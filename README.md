@@ -45,25 +45,35 @@ GCC and flawfinder were installed via [Homebrew](https://brew.sh). CPP-Check the
 ### Retrieve the problems solution source code
 
 1. Install dependencies:
-```python3 -m pip install -r requirements.txt```
+```bash
+python3 -m pip install -r requirements.txt
+```
 
 2. Configure your OpenAI API key:
-```export OPENAI_API_KEY=<your api key here>```
+```bash
+export OPENAI_API_KEY="<your api key here>"
+```
 
 3. Run the collector
-```python collect_code.py```
+```bash
+python collect_code.py
+```
 
 ### Execute the static analysis tools
 
 4. Configure the path of the tools
 
-```export GCC_PATH=<gcc binary path>```
-```export FLAWFINDER_PATH=<flawfinder binary path>```
-```export CPPCHECK_PATH=<cppcheck binary path>```
+```bash
+export GCC_PATH="<gcc binary path>"
+export FLAWFINDER_PATH="<flawfinder binary path>"
+export CPPCHECK_PATH="<cppcheck binary path>"
+```
 
 5. Run the compilar and static analyzer:
 
-```./diagnose_code.sh```
+```bash
+./diagnose_code.sh
+```
 
 ### Manual tasks required
 

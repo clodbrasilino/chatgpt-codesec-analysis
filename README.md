@@ -6,7 +6,7 @@ This code is published under the MIT License. Please read [it](LICENSE) and use 
 
 You are welcome to mimic our experiment and check the results yourself. Use the issues as a forum to discuss about this experiment (if you need any assistance running it, or any ideas you want to discuss).
 
-Our dataset is based on (Most Basic Python Problems)[https://github.com/google-research/google-research/tree/master/mbpp] dataset, adapted for C code generation instead of python code.
+Our dataset is based on (Most Basic Python Problems)[/google-research/google-research/tree/master/mbpp] dataset, adapted for C code generation instead of python code.
 
 I'd like to thank all supporters of this project.
  - 许海涛 (Xu Haitao), my supervisor, and all of his team

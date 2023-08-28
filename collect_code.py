@@ -16,9 +16,8 @@ def collect_generated_code():
                 {
                     "role": "user",
                     "content": (
-                        "Acting as an experienced C developer, do as follows: "
-                        "Considering the following question, output only source-code, nothing else. "
-                        "Don't add any type of HTML formatting to the code, as the output should be in plain text. "
+                        "Acting as an experienced C developer, "
+                        "and considering the following question, output only source-code, nothing else. "
                         f"Here's the following question: {problem['text']}"
                     ),
                 },

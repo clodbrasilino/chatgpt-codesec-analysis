@@ -1,0 +1,15 @@
+collected_code/problem-507-0.c:8:24: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strcmp(list[i], word) == 0) {
+                       ^
+collected_code/problem-507-0.c:8:29: error: Cannot determine that 'word[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strcmp(list[i], word) == 0) {
+                            ^
+collected_code/problem-507-0.c:10:28: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                strcpy(list[j], list[j + 1]);
+                           ^
+collected_code/problem-507-0.c:10:37: error: Cannot determine that 'list[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                strcpy(list[j], list[j + 1]);
+                                    ^
+collected_code/problem-507-0.c:12:24: error: Cannot determine that 'list[size-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            strcpy(list[size - 1], "");
+                       ^

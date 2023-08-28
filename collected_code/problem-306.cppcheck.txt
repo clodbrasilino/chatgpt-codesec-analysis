@@ -1,0 +1,15 @@
+collected_code/problem-306-0.c:10:24: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        prefixSum = arr[i];
+                       ^
+collected_code/problem-306-0.c:11:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        tempSum = arr[i];
+                     ^
+collected_code/problem-306-0.c:14:20: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[j] > arr[j - 1]) {
+                   ^
+collected_code/problem-306-0.c:14:29: error: Cannot determine that 'arr[j-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[j] > arr[j - 1]) {
+                            ^
+collected_code/problem-306-0.c:15:31: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                tempSum += arr[j];
+                              ^

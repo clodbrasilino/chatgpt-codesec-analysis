@@ -1,0 +1,9 @@
+collected_code/problem-542-0.c: In function 'replace_chars':
+collected_code/problem-542-0.c:8:5: warning: implicit declaration of function 'regreplace' [-Wimplicit-function-declaration]
+    8 |     regreplace(&regex, str, ":", str, 0);
+      |     ^~~~~~~~~~
+Undefined symbols for architecture x86_64:
+  "_regreplace", referenced from:
+      _replace_chars in ccsMHrZa.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

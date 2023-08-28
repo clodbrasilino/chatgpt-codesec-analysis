@@ -1,0 +1,16 @@
+collected_code/problem-904-0.c:1:1: error: unknown type name 'bool'
+    1 | bool isEven(int number) {
+      | ^~~~
+collected_code/problem-904-0.c:1:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  +++ |+#include <stdbool.h>
+    1 | bool isEven(int number) {
+collected_code/problem-904-0.c: In function 'isEven':
+collected_code/problem-904-0.c:3:16: error: 'true' undeclared (first use in this function)
+    3 |         return true;
+      |                ^~~~
+collected_code/problem-904-0.c:3:16: note: 'true' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+collected_code/problem-904-0.c:3:16: note: each undeclared identifier is reported only once for each function it appears in
+collected_code/problem-904-0.c:5:16: error: 'false' undeclared (first use in this function)
+    5 |         return false;
+      |                ^~~~~
+collected_code/problem-904-0.c:5:16: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?

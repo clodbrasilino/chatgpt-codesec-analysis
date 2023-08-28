@@ -1,0 +1,12 @@
+collected_code/problem-75-0.c:6:22: error: Cannot determine that 'tuples[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (tuples[i][0] % k == 0 && tuples[i][1] % k == 0) {
+                     ^
+collected_code/problem-75-0.c:6:47: error: Cannot determine that 'tuples[i][1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (tuples[i][0] % k == 0 && tuples[i][1] % k == 0) {
+                                              ^
+collected_code/problem-75-0.c:7:43: error: Cannot determine that 'tuples[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("(%d, %d)\n", tuples[i][0], tuples[i][1]);
+                                          ^
+collected_code/problem-75-0.c:7:57: error: Cannot determine that 'tuples[i][1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("(%d, %d)\n", tuples[i][0], tuples[i][1]);
+                                                        ^

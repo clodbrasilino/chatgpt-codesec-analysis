@@ -1,0 +1,1596 @@
+collected_code/problem-31-0.c: In function 'createHeap':
+collected_code/problem-31-0.c:19:15: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+      |     ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'createHeap': events 1-2
+    |
+    |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) 'heap' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-31-0.c: In function 'heapify':
+collected_code/problem-31-0.c:36:45: warning: use of uninitialized value '*_4 + _6.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+      |                              ~~~~~~~~~~~~~~~^~~~~~
+  'buildHeap': events 1-2
+    |
+    |   48 | Heap* buildHeap(Element *arr, int size) {
+    |      |       ^~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'buildHeap'
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'buildHeap'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   17 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+           |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) region created on heap here
+           |
+    <------+
+    |
+  'buildHeap': events 5-8
+    |
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'buildHeap' from 'createHeap'
+    |......
+    |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (6) following 'true' branch (when 'i >= 0')...
+    |   53 |         heapify(heap, i);
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'heapify' from 'buildHeap'
+    |
+    +--> 'heapify': events 9-12
+           |
+           |   31 | void heapify(Heap *heap, int index) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (9) entry to 'heapify'
+           |......
+           |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+           |      |        ~                     ~~~~~~~~~~~~~~~~~~~~~
+           |      |        |                         |          |
+           |      |        |                         |          (12) use of uninitialized value '*_4 + _6.count' here
+           |      |        |                         (11) ...to here
+           |      |        (10) following 'true' branch...
+           |
+collected_code/problem-31-0.c:36:45: warning: use of uninitialized value '*_4 + _6.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+      |                              ~~~~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': events 7-10
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |......
+           |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (8) following 'true' branch (when 'i >= 0')...
+           |   53 |         heapify(heap, i);
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |      |         (10) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 11-14
+                  |
+                  |   31 | void heapify(Heap *heap, int index) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                  |      |        ~                     ~~~~~~~~~~~~~~~~~~~~~
+                  |      |        |                         |          |
+                  |      |        |                         |          (14) use of uninitialized value '*_4 + _6.count' here
+                  |      |        |                         (13) ...to here
+                  |      |        (12) following 'true' branch...
+                  |
+collected_code/problem-31-0.c:36:45: warning: use of uninitialized value '*_4 + _6.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+      |                              ~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  112 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findTopKFrequent(arr, size, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findTopKFrequent' from 'main'
+    |
+    +--> 'findTopKFrequent': events 3-4
+           |
+           |   77 | void findTopKFrequent(int arr[], int size, int k) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findTopKFrequent'
+           |   78 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'buildHeap' from 'findTopKFrequent'
+           |
+           +--> 'buildHeap': events 5-6
+                  |
+                  |   48 | Heap* buildHeap(Element *arr, int size) {
+                  |      |       ^~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'buildHeap'
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (6) calling 'createHeap' from 'buildHeap'
+                  |
+                  +--> 'createHeap': events 7-8
+                         |
+                         |   17 | Heap* createHeap(int capacity) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (7) entry to 'createHeap'
+                         |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                         |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                         |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                            |
+                         |      |                            (8) region created on heap here
+                         |
+                  <------+
+                  |
+                'buildHeap': events 9-12
+                  |
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ^~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (9) returning to 'buildHeap' from 'createHeap'
+                  |......
+                  |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (10) following 'true' branch (when 'i >= 0')...
+                  |   53 |         heapify(heap, i);
+                  |      |         ~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (11) ...to here
+                  |      |         (12) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 13-16
+                         |
+                         |   31 | void heapify(Heap *heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (13) entry to 'heapify'
+                         |......
+                         |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                         |      |        ~                     ~~~~~~~~~~~~~~~~~~~~~
+                         |      |        |                         |          |
+                         |      |        |                         |          (16) use of uninitialized value '*_4 + _6.count' here
+                         |      |        |                         (15) ...to here
+                         |      |        (14) following 'true' branch...
+                         |
+collected_code/problem-31-0.c:36:72: warning: use of uninitialized value '*_9 + _11.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+      |                                                      ~~~~~~~~~~~~~~~~~~^~~~~~
+  'buildHeap': events 1-2
+    |
+    |   48 | Heap* buildHeap(Element *arr, int size) {
+    |      |       ^~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'buildHeap'
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'buildHeap'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   17 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+           |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) region created on heap here
+           |
+    <------+
+    |
+  'buildHeap': events 5-8
+    |
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'buildHeap' from 'createHeap'
+    |......
+    |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (6) following 'true' branch (when 'i >= 0')...
+    |   53 |         heapify(heap, i);
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'heapify' from 'buildHeap'
+    |
+    +--> 'heapify': events 9-15
+           |
+           |   31 | void heapify(Heap *heap, int index) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (9) entry to 'heapify'
+           |......
+           |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+           |      |        ~        ~~~~~~~~~~
+           |      |        |            |
+           |      |        |            (11) ...to here
+           |      |        (12) following 'false' branch...
+           |......
+           |   42 |     if (largest != index) {
+           |      |        ~
+           |      |        |
+           |      |        (13) ...to here
+           |      |        (14) following 'false' branch (when 'largest == index')...
+           |......
+           |   46 | }
+           |      | ~     
+           |      | |
+           |      | (15) ...to here
+           |
+    <------+
+    |
+  'buildHeap': events 16-19
+    |
+    |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (17) following 'true' branch (when 'i >= 0')...
+    |   53 |         heapify(heap, i);
+    |      |         ^~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (16) returning to 'buildHeap' from 'heapify'
+    |      |         (18) ...to here
+    |      |         (19) calling 'heapify' from 'buildHeap'
+    |
+    +--> 'heapify': events 20-21
+           |
+           |   31 | void heapify(Heap *heap, int index) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (20) entry to 'heapify'
+           |......
+           |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+           |      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                                                        |
+           |      |                                                                        (21) use of uninitialized value '*_9 + _11.count' here
+           |
+collected_code/problem-31-0.c:36:72: warning: use of uninitialized value '*_9 + _11.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+      |                                                      ~~~~~~~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': events 7-10
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |......
+           |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (8) following 'true' branch (when 'i >= 0')...
+           |   53 |         heapify(heap, i);
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |      |         (10) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 11-17
+                  |
+                  |   31 | void heapify(Heap *heap, int index) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) following 'false' branch...
+                  |......
+                  |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                  |      |        ~        ~~~~~~~~~~
+                  |      |        |            |
+                  |      |        |            (13) ...to here
+                  |      |        (14) following 'false' branch...
+                  |......
+                  |   42 |     if (largest != index) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (15) ...to here
+                  |      |        (16) following 'false' branch (when 'largest == index')...
+                  |......
+                  |   46 | }
+                  |      | ~     
+                  |      | |
+                  |      | (17) ...to here
+                  |
+           <------+
+           |
+         'buildHeap': events 18-21
+           |
+           |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (19) following 'true' branch (when 'i >= 0')...
+           |   53 |         heapify(heap, i);
+           |      |         ^~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) returning to 'buildHeap' from 'heapify'
+           |      |         (20) ...to here
+           |      |         (21) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 22-23
+                  |
+                  |   31 | void heapify(Heap *heap, int index) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (22) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                  |      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                                                        |
+                  |      |                                                                        (23) use of uninitialized value '*_9 + _11.count' here
+                  |
+collected_code/problem-31-0.c:36:72: warning: use of uninitialized value '*_9 + _11.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+      |                                                      ~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  112 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findTopKFrequent(arr, size, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findTopKFrequent' from 'main'
+    |
+    +--> 'findTopKFrequent': events 3-4
+           |
+           |   77 | void findTopKFrequent(int arr[], int size, int k) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findTopKFrequent'
+           |   78 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'buildHeap' from 'findTopKFrequent'
+           |
+           +--> 'buildHeap': events 5-6
+                  |
+                  |   48 | Heap* buildHeap(Element *arr, int size) {
+                  |      |       ^~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'buildHeap'
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (6) calling 'createHeap' from 'buildHeap'
+                  |
+                  +--> 'createHeap': events 7-8
+                         |
+                         |   17 | Heap* createHeap(int capacity) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (7) entry to 'createHeap'
+                         |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                         |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                         |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                            |
+                         |      |                            (8) region created on heap here
+                         |
+                  <------+
+                  |
+                'buildHeap': events 9-12
+                  |
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ^~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (9) returning to 'buildHeap' from 'createHeap'
+                  |......
+                  |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (10) following 'true' branch (when 'i >= 0')...
+                  |   53 |         heapify(heap, i);
+                  |      |         ~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (11) ...to here
+                  |      |         (12) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 13-19
+                         |
+                         |   31 | void heapify(Heap *heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (13) entry to 'heapify'
+                         |......
+                         |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                         |      |        ~
+                         |      |        |
+                         |      |        (14) following 'false' branch...
+                         |......
+                         |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                         |      |        ~        ~~~~~~~~~~
+                         |      |        |            |
+                         |      |        |            (15) ...to here
+                         |      |        (16) following 'false' branch...
+                         |......
+                         |   42 |     if (largest != index) {
+                         |      |        ~
+                         |      |        |
+                         |      |        (17) ...to here
+                         |      |        (18) following 'false' branch (when 'largest == index')...
+                         |......
+                         |   46 | }
+                         |      | ~     
+                         |      | |
+                         |      | (19) ...to here
+                         |
+                  <------+
+                  |
+                'buildHeap': events 20-23
+                  |
+                  |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (21) following 'true' branch (when 'i >= 0')...
+                  |   53 |         heapify(heap, i);
+                  |      |         ^~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (20) returning to 'buildHeap' from 'heapify'
+                  |      |         (22) ...to here
+                  |      |         (23) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 24-25
+                         |
+                         |   31 | void heapify(Heap *heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (24) entry to 'heapify'
+                         |......
+                         |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                         |      |                                                      ~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                                                                        |
+                         |      |                                                                        (25) use of uninitialized value '*_9 + _11.count' here
+                         |
+collected_code/problem-31-0.c:39:47: warning: use of uninitialized value '*_15 + _17.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+      |                               ~~~~~~~~~~~~~~~~^~~~~~
+  'buildHeap': events 1-2
+    |
+    |   48 | Heap* buildHeap(Element *arr, int size) {
+    |      |       ^~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'buildHeap'
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'buildHeap'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   17 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+           |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) region created on heap here
+           |
+    <------+
+    |
+  'buildHeap': events 5-8
+    |
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'buildHeap' from 'createHeap'
+    |......
+    |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (6) following 'true' branch (when 'i >= 0')...
+    |   53 |         heapify(heap, i);
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'heapify' from 'buildHeap'
+    |
+    +--> 'heapify': events 9-14
+           |
+           |   31 | void heapify(Heap *heap, int index) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (9) entry to 'heapify'
+           |......
+           |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+           |      |        ~        ~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~
+           |      |        |            |             |           |
+           |      |        |            |             |           (14) use of uninitialized value '*_15 + _17.count' here
+           |      |        |            |             (13) ...to here
+           |      |        |            (11) ...to here
+           |      |        (12) following 'true' branch...
+           |
+collected_code/problem-31-0.c:39:47: warning: use of uninitialized value '*_15 + _17.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+      |                               ~~~~~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': events 7-10
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |......
+           |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (8) following 'true' branch (when 'i >= 0')...
+           |   53 |         heapify(heap, i);
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |      |         (10) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 11-16
+                  |
+                  |   31 | void heapify(Heap *heap, int index) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) following 'false' branch...
+                  |......
+                  |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                  |      |        ~        ~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~
+                  |      |        |            |             |           |
+                  |      |        |            |             |           (16) use of uninitialized value '*_15 + _17.count' here
+                  |      |        |            |             (15) ...to here
+                  |      |        |            (13) ...to here
+                  |      |        (14) following 'true' branch...
+                  |
+collected_code/problem-31-0.c:39:47: warning: use of uninitialized value '*_15 + _17.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+      |                               ~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  112 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findTopKFrequent(arr, size, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findTopKFrequent' from 'main'
+    |
+    +--> 'findTopKFrequent': events 3-4
+           |
+           |   77 | void findTopKFrequent(int arr[], int size, int k) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findTopKFrequent'
+           |   78 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'buildHeap' from 'findTopKFrequent'
+           |
+           +--> 'buildHeap': events 5-6
+                  |
+                  |   48 | Heap* buildHeap(Element *arr, int size) {
+                  |      |       ^~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'buildHeap'
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (6) calling 'createHeap' from 'buildHeap'
+                  |
+                  +--> 'createHeap': events 7-8
+                         |
+                         |   17 | Heap* createHeap(int capacity) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (7) entry to 'createHeap'
+                         |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                         |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                         |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                            |
+                         |      |                            (8) region created on heap here
+                         |
+                  <------+
+                  |
+                'buildHeap': events 9-12
+                  |
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ^~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (9) returning to 'buildHeap' from 'createHeap'
+                  |......
+                  |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (10) following 'true' branch (when 'i >= 0')...
+                  |   53 |         heapify(heap, i);
+                  |      |         ~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (11) ...to here
+                  |      |         (12) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 13-18
+                         |
+                         |   31 | void heapify(Heap *heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (13) entry to 'heapify'
+                         |......
+                         |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                         |      |        ~
+                         |      |        |
+                         |      |        (14) following 'false' branch...
+                         |......
+                         |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                         |      |        ~        ~~~~~~~~~~    ~~~~~~~~~~~~~~~~~~~~~~
+                         |      |        |            |             |           |
+                         |      |        |            |             |           (18) use of uninitialized value '*_15 + _17.count' here
+                         |      |        |            |             (17) ...to here
+                         |      |        |            (15) ...to here
+                         |      |        (16) following 'true' branch...
+                         |
+collected_code/problem-31-0.c:39:74: warning: use of uninitialized value '*_20 + _22.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+      |                                                        ~~~~~~~~~~~~~~~~~~^~~~~~
+  'buildHeap': events 1-2
+    |
+    |   48 | Heap* buildHeap(Element *arr, int size) {
+    |      |       ^~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'buildHeap'
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'buildHeap'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   17 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+           |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) region created on heap here
+           |
+    <------+
+    |
+  'buildHeap': events 5-8
+    |
+    |   49 |     Heap* heap = createHeap(size);
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'buildHeap' from 'createHeap'
+    |......
+    |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (6) following 'true' branch (when 'i >= 0')...
+    |   53 |         heapify(heap, i);
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'heapify' from 'buildHeap'
+    |
+    +--> 'heapify': events 9-15
+           |
+           |   31 | void heapify(Heap *heap, int index) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (9) entry to 'heapify'
+           |......
+           |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+           |      |        ~        ~~~~~~~~~~
+           |      |        |            |
+           |      |        |            (11) ...to here
+           |      |        (12) following 'false' branch...
+           |......
+           |   42 |     if (largest != index) {
+           |      |        ~
+           |      |        |
+           |      |        (13) ...to here
+           |      |        (14) following 'false' branch (when 'largest == index')...
+           |......
+           |   46 | }
+           |      | ~     
+           |      | |
+           |      | (15) ...to here
+           |
+    <------+
+    |
+  'buildHeap': events 16-19
+    |
+    |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (17) following 'true' branch (when 'i >= 0')...
+    |   53 |         heapify(heap, i);
+    |      |         ^~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (16) returning to 'buildHeap' from 'heapify'
+    |      |         (18) ...to here
+    |      |         (19) calling 'heapify' from 'buildHeap'
+    |
+    +--> 'heapify': events 20-23
+           |
+           |   31 | void heapify(Heap *heap, int index) {
+           |      |      ^~~~~~~
+           |      |      |
+           |      |      (20) entry to 'heapify'
+           |......
+           |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+           |      |        ~
+           |      |        |
+           |      |        (21) following 'false' branch...
+           |......
+           |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+           |      |                 ~~~~~~~~~~                             ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                                                    |
+           |      |                     (22) ...to here                                      (23) use of uninitialized value '*_20 + _22.count' here
+           |
+collected_code/problem-31-0.c:39:74: warning: use of uninitialized value '*_20 + _22.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+      |                                                        ~~~~~~~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': events 7-10
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |......
+           |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (8) following 'true' branch (when 'i >= 0')...
+           |   53 |         heapify(heap, i);
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |      |         (10) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 11-17
+                  |
+                  |   31 | void heapify(Heap *heap, int index) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) following 'false' branch...
+                  |......
+                  |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                  |      |        ~        ~~~~~~~~~~
+                  |      |        |            |
+                  |      |        |            (13) ...to here
+                  |      |        (14) following 'false' branch...
+                  |......
+                  |   42 |     if (largest != index) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (15) ...to here
+                  |      |        (16) following 'false' branch (when 'largest == index')...
+                  |......
+                  |   46 | }
+                  |      | ~     
+                  |      | |
+                  |      | (17) ...to here
+                  |
+           <------+
+           |
+         'buildHeap': events 18-21
+           |
+           |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (19) following 'true' branch (when 'i >= 0')...
+           |   53 |         heapify(heap, i);
+           |      |         ^~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (18) returning to 'buildHeap' from 'heapify'
+           |      |         (20) ...to here
+           |      |         (21) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 22-25
+                  |
+                  |   31 | void heapify(Heap *heap, int index) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (22) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                  |      |        ~
+                  |      |        |
+                  |      |        (23) following 'false' branch...
+                  |......
+                  |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                  |      |                 ~~~~~~~~~~                             ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |                                                    |
+                  |      |                     (24) ...to here                                      (25) use of uninitialized value '*_20 + _22.count' here
+                  |
+collected_code/problem-31-0.c:39:74: warning: use of uninitialized value '*_20 + _22.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+      |                                                        ~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  112 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findTopKFrequent(arr, size, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findTopKFrequent' from 'main'
+    |
+    +--> 'findTopKFrequent': events 3-4
+           |
+           |   77 | void findTopKFrequent(int arr[], int size, int k) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findTopKFrequent'
+           |   78 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'buildHeap' from 'findTopKFrequent'
+           |
+           +--> 'buildHeap': events 5-6
+                  |
+                  |   48 | Heap* buildHeap(Element *arr, int size) {
+                  |      |       ^~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'buildHeap'
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (6) calling 'createHeap' from 'buildHeap'
+                  |
+                  +--> 'createHeap': events 7-8
+                         |
+                         |   17 | Heap* createHeap(int capacity) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (7) entry to 'createHeap'
+                         |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                         |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                         |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                            |
+                         |      |                            (8) region created on heap here
+                         |
+                  <------+
+                  |
+                'buildHeap': events 9-12
+                  |
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ^~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (9) returning to 'buildHeap' from 'createHeap'
+                  |......
+                  |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (10) following 'true' branch (when 'i >= 0')...
+                  |   53 |         heapify(heap, i);
+                  |      |         ~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (11) ...to here
+                  |      |         (12) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 13-19
+                         |
+                         |   31 | void heapify(Heap *heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (13) entry to 'heapify'
+                         |......
+                         |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                         |      |        ~
+                         |      |        |
+                         |      |        (14) following 'false' branch...
+                         |......
+                         |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                         |      |        ~        ~~~~~~~~~~
+                         |      |        |            |
+                         |      |        |            (15) ...to here
+                         |      |        (16) following 'false' branch...
+                         |......
+                         |   42 |     if (largest != index) {
+                         |      |        ~
+                         |      |        |
+                         |      |        (17) ...to here
+                         |      |        (18) following 'false' branch (when 'largest == index')...
+                         |......
+                         |   46 | }
+                         |      | ~     
+                         |      | |
+                         |      | (19) ...to here
+                         |
+                  <------+
+                  |
+                'buildHeap': events 20-23
+                  |
+                  |   52 |     for (int i = (size - 2) / 2; i >= 0; --i) {
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (21) following 'true' branch (when 'i >= 0')...
+                  |   53 |         heapify(heap, i);
+                  |      |         ^~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (20) returning to 'buildHeap' from 'heapify'
+                  |      |         (22) ...to here
+                  |      |         (23) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 24-27
+                         |
+                         |   31 | void heapify(Heap *heap, int index) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (24) entry to 'heapify'
+                         |......
+                         |   36 |     if (left < heap->size && heap->arr[left].count > heap->arr[largest].count)
+                         |      |        ~
+                         |      |        |
+                         |      |        (25) following 'false' branch...
+                         |......
+                         |   39 |     if (right < heap->size && heap->arr[right].count > heap->arr[largest].count)
+                         |      |                 ~~~~~~~~~~                             ~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                     |                                                    |
+                         |      |                     (26) ...to here                                      (27) use of uninitialized value '*_20 + _22.count' here
+                         |
+collected_code/problem-31-0.c: In function 'findTopKFrequent':
+collected_code/problem-31-0.c:83:29: warning: use of uninitialized value '*_1 + _3.value' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   83 |             if (heap->arr[j].value == arr[i]) {
+      |                 ~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': event 7
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |
+    <------+
+    |
+  'findTopKFrequent': events 8-13
+    |
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) returning to 'findTopKFrequent' from 'buildHeap'
+    |   79 | 
+    |   80 |     for (int i = 0; i < size; ++i) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (9) following 'true' branch (when 'i < size')...
+    |   81 |         int j;
+    |   82 |         for (j = 0; j < heap->size; ++j) {
+    |      |              ~~~~~  ~~~~~~~~~~~~~~
+    |      |                |      |
+    |      |                |      (11) following 'true' branch...
+    |      |                (10) ...to here
+    |   83 |             if (heap->arr[j].value == arr[i]) {
+    |      |                 ~~~~~~~~~~~~~~~~~~
+    |      |                     |       |
+    |      |                     |       (13) use of uninitialized value '*_1 + _3.value' here
+    |      |                     (12) ...to here
+    |
+collected_code/problem-31-0.c:83:29: warning: dereference of possibly-NULL '*heap.arr + (long unsigned int)j * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   83 |             if (heap->arr[j].value == arr[i]) {
+      |                 ~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) this call could return NULL
+                  |
+           <------+
+           |
+         'buildHeap': event 7
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |
+    <------+
+    |
+  'findTopKFrequent': events 8-13
+    |
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) returning to 'findTopKFrequent' from 'buildHeap'
+    |   79 | 
+    |   80 |     for (int i = 0; i < size; ++i) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (9) following 'true' branch (when 'i < size')...
+    |   81 |         int j;
+    |   82 |         for (j = 0; j < heap->size; ++j) {
+    |      |              ~~~~~  ~~~~~~~~~~~~~~
+    |      |                |      |
+    |      |                |      (11) following 'true' branch...
+    |      |                (10) ...to here
+    |   83 |             if (heap->arr[j].value == arr[i]) {
+    |      |                 ~~~~~~~~~~~~~~~~~~
+    |      |                     |       |
+    |      |                     |       (13) '*heap.arr + (long unsigned int)j * 8' could be NULL: unchecked value from (6)
+    |      |                     (12) ...to here
+    |
+collected_code/problem-31-0.c:95:34: warning: use of uninitialized value '*heap_60->arr.count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   95 |             else if (heap->arr[0].count < 1) {
+      |                      ~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': event 7
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |
+    <------+
+    |
+  'findTopKFrequent': events 8-17
+    |
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) returning to 'findTopKFrequent' from 'buildHeap'
+    |   79 | 
+    |   80 |     for (int i = 0; i < size; ++i) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (9) following 'true' branch (when 'i < size')...
+    |   81 |         int j;
+    |   82 |         for (j = 0; j < heap->size; ++j) {
+    |      |              ~~~~~  ~~~~~~~~~~~~~~
+    |      |                |      |
+    |      |                |      (11) following 'false' branch...
+    |      |                (10) ...to here
+    |......
+    |   89 |         if (j == heap->size) {
+    |      |            ~     ~~~~~~~~~~
+    |      |            |         |
+    |      |            |         (12) ...to here
+    |      |            (13) following 'true' branch...
+    |   90 |             if (heap->size < k) {
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (14) ...to here
+    |      |                (15) following 'false' branch...
+    |......
+    |   95 |             else if (heap->arr[0].count < 1) {
+    |      |                      ~~~~~~~~~~~~~~~~~~
+    |      |                          |       |
+    |      |                          |       (17) use of uninitialized value '*heap_60->arr.count' here
+    |      |                          (16) ...to here
+    |
+collected_code/problem-31-0.c:95:34: warning: dereference of possibly-NULL '*heap.arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   95 |             else if (heap->arr[0].count < 1) {
+      |                      ~~~~~~~~~~~~^~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) this call could return NULL
+                  |
+           <------+
+           |
+         'buildHeap': event 7
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |
+    <------+
+    |
+  'findTopKFrequent': events 8-17
+    |
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) returning to 'findTopKFrequent' from 'buildHeap'
+    |   79 | 
+    |   80 |     for (int i = 0; i < size; ++i) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (9) following 'true' branch (when 'i < size')...
+    |   81 |         int j;
+    |   82 |         for (j = 0; j < heap->size; ++j) {
+    |      |              ~~~~~  ~~~~~~~~~~~~~~
+    |      |                |      |
+    |      |                |      (11) following 'false' branch...
+    |      |                (10) ...to here
+    |......
+    |   89 |         if (j == heap->size) {
+    |      |            ~     ~~~~~~~~~~
+    |      |            |         |
+    |      |            |         (12) ...to here
+    |      |            (13) following 'true' branch...
+    |   90 |             if (heap->size < k) {
+    |      |                ~~~~~~~~~~~
+    |      |                |    |
+    |      |                |    (14) ...to here
+    |      |                (15) following 'false' branch...
+    |......
+    |   95 |             else if (heap->arr[0].count < 1) {
+    |      |                      ~~~~~~~~~~~~~~~~~~
+    |      |                          |       |
+    |      |                          |       (17) '*heap.arr' could be NULL: unchecked value from (6)
+    |      |                          (16) ...to here
+    |
+collected_code/problem-31-0.c:105:9: warning: use of uninitialized value '*_44 + _46.value' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+  105 |         printf("%d ", heap->arr[i].value);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'findTopKFrequent': events 1-2
+    |
+    |   77 | void findTopKFrequent(int arr[], int size, int k) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'findTopKFrequent'
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'buildHeap' from 'findTopKFrequent'
+    |
+    +--> 'buildHeap': events 3-4
+           |
+           |   48 | Heap* buildHeap(Element *arr, int size) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'buildHeap'
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'buildHeap'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   17 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                  |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) region created on heap here
+                  |
+           <------+
+           |
+         'buildHeap': event 7
+           |
+           |   49 |     Heap* heap = createHeap(size);
+           |      |                  ^~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'buildHeap' from 'createHeap'
+           |
+    <------+
+    |
+  'findTopKFrequent': events 8-11
+    |
+    |   78 |     Heap* heap = buildHeap(NULL, k);
+    |      |                  ^~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) returning to 'findTopKFrequent' from 'buildHeap'
+    |......
+    |  104 |     for (int i = heap->size - 1; i >= 0; --i) {
+    |      |                                  ~~~~~~
+    |      |                                    |
+    |      |                                    (9) following 'true' branch (when 'i >= 0')...
+    |  105 |         printf("%d ", heap->arr[i].value);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                 |
+    |      |         |                 (10) ...to here
+    |      |         (11) use of uninitialized value '*_44 + _46.value' here
+    |
+collected_code/problem-31-0.c:105:9: warning: use of uninitialized value '*_44 + _46.value' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+  105 |         printf("%d ", heap->arr[i].value);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |  112 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findTopKFrequent(arr, size, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findTopKFrequent' from 'main'
+    |
+    +--> 'findTopKFrequent': events 3-4
+           |
+           |   77 | void findTopKFrequent(int arr[], int size, int k) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findTopKFrequent'
+           |   78 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'buildHeap' from 'findTopKFrequent'
+           |
+           +--> 'buildHeap': events 5-6
+                  |
+                  |   48 | Heap* buildHeap(Element *arr, int size) {
+                  |      |       ^~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'buildHeap'
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (6) calling 'createHeap' from 'buildHeap'
+                  |
+                  +--> 'createHeap': events 7-8
+                         |
+                         |   17 | Heap* createHeap(int capacity) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (7) entry to 'createHeap'
+                         |   18 |     Heap* heap = (Heap*) malloc(sizeof(Heap));
+                         |   19 |     heap->arr = (Element*) malloc(capacity * sizeof(Element));
+                         |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         |      |                            |
+                         |      |                            (8) region created on heap here
+                         |
+                  <------+
+                  |
+                'buildHeap': event 9
+                  |
+                  |   49 |     Heap* heap = createHeap(size);
+                  |      |                  ^~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (9) returning to 'buildHeap' from 'createHeap'
+                  |
+           <------+
+           |
+         'findTopKFrequent': events 10-13
+           |
+           |   78 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ^~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (10) returning to 'findTopKFrequent' from 'buildHeap'
+           |......
+           |  104 |     for (int i = heap->size - 1; i >= 0; --i) {
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (11) following 'true' branch (when 'i >= 0')...
+           |  105 |         printf("%d ", heap->arr[i].value);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (12) ...to here
+           |      |         (13) use of uninitialized value '*_44 + _46.value' here
+           |

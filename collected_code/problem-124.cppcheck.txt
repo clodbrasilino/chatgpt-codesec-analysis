@@ -1,0 +1,12 @@
+collected_code/problem-124-0.c:11:19: error: Cannot determine that 'real' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &real);
+                  ^
+collected_code/problem-124-0.c:13:19: error: Cannot determine that 'imag' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &imag);
+                  ^
+collected_code/problem-124-0.c:14:68: error: Cannot determine that 'real' is initialized [premium-bughuntingUninit]
+    printf("The angle of the complex number is: %.2lf\n", getAngle(real, imag));
+                                                                   ^
+collected_code/problem-124-0.c:14:74: error: Cannot determine that 'imag' is initialized [premium-bughuntingUninit]
+    printf("The angle of the complex number is: %.2lf\n", getAngle(real, imag));
+                                                                         ^

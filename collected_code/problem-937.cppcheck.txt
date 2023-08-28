@@ -1,0 +1,15 @@
+collected_code/problem-937-0.c:9:27: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; string[i] != '\0'; i++) {
+                          ^
+collected_code/problem-937-0.c:10:21: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[string[i]]++;
+                    ^
+collected_code/problem-937-0.c:13:25: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (count[string[i]] > max_count) {
+                        ^
+collected_code/problem-937-0.c:14:37: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            max_count = count[string[i]];
+                                    ^
+collected_code/problem-937-0.c:15:33: error: Cannot determine that 'string[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            most_common = string[i];
+                                ^

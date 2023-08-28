@@ -1,0 +1,6 @@
+collected_code/problem-315-0.c:6:25: error: Cannot determine that 'sentence[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    char *word = strtok(sentence, " ");
+                        ^
+collected_code/problem-315-0.c:24:11: error: Cannot determine that 'sentence[0]' is initialized [premium-bughuntingUninit]
+    fgets(sentence, sizeof(sentence), stdin);
+          ^

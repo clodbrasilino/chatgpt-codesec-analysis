@@ -1,0 +1,54 @@
+collected_code/problem-635-0.c:9:24: error: Cannot determine that 'arr[left]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (left < n && arr[left] < arr[smallest])
+                       ^
+collected_code/problem-635-0.c:9:36: error: Cannot determine that 'arr[smallest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (left < n && arr[left] < arr[smallest])
+                                   ^
+collected_code/problem-635-0.c:12:25: error: Cannot determine that 'arr[right]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (right < n && arr[right] < arr[smallest])
+                        ^
+collected_code/problem-635-0.c:12:38: error: Cannot determine that 'arr[smallest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (right < n && arr[right] < arr[smallest])
+                                     ^
+collected_code/problem-635-0.c:16:23: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int temp = arr[i];
+                      ^
+collected_code/problem-635-0.c:17:21: error: Cannot determine that 'arr[smallest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[i] = arr[smallest];
+                    ^
+collected_code/problem-635-0.c:35:23: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int temp = arr[0];
+                      ^
+collected_code/problem-635-0.c:36:21: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[0] = arr[i];
+                    ^
+collected_code/problem-635-0.c:44:13: error: Cannot determine that '*size' is initialized [premium-bughuntingUninit]
+    *size = *size + 1;
+            ^
+collected_code/problem-635-0.c:48:26: error: Cannot determine that 'heap[(i-1)/2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (i != 0 && heap[(i - 1) / 2] > heap[i]) {
+                         ^
+collected_code/problem-635-0.c:58:9: error: Cannot determine that '*size' is initialized [premium-bughuntingUninit]
+    if (*size <= 0)
+        ^
+collected_code/problem-635-0.c:61:9: error: Cannot determine that '*size' is initialized [premium-bughuntingUninit]
+    if (*size == 1) {
+        ^
+collected_code/problem-635-0.c:62:17: error: Cannot determine that '*size' is initialized [premium-bughuntingUninit]
+        *size = *size - 1;
+                ^
+collected_code/problem-635-0.c:63:20: error: Cannot determine that 'heap[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        return heap[0];
+                   ^
+collected_code/problem-635-0.c:66:24: error: Cannot determine that 'heap[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int smallest = heap[0];
+                       ^
+collected_code/problem-635-0.c:67:19: error: Cannot determine that 'heap[*size-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    heap[0] = heap[*size - 1];
+                  ^
+collected_code/problem-635-0.c:67:20: error: Cannot determine that '*size' is initialized [premium-bughuntingUninit]
+    heap[0] = heap[*size - 1];
+                   ^
+collected_code/problem-635-0.c:68:13: error: Cannot determine that '*size' is initialized [premium-bughuntingUninit]
+    *size = *size - 1;
+            ^

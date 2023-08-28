@@ -1,0 +1,9 @@
+collected_code/problem-972-0.c:10:9: error: Cannot determine that 'nestedTuple' is initialized [premium-bughuntingUninit]
+        nestedTuple[i] = (int*) malloc(sizeof(int));
+        ^
+collected_code/problem-972-0.c:11:35: error: Cannot determine that 'tuple1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        nestedTuple[i][0] = tuple1[i];
+                                  ^
+collected_code/problem-972-0.c:17:43: error: Cannot determine that 'tuple2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        nestedTuple[size1 + i][0] = tuple2[i];
+                                          ^

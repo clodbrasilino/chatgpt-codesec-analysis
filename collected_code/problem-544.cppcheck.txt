@@ -1,0 +1,6 @@
+collected_code/problem-544-0.c:10:17: error: Cannot determine that 'num[0]' is initialized [premium-bughuntingUninit]
+        sprintf(num, "%d", tuple[i]);
+                ^
+collected_code/problem-544-0.c:10:33: error: Cannot determine that 'tuple[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        sprintf(num, "%d", tuple[i]);
+                                ^

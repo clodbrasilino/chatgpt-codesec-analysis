@@ -1,0 +1,12 @@
+collected_code/problem-757-0.c:9:38: error: Cannot determine that 'strList[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int len1 = strlen(strList[i]);
+                                     ^
+collected_code/problem-757-0.c:10:38: error: Cannot determine that 'strList[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int len2 = strlen(strList[j]);
+                                     ^
+collected_code/problem-757-0.c:18:31: error: Cannot determine that 'strList[i][k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (strList[i][k] != strList[j][len1 - k - 1]) {
+                              ^
+collected_code/problem-757-0.c:18:48: error: Cannot determine that 'strList[j][len1-k-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (strList[i][k] != strList[j][len1 - k - 1]) {
+                                               ^

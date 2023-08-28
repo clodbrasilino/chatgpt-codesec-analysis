@@ -1,0 +1,9 @@
+collected_code/problem-149-0.c: In function 'longestSubsequence':
+collected_code/problem-149-0.c:16:15: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   16 |         ans = max(ans, dp[i]);
+      |               ^~~
+Undefined symbols for architecture x86_64:
+  "_max", referenced from:
+      _longestSubsequence in ccc2Pc2x.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

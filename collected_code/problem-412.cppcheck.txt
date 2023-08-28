@@ -1,0 +1,9 @@
+collected_code/problem-412-0.c:8:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] % 2 == 0) {
+               ^
+collected_code/problem-412-0.c:9:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            temp[j] = arr[i];
+                         ^
+collected_code/problem-412-0.c:16:27: error: Cannot determine that 'temp[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", temp[i]);
+                          ^

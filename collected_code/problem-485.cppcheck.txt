@@ -1,0 +1,6 @@
+collected_code/problem-485-0.c:16:29: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (isPalindrome(arr[i]) && arr[i] > largest) {
+                            ^
+collected_code/problem-485-0.c:17:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            largest = arr[i];
+                         ^

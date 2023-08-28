@@ -1,0 +1,18 @@
+collected_code/problem-9-0.c: In function 'findMinRotations':
+collected_code/problem-9-0.c:6:27: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    6 |     char* concat = (char*)malloc(sizeof(char) * (len * 2 + 1));
+      |                           ^~~~~~
+collected_code/problem-9-0.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+collected_code/problem-9-0.c:6:27: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    6 |     char* concat = (char*)malloc(sizeof(char) * (len * 2 + 1));
+      |                           ^~~~~~
+collected_code/problem-9-0.c:6:27: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/problem-9-0.c:29:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   29 |     free(concat);
+      |     ^~~~
+collected_code/problem-9-0.c:29:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/problem-9-0.c:29:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-9-0.c:29:5: note: include '<stdlib.h>' or provide a declaration of 'free'

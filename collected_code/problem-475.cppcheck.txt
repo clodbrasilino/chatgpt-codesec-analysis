@@ -1,0 +1,33 @@
+collected_code/problem-475-0.c:30:13: error: Cannot determine that 'counters[0] members' is initialized [premium-bughuntingUninit]
+    counters[0].key = 1;
+            ^
+collected_code/problem-475-0.c:31:13: error: Cannot determine that 'counters[0] members' is initialized [premium-bughuntingUninit]
+    counters[0].value = 5;
+            ^
+collected_code/problem-475-0.c:32:13: error: Cannot determine that 'counters[1] members' is initialized [premium-bughuntingUninit]
+    counters[1].key = 2;
+            ^
+collected_code/problem-475-0.c:33:13: error: Cannot determine that 'counters[1] members' is initialized [premium-bughuntingUninit]
+    counters[1].value = 2;
+            ^
+collected_code/problem-475-0.c:34:13: error: Cannot determine that 'counters[2] members' is initialized [premium-bughuntingUninit]
+    counters[2].key = 3;
+            ^
+collected_code/problem-475-0.c:35:13: error: Cannot determine that 'counters[2] members' is initialized [premium-bughuntingUninit]
+    counters[2].value = 7;
+            ^
+collected_code/problem-475-0.c:36:13: error: Cannot determine that 'counters[3] members' is initialized [premium-bughuntingUninit]
+    counters[3].key = 4;
+            ^
+collected_code/problem-475-0.c:37:13: error: Cannot determine that 'counters[3] members' is initialized [premium-bughuntingUninit]
+    counters[3].value = 1;
+            ^
+collected_code/problem-475-0.c:38:13: error: Cannot determine that 'counters[4] members' is initialized [premium-bughuntingUninit]
+    counters[4].key = 5;
+            ^
+collected_code/problem-475-0.c:39:13: error: Cannot determine that 'counters[4] members' is initialized [premium-bughuntingUninit]
+    counters[4].value = 4;
+            ^
+collected_code/problem-475-0.c:46:63: error: Cannot determine that 'counters[i] members' is initialized [premium-bughuntingUninit]
+        printf("Counter %d: key=%d, value=%d\n", i+1, counters[i].key, counters[i].value);
+                                                              ^

@@ -1,0 +1,9 @@
+collected_code/problem-946-0.c:16:25: error: Cannot determine that 'text[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int length = strlen(text);
+                        ^
+collected_code/problem-946-0.c:81:11: error: Cannot determine that 'text[0]' is initialized [premium-bughuntingUninit]
+    fgets(text, sizeof(text), stdin);
+          ^
+collected_code/problem-946-0.c:87:34: error: Cannot determine that 'result[i] members' is initialized [premium-bughuntingUninit]
+        printf("%s: %d\n", result[i].element, result[i].count);
+                                 ^

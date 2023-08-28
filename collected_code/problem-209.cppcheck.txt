@@ -1,0 +1,21 @@
+collected_code/problem-209-0.c:5:16: error: Cannot determine that '*a' is initialized [premium-bughuntingUninit]
+    int temp = *a;
+               ^
+collected_code/problem-209-0.c:6:10: error: Cannot determine that '*b' is initialized [premium-bughuntingUninit]
+    *a = *b;
+         ^
+collected_code/problem-209-0.c:16:24: error: Cannot determine that 'arr[left]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (left < n && arr[left] < arr[smallest])
+                       ^
+collected_code/problem-209-0.c:16:36: error: Cannot determine that 'arr[smallest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (left < n && arr[left] < arr[smallest])
+                                   ^
+collected_code/problem-209-0.c:19:25: error: Cannot determine that 'arr[right]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (right < n && arr[right] < arr[smallest])
+                        ^
+collected_code/problem-209-0.c:19:38: error: Cannot determine that 'arr[smallest]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (right < n && arr[right] < arr[smallest])
+                                     ^
+collected_code/problem-209-0.c:40:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("%d ", arr[i]);
+                         ^

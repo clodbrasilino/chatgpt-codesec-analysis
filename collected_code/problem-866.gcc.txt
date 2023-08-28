@@ -1,0 +1,8 @@
+collected_code/problem-866-0.c: In function 'checkDays':
+collected_code/problem-866-0.c:4:8: warning: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+    4 |     if(strcmp(month, "January") == 0 || strcmp(month, "March") == 0 || strcmp(month, "May") == 0 || strcmp(month, "July") == 0 || strcmp(month, "August") == 0 || strcmp(month, "October") == 0 || strcmp(month, "December") == 0) {
+      |        ^~~~~~
+collected_code/problem-866-0.c:2:1: note: include '<string.h>' or provide a declaration of 'strcmp'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | 

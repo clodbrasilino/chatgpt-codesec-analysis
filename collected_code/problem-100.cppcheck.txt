@@ -1,0 +1,15 @@
+collected_code/problem-100-0.c:9:24: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        char temp = str[i];
+                       ^
+collected_code/problem-100-0.c:10:21: error: Cannot determine that 'str[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        str[i] = str[j];
+                    ^
+collected_code/problem-100-0.c:21:24: error: Cannot determine that 'num[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int digit = num[i] - '0' + carry;
+                       ^
+collected_code/problem-100-0.c:29:22: error: Cannot determine that 'num[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int len = strlen(num);
+                     ^
+collected_code/problem-100-0.c:55:17: error: Cannot determine that 'num[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", num);
+                ^

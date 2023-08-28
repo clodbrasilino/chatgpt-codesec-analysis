@@ -1,0 +1,12 @@
+collected_code/problem-825-0.c:6:18: error: Cannot determine that 'index[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (index[i] >= 0 && index[i] < numElements) {
+                 ^
+collected_code/problem-825-0.c:7:52: error: Cannot determine that 'index[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("Value at index %d: %d\n", index[i], list[index[i]]);
+                                                   ^
+collected_code/problem-825-0.c:7:61: error: Cannot determine that 'list[index[i]]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("Value at index %d: %d\n", index[i], list[index[i]]);
+                                                            ^
+collected_code/problem-825-0.c:9:47: error: Cannot determine that 'index[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("Invalid index %d\n", index[i]);
+                                              ^

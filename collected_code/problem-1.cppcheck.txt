@@ -1,0 +1,12 @@
+collected_code/problem-1-0.c:12:24: error: Cannot determine that 'cost[0][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+     tc[0][0] = cost[0][0];
+                       ^
+collected_code/problem-1-0.c:16:40: error: Cannot determine that 'cost[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        tc[i][0] = tc[i-1][0] + cost[i][0];
+                                       ^
+collected_code/problem-1-0.c:20:40: error: Cannot determine that 'cost[0][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        tc[0][j] = tc[0][j-1] + cost[0][j];
+                                       ^
+collected_code/problem-1-0.c:27:49: error: Cannot determine that 'cost[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                           tc[i][j-1]) + cost[i][j];
+                                                ^

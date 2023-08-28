@@ -1,0 +1,12 @@
+collected_code/problem-688-0.c: In function 'getComplexNumberLength':
+collected_code/problem-688-0.c:9:21: warning: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+    9 |     double length = sqrt((number.real * number.real) + (number.imag * number.imag));
+      |                     ^~~~
+collected_code/problem-688-0.c:2:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code/problem-688-0.c:9:21: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]
+    9 |     double length = sqrt((number.real * number.real) + (number.imag * number.imag));
+      |                     ^~~~
+collected_code/problem-688-0.c:9:21: note: include '<math.h>' or provide a declaration of 'sqrt'

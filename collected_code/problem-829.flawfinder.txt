@@ -1,0 +1,30 @@
+Flawfinder version 2.0.19, (C) 2001-2019 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 222
+Examining collected_code/problem-829-0.c
+
+FINAL RESULTS:
+
+collected_code/problem-829-0.c:63:  [4] (buffer) scanf:
+  The scanf() family's %s operation, without a limit specification, permits
+  buffer overflows (CWE-120, CWE-20). Specify a limit to %s, or use a
+  different input function.
+
+ANALYSIS SUMMARY:
+
+Hits = 1
+Lines analyzed = 79 in approximately 0.63 seconds (125 lines/second)
+Physical Source Lines of Code (SLOC) = 60
+Hits@level = [0]   5 [1]   0 [2]   0 [3]   0 [4]   1 [5]   0
+Hits@level+ = [0+]   6 [1+]   1 [2+]   1 [3+]   1 [4+]   1 [5+]   0
+Hits/KSLOC@level+ = [0+] 100 [1+] 16.6667 [2+] 16.6667 [3+] 16.6667 [4+] 16.6667 [5+]   0
+Minimum risk level = 1
+
+Not every hit is necessarily a security vulnerability.
+You can inhibit a report by adding a comment in this form:
+// flawfinder: ignore
+Make *sure* it's a false positive!
+You can use the option --neverignore to show these.
+
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.

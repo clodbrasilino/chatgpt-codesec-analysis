@@ -1,0 +1,11 @@
+collected_code/problem-396-0.c: In function 'startsAndEndsWithSameChar':
+collected_code/problem-396-0.c:8:42: error: 'NULL' undeclared (first use in this function)
+    8 |     int result = regexec(&regex, str, 0, NULL, 0);
+      |                                          ^~~~
+collected_code/problem-396-0.c:3:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    2 | #include <stdbool.h>
+  +++ |+#include <stddef.h>
+    3 | 
+collected_code/problem-396-0.c:8:42: note: each undeclared identifier is reported only once for each function it appears in
+    8 |     int result = regexec(&regex, str, 0, NULL, 0);
+      |                                          ^~~~

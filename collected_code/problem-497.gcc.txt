@@ -1,0 +1,28 @@
+collected_code/problem-497-0.c: In function 'find_surface_area':
+collected_code/problem-497-0.c:3:26: warning: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+    3 |     float slant_height = sqrt((radius * radius) + (height * height));
+      |                          ^~~~
+collected_code/problem-497-0.c:1:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+  +++ |+#include <math.h>
+    1 | float find_surface_area(float radius, float height) {
+collected_code/problem-497-0.c:3:26: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]
+    3 |     float slant_height = sqrt((radius * radius) + (height * height));
+      |                          ^~~~
+collected_code/problem-497-0.c:3:26: note: include '<math.h>' or provide a declaration of 'sqrt'
+collected_code/problem-497-0.c: In function 'main':
+collected_code/problem-497-0.c:12:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   12 |     printf("Enter the radius of the cone: ");
+      |     ^~~~~~
+collected_code/problem-497-0.c:1:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+  +++ |+#include <stdio.h>
+    1 | float find_surface_area(float radius, float height) {
+collected_code/problem-497-0.c:12:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   12 |     printf("Enter the radius of the cone: ");
+      |     ^~~~~~
+collected_code/problem-497-0.c:12:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+collected_code/problem-497-0.c:13:5: warning: implicit declaration of function 'scanf' [-Wimplicit-function-declaration]
+   13 |     scanf("%f", &radius);
+      |     ^~~~~
+collected_code/problem-497-0.c:13:5: note: include '<stdio.h>' or provide a declaration of 'scanf'
+collected_code/problem-497-0.c:13:5: warning: incompatible implicit declaration of built-in function 'scanf' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-497-0.c:13:5: note: include '<stdio.h>' or provide a declaration of 'scanf'

@@ -1,0 +1,12 @@
+collected_code/problem-845-0.c: In function 'countDigitsInFactorial':
+collected_code/problem-845-0.c:15:19: warning: implicit declaration of function 'log10' [-Wimplicit-function-declaration]
+   15 |         digits += log10(i);
+      |                   ^~~~~
+collected_code/problem-845-0.c:2:1: note: include '<math.h>' or provide a declaration of 'log10'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code/problem-845-0.c:15:19: warning: incompatible implicit declaration of built-in function 'log10' [-Wbuiltin-declaration-mismatch]
+   15 |         digits += log10(i);
+      |                   ^~~~~
+collected_code/problem-845-0.c:15:19: note: include '<math.h>' or provide a declaration of 'log10'

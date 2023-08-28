@@ -1,0 +1,16 @@
+collected_code/problem-158-0.c: In function 'findOperations':
+collected_code/problem-158-0.c:5:19: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+    5 |         max_val = max(max_val, arr[i]);
+      |                   ^~~
+collected_code/problem-158-0.c:6:19: warning: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+    6 |         min_val = min(min_val, arr[i]);
+      |                   ^~~
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+  "_max", referenced from:
+      _findOperations in ccLxM0Vv.o
+  "_min", referenced from:
+      _findOperations in ccLxM0Vv.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

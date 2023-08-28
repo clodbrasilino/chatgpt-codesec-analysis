@@ -1,0 +1,6 @@
+collected_code/problem-226-0.c:5:15: error: Cannot determine that 'str[length]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (str[length] != '\0') {
+              ^
+collected_code/problem-226-0.c:11:21: error: Cannot determine that 'str[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        str[i] = str[j];
+                    ^

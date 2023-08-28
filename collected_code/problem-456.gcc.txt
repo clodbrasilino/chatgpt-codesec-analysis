@@ -1,0 +1,179 @@
+collected_code/problem-456-0.c: In function 'reverseStrings':
+collected_code/problem-456-0.c:10:20: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   10 |             str[j] = str[len - j - 1];
+      |             ~~~~~~~^~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     reverseStrings(strings, numStrings);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-8
+           |
+           |    4 | void reverseStrings(char** strings, int numStrings) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |    5 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numStrings')...
+           |    6 |         char* str = strings[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (5) ...to here
+           |    7 |         int len = strlen(str);
+           |    8 |         for (int j = 0; j < len / 2; j++) {
+           |      |                         ~~~~~~~~~~~
+           |      |                           |
+           |      |                           (6) following 'true' branch...
+           |    9 |             char temp = str[j];
+           |      |                            ~
+           |      |                            |
+           |      |                            (7) ...to here
+           |   10 |             str[j] = str[len - j - 1];
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (8) write to string literal here
+           |
+collected_code/problem-456-0.c:10:20: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   10 |             str[j] = str[len - j - 1];
+      |             ~~~~~~~^~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     reverseStrings(strings, numStrings);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-10
+           |
+           |    4 | void reverseStrings(char** strings, int numStrings) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |    5 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numStrings')...
+           |    6 |         char* str = strings[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (5) ...to here
+           |    7 |         int len = strlen(str);
+           |    8 |         for (int j = 0; j < len / 2; j++) {
+           |      |                         ~~~~~~~~~~~
+           |      |                           |
+           |      |                           (6) following 'true' branch...
+           |      |                           (8) following 'true' branch...
+           |    9 |             char temp = str[j];
+           |      |                            ~
+           |      |                            |
+           |      |                            (7) ...to here
+           |      |                            (9) ...to here
+           |   10 |             str[j] = str[len - j - 1];
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (10) write to string literal here
+           |
+collected_code/problem-456-0.c:11:30: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[len - j - 1] = temp;
+      |             ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     reverseStrings(strings, numStrings);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-8
+           |
+           |    4 | void reverseStrings(char** strings, int numStrings) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |    5 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numStrings')...
+           |    6 |         char* str = strings[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (5) ...to here
+           |    7 |         int len = strlen(str);
+           |    8 |         for (int j = 0; j < len / 2; j++) {
+           |      |                         ~~~~~~~~~~~
+           |      |                           |
+           |      |                           (6) following 'true' branch...
+           |    9 |             char temp = str[j];
+           |      |                            ~
+           |      |                            |
+           |      |                            (7) ...to here
+           |   10 |             str[j] = str[len - j - 1];
+           |   11 |             str[len - j - 1] = temp;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (8) write to string literal here
+           |
+collected_code/problem-456-0.c:11:30: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[len - j - 1] = temp;
+      |             ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     reverseStrings(strings, numStrings);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStrings' from 'main'
+    |
+    +--> 'reverseStrings': events 3-10
+           |
+           |    4 | void reverseStrings(char** strings, int numStrings) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStrings'
+           |    5 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numStrings')...
+           |    6 |         char* str = strings[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (5) ...to here
+           |    7 |         int len = strlen(str);
+           |    8 |         for (int j = 0; j < len / 2; j++) {
+           |      |                         ~~~~~~~~~~~
+           |      |                           |
+           |      |                           (6) following 'true' branch...
+           |      |                           (8) following 'true' branch...
+           |    9 |             char temp = str[j];
+           |      |                            ~
+           |      |                            |
+           |      |                            (7) ...to here
+           |      |                            (9) ...to here
+           |   10 |             str[j] = str[len - j - 1];
+           |   11 |             str[len - j - 1] = temp;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (10) write to string literal here
+           |

@@ -1,0 +1,9 @@
+collected_code/problem-34-0.c:11:16: error: Cannot determine that 'arr[mid]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[mid] != mid + 1 && arr[mid - 1] == mid) {
+               ^
+collected_code/problem-34-0.c:11:39: error: Cannot determine that 'arr[mid-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[mid] != mid + 1 && arr[mid - 1] == mid) {
+                                      ^
+collected_code/problem-34-0.c:14:21: error: Cannot determine that 'arr[mid]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        else if (arr[mid] != mid + 1) {
+                    ^

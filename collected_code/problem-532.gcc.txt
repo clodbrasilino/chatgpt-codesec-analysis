@@ -1,0 +1,62 @@
+collected_code/problem-532-0.c: In function 'arePermutations':
+collected_code/problem-532-0.c:24:19: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   24 |         count[str2[i]]--;
+      |               ~~~~^~~
+  'main': events 1-3
+    |
+    |   38 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   39 |     char str1[] = "abcd";
+    |   40 |     char str2[] = "dcba";
+    |      |          ~~~~
+    |      |          |
+    |      |          (2) capacity: 5 bytes
+    |   41 | 
+    |   42 |     if (arePermutations(str1, str2)) {
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) calling 'arePermutations' from 'main'
+    |
+    +--> 'arePermutations': events 4-19
+           |
+           |    5 | int arePermutations(char* str1, char* str2) {
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (4) entry to 'arePermutations'
+           |......
+           |   10 |     if (len1 != len2) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'len1 == len2')...
+           |......
+           |   15 |     int count[256] = {0};
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |......
+           |   23 |     for (int i = 0; i < len2; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (7) following 'true' branch (when 'i < len2')...
+           |      |                       (9) following 'true' branch (when 'i < len2')...
+           |      |                       (11) following 'true' branch (when 'i < len2')...
+           |      |                       (13) following 'true' branch (when 'i < len2')...
+           |      |                       (15) following 'true' branch (when 'i < len2')...
+           |      |                       (17) following 'true' branch (when 'i < len2')...
+           |   24 |         count[str2[i]]--;
+           |      |               ~~~~~~~
+           |      |                   |
+           |      |                   (8) ...to here
+           |      |                   (10) ...to here
+           |      |                   (12) ...to here
+           |      |                   (14) ...to here
+           |      |                   (16) ...to here
+           |      |                   (18) ...to here
+           |      |                   (19) out-of-bounds read at byte 5 but 'str2' ends at byte 5
+           |
+collected_code/problem-532-0.c:24:19: note: read of 1 byte from after the end of 'str2'
+   24 |         count[str2[i]]--;
+      |               ~~~~^~~
+collected_code/problem-532-0.c:24:19: note: valid subscripts for 'str2' are '[0]' to '[4]'

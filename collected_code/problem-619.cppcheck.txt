@@ -1,0 +1,9 @@
+collected_code/problem-619-0.c:6:18: error: Cannot determine that 'string[index]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (string[index] != '\0') {
+                 ^
+collected_code/problem-619-0.c:7:27: error: Cannot determine that 'string[index]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (isdigit(string[index])) {
+                          ^
+collected_code/problem-619-0.c:8:38: error: Cannot determine that 'string[index]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            string[numIndex] = string[index];
+                                     ^

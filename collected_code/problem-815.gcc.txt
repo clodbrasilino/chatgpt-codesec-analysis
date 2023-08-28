@@ -1,0 +1,11 @@
+collected_code/problem-815-0.c: In function 'main':
+collected_code/problem-815-0.c:29:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   29 |         printf("%d ", arr[i]);
+      |         ^~~~~~
+collected_code/problem-815-0.c:1:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+  +++ |+#include <stdio.h>
+    1 | void sortArray(int arr[], int n) {
+collected_code/problem-815-0.c:29:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   29 |         printf("%d ", arr[i]);
+      |         ^~~~~~
+collected_code/problem-815-0.c:29:9: note: include '<stdio.h>' or provide a declaration of 'printf'

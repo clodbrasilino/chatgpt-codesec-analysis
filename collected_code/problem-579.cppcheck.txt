@@ -1,0 +1,18 @@
+collected_code/problem-579-0.c:13:22: error: Cannot determine that 'tuple1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if(tuple1[i] == tuple2[j])
+                     ^
+collected_code/problem-579-0.c:13:35: error: Cannot determine that 'tuple2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if(tuple1[i] == tuple2[j])
+                                  ^
+collected_code/problem-579-0.c:21:33: error: Cannot determine that 'tuple1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d ", tuple1[i]);
+                                ^
+collected_code/problem-579-0.c:30:22: error: Cannot determine that 'tuple2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if(tuple2[i] == tuple1[j])
+                     ^
+collected_code/problem-579-0.c:30:35: error: Cannot determine that 'tuple1[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if(tuple2[i] == tuple1[j])
+                                  ^
+collected_code/problem-579-0.c:38:33: error: Cannot determine that 'tuple2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d ", tuple2[i]);
+                                ^

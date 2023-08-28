@@ -1,0 +1,9 @@
+collected_code/problem-403-0.c:14:27: error: Cannot determine that 'url[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    ret = regexec(&regex, url, 0, NULL, 0);
+                          ^
+collected_code/problem-403-0.c:23:31: error: Cannot determine that 'error_message[0]' is initialized [premium-bughuntingUninit]
+        regerror(ret, &regex, error_message, sizeof(error_message));
+                              ^
+collected_code/problem-403-0.c:33:17: error: Cannot determine that 'url[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", url);
+                ^

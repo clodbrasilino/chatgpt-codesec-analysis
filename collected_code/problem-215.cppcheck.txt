@@ -1,0 +1,9 @@
+collected_code/problem-215-0.c:7:33: error: Cannot determine that 'encoded_list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; encoded_list[i] != '\0'; i += 2) {
+                                ^
+collected_code/problem-215-0.c:8:30: error: Cannot determine that 'encoded_list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        length = encoded_list[i] - '0';
+                             ^
+collected_code/problem-215-0.c:9:30: error: Cannot determine that 'encoded_list[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        letter = encoded_list[i + 1];
+                             ^

@@ -1,0 +1,48 @@
+collected_code/problem-708-0.c: In function 'push':
+collected_code/problem-708-0.c:12:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     newNode->data = data;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   35 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   36 |     char str[] = "Hello";
+    |   37 |     Node* head = convertStringToList(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'convertStringToList' from 'main'
+    |
+    +--> 'convertStringToList': events 3-6
+           |
+           |   17 | Node* convertStringToList(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'convertStringToList'
+           |......
+           |   20 |     for (int i = len - 1; i >= 0; i--) {
+           |      |                           ~~~~~~
+           |      |                             |
+           |      |                             (4) following 'true' branch (when 'i >= 0')...
+           |   21 |         head = push(head, str[i]);
+           |      |                ~~~~~~~~~~~~~~~~~~
+           |      |                |             |
+           |      |                |             (5) ...to here
+           |      |                (6) calling 'push' from 'convertStringToList'
+           |
+           +--> 'push': events 7-9
+                  |
+                  |   10 | Node* push(Node* head, char data) {
+                  |      |       ^~~~
+                  |      |       |
+                  |      |       (7) entry to 'push'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (8) this call could return NULL
+                  |   12 |     newNode->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (9) 'newNode' could be NULL: unchecked value from (8)
+                  |

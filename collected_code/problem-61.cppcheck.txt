@@ -1,0 +1,9 @@
+collected_code/problem-61-0.c:7:24: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; str[i] != '\0'; i++)
+                       ^
+collected_code/problem-61-0.c:11:28: error: Cannot determine that 'str[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        for (int j = i; str[j] != '\0'; j++)
+                           ^
+collected_code/problem-61-0.c:13:23: error: Cannot determine that 'str[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sum += str[j] - '0';
+                      ^

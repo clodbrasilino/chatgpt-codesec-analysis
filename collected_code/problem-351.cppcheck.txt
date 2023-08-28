@@ -1,0 +1,9 @@
+collected_code/problem-351-0.c:7:20: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] == arr[j])
+                   ^
+collected_code/problem-351-0.c:7:30: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] == arr[j])
+                             ^
+collected_code/problem-351-0.c:11:23: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            return arr[i];
+                      ^

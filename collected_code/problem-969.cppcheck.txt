@@ -1,0 +1,24 @@
+collected_code/problem-969-0.c:12:26: error: Cannot determine that 'tuples[j][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (tuples[j][0] > tuples[j+1][0]) {
+                         ^
+collected_code/problem-969-0.c:12:43: error: Cannot determine that 'tuples[j+1][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (tuples[j][0] > tuples[j+1][0]) {
+                                          ^
+collected_code/problem-969-0.c:14:24: error: Cannot determine that 'temp[0]' is initialized [premium-bughuntingUninit]
+                memcpy(temp, tuples[j], sizeof(temp));
+                       ^
+collected_code/problem-969-0.c:14:36: error: Cannot determine that 'tuples[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                memcpy(temp, tuples[j], sizeof(temp));
+                                   ^
+collected_code/problem-969-0.c:15:30: error: Cannot determine that 'tuples[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                memcpy(tuples[j], tuples[j+1], sizeof(temp));
+                             ^
+collected_code/problem-969-0.c:15:41: error: Cannot determine that 'tuples[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                memcpy(tuples[j], tuples[j+1], sizeof(temp));
+                                        ^
+collected_code/problem-969-0.c:16:30: error: Cannot determine that 'tuples[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                memcpy(tuples[j+1], temp, sizeof(temp));
+                             ^
+collected_code/problem-969-0.c:23:33: error: Cannot determine that 'tuples[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        tuples[k][0] = tuples[i][0];
+                                ^

@@ -1,0 +1,12 @@
+collected_code/problem-794-0.c:6:15: error: Cannot determine that 'str[len]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (str[len] != '\0') {
+              ^
+collected_code/problem-794-0.c:10:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (str[i] == 'a' && str[i + 2] == 'b') {
+               ^
+collected_code/problem-794-0.c:10:33: error: Cannot determine that 'str[i+2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (str[i] == 'a' && str[i + 2] == 'b') {
+                                ^
+collected_code/problem-794-0.c:21:17: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", str);
+                ^

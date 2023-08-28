@@ -1,0 +1,6 @@
+collected_code/problem-50-0.c:8:34: error: Cannot determine that 'lists[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int length = findLength(lists[i]);
+                                 ^
+collected_code/problem-50-0.c:26:13: error: Cannot determine that 'list[length]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+  while(list[length] != '\0') {
+            ^

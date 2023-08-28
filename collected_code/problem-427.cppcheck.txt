@@ -1,0 +1,24 @@
+collected_code/problem-427-0.c:19:60: error: Array 'match[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
+        snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+                                                           ^
+collected_code/problem-427-0.c:17:27: error: Cannot determine that 'date[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    ret = regexec(&regex, date, 3, match, 0);
+                          ^
+collected_code/problem-427-0.c:19:18: error: Cannot determine that 'convertedDate[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+                 ^
+collected_code/problem-427-0.c:19:60: error: Cannot determine that 'match[3]' is initialized [premium-bughuntingUninit]
+        snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+                                                           ^
+collected_code/problem-427-0.c:20:58: error: Cannot determine that 'match[2]' is initialized [premium-bughuntingUninit]
+                                                    match[2].rm_eo - match[2].rm_so, date + match[2].rm_so,
+                                                         ^
+collected_code/problem-427-0.c:21:58: error: Cannot determine that 'match[1]' is initialized [premium-bughuntingUninit]
+                                                    match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+                                                         ^
+collected_code/problem-427-0.c:28:31: error: Cannot determine that 'convertedDate[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        regerror(ret, &regex, convertedDate, sizeof(convertedDate));
+                              ^
+collected_code/problem-427-0.c:42:40: error: Cannot determine that 'convertedDate[0]' is initialized [premium-bughuntingUninit]
+        printf("Converted date: %s\n", convertedDate);
+                                       ^

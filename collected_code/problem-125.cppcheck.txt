@@ -1,0 +1,12 @@
+collected_code/problem-125-0.c:8:24: error: Cannot determine that 'binaryString[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (binaryString[i] != '\0') {
+                       ^
+collected_code/problem-125-0.c:9:25: error: Cannot determine that 'binaryString[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (binaryString[i] == '0') {
+                        ^
+collected_code/problem-125-0.c:11:32: error: Cannot determine that 'binaryString[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        } else if (binaryString[i] == '1') {
+                               ^
+collected_code/problem-125-0.c:34:17: error: Cannot determine that 'binaryString[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", binaryString);
+                ^

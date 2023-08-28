@@ -1,0 +1,6 @@
+collected_code/problem-537-0.c:6:16: error: Cannot determine that 'words[100]' is initialized [premium-bughuntingUninit]
+    char* words[100];
+               ^
+collected_code/problem-537-0.c:9:19: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    word = strtok(str, " ");
+                  ^

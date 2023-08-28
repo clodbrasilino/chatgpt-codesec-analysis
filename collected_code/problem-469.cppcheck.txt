@@ -1,0 +1,6 @@
+collected_code/problem-469-0.c:19:34: error: Cannot determine that 'prices[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                int temp = prices[j] - prices[m] + profit[i - 1][m];
+                                 ^
+collected_code/problem-469-0.c:19:46: error: Cannot determine that 'prices[m]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                int temp = prices[j] - prices[m] + profit[i - 1][m];
+                                             ^

@@ -1,0 +1,11 @@
+collected_code/problem-737-0.c: In function 'startsWithVowel':
+collected_code/problem-737-0.c:7:42: error: 'NULL' undeclared (first use in this function)
+    7 |     int result = regexec(&regex, str, 0, NULL, 0);
+      |                                          ^~~~
+collected_code/problem-737-0.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    1 | #include <regex.h>
+  +++ |+#include <stddef.h>
+    2 | 
+collected_code/problem-737-0.c:7:42: note: each undeclared identifier is reported only once for each function it appears in
+    7 |     int result = regexec(&regex, str, 0, NULL, 0);
+      |                                          ^~~~

@@ -1,0 +1,18 @@
+collected_code/problem-410-0.c:8:21: error: Cannot determine that 'list[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    void* min = list[0];
+                    ^
+collected_code/problem-410-0.c:11:13: error: Cannot determine that '*(int*)list[i]' is initialized [premium-bughuntingUninit]
+        if (*(int*)list[i] < *(int*)min) {
+            ^
+collected_code/problem-410-0.c:11:24: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (*(int*)list[i] < *(int*)min) {
+                       ^
+collected_code/problem-410-0.c:11:30: error: Cannot determine that '*(int*)min' is initialized [premium-bughuntingUninit]
+        if (*(int*)list[i] < *(int*)min) {
+                             ^
+collected_code/problem-410-0.c:12:23: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            min = list[i];
+                      ^
+collected_code/problem-410-0.c:16:12: error: Cannot determine that 'min' is initialized [premium-bughuntingUninit]
+    return min;
+           ^

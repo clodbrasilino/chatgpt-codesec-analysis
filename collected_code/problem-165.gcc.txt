@@ -1,0 +1,12 @@
+collected_code/problem-165-0.c: In function 'countCharacters':
+collected_code/problem-165-0.c:8:17: warning: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+    8 |             if (tolower(str[i]) - 'a' == i || toupper(str[i]) - 'A' == i) {
+      |                 ^~~~~~~
+collected_code/problem-165-0.c:2:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    1 | #include <stdio.h>
+  +++ |+#include <ctype.h>
+    2 | 
+collected_code/problem-165-0.c:8:47: warning: implicit declaration of function 'toupper' [-Wimplicit-function-declaration]
+    8 |             if (tolower(str[i]) - 'a' == i || toupper(str[i]) - 'A' == i) {
+      |                                               ^~~~~~~
+collected_code/problem-165-0.c:8:47: note: include '<ctype.h>' or provide a declaration of 'toupper'

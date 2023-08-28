@@ -1,0 +1,85 @@
+collected_code/problem-240-0.c: In function 'main':
+collected_code/problem-240-0.c:30:17: warning: dereference of possibly-NULL 'head1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |     head1->data = 1;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   29 |     head1 = (struct Node*)malloc(sizeof(struct Node));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   30 |     head1->data = 1;
+    |      |     ~~~~~~~~~~~~~~~        
+    |      |                 |
+    |      |                 (2) 'head1' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-240-0.c:34:19: warning: dereference of possibly-NULL 'second1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   34 |     second1->data = 2;
+      |     ~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   33 |     struct Node* second1 = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (1) this call could return NULL
+    |   34 |     second1->data = 2;
+    |      |     ~~~~~~~~~~~~~~~~~                     
+    |      |                   |
+    |      |                   (2) 'second1' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-240-0.c:38:18: warning: dereference of possibly-NULL 'third1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   38 |     third1->data = 3;
+      |     ~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   37 |     struct Node* third1 = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |   38 |     third1->data = 3;
+    |      |     ~~~~~~~~~~~~~~~~                     
+    |      |                  |
+    |      |                  (2) 'third1' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-240-0.c:46:17: warning: dereference of possibly-NULL 'head2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   46 |     head2->data = 4;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   45 |     head2 = (struct Node*)malloc(sizeof(struct Node));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   46 |     head2->data = 4;
+    |      |     ~~~~~~~~~~~~~~~        
+    |      |                 |
+    |      |                 (2) 'head2' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-240-0.c:50:19: warning: dereference of possibly-NULL 'second2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   50 |     second2->data = 5;
+      |     ~~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   49 |     struct Node* second2 = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                          |
+    |      |                                          (1) this call could return NULL
+    |   50 |     second2->data = 5;
+    |      |     ~~~~~~~~~~~~~~~~~                     
+    |      |                   |
+    |      |                   (2) 'second2' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-240-0.c:54:18: warning: dereference of possibly-NULL 'third2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   54 |     third2->data = 6;
+      |     ~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   53 |     struct Node* third2 = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |   54 |     third2->data = 6;
+    |      |     ~~~~~~~~~~~~~~~~                     
+    |      |                  |
+    |      |                  (2) 'third2' could be NULL: unchecked value from (1)
+    |

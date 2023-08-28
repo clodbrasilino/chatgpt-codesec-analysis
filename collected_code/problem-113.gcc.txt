@@ -1,0 +1,11 @@
+collected_code/problem-113-0.c: In function 'isInteger':
+collected_code/problem-113-0.c:4:14: error: 'NULL' undeclared (first use in this function)
+    4 |   if (str == NULL || *str == '\0') {
+      |              ^~~~
+collected_code/problem-113-0.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    1 | #include <stdbool.h>
+  +++ |+#include <stddef.h>
+    2 | 
+collected_code/problem-113-0.c:4:14: note: each undeclared identifier is reported only once for each function it appears in
+    4 |   if (str == NULL || *str == '\0') {
+      |              ^~~~

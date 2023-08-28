@@ -1,0 +1,11 @@
+collected_code/problem-671-0.c: In function 'setRightMostUnsetBit':
+collected_code/problem-671-0.c:5:16: error: 'UINT_MAX' undeclared (first use in this function)
+    5 |     if (num == UINT_MAX) {
+      |                ^~~~~~~~
+collected_code/problem-671-0.c:2:1: note: 'UINT_MAX' is defined in header '<limits.h>'; did you forget to '#include <limits.h>'?
+    1 | #include <stdio.h>
+  +++ |+#include <limits.h>
+    2 | 
+collected_code/problem-671-0.c:5:16: note: each undeclared identifier is reported only once for each function it appears in
+    5 |     if (num == UINT_MAX) {
+      |                ^~~~~~~~

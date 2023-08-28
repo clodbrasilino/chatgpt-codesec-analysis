@@ -1,0 +1,6 @@
+collected_code/problem-512-0.c:6:13: error: Cannot determine that '*(int*)tuple' is initialized [premium-bughuntingUninit]
+        if (*(int*)tuple == *(int*)element) {
+            ^
+collected_code/problem-512-0.c:6:29: error: Cannot determine that '*(int*)element' is initialized [premium-bughuntingUninit]
+        if (*(int*)tuple == *(int*)element) {
+                            ^

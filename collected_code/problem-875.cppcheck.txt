@@ -1,0 +1,12 @@
+collected_code/problem-875-0.c:5:29: error: Cannot determine that 'tuple1[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int minDiff = abs(tuple1[0] - tuple2[0]);
+                            ^
+collected_code/problem-875-0.c:5:41: error: Cannot determine that 'tuple2[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int minDiff = abs(tuple1[0] - tuple2[0]);
+                                        ^
+collected_code/problem-875-0.c:7:30: error: Cannot determine that 'tuple1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int diff = abs(tuple1[i] - tuple2[i]);
+                             ^
+collected_code/problem-875-0.c:7:42: error: Cannot determine that 'tuple2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int diff = abs(tuple1[i] - tuple2[i]);
+                                         ^

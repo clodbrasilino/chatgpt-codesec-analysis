@@ -1,0 +1,9 @@
+collected_code/problem-709-0.c:6:31: error: Cannot determine that 'tuple[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int currentKey = tuple[i];
+                              ^
+collected_code/problem-709-0.c:11:22: error: Cannot determine that 'tuple[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (tuple[j] == currentKey) {
+                     ^
+collected_code/problem-709-0.c:21:26: error: Cannot determine that 'tuple[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (tuple[k] == currentKey) {
+                         ^

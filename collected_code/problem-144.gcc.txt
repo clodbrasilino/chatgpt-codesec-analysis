@@ -1,0 +1,8 @@
+collected_code/problem-144-0.c: In function 'getSumOfAbsoluteDifferences':
+collected_code/problem-144-0.c:11:20: warning: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   11 |             sum += abs(arr[i] - arr[j]);
+      |                    ^~~
+collected_code/problem-144-0.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 

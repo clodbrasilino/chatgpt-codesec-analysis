@@ -1,0 +1,6 @@
+collected_code/problem-569-0.c:13:19: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        qsort(list[i], listLengths[i], sizeof(char *), compare);
+                  ^
+collected_code/problem-569-0.c:13:35: error: Cannot determine that 'listLengths[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        qsort(list[i], listLengths[i], sizeof(char *), compare);
+                                  ^

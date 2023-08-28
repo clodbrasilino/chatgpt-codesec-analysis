@@ -1,0 +1,12 @@
+collected_code/problem-255-0.c: In function 'generateColorCombinations':
+collected_code/problem-255-0.c:5:5: warning: implicit declaration of function 'generateCombinations'; did you mean 'generateColorCombinations'? [-Wimplicit-function-declaration]
+    5 |     generateCombinations(colors, numColors, combination, numCombinations, 0);
+      |     ^~~~~~~~~~~~~~~~~~~~
+      |     generateColorCombinations
+collected_code/problem-255-0.c: At top level:
+collected_code/problem-255-0.c:8:6: warning: conflicting types for 'generateCombinations'; have 'void(int *, int,  int *, int,  int)'
+    8 | void generateCombinations(int colors[], int numColors, int combination[], int numCombinations, int currentIndex) {
+      |      ^~~~~~~~~~~~~~~~~~~~
+collected_code/problem-255-0.c:5:5: note: previous implicit declaration of 'generateCombinations' with type 'void(int *, int,  int *, int,  int)'
+    5 |     generateCombinations(colors, numColors, combination, numCombinations, 0);
+      |     ^~~~~~~~~~~~~~~~~~~~

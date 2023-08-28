@@ -1,0 +1,12 @@
+collected_code/problem-940-0.c: In function 'heapify':
+collected_code/problem-940-0.c:19:9: warning: implicit declaration of function 'swap' [-Wimplicit-function-declaration]
+   19 |         swap(&arr[i], &arr[largest]);
+      |         ^~~~
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+  "_swap", referenced from:
+      _heapify in cciAQruB.o
+      _heapSort in cciAQruB.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

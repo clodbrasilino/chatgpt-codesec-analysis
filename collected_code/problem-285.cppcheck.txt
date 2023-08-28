@@ -1,0 +1,12 @@
+collected_code/problem-285-0.c:6:14: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while(str[i] != '\0') {
+             ^
+collected_code/problem-285-0.c:7:15: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(str[i] == 'a') {
+              ^
+collected_code/problem-285-0.c:8:19: error: Cannot determine that 'str[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if(str[i + 1] == 'b' && (str[i + 2] == 'b' || str[i + 2] == '\0')) {
+                  ^
+collected_code/problem-285-0.c:8:41: error: Cannot determine that 'str[i+2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if(str[i + 1] == 'b' && (str[i + 2] == 'b' || str[i + 2] == '\0')) {
+                                        ^

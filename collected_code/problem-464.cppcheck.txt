@@ -1,0 +1,6 @@
+collected_code/problem-464-0.c:9:32: error: Cannot determine that 'dictionary[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int firstValue = dictionary[0];
+                               ^
+collected_code/problem-464-0.c:12:23: error: Cannot determine that 'dictionary[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (dictionary[i] != firstValue) {
+                      ^

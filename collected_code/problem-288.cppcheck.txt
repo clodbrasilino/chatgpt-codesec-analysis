@@ -1,0 +1,51 @@
+collected_code/problem-288-0.c:17:15: error: Division by zero. [zerodiv]
+        q = a / p;
+              ^
+collected_code/problem-288-0.c:49:13: note: Assignment 'p=5', assigned value is 5
+    int p = 5;
+            ^
+collected_code/problem-288-0.c:51:44: note: Calling function 'countArrayElements', 3rd argument 'p' value is 5
+    int count = countArrayElements(arr, n, p);
+                                           ^
+collected_code/problem-288-0.c:38:32: note: Calling function 'modInverse', 2nd argument 'p' value is 5
+        if (modInverse(arr[i], p) == arr[i]) {
+                               ^
+collected_code/problem-288-0.c:18:13: note: Assignment 't=p', assigned value is 5
+        t = p;
+            ^
+collected_code/problem-288-0.c:21:13: note: Assignment 'a=t', assigned value is 5
+        a = t;
+            ^
+collected_code/problem-288-0.c:20:15: note: Assignment 'p=a%p', assigned value is 0
+        p = a % p;
+              ^
+collected_code/problem-288-0.c:17:15: note: Division by zero
+        q = a / p;
+              ^
+collected_code/problem-288-0.c:20:15: error: Division by zero. [zerodiv]
+        p = a % p;
+              ^
+collected_code/problem-288-0.c:49:13: note: Assignment 'p=5', assigned value is 5
+    int p = 5;
+            ^
+collected_code/problem-288-0.c:51:44: note: Calling function 'countArrayElements', 3rd argument 'p' value is 5
+    int count = countArrayElements(arr, n, p);
+                                           ^
+collected_code/problem-288-0.c:38:32: note: Calling function 'modInverse', 2nd argument 'p' value is 5
+        if (modInverse(arr[i], p) == arr[i]) {
+                               ^
+collected_code/problem-288-0.c:18:13: note: Assignment 't=p', assigned value is 5
+        t = p;
+            ^
+collected_code/problem-288-0.c:21:13: note: Assignment 'a=t', assigned value is 5
+        a = t;
+            ^
+collected_code/problem-288-0.c:20:15: note: Assignment 'p=a%p', assigned value is 0
+        p = a % p;
+              ^
+collected_code/problem-288-0.c:20:15: note: Division by zero
+        p = a % p;
+              ^
+collected_code/problem-288-0.c:38:27: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (modInverse(arr[i], p) == arr[i]) {
+                          ^

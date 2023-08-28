@@ -1,0 +1,6 @@
+collected_code/problem-95-0.c:9:22: error: Cannot determine that 'arr[end++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+           sum += arr[end++];
+                     ^
+collected_code/problem-95-0.c:16:22: error: Cannot determine that 'arr[start++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+           sum -= arr[start++];
+                     ^

@@ -1,0 +1,15 @@
+collected_code/problem-104-0.c:7:38: error: Cannot determine that 'listSizes[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        for (int j = 0; j < listSizes[i]; j++) {
+                                     ^
+collected_code/problem-104-0.c:8:42: error: Cannot determine that 'listSizes[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            for (int k = 0; k < listSizes[i] - j - 1; k++) {
+                                         ^
+collected_code/problem-104-0.c:31:18: error: Cannot determine that 'lists' is initialized [premium-bughuntingUninit]
+    sortSublists(lists, 3, listSizes);
+                 ^
+collected_code/problem-104-0.c:35:27: error: Cannot determine that 'lists' is initialized [premium-bughuntingUninit]
+            printf("%s ", lists[i][j]);
+                          ^
+collected_code/problem-104-0.c:40:10: error: Cannot determine that 'lists' is initialized [premium-bughuntingUninit]
+    free(lists);
+         ^

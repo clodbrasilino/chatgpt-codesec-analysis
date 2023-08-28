@@ -1,0 +1,12 @@
+collected_code/problem-973-0.c: In function 'leftRotateString':
+collected_code/problem-973-0.c:4:15: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    4 |     int len = strlen(str);
+      |               ^~~~~~
+collected_code/problem-973-0.c:2:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    1 | #include <stdio.h>
+  +++ |+#include <string.h>
+    2 | 
+collected_code/problem-973-0.c:4:15: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+    4 |     int len = strlen(str);
+      |               ^~~~~~
+collected_code/problem-973-0.c:4:15: note: include '<string.h>' or provide a declaration of 'strlen'

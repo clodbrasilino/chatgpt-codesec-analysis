@@ -1,0 +1,9 @@
+collected_code/problem-747-0.c:17:27: error: Cannot determine that 'X[i-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                else if (X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1])
+                          ^
+collected_code/problem-747-0.c:17:39: error: Cannot determine that 'Y[j-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                else if (X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1])
+                                      ^
+collected_code/problem-747-0.c:17:63: error: Cannot determine that 'Z[k-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                else if (X[i - 1] == Y[j - 1] && X[i - 1] == Z[k - 1])
+                                                              ^

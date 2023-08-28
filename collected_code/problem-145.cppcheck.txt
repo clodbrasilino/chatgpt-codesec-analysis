@@ -1,0 +1,12 @@
+collected_code/problem-145-0.c:8:20: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[j] - arr[i] > maxDiff) {
+                   ^
+collected_code/problem-145-0.c:8:29: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[j] - arr[i] > maxDiff) {
+                            ^
+collected_code/problem-145-0.c:9:30: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                maxDiff = arr[j] - arr[i];
+                             ^
+collected_code/problem-145-0.c:9:39: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                maxDiff = arr[j] - arr[i];
+                                      ^

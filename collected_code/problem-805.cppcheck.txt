@@ -1,0 +1,15 @@
+collected_code/problem-805-0.c:9:22: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        total += list[i];
+                     ^
+collected_code/problem-805-0.c:20:41: error: Cannot determine that 'listOfLists[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int currentSum = sum(listOfLists[i], listSizes[i]);
+                                        ^
+collected_code/problem-805-0.c:20:55: error: Cannot determine that 'listSizes[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int currentSum = sum(listOfLists[i], listSizes[i]);
+                                                      ^
+collected_code/problem-805-0.c:23:41: error: Cannot determine that 'listOfLists[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            highestSumList = listOfLists[i];
+                                        ^
+collected_code/problem-805-0.c:26:12: error: Cannot determine that 'highestSumList' is initialized [premium-bughuntingUninit]
+    return highestSumList;
+           ^

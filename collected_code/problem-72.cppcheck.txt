@@ -1,0 +1,15 @@
+collected_code/problem-72-0.c:8:29: warning: Invalid sqrt() argument nr 1. The value is -1 but the valid values are '0.0:'. [invalidFunctionArg]
+        int sqrtDiff = sqrt(diff);
+                            ^
+collected_code/problem-72-0.c:6:18: note: Assignment 'i=1', assigned value is 1
+    for (int i = 1; i * i <= num; i++) {
+                 ^
+collected_code/problem-72-0.c:7:18: note: diff is assigned 'num-i*i' here.
+        int diff = num - i * i;
+                 ^
+collected_code/problem-72-0.c:8:29: note: Invalid argument
+        int sqrtDiff = sqrt(diff);
+                            ^
+collected_code/problem-72-0.c:19:18: error: Cannot determine that 'number' is initialized [premium-bughuntingUninit]
+    scanf("%d", &number);
+                 ^

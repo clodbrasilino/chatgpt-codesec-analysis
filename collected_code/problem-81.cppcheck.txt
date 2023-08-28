@@ -1,0 +1,6 @@
+collected_code/problem-81-0.c:10:29: error: Cannot determine that 'tuple1[i/2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        zipTuple[i] = tuple1[i / 2];
+                            ^
+collected_code/problem-81-0.c:11:33: error: Cannot determine that 'tuple2[i/2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        zipTuple[i + 1] = tuple2[i / 2];
+                                ^

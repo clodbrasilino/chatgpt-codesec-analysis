@@ -1,0 +1,27 @@
+collected_code/problem-54-0.c:29:18: warning: Uninitialized variable: output [uninitvar]
+        arr[i] = output[i];
+                 ^
+collected_code/problem-54-0.c:23:23: note: Assuming condition is false
+    for (i = n - 1; i >= 0; i--) {
+                      ^
+collected_code/problem-54-0.c:29:18: note: Uninitialized variable: output
+        arr[i] = output[i];
+                 ^
+collected_code/problem-54-0.c:6:18: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int max = arr[0];
+                 ^
+collected_code/problem-54-0.c:10:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > max) {
+               ^
+collected_code/problem-54-0.c:11:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            max = arr[i];
+                     ^
+collected_code/problem-54-0.c:16:18: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[arr[i]]++;
+                 ^
+collected_code/problem-54-0.c:24:25: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        output[count[arr[i]] - 1] = arr[i];
+                        ^
+collected_code/problem-54-0.c:25:18: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[arr[i]]--;
+                 ^

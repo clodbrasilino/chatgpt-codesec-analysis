@@ -1,0 +1,15 @@
+collected_code/problem-821-0.c:9:22: error: Cannot determine that 'result[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        strcpy(result[i], dict1[i]);
+                     ^
+collected_code/problem-821-0.c:9:32: error: Cannot determine that 'dict1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        strcpy(result[i], dict1[i]);
+                               ^
+collected_code/problem-821-0.c:13:22: error: Cannot determine that 'result[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        strcpy(result[k], dict2[j]);
+                     ^
+collected_code/problem-821-0.c:13:32: error: Cannot determine that 'dict2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        strcpy(result[k], dict2[j]);
+                               ^
+collected_code/problem-821-0.c:28:30: error: Cannot determine that 'result[i]' is initialized [premium-bughuntingUninit]
+        printf("%s\n", result[i]);
+                             ^

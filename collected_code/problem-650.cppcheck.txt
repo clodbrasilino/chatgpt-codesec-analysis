@@ -1,0 +1,6 @@
+collected_code/problem-650-0.c:9:17: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr1[i] != arr2[i]) {
+                ^
+collected_code/problem-650-0.c:9:28: error: Cannot determine that 'arr2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr1[i] != arr2[i]) {
+                           ^

@@ -1,0 +1,18 @@
+collected_code/problem-597-0.c:8:17: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr1[i] < arr2[j]) {
+                ^
+collected_code/problem-597-0.c:8:27: error: Cannot determine that 'arr2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr1[i] < arr2[j]) {
+                          ^
+collected_code/problem-597-0.c:9:35: error: Cannot determine that 'arr1[i++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            merged[count++] = arr1[i++];
+                                  ^
+collected_code/problem-597-0.c:12:35: error: Cannot determine that 'arr2[j++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            merged[count++] = arr2[j++];
+                                  ^
+collected_code/problem-597-0.c:17:31: error: Cannot determine that 'arr1[i++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        merged[count++] = arr1[i++];
+                              ^
+collected_code/problem-597-0.c:21:31: error: Cannot determine that 'arr2[j++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        merged[count++] = arr2[j++];
+                              ^

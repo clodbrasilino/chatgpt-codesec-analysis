@@ -1,0 +1,27 @@
+collected_code/problem-705-0.c:6:18: error: Cannot determine that '*a' is initialized [premium-bughuntingUninit]
+    char* temp = *a;
+                 ^
+collected_code/problem-705-0.c:7:10: error: Cannot determine that '*b' is initialized [premium-bughuntingUninit]
+    *a = *b;
+         ^
+collected_code/problem-705-0.c:8:10: error: Cannot determine that 'temp' is initialized [premium-bughuntingUninit]
+    *b = temp;
+         ^
+collected_code/problem-705-0.c:16:28: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strlen(list[j]) > strlen(list[j + 1])) {
+                           ^
+collected_code/problem-705-0.c:16:46: error: Cannot determine that 'list[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strlen(list[j]) > strlen(list[j + 1])) {
+                                             ^
+collected_code/problem-705-0.c:20:33: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            else if (strlen(list[j]) == strlen(list[j + 1])) {
+                                ^
+collected_code/problem-705-0.c:20:52: error: Cannot determine that 'list[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            else if (strlen(list[j]) == strlen(list[j + 1])) {
+                                                   ^
+collected_code/problem-705-0.c:21:32: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (strcmp(list[j], list[j + 1]) > 0) {
+                               ^
+collected_code/problem-705-0.c:21:41: error: Cannot determine that 'list[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (strcmp(list[j], list[j + 1]) > 0) {
+                                        ^

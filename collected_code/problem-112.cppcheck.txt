@@ -1,0 +1,12 @@
+collected_code/problem-112-0.c:13:18: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    scanf("%f", &radius);
+                 ^
+collected_code/problem-112-0.c:16:18: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    scanf("%f", &height);
+                 ^
+collected_code/problem-112-0.c:18:47: error: Cannot determine that 'radius' is initialized [premium-bughuntingUninit]
+    float perimeter = findPerimeterOfCylinder(radius, height);
+                                              ^
+collected_code/problem-112-0.c:18:55: error: Cannot determine that 'height' is initialized [premium-bughuntingUninit]
+    float perimeter = findPerimeterOfCylinder(radius, height);
+                                                      ^

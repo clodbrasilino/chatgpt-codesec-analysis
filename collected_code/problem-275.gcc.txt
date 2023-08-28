@@ -1,0 +1,60 @@
+collected_code/problem-275-0.c: In function 'lastRemovedElementPosition':
+collected_code/problem-275-0.c:13:12: warning: use of uninitialized value 'lastRemovedPos' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   13 |     return lastRemovedPos;
+      |            ^~~~~~~~~~~~~~
+  'lastRemovedElementPosition': events 1-3
+    |
+    |    4 |     int i, lastRemovedPos;
+    |      |            ^~~~~~~~~~~~~~
+    |      |            |
+    |      |            (1) region created on stack here
+    |      |            (2) capacity: 4 bytes
+    |......
+    |   13 |     return lastRemovedPos;
+    |      |            ~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (3) use of uninitialized value 'lastRemovedPos' here
+    |
+collected_code/problem-275-0.c:13:12: warning: use of uninitialized value 'lastRemovedPos' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   13 |     return lastRemovedPos;
+      |            ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     int lastRemovedPos = lastRemovedElementPosition(arr, n);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'lastRemovedElementPosition' from 'main'
+    |
+    +--> 'lastRemovedElementPosition': events 3-10
+           |
+           |    3 | int lastRemovedElementPosition(int arr[], int n) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'lastRemovedElementPosition'
+           |    4 |     int i, lastRemovedPos;
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (4) region created on stack here
+           |      |            (5) capacity: 4 bytes
+           |......
+           |    7 |     for (i = 0; i < n; i++) {
+           |      |                 ~~~~~  ~~~
+           |      |                   |     |
+           |      |                   |     (9) ...to here
+           |      |                   (6) following 'true' branch (when 'i < n')...
+           |    8 |         if (arr[i] == removedElement) {
+           |      |            ~   ~
+           |      |            |   |
+           |      |            |   (7) ...to here
+           |      |            (8) following 'false' branch...
+           |......
+           |   13 |     return lastRemovedPos;
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (10) use of uninitialized value 'lastRemovedPos' here
+           |

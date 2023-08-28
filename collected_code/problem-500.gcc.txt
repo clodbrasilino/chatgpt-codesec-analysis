@@ -1,0 +1,250 @@
+collected_code/problem-500-0.c: In function 'concatenateList':
+collected_code/problem-500-0.c:38:38: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   38 |         char* temp = realloc(result, strlen(result) + size + 1); // Resize result string
+      |                                      ^~~~~~
+collected_code/problem-500-0.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code/problem-500-0.c:38:38: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   38 |         char* temp = realloc(result, strlen(result) + size + 1); // Resize result string
+      |                                      ^~~~~~
+collected_code/problem-500-0.c:38:38: note: include '<string.h>' or provide a declaration of 'strlen'
+collected_code/problem-500-0.c: In function 'append':
+collected_code/problem-500-0.c:15:20: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |     new_node->data = new_data;
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~
+  'append': events 1-2
+    |
+    |   12 |     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |......
+    |   15 |     new_node->data = new_data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~              
+    |      |                    |
+    |      |                    (2) 'new_node' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-500-0.c: In function 'concatenateList':
+collected_code/problem-500-0.c:32:15: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     result[0] = '\0'; // Initialize empty string
+      |     ~~~~~~~~~~^~~~~~
+  'concatenateList': events 1-2
+    |
+    |   31 |     char* result = malloc(1); // Allocate memory for empty string
+    |      |                    ^~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |   32 |     result[0] = '\0'; // Initialize empty string
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) 'result' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-500-0.c: In function 'main':
+collected_code/problem-500-0.c:66:5: warning: use of NULL 'concatenatedString' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+   66 |     printf("%s\n", concatenatedString);
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   58 |     append(&head, 1);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'append' from 'main'
+    |
+    +--> 'append': events 3-5
+           |
+           |   11 | void append(struct Node** head_ref, int new_data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (3) entry to 'append'
+           |......
+           |   18 |     if (*head_ref == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'true' branch...
+           |   19 |         *head_ref = new_node;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   58 |     append(&head, 1);
+    |      |     ^~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'append'
+    |   59 |     append(&head, 2);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'append' from 'main'
+    |
+    +--> 'append': events 8-9
+           |
+           |   11 | void append(struct Node** head_ref, int new_data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (8) entry to 'append'
+           |......
+           |   18 |     if (*head_ref == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (9) following 'false' branch...
+           |
+         'append': event 10
+           |
+           |cc1:
+           | (10): ...to here
+           |
+         'append': events 11-12
+           |
+           |   23 |     while (last->next != NULL)
+           |      |                       ^
+           |      |                       |
+           |      |                       (11) following 'false' branch...
+           |......
+           |   26 |     last->next = new_node;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   59 |     append(&head, 2);
+    |      |     ^~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (13) returning to 'main' from 'append'
+    |   60 |     append(&head, 3);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (14) calling 'append' from 'main'
+    |
+    +--> 'append': events 15-16
+           |
+           |   11 | void append(struct Node** head_ref, int new_data) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (15) entry to 'append'
+           |......
+           |   18 |     if (*head_ref == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch...
+           |
+         'append': event 17
+           |
+           |cc1:
+           | (17): ...to here
+           |
+         'append': events 18-19
+           |
+           |   23 |     while (last->next != NULL)
+           |      |                       ^
+           |      |                       |
+           |      |                       (18) following 'true' branch...
+           |   24 |         last = last->next;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (19) ...to here
+           |
+         'append': events 20-21
+           |
+           |   23 |     while (last->next != NULL)
+           |      |                       ^
+           |      |                       |
+           |      |                       (20) following 'false' branch...
+           |......
+           |   26 |     last->next = new_node;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-23
+    |
+    |   60 |     append(&head, 3);
+    |      |     ^~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (22) returning to 'main' from 'append'
+    |......
+    |   63 |     char* concatenatedString = concatenateList(head);
+    |      |                                ~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (23) calling 'concatenateList' from 'main'
+    |
+    +--> 'concatenateList': event 24
+           |
+           |   30 | char* concatenateList(struct Node* head) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (24) entry to 'concatenateList'
+           |
+         'concatenateList': event 25
+           |
+           |   36 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (25) following 'true' branch (when 'current' is non-NULL)...
+           |
+         'concatenateList': event 26
+           |
+           |   37 |         int size = snprintf(NULL, 0, "%d", current->data); // Get size of current element
+           |      |                    ^~~~~~~~
+           |      |                    |
+           |      |                    (26) ...to here
+           |
+         'concatenateList': events 27-29
+           |
+           |   38 |         char* temp = realloc(result, strlen(result) + size + 1); // Resize result string
+           |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (27) when 'realloc' fails
+           |   39 | 
+           |   40 |         if (temp == NULL) {
+           |      |            ~          
+           |      |            |
+           |      |            (28) following 'true' branch (when 'temp' is NULL)...
+           |   41 |             free(result);
+           |      |             ~~~~~~~~~~~~
+           |      |             |
+           |      |             (29) ...to here
+           |
+         'concatenateList': event 30
+           |
+           |   42 |             return NULL; // Memory allocation failed
+           |      |                    ^~~~
+           |      |                    |
+           |      |                    (30) '0' is NULL
+           |
+         'concatenateList': event 31
+           |
+           |   42 |             return NULL; // Memory allocation failed
+           |      |                    ^~~~
+           |      |                    |
+           |      |                    (31) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 32-33
+    |
+    |   63 |     char* concatenatedString = concatenateList(head);
+    |      |                                ^~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (32) returning to 'main' from 'concatenateList'
+    |......
+    |   66 |     printf("%s\n", concatenatedString);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (33) argument 1 ('concatenatedString') NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

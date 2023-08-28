@@ -1,0 +1,288 @@
+In file included from /usr/local/Cellar/gcc/13.1.0/lib/gcc/current/gcc/x86_64-apple-darwin22/13/include-fixed/stdio.h:440,
+                 from collected_code/problem-427-0.c:1:
+collected_code/problem-427-0.c: In function 'convertDate':
+collected_code/problem-427-0.c:19:63: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+      |                                                       ~~~~~~~~^~~~~~
+  'convertDate': events 1-4
+    |
+    |    7 |     regmatch_t match[3];
+    |      |                ^~~~~
+    |      |                |
+    |      |                (1) capacity: 48 bytes
+    |......
+    |   12 |     if (ret) {
+    |      |        ~        
+    |      |        |
+    |      |        (2) following 'false' branch (when 'ret == 0')...
+    |......
+    |   17 |     ret = regexec(&regex, date, 3, match, 0);
+    |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (3) ...to here
+    |   18 |     if (!ret) {
+    |      |        ~        
+    |      |        |
+    |      |        (4) following 'true' branch (when 'ret == 0')...
+    |
+  'convertDate': event 5
+    |
+    |   21 |                                                     match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+    |      |                                                                                             ~~~~~~~~^~~~~~
+    |      |                                                                                                     |
+    |      |                                                                                                     (5) ...to here
+    |
+  'convertDate': event 6
+    |
+    |   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+    |      |                                                       ~~~~~~~~^~~~~~
+    |      |                                                               |
+    |      |                                                               (6) out-of-bounds read from byte 56 till byte 63 but 'match' ends at byte 48
+    |
+collected_code/problem-427-0.c:19:63: note: read of 8 bytes from after the end of 'match'
+collected_code/problem-427-0.c:19:63: note: valid subscripts for 'match' are '[0]' to '[2]'
+collected_code/problem-427-0.c:19:63: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     if (convertDate(date, convertedDate) == 0) {
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'convertDate' from 'main'
+    |
+    +--> 'convertDate': events 3-7
+           |
+           |    5 | int convertDate(char* date, char* convertedDate) {
+           |      |     ^~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'convertDate'
+           |    6 |     regex_t regex;
+           |    7 |     regmatch_t match[3];
+           |      |                ~~~~~
+           |      |                |
+           |      |                (4) capacity: 48 bytes
+           |......
+           |   12 |     if (ret) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'ret == 0')...
+           |......
+           |   17 |     ret = regexec(&regex, date, 3, match, 0);
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (6) ...to here
+           |   18 |     if (!ret) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'true' branch (when 'ret == 0')...
+           |
+         'convertDate': event 8
+           |
+           |   21 |                                                     match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+           |      |                                                                                             ~~~~~~~~^~~~~~
+           |      |                                                                                                     |
+           |      |                                                                                                     (8) ...to here
+           |
+         'convertDate': event 9
+           |
+           |   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+           |      |                                                       ~~~~~~~~^~~~~~
+           |      |                                                               |
+           |      |                                                               (9) out-of-bounds read from byte 56 till byte 63 but 'match' ends at byte 48
+           |
+collected_code/problem-427-0.c:19:63: note: read of 8 bytes from after the end of 'match'
+collected_code/problem-427-0.c:19:63: note: valid subscripts for 'match' are '[0]' to '[2]'
+collected_code/problem-427-0.c:19:80: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+      |                                                                        ~~~~~~~~^~~~~~
+  'convertDate': events 1-4
+    |
+    |    7 |     regmatch_t match[3];
+    |      |                ^~~~~
+    |      |                |
+    |      |                (1) capacity: 48 bytes
+    |......
+    |   12 |     if (ret) {
+    |      |        ~        
+    |      |        |
+    |      |        (2) following 'false' branch (when 'ret == 0')...
+    |......
+    |   17 |     ret = regexec(&regex, date, 3, match, 0);
+    |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (3) ...to here
+    |   18 |     if (!ret) {
+    |      |        ~        
+    |      |        |
+    |      |        (4) following 'true' branch (when 'ret == 0')...
+    |
+  'convertDate': event 5
+    |
+    |   21 |                                                     match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+    |      |                                                                                             ~~~~~~~~^~~~~~
+    |      |                                                                                                     |
+    |      |                                                                                                     (5) ...to here
+    |
+  'convertDate': event 6
+    |
+    |   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+    |      |                                                                        ~~~~~~~~^~~~~~
+    |      |                                                                                |
+    |      |                                                                                (6) out-of-bounds read from byte 48 till byte 55 but 'match' ends at byte 48
+    |
+collected_code/problem-427-0.c:19:80: note: read of 8 bytes from after the end of 'match'
+collected_code/problem-427-0.c:19:80: note: valid subscripts for 'match' are '[0]' to '[2]'
+collected_code/problem-427-0.c:19:80: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     if (convertDate(date, convertedDate) == 0) {
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'convertDate' from 'main'
+    |
+    +--> 'convertDate': events 3-7
+           |
+           |    5 | int convertDate(char* date, char* convertedDate) {
+           |      |     ^~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'convertDate'
+           |    6 |     regex_t regex;
+           |    7 |     regmatch_t match[3];
+           |      |                ~~~~~
+           |      |                |
+           |      |                (4) capacity: 48 bytes
+           |......
+           |   12 |     if (ret) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'ret == 0')...
+           |......
+           |   17 |     ret = regexec(&regex, date, 3, match, 0);
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (6) ...to here
+           |   18 |     if (!ret) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'true' branch (when 'ret == 0')...
+           |
+         'convertDate': event 8
+           |
+           |   21 |                                                     match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+           |      |                                                                                             ~~~~~~~~^~~~~~
+           |      |                                                                                                     |
+           |      |                                                                                                     (8) ...to here
+           |
+         'convertDate': event 9
+           |
+           |   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+           |      |                                                                        ~~~~~~~~^~~~~~
+           |      |                                                                                |
+           |      |                                                                                (9) out-of-bounds read from byte 48 till byte 55 but 'match' ends at byte 48
+           |
+collected_code/problem-427-0.c:19:80: note: read of 8 bytes from after the end of 'match'
+collected_code/problem-427-0.c:19:80: note: valid subscripts for 'match' are '[0]' to '[2]'
+collected_code/problem-427-0.c:19:103: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+      |                                                                                               ~~~~~~~~^~~~~~
+  'convertDate': events 1-4
+    |
+    |    7 |     regmatch_t match[3];
+    |      |                ^~~~~
+    |      |                |
+    |      |                (1) capacity: 48 bytes
+    |......
+    |   12 |     if (ret) {
+    |      |        ~        
+    |      |        |
+    |      |        (2) following 'false' branch (when 'ret == 0')...
+    |......
+    |   17 |     ret = regexec(&regex, date, 3, match, 0);
+    |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |           |
+    |      |           (3) ...to here
+    |   18 |     if (!ret) {
+    |      |        ~        
+    |      |        |
+    |      |        (4) following 'true' branch (when 'ret == 0')...
+    |
+  'convertDate': event 5
+    |
+    |   21 |                                                     match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+    |      |                                                                                             ~~~~~~~~^~~~~~
+    |      |                                                                                                     |
+    |      |                                                                                                     (5) ...to here
+    |
+  'convertDate': event 6
+    |
+    |   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+    |      |                                                                                               ~~~~~~~~^~~~~~
+    |      |                                                                                                       |
+    |      |                                                                                                       (6) out-of-bounds read from byte 48 till byte 55 but 'match' ends at byte 48
+    |
+collected_code/problem-427-0.c:19:103: note: read of 8 bytes from after the end of 'match'
+collected_code/problem-427-0.c:19:103: note: valid subscripts for 'match' are '[0]' to '[2]'
+collected_code/problem-427-0.c:19:103: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   37 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   41 |     if (convertDate(date, convertedDate) == 0) {
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'convertDate' from 'main'
+    |
+    +--> 'convertDate': events 3-7
+           |
+           |    5 | int convertDate(char* date, char* convertedDate) {
+           |      |     ^~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'convertDate'
+           |    6 |     regex_t regex;
+           |    7 |     regmatch_t match[3];
+           |      |                ~~~~~
+           |      |                |
+           |      |                (4) capacity: 48 bytes
+           |......
+           |   12 |     if (ret) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'ret == 0')...
+           |......
+           |   17 |     ret = regexec(&regex, date, 3, match, 0);
+           |      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (6) ...to here
+           |   18 |     if (!ret) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'true' branch (when 'ret == 0')...
+           |
+         'convertDate': event 8
+           |
+           |   21 |                                                     match[1].rm_eo - match[1].rm_so, date + match[1].rm_so);
+           |      |                                                                                             ~~~~~~~~^~~~~~
+           |      |                                                                                                     |
+           |      |                                                                                                     (8) ...to here
+           |
+         'convertDate': event 9
+           |
+           |   19 |         snprintf(convertedDate, 11, "%.*s-%.*s-%.*s", match[3].rm_eo - match[3].rm_so, date + match[3].rm_so,
+           |      |                                                                                               ~~~~~~~~^~~~~~
+           |      |                                                                                                       |
+           |      |                                                                                                       (9) out-of-bounds read from byte 48 till byte 55 but 'match' ends at byte 48
+           |
+collected_code/problem-427-0.c:19:103: note: read of 8 bytes from after the end of 'match'
+collected_code/problem-427-0.c:19:103: note: valid subscripts for 'match' are '[0]' to '[2]'

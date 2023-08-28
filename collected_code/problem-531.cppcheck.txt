@@ -1,0 +1,6 @@
+collected_code/problem-531-0.c:13:22: error: Cannot determine that 'coins[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (coins[j] <= i) {
+                     ^
+collected_code/problem-531-0.c:14:43: error: Cannot determine that 'coins[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                int sub_res = dp[i - coins[j]];
+                                          ^

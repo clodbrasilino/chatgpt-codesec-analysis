@@ -1,0 +1,24 @@
+collected_code/problem-437-0.c:16:9: warning: Uninitialized variable: j [uninitvar]
+    str[j] = '\0';
+        ^
+collected_code/problem-437-0.c:7:24: note: Assuming condition is false
+    for (i = 0; str[i] != '\0'; i++) {
+                       ^
+collected_code/problem-437-0.c:16:9: note: Uninitialized variable: j
+    str[j] = '\0';
+        ^
+collected_code/problem-437-0.c:11:17: error: Uninitialized variable: j [legacyUninitvar]
+            str[j++] = str[i];
+                ^
+collected_code/problem-437-0.c:7:20: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (i = 0; str[i] != '\0'; i++) {
+                   ^
+collected_code/problem-437-0.c:11:18: error: Cannot determine that 'j++' is initialized [premium-bughuntingUninit]
+            str[j++] = str[i];
+                 ^
+collected_code/problem-437-0.c:11:27: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            str[j++] = str[i];
+                          ^
+collected_code/problem-437-0.c:24:11: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    fgets(str, sizeof(str), stdin);
+          ^

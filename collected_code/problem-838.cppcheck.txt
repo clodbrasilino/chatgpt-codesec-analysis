@@ -1,0 +1,9 @@
+collected_code/problem-838-0.c:8:23: error: Cannot determine that 's1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; s1[i]; i++) {
+                      ^
+collected_code/problem-838-0.c:9:15: error: Cannot determine that 's1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (s1[i] != s2[i]) {
+              ^
+collected_code/problem-838-0.c:9:24: error: Cannot determine that 's2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (s1[i] != s2[i]) {
+                       ^

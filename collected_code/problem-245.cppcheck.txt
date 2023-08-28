@@ -1,0 +1,54 @@
+collected_code/problem-245-0.c:32:18: warning: Uninitialized variable: asc [uninitvar]
+    int maxSum = asc[0] + desc[0] - arr[0];
+                 ^
+collected_code/problem-245-0.c:12:23: note: Assuming condition is false
+    for (int i = 0; i < n; i++) {
+                      ^
+collected_code/problem-245-0.c:32:18: note: Uninitialized variable: asc
+    int maxSum = asc[0] + desc[0] - arr[0];
+                 ^
+collected_code/problem-245-0.c:32:27: warning: Uninitialized variable: desc [uninitvar]
+    int maxSum = asc[0] + desc[0] - arr[0];
+                          ^
+collected_code/problem-245-0.c:22:27: note: Assuming condition is false
+    for (int i = n - 1; i >= 0; i--) {
+                          ^
+collected_code/problem-245-0.c:32:27: note: Uninitialized variable: desc
+    int maxSum = asc[0] + desc[0] - arr[0];
+                          ^
+collected_code/problem-245-0.c:13:21: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        asc[i] = arr[i];
+                    ^
+collected_code/problem-245-0.c:15:20: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] > arr[j]) {
+                   ^
+collected_code/problem-245-0.c:15:29: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] > arr[j]) {
+                            ^
+collected_code/problem-245-0.c:16:50: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                asc[i] = max(asc[i], asc[j] + arr[i]);
+                                                 ^
+collected_code/problem-245-0.c:23:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        desc[i] = arr[i];
+                     ^
+collected_code/problem-245-0.c:25:20: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] > arr[j]) {
+                   ^
+collected_code/problem-245-0.c:25:29: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr[i] > arr[j]) {
+                            ^
+collected_code/problem-245-0.c:26:53: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                desc[i] = max(desc[i], desc[j] + arr[i]);
+                                                    ^
+collected_code/problem-245-0.c:32:21: error: Cannot determine that 'asc[0]' is initialized [premium-bughuntingUninit]
+    int maxSum = asc[0] + desc[0] - arr[0];
+                    ^
+collected_code/problem-245-0.c:32:31: error: Cannot determine that 'desc[0]' is initialized [premium-bughuntingUninit]
+    int maxSum = asc[0] + desc[0] - arr[0];
+                              ^
+collected_code/problem-245-0.c:32:40: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int maxSum = asc[0] + desc[0] - arr[0];
+                                       ^
+collected_code/problem-245-0.c:34:52: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        maxSum = max(maxSum, asc[i] + desc[i] - arr[i]);
+                                                   ^

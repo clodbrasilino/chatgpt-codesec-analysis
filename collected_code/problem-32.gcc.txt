@@ -1,0 +1,12 @@
+collected_code/problem-32-0.c: In function 'largestPrimeFactor':
+collected_code/problem-32-0.c:12:22: warning: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+   12 |     for (i = 3; i <= sqrt(number); i += 2) {
+      |                      ^~~~
+collected_code/problem-32-0.c:2:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    1 | #include<stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code/problem-32-0.c:12:22: warning: incompatible implicit declaration of built-in function 'sqrt' [-Wbuiltin-declaration-mismatch]
+   12 |     for (i = 3; i <= sqrt(number); i += 2) {
+      |                      ^~~~
+collected_code/problem-32-0.c:12:22: note: include '<math.h>' or provide a declaration of 'sqrt'

@@ -1,0 +1,24 @@
+collected_code/problem-693-0.c: In function 'removeMultipleSpaces':
+collected_code/problem-693-0.c:10:15: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   10 |     int len = strlen(str);
+      |               ^~~~~~
+collected_code/problem-693-0.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <regex.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code/problem-693-0.c:10:15: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   10 |     int len = strlen(str);
+      |               ^~~~~~
+collected_code/problem-693-0.c:10:15: note: include '<string.h>' or provide a declaration of 'strlen'
+collected_code/problem-693-0.c:17:9: warning: implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
+   17 |         memmove(str + start, str + end, numCharsAfterSpaces);
+      |         ^~~~~~~
+collected_code/problem-693-0.c:17:9: note: include '<string.h>' or provide a declaration of 'memmove'
+collected_code/problem-693-0.c:17:9: warning: incompatible implicit declaration of built-in function 'memmove' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-693-0.c:17:9: note: include '<string.h>' or provide a declaration of 'memmove'
+collected_code/problem-693-0.c:18:9: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+   18 |         memset(str + len - numSpaces, ' ', numSpaces);
+      |         ^~~~~~
+collected_code/problem-693-0.c:18:9: note: include '<string.h>' or provide a declaration of 'memset'
+collected_code/problem-693-0.c:18:9: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-693-0.c:18:9: note: include '<string.h>' or provide a declaration of 'memset'

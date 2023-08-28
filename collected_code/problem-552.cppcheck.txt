@@ -1,0 +1,12 @@
+collected_code/problem-552-0.c:9:25: error: Cannot determine that 'arr[1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int difference = arr[1] - arr[0];
+                        ^
+collected_code/problem-552-0.c:9:34: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int difference = arr[1] - arr[0];
+                                 ^
+collected_code/problem-552-0.c:12:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] - arr[i-1] != difference) {
+               ^
+collected_code/problem-552-0.c:12:25: error: Cannot determine that 'arr[i-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] - arr[i-1] != difference) {
+                        ^

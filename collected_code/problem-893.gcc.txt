@@ -1,0 +1,13 @@
+collected_code/problem-893-0.c: In function 'main':
+collected_code/problem-893-0.c:15:21: warning: initialization of 'int' from 'int *' makes integer from pointer without a cast [-Wint-conversion]
+   15 |     int arr[][3] = {sublist1, sublist2, sublist3};
+      |                     ^~~~~~~~
+collected_code/problem-893-0.c:15:21: note: (near initialization for 'arr[0][0]')
+collected_code/problem-893-0.c:15:31: warning: initialization of 'int' from 'int *' makes integer from pointer without a cast [-Wint-conversion]
+   15 |     int arr[][3] = {sublist1, sublist2, sublist3};
+      |                               ^~~~~~~~
+collected_code/problem-893-0.c:15:31: note: (near initialization for 'arr[0][1]')
+collected_code/problem-893-0.c:15:41: warning: initialization of 'int' from 'int *' makes integer from pointer without a cast [-Wint-conversion]
+   15 |     int arr[][3] = {sublist1, sublist2, sublist3};
+      |                                         ^~~~~~~~
+collected_code/problem-893-0.c:15:41: note: (near initialization for 'arr[0][2]')

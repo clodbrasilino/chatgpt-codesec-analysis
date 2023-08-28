@@ -1,0 +1,65 @@
+collected_code/problem-972-0.c: In function 'concatenateTuples':
+collected_code/problem-972-0.c:10:24: warning: dereference of possibly-NULL 'nestedTuple' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |         nestedTuple[i] = (int*) malloc(sizeof(int));
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'concatenateTuples': events 1-4
+    |
+    |    6 |     int** nestedTuple = (int**) malloc((size1 + size2) * sizeof(int*));
+    |      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (1) this call could return NULL
+    |......
+    |    9 |     for (int i = 0; i < size1; i++) {
+    |      |                     ~~~~~~~~~    
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < size1')...
+    |   10 |         nestedTuple[i] = (int*) malloc(sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |   |
+    |      |                    |   (4) 'nestedTuple + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                    (3) ...to here
+    |
+collected_code/problem-972-0.c:11:27: warning: dereference of possibly-NULL '*nestedTuple_38 + _12' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |         nestedTuple[i][0] = tuple1[i];
+      |         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'concatenateTuples': events 1-4
+    |
+    |    9 |     for (int i = 0; i < size1; i++) {
+    |      |                     ~~^~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i < size1')...
+    |   10 |         nestedTuple[i] = (int*) malloc(sizeof(int));
+    |      |                    ~            ~~~~~~~~~~~~~~~~~~~
+    |      |                    |            |
+    |      |                    |            (3) this call could return NULL
+    |      |                    (2) ...to here
+    |   11 |         nestedTuple[i][0] = tuple1[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (4) '*nestedTuple_38 + _12' could be NULL: unchecked value from (3)
+    |
+collected_code/problem-972-0.c:17:35: warning: dereference of possibly-NULL '*nestedTuple_38 + _26' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |         nestedTuple[size1 + i][0] = tuple2[i];
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'concatenateTuples': events 1-6
+    |
+    |    9 |     for (int i = 0; i < size1; i++) {
+    |      |                     ~~^~~~~~~
+    |      |                       |
+    |      |                       (1) following 'false' branch (when 'i >= size1')...
+    |......
+    |   15 |     for (int i = 0; i < size2; i++) {
+    |      |              ~      ~~~~~~~~~
+    |      |              |        |
+    |      |              |        (3) following 'true' branch (when 'i < size2')...
+    |      |              (2) ...to here
+    |   16 |         nestedTuple[size1 + i] = (int*) malloc(sizeof(int));
+    |      |                     ~~~~~~~~~           ~~~~~~~~~~~~~~~~~~~
+    |      |                           |             |
+    |      |                           |             (5) this call could return NULL
+    |      |                           (4) ...to here
+    |   17 |         nestedTuple[size1 + i][0] = tuple2[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (6) '*nestedTuple_38 + _26' could be NULL: unchecked value from (5)
+    |

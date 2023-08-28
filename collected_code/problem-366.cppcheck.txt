@@ -1,0 +1,12 @@
+collected_code/problem-366-0.c:4:26: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int largestProd = arr[0] * arr[1];
+                         ^
+collected_code/problem-366-0.c:4:35: error: Cannot determine that 'arr[1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int largestProd = arr[0] * arr[1];
+                                  ^
+collected_code/problem-366-0.c:7:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int product = arr[i] * arr[i + 1];
+                         ^
+collected_code/problem-366-0.c:7:35: error: Cannot determine that 'arr[i+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int product = arr[i] * arr[i + 1];
+                                  ^

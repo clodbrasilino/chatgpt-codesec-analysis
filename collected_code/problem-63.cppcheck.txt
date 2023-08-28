@@ -1,0 +1,6 @@
+collected_code/problem-63-0.c:8:33: error: Cannot determine that 'tupleList[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int diff = tupleList[j] - tupleList[i];
+                                ^
+collected_code/problem-63-0.c:8:48: error: Cannot determine that 'tupleList[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int diff = tupleList[j] - tupleList[i];
+                                               ^

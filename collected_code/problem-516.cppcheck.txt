@@ -1,0 +1,27 @@
+collected_code/problem-516-0.c:39:18: warning: Uninitialized variable: output [uninitvar]
+        arr[i] = output[i];
+                 ^
+collected_code/problem-516-0.c:31:27: note: Assuming condition is false
+    for (int i = n - 1; i >= 0; i--) {
+                          ^
+collected_code/problem-516-0.c:39:18: note: Uninitialized variable: output
+        arr[i] = output[i];
+                 ^
+collected_code/problem-516-0.c:5:18: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int max = arr[0];
+                 ^
+collected_code/problem-516-0.c:7:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] > max) {
+               ^
+collected_code/problem-516-0.c:8:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            max = arr[i];
+                     ^
+collected_code/problem-516-0.c:21:19: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[(arr[i] / exp) % 10]++;
+                  ^
+collected_code/problem-516-0.c:32:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+                         ^
+collected_code/problem-516-0.c:33:19: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[(arr[i] / exp) % 10]--;
+                  ^

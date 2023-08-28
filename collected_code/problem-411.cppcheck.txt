@@ -1,0 +1,6 @@
+collected_code/problem-411-0.c:14:70: error: Cannot determine that 'snakeCase[match.rm_so+1+currentIndex]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        camelCase[match.rm_so + currentIndex + 1] = toupper(snakeCase[match.rm_so + 1 + currentIndex]);
+                                                                     ^
+collected_code/problem-411-0.c:26:12: error: Cannot determine that 'camelCase[0]' is initialized [premium-bughuntingUninit]
+    strcpy(camelCase, snakeCase);
+           ^

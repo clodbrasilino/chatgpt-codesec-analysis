@@ -1,0 +1,15 @@
+collected_code/problem-12-0.c:10:35: error: Cannot determine that 'matrix[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            rowSum[i] += matrix[i][j];
+                                  ^
+collected_code/problem-12-0.c:37:18: error: Cannot determine that 'rows' is initialized [premium-bughuntingUninit]
+    scanf("%d", &rows);
+                 ^
+collected_code/problem-12-0.c:40:18: error: Cannot determine that 'columns' is initialized [premium-bughuntingUninit]
+    scanf("%d", &columns);
+                 ^
+collected_code/problem-12-0.c:52:36: error: Cannot determine that 'matrix[i][j]' is initialized [premium-bughuntingUninit]
+            printf("%d ", matrix[i][j]);
+                                   ^
+collected_code/problem-12-0.c:62:36: error: Cannot determine that 'matrix[i][j]' is initialized [premium-bughuntingUninit]
+            printf("%d ", matrix[i][j]);
+                                   ^

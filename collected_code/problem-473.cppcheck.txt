@@ -1,0 +1,9 @@
+collected_code/problem-473-0.c:11:21: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr1[i] == arr2[j]) {
+                    ^
+collected_code/problem-473-0.c:11:32: error: Cannot determine that 'arr2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (arr1[i] == arr2[j]) {
+                               ^
+collected_code/problem-473-0.c:18:32: error: Cannot determine that 'arr1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d\n", arr1[i]);
+                               ^

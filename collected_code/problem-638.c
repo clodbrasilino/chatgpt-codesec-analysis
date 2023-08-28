@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+float calculate_wind_chill_index(float temperature, float wind_speed) {
+    float wind_chill_index;
+    
+    wind_chill_index = 35.74 + 0.6215 * temperature - 35.75 * pow(wind_speed, 0.16) + 0.4275 * temperature * pow(wind_speed, 0.16);
+    
+    return wind_chill_index;
+}
+
+int main() {
+    float temperature, wind_speed;
+    
+    printf("Enter the temperature (in degrees Fahrenheit): ");
+    scanf("%f", &temperature);
+    
+    printf("Enter the wind speed (in miles per hour): ");
+    scanf("%f", &wind_speed);
+    
+    float wind_chill_index = calculate_wind_chill_index(temperature, wind_speed);
+    printf("The Wind Chill Index is: %.2f", wind_chill_index);
+    
+    return 0;
+}

@@ -1,0 +1,6 @@
+collected_code/problem-398-0.c:14:35: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        int sum = sumOfDigits(list[i]);
+                                  ^
+collected_code/problem-398-0.c:15:56: error: Cannot determine that 'list[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        printf("Sum of digits in number %d: %d\n", list[i], sum);
+                                                       ^

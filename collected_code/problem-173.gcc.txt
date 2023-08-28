@@ -1,0 +1,8 @@
+collected_code/problem-173-0.c: In function 'removeNonAlphanumeric':
+collected_code/problem-173-0.c:9:13: warning: implicit declaration of function 'isalnum' [-Wimplicit-function-declaration]
+    9 |         if (isalnum(str[i])) {
+      |             ^~~~~~~
+collected_code/problem-173-0.c:2:1: note: include '<ctype.h>' or provide a declaration of 'isalnum'
+    1 | #include <stdio.h>
+  +++ |+#include <ctype.h>
+    2 | 

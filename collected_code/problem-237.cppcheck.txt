@@ -1,0 +1,18 @@
+collected_code/problem-237-0.c:13:12: error: Cannot determine that 'count[0]' is initialized [premium-bughuntingUninit]
+    memset(count, 0, sizeof(count));
+           ^
+collected_code/problem-237-0.c:19:33: error: Cannot determine that 'tuples[i].name[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strcmp(tuples[i].name, tuples[j].name) == 0) {
+                                ^
+collected_code/problem-237-0.c:36:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^
+collected_code/problem-237-0.c:42:27: error: Cannot determine that 'tuples[i] members' is initialized [premium-bughuntingUninit]
+        scanf("%s", tuples[i].name);
+                          ^
+collected_code/problem-237-0.c:50:36: error: Cannot determine that 'tuples[i] members' is initialized [premium-bughuntingUninit]
+        printf("Name: %s\n", tuples[i].name);
+                                   ^
+collected_code/problem-237-0.c:51:43: error: Cannot determine that 'tuples[i] members' is initialized [premium-bughuntingUninit]
+        printf("Occurrences: %d\n", tuples[i].occurrence);
+                                          ^

@@ -1,0 +1,9 @@
+collected_code/problem-689-0.c: In function 'minJumps':
+collected_code/problem-689-0.c:20:20: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   20 |         maxReach = max(maxReach, i + arr[i]);
+      |                    ^~~
+Undefined symbols for architecture x86_64:
+  "_max", referenced from:
+      _minJumps in ccJJkcsO.o
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

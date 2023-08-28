@@ -1,0 +1,11 @@
+collected_code/problem-434-0.c: In function 'matchString':
+collected_code/problem-434-0.c:4:19: error: 'NULL' undeclared (first use in this function)
+    4 |     if (string == NULL) {
+      |                   ^~~~
+collected_code/problem-434-0.c:2:1: note: 'NULL' is defined in header '<stddef.h>'; did you forget to '#include <stddef.h>'?
+    1 | #include <stdbool.h>
+  +++ |+#include <stddef.h>
+    2 | 
+collected_code/problem-434-0.c:4:19: note: each undeclared identifier is reported only once for each function it appears in
+    4 |     if (string == NULL) {
+      |                   ^~~~

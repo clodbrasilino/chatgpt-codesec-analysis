@@ -1,0 +1,12 @@
+collected_code/problem-463-0.c:9:14: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      if (arr[i] > 0) {
+             ^
+collected_code/problem-463-0.c:10:49: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+         max_ending_here = max_ending_here * arr[i];
+                                                ^
+collected_code/problem-463-0.c:11:53: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+         min_ending_here = min(min_ending_here * arr[i], 1);
+                                                    ^
+collected_code/problem-463-0.c:12:21: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      } else if (arr[i] == 0) {
+                    ^

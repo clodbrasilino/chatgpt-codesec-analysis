@@ -1,0 +1,24 @@
+collected_code/problem-121-0.c:7:24: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (arr[i] + arr[j] + arr[k] == targetSum) {
+                       ^
+collected_code/problem-121-0.c:7:33: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (arr[i] + arr[j] + arr[k] == targetSum) {
+                                ^
+collected_code/problem-121-0.c:7:42: error: Cannot determine that 'arr[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                if (arr[i] + arr[j] + arr[k] == targetSum) {
+                                         ^
+collected_code/problem-121-0.c:8:47: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                    printf("%d, %d, %d\n", arr[i], arr[j], arr[k]);
+                                              ^
+collected_code/problem-121-0.c:8:55: error: Cannot determine that 'arr[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                    printf("%d, %d, %d\n", arr[i], arr[j], arr[k]);
+                                                      ^
+collected_code/problem-121-0.c:8:63: error: Cannot determine that 'arr[k]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                    printf("%d, %d, %d\n", arr[i], arr[j], arr[k]);
+                                                              ^
+collected_code/problem-121-0.c:18:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^
+collected_code/problem-121-0.c:25:18: error: Cannot determine that 'targetSum' is initialized [premium-bughuntingUninit]
+    scanf("%d", &targetSum);
+                 ^

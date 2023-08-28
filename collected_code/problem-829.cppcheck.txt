@@ -1,0 +1,9 @@
+collected_code/problem-829-0.c:56:16: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+  scanf("%d", &n);
+               ^
+collected_code/problem-829-0.c:58:17: error: Cannot determine that 'sequence[100]' is initialized [premium-bughuntingUninit]
+  char* sequence[MAX_SIZE];
+                ^
+collected_code/problem-829-0.c:63:25: error: Cannot determine that 'sequence[i][0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", sequence[i]);
+                        ^

@@ -1,0 +1,367 @@
+collected_code/problem-174-0.c: In function 'createDictionary':
+collected_code/problem-174-0.c:18:22: warning: dereference of possibly-NULL 'dictionary' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     dictionary->head = NULL;
+      |                      ^
+  'groupKeyValuePairs': events 1-2
+    |
+    |   42 | void groupKeyValuePairs(char** input, int length) {
+    |      |      ^~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'groupKeyValuePairs'
+    |   43 |     Dictionary* dictionary = createDictionary();
+    |      |                              ~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'createDictionary' from 'groupKeyValuePairs'
+    |
+    +--> 'createDictionary': events 3-4
+           |
+           |   16 | Dictionary* createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   17 |     Dictionary* dictionary = (Dictionary*)malloc(sizeof(Dictionary));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) this call could return NULL
+           |
+         'createDictionary': event 5
+           |
+           |   18 |     dictionary->head = NULL;
+           |      |                      ^
+           |      |                      |
+           |      |                      (5) 'dictionary' could be NULL: unchecked value from (4)
+           |
+collected_code/problem-174-0.c: In function 'insertKeyValuePair':
+collected_code/problem-174-0.c:27:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   27 |     newNode->next = NULL;
+      |                   ^
+  'insertKeyValuePair': event 1
+    |
+    |   24 |     Node* newNode = (Node*)malloc(sizeof(Node));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |
+  'insertKeyValuePair': event 2
+    |
+    |   27 |     newNode->next = NULL;
+    |      |                   ^
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-174-0.c: In function 'groupKeyValuePairs':
+collected_code/problem-174-0.c:58:17: warning: leak of 'current' [CWE-401] [-Wanalyzer-malloc-leak]
+   58 |         current = current->next;
+      |         ~~~~~~~~^~~~~~~~~~~~~~~
+  'groupKeyValuePairs': events 1-4
+    |
+    |   42 | void groupKeyValuePairs(char** input, int length) {
+    |      |      ^~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'groupKeyValuePairs'
+    |......
+    |   45 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < length')...
+    |   46 |         char* key = input[i];
+    |      |                          ~
+    |      |                          |
+    |      |                          (3) ...to here
+    |......
+    |   49 |         insertKeyValuePair(dictionary, key, value);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) calling 'insertKeyValuePair' from 'groupKeyValuePairs'
+    |
+    +--> 'insertKeyValuePair': events 5-6
+           |
+           |   23 | void insertKeyValuePair(Dictionary* dictionary, char* key, char* value) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'insertKeyValuePair'
+           |   24 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (6) allocated here
+           |
+         'insertKeyValuePair': events 7-9
+           |
+           |   27 |     newNode->next = NULL;
+           |      |                   ^
+           |      |                   |
+           |      |                   (7) assuming 'newNode' is non-NULL
+           |   28 | 
+           |   29 |     if (dictionary->head == NULL) {
+           |      |        ~           
+           |      |        |
+           |      |        (8) following 'true' branch...
+           |   30 |         dictionary->head = newNode;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (9) ...to here
+           |
+    <------+
+    |
+  'groupKeyValuePairs': events 10-12
+    |
+    |   45 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (11) following 'false' branch (when 'i >= length')...
+    |......
+    |   49 |         insertKeyValuePair(dictionary, key, value);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (10) returning to 'groupKeyValuePairs' from 'insertKeyValuePair'
+    |......
+    |   55 |     Node* current = dictionary->head;
+    |      |           ~~~~~~~
+    |      |           |
+    |      |           (12) ...to here
+    |
+  'groupKeyValuePairs': events 13-14
+    |
+    |   56 |     while (current != NULL) {
+    |      |                    ^
+    |      |                    |
+    |      |                    (13) following 'true' branch (when 'current' is non-NULL)...
+    |   57 |         printf("%s: %s\n", current->key, current->value);
+    |      |                                          ~~~~~~~~~~~~~~
+    |      |                                                 |
+    |      |                                                 (14) ...to here
+    |
+  'groupKeyValuePairs': events 15-17
+    |
+    |   56 |     while (current != NULL) {
+    |      |                    ^
+    |      |                    |
+    |      |                    (15) following 'false' branch (when 'current' is NULL)...
+    |   57 |         printf("%s: %s\n", current->key, current->value);
+    |   58 |         current = current->next;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (17) 'current' leaks here; was allocated at (6)
+    |   59 |     }
+    |   60 | }
+    |      | ~                   
+    |      | |
+    |      | (16) ...to here
+    |
+collected_code/problem-174-0.c:60:1: warning: leak of 'dictionary' [CWE-401] [-Wanalyzer-malloc-leak]
+   60 | }
+      | ^
+  'groupKeyValuePairs': events 1-2
+    |
+    |   42 | void groupKeyValuePairs(char** input, int length) {
+    |      |      ^~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'groupKeyValuePairs'
+    |   43 |     Dictionary* dictionary = createDictionary();
+    |      |                              ~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) calling 'createDictionary' from 'groupKeyValuePairs'
+    |
+    +--> 'createDictionary': events 3-4
+           |
+           |   16 | Dictionary* createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   17 |     Dictionary* dictionary = (Dictionary*)malloc(sizeof(Dictionary));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) allocated here
+           |
+         'createDictionary': event 5
+           |
+           |   18 |     dictionary->head = NULL;
+           |      |                      ^
+           |      |                      |
+           |      |                      (5) assuming 'dictionary' is non-NULL
+           |
+    <------+
+    |
+  'groupKeyValuePairs': events 6-8
+    |
+    |   43 |     Dictionary* dictionary = createDictionary();
+    |      |                              ^~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (6) returning to 'groupKeyValuePairs' from 'createDictionary'
+    |   44 | 
+    |   45 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (7) following 'false' branch (when 'i >= length')...
+    |......
+    |   55 |     Node* current = dictionary->head;
+    |      |           ~~~~~~~             
+    |      |           |
+    |      |           (8) ...to here
+    |
+  'groupKeyValuePairs': events 9-11
+    |
+    |   56 |     while (current != NULL) {
+    |      |                    ^
+    |      |                    |
+    |      |                    (9) following 'false' branch (when 'current' is NULL)...
+    |......
+    |   60 | }
+    |      | ~                   
+    |      | |
+    |      | (10) ...to here
+    |      | (11) 'dictionary' leaks here; was allocated at (4)
+    |
+collected_code/problem-174-0.c:60:1: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   60 | }
+      | ^
+  'groupKeyValuePairs': events 1-4
+    |
+    |   42 | void groupKeyValuePairs(char** input, int length) {
+    |      |      ^~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'groupKeyValuePairs'
+    |......
+    |   45 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < length')...
+    |   46 |         char* key = input[i];
+    |      |                          ~
+    |      |                          |
+    |      |                          (3) ...to here
+    |......
+    |   49 |         insertKeyValuePair(dictionary, key, value);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) calling 'insertKeyValuePair' from 'groupKeyValuePairs'
+    |
+    +--> 'insertKeyValuePair': events 5-7
+           |
+           |   23 | void insertKeyValuePair(Dictionary* dictionary, char* key, char* value) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'insertKeyValuePair'
+           |......
+           |   29 |     if (dictionary->head == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'true' branch...
+           |   30 |         dictionary->head = newNode;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (7) ...to here
+           |
+    <------+
+    |
+  'groupKeyValuePairs': events 8-11
+    |
+    |   45 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (9) following 'true' branch (when 'i < length')...
+    |   46 |         char* key = input[i];
+    |      |                          ~
+    |      |                          |
+    |      |                          (10) ...to here
+    |......
+    |   49 |         insertKeyValuePair(dictionary, key, value);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (8) returning to 'groupKeyValuePairs' from 'insertKeyValuePair'
+    |      |         (11) calling 'insertKeyValuePair' from 'groupKeyValuePairs'
+    |
+    +--> 'insertKeyValuePair': events 12-13
+           |
+           |   23 | void insertKeyValuePair(Dictionary* dictionary, char* key, char* value) {
+           |      |      ^~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (12) entry to 'insertKeyValuePair'
+           |   24 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (13) allocated here
+           |
+         'insertKeyValuePair': events 14-16
+           |
+           |   27 |     newNode->next = NULL;
+           |      |                   ^
+           |      |                   |
+           |      |                   (14) assuming 'newNode' is non-NULL
+           |   28 | 
+           |   29 |     if (dictionary->head == NULL) {
+           |      |        ~           
+           |      |        |
+           |      |        (15) following 'false' branch...
+           |......
+           |   32 |         Node* current = dictionary->head;
+           |      |               ~~~~~~~
+           |      |               |
+           |      |               (16) ...to here
+           |
+         'insertKeyValuePair': events 17-18
+           |
+           |   33 |         while (current->next != NULL) {
+           |      |                              ^
+           |      |                              |
+           |      |                              (17) following 'false' branch...
+           |......
+           |   36 |         current->next = newNode;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) ...to here
+           |
+    <------+
+    |
+  'groupKeyValuePairs': events 19-21
+    |
+    |   45 |     for (int i = 0; i < length; i++) {
+    |      |                     ~~~~~~~~~~
+    |      |                       |
+    |      |                       (20) following 'false' branch (when 'i >= length')...
+    |......
+    |   49 |         insertKeyValuePair(dictionary, key, value);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (19) returning to 'groupKeyValuePairs' from 'insertKeyValuePair'
+    |......
+    |   55 |     Node* current = dictionary->head;
+    |      |           ~~~~~~~
+    |      |           |
+    |      |           (21) ...to here
+    |
+  'groupKeyValuePairs': events 22-23
+    |
+    |   56 |     while (current != NULL) {
+    |      |                    ^
+    |      |                    |
+    |      |                    (22) following 'true' branch (when 'current' is non-NULL)...
+    |   57 |         printf("%s: %s\n", current->key, current->value);
+    |      |                                          ~~~~~~~~~~~~~~
+    |      |                                                 |
+    |      |                                                 (23) ...to here
+    |
+  'groupKeyValuePairs': events 24-25
+    |
+    |   56 |     while (current != NULL) {
+    |      |                    ^
+    |      |                    |
+    |      |                    (24) following 'true' branch (when 'current' is non-NULL)...
+    |   57 |         printf("%s: %s\n", current->key, current->value);
+    |      |                                          ~~~~~~~~~~~~~~
+    |      |                                                 |
+    |      |                                                 (25) ...to here
+    |
+  'groupKeyValuePairs': events 26-28
+    |
+    |   56 |     while (current != NULL) {
+    |      |                    ^
+    |      |                    |
+    |      |                    (26) following 'false' branch (when 'current' is NULL)...
+    |......
+    |   60 | }
+    |      | ~                   
+    |      | |
+    |      | (27) ...to here
+    |      | (28) '<unknown>' leaks here; was allocated at (13)
+    |

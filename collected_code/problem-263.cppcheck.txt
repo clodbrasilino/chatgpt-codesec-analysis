@@ -1,0 +1,27 @@
+collected_code/problem-263-0.c:11:35: error: Cannot determine that 'dictionary1[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strcmp(dictionary1[j], dictionary2[i]) == 0) {
+                                  ^
+collected_code/problem-263-0.c:11:51: error: Cannot determine that 'dictionary2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (strcmp(dictionary1[j], dictionary2[i]) == 0) {
+                                                  ^
+collected_code/problem-263-0.c:17:31: error: Cannot determine that 'dictionary1[size1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            strcpy(dictionary1[size1], dictionary2[i]);
+                              ^
+collected_code/problem-263-0.c:17:51: error: Cannot determine that 'dictionary2[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            strcpy(dictionary1[size1], dictionary2[i]);
+                                                  ^
+collected_code/problem-263-0.c:29:18: error: Cannot determine that 'size1' is initialized [premium-bughuntingUninit]
+    scanf("%d", &size1);
+                 ^
+collected_code/problem-263-0.c:34:32: error: Cannot determine that 'dictionary1[i]' is initialized [premium-bughuntingUninit]
+        scanf("%s", dictionary1[i]);
+                               ^
+collected_code/problem-263-0.c:39:18: error: Cannot determine that 'size2' is initialized [premium-bughuntingUninit]
+    scanf("%d", &size2);
+                 ^
+collected_code/problem-263-0.c:44:32: error: Cannot determine that 'dictionary2[i]' is initialized [premium-bughuntingUninit]
+        scanf("%s", dictionary2[i]);
+                               ^
+collected_code/problem-263-0.c:53:35: error: Cannot determine that 'dictionary1[i]' is initialized [premium-bughuntingUninit]
+        printf("%s\n", dictionary1[i]);
+                                  ^

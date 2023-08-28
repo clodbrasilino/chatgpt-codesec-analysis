@@ -1,0 +1,18 @@
+collected_code/problem-829-0.c: In function 'main':
+collected_code/problem-829-0.c:62:26: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   62 |     sequence[i] = (char*)malloc(MAX_SIZE * sizeof(char));
+      |                          ^~~~~~
+collected_code/problem-829-0.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+collected_code/problem-829-0.c:62:26: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   62 |     sequence[i] = (char*)malloc(MAX_SIZE * sizeof(char));
+      |                          ^~~~~~
+collected_code/problem-829-0.c:62:26: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/problem-829-0.c:76:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   76 |     free(sequence[i]);
+      |     ^~~~
+collected_code/problem-829-0.c:76:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/problem-829-0.c:76:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code/problem-829-0.c:76:5: note: include '<stdlib.h>' or provide a declaration of 'free'

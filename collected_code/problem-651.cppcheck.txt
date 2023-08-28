@@ -1,0 +1,6 @@
+collected_code/problem-651-0.c:10:23: error: Cannot determine that 'tuple1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (tuple1[i] == tuple2[j]) {
+                      ^
+collected_code/problem-651-0.c:10:36: error: Cannot determine that 'tuple2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            if (tuple1[i] == tuple2[j]) {
+                                   ^

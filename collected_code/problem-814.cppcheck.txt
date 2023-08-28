@@ -1,0 +1,12 @@
+collected_code/problem-814-0.c:12:18: error: Cannot determine that 'diagonal1' is initialized [premium-bughuntingUninit]
+    scanf("%f", &diagonal1);
+                 ^
+collected_code/problem-814-0.c:15:18: error: Cannot determine that 'diagonal2' is initialized [premium-bughuntingUninit]
+    scanf("%f", &diagonal2);
+                 ^
+collected_code/problem-814-0.c:17:38: error: Cannot determine that 'diagonal1' is initialized [premium-bughuntingUninit]
+    float area = calculateRombusArea(diagonal1, diagonal2);
+                                     ^
+collected_code/problem-814-0.c:17:49: error: Cannot determine that 'diagonal2' is initialized [premium-bughuntingUninit]
+    float area = calculateRombusArea(diagonal1, diagonal2);
+                                                ^

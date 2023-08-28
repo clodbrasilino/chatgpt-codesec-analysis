@@ -1,0 +1,9 @@
+collected_code/problem-553-0.c:4:28: error: Cannot determine that 'tuple[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int integerPart = tuple[0];
+                           ^
+collected_code/problem-553-0.c:5:28: error: Cannot determine that 'tuple[1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int decimalPart = tuple[1];
+                           ^
+collected_code/problem-553-0.c:6:27: error: Cannot determine that 'tuple[2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int powerOfTen = tuple[2];
+                          ^

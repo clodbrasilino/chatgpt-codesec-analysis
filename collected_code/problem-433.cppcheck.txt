@@ -1,0 +1,9 @@
+collected_code/problem-433-0.c:6:24: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      if (number <= arr[i]) { // If number is less than or equal to any element in the array
+                       ^
+collected_code/problem-433-0.c:16:17: error: Cannot determine that 'number' is initialized [premium-bughuntingUninit]
+   scanf("%d", &number);
+                ^
+collected_code/problem-433-0.c:18:17: error: Cannot determine that 'arrSize' is initialized [premium-bughuntingUninit]
+   scanf("%d", &arrSize);
+                ^

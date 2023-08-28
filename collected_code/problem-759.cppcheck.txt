@@ -1,0 +1,9 @@
+collected_code/problem-759-0.c:9:13: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    sprintf(str, "%f", num);
+            ^
+collected_code/problem-759-0.c:26:18: error: Cannot determine that 'num' is initialized [premium-bughuntingUninit]
+    scanf("%f", &num);
+                 ^
+collected_code/problem-759-0.c:28:31: error: Cannot determine that 'num' is initialized [premium-bughuntingUninit]
+    if (checkDecimalPrecision(num)) {
+                              ^

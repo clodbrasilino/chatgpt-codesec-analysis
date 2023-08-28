@@ -1,0 +1,12 @@
+collected_code/problem-188-0.c:9:32: error: Division by zero. [zerodiv]
+        int remaining = number / (i * i);
+                               ^
+collected_code/problem-188-0.c:8:18: note: Assignment 'i=0', assigned value is 0
+    for (int i = 0; i * i <= number; i++) {
+                 ^
+collected_code/problem-188-0.c:9:32: note: Division by zero
+        int remaining = number / (i * i);
+                               ^
+collected_code/problem-188-0.c:20:18: error: Cannot determine that 'num' is initialized [premium-bughuntingUninit]
+    scanf("%d", &num);
+                 ^

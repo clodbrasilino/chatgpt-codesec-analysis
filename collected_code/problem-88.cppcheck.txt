@@ -1,0 +1,15 @@
+collected_code/problem-88-0.c:8:18: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[arr[i]]++;
+                 ^
+collected_code/problem-88-0.c:13:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (count[arr[i]] != 0) {
+                     ^
+collected_code/problem-88-0.c:14:35: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d: %d\n", arr[i], count[arr[i]]);
+                                  ^
+collected_code/problem-88-0.c:15:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            count[arr[i]] = 0;
+                     ^
+collected_code/problem-88-0.c:23:18: error: Cannot determine that 'size' is initialized [premium-bughuntingUninit]
+    scanf("%d", &size);
+                 ^

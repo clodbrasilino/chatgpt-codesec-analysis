@@ -1,0 +1,9 @@
+collected_code/problem-864-0.c:5:22: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int len = strlen(str);
+                     ^
+collected_code/problem-864-0.c:16:33: error: Cannot determine that 'strings[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (isPalindrome(strings[i])) {
+                                ^
+collected_code/problem-864-0.c:17:52: error: Cannot determine that 'strings[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%s is a palindrome.\n", strings[i]);
+                                                   ^

@@ -1,0 +1,24 @@
+collected_code/problem-182-0.c:11:53: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    printf("Uppercase letter found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+                                                    ^
+collected_code/problem-182-0.c:12:19: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    str += matches[0].rm_eo;
+                  ^
+collected_code/problem-182-0.c:19:53: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    printf("Lowercase letter found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+                                                    ^
+collected_code/problem-182-0.c:20:19: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    str += matches[0].rm_eo;
+                  ^
+collected_code/problem-182-0.c:27:54: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    printf("Special character found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+                                                     ^
+collected_code/problem-182-0.c:28:19: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    str += matches[0].rm_eo;
+                  ^
+collected_code/problem-182-0.c:35:50: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    printf("Numeric value found: %.*s\n", matches[0].rm_eo - matches[0].rm_so, &str[matches[0].rm_so]);
+                                                 ^
+collected_code/problem-182-0.c:36:19: error: Cannot determine that 'matches[0]' is initialized [premium-bughuntingUninit]
+    str += matches[0].rm_eo;
+                  ^

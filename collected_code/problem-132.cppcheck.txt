@@ -1,0 +1,6 @@
+collected_code/problem-132-0.c:5:13: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    sprintf(str, "(%d, %d, %d)", tuple >> 16, (tuple >> 8) & 0xFF, tuple & 0xFF);
+            ^
+collected_code/problem-132-0.c:14:20: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    printf("%s\n", str);
+                   ^

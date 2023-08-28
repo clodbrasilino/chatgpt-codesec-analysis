@@ -1,0 +1,96 @@
+collected_code/problem-902-0.c: In function 'combineDictionaries':
+collected_code/problem-902-0.c:27:25: warning: use of uninitialized value 'k' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   27 |             dict3[size1 + k] = dict2[i]; // Adding new key
+      |                   ~~~~~~^~~
+  'combineDictionaries': events 1-7
+    |
+    |    6 |     int i, j, k;
+    |      |               ^
+    |      |               |
+    |      |               (1) region created on stack here
+    |      |               (2) capacity: 4 bytes
+    |......
+    |   14 |     for (i = 0; i < size2; i++) {
+    |      |                 ~~~~~~~~~
+    |      |                   |
+    |      |                   (3) following 'true' branch (when 'i < size2')...
+    |   15 |         int flag = 0; // Flag to check if key is already present in dict3
+    |      |             ~~~~
+    |      |             |
+    |      |             (4) ...to here
+    |......
+    |   26 |         if (flag == 0) {
+    |      |            ~   
+    |      |            |
+    |      |            (5) following 'true' branch (when 'flag == 0')...
+    |   27 |             dict3[size1 + k] = dict2[i]; // Adding new key
+    |      |                   ~~~~~~~~~         ~
+    |      |                         |           |
+    |      |                         |           (6) ...to here
+    |      |                         (7) use of uninitialized value 'k' here
+    |
+collected_code/problem-902-0.c:27:25: warning: use of uninitialized value 'k' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   27 |             dict3[size1 + k] = dict2[i]; // Adding new key
+      |                   ~~~~~~^~~
+  'main': events 1-2
+    |
+    |   39 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   48 |     combineDictionaries(dict1, dict2, size1, size2);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'combineDictionaries' from 'main'
+    |
+    +--> 'combineDictionaries': events 3-14
+           |
+           |    4 | void combineDictionaries(int dict1[], int dict2[], int size1, int size2) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'combineDictionaries'
+           |    5 |     int dict3[size1 + size2]; // Combined dictionary
+           |    6 |     int i, j, k;
+           |      |               ~
+           |      |               |
+           |      |               (4) region created on stack here
+           |      |               (5) capacity: 4 bytes
+           |......
+           |    9 |     for (i = 0; i < size1; i++) {
+           |      |                 ~~~~~~~~~
+           |      |                   |
+           |      |                   (6) following 'true' branch (when 'i < size1')...
+           |   10 |         dict3[i] = dict1[i];
+           |      |                         ~
+           |      |                         |
+           |      |                         (7) ...to here
+           |......
+           |   14 |     for (i = 0; i < size2; i++) {
+           |      |                 ~~~~~~~~~
+           |      |                   |
+           |      |                   (8) following 'true' branch (when 'i < size2')...
+           |   15 |         int flag = 0; // Flag to check if key is already present in dict3
+           |      |             ~~~~
+           |      |             |
+           |      |             (9) ...to here
+           |......
+           |   18 |         for (j = 0; j < size1; j++) {
+           |      |                     ~~~~~~~~~
+           |      |                       |
+           |      |                       (10) following 'true' branch (when 'j < size1')...
+           |   19 |             if (dict2[i] == dict3[j]) {
+           |      |                      ~
+           |      |                      |
+           |      |                      (11) ...to here
+           |......
+           |   26 |         if (flag == 0) {
+           |      |            ~
+           |      |            |
+           |      |            (12) following 'true' branch (when 'flag == 0')...
+           |   27 |             dict3[size1 + k] = dict2[i]; // Adding new key
+           |      |                   ~~~~~~~~~         ~
+           |      |                         |           |
+           |      |                         |           (13) ...to here
+           |      |                         (14) use of uninitialized value 'k' here
+           |

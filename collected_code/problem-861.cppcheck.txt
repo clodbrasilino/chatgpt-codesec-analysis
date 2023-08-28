@@ -1,0 +1,12 @@
+collected_code/problem-861-0.c:7:26: error: Cannot determine that 'str1[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int length1 = strlen(str1);
+                         ^
+collected_code/problem-861-0.c:8:26: error: Cannot determine that 'str2[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int length2 = strlen(str2);
+                         ^
+collected_code/problem-861-0.c:28:39: error: Cannot determine that 'wordList[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (areAnagrams(word, wordList[i])) {
+                                      ^
+collected_code/problem-861-0.c:29:36: error: Cannot determine that 'wordList[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%s\n", wordList[i]);
+                                   ^

@@ -1,0 +1,21 @@
+collected_code/problem-674-0.c:30:20: warning: Uninitialized variable: wordArray [uninitvar]
+    strcpy(string, wordArray[0]);
+                   ^
+collected_code/problem-674-0.c:10:17: note: Assuming condition is false
+    while (word != NULL) {
+                ^
+collected_code/problem-674-0.c:30:20: note: Uninitialized variable: wordArray
+    strcpy(string, wordArray[0]);
+                   ^
+collected_code/problem-674-0.c:5:20: error: Cannot determine that 'wordArray[100]' is initialized [premium-bughuntingUninit]
+    char *wordArray[100];
+                   ^
+collected_code/problem-674-0.c:9:25: error: Cannot determine that 'string[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    char *word = strtok(string, " ");
+                        ^
+collected_code/problem-674-0.c:30:29: error: Cannot determine that 'wordArray[0]' is initialized [premium-bughuntingUninit]
+    strcpy(string, wordArray[0]);
+                            ^
+collected_code/problem-674-0.c:33:33: error: Cannot determine that 'wordArray[i]' is initialized [premium-bughuntingUninit]
+        strcat(string, wordArray[i]);
+                                ^

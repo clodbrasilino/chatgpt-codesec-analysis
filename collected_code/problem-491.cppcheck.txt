@@ -1,0 +1,15 @@
+collected_code/problem-491-0.c:15:19: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &a);
+                  ^
+collected_code/problem-491-0.c:17:19: error: Cannot determine that 'r' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &r);
+                  ^
+collected_code/problem-491-0.c:19:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^
+collected_code/problem-491-0.c:20:31: error: Cannot determine that 'a' is initialized [premium-bughuntingUninit]
+    double sum = geometricSum(a, r, n);
+                              ^
+collected_code/problem-491-0.c:20:34: error: Cannot determine that 'r' is initialized [premium-bughuntingUninit]
+    double sum = geometricSum(a, r, n);
+                                 ^

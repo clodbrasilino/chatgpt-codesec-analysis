@@ -1,0 +1,12 @@
+collected_code/problem-638-0.c: In function 'calculate_wind_chill_index':
+collected_code/problem-638-0.c:6:63: warning: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+    6 |     wind_chill_index = 35.74 + 0.6215 * temperature - 35.75 * pow(wind_speed, 0.16) + 0.4275 * temperature * pow(wind_speed, 0.16);
+      |                                                               ^~~
+collected_code/problem-638-0.c:2:1: note: include '<math.h>' or provide a declaration of 'pow'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code/problem-638-0.c:6:63: warning: incompatible implicit declaration of built-in function 'pow' [-Wbuiltin-declaration-mismatch]
+    6 |     wind_chill_index = 35.74 + 0.6215 * temperature - 35.75 * pow(wind_speed, 0.16) + 0.4275 * temperature * pow(wind_speed, 0.16);
+      |                                                               ^~~
+collected_code/problem-638-0.c:6:63: note: include '<math.h>' or provide a declaration of 'pow'

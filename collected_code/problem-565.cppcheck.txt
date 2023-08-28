@@ -1,0 +1,6 @@
+collected_code/problem-565-0.c:5:24: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+   int length = strlen(str);
+                       ^
+collected_code/problem-565-0.c:18:10: error: Cannot determine that 'input[0]' is initialized [premium-bughuntingUninit]
+   fgets(input, sizeof(input), stdin);
+         ^

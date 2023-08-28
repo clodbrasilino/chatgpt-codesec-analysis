@@ -1,0 +1,15 @@
+collected_code/problem-780-0.c:8:33: error: Cannot determine that 'tuple[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d, ", tuple[i]);
+                                ^
+collected_code/problem-780-0.c:10:31: error: Cannot determine that 'tuple[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d", tuple[i]);
+                              ^
+collected_code/problem-780-0.c:19:18: error: Cannot determine that 'tuple[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (tuple[0] + tuple[1] == targetSum) {
+                 ^
+collected_code/problem-780-0.c:19:29: error: Cannot determine that 'tuple[1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (tuple[0] + tuple[1] == targetSum) {
+                            ^
+collected_code/problem-780-0.c:29:40: error: Cannot determine that 'tupleList[index][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    tuple[tupleSize] = tupleList[index][0];
+                                       ^

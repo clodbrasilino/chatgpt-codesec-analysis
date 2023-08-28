@@ -1,0 +1,9 @@
+collected_code/problem-607-0.c:7:34: error: Cannot determine that 'pattern[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int result = regcomp(&regex, pattern, REG_EXTENDED);
+                                 ^
+collected_code/problem-607-0.c:14:30: error: Cannot determine that 'string[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    result = regexec(&regex, string, 1, &match, 0);
+                             ^
+collected_code/problem-607-0.c:23:34: error: Cannot determine that 'error_message[0]' is initialized [premium-bughuntingUninit]
+        regerror(result, &regex, error_message, sizeof(error_message));
+                                 ^

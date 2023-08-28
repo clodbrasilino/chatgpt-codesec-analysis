@@ -1,0 +1,15 @@
+collected_code/problem-917-0.c:5:15: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (str[i] != '\0') {
+              ^
+collected_code/problem-917-0.c:6:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+               ^
+collected_code/problem-917-0.c:7:24: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            putchar(str[i]);
+                       ^
+collected_code/problem-917-0.c:9:23: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            while (str[i] >= 'a' && str[i] <= 'z') {
+                      ^
+collected_code/problem-917-0.c:10:28: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+                putchar(str[i]);
+                           ^

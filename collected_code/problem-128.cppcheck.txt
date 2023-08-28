@@ -1,0 +1,6 @@
+collected_code/problem-128-0.c:8:25: error: Cannot determine that 'words[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (strlen(words[i]) > n) {
+                        ^
+collected_code/problem-128-0.c:9:33: error: Cannot determine that 'words[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%s\n", words[i]);
+                                ^

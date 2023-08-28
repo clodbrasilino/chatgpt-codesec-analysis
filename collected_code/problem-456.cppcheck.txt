@@ -1,0 +1,9 @@
+collected_code/problem-456-0.c:6:28: error: Cannot determine that 'strings[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        char* str = strings[i];
+                           ^
+collected_code/problem-456-0.c:7:26: error: Cannot determine that 'str' is initialized [premium-bughuntingUninit]
+        int len = strlen(str);
+                         ^
+collected_code/problem-456-0.c:10:13: error: Cannot determine that 'str' is initialized [premium-bughuntingUninit]
+            str[j] = str[len - j - 1];
+            ^

@@ -1,0 +1,6 @@
+collected_code/problem-936-0.c:6:25: error: Cannot determine that 'orderedList[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        temp[orderedList[i]] = tuples[i];
+                        ^
+collected_code/problem-936-0.c:6:38: error: Cannot determine that 'tuples[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        temp[orderedList[i]] = tuples[i];
+                                     ^

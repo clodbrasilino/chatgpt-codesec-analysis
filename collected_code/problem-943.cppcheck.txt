@@ -1,0 +1,21 @@
+collected_code/problem-943-0.c:7:18: error: Cannot determine that 'list1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (list1[i] < list2[j]) {
+                 ^
+collected_code/problem-943-0.c:7:29: error: Cannot determine that 'list2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (list1[i] < list2[j]) {
+                            ^
+collected_code/problem-943-0.c:8:36: error: Cannot determine that 'list1[i++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            mergedList[k++] = list1[i++];
+                                   ^
+collected_code/problem-943-0.c:10:36: error: Cannot determine that 'list2[j++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            mergedList[k++] = list2[j++];
+                                   ^
+collected_code/problem-943-0.c:15:32: error: Cannot determine that 'list1[i++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        mergedList[k++] = list1[i++];
+                               ^
+collected_code/problem-943-0.c:19:32: error: Cannot determine that 'list2[j++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        mergedList[k++] = list2[j++];
+                               ^
+collected_code/problem-943-0.c:36:33: error: Cannot determine that 'mergedList[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", mergedList[i]);
+                                ^

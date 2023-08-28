@@ -1,0 +1,15 @@
+collected_code/problem-275-0.c:13:12: warning: Uninitialized variable: lastRemovedPos [uninitvar]
+    return lastRemovedPos;
+           ^
+collected_code/problem-275-0.c:7:19: note: Assuming condition is false
+    for (i = 0; i < n; i++) {
+                  ^
+collected_code/problem-275-0.c:13:12: note: Uninitialized variable: lastRemovedPos
+    return lastRemovedPos;
+           ^
+collected_code/problem-275-0.c:5:29: error: Cannot determine that 'arr[n-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int removedElement = arr[n - 1];
+                            ^
+collected_code/problem-275-0.c:8:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] == removedElement) {
+               ^

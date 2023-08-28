@@ -1,0 +1,12 @@
+collected_code/problem-36-0.c:17:13: error: Cannot determine that 'fractionString[0]' is initialized [premium-bughuntingUninit]
+    sprintf(fractionString, "%.15f", properFraction);
+            ^
+collected_code/problem-36-0.c:28:18: error: Cannot determine that 'numerator' is initialized [premium-bughuntingUninit]
+    scanf("%d", &numerator);
+                 ^
+collected_code/problem-36-0.c:30:18: error: Cannot determine that 'denominator' is initialized [premium-bughuntingUninit]
+    scanf("%d", &denominator);
+                 ^
+collected_code/problem-36-0.c:32:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^

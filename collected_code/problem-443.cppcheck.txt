@@ -1,0 +1,6 @@
+collected_code/problem-443-0.c:7:15: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(arr[i] < 0 && arr[i] < largest) {
+              ^
+collected_code/problem-443-0.c:8:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            largest = arr[i];
+                         ^

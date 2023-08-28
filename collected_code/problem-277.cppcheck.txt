@@ -1,0 +1,6 @@
+collected_code/problem-277-0.c:6:22: error: Cannot determine that 'dictionary[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(dictionary[i] == value) {
+                     ^
+collected_code/problem-277-0.c:7:38: error: Cannot determine that 'dictionary[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            printf("%d\n", dictionary[i]);
+                                     ^

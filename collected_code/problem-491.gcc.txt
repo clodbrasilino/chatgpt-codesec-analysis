@@ -1,0 +1,12 @@
+collected_code/problem-491-0.c: In function 'geometricSum':
+collected_code/problem-491-0.c:6:20: warning: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+    6 |         sum += a * pow(r, i);
+      |                    ^~~
+collected_code/problem-491-0.c:2:1: note: include '<math.h>' or provide a declaration of 'pow'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+collected_code/problem-491-0.c:6:20: warning: incompatible implicit declaration of built-in function 'pow' [-Wbuiltin-declaration-mismatch]
+    6 |         sum += a * pow(r, i);
+      |                    ^~~
+collected_code/problem-491-0.c:6:20: note: include '<math.h>' or provide a declaration of 'pow'

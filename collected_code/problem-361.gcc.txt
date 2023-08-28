@@ -1,0 +1,31 @@
+collected_code/problem-361-0.c: In function 'main':
+collected_code/problem-361-0.c:35:17: warning: dereference of possibly-NULL 'list1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |     list1->data = -1;
+      |     ~~~~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   32 |     Node* list1 = (Node*)malloc(sizeof(Node));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |......
+    |   35 |     list1->data = -1;
+    |      |     ~~~~~~~~~~~~~~~~      
+    |      |                 |
+    |      |                 (2) 'list1' could be NULL: unchecked value from (1)
+    |
+collected_code/problem-361-0.c:37:17: warning: dereference of possibly-NULL 'list2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   37 |     list2->data = 2;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   33 |     Node* list2 = (Node*)malloc(sizeof(Node));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |......
+    |   37 |     list2->data = 2;
+    |      |     ~~~~~~~~~~~~~~~       
+    |      |                 |
+    |      |                 (2) 'list2' could be NULL: unchecked value from (1)
+    |

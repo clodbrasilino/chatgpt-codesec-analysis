@@ -1,0 +1,59 @@
+collected_code/problem-342-0.c: In function 'findSmallestRange':
+collected_code/problem-342-0.c:41:12: warning: stack-based buffer under-read [CWE-127] [-Wanalyzer-out-of-bounds]
+   41 |         ptr[minIndex]++;
+      |         ~~~^~~~~~~~~~
+  'findSmallestRange': events 1-5
+    |
+    |   20 |         for (i = 0; i < numRows; i++) {
+    |      |                     ~~^~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'false' branch (when 'i >= numRows')...
+    |......
+    |   35 |         range = max - min;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   36 | 
+    |   37 |         if (range < minRange) {
+    |      |            ~           
+    |      |            |
+    |      |            (3) following 'true' branch (when 'range < minRange')...
+    |   38 |             minRange = range;
+    |      |             ~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (4) ...to here
+    |......
+    |   41 |         ptr[minIndex]++;
+    |      |         ~~~~~~~~~~~~~  
+    |      |            |
+    |      |            (5) out-of-bounds read from byte -4 till byte -1 but region starts at byte 0
+    |
+collected_code/problem-342-0.c:41:22: warning: stack-based buffer underwrite [CWE-124] [-Wanalyzer-out-of-bounds]
+   41 |         ptr[minIndex]++;
+      |         ~~~~~~~~~~~~~^~
+  'findSmallestRange': events 1-5
+    |
+    |   20 |         for (i = 0; i < numRows; i++) {
+    |      |                     ~~^~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'false' branch (when 'i >= numRows')...
+    |......
+    |   35 |         range = max - min;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) ...to here
+    |   36 | 
+    |   37 |         if (range < minRange) {
+    |      |            ~           
+    |      |            |
+    |      |            (3) following 'true' branch (when 'range < minRange')...
+    |   38 |             minRange = range;
+    |      |             ~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (4) ...to here
+    |......
+    |   41 |         ptr[minIndex]++;
+    |      |         ~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (5) out-of-bounds write from byte -4 till byte -1 but region starts at byte 0
+    |

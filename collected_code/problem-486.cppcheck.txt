@@ -1,0 +1,12 @@
+collected_code/problem-486-0.c:24:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^
+collected_code/problem-486-0.c:27:18: error: Cannot determine that 'k' is initialized [premium-bughuntingUninit]
+    scanf("%d", &k);
+                 ^
+collected_code/problem-486-0.c:30:19: error: Cannot determine that 'p' is initialized [premium-bughuntingUninit]
+    scanf("%lf", &p);
+                  ^
+collected_code/problem-486-0.c:32:47: error: Cannot determine that 'p' is initialized [premium-bughuntingUninit]
+    double result = binomialProbability(n, k, p);
+                                              ^

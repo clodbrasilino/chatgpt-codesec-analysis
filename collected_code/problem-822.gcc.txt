@@ -1,0 +1,26 @@
+collected_code/problem-822-0.c:1:1: error: unknown type name 'bool'
+    1 | bool isValidPassword(const char* password) {
+      | ^~~~
+collected_code/problem-822-0.c:1:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  +++ |+#include <stdbool.h>
+    1 | bool isValidPassword(const char* password) {
+collected_code/problem-822-0.c: In function 'isValidPassword':
+collected_code/problem-822-0.c:12:16: error: 'false' undeclared (first use in this function)
+   12 |         return false;
+      |                ^~~~~
+collected_code/problem-822-0.c:12:16: note: 'false' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+collected_code/problem-822-0.c:12:16: note: each undeclared identifier is reported only once for each function it appears in
+collected_code/problem-822-0.c:17:13: warning: implicit declaration of function 'islower' [-Wimplicit-function-declaration]
+   17 |         if (islower(password[i])) {
+      |             ^~~~~~~
+collected_code/problem-822-0.c:1:1: note: include '<ctype.h>' or provide a declaration of 'islower'
+  +++ |+#include <ctype.h>
+    1 | bool isValidPassword(const char* password) {
+collected_code/problem-822-0.c:19:20: warning: implicit declaration of function 'isupper' [-Wimplicit-function-declaration]
+   19 |         } else if (isupper(password[i])) {
+      |                    ^~~~~~~
+collected_code/problem-822-0.c:19:20: note: include '<ctype.h>' or provide a declaration of 'isupper'
+collected_code/problem-822-0.c:21:20: warning: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+   21 |         } else if (isdigit(password[i])) {
+      |                    ^~~~~~~
+collected_code/problem-822-0.c:21:20: note: include '<ctype.h>' or provide a declaration of 'isdigit'

@@ -1,0 +1,218 @@
+collected_code/problem-862-0.c: In function 'findMostCommonWords':
+collected_code/problem-862-0.c:61:60: warning: use of uninitialized value 'wordList.words[j].count' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   61 |             if (wordList.words[i].count < wordList.words[j].count) {
+      |                                           ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   83 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   92 |     WordList commonWords = findMostCommonWords(text, n);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'findMostCommonWords' from 'main'
+    |
+    +--> 'findMostCommonWords': events 3-4
+           |
+           |   29 | WordList findMostCommonWords(char *text, int n) {
+           |      |          ^~~~~~~~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'findMostCommonWords'
+           |   30 |     WordList wordList;
+           |      |              ~~~~~~~~
+           |      |              |
+           |      |              (4) region created on stack here
+           |
+         'findMostCommonWords': events 5-9
+           |
+           |   37 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (5) following 'true' branch (when 'token' is non-NULL)...
+           |   38 |         int i, found = 0;
+           |      |                ~~~~~
+           |      |                |
+           |      |                (6) ...to here
+           |   39 | 
+           |   40 |         for (i = 0; i < wordList.size; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (7) following 'false' branch...
+           |......
+           |   48 |         if (!found) {
+           |      |            ~      
+           |      |            |
+           |      |            (8) ...to here
+           |      |            (9) following 'true' branch (when 'found == 0')...
+           |
+         'findMostCommonWords': event 10
+           |
+           |   50 |             strcpy(newWord.word, token);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (10) ...to here
+           |
+         'findMostCommonWords': events 11-23
+           |
+           |   37 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (11) following 'true' branch (when 'token' is non-NULL)...
+           |   38 |         int i, found = 0;
+           |      |                ~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |   39 | 
+           |   40 |         for (i = 0; i < wordList.size; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (13) following 'true' branch...
+           |   41 |             if (strcmp(wordList.words[i].word, token) == 0) {
+           |      |                ~       ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |                        |
+           |      |                |                        (14) ...to here
+           |      |                (15) following 'true' branch (when the strings are equal)...
+           |   42 |                 wordList.words[i].count++;
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (16) ...to here
+           |......
+           |   48 |         if (!found) {
+           |      |            ~      
+           |      |            |
+           |      |            (17) following 'false' branch (when 'found != 0')...
+           |......
+           |   56 |         token = strtok(NULL, " ");
+           |      |                 ~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (18) ...to here
+           |......
+           |   59 |     for (int i = 0; i < wordList.size; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (19) following 'true' branch...
+           |   60 |         for (int j = i + 1; j < wordList.size; j++) {
+           |      |                  ~          ~~~~~~~~~~~~~~~~~
+           |      |                  |            |
+           |      |                  |            (21) following 'true' branch...
+           |      |                  (20) ...to here
+           |   61 |             if (wordList.words[i].count < wordList.words[j].count) {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |                         |
+           |      |                                  (22) ...to here           (23) use of uninitialized value 'wordList.words[j].count' here
+           |
+collected_code/problem-862-0.c:77:30: warning: use of uninitialized value 'wordList.words[i]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   77 |         commonWords.words[i] = wordList.words[i];
+      |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   83 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   92 |     WordList commonWords = findMostCommonWords(text, n);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) calling 'findMostCommonWords' from 'main'
+    |
+    +--> 'findMostCommonWords': events 3-4
+           |
+           |   29 | WordList findMostCommonWords(char *text, int n) {
+           |      |          ^~~~~~~~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'findMostCommonWords'
+           |   30 |     WordList wordList;
+           |      |              ~~~~~~~~
+           |      |              |
+           |      |              (4) region created on stack here
+           |
+         'findMostCommonWords': events 5-9
+           |
+           |   37 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (5) following 'true' branch (when 'token' is non-NULL)...
+           |   38 |         int i, found = 0;
+           |      |                ~~~~~
+           |      |                |
+           |      |                (6) ...to here
+           |   39 | 
+           |   40 |         for (i = 0; i < wordList.size; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (7) following 'false' branch...
+           |......
+           |   48 |         if (!found) {
+           |      |            ~      
+           |      |            |
+           |      |            (8) ...to here
+           |      |            (9) following 'true' branch (when 'found == 0')...
+           |
+         'findMostCommonWords': event 10
+           |
+           |   50 |             strcpy(newWord.word, token);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (10) ...to here
+           |
+         'findMostCommonWords': events 11-27
+           |
+           |   37 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (11) following 'true' branch (when 'token' is non-NULL)...
+           |   38 |         int i, found = 0;
+           |      |                ~~~~~
+           |      |                |
+           |      |                (12) ...to here
+           |   39 | 
+           |   40 |         for (i = 0; i < wordList.size; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (13) following 'true' branch...
+           |   41 |             if (strcmp(wordList.words[i].word, token) == 0) {
+           |      |                ~       ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |                        |
+           |      |                |                        (14) ...to here
+           |      |                (15) following 'true' branch (when the strings are equal)...
+           |   42 |                 wordList.words[i].count++;
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (16) ...to here
+           |......
+           |   48 |         if (!found) {
+           |      |            ~      
+           |      |            |
+           |      |            (17) following 'false' branch (when 'found != 0')...
+           |......
+           |   56 |         token = strtok(NULL, " ");
+           |      |                 ~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (18) ...to here
+           |......
+           |   59 |     for (int i = 0; i < wordList.size; i++) {
+           |      |                     ~~~~~~~~~~~~~~~~~  ~~~
+           |      |                       |                 |
+           |      |                       |                 (22) ...to here
+           |      |                       (19) following 'true' branch...
+           |   60 |         for (int j = i + 1; j < wordList.size; j++) {
+           |      |                  ~          ~~~~~~~~~~~~~~~~~
+           |      |                  |            |
+           |      |                  |            (21) following 'false' branch...
+           |      |                  (20) ...to here
+           |......
+           |   76 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (23) following 'true' branch (when 'i < n')...
+           |      |                       (25) following 'true' branch (when 'i < n')...
+           |   77 |         commonWords.words[i] = wordList.words[i];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (24) ...to here
+           |      |                              (26) ...to here
+           |      |                              (27) use of uninitialized value 'wordList.words[i]' here
+           |

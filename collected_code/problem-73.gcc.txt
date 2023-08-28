@@ -1,0 +1,8 @@
+collected_code/problem-73-0.c: In function 'split_string':
+collected_code/problem-73-0.c:14:19: warning: implicit declaration of function 'strtok' [-Wimplicit-function-declaration]
+   14 |     char *token = strtok(string, delimiters);
+      |                   ^~~~~~
+collected_code/problem-73-0.c:14:19: warning: initialization of 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+collected_code/problem-73-0.c:17:15: warning: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   17 |         token = strtok(NULL, delimiters);
+      |               ^

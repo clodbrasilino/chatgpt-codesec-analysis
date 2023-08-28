@@ -1,0 +1,6 @@
+collected_code/problem-23-0.c:7:37: error: Cannot determine that 'colCount[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        for (int j = 0; j < colCount[i]; j++) {
+                                    ^
+collected_code/problem-23-0.c:8:27: error: Cannot determine that 'list[i][j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sum += list[i][j];
+                          ^

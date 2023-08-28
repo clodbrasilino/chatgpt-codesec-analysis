@@ -1,0 +1,6 @@
+collected_code/problem-727-0.c:17:27: error: Cannot determine that 'str[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    ret = regexec(&regex, str, 0, NULL, 0);
+                          ^
+collected_code/problem-727-0.c:33:21: error: Cannot determine that 'result[0]' is initialized [premium-bughuntingUninit]
+        strcpy(str, result);
+                    ^

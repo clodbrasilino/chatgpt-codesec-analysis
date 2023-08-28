@@ -1,0 +1,3 @@
+collected_code/problem-134-0.c:8:26: error: Cannot determine that 'arr[size-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int lastElement = arr[size-1];
+                         ^

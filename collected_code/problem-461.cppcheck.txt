@@ -1,0 +1,9 @@
+collected_code/problem-461-0.c:5:24: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    for (int i = 0; str[i] != '\0'; i++) {
+                       ^
+collected_code/problem-461-0.c:6:16: error: Cannot determine that 'str[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+               ^
+collected_code/problem-461-0.c:16:11: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    fgets(str, sizeof(str), stdin);
+          ^

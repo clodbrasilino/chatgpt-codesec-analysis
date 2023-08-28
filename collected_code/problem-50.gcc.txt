@@ -1,0 +1,10 @@
+collected_code/problem-50-0.c: In function 'minListLength':
+collected_code/problem-50-0.c:8:18: warning: implicit declaration of function 'findLength'; did you mean 'minListLength'? [-Wimplicit-function-declaration]
+    8 |     int length = findLength(lists[i]);
+      |                  ^~~~~~~~~~
+      |                  minListLength
+Undefined symbols for architecture x86_64:
+  "_main", referenced from:
+     implicit entry/start for main executable
+ld: symbol(s) not found for architecture x86_64
+collect2: error: ld returned 1 exit status

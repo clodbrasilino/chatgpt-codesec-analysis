@@ -1,0 +1,24 @@
+collected_code/problem-540-0.c:4:18: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int max = arr[0];
+                 ^
+collected_code/problem-540-0.c:6:15: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(arr[i] > max) {
+              ^
+collected_code/problem-540-0.c:7:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            max = arr[i];
+                     ^
+collected_code/problem-540-0.c:14:18: error: Cannot determine that 'arr[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int min = arr[0];
+                 ^
+collected_code/problem-540-0.c:16:15: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(arr[i] < min) {
+              ^
+collected_code/problem-540-0.c:17:22: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            min = arr[i];
+                     ^
+collected_code/problem-540-0.c:30:15: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(arr[i] == maxVal) {
+              ^
+collected_code/problem-540-0.c:33:15: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if(arr[i] == minVal) {
+              ^

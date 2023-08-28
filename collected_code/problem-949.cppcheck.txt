@@ -1,0 +1,12 @@
+collected_code/problem-949-0.c:16:16: error: Cannot determine that '*a' is initialized [premium-bughuntingUninit]
+    int temp = *a;
+               ^
+collected_code/problem-949-0.c:17:10: error: Cannot determine that '*b' is initialized [premium-bughuntingUninit]
+    *a = *b;
+         ^
+collected_code/problem-949-0.c:25:44: error: Cannot determine that 'tuples[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int digits1 = findDigits(tuples[j]);
+                                           ^
+collected_code/problem-949-0.c:26:44: error: Cannot determine that 'tuples[j+1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int digits2 = findDigits(tuples[j + 1]);
+                                           ^

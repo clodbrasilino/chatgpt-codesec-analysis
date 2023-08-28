@@ -1,0 +1,6 @@
+collected_code/problem-223-0.c:9:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] == element)
+               ^
+collected_code/problem-223-0.c:21:30: error: Cannot determine that 'arr[n/2]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int majorityElement = arr[n / 2];
+                             ^

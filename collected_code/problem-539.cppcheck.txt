@@ -1,0 +1,9 @@
+collected_code/problem-539-0.c:18:16: error: Cannot determine that 'size' is initialized [premium-bughuntingUninit]
+  scanf("%d", &size);
+               ^
+collected_code/problem-539-0.c:26:29: error: Cannot determine that 'powerList[i]' is initialized [premium-bughuntingUninit]
+    printf("%d\n", powerList[i]);
+                            ^
+collected_code/problem-539-0.c:29:8: error: Cannot determine that 'powerList[0]' is initialized [premium-bughuntingUninit]
+  free(powerList);
+       ^

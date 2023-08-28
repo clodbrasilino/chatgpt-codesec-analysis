@@ -1,0 +1,26 @@
+collected_code/problem-750-0.c: In function 'addTupleToList':
+collected_code/problem-750-0.c:14:29: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   14 |     Node *newNode = (Node *)malloc(sizeof(Node));
+      |                             ^~~~~~
+collected_code/problem-750-0.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code/problem-750-0.c:14:29: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   14 |     Node *newNode = (Node *)malloc(sizeof(Node));
+      |                             ^~~~~~
+collected_code/problem-750-0.c:14:29: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/problem-750-0.c:15:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |     newNode->data = tuple;
+      |     ~~~~~~~~~~~~~~^~~~~~~
+  'addTupleToList': events 1-2
+    |
+    |   14 |     Node *newNode = (Node *)malloc(sizeof(Node));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   15 |     newNode->data = tuple;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~    
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |

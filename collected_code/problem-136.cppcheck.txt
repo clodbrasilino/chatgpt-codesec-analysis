@@ -1,0 +1,12 @@
+collected_code/problem-136-0.c:24:18: error: Cannot determine that 'units' is initialized [premium-bughuntingUninit]
+    scanf("%f", &units);
+                 ^
+collected_code/problem-136-0.c:26:8: error: Cannot determine that 'units' is initialized [premium-bughuntingUninit]
+    if(units < 0) {
+       ^
+collected_code/problem-136-0.c:31:43: error: Cannot determine that 'units' is initialized [premium-bughuntingUninit]
+    float bill = calculateElectricityBill(units);
+                                          ^
+collected_code/problem-136-0.c:32:56: error: Cannot determine that 'units' is initialized [premium-bughuntingUninit]
+    printf("Electricity bill for %.2f units: $%.2f\n", units, bill);
+                                                       ^

@@ -1,0 +1,6 @@
+collected_code/problem-105-0.c:1:23: error: unknown type name 'bool'
+    1 | int countTrueBooleans(bool list[], int size) {
+      |                       ^~~~
+collected_code/problem-105-0.c:1:1: note: 'bool' is defined in header '<stdbool.h>'; did you forget to '#include <stdbool.h>'?
+  +++ |+#include <stdbool.h>
+    1 | int countTrueBooleans(bool list[], int size) {

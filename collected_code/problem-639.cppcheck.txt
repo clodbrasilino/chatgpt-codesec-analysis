@@ -1,0 +1,6 @@
+collected_code/problem-639-0.c:8:29: error: Cannot determine that 'names[i][0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (islower(names[i][0])) {
+                            ^
+collected_code/problem-639-0.c:11:28: error: Cannot determine that 'names[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        sum += strlen(names[i]);
+                           ^

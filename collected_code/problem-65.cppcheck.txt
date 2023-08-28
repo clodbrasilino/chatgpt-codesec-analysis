@@ -1,0 +1,3 @@
+collected_code/problem-65-0.c:7:19: error: Cannot determine that 'arr[size-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        return arr[size-1] + listSum(arr, size-1);
+                  ^

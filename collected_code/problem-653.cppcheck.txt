@@ -1,0 +1,9 @@
+collected_code/problem-653-0.c:47:17: error: Cannot determine that '*key++' is initialized [premium-bughuntingUninit]
+    while ((c = *key++)) {
+                ^
+collected_code/problem-653-0.c:58:31: error: Cannot determine that 'key[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    strcpy(newNode->data.key, key);
+                              ^
+collected_code/problem-653-0.c:59:33: error: Cannot determine that 'value[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    strcpy(newNode->data.value, value);
+                                ^

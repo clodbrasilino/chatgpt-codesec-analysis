@@ -1,0 +1,12 @@
+collected_code/problem-102-0.c: In function 'main':
+collected_code/problem-102-0.c:25:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   25 |     printf("%s\n", str);
+      |     ^~~~~~
+collected_code/problem-102-0.c:2:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    1 | #include <string.h>
+  +++ |+#include <stdio.h>
+    2 | 
+collected_code/problem-102-0.c:25:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   25 |     printf("%s\n", str);
+      |     ^~~~~~
+collected_code/problem-102-0.c:25:5: note: include '<stdio.h>' or provide a declaration of 'printf'

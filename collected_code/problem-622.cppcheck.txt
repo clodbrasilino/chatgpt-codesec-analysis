@@ -1,0 +1,18 @@
+collected_code/problem-622-0.c:9:15: error: Cannot determine that 'array1[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (array1[i] <= array2[j]) {
+              ^
+collected_code/problem-622-0.c:9:28: error: Cannot determine that 'array2[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    if (array1[i] <= array2[j]) {
+                           ^
+collected_code/problem-622-0.c:10:27: error: Cannot determine that 'array1[i++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      merged[k++] = array1[i++];
+                          ^
+collected_code/problem-622-0.c:12:27: error: Cannot determine that 'array2[j++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+      merged[k++] = array2[j++];
+                          ^
+collected_code/problem-622-0.c:17:25: error: Cannot determine that 'array1[i++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    merged[k++] = array1[i++];
+                        ^
+collected_code/problem-622-0.c:21:25: error: Cannot determine that 'array2[j++]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    merged[k++] = array2[j++];
+                        ^

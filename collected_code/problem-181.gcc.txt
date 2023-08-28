@@ -1,0 +1,54 @@
+collected_code/problem-181-0.c: In function 'longestCommonPrefix':
+collected_code/problem-181-0.c:18:19: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   18 |         prefix[j] = '\0';
+      |         ~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   28 |     char* commonPrefix = longestCommonPrefix(strings, size);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'longestCommonPrefix' from 'main'
+    |
+    +--> 'longestCommonPrefix': events 3-10
+           |
+           |    4 | char* longestCommonPrefix(char** strs, int size) {
+           |      |       ^~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'longestCommonPrefix'
+           |    5 |     if (size == 0) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'size != 0')...
+           |......
+           |    9 |     char* prefix = strs[0];
+           |      |           ~~~~~~
+           |      |           |
+           |      |           (5) ...to here
+           |......
+           |   12 |     for (i = 1; i < size; i++) {
+           |      |                 ~~~~~~~~
+           |      |                   |
+           |      |                   (6) following 'true' branch (when 'i < size')...
+           |   13 |         j = 0;
+           |      |         ~~~~~
+           |      |           |
+           |      |           (7) ...to here
+           |   14 |         while (prefix[j] && strs[i][j] && prefix[j] == strs[i][j]) {
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                        |
+           |      |                                        (8) following 'true' branch...
+           |   15 |             j++;
+           |      |             ~~~
+           |      |              |
+           |      |              (9) ...to here
+           |......
+           |   18 |         prefix[j] = '\0';
+           |      |         ~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (10) write to string literal here
+           |

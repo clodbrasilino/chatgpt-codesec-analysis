@@ -1,0 +1,12 @@
+collected_code/problem-897-0.c:5:33: error: Cannot determine that 'sentence[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int sentenceLength = strlen(sentence);
+                                ^
+collected_code/problem-897-0.c:6:29: error: Cannot determine that 'word[0]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    int wordLength = strlen(word);
+                            ^
+collected_code/problem-897-0.c:27:10: error: Cannot determine that 'sentence[0]' is initialized [premium-bughuntingUninit]
+    gets(sentence);
+         ^
+collected_code/problem-897-0.c:30:10: error: Cannot determine that 'word[0]' is initialized [premium-bughuntingUninit]
+    gets(word);
+         ^

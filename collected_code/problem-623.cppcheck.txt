@@ -1,0 +1,12 @@
+collected_code/problem-623-0.c:6:25: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        arr[i] = pow(arr[i], n);
+                        ^
+collected_code/problem-623-0.c:13:18: error: Cannot determine that 'size' is initialized [premium-bughuntingUninit]
+    scanf("%d", &size);
+                 ^
+collected_code/problem-623-0.c:22:18: error: Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+    scanf("%d", &n);
+                 ^
+collected_code/problem-623-0.c:28:26: error: Cannot determine that 'arr[i]' is initialized [premium-bughuntingUninit]
+        printf("%d ", arr[i]);
+                         ^

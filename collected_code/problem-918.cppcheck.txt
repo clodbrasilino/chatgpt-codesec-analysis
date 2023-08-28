@@ -1,0 +1,3 @@
+collected_code/problem-918-0.c:16:39: error: Cannot determine that 'coins[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            int includeCoin = (i-coins[j] >= 0) ? table[i-coins[j]][j] : 0;
+                                      ^

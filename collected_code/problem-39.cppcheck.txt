@@ -1,0 +1,9 @@
+collected_code/problem-39-0.c:8:15: error: Cannot determine that 'str[len]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+    while (str[len] != '\0') {
+              ^
+collected_code/problem-39-0.c:9:18: error: Cannot determine that 'str[len]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        count[str[len] - 'a']++;
+                 ^
+collected_code/problem-39-0.c:25:17: error: Cannot determine that 'str[0]' is initialized [premium-bughuntingUninit]
+    scanf("%s", str);
+                ^

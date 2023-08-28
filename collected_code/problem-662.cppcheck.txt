@@ -1,0 +1,6 @@
+collected_code/problem-662-0.c:10:29: error: Cannot determine that 'list[j-1]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        while (j > 0 && list[j-1] > list[j]) {
+                            ^
+collected_code/problem-662-0.c:10:41: error: Cannot determine that 'list[j]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        while (j > 0 && list[j-1] > list[j]) {
+                                        ^

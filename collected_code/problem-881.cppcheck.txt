@@ -1,0 +1,9 @@
+collected_code/problem-881-0.c:10:16: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        if (arr[i] % 2 == 0) {
+               ^
+collected_code/problem-881-0.c:11:27: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sumEven += arr[i];
+                          ^
+collected_code/problem-881-0.c:14:26: error: Cannot determine that 'arr[i]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            sumOdd += arr[i];
+                         ^

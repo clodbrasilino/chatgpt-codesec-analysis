@@ -2,7 +2,7 @@
 
 This project contains assets used for the experiment in the paper [to be published]().
 
-This code is published under the MIT License. Please read [it](LICENSE.md) and use it only if you agree with the terms.
+This code is published under the MIT License. Please read [it](LICENSE) and use it only if you agree with the terms.
 
 You are welcome to mimic our experiment and check the results yourself. Use the issues as a forum to discuss about this experiment (if you need any assistance running it, or any ideas you want to discuss).
 

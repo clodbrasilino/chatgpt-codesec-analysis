@@ -1,12 +1,12 @@
 collected_code/problem-323-0.c:8:40: error: Cannot determine that 'arr[positiveIndex]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
         while (positiveIndex < n && arr[positiveIndex] >= 0) {
                                        ^
-collected_code/problem-323-0.c:12:40: error: Cannot determine that 'arr[negativeIndex]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
-        while (negativeIndex < n && arr[negativeIndex] <= 0) {
+collected_code/problem-323-0.c:12:40: error: Cannot determine that 'arr[negative_Index]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+        while (negativeIndex < n && arr[negative_Index] <= 0) {
                                        ^
 collected_code/problem-323-0.c:17:27: error: Cannot determine that 'arr[positiveIndex]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
             int temp = arr[positiveIndex];
                           ^
-collected_code/problem-323-0.c:18:37: error: Cannot determine that 'arr[negativeIndex]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
-            arr[positiveIndex] = arr[negativeIndex];
+collected_code/problem-323-0.c:18:37: error: Cannot determine that 'arr[negative_Index]' is initialized (since function parameter is not 'const' it is assumed it points at uninitialized data) [premium-bughuntingUninitNonConstArg]
+            arr[positiveIndex] = arr[negative_Index];
                                     ^

@@ -1,0 +1,6 @@
+example2.c:37:48: error: Cannot determine that 'buffer[0]' is initialized [premium-bughuntingUninit]
+        int request_size = recv(client_socket, buffer, sizeof(buffer), 0);
+                                               ^
+example2.c:52:49: error: Cannot determine that 'response_buffer[0]' is initialized [premium-bughuntingUninit]
+        int response_size = send(client_socket, response_buffer, length + 2, 0);
+                                                ^

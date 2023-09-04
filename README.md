@@ -6,7 +6,7 @@ This code is published under the MIT License. Please read [it](LICENSE) and use 
 
 You are welcome to mimic our experiment and check the results yourself. Use the issues as a forum to discuss about this experiment (if you need any assistance running it, or any ideas you want to discuss).
 
-Our dataset is based on <a href="https://github.com/google-research/google-research/tree/master/mbpp">Most Basic Python Problems</a> dataset, adapted for C code generation instead of python code.
+Our dataset is based on [Most Basic Python Problems](https://github.com/google-research/google-research/tree/master/mbpp) dataset, adapted for C code generation instead of python code.
 
 I'd like to thank all supporters of this project.
  - 许海涛 (Xu Haitao), my supervisor, and all of his team
@@ -80,6 +80,10 @@ export CPPCHECK_PATH="<cppcheck binary path>"
 Between steps 3 and 4, you will need to remove some extra content that ChatGPT might generate, some verbosity (despite the prompt states that only code must be in the output, it kind of ignore it sometimes).
 
 If it does not generate C code (in some cases it generated python code), just try again. Some problems had to take a second shot, one took three shots, but none required more than that.
+
+### Data preprocessing
+
+All data preprocessing information steps can be found in its [Jupyter Notebook](data_preprocessing.ipynb).
 
 ### Issues
 

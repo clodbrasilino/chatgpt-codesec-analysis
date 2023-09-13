@@ -1,6 +1,7 @@
 problems = [
     {
         "text": "Write a C function to find the minimum cost path to reach (m, n) from (0, 0) for the given cost matrix cost[][] and a position (m, n) in cost[][].",
+        "label": "matrix",
         "code": "R = 3\r\nC = 3\r\ndef min_cost(cost, m, n): \r\n\ttc = [[0 for x in range(C)] for x in range(R)] \r\n\ttc[0][0] = cost[0][0] \r\n\tfor i in range(1, m+1): \r\n\t\ttc[i][0] = tc[i-1][0] + cost[i][0] \r\n\tfor j in range(1, n+1): \r\n\t\ttc[0][j] = tc[0][j-1] + cost[0][j] \r\n\tfor i in range(1, m+1): \r\n\t\tfor j in range(1, n+1): \r\n\t\t\ttc[i][j] = min(tc[i-1][j-1], tc[i-1][j], tc[i][j-1]) + cost[i][j] \r\n\treturn tc[m][n]",
         "id": 1,
         "test_setup_code": "",
@@ -13,6 +14,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the similar elements from the given two tuple lists.",
+        "label": "array",
         "code": "def similar_elements(test_tup1, test_tup2):\r\n  res = tuple(set(test_tup1) & set(test_tup2))\r\n  return (res) ",
         "id": 2,
         "test_setup_code": "",
@@ -25,6 +27,7 @@ problems = [
     },
     {
         "text": "Write a C function to identify non-prime numbers.",
+        "label": "array",
         "code": "import math\r\ndef is_not_prime(n):\r\n    result = False\r\n    for i in range(2,int(math.sqrt(n)) + 1):\r\n        if n % i == 0:\r\n            result = True\r\n    return result",
         "id": 3,
         "test_setup_code": "",
@@ -37,6 +40,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest integers from a given list of numbers using heap queue algorithm.",
+        "label": "array",
         "code": "import heapq as hq\r\ndef heap_queue_largest(nums,n):\r\n  largest_nums = hq.nlargest(n, nums)\r\n  return largest_nums",
         "id": 4,
         "test_setup_code": "",
@@ -49,6 +53,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of ways to fill it with 2 x 1 dominoes for the given 3 x n board.",
+        "label": "array",
         "code": "def count_ways(n): \r\n\tA = [0] * (n + 1) \r\n\tB = [0] * (n + 1) \r\n\tA[0] = 1\r\n\tA[1] = 0\r\n\tB[0] = 0\r\n\tB[1] = 1\r\n\tfor i in range(2, n+1): \r\n\t\tA[i] = A[i - 2] + 2 * B[i - 1] \r\n\t\tB[i] = A[i - 1] + B[i - 2] \r\n\treturn A[n] ",
         "id": 5,
         "test_setup_code": "",
@@ -57,6 +62,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the two numbers differ at one bit position only or not.",
+        "label": "array",
         "code": "def is_Power_Of_Two (x): \r\n    return x and (not(x & (x - 1))) \r\ndef differ_At_One_Bit_Pos(a,b): \r\n    return is_Power_Of_Two(a ^ b)",
         "id": 6,
         "test_setup_code": "",
@@ -69,6 +75,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all words which are at least 4 characters long in a string by using regex.",
+        "label": "array",
         "code": 'import re\r\ndef find_char_long(text):\r\n  return (re.findall(r"\\b\\w{4,},\\b", text))',
         "id": 7,
         "test_setup_code": "",
@@ -81,6 +88,7 @@ problems = [
     },
     {
         "text": "Write a C function to find squares of individual elements in a list.",
+        "label": "array",
         "code": "def square_nums(nums):\r\n square_nums = list(map(lambda x: x ** 2, nums))\r\n return square_nums",
         "id": 8,
         "test_setup_code": "",
@@ -93,6 +101,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum number of rotations required to get the same string.",
+        "label": "array",
         "code": "def find_Rotations(str): \r\n    tmp = str + str\r\n    n = len(str) \r\n    for i in range(1,n + 1): \r\n        substring = tmp[i: i+n] \r\n        if (str == substring): \r\n            return i \r\n    return n ",
         "id": 9,
         "test_setup_code": "",
@@ -105,6 +114,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the n smallest items from a dataset.",
+        "label": "array",
         "code": "import heapq\r\ndef small_nnum(list1,n):\r\n  smallest=heapq.nsmallest(n,list1)\r\n  return smallest",
         "id": 10,
         "test_setup_code": "",
@@ -117,6 +127,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove first and last occurrence of a given character from the string.",
+        "label": "array",
         "code": "def remove_Occ(s,ch): \r\n    for i in range(len(s)): \r\n        if (s[i] == ch): \r\n            s = s[0 : i] + s[i + 1:] \r\n            break\r\n    for i in range(len(s) - 1,-1,-1):  \r\n        if (s[i] == ch): \r\n            s = s[0 : i] + s[i + 1:] \r\n            break\r\n    return s ",
         "id": 11,
         "test_setup_code": "",
@@ -129,6 +140,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a given matrix in ascending order according to the sum of its rows.",
+        "label": "array",
         "code": "def sort_matrix(M):\r\n    result = sorted(M, key=sum)\r\n    return result",
         "id": 12,
         "test_setup_code": "",
@@ -141,6 +153,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the most common words in a dictionary.",
+        "label": "array",
         "code": "from collections import Counter\r\ndef count_common(words):\r\n  word_counts = Counter(words)\r\n  top_four = word_counts.most_common(4)\r\n  return (top_four)\r\n",
         "id": 13,
         "test_setup_code": "",
@@ -153,6 +166,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the volume of a triangular prism.",
+        "label": "array",
         "code": "def find_Volume(l,b,h) : \r\n    return ((l * b * h) / 2) ",
         "id": 14,
         "test_setup_code": "",
@@ -165,6 +179,7 @@ problems = [
     },
     {
         "text": "Write a C function to split a string at lowercase letters.",
+        "label": "array",
         "code": "import re\r\ndef split_lowerstring(text):\r\n return (re.findall('[a-z][^a-z]*', text))",
         "id": 15,
         "test_setup_code": "",
@@ -177,6 +192,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sequences of lowercase letters joined with an underscore.",
+        "label": "array",
         "code": "import re\r\ndef text_lowercase_underscore(text):\r\n        patterns = '^[a-z]+_[a-z]+$'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 16,
         "test_setup_code": "",
@@ -189,6 +205,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the perimeter of a square.",
+        "label": "array",
         "code": "def square_perimeter(a):\r\n  perimeter=4*a\r\n  return perimeter",
         "id": 17,
         "test_setup_code": "",
@@ -201,6 +218,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove characters from the first string which are present in the second string.",
+        "label": "array",
         "code": "NO_OF_CHARS = 256\r\ndef str_to_list(string): \r\n\ttemp = [] \r\n\tfor x in string: \r\n\t\ttemp.append(x) \r\n\treturn temp \r\ndef lst_to_string(List): \r\n\treturn ''.join(List) \r\ndef get_char_count_array(string): \r\n\tcount = [0] * NO_OF_CHARS \r\n\tfor i in string: \r\n\t\tcount[ord(i)] += 1\r\n\treturn count \r\ndef remove_dirty_chars(string, second_string): \r\n\tcount = get_char_count_array(second_string) \r\n\tip_ind = 0\r\n\tres_ind = 0\r\n\ttemp = '' \r\n\tstr_list = str_to_list(string) \r\n\twhile ip_ind != len(str_list): \r\n\t\ttemp = str_list[ip_ind] \r\n\t\tif count[ord(temp)] == 0: \r\n\t\t\tstr_list[res_ind] = str_list[ip_ind] \r\n\t\t\tres_ind += 1\r\n\t\tip_ind+=1\r\n\treturn lst_to_string(str_list[0:res_ind]) ",
         "id": 18,
         "test_setup_code": "",
@@ -213,6 +231,7 @@ problems = [
     },
     {
         "text": "Write a C function to find whether a given array of integers contains any duplicate element.",
+        "label": "array",
         "code": "def test_duplicate(arraynums):\r\n    nums_set = set(arraynums)    \r\n    return len(arraynums) != len(nums_set)     ",
         "id": 19,
         "test_setup_code": "",
@@ -225,6 +244,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given number is woodball or not.",
+        "label": "array",
         "code": "def is_woodall(x): \r\n\tif (x % 2 == 0): \r\n\t\treturn False\r\n\tif (x == 1): \r\n\t\treturn True\r\n\tx = x + 1 \r\n\tp = 0\r\n\twhile (x % 2 == 0): \r\n\t\tx = x/2\r\n\t\tp = p + 1\r\n\t\tif (p == x): \r\n\t\t\treturn True\r\n\treturn False",
         "id": 20,
         "test_setup_code": "",
@@ -241,6 +261,7 @@ problems = [
     },
     {
         "text": "Write a C function to find m number of multiples of n.",
+        "label": "array",
         "code": "def multiples_of_num(m,n): \r\n    multiples_of_num= list(range(n,(m+1)*n, n)) \r\n    return list(multiples_of_num)",
         "id": 21,
         "test_setup_code": "",
@@ -253,6 +274,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first duplicate element in a given array of integers.",
+        "label": "array",
         "code": "def find_first_duplicate(nums):\r\n    num_set = set()\r\n    no_duplicate = -1\r\n\r\n    for i in range(len(nums)):\r\n\r\n        if nums[i] in num_set:\r\n            return nums[i]\r\n        else:\r\n            num_set.add(nums[i])\r\n\r\n    return no_duplicate",
         "id": 22,
         "test_setup_code": "",
@@ -265,6 +287,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum of elements of list in a list of lists.",
+        "label": "array",
         "code": "def maximum_Sum(list1): \r\n    maxi = -100000\r\n    for x in list1: \r\n        sum = 0 \r\n        for y in x: \r\n            sum+= y      \r\n        maxi = max(sum,maxi)     \r\n    return maxi ",
         "id": 23,
         "test_setup_code": "",
@@ -277,6 +300,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given binary number to its decimal equivalent.",
+        "label": "array",
         "code": "def binary_to_decimal(binary): \r\n    binary1 = binary \r\n    decimal, i, n = 0, 0, 0\r\n    while(binary != 0): \r\n        dec = binary % 10\r\n        decimal = decimal + dec * pow(2, i) \r\n        binary = binary//10\r\n        i += 1\r\n    return (decimal)",
         "id": 24,
         "test_setup_code": "",
@@ -289,6 +313,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the product of non-repeated elements in a given array.",
+        "label": "array",
         "code": "def find_Product(arr,n): \r\n    arr.sort() \r\n    prod = 1\r\n    for i in range(0,n,1): \r\n        if (arr[i - 1] != arr[i]): \r\n            prod = prod * arr[i] \r\n    return prod; ",
         "id": 25,
         "test_setup_code": "",
@@ -301,6 +326,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given tuple list has all k elements.",
+        "label": "array",
         "code": "def check_k_elements(test_list, K):\r\n  res = True\r\n  for tup in test_list:\r\n    for ele in tup:\r\n      if ele != K:\r\n        res = False\r\n  return (res) ",
         "id": 26,
         "test_setup_code": "",
@@ -315,6 +341,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all digits from a list of strings.",
+        "label": "array",
         "code": "import re  \r\ndef remove(list): \r\n    pattern = '[0-9]'\r\n    list = [re.sub(pattern, '', i) for i in list] \r\n    return list",
         "id": 27,
         "test_setup_code": "",
@@ -327,6 +354,7 @@ problems = [
     },
     {
         "text": "Write a C function to find binomial co-efficient.",
+        "label": "array",
         "code": "def binomial_Coeff(n,k): \r\n    if k > n : \r\n       return 0\r\n    if k==0 or k ==n : \r\n        return 1 \r\n    return binomial_Coeff(n-1,k-1) + binomial_Coeff(n-1,k) ",
         "id": 28,
         "test_setup_code": "",
@@ -339,6 +367,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the element occurring odd number of times.",
+        "label": "array",
         "code": "def get_Odd_Occurrence(arr,arr_size):   \r\n    for i in range(0,arr_size): \r\n        count = 0\r\n        for j in range(0,arr_size): \r\n            if arr[i] == arr[j]: \r\n                count+=1     \r\n        if (count % 2 != 0): \r\n            return arr[i]     \r\n    return -1",
         "id": 29,
         "test_setup_code": "",
@@ -351,6 +380,7 @@ problems = [
     },
     {
         "text": "Write a C function to count all the substrings starting and ending with same characters.",
+        "label": "array",
         "code": "def check_Equality(s): \r\n    return (ord(s[0]) == ord(s[len(s) - 1])); \r\ndef count_Substring_With_Equal_Ends(s): \r\n    result = 0; \r\n    n = len(s); \r\n    for i in range(n): \r\n        for j in range(1,n-i+1):  \r\n            if (check_Equality(s[i:i+j])): \r\n                result+=1; \r\n    return result; ",
         "id": 30,
         "test_setup_code": "",
@@ -363,6 +393,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the top k integers that occur most frequently from given lists of sorted and distinct integers using heap queue algorithm.",
+        "label": "array",
         "code": "def func(nums, k):\r\n    import collections\r\n    d = collections.defaultdict(int)\r\n    for row in nums:\r\n        for i in row:\r\n            d[i] += 1\r\n    temp = []\r\n    import heapq\r\n    for key, v in d.items():\r\n        if len(temp) < k:\r\n            temp.append((v, key))\r\n            if len(temp) == k:\r\n                heapq.heapify(temp)\r\n        else:\r\n            if v > temp[0][0]:\r\n                heapq.heappop(temp)\r\n                heapq.heappush(temp, (v, key))\r\n    result = []\r\n    while temp:\r\n        v, key = heapq.heappop(temp)\r\n        result.append(key)\r\n    return result",
         "id": 31,
         "test_setup_code": "",
@@ -375,6 +406,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest prime factor of a given number.",
+        "label": "array",
         "code": "import math \r\ndef max_Prime_Factors (n): \r\n    maxPrime = -1 \r\n    while n%2 == 0: \r\n        maxPrime = 2\r\n        n >>= 1    \r\n    for i in range(3,int(math.sqrt(n))+1,2): \r\n        while n % i == 0: \r\n            maxPrime = i \r\n            n = n / i \r\n    if n > 2: \r\n        maxPrime = n  \r\n    return int(maxPrime)",
         "id": 32,
         "test_setup_code": "",
@@ -387,6 +419,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a decimal number to binary number.",
+        "label": "array",
         "code": "def decimal_To_Binary(N): \r\n    B_Number = 0\r\n    cnt = 0\r\n    while (N != 0): \r\n        rem = N % 2\r\n        c = pow(10,cnt)  \r\n        B_Number += rem*c  \r\n        N //= 2 \r\n        cnt += 1\r\n    return B_Number  ",
         "id": 33,
         "test_setup_code": "",
@@ -399,6 +432,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the missing number in a sorted array.",
+        "label": "array",
         "code": "def find_missing(ar,N): \r\n    l = 0\r\n    r = N - 1\r\n    while (l <= r):  \r\n        mid = (l + r) / 2\r\n        mid= int (mid) \r\n        if (ar[mid] != mid + 1 and ar[mid - 1] == mid): \r\n            return (mid + 1)  \r\n        elif (ar[mid] != mid + 1): \r\n            r = mid - 1 \r\n        else: \r\n            l = mid + 1\r\n    return (-1) ",
         "id": 34,
         "test_setup_code": "",
@@ -411,6 +445,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n-th rectangular number.",
+        "label": "array",
         "code": "def find_rect_num(n):\r\n  return n*(n + 1) ",
         "id": 35,
         "test_setup_code": "",
@@ -423,6 +458,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth digit in the proper fraction of two given numbers.",
+        "label": "array",
         "code": "def find_Nth_Digit(p,q,N) :  \r\n    while (N > 0) : \r\n        N -= 1;  \r\n        p *= 10;  \r\n        res = p // q;  \r\n        p %= q;  \r\n    return res;  ",
         "id": 36,
         "test_setup_code": "",
@@ -435,6 +471,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a given mixed list of integers and strings.",
+        "label": "array",
         "code": "def sort_mixed_list(mixed_list):\r\n    int_part = sorted([i for i in mixed_list if type(i) is int])\r\n    str_part = sorted([i for i in mixed_list if type(i) is str])\r\n    return int_part + str_part",
         "id": 37,
         "test_setup_code": "",
@@ -447,6 +484,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the division of first even and odd number of a given list.",
+        "label": "array",
         "code": "def div_even_odd(list1):\r\n    first_even = next((el for el in list1 if el%2==0),-1)\r\n    first_odd = next((el for el in list1 if el%2!=0),-1)\r\n    return (first_even/first_odd)",
         "id": 38,
         "test_setup_code": "",
@@ -459,6 +497,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the letters of a given string can be rearranged so that two characters that are adjacent to each other are different.",
+        "label": "array",
         "code": 'import heapq\r\nfrom collections import Counter\r\ndef rearange_string(S):\r\n    ctr = Counter(S)\r\n    heap = [(-value, key) for key, value in ctr.items()]\r\n    heapq.heapify(heap)\r\n    if (-heap[0][0]) * 2 > len(S) + 1: \r\n        return ""\r\n    ans = []\r\n    while len(heap) >= 2:\r\n        nct1, char1 = heapq.heappop(heap)\r\n        nct2, char2 = heapq.heappop(heap)\r\n        ans.extend([char1, char2])\r\n        if nct1 + 1: heapq.heappush(heap, (nct1 + 1, char1))\r\n        if nct2 + 1: heapq.heappush(heap, (nct2 + 1, char2))\r\n    return "".join(ans) + (heap[0][1] if heap else "")',
         "id": 39,
         "test_setup_code": "",
@@ -471,6 +510,7 @@ problems = [
     },
     {
         "text": "Write a C function to find frequency of the elements in a given list of lists.",
+        "label": "array",
         "code": "from collections import Counter\r\nfrom itertools import chain\r\ndef freq_element(nums):\r\n  result = Counter(chain.from_iterable(nums))\r\n  return result",
         "id": 40,
         "test_setup_code": "",
@@ -483,6 +523,7 @@ problems = [
     },
     {
         "text": "Write a C function to filter even numbers.",
+        "label": "array",
         "code": "def filter_evennumbers(nums):\r\n even_nums = list(filter(lambda x: x%2 == 0, nums))\r\n return even_nums",
         "id": 41,
         "test_setup_code": "",
@@ -495,6 +536,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of repeated elements in a given array.",
+        "label": "array",
         "code": "def find_Sum(arr,n): \r\n    return sum([x for x in arr if arr.count(x) > 1])",
         "id": 42,
         "test_setup_code": "",
@@ -507,6 +549,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sequences of lowercase letters joined with an underscore using regex.",
+        "label": "array",
         "code": "import re\r\ndef text_match(text):\r\n  patterns = '^[a-z]+_[a-z]+$'\r\n  if re.search(patterns,  text):\r\n    return ('Found a match!')\r\n  else:\r\n    return ('Not matched!')",
         "id": 43,
         "test_setup_code": "",
@@ -519,6 +562,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a word at the beginning of a string.",
+        "label": "array",
         "code": "import re\r\ndef text_match_string(text):\r\n        patterns = '^\\w+'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return 'Not matched!'",
         "id": 44,
         "test_setup_code": "",
@@ -531,6 +575,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the gcd of the given array elements.",
+        "label": "array",
         "code": "def find_gcd(x, y): \r\n\twhile(y): \r\n\t\tx, y = y, x % y \r\n\treturn x \r\ndef get_gcd(l):\r\n  num1 = l[0]\r\n  num2 = l[1]\r\n  gcd = find_gcd(num1, num2)\r\n  for i in range(2, len(l)):\r\n    gcd = find_gcd(gcd, l[i])\r\n  return gcd",
         "id": 45,
         "test_setup_code": "",
@@ -543,6 +588,7 @@ problems = [
     },
     {
         "text": "Write a C function to determine whether all the numbers are different from each other are not.",
+        "label": "array",
         "code": "def test_distinct(data):\r\n  if len(data) == len(set(data)):\r\n    return True\r\n  else:\r\n    return False;",
         "id": 46,
         "test_setup_code": "",
@@ -555,6 +601,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the last digit when factorial of a divides factorial of b.",
+        "label": "array",
         "code": "def compute_Last_Digit(A,B): \r\n    variable = 1\r\n    if (A == B): \r\n        return 1\r\n    elif ((B - A) >= 5):  \r\n        return 0\r\n    else:   \r\n        for i in range(A + 1,B + 1): \r\n            variable = (variable * (i % 10)) % 10\r\n        return variable % 10",
         "id": 47,
         "test_setup_code": "",
@@ -571,6 +618,7 @@ problems = [
     },
     {
         "text": "Write a C function to set all odd bits of a given number.",
+        "label": "array",
         "code": "def odd_bit_set_number(n):\r\n    count = 0;res = 0;temp = n\r\n    while temp > 0:\r\n        if count % 2 == 0:\r\n            res |= (1 << count)\r\n        count += 1\r\n        temp >>= 1\r\n    return (n | res)",
         "id": 48,
         "test_setup_code": "",
@@ -583,6 +631,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract every first or specified element from a given two-dimensional list.",
+        "label": "array",
         "code": "def specified_element(nums, N):\r\n    result = [i[N] for i in nums]\r\n    return result\r\n    ",
         "id": 49,
         "test_setup_code": "",
@@ -595,6 +644,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the list with minimum length.",
+        "label": "array",
         "code": "def min_length_list(input_list):\r\n    min_length = min(len(x) for x in input_list )  \r\n    min_list = min(input_list, key = lambda i: len(i))\r\n    return(min_length, min_list)",
         "id": 50,
         "test_setup_code": "",
@@ -607,6 +657,7 @@ problems = [
     },
     {
         "text": "Write a C function to print check if the triangle is equilateral or not.",
+        "label": "array",
         "code": "def check_equilateral(x,y,z):\r\n  if x == y == z:\r\n\t   return True\r\n  else:\r\n     return False",
         "id": 51,
         "test_setup_code": "",
@@ -619,6 +670,7 @@ problems = [
     },
     {
         "text": "Write a C function to caluclate area of a parallelogram.",
+        "label": "array",
         "code": "def parallelogram_area(b,h):\r\n  area=b*h\r\n  return area",
         "id": 52,
         "test_setup_code": "",
@@ -631,6 +683,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the first and last characters of a given string are equal or not.",
+        "label": "array",
         "code": 'def check_Equality(str):\r\n  if (str[0] == str[-1]):  \r\n    return ("Equal") \r\n  else:  \r\n    return ("Not Equal") ',
         "id": 53,
         "test_setup_code": "",
@@ -643,6 +696,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given array by using counting sort.",
+        "label": "array",
         "code": "def counting_sort(my_list):\r\n    max_value = 0\r\n    for i in range(len(my_list)):\r\n        if my_list[i] > max_value:\r\n            max_value = my_list[i]\r\n    buckets = [0] * (max_value + 1)\r\n    for i in my_list:\r\n        buckets[i] += 1\r\n    i = 0\r\n    for j in range(max_value + 1):\r\n         for a in range(buckets[j]):\r\n             my_list[i] = j\r\n             i += 1\r\n    return my_list",
         "id": 54,
         "test_setup_code": "",
@@ -655,6 +709,7 @@ problems = [
     },
     {
         "text": "Write a C function to find t-nth term of geometric series.",
+        "label": "array",
         "code": "import math\r\ndef tn_gp(a,n,r):\r\n  tn = a * (math.pow(r, n - 1))\r\n  return tn",
         "id": 55,
         "test_setup_code": "",
@@ -663,6 +718,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a given number is one less than twice its reverse.",
+        "label": "array",
         "code": "def rev(num):    \r\n    rev_num = 0\r\n    while (num > 0):  \r\n        rev_num = (rev_num * 10 + num % 10) \r\n        num = num // 10  \r\n    return rev_num  \r\ndef check(n):    \r\n    return (2 * rev(n) == n + 1)  ",
         "id": 56,
         "test_setup_code": "",
@@ -671,6 +727,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest number that can be formed with the given digits.",
+        "label": "array",
         "code": "def find_Max_Num(arr,n) : \r\n    arr.sort(reverse = True) \r\n    num = arr[0] \r\n    for i in range(1,n) : \r\n        num = num * 10 + arr[i] \r\n    return num ",
         "id": 57,
         "test_setup_code": "",
@@ -683,6 +740,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given two integers have opposite sign or not.",
+        "label": "array",
         "code": "def opposite_Signs(x,y): \r\n    return ((x ^ y) < 0); ",
         "id": 58,
         "test_setup_code": "",
@@ -695,6 +753,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth octagonal number.",
+        "label": "array",
         "code": "def is_octagonal(n): \r\n\treturn 3 * n * n - 2 * n ",
         "id": 59,
         "test_setup_code": "",
@@ -707,6 +766,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum length of the subsequence with difference between adjacent elements for the given array.",
+        "label": "array",
         "code": "def max_len_sub( arr, n): \r\n\tmls=[] \r\n\tmax = 0\r\n\tfor i in range(n): \r\n\t\tmls.append(1) \r\n\tfor i in range(n): \r\n\t\tfor j in range(i): \r\n\t\t\tif (abs(arr[i] - arr[j]) <= 1 and mls[i] < mls[j] + 1): \r\n\t\t\t\tmls[i] = mls[j] + 1\r\n\tfor i in range(n): \r\n\t\tif (max < mls[i]): \r\n\t\t\tmax = mls[i] \r\n\treturn max",
         "id": 60,
         "test_setup_code": "",
@@ -719,6 +779,7 @@ problems = [
     },
     {
         "text": "Write a C function to count number of substrings with the sum of digits equal to their length.",
+        "label": "array",
         "code": "from collections import defaultdict\r\ndef count_Substrings(s,n):\r\n    count,sum = 0,0\r\n    mp = defaultdict(lambda : 0)\r\n    mp[0] += 1\r\n    for i in range(n):\r\n        sum += ord(s[i]) - ord('0')\r\n        count += mp[sum - (i + 1)]\r\n        mp[sum - (i + 1)] += 1\r\n    return count",
         "id": 61,
         "test_setup_code": "",
@@ -731,6 +792,7 @@ problems = [
     },
     {
         "text": "Write a C function to find smallest number in a list.",
+        "label": "array",
         "code": "def smallest_num(xs):\n  return min(xs)\n",
         "id": 62,
         "test_setup_code": "",
@@ -743,6 +805,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum difference between available pairs in the given tuple list.",
+        "label": "array",
         "code": "def max_difference(test_list):\r\n  temp = [abs(b - a) for a, b in test_list]\r\n  res = max(temp)\r\n  return (res) ",
         "id": 63,
         "test_setup_code": "",
@@ -755,6 +818,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of tuples using lambda.",
+        "label": "array",
         "code": "def subject_marks(subjectmarks):\r\n#subject_marks = [('English', 88), ('Science', 90), ('Maths', 97), ('Social sciences', 82)])\r\n subjectmarks.sort(key = lambda x: x[1])\r\n return subjectmarks",
         "id": 64,
         "test_setup_code": "",
@@ -767,6 +831,7 @@ problems = [
     },
     {
         "text": "Write a C function of recursion list sum.",
+        "label": "array",
         "code": "def recursive_list_sum(data_list):\r\n\ttotal = 0\r\n\tfor element in data_list:\r\n\t\tif type(element) == type([]):\r\n\t\t\ttotal = total + recursive_list_sum(element)\r\n\t\telse:\r\n\t\t\ttotal = total + element\r\n\treturn total",
         "id": 65,
         "test_setup_code": "",
@@ -779,6 +844,7 @@ problems = [
     },
     {
         "text": "Write a C function to count positive numbers in a list.",
+        "label": "array",
         "code": "def pos_count(list):\r\n  pos_count= 0\r\n  for num in list: \r\n    if num >= 0: \r\n      pos_count += 1\r\n  return pos_count ",
         "id": 66,
         "test_setup_code": "",
@@ -791,6 +857,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of ways to partition a set of bell numbers.",
+        "label": "array",
         "code": "def bell_number(n):   \r\n    bell = [[0 for i in range(n+1)] for j in range(n+1)] \r\n    bell[0][0] = 1\r\n    for i in range(1, n+1): \r\n        bell[i][0] = bell[i-1][i-1]  \r\n        for j in range(1, i+1): \r\n            bell[i][j] = bell[i-1][j-1] + bell[i][j-1]   \r\n    return bell[n][0] ",
         "id": 67,
         "test_setup_code": "",
@@ -803,6 +870,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given array is monotonic or not.",
+        "label": "array",
         "code": "def is_Monotonic(A): \r\n    return (all(A[i] <= A[i + 1] for i in range(len(A) - 1)) or\r\n            all(A[i] >= A[i + 1] for i in range(len(A) - 1))) ",
         "id": 68,
         "test_setup_code": "",
@@ -815,6 +883,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a list contains the given sublist or not.",
+        "label": "array",
         "code": "def is_sublist(l, s):\r\n\tsub_set = False\r\n\tif s == []:\r\n\t\tsub_set = True\r\n\telif s == l:\r\n\t\tsub_set = True\r\n\telif len(s) > len(l):\r\n\t\tsub_set = False\r\n\telse:\r\n\t\tfor i in range(len(l)):\r\n\t\t\tif l[i] == s[0]:\r\n\t\t\t\tn = 1\r\n\t\t\t\twhile (n < len(s)) and (l[i+n] == s[n]):\r\n\t\t\t\t\tn += 1\t\t\t\t\r\n\t\t\t\tif n == len(s):\r\n\t\t\t\t\tsub_set = True\r\n\treturn sub_set",
         "id": 69,
         "test_setup_code": "",
@@ -827,6 +896,7 @@ problems = [
     },
     {
         "text": "Write a C function to find whether all the given tuples have equal length or not.",
+        "label": "array",
         "code": 'def find_equal_tuple(Input, k):\r\n  flag = 1\r\n  for tuple in Input:\r\n    if len(tuple) != k:\r\n      flag = 0\r\n      break\r\n  return flag\r\ndef get_equal(Input, k):\r\n  if find_equal_tuple(Input, k) == 1:\r\n    return ("All tuples have same length")\r\n  else:\r\n    return ("All tuples do not have same length")',
         "id": 70,
         "test_setup_code": "",
@@ -839,6 +909,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of elements using comb sort.",
+        "label": "array",
         "code": "def comb_sort(nums):\r\n    shrink_fact = 1.3\r\n    gaps = len(nums)\r\n    swapped = True\r\n    i = 0\r\n    while gaps > 1 or swapped:\r\n        gaps = int(float(gaps) / shrink_fact)\r\n        swapped = False\r\n        i = 0\r\n        while gaps + i < len(nums):\r\n            if nums[i] > nums[i+gaps]:\r\n                nums[i], nums[i+gaps] = nums[i+gaps], nums[i]\r\n                swapped = True\r\n            i += 1\r\n    return nums",
         "id": 71,
         "test_setup_code": "",
@@ -851,6 +922,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number can be represented as difference of two squares or not.",
+        "label": "array",
         "code": "def dif_Square(n): \r\n    if (n % 4 != 2): \r\n        return True\r\n    return False",
         "id": 72,
         "test_setup_code": "",
@@ -863,6 +935,7 @@ problems = [
     },
     {
         "text": "Write a C function to split the given string with multiple delimiters by using regex.",
+        "label": "array",
         "code": "import re\r\ndef multiple_split(text):\r\n  return (re.split('; |, |\\*|\\n',text))",
         "id": 73,
         "test_setup_code": "",
@@ -875,6 +948,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether it follows the sequence given in the patterns array.",
+        "label": "array",
         "code": "def is_samepatterns(colors, patterns):    \r\n    if len(colors) != len(patterns):\r\n        return False    \r\n    sdict = {},\r\n    pset = set()\r\n    sset = set()    \r\n    for i in range(len(patterns)):\r\n        pset.add(patterns[i])\r\n        sset.add(colors[i])\r\n        if patterns[i] not in sdict.keys():\r\n            sdict[patterns[i]] = []\r\n\r\n        keys = sdict[patterns[i]]\r\n        keys.append(colors[i])\r\n        sdict[patterns[i]] = keys\r\n\r\n    if len(pset) != len(sset):\r\n        return False   \r\n\r\n    for values in sdict.values():\r\n\r\n        for i in range(len(values) - 1):\r\n            if values[i] != values[i+1]:\r\n                return False\r\n\r\n    return True",
         "id": 74,
         "test_setup_code": "",
@@ -887,6 +961,7 @@ problems = [
     },
     {
         "text": "Write a C function to find tuples which have all elements divisible by k from the given list of tuples.",
+        "label": "array",
         "code": "def find_tuples(test_list, K):\r\n  res = [sub for sub in test_list if all(ele % K == 0 for ele in sub)]\r\n  return (str(res)) ",
         "id": 75,
         "test_setup_code": "",
@@ -899,6 +974,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of squares in a rectangle.",
+        "label": "math",
         "code": "def count_Squares(m,n):\r\n    if(n < m):\r\n        temp = m\r\n        m = n\r\n        n = temp\r\n    return ((m * (m + 1) * (2 * m + 1) / 6 + (n - m) * m * (m + 1) / 2))",
         "id": 76,
         "test_setup_code": "",
@@ -911,6 +987,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the difference between sum of even and odd digits.",
+        "label": "math",
         "code": "def is_Diff(n): \r\n    return (n % 11 == 0) ",
         "id": 77,
         "test_setup_code": "",
@@ -923,6 +1000,7 @@ problems = [
     },
     {
         "text": "Write a C function to find number of integers with odd number of set bits.",
+        "label": "math",
         "code": "def count_With_Odd_SetBits(n): \r\n    if (n % 2 != 0): \r\n        return (n + 1) / 2\r\n    count = bin(n).count('1') \r\n    ans = n / 2\r\n    if (count % 2 != 0): \r\n        ans += 1\r\n    return ans ",
         "id": 78,
         "test_setup_code": "",
@@ -935,6 +1013,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the length of the word is odd or not.",
+        "label": "math",
         "code": "def word_len(s): \r\n    s = s.split(' ')   \r\n    for word in s:    \r\n        if len(word)%2!=0: \r\n            return True  \r\n        else:\r\n          return False",
         "id": 79,
         "test_setup_code": "",
@@ -947,6 +1026,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth tetrahedral number.",
+        "label": "math",
         "code": "def tetrahedral_number(n): \r\n\treturn (n * (n + 1) * (n + 2)) / 6",
         "id": 80,
         "test_setup_code": "",
@@ -959,6 +1039,7 @@ problems = [
     },
     {
         "text": "Write a C function to zip the two given tuples.",
+        "label": "array",
         "code": "def zip_tuples(test_tup1, test_tup2):\r\n  res = []\r\n  for i, j in enumerate(test_tup1):\r\n    res.append((j, test_tup2[i % len(test_tup2)])) \r\n  return (res) ",
         "id": 81,
         "test_setup_code": "",
@@ -971,6 +1052,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the volume of a sphere.",
+        "label": "math",
         "code": "import math\r\ndef volume_sphere(r):\r\n  volume=(4/3)*math.pi*r*r*r\r\n  return volume",
         "id": 82,
         "test_setup_code": "",
@@ -983,6 +1065,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the character made by adding all the characters of the given string.",
+        "label": "string",
         "code": "def get_Char(strr):  \r\n    summ = 0\r\n    for i in range(len(strr)): \r\n        summ += (ord(strr[i]) - ord('a') + 1)  \r\n    if (summ % 26 == 0): \r\n        return ord('z') \r\n    else: \r\n        summ = summ % 26\r\n        return chr(ord('a') + summ - 1)",
         "id": 83,
         "test_setup_code": "",
@@ -991,6 +1074,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n-th number in newman conway sequence.",
+        "label": "math",
         "code": "def sequence(n): \r\n\tif n == 1 or n == 2: \r\n\t\treturn 1\r\n\telse: \r\n\t\treturn sequence(sequence(n-1)) + sequence(n-sequence(n-1))",
         "id": 84,
         "test_setup_code": "",
@@ -999,6 +1083,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the surface area of a sphere.",
+        "label": "math",
         "code": "import math\r\ndef surfacearea_sphere(r):\r\n  surfacearea=4*math.pi*r*r\r\n  return surfacearea",
         "id": 85,
         "test_setup_code": "",
@@ -1011,6 +1096,7 @@ problems = [
     },
     {
         "text": "Write a C function to find nth centered hexagonal number.",
+        "label": "math",
         "code": "def centered_hexagonal_number(n):\r\n  return 3 * n * (n - 1) + 1",
         "id": 86,
         "test_setup_code": "",
@@ -1023,6 +1109,7 @@ problems = [
     },
     {
         "text": "Write a C function to merge three dictionaries into a single expression.",
+        "label": "matrix",
         "code": "import collections as ct\r\ndef merge_dictionaries_three(dict1,dict2, dict3):\r\n    merged_dict = dict(ct.ChainMap({},,dict1,dict2,dict3))\r\n    return merged_dict",
         "id": 87,
         "test_setup_code": "",
@@ -1035,6 +1122,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the frequency of the elements in a list.",
+        "label": "array",
         "code": "import collections\r\ndef freq_count(list1):\r\n  freq_count= collections.Counter(list1)\r\n  return freq_count",
         "id": 88,
         "test_setup_code": "",
@@ -1047,6 +1135,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the closest smaller number than n.",
+        "label": "math",
         "code": "def closest_num(N):\r\n  return (N - 1)",
         "id": 89,
         "test_setup_code": "",
@@ -1055,6 +1144,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the length of the longest word.",
+        "label": "array",
         "code": "def len_log(list1):\r\n    max=len(list1[0])\r\n    for i in list1:\r\n        if len(i)>max:\r\n            max=len(i)\r\n    return max",
         "id": 90,
         "test_setup_code": "",
@@ -1067,6 +1157,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a substring is present in a given list of string values.",
+        "label": "string",
         "code": "def find_substring(str1, sub_str):\r\n   if any(sub_str in s for s in str1):\r\n       return True\r\n   return False",
         "id": 91,
         "test_setup_code": "",
@@ -1079,6 +1170,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number is undulating or not.",
+        "label": "string",
         "code": "def is_undulating(n): \r\n\tif (len(n) <= 2): \r\n\t\treturn False\r\n\tfor i in range(2, len(n)): \r\n\t\tif (n[i - 2] != n[i]): \r\n\t\t\treturn False\r\n\treturn True",
         "id": 92,
         "test_setup_code": "",
@@ -1091,6 +1183,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the value of 'a' to the power 'b'.",
+        "label": "math",
         "code": "def power(a,b):\r\n\tif b==0:\r\n\t\treturn 1\r\n\telif a==0:\r\n\t\treturn 0\r\n\telif b==1:\r\n\t\treturn a\r\n\telse:\r\n\t\treturn a*power(a,b-1)",
         "id": 93,
         "test_setup_code": "",
@@ -1099,6 +1192,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the index minimum value record from the given tuples.",
+        "label": "matrix",
         "code": "from operator import itemgetter \r\ndef index_minimum(test_list):\r\n  res = min(test_list, key = itemgetter(1))[0]\r\n  return (res) ",
         "id": 94,
         "test_setup_code": "",
@@ -1111,6 +1205,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum length of sublist.",
+        "label": "array",
         "code": "def Find_Min_Length(lst):  \r\n    minLength = min(len(x) for x in lst )\r\n    return minLength ",
         "id": 95,
         "test_setup_code": "",
@@ -1123,6 +1218,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of divisors of a given integer.",
+        "label": "math",
         "code": "def divisor(n):\r\n  for i in range(n):\r\n    x = len([i for i in range(1,n+1) if not n % i])\r\n  return x",
         "id": 96,
         "test_setup_code": "",
@@ -1131,6 +1227,7 @@ problems = [
     },
     {
         "text": "Write a C function to find frequency count of list of lists.",
+        "label": "matrix",
         "code": "def frequency_lists(list1):\r\n    list1 = [item for sublist in list1 for item in sublist]\r\n    dic_data = {},\r\n    for num in list1:\r\n        if num in dic_data.keys():\r\n            dic_data[num] += 1\r\n        else:\r\n            key = num\r\n            value = 1\r\n            dic_data[key] = value\r\n    return dic_data\r\n",
         "id": 97,
         "test_setup_code": "",
@@ -1143,6 +1240,7 @@ problems = [
     },
     {
         "text": "Write a C function to multiply all the numbers in a list and divide with the length of the list.",
+        "label": "array",
         "code": "def multiply_num(numbers):  \r\n    total = 1\r\n    for x in numbers:\r\n        total *= x  \r\n    return total/len(numbers) ",
         "id": 98,
         "test_setup_code": "",
@@ -1155,6 +1253,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given decimal number to its binary equivalent.",
+        "label": "math",
         "code": 'def decimal_to_binary(n): \r\n    return bin(n).replace("0b","") ',
         "id": 99,
         "test_setup_code": "",
@@ -1167,6 +1266,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the next smallest palindrome of a specified number.",
+        "label": "string",
         "code": "import sys\r\ndef next_smallest_palindrome(num):\r\n    numstr = str(num)\r\n    for i in range(num+1,sys.maxsize):\r\n        if str(i) == str(i)[::-1]:\r\n            return i",
         "id": 100,
         "test_setup_code": "",
@@ -1179,6 +1279,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the kth element in the given array.",
+        "label": "array",
         "code": "def kth_element(arr, n, k):\r\n  for i in range(n):\r\n    for j in range(0, n-i-1):\r\n      if arr[j] > arr[j+1]:\r\n        arr[j], arr[j+1] == arr[j+1], arr[j]\r\n  return arr[k-1]",
         "id": 101,
         "test_setup_code": "",
@@ -1191,6 +1292,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert snake case string to camel case string.",
+        "label": "string",
         "code": "def snake_to_camel(word):\r\n        import re\r\n        return ''.join(x.capitalize() or '_' for x in word.split('_'))",
         "id": 102,
         "test_setup_code": "",
@@ -1203,6 +1305,7 @@ problems = [
     },
     {
         "text": "Write a C function to find eulerian number a(n, m).",
+        "label": "math",
         "code": "def eulerian_num(n, m): \r\n\tif (m >= n or n == 0): \r\n\t\treturn 0 \r\n\tif (m == 0): \r\n\t\treturn 1 \r\n\treturn ((n - m) * eulerian_num(n - 1, m - 1) +(m + 1) * eulerian_num(n - 1, m))",
         "id": 103,
         "test_setup_code": "",
@@ -1215,6 +1318,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort each sublist of strings in a given list of lists.",
+        "label": "matrix",
         "code": "def sort_sublists(input_list):\r\n    result = [sorted(x, key = lambda x:x[0]) for x in input_list] \r\n    return result\r",
         "id": 104,
         "test_setup_code": "",
@@ -1227,6 +1331,7 @@ problems = [
     },
     {
         "text": "Write a C function to count true booleans in the given list.",
+        "label": "array",
         "code": "def count(lst):   \r\n    return sum(lst) ",
         "id": 105,
         "test_setup_code": "",
@@ -1239,6 +1344,7 @@ problems = [
     },
     {
         "text": "Write a C function to add the given list to the given tuples.",
+        "label": "array",
         "code": "def add_lists(test_list, test_tup):\r\n  res = tuple(list(test_tup) + test_list)\r\n  return (res) ",
         "id": 106,
         "test_setup_code": "",
@@ -1251,6 +1357,7 @@ problems = [
     },
     {
         "text": "Write a C function to count hexadecimal numbers for a given range.",
+        "label": "math",
         "code": "def count_Hexadecimal(L,R) :  \r\n    count = 0;  \r\n    for i in range(L,R + 1) : \r\n        if (i >= 10 and i <= 15) : \r\n            count += 1;  \r\n        elif (i > 15) : \r\n            k = i;  \r\n            while (k != 0) :  \r\n                if (k % 16 >= 10) : \r\n                    count += 1;  \r\n                k = k // 16;  \r\n    return count;  ",
         "id": 107,
         "test_setup_code": "",
@@ -1263,6 +1370,7 @@ problems = [
     },
     {
         "text": "Write a C function to merge multiple sorted inputs into a single sorted iterator using heap queue algorithm.",
+        "label": "array",
         "code": "import heapq\r\ndef merge_sorted_list(num1,num2,num3):\r\n  num1=sorted(num1)\r\n  num2=sorted(num2)\r\n  num3=sorted(num3)\r\n  result = heapq.merge(num1,num2,num3)\r\n  return list(result)",
         "id": 108,
         "test_setup_code": "",
@@ -1275,6 +1383,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the count of rotations of a binary string with odd value.",
+        "label": "string",
         "code": "def odd_Equivalent(s,n): \r\n    count=0\r\n    for i in range(0,n): \r\n        if (s[i] == '1'): \r\n            count = count + 1\r\n    return count ",
         "id": 109,
         "test_setup_code": "",
@@ -1287,6 +1396,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the ranges that are missing from the given list with the given start range and end range values.",
+        "label": "array",
         "code": "def extract_missing(test_list, strt_val, stop_val):\r\n  res = []\r\n  for sub in test_list:\r\n    if sub[0] > strt_val:\r\n      res.append((strt_val, sub[0]))\r\n      strt_val = sub[1]\r\n    if strt_val < stop_val:\r\n      res.append((strt_val, stop_val))\r\n  return (res) ",
         "id": 110,
         "test_setup_code": "",
@@ -1299,6 +1409,7 @@ problems = [
     },
     {
         "text": "Write a C function to find common elements in given nested lists. * list item * list item * list item * list item",
+        "label": "matrix",
         "code": "def common_in_nested_lists(nestedlist):\r\n    result = list(set.intersection(*map(set, nestedlist)))\r\n    return result",
         "id": 111,
         "test_setup_code": "",
@@ -1311,6 +1422,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the perimeter of a cylinder.",
+        "label": "math",
         "code": "def perimeter(diameter,height) : \r\n    return 2*(diameter+height)  ",
         "id": 112,
         "test_setup_code": "",
@@ -1319,6 +1431,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a string represents an integer or not.",
+        "label": "string",
         "code": 'def check_integer(text):\r\n text = text.strip()\r\n if len(text) < 1:\r\n    return None\r\n else:\r\n     if all(text[i] in "0123456789" for i in range(len(text))):\r\n          return True\r\n     elif (text[0] in "+-") and \\\r\n         all(text[i] in "0123456789" for i in range(1,len(text))):\r\n         return True\r\n     else:\r\n        return False',
         "id": 113,
         "test_setup_code": "",
@@ -1331,6 +1444,7 @@ problems = [
     },
     {
         "text": "Write a C function to assign frequency to each tuple in the given tuple list.",
+        "label": "matrix",
         "code": "from collections import Counter \r\ndef assign_freq(test_list):\r\n  res = [(*key, val) for key, val in Counter(test_list).items()]\r\n  return (str(res)) ",
         "id": 114,
         "test_setup_code": "",
@@ -1343,6 +1457,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether all dictionaries in a list are empty or not.",
+        "label": "array",
         "code": "def empty_dit(list1):\r\n empty_dit=all(not d for d in list1)\r\n return empty_dit",
         "id": 115,
         "test_setup_code": "",
@@ -1355,6 +1470,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a given tuple of positive integers into an integer.",
+        "label": "array",
         "code": "def tuple_to_int(nums):\r\n    result = int(''.join(map(str,nums)))\r\n    return result",
         "id": 116,
         "test_setup_code": "",
@@ -1367,6 +1483,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert all possible convertible elements in the list to float.",
+        "label": "matrix",
         "code": "def list_to_float(test_list):\r\n  res = []\r\n  for tup in test_list:\r\n    temp = []\r\n    for ele in tup:\r\n      if ele.isalpha():\r\n        temp.append(ele)\r\n      else:\r\n        temp.append(float(ele))\r\n    res.append((temp[0],temp[1])) \r\n  return (str(res)) ",
         "id": 117,
         "test_setup_code": "",
@@ -1379,6 +1496,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a string to a list.",
+        "label": "string",
         "code": 'def string_to_list(string): \r\n    lst = list(string.split(" ")) \r\n    return lst',
         "id": 118,
         "test_setup_code": "",
@@ -1391,6 +1509,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the element that appears only once in a sorted array.",
+        "label": "array",
         "code": "def search(arr,n) :\r\n    XOR = 0\r\n    for i in range(n) :\r\n        XOR = XOR ^ arr[i]\r\n    return (XOR)",
         "id": 119,
         "test_setup_code": "",
@@ -1403,6 +1522,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum product from the pairs of tuples within a given list.",
+        "label": "array",
         "code": "def max_product_tuple(list1):\r\n    result_max = max([abs(x * y) for x, y in list1] )\r\n    return result_max",
         "id": 120,
         "test_setup_code": "",
@@ -1415,6 +1535,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the triplet with sum of the given array",
+        "label": "array",
         "code": "def check_triplet(A, n, sum, count):\r\n    if count == 3 and sum == 0:\r\n        return True\r\n    if count == 3 or n == 0 or sum < 0:\r\n        return False\r\n    return check_triplet(A, n - 1, sum - A[n - 1], count + 1) or\\\r\n           check_triplet(A, n - 1, sum, count)",
         "id": 121,
         "test_setup_code": "",
@@ -1427,6 +1548,7 @@ problems = [
     },
     {
         "text": "Write a C function to find n\u2019th smart number.",
+        "label": "math",
         "code": "MAX = 3000 \r\ndef smartNumber(n): \r\n\tprimes = [0] * MAX \r\n\tresult = [] \r\n\tfor i in range(2, MAX): \r\n\t\tif (primes[i] == 0): \r\n\t\t\tprimes[i] = 1 \r\n\t\t\tj = i * 2 \r\n\t\t\twhile (j < MAX): \r\n\t\t\t\tprimes[j] -= 1 \r\n\t\t\t\tif ( (primes[j] + 3) == 0): \r\n\t\t\t\t\tresult.append(j) \r\n\t\t\t\tj = j + i \r\n\tresult.sort() \r\n\treturn result[n - 1] ",
         "id": 122,
         "test_setup_code": "",
@@ -1439,6 +1561,7 @@ problems = [
     },
     {
         "text": "Write a C function to sum all amicable numbers from 1 to a specified number.",
+        "label": "math",
         "code": 'def amicable_numbers_sum(limit):\r\n    if not isinstance(limit, int):\r\n        return "Input is not an integer!"\r\n    if limit < 1:\r\n        return "Input must be bigger than 0!"\r\n    amicables = set()\r\n    for num in range(2, limit+1):\r\n        if num in amicables:\r\n            continue\r\n        sum_fact = sum([fact for fact in range(1, num) if num % fact == 0])\r\n        sum_fact2 = sum([fact for fact in range(1, sum_fact) if sum_fact % fact == 0])\r\n        if num == sum_fact2 and num != sum_fact:\r\n            amicables.add(num)\r\n            amicables.add(sum_fact2)\r\n    return sum(amicables)',
         "id": 123,
         "test_setup_code": "",
@@ -1451,6 +1574,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the angle of a complex number.",
+        "label": "math",
         "code": "import cmath\r\ndef angle_complex(a,b):\r\n  cn=complex(a,b)\r\n  angle=cmath.phase(a+b)\r\n  return angle",
         "id": 124,
         "test_setup_code": "",
@@ -1463,6 +1587,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum difference between the number of 0s and number of 1s in any sub-string of the given binary string.",
+        "label": "string",
         "code": "def find_length(string, n): \r\n\tcurrent_sum = 0\r\n\tmax_sum = 0\r\n\tfor i in range(n): \r\n\t\tcurrent_sum += (1 if string[i] == '0' else -1) \r\n\t\tif current_sum < 0: \r\n\t\t\tcurrent_sum = 0\r\n\t\tmax_sum = max(current_sum, max_sum) \r\n\treturn max_sum if max_sum else 0",
         "id": 125,
         "test_setup_code": "",
@@ -1475,6 +1600,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of common divisors of two given numbers.",
+        "label": "math",
         "code": "def sum(a,b): \r\n    sum = 0\r\n    for i in range (1,min(a,b)): \r\n        if (a % i == 0 and b % i == 0): \r\n            sum += i \r\n    return sum",
         "id": 126,
         "test_setup_code": "",
@@ -1483,6 +1609,7 @@ problems = [
     },
     {
         "text": "Write a C function to multiply two integers without using the * operator.",
+        "label": "math",
         "code": "def multiply_int(x, y):\r\n    if y < 0:\r\n        return -multiply_int(x, -y)\r\n    elif y == 0:\r\n        return 0\r\n    elif y == 1:\r\n        return x\r\n    else:\r\n        return x + multiply_int(x, y - 1)",
         "id": 127,
         "test_setup_code": "",
@@ -1495,6 +1622,7 @@ problems = [
     },
     {
         "text": "Write a C function to shortlist words that are longer than n from a given list of words.",
+        "label": "string",
         "code": 'def long_words(n, str):\r\n    word_len = []\r\n    txt = str.split(" ")\r\n    for x in txt:\r\n        if len(x) > n:\r\n            word_len.append(x)\r\n    return word_len\t',
         "id": 128,
         "test_setup_code": "",
@@ -1507,6 +1635,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate magic square.",
+        "label": "matrix",
         "code": "def magic_square_test(my_matrix):\r\n    iSize = len(my_matrix[0])\r\n    sum_list = []\r\n    sum_list.extend([sum (lines) for lines in my_matrix])   \r\n    for col in range(iSize):\r\n        sum_list.append(sum(row[col] for row in my_matrix))\r\n    result1 = 0\r\n    for i in range(0,iSize):\r\n        result1 +=my_matrix[i][i]\r\n    sum_list.append(result1)      \r\n    result2 = 0\r\n    for i in range(iSize-1,-1,-1):\r\n        result2 +=my_matrix[i][i]\r\n    sum_list.append(result2)\r\n    if len(set(sum_list))>1:\r\n        return False\r\n    return True",
         "id": 129,
         "test_setup_code": "",
@@ -1519,6 +1648,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the item with maximum frequency in a given list.",
+        "label": "array",
         "code": "from collections import defaultdict\r\ndef max_occurrences(nums):\r\n    dict = defaultdict(int)\r\n    for i in nums:\r\n        dict[i] += 1\r\n    result = max(dict.items(), key=lambda x: x[1]) \r\n    return result",
         "id": 130,
         "test_setup_code": "",
@@ -1531,6 +1661,7 @@ problems = [
     },
     {
         "text": "Write a C function to reverse only the vowels of a given string.",
+        "label": "string",
         "code": 'def reverse_vowels(str1):\r\n\tvowels = ""\r\n\tfor char in str1:\r\n\t\tif char in "aeiouAEIOU":\r\n\t\t\tvowels += char\r\n\tresult_string = ""\r\n\tfor char in str1:\r\n\t\tif char in "aeiouAEIOU":\r\n\t\t\tresult_string += vowels[-1]\r\n\t\t\tvowels = vowels[:-1]\r\n\t\telse:\r\n\t\t\tresult_string += char\r\n\treturn result_string',
         "id": 131,
         "test_setup_code": "",
@@ -1543,6 +1674,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert tuple to a string.",
+        "label": "array",
         "code": "def tup_string(tup1):\r\n  str =  ''.join(tup1)\r\n  return str",
         "id": 132,
         "test_setup_code": "",
@@ -1555,6 +1687,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of the negative numbers of a given list of numbers.",
+        "label": "array",
         "code": "def sum_negativenum(nums):\r\n  sum_negativenum = list(filter(lambda nums:nums<0,nums))\r\n  return sum(sum_negativenum)",
         "id": 133,
         "test_setup_code": "",
@@ -1567,6 +1700,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the last element of given array is even or odd after performing an operation p times.",
+        "label": "array",
         "code": 'def check_last (arr,n,p): \r\n    _sum = 0\r\n    for i in range(n): \r\n        _sum = _sum + arr[i] \r\n    if p == 1: \r\n        if _sum % 2 == 0: \r\n            return "ODD"\r\n        else: \r\n            return "EVEN"\r\n    return "EVEN"\r\n      ',
         "id": 134,
         "test_setup_code": "",
@@ -1579,6 +1713,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth hexagonal number.",
+        "label": "math",
         "code": "def hexagonal_num(n): \r\n\treturn n*(2*n - 1) ",
         "id": 135,
         "test_setup_code": "",
@@ -1591,6 +1726,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate electricity bill.",
+        "label": "math",
         "code": "def cal_electbill(units):\r\n if(units < 50):\r\n    amount = units * 2.60\r\n    surcharge = 25\r\n elif(units <= 100):\r\n    amount = 130 + ((units - 50) * 3.25)\r\n    surcharge = 35\r\n elif(units <= 200):\r\n    amount = 130 + 162.50 + ((units - 100) * 5.26)\r\n    surcharge = 45\r\n else:\r\n    amount = 130 + 162.50 + 526 + ((units - 200) * 8.45)\r\n    surcharge = 75\r\n total = amount + surcharge\r\n return total",
         "id": 136,
         "test_setup_code": "",
@@ -1603,6 +1739,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the ration of zeroes in an array of integers.",
+        "label": "array",
         "code": "from array import array\r\ndef zero_count(nums):\r\n    n = len(nums)\r\n    n1 = 0\r\n    for x in nums:\r\n        if x == 0:\r\n            n1 += 1\r\n        else:\r\n          None\r\n    return round(n1/n,2)",
         "id": 137,
         "test_setup_code": "",
@@ -1615,6 +1752,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number can be represented as sum of non-zero powers of 2 or not.",
+        "label": "math",
         "code": "def is_Sum_Of_Powers_Of_Two(n): \r\n    if (n % 2 == 1): \r\n        return False\r\n    else: \r\n        return True",
         "id": 138,
         "test_setup_code": "",
@@ -1627,6 +1765,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the circumference of a circle.",
+        "label": "math",
         "code": "def circle_circumference(r):\r\n  perimeter=2*3.1415*r\r\n  return perimeter",
         "id": 139,
         "test_setup_code": "",
@@ -1639,6 +1778,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract elements that occur singly in the given tuple list.",
+        "label": "matrix",
         "code": "def extract_singly(test_list):\r\n  res = []\r\n  temp = set()\r\n  for inner in test_list:\r\n    for ele in inner:\r\n      if not ele in temp:\r\n        temp.add(ele)\r\n        res.append(ele)\r\n  return (res) ",
         "id": 140,
         "test_setup_code": "",
@@ -1651,6 +1791,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of elements using pancake sort.",
+        "label": "array",
         "code": "def pancake_sort(nums):\r\n    arr_len = len(nums)\r\n    while arr_len > 1:\r\n        mi = nums.index(max(nums[0:arr_len]))\r\n        nums = nums[mi::-1] + nums[mi+1:len(nums)]\r\n        nums = nums[arr_len-1::-1] + nums[arr_len:len(nums)]\r\n        arr_len -= 1\r\n    return nums",
         "id": 141,
         "test_setup_code": "",
@@ -1663,6 +1804,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the same pair in three given lists.",
+        "label": "array",
         "code": "def count_samepair(list1,list2,list3):\r\n    result = sum(m == n == o for m, n, o in zip(list1,list2,list3))\r\n    return result",
         "id": 142,
         "test_setup_code": "",
@@ -1675,6 +1817,7 @@ problems = [
     },
     {
         "text": "Write a C function to find number of lists present in the given tuple.",
+        "label": "matrix",
         "code": "def find_lists(Input): \r\n\tif isinstance(Input, list): \r\n\t\treturn 1\r\n\telse: \r\n\t\treturn len(Input) ",
         "id": 143,
         "test_setup_code": "",
@@ -1687,6 +1830,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of absolute differences in all pairs of the given array.",
+        "label": "array",
         "code": "def sum_Pairs(arr,n): \r\n    sum = 0\r\n    for i in range(n - 1,-1,-1): \r\n        sum += i*arr[i] - (n-1-i) * arr[i] \r\n    return sum",
         "id": 144,
         "test_setup_code": "",
@@ -1699,6 +1843,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum difference between any two elements in a given array.",
+        "label": "array",
         "code": "def max_Abs_Diff(arr,n): \r\n    minEle = arr[0] \r\n    maxEle = arr[0] \r\n    for i in range(1, n): \r\n        minEle = min(minEle,arr[i]) \r\n        maxEle = max(maxEle,arr[i]) \r\n    return (maxEle - minEle) ",
         "id": 145,
         "test_setup_code": "",
@@ -1711,6 +1856,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the ascii value of total characters in a string.",
+        "label": "string",
         "code": "def ascii_value_string(str1):\r\n  for i in range(len(str1)):\r\n   return ord(str1[i])",
         "id": 146,
         "test_setup_code": "",
@@ -1723,6 +1869,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum total path sum in the given triangle.",
+        "label": "matrix",
         "code": "def max_path_sum(tri, m, n): \r\n\tfor i in range(m-1, -1, -1): \r\n\t\tfor j in range(i+1): \r\n\t\t\tif (tri[i+1][j] > tri[i+1][j+1]): \r\n\t\t\t\ttri[i][j] += tri[i+1][j] \r\n\t\t\telse: \r\n\t\t\t\ttri[i][j] += tri[i+1][j+1] \r\n\treturn tri[0][0]",
         "id": 147,
         "test_setup_code": "",
@@ -1735,6 +1882,7 @@ problems = [
     },
     {
         "text": "Write a C function to divide a number into two parts such that the sum of digits is maximum.",
+        "label": "math",
         "code": "def sum_digits_single(x) : \r\n    ans = 0\r\n    while x : \r\n        ans += x % 10\r\n        x //= 10  \r\n    return ans \r\ndef closest(x) : \r\n    ans = 0\r\n    while (ans * 10 + 9 <= x) : \r\n        ans = ans * 10 + 9  \r\n    return ans   \r\ndef sum_digits_twoparts(N) : \r\n    A = closest(N)  \r\n    return sum_digits_single(A) + sum_digits_single(N - A) ",
         "id": 148,
         "test_setup_code": "",
@@ -1747,6 +1895,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest subsequence such that the difference between adjacents is one for the given array.",
+        "label": "array",
         "code": "def longest_subseq_with_diff_one(arr, n): \r\n\tdp = [1 for i in range(n)] \r\n\tfor i in range(n): \r\n\t\tfor j in range(i): \r\n\t\t\tif ((arr[i] == arr[j]+1) or (arr[i] == arr[j]-1)): \r\n\t\t\t\tdp[i] = max(dp[i], dp[j]+1) \r\n\tresult = 1\r\n\tfor i in range(n): \r\n\t\tif (result < dp[i]): \r\n\t\t\tresult = dp[i] \r\n\treturn result",
         "id": 149,
         "test_setup_code": "",
@@ -1759,6 +1908,7 @@ problems = [
     },
     {
         "text": "Write a C function to find whether the given number is present in the infinite sequence or not.",
+        "label": "math",
         "code": "def does_Contain_B(a,b,c): \r\n    if (a == b): \r\n        return True\r\n    if ((b - a) * c > 0 and (b - a) % c == 0): \r\n        return True\r\n    return False",
         "id": 150,
         "test_setup_code": "",
@@ -1771,6 +1921,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number is co-prime or not.",
+        "label": "math",
         "code": "def gcd(p,q):\r\n    while q != 0:\r\n        p, q = q,p%q\r\n    return p\r\ndef is_coprime(x,y):\r\n    return gcd(x,y) == 1",
         "id": 151,
         "test_setup_code": "",
@@ -1783,6 +1934,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given array by using merge sort.",
+        "label": "array",
         "code": "def merge(a,b):\r\n    c = []\r\n    while len(a) != 0 and len(b) != 0:\r\n        if a[0] < b[0]:\r\n            c.append(a[0])\r\n            a.remove(a[0])\r\n        else:\r\n            c.append(b[0])\r\n            b.remove(b[0])\r\n    if len(a) == 0:\r\n        c += b\r\n    else:\r\n        c += a\r\n    return c\r\ndef merge_sort(x):\r\n    if len(x) == 0 or len(x) == 1:\r\n        return x\r\n    else:\r\n        middle = len(x)//2\r\n        a = merge_sort(x[:middle])\r\n        b = merge_sort(x[middle:])\r\n        return merge(a,b)\r\n",
         "id": 152,
         "test_setup_code": "",
@@ -1795,6 +1947,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the vertex of a parabola.",
+        "label": "math",
         "code": "def parabola_vertex(a, b, c): \r\n  vertex=(((-b / (2 * a)),(((4 * a * c) - (b * b)) / (4 * a))))\r\n  return vertex",
         "id": 153,
         "test_setup_code": "",
@@ -1807,6 +1960,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract every specified element from a given two dimensional list.",
+        "label": "matrix",
         "code": "def specified_element(nums, N):\r\n    result = [i[N] for i in nums]\r\n    return result",
         "id": 154,
         "test_setup_code": "",
@@ -1819,6 +1973,7 @@ problems = [
     },
     {
         "text": "Write a C function to toggle all even bits of a given number.",
+        "label": "math",
         "code": "def even_bit_toggle_number(n) : \r\n    res = 0; count = 0; temp = n \r\n    while (temp > 0) :     \r\n        if (count % 2 == 1) : \r\n            res = res | (1 << count)      \r\n        count = count + 1\r\n        temp >>= 1 \r\n    return n ^ res ",
         "id": 155,
         "test_setup_code": "",
@@ -1831,6 +1986,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a tuple of string values to a tuple of integer values.",
+        "label": "array",
         "code": "def tuple_int_str(tuple_str):\r\n    result = tuple((int(x[0]), int(x[1])) for x in tuple_str)\r\n    return result",
         "id": 156,
         "test_setup_code": "",
@@ -1843,6 +1999,7 @@ problems = [
     },
     {
         "text": "Write a C function to reflect the run-length encoding from a list.",
+        "label": "array",
         "code": "from itertools import groupby\r\ndef encode_list(list1):\r\n    return [[len(list(group)), key] for key, group in groupby(list1)]",
         "id": 157,
         "test_setup_code": "",
@@ -1855,6 +2012,7 @@ problems = [
     },
     {
         "text": "Write a C function to find k number of operations required to make all elements equal.",
+        "label": "array",
         "code": "def min_Ops(arr,n,k): \r\n    max1 = max(arr) \r\n    res = 0\r\n    for i in range(0,n):  \r\n        if ((max1 - arr[i]) % k != 0): \r\n            return -1 \r\n        else: \r\n            res += (max1 - arr[i]) / k \r\n    return int(res) ",
         "id": 158,
         "test_setup_code": "",
@@ -1867,6 +2025,7 @@ problems = [
     },
     {
         "text": "Write a C function to print the season for the given month and day.",
+        "label": "math",
         "code": "def month_season(month,days):\r\n if month in ('January', 'February', 'March'):\r\n\t season = 'winter'\r\n elif month in ('April', 'May', 'June'):\r\n\t season = 'spring'\r\n elif month in ('July', 'August', 'September'):\r\n\t season = 'summer'\r\n else:\r\n\t season = 'autumn'\r\n if (month == 'March') and (days > 19):\r\n\t season = 'spring'\r\n elif (month == 'June') and (days > 20):\r\n\t season = 'summer'\r\n elif (month == 'September') and (days > 21):\r\n\t season = 'autumn'\r\n elif (month == 'October') and (days > 21):\r\n\t season = 'autumn'\r\n elif (month == 'November') and (days > 21):\r\n\t season = 'autumn'\r\n elif (month == 'December') and (days > 20):\r\n\t season = 'winter'\r\n return season",
         "id": 159,
         "test_setup_code": "",
@@ -1879,6 +2038,7 @@ problems = [
     },
     {
         "text": "Write a C function to find x and y that satisfies ax + by = n.",
+        "label": "math",
         "code": 'def solution (a, b, n): \r\n\ti = 0\r\n\twhile i * a <= n: \r\n\t\tif (n - (i * a)) % b == 0: \r\n\t\t\treturn ("x = ",i ,", y = ", \r\n\t\t\tint((n - (i * a)) / b)) \r\n\t\t\treturn 0\r\n\t\ti = i + 1\r\n\treturn ("No solution") ',
         "id": 160,
         "test_setup_code": "",
@@ -1891,6 +2051,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all elements from a given list present in another list.",
+        "label": "array",
         "code": "def remove_elements(list1, list2):\r\n    result = [x for x in list1 if x not in list2]\r\n    return result",
         "id": 161,
         "test_setup_code": "",
@@ -1903,6 +2064,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of the positive integers of n+(n-2)+(n-4)... (until n-x =< 0).",
+        "label": "math",
         "code": "def sum_series(n):\r\n  if n < 1:\r\n    return 0\r\n  else:\r\n    return n + sum_series(n - 2)",
         "id": 162,
         "test_setup_code": "",
@@ -1911,6 +2073,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the area of a regular polygon.",
+        "label": "math",
         "code": "from math import tan, pi\r\ndef area_polygon(s,l):\r\n  area = s * (l ** 2) / (4 * tan(pi / s))\r\n  return area",
         "id": 163,
         "test_setup_code": "",
@@ -1923,6 +2086,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the sum of divisors are same or not.",
+        "label": "math",
         "code": "import math \r\ndef divSum(n): \r\n    sum = 1; \r\n    i = 2; \r\n    while(i * i <= n): \r\n        if (n % i == 0): \r\n            sum = (sum + i +math.floor(n / i)); \r\n        i += 1; \r\n    return sum; \r\ndef areEquivalent(num1,num2): \r\n    return divSum(num1) == divSum(num2); ",
         "id": 164,
         "test_setup_code": "",
@@ -1935,6 +2099,7 @@ problems = [
     },
     {
         "text": "Write a C function to count characters at same position in a given string (lower and uppercase characters) as in english alphabet.",
+        "label": "string",
         "code": "def count_char_position(str1): \r\n    count_chars = 0\r\n    for i in range(len(str1)):\r\n        if ((i == ord(str1[i]) - ord('A')) or \r\n            (i == ord(str1[i]) - ord('a'))): \r\n            count_chars += 1\r\n    return count_chars ",
         "id": 165,
         "test_setup_code": "",
@@ -1947,6 +2112,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the pairs with xor as an even number.",
+        "label": "array",
         "code": "def find_even_Pair(A,N): \r\n    evenPair = 0\r\n    for i in range(0,N): \r\n        for j in range(i+1,N): \r\n            if ((A[i] ^ A[j]) % 2 == 0): \r\n                evenPair+=1\r\n    return evenPair; ",
         "id": 166,
         "test_setup_code": "",
@@ -1959,6 +2125,7 @@ problems = [
     },
     {
         "text": "Write a C function to find smallest power of 2 greater than or equal to n.",
+        "label": "math",
         "code": "def next_Power_Of_2(n): \r\n    count = 0; \r\n    if (n and not(n & (n - 1))): \r\n        return n   \r\n    while( n != 0): \r\n        n >>= 1\r\n        count += 1\r\n    return 1 << count; ",
         "id": 167,
         "test_setup_code": "",
@@ -1971,6 +2138,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the frequency of a number in a given array.",
+        "label": "array",
         "code": "def frequency(a,x): \r\n    count = 0  \r\n    for i in a: \r\n        if i == x: count += 1\r\n    return count ",
         "id": 168,
         "test_setup_code": "",
@@ -1983,6 +2151,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the nth pell number.",
+        "label": "math",
         "code": "def get_pell(n): \r\n\tif (n <= 2): \r\n\t\treturn n \r\n\ta = 1\r\n\tb = 2\r\n\tfor i in range(3, n+1): \r\n\t\tc = 2 * b + a \r\n\t\ta = b \r\n\t\tb = c \r\n\treturn b ",
         "id": 169,
         "test_setup_code": "",
@@ -1991,6 +2160,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of the numbers in a list between the indices of a specified range.",
+        "label": "array",
         "code": "def sum_range_list(list1, m, n):                                                                                                                                                                                                \r\n    sum_range = 0                                                                                                                                                                                                         \r\n    for i in range(m, n+1, 1):                                                                                                                                                                                        \r\n        sum_range += list1[i]                                                                                                                                                                                                  \r\n    return sum_range   ",
         "id": 170,
         "test_setup_code": "",
@@ -2003,6 +2173,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the perimeter of a pentagon.",
+        "label": "math",
         "code": "import math\r\ndef perimeter_pentagon(a):\r\n  perimeter=(5*a)\r\n  return perimeter",
         "id": 171,
         "test_setup_code": "",
@@ -2015,6 +2186,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the occurence of characters 'std' in the given string 1. list item 1. list item 1. list item 2. list item 2. list item 2. list item",
+        "label": "string",
         "code": "def count_occurance(s):\r\n  count=0\r\n  for i in range(len(s)):\r\n    if (s[i]== 's' and s[i+1]=='t' and s[i+2]== 'd'):\r\n      count = count + 1\r\n  return count",
         "id": 172,
         "test_setup_code": "",
@@ -2027,6 +2199,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove everything except alphanumeric characters from a string.",
+        "label": "string",
         "code": "import re\r\ndef remove_splchar(text): \r\n pattern = re.compile('[\\W_]+')\r\n return (pattern.sub('', text))",
         "id": 173,
         "test_setup_code": "",
@@ -2039,6 +2212,7 @@ problems = [
     },
     {
         "text": "Write a C function to group a sequence of key-value pairs into a dictionary of lists.",
+        "label": "matrix",
         "code": "def group_keyvalue(l):\r\n    result = {},\r\n    for k, v in l:\r\n         result.setdefault(k, []).append(v)\r\n    return result",
         "id": 174,
         "test_setup_code": "",
@@ -2051,6 +2225,7 @@ problems = [
     },
     {
         "text": "Write a C function to verify validity of a string of parentheses.",
+        "label": "string",
         "code": 'def is_valid_parenthese( str1):\r\n        stack, pchar = [], {"(": ")", "{": "},", "[": "]"},\r\n        for parenthese in str1:\r\n            if parenthese in pchar:\r\n                stack.append(parenthese)\r\n            elif len(stack) == 0 or pchar[stack.pop()] != parenthese:\r\n                return False\r\n        return len(stack) == 0',
         "id": 175,
         "test_setup_code": "",
@@ -2063,6 +2238,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the perimeter of a triangle.",
+        "label": "math",
         "code": "def perimeter_triangle(a,b,c):\r\n  perimeter=a+b+c\r\n  return perimeter",
         "id": 176,
         "test_setup_code": "",
@@ -2075,6 +2251,7 @@ problems = [
     },
     {
         "text": "Write a C function to find two distinct numbers such that their lcm lies within the given range.",
+        "label": "math",
         "code": "def answer(L,R): \r\n    if (2 * L <= R): \r\n        return (L ,2*L)\r\n    else: \r\n        return (-1) ",
         "id": 177,
         "test_setup_code": "",
@@ -2083,6 +2260,7 @@ problems = [
     },
     {
         "text": "Write a C function to search some literals strings in a string.",
+        "label": "string",
         "code": "import re\r\ndef string_literals(patterns,text):\r\n  for pattern in patterns:\r\n     if re.search(pattern,  text):\r\n       return ('Matched!')\r\n     else:\r\n       return ('Not Matched!')",
         "id": 178,
         "test_setup_code": "",
@@ -2095,6 +2273,7 @@ problems = [
     },
     {
         "text": "Write a C function to find if the given number is a keith number or not.",
+        "label": "math",
         "code": "def is_num_keith(x): \r\n\tterms = [] \r\n\ttemp = x \r\n\tn = 0 \r\n\twhile (temp > 0): \r\n\t\tterms.append(temp % 10) \r\n\t\ttemp = int(temp / 10) \r\n\t\tn+=1 \r\n\tterms.reverse() \r\n\tnext_term = 0 \r\n\ti = n \r\n\twhile (next_term < x): \r\n\t\tnext_term = 0 \r\n\t\tfor j in range(1,n+1): \r\n\t\t\tnext_term += terms[i - j] \r\n\t\tterms.append(next_term) \r\n\t\ti+=1 \r\n\treturn (next_term == x) ",
         "id": 179,
         "test_setup_code": "",
@@ -2107,6 +2286,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate distance between two points using latitude and longitude.",
+        "label": "math",
         "code": "from math import radians, sin, cos, acos\r\ndef distance_lat_long(slat,slon,elat,elon):\r\n dist = 6371.01 * acos(sin(slat)*sin(elat) + cos(slat)*cos(elat)*cos(slon - elon))\r\n return dist",
         "id": 180,
         "test_setup_code": "",
@@ -2119,6 +2299,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest common prefix in the given set of strings.",
+        "label": "array",
         "code": 'def common_prefix_util(str1, str2): \r\n\tresult = ""; \r\n\tn1 = len(str1) \r\n\tn2 = len(str2) \r\n\ti = 0\r\n\tj = 0\r\n\twhile i <= n1 - 1 and j <= n2 - 1: \r\n\t\tif (str1[i] != str2[j]): \r\n\t\t\tbreak\r\n\t\tresult += str1[i] \r\n\t\ti += 1\r\n\t\tj += 1\r\n\treturn (result) \r\ndef common_prefix (arr, n): \r\n\tprefix = arr[0] \r\n\tfor i in range (1, n): \r\n\t\tprefix = common_prefix_util(prefix, arr[i]) \r\n\treturn (prefix) ',
         "id": 181,
         "test_setup_code": "",
@@ -2131,6 +2312,7 @@ problems = [
     },
     {
         "text": "Write a C function to find uppercase, lowercase, special character and numeric values using regex.",
+        "label": "string",
         "code": 'import re\r\ndef find_character(string):\r\n  uppercase_characters = re.findall(r"[A-Z]", string) \r\n  lowercase_characters = re.findall(r"[a-z]", string) \r\n  numerical_characters = re.findall(r"[0-9]", string) \r\n  special_characters = re.findall(r"[, .!?]", string) \r\n  return uppercase_characters, lowercase_characters, numerical_characters, special_characters',
         "id": 182,
         "test_setup_code": "",
@@ -2143,6 +2325,7 @@ problems = [
     },
     {
         "text": "Write a C function to count all the distinct pairs having a difference of k in any array.",
+        "label": "array",
         "code": "def count_pairs(arr, n, k):\r\n  count=0;\r\n  for i in range(0,n):\r\n    for j in range(i+1, n):\r\n      if arr[i] - arr[j] == k or arr[j] - arr[i] == k:\r\n        count += 1\r\n  return count",
         "id": 183,
         "test_setup_code": "",
@@ -2155,6 +2338,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all the values in a list that are greater than a specified number.",
+        "label": "array",
         "code": "def greater_specificnum(list,num):\r\n greater_specificnum=all(x >= num for x in list)\r\n return greater_specificnum",
         "id": 184,
         "test_setup_code": "",
@@ -2167,6 +2351,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the focus of a parabola.",
+        "label": "math",
         "code": "def parabola_focus(a, b, c): \r\n  focus= (((-b / (2 * a)),(((4 * a * c) - (b * b) + 1) / (4 * a))))\r\n  return focus",
         "id": 185,
         "test_setup_code": "",
@@ -2179,6 +2364,7 @@ problems = [
     },
     {
         "text": "Write a C function to search some literals strings in a string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef check_literals(text, patterns):\r\n  for pattern in patterns:\r\n    if re.search(pattern,  text):\r\n        return ('Matched!')\r\n    else:\r\n        return ('Not Matched!')",
         "id": 186,
         "test_setup_code": "",
@@ -2191,6 +2377,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest common subsequence for the given two sequences.",
+        "label": "string",
         "code": "def longest_common_subsequence(X, Y, m, n): \r\n    if m == 0 or n == 0: \r\n       return 0 \r\n    elif X[m-1] == Y[n-1]: \r\n       return 1 + longest_common_subsequence(X, Y, m-1, n-1) \r\n    else: \r\n       return max(longest_common_subsequence(X, Y, m, n-1), longest_common_subsequence(X, Y, m-1, n))",
         "id": 187,
         "test_setup_code": "",
@@ -2203,6 +2390,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number can be represented by product of two squares or not.",
+        "label": "math",
         "code": "def prod_Square(n):\r\n    for i in range(2,(n) + 1):\r\n        if (i*i < (n+1)):\r\n            for j in range(2,n + 1):\r\n                if ((i*i*j*j) == n):\r\n                    return True;\r\n    return False;",
         "id": 188,
         "test_setup_code": "",
@@ -2215,6 +2403,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first missing positive number.",
+        "label": "array",
         "code": "def first_Missing_Positive(arr,n): \r\n    ptr = 0\r\n    for i in range(n):\r\n        if arr[i] == 1:\r\n            ptr = 1\r\n            break\r\n    if ptr == 0:\r\n        return(1)\r\n    for i in range(n):\r\n        if arr[i] <= 0 or arr[i] > n:\r\n            arr[i] = 1\r\n    for i in range(n):\r\n        arr[(arr[i] - 1) % n] += n\r\n    for i in range(n):\r\n        if arr[i] <= n:\r\n            return(i + 1)\r\n    return(n + 1)",
         "id": 189,
         "test_setup_code": "",
@@ -2227,6 +2416,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of integral co-ordinates that lie inside a square.",
+        "label": "math",
         "code": "def count_Intgral_Points(x1,y1,x2,y2): \r\n    return ((y2 - y1 - 1) * (x2 - x1 - 1)) ",
         "id": 190,
         "test_setup_code": "",
@@ -2239,6 +2429,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given month name contains 30 days or not.",
+        "label": "string",
         "code": 'def check_monthnumber(monthname3):\r\n  if monthname3 =="April" or monthname3== "June" or monthname3== "September" or monthname3== "November":\r\n    return True\r\n  else:\r\n    return False',
         "id": 191,
         "test_setup_code": "",
@@ -2251,6 +2442,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a string has atleast one letter and one number.",
+        "label": "string",
         "code": "def check_String(str): \r\n    flag_l = False\r\n    flag_n = False\r\n    for i in str: \r\n        if i.isalpha(): \r\n            flag_l = True  \r\n        if i.isdigit(): \r\n            flag_n = True\r\n    return flag_l and flag_n ",
         "id": 192,
         "test_setup_code": "",
@@ -2263,6 +2455,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove the duplicates from the given tuple.",
+        "label": "array",
         "code": "def remove_tuple(test_tup):\r\n  res = tuple(set(test_tup))\r\n  return (res) ",
         "id": 193,
         "test_setup_code": "",
@@ -2275,6 +2468,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert octal number to decimal number.",
+        "label": "math",
         "code": "def octal_To_Decimal(n):  \r\n    num = n; \r\n    dec_value = 0; \r\n    base = 1; \r\n    temp = num; \r\n    while (temp): \r\n        last_digit = temp % 10; \r\n        temp = int(temp / 10); \r\n        dec_value += last_digit*base; \r\n        base = base * 8; \r\n    return dec_value; ",
         "id": 194,
         "test_setup_code": "",
@@ -2287,6 +2481,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first position of an element in a sorted array.",
+        "label": "array",
         "code": "def first(arr,x,n): \r\n    low = 0\r\n    high = n - 1\r\n    res = -1  \r\n    while (low <= high):\r\n        mid = (low + high) // 2 \r\n        if arr[mid] > x:\r\n            high = mid - 1\r\n        elif arr[mid] < x:\r\n            low = mid + 1\r\n        else:\r\n            res = mid\r\n            high = mid - 1\r\n    return res",
         "id": 195,
         "test_setup_code": "",
@@ -2299,6 +2494,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all the tuples with length k.",
+        "label": "matrix",
         "code": "def remove_tuples(test_list, K):\r\n  res = [ele for ele in test_list if len(ele) != K]\r\n  return (res) ",
         "id": 196,
         "test_setup_code": "",
@@ -2311,6 +2507,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform the exponentiation of the given two tuples.",
+        "label": "array",
         "code": "def find_exponentio(test_tup1, test_tup2):\r\n  res = tuple(ele1 ** ele2 for ele1, ele2 in zip(test_tup1, test_tup2))\r\n  return (res)\r\n",
         "id": 197,
         "test_setup_code": "",
@@ -2323,6 +2520,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest triangle that can be inscribed in an ellipse.",
+        "label": "math",
         "code": "import math\r\ndef largest_triangle(a,b): \r\n    if (a < 0 or b < 0): \r\n        return -1 \r\n    area = (3 * math.sqrt(3) * pow(a, 2)) / (4 * b);  \r\n    return area ",
         "id": 198,
         "test_setup_code": "",
@@ -2335,6 +2533,7 @@ problems = [
     },
     {
         "text": "Write a C function to find highest power of 2 less than or equal to given number.",
+        "label": "math",
         "code": "def highest_Power_of_2(n): \r\n    res = 0; \r\n    for i in range(n, 0, -1):  \r\n        if ((i & (i - 1)) == 0): \r\n            res = i; \r\n            break;      \r\n    return res; ",
         "id": 199,
         "test_setup_code": "",
@@ -2347,6 +2546,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all index positions of the maximum values in a given list.",
+        "label": "array",
         "code": "def position_max(list1):\r\n    max_val = max(list1)\r\n    max_result = [i for i, j in enumerate(list1) if j == max_val]\r\n    return max_result",
         "id": 200,
         "test_setup_code": "",
@@ -2359,6 +2559,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the elements in a list are same or not.",
+        "label": "array",
         "code": "def chkList(lst): \r\n    return len(set(lst)) == 1",
         "id": 201,
         "test_setup_code": "",
@@ -2371,6 +2572,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove even characters in a string.",
+        "label": "string",
         "code": "def remove_even(str1):\r\n str2 = ''\r\n for i in range(1, len(str1) + 1):\r\n    if(i % 2 != 0):\r\n        str2 = str2 + str1[i - 1]\r\n return str2",
         "id": 202,
         "test_setup_code": "",
@@ -2383,6 +2585,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the hamming distance between given two integers.",
+        "label": "math",
         "code": "def hamming_Distance(n1,n2) : \r\n    x = n1 ^ n2  \r\n    setBits = 0\r\n    while (x > 0) : \r\n        setBits += x & 1\r\n        x >>= 1\r\n    return setBits  ",
         "id": 203,
         "test_setup_code": "",
@@ -2395,6 +2598,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the occurrence of a given character in a string.",
+        "label": "string",
         "code": "def count(s,c) : \r\n    res = 0 \r\n    for i in range(len(s)) : \r\n        if (s[i] == c): \r\n            res = res + 1\r\n    return res ",
         "id": 204,
         "test_setup_code": "",
@@ -2407,6 +2611,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the inversions of tuple elements in the given tuple list.",
+        "label": "array",
         "code": "def inversion_elements(test_tup):\r\n  res = tuple(list(map(lambda x: ~x, list(test_tup))))\r\n  return (res) ",
         "id": 205,
         "test_setup_code": "",
@@ -2419,6 +2624,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform the adjacent element concatenation in the given tuples.",
+        "label": "array",
         "code": "def concatenate_elements(test_tup):\r\n  res = tuple(i + j for i, j in zip(test_tup, test_tup[1:]))\r\n  return (res) ",
         "id": 206,
         "test_setup_code": "",
@@ -2431,6 +2637,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the longest repeating subsequences such that the two subsequences don\u2019t have same string characters at same positions.",
+        "label": "string",
         "code": "def find_longest_repeating_subseq(str): \r\n\tn = len(str) \r\n\tdp = [[0 for k in range(n+1)] for l in range(n+1)] \r\n\tfor i in range(1, n+1): \r\n\t\tfor j in range(1, n+1): \r\n\t\t\tif (str[i-1] == str[j-1] and i != j): \r\n\t\t\t\tdp[i][j] = 1 + dp[i-1][j-1] \r\n\t\t\telse: \r\n\t\t\t\tdp[i][j] = max(dp[i][j-1], dp[i-1][j]) \r\n\treturn dp[n][n]",
         "id": 207,
         "test_setup_code": "",
@@ -2443,6 +2650,7 @@ problems = [
     },
     {
         "text": "Write a C function to check the given decimal with a precision of 2 by using regex.",
+        "label": "string",
         "code": 'import re\r\ndef is_decimal(num):\r\n  num_fetch = re.compile(r"""^[0-9]+(\\.[0-9]{1,2},)?$""")\r\n  result = num_fetch.search(num)\r\n  return bool(result)',
         "id": 208,
         "test_setup_code": "",
@@ -2455,6 +2663,7 @@ problems = [
     },
     {
         "text": "Write a C function to delete the smallest element from the given heap and then insert a new item.",
+        "label": "array",
         "code": "import heapq as hq\r\ndef heap_replace(heap,a):\r\n  hq.heapify(heap)\r\n  hq.heapreplace(heap, a)\r\n  return heap",
         "id": 209,
         "test_setup_code": "",
@@ -2467,6 +2676,7 @@ problems = [
     },
     {
         "text": "Write a C function to check that the given string contains only a certain set of characters(in this case a-z, a-z and 0-9) by using regex.",
+        "label": "string",
         "code": "import re\r\ndef is_allowed_specific_char(string):\r\n    get_char = re.compile(r'[^a-zA-Z0-9.]')\r\n    string = get_char.search(string)\r\n    return not bool(string)",
         "id": 210,
         "test_setup_code": "",
@@ -2479,6 +2689,7 @@ problems = [
     },
     {
         "text": "Write a C function to count numbers whose oth and nth bits are set.",
+        "label": "math",
         "code": "def count_Num(n): \r\n    if (n == 1): \r\n        return 1\r\n    count = pow(2,n - 2) \r\n    return count ",
         "id": 211,
         "test_setup_code": "",
@@ -2487,6 +2698,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of fourth power of n natural numbers.",
+        "label": "math",
         "code": "import math  \r\ndef fourth_Power_Sum(n): \r\n    sum = 0\r\n    for i in range(1,n+1) : \r\n        sum = sum + (i*i*i*i) \r\n    return sum",
         "id": 212,
         "test_setup_code": "",
@@ -2499,6 +2711,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform the concatenation of two string tuples.",
+        "label": "array",
         "code": "def concatenate_strings(test_tup1, test_tup2):\r\n  res = tuple(ele1 + ele2 for ele1, ele2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 213,
         "test_setup_code": "",
@@ -2511,6 +2724,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert radians to degrees.",
+        "label": "math",
         "code": "import math\r\ndef degree_radian(radian):\r\n degree = radian*(180/math.pi)\r\n return degree",
         "id": 214,
         "test_setup_code": "",
@@ -2523,6 +2737,7 @@ problems = [
     },
     {
         "text": "Write a C function to decode a run-length encoded given list.",
+        "label": "array",
         "code": "def decode_list(alist):\r\n    def aux(g):\r\n        if isinstance(g, list):\r\n            return [(g[1], range(g[0]))]\r\n        else:\r\n            return [(g, [0])]\r\n    return [x for g in alist for x, R in aux(g) for i in R]",
         "id": 215,
         "test_setup_code": "",
@@ -2535,6 +2750,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a nested list is a subset of another nested list.",
+        "label": "matrix",
         "code": "def check_subset_list(list1, list2): \r\n    l1, l2 = list1[0], list2[0] \r\n    exist = True\r\n    for i in list2: \r\n        if i not in list1: \r\n            exist = False\r\n    return exist ",
         "id": 216,
         "test_setup_code": "",
@@ -2547,6 +2763,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first repeated character in a given string.",
+        "label": "string",
         "code": "def first_Repeated_Char(str): \r\n    h = {},\r\n    for ch in str:\r\n        if ch in h: \r\n            return ch;\r\n        else: \r\n            h[ch] = 0\r\n    return '\\0'",
         "id": 217,
         "test_setup_code": "",
@@ -2559,6 +2776,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum operations required to make two numbers equal.",
+        "label": "math",
         "code": "import math   \r\ndef min_Operations(A,B):  \r\n    if (A > B): \r\n        swap(A,B)  \r\n    B = B // math.gcd(A,B);  \r\n    return B - 1",
         "id": 218,
         "test_setup_code": "",
@@ -2571,6 +2789,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract maximum and minimum k elements in the given tuple.",
+        "label": "array",
         "code": "\r\ndef extract_min_max(test_tup, K):\r\n  res = []\r\n  test_tup = list(test_tup)\r\n  temp = sorted(test_tup)\r\n  for idx, val in enumerate(temp):\r\n    if idx < K or idx >= len(temp) - K:\r\n      res.append(val)\r\n  res = tuple(res)\r\n  return (res) ",
         "id": 219,
         "test_setup_code": "",
@@ -2583,6 +2802,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace maximum n occurrences of spaces, commas, or dots with a colon.",
+        "label": "string",
         "code": 'import re\r\ndef replace_max_specialchar(text,n):\r\n return (re.sub("[ ,.]", ":", text, n))',
         "id": 220,
         "test_setup_code": "",
@@ -2595,6 +2815,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first even number in a given list of numbers.",
+        "label": "array",
         "code": "def first_even(nums):\r\n    first_even = next((el for el in nums if el%2==0),-1)\r\n    return first_even",
         "id": 221,
         "test_setup_code": "",
@@ -2607,6 +2828,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if all the elements in tuple have same data type or not.",
+        "label": "array",
         "code": "def check_type(test_tuple):\r\n  res = True\r\n  for ele in test_tuple:\r\n    if not isinstance(ele, type(test_tuple[0])):\r\n      res = False\r\n      break\r\n  return (res) ",
         "id": 222,
         "test_setup_code": "",
@@ -2619,6 +2841,7 @@ problems = [
     },
     {
         "text": "Write a C function to check for majority element in the given sorted array.",
+        "label": "array",
         "code": "def is_majority(arr, n, x):\r\n\ti = binary_search(arr, 0, n-1, x)\r\n\tif i == -1:\r\n\t\treturn False\r\n\tif ((i + n//2) <= (n -1)) and arr[i + n//2] == x:\r\n\t\treturn True\r\n\telse:\r\n\t\treturn False\r\ndef binary_search(arr, low, high, x):\r\n\tif high >= low:\r\n\t\tmid = (low + high)//2 \r\n\t\tif (mid == 0 or x > arr[mid-1]) and (arr[mid] == x):\r\n\t\t\treturn mid\r\n\t\telif x > arr[mid]:\r\n\t\t\treturn binary_search(arr, (mid + 1), high, x)\r\n\t\telse:\r\n\t\t\treturn binary_search(arr, low, (mid -1), x)\r\n\treturn -1",
         "id": 223,
         "test_setup_code": "",
@@ -2631,6 +2854,7 @@ problems = [
     },
     {
         "text": "Write a C function to count set bits of a given number.",
+        "label": "math",
         "code": "def count_Set_Bits(n): \r\n    count = 0\r\n    while (n): \r\n        count += n & 1\r\n        n >>= 1\r\n    return count ",
         "id": 224,
         "test_setup_code": "",
@@ -2643,6 +2867,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum element in a sorted and rotated array.",
+        "label": "array",
         "code": "def find_Min(arr,low,high): \r\n    while (low < high): \r\n        mid = low + (high - low) // 2;   \r\n        if (arr[mid] == arr[high]): \r\n            high -= 1; \r\n        elif (arr[mid] > arr[high]): \r\n            low = mid + 1; \r\n        else: \r\n            high = mid; \r\n    return arr[high]; ",
         "id": 225,
         "test_setup_code": "",
@@ -2655,6 +2880,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove the characters which have odd index values of a given string.",
+        "label": "string",
         "code": 'def odd_values_string(str):\r\n  result = "" \r\n  for i in range(len(str)):\r\n    if i % 2 == 0:\r\n      result = result + str[i]\r\n  return result',
         "id": 226,
         "test_setup_code": "",
@@ -2667,6 +2893,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum of three numbers.",
+        "label": "math",
         "code": "def min_of_three(a,b,c): \r\n      if (a <= b) and (a <= c): \r\n        smallest = a \r\n      elif (b <= a) and (b <= c): \r\n        smallest = b \r\n      else: \r\n        smallest = c \r\n      return smallest ",
         "id": 227,
         "test_setup_code": "",
@@ -2679,6 +2906,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether all the bits are unset in the given range or not.",
+        "label": "math",
         "code": "def all_Bits_Set_In_The_Given_Range(n,l,r):  \r\n    num = (((1 << r) - 1) ^ ((1 << (l - 1)) - 1)) \r\n    new_num = n & num\r\n    if (new_num == 0): \r\n        return True\r\n    return False",
         "id": 228,
         "test_setup_code": "",
@@ -2691,6 +2919,7 @@ problems = [
     },
     {
         "text": "Write a C function to re-arrange the elements of the given array so that all negative elements appear before positive ones.",
+        "label": "array",
         "code": "def re_arrange_array(arr, n):\r\n  j=0\r\n  for i in range(0, n):\r\n    if (arr[i] < 0):\r\n      temp = arr[i]\r\n      arr[i] = arr[j]\r\n      arr[j] = temp\r\n      j = j + 1\r\n  return arr",
         "id": 229,
         "test_setup_code": "",
@@ -2703,6 +2932,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace blank spaces with any character in a string.",
+        "label": "string",
         "code": "def replace_blank(str1,char):\r\n str2 = str1.replace(' ', char)\r\n return str2",
         "id": 230,
         "test_setup_code": "",
@@ -2715,6 +2945,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum in the given right triangle of numbers.",
+        "label": "matrix",
         "code": "def max_sum(tri, n): \r\n\tif n > 1: \r\n\t\ttri[1][1] = tri[1][1]+tri[0][0] \r\n\t\ttri[1][0] = tri[1][0]+tri[0][0] \r\n\tfor i in range(2, n): \r\n\t\ttri[i][0] = tri[i][0] + tri[i-1][0] \r\n\t\ttri[i][i] = tri[i][i] + tri[i-1][i-1] \r\n\t\tfor j in range(1, i): \r\n\t\t\tif tri[i][j]+tri[i-1][j-1] >= tri[i][j]+tri[i-1][j]: \r\n\t\t\t\ttri[i][j] = tri[i][j] + tri[i-1][j-1] \r\n\t\t\telse: \r\n\t\t\t\ttri[i][j] = tri[i][j]+tri[i-1][j] \r\n\treturn (max(tri[n-1]))",
         "id": 231,
         "test_setup_code": "",
@@ -2727,6 +2958,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the n largest items from a dataset.",
+        "label": "array",
         "code": "import heapq\r\ndef larg_nnum(list1,n):\r\n largest=heapq.nlargest(n,list1)\r\n return largest",
         "id": 232,
         "test_setup_code": "",
@@ -2739,6 +2971,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the lateral surface area of a cylinder.",
+        "label": "math",
         "code": "def lateralsuface_cylinder(r,h):\r\n  lateralsurface= 2*3.1415*r*h\r\n  return lateralsurface",
         "id": 233,
         "test_setup_code": "",
@@ -2751,6 +2984,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the volume of a cube.",
+        "label": "math",
         "code": "def volume_cube(l):\r\n  volume = l * l * l\r\n  return volume",
         "id": 234,
         "test_setup_code": "",
@@ -2759,6 +2993,7 @@ problems = [
     },
     {
         "text": "Write a C function to set all even bits of a given number.",
+        "label": "math",
         "code": "def even_bit_set_number(n): \r\n    count = 0;res = 0;temp = n \r\n    while(temp > 0): \r\n        if (count % 2 == 1): \r\n            res |= (1 << count)\r\n        count+=1\r\n        temp >>= 1\r\n    return (n | res) ",
         "id": 235,
         "test_setup_code": "",
@@ -2771,6 +3006,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the maximum number of equilateral triangles that can be formed within a given equilateral triangle.",
+        "label": "math",
         "code": "def No_of_Triangle(N,K):\r\n    if (N < K):\r\n        return -1;\r\n    else:\r\n        Tri_up = 0;\r\n        Tri_up = ((N - K + 1) *(N - K + 2)) // 2;\r\n        Tri_down = 0;\r\n        Tri_down = ((N - 2 * K + 1) *(N - 2 * K + 2)) // 2;\r\n        return Tri_up + Tri_down;",
         "id": 236,
         "test_setup_code": "",
@@ -2783,6 +3019,7 @@ problems = [
     },
     {
         "text": "Write a C function to check the occurrences of records which occur similar times in the given tuples.",
+        "label": "matrix",
         "code": "from collections import Counter \r\ndef check_occurences(test_list):\r\n  res = dict(Counter(tuple(ele) for ele in map(sorted, test_list)))\r\n  return  (res) ",
         "id": 237,
         "test_setup_code": "",
@@ -2795,6 +3032,7 @@ problems = [
     },
     {
         "text": "Write a C function to count number of non-empty substrings of a given string.",
+        "label": "string",
         "code": "def number_of_substrings(str): \r\n\tstr_len = len(str); \r\n\treturn int(str_len * (str_len + 1) / 2); ",
         "id": 238,
         "test_setup_code": "",
@@ -2807,6 +3045,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of possible sequences of length n such that each of the next element is greater than or equal to twice of the previous element but less than or equal to m.",
+        "label": "math",
         "code": "def get_total_number_of_sequences(m,n): \r\n\tT=[[0 for i in range(n+1)] for i in range(m+1)] \r\n\tfor i in range(m+1): \r\n\t\tfor j in range(n+1): \r\n\t\t\tif i==0 or j==0: \r\n\t\t\t\tT[i][j]=0\r\n\t\t\telif i<j: \r\n\t\t\t\tT[i][j]=0\r\n\t\t\telif j==1: \r\n\t\t\t\tT[i][j]=i \r\n\t\t\telse: \r\n\t\t\t\tT[i][j]=T[i-1][j]+T[i//2][j-1] \r\n\treturn T[m][n]",
         "id": 239,
         "test_setup_code": "",
@@ -2819,6 +3058,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace the last element of the list with another list.",
+        "label": "array",
         "code": "def replace_list(list1,list2):\r\n list1[-1:] = list2\r\n replace_list=list1\r\n return replace_list\r\n",
         "id": 240,
         "test_setup_code": "",
@@ -2831,6 +3071,7 @@ problems = [
     },
     {
         "text": "Write a C function to generate a 3d array having each element as '*'.",
+        "label": "matrix",
         "code": "def array_3d(m,n,o):\r\n array_3d = [[ ['*' for col in range(m)] for col in range(n)] for row in range(o)]\r\n return array_3d",
         "id": 241,
         "test_setup_code": "",
@@ -2843,6 +3084,7 @@ problems = [
     },
     {
         "text": "Write a C function to count total characters in a string.",
+        "label": "string",
         "code": "def count_charac(str1):\r\n total = 0\r\n for i in str1:\r\n    total = total + 1\r\n return total",
         "id": 242,
         "test_setup_code": "",
@@ -2855,6 +3097,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given list based on the occurrence of first element of tuples.",
+        "label": "matrix",
         "code": "def sort_on_occurence(lst): \r\n\tdct = {}, \r\n\tfor i, j in lst: \r\n\t\tdct.setdefault(i, []).append(j) \r\n\treturn ([(i, *dict.fromkeys(j), len(j)) \r\n\t\t\t\tfor i, j in dct.items()]) ",
         "id": 243,
         "test_setup_code": "",
@@ -2867,6 +3110,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the next perfect square greater than a given number.",
+        "label": "math",
         "code": "import math  \r\ndef next_Perfect_Square(N): \r\n    nextN = math.floor(math.sqrt(N)) + 1\r\n    return nextN * nextN ",
         "id": 244,
         "test_setup_code": "",
@@ -2879,6 +3123,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum of bi-tonic sub-sequence for the given array.",
+        "label": "array",
         "code": 'def max_sum(arr, n): \r\n\tMSIBS = arr[:] \r\n\tfor i in range(n): \r\n\t\tfor j in range(0, i): \r\n\t\t\tif arr[i] > arr[j] and MSIBS[i] < MSIBS[j] + arr[i]: \r\n\t\t\t\tMSIBS[i] = MSIBS[j] + arr[i] \r\n\tMSDBS = arr[:] \r\n\tfor i in range(1, n + 1): \r\n\t\tfor j in range(1, i): \r\n\t\t\tif arr[-i] > arr[-j] and MSDBS[-i] < MSDBS[-j] + arr[-i]: \r\n\t\t\t\tMSDBS[-i] = MSDBS[-j] + arr[-i] \r\n\tmax_sum = float("-Inf") \r\n\tfor i, j, k in zip(MSIBS, MSDBS, arr): \r\n\t\tmax_sum = max(max_sum, i + j - k) \r\n\treturn max_sum',
         "id": 245,
         "test_setup_code": "",
@@ -2891,6 +3136,7 @@ problems = [
     },
     {
         "text": "Write a C function for computing square roots using the babylonian method.",
+        "label": "math",
         "code": "def babylonian_squareroot(number):\r\n    if(number == 0):\r\n        return 0;\r\n    g = number/2.0;\r\n    g2 = g + 1;\r\n    while(g != g2):\r\n        n = number/ g;\r\n        g2 = g;\r\n        g = (g + n)/2;\r\n    return g;",
         "id": 246,
         "test_setup_code": "",
@@ -2903,6 +3149,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest palindromic subsequence in the given string.",
+        "label": "string",
         "code": "def lps(str): \r\n\tn = len(str) \r\n\tL = [[0 for x in range(n)] for x in range(n)] \r\n\tfor i in range(n): \r\n\t\tL[i][i] = 1\r\n\tfor cl in range(2, n+1): \r\n\t\tfor i in range(n-cl+1): \r\n\t\t\tj = i+cl-1\r\n\t\t\tif str[i] == str[j] and cl == 2: \r\n\t\t\t\tL[i][j] = 2\r\n\t\t\telif str[i] == str[j]: \r\n\t\t\t\tL[i][j] = L[i+1][j-1] + 2\r\n\t\t\telse: \r\n\t\t\t\tL[i][j] = max(L[i][j-1], L[i+1][j]); \r\n\treturn L[0][n-1]",
         "id": 247,
         "test_setup_code": "",
@@ -2915,6 +3162,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the harmonic sum of n-1.",
+        "label": "math",
         "code": "def harmonic_sum(n):\r\n  if n < 2:\r\n    return 1\r\n  else:\r\n    return 1 / n + (harmonic_sum(n - 1)) ",
         "id": 248,
         "test_setup_code": "",
@@ -2927,6 +3175,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the intersection of two arrays.",
+        "label": "array",
         "code": "def intersection_array(array_nums1,array_nums2):\r\n result = list(filter(lambda x: x in array_nums1, array_nums2)) \r\n return result",
         "id": 249,
         "test_setup_code": "",
@@ -2939,6 +3188,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the occcurences of an element in a tuple.",
+        "label": "array",
         "code": "def count_X(tup, x): \r\n    count = 0\r\n    for ele in tup: \r\n        if (ele == x): \r\n            count = count + 1\r\n    return count ",
         "id": 250,
         "test_setup_code": "",
@@ -2951,6 +3201,7 @@ problems = [
     },
     {
         "text": "Write a C function to insert an element before each element of a list.",
+        "label": "array",
         "code": "def insert_element(list,element):\r\n list = [v for elt in list for v in (element, elt)]\r\n return list",
         "id": 251,
         "test_setup_code": "",
@@ -2963,6 +3214,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert complex numbers to polar coordinates.",
+        "label": "math",
         "code": "import cmath  \r\ndef convert(numbers):    \r\n  num = cmath.polar(numbers)  \r\n  return (num) ",
         "id": 252,
         "test_setup_code": "",
@@ -2975,6 +3227,7 @@ problems = [
     },
     {
         "text": "Write a C function to count integers from a given list.",
+        "label": "array",
         "code": "def count_integer(list1):\r\n    ctr = 0\r\n    for i in list1:\r\n        if isinstance(i, int):\r\n            ctr = ctr + 1\r\n    return ctr",
         "id": 253,
         "test_setup_code": "",
@@ -2987,6 +3240,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all words starting with 'a' or 'e' in a given string.",
+        "label": "string",
         "code": 'import re\r\ndef words_ae(text):\r\n list = re.findall("[ae]\\w+", text)\r\n return list',
         "id": 254,
         "test_setup_code": "",
@@ -2999,6 +3253,7 @@ problems = [
     },
     {
         "text": "Write a C function to choose specified number of colours from three different colours and generate all the combinations with repetitions.",
+        "label": "array",
         "code": "from itertools import combinations_with_replacement \r\ndef combinations_colors(l, n):\r\n    return list(combinations_with_replacement(l,n))\r",
         "id": 255,
         "test_setup_code": "",
@@ -3011,6 +3266,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of prime numbers less than a given non-negative number.",
+        "label": "math",
         "code": "def count_Primes_nums(n):\r\n    ctr = 0\r\n    for num in range(n):\r\n        if num <= 1:\r\n            continue\r\n        for i in range(2,num):\r\n            if (num % i) == 0:\r\n                break\r\n        else:\r\n            ctr += 1\r\n    return ctr",
         "id": 256,
         "test_setup_code": "",
@@ -3023,6 +3279,7 @@ problems = [
     },
     {
         "text": "Write a C function to swap two numbers.",
+        "label": "math",
         "code": "def swap_numbers(a,b):\r\n temp = a\r\n a = b\r\n b = temp\r\n return (a,b)",
         "id": 257,
         "test_setup_code": "",
@@ -3035,6 +3292,7 @@ problems = [
     },
     {
         "text": "Write a C function to find number of odd elements in the given list.",
+        "label": "array",
         "code": "def count_odd(array_nums):\r\n   count_odd = len(list(filter(lambda x: (x%2 != 0) , array_nums)))\r\n   return count_odd",
         "id": 258,
         "test_setup_code": "",
@@ -3047,6 +3305,7 @@ problems = [
     },
     {
         "text": "Write a C function to maximize the given two tuples.",
+        "label": "matrix",
         "code": "def maximize_elements(test_tup1, test_tup2):\r\n  res = tuple(tuple(max(a, b) for a, b in zip(tup1, tup2))\r\n   for tup1, tup2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 259,
         "test_setup_code": "",
@@ -3059,6 +3318,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth newman\u2013shanks\u2013williams prime number.",
+        "label": "math",
         "code": "def newman_prime(n): \r\n\tif n == 0 or n == 1: \r\n\t\treturn 1\r\n\treturn 2 * newman_prime(n - 1) + newman_prime(n - 2)",
         "id": 260,
         "test_setup_code": "",
@@ -3067,6 +3327,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform mathematical division operation across the given tuples.",
+        "label": "array",
         "code": "def division_elements(test_tup1, test_tup2):\r\n  res = tuple(ele1 // ele2 for ele1, ele2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 261,
         "test_setup_code": "",
@@ -3079,6 +3340,7 @@ problems = [
     },
     {
         "text": "Write a C function to split a given list into two parts where the length of the first part of the list is given.",
+        "label": "array",
         "code": "def split_two_parts(list1, L):\r\n    return list1[:L], list1[L:]",
         "id": 262,
         "test_setup_code": "",
@@ -3091,6 +3353,7 @@ problems = [
     },
     {
         "text": "Write a C function to merge two dictionaries.",
+        "label": "matrix",
         "code": "def merge_dict(d1,d2):\r\n d = d1.copy()\r\n d.update(d2)\r\n return d",
         "id": 263,
         "test_setup_code": "",
@@ -3103,6 +3366,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate a dog's age in dog's years.",
+        "label": "math",
         "code": "def dog_age(h_age):\r\n if h_age < 0:\r\n \texit()\r\n elif h_age <= 2:\r\n\t d_age = h_age * 10.5\r\n else:\r\n\t d_age = 21 + (h_age - 2)*4\r\n return d_age",
         "id": 264,
         "test_setup_code": "",
@@ -3111,6 +3375,7 @@ problems = [
     },
     {
         "text": "Write a C function to split a list for every nth element.",
+        "label": "array",
         "code": "def list_split(S, step):\r\n    return [S[i::step] for i in range(step)]",
         "id": 265,
         "test_setup_code": "",
@@ -3123,6 +3388,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the lateral surface area of a cube.",
+        "label": "math",
         "code": "def lateralsurface_cube(l):\r\n  LSA = 4 * (l * l)\r\n  return LSA",
         "id": 266,
         "test_setup_code": "",
@@ -3135,6 +3401,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of squares of first n odd natural numbers.",
+        "label": "math",
         "code": "def square_Sum(n):  \r\n    return int(n*(4*n*n-1)/3) ",
         "id": 267,
         "test_setup_code": "",
@@ -3143,6 +3410,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n'th star number.",
+        "label": "math",
         "code": "def find_star_num(n): \r\n\treturn (6 * n * (n - 1) + 1) ",
         "id": 268,
         "test_setup_code": "",
@@ -3155,6 +3423,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the ascii value of a character.",
+        "label": "math",
         "code": "def ascii_value(k):\r\n  ch=k\r\n  return ord(ch)",
         "id": 269,
         "test_setup_code": "",
@@ -3163,6 +3432,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of even numbers at even positions.",
+        "label": "array",
         "code": "def sum_even_and_even_index(arr,n):  \r\n    i = 0\r\n    sum = 0\r\n    for i in range(0,n,2): \r\n        if (arr[i] % 2 == 0) : \r\n            sum += arr[i]  \r\n    return sum",
         "id": 270,
         "test_setup_code": "",
@@ -3175,6 +3445,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of fifth power of first n even natural numbers.",
+        "label": "math",
         "code": "def even_Power_Sum(n): \r\n    sum = 0; \r\n    for i in range(1,n+1): \r\n        j = 2*i; \r\n        sum = sum + (j*j*j*j*j); \r\n    return sum; ",
         "id": 271,
         "test_setup_code": "",
@@ -3187,6 +3458,7 @@ problems = [
     },
     {
         "text": "Write a C function to perfom the rear element extraction from list of tuples records.",
+        "label": "matrix",
         "code": "def rear_extract(test_list):\r\n  res = [lis[-1] for lis in test_list]\r\n  return (res) ",
         "id": 272,
         "test_setup_code": "",
@@ -3199,6 +3471,7 @@ problems = [
     },
     {
         "text": "Write a C function to substract the contents of one tuple with corresponding index of other tuple.",
+        "label": "array",
         "code": "def substract_elements(test_tup1, test_tup2):\r\n  res = tuple(map(lambda i, j: i - j, test_tup1, test_tup2))\r\n  return (res) ",
         "id": 273,
         "test_setup_code": "",
@@ -3211,6 +3484,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of even index binomial coefficients.",
+        "label": "math",
         "code": "import math  \r\ndef even_binomial_Coeff_Sum( n): \r\n    return (1 << (n - 1)) ",
         "id": 274,
         "test_setup_code": "",
@@ -3223,6 +3497,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the position of the last removed element from the given array.",
+        "label": "array",
         "code": "import math as mt \r\ndef get_Position(a,n,m): \r\n    for i in range(n): \r\n        a[i] = (a[i] // m + (a[i] % m != 0))  \r\n    result,maxx = -1,-1\r\n    for i in range(n - 1,-1,-1): \r\n        if (maxx < a[i]): \r\n            maxx = a[i] \r\n            result = i \r\n    return result + 1",
         "id": 275,
         "test_setup_code": "",
@@ -3235,6 +3510,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the volume of a cylinder.",
+        "label": "math",
         "code": "def volume_cylinder(r,h):\r\n  volume=3.1415*r*r*h\r\n  return volume",
         "id": 276,
         "test_setup_code": "",
@@ -3247,6 +3523,7 @@ problems = [
     },
     {
         "text": "Write a C function to filter a dictionary based on values.",
+        "label": "matrix",
         "code": "def dict_filter(dict,n):\r\n result = {key:value for (key, value) in dict.items() if value >=n},\r\n return result",
         "id": 277,
         "test_setup_code": "",
@@ -3259,6 +3536,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the element count that occurs before the record in the given tuple.",
+        "label": "array",
         "code": "def count_first_elements(test_tup):\r\n  for count, ele in enumerate(test_tup):\r\n    if isinstance(ele, tuple):\r\n      break\r\n  return (count) ",
         "id": 278,
         "test_setup_code": "",
@@ -3271,6 +3549,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth decagonal number.",
+        "label": "math",
         "code": "def is_num_decagonal(n): \r\n\treturn 4 * n * n - 3 * n ",
         "id": 279,
         "test_setup_code": "",
@@ -3283,6 +3562,7 @@ problems = [
     },
     {
         "text": "Write a C function to search an element in the given array by using sequential search.",
+        "label": "array",
         "code": "def sequential_search(dlist, item):\r\n    pos = 0\r\n    found = False\r\n    while pos < len(dlist) and not found:\r\n        if dlist[pos] == item:\r\n            found = True\r\n        else:\r\n            pos = pos + 1\r\n    return found, pos",
         "id": 280,
         "test_setup_code": "",
@@ -3295,6 +3575,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the elements of a given list are unique or not.",
+        "label": "array",
         "code": "def all_unique(test_list):\r\n    if len(test_list) > len(set(test_list)):\r\n        return False\r\n    return True",
         "id": 281,
         "test_setup_code": "",
@@ -3307,6 +3588,7 @@ problems = [
     },
     {
         "text": "Write a C function to substract two lists.",
+        "label": "array",
         "code": "def sub_list(nums1,nums2):\r\n  result = map(lambda x, y: x - y, nums1, nums2)\r\n  return list(result)",
         "id": 282,
         "test_setup_code": "",
@@ -3319,6 +3601,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the frequency of each digit is less than or equal to the digit itself.",
+        "label": "string",
         "code": "def validate(n): \r\n    for i in range(10): \r\n        temp = n;  \r\n        count = 0; \r\n        while (temp): \r\n            if (temp % 10 == i): \r\n                count+=1;  \r\n            if (count > i): \r\n                return False\r\n            temp //= 10; \r\n    return True",
         "id": 283,
         "test_setup_code": "",
@@ -3331,6 +3614,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether all items of a list are equal to a given string.",
+        "label": "array",
         "code": "def check_element(list,element):\r\n  check_element=all(v== element for v in list)\r\n  return check_element",
         "id": 284,
         "test_setup_code": "",
@@ -3343,6 +3627,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an a followed by two to three 'b'.",
+        "label": "string",
         "code": "import re\r\ndef text_match_two_three(text):\r\n        patterns = 'ab{2,3},'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 285,
         "test_setup_code": "",
@@ -3355,6 +3640,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest sum of contiguous array in the modified array which is formed by repeating the given array k times.",
+        "label": "array",
         "code": "def max_sub_array_sum_repeated(a, n, k): \r\n\tmax_so_far = -2147483648\r\n\tmax_ending_here = 0\r\n\tfor i in range(n*k): \r\n\t\tmax_ending_here = max_ending_here + a[i%n] \r\n\t\tif (max_so_far < max_ending_here): \r\n\t\t\tmax_so_far = max_ending_here \r\n\t\tif (max_ending_here < 0): \r\n\t\t\tmax_ending_here = 0\r\n\treturn max_so_far",
         "id": 286,
         "test_setup_code": "",
@@ -3367,6 +3653,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of squares of first n even natural numbers.",
+        "label": "math",
         "code": "def square_Sum(n):  \r\n    return int(2*n*(n+1)*(2*n+1)/3)",
         "id": 287,
         "test_setup_code": "",
@@ -3375,6 +3662,7 @@ problems = [
     },
     {
         "text": "Write a C function to count array elements having modular inverse under given prime number p equal to itself.",
+        "label": "array",
         "code": "def modular_inverse(arr, N, P):\r\n\tcurrent_element = 0\r\n\tfor i in range(0, N):\r\n\t\tif ((arr[i] * arr[i]) % P == 1):\r\n\t\t\tcurrent_element = current_element + 1\r\n\treturn current_element",
         "id": 288,
         "test_setup_code": "",
@@ -3387,6 +3675,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the number of odd days in a given year.",
+        "label": "math",
         "code": "def odd_Days(N): \r\n    hund1 = N // 100\r\n    hund4 = N // 400\r\n    leap = N >> 2\r\n    ordd = N - leap \r\n    if (hund1): \r\n        ordd += hund1 \r\n        leap -= hund1 \r\n    if (hund4): \r\n        ordd -= hund4 \r\n        leap += hund4 \r\n    days = ordd + leap * 2\r\n    odd = days % 7\r\n    return odd ",
         "id": 289,
         "test_setup_code": "",
@@ -3395,6 +3684,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the list of lists with maximum length.",
+        "label": "matrix",
         "code": "def max_length(list1):\r\n    max_length = max(len(x) for x in  list1 )  \r\n    max_list = max((x) for x in   list1)\r\n    return(max_length, max_list)",
         "id": 290,
         "test_setup_code": "",
@@ -3407,6 +3697,7 @@ problems = [
     },
     {
         "text": "Write a C function to find out the number of ways of painting the fence such that at most 2 adjacent posts have the same color for the given fence with n posts and k colors.",
+        "label": "math",
         "code": "def count_no_of_ways(n, k): \r\n\tdp = [0] * (n + 1) \r\n\ttotal = k \r\n\tmod = 1000000007\r\n\tdp[1] = k \r\n\tdp[2] = k * k\t \r\n\tfor i in range(3,n+1): \r\n\t\tdp[i] = ((k - 1) * (dp[i - 1] + dp[i - 2])) % mod \r\n\treturn dp[n]",
         "id": 291,
         "test_setup_code": "",
@@ -3419,6 +3710,7 @@ problems = [
     },
     {
         "text": "Write a C function to find quotient of two numbers.",
+        "label": "math",
         "code": "def find(n,m):  \r\n    q = n//m \r\n    return (q)",
         "id": 292,
         "test_setup_code": "",
@@ -3427,6 +3719,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the third side of a right angled triangle.",
+        "label": "math",
         "code": "import math\r\ndef otherside_rightangle(w,h):\r\n  s=math.sqrt((w*w)+(h*h))\r\n  return s",
         "id": 293,
         "test_setup_code": "",
@@ -3439,6 +3732,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum value in a given heterogeneous list.",
+        "label": "array",
         "code": "def max_val(listval):\r\n     max_val = max(i for i in listval if isinstance(i, int)) \r\n     return(max_val)",
         "id": 294,
         "test_setup_code": "",
@@ -3451,6 +3745,7 @@ problems = [
     },
     {
         "text": "Write a C function to return the sum of all divisors of a number.",
+        "label": "math",
         "code": "def sum_div(number):\r\n    divisors = [1]\r\n    for i in range(2, number):\r\n        if (number % i)==0:\r\n            divisors.append(i)\r\n    return sum(divisors)",
         "id": 295,
         "test_setup_code": "",
@@ -3459,6 +3754,7 @@ problems = [
     },
     {
         "text": "Write a C function to count inversions in an array.",
+        "label": "array",
         "code": "def get_Inv_Count(arr,n): \r\n    inv_count = 0\r\n    for i in range(n): \r\n        for j in range(i + 1,n): \r\n            if (arr[i] > arr[j]): \r\n                inv_count += 1\r\n    return inv_count ",
         "id": 296,
         "test_setup_code": "",
@@ -3471,6 +3767,7 @@ problems = [
     },
     {
         "text": "Write a C function to flatten a given nested list structure.",
+        "label": "matrix",
         "code": "def flatten_list(list1):\r\n    result_list = []\r\n    if not list1: return result_list\r\n    stack = [list(list1)]\r\n    while stack:\r\n        c_num = stack.pop()\r\n        next = c_num.pop()\r\n        if c_num: stack.append(c_num)\r\n        if isinstance(next, list):\r\n            if next: stack.append(list(next))\r\n        else: result_list.append(next)\r\n    result_list.reverse()\r\n    return result_list ",
         "id": 297,
         "test_setup_code": "",
@@ -3483,6 +3780,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nested list elements which are present in another list.",
+        "label": "matrix",
         "code": "def intersection_nested_lists(l1, l2):\r\n    result = [[n for n in lst if n in l1] for lst in l2]\r\n    return result",
         "id": 298,
         "test_setup_code": "",
@@ -3495,6 +3793,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the maximum aggregate from the list of tuples.",
+        "label": "matrix",
         "code": "from collections import defaultdict\r\ndef max_aggregate(stdata):\r\n    temp = defaultdict(int)\r\n    for name, marks in stdata:\r\n        temp[name] += marks\r\n    return max(temp.items(), key=lambda x: x[1])",
         "id": 299,
         "test_setup_code": "",
@@ -3507,6 +3806,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the count of all binary sequences of length 2n such that sum of first n bits is same as sum of last n bits.",
+        "label": "math",
         "code": "def count_binary_seq(n): \r\n\tnCr = 1\r\n\tres = 1\r\n\tfor r in range(1, n + 1): \r\n\t\tnCr = (nCr * (n + 1 - r)) / r \r\n\t\tres += nCr * nCr \r\n\treturn res ",
         "id": 300,
         "test_setup_code": "",
@@ -3519,6 +3819,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the depth of a dictionary.",
+        "label": "matrix",
         "code": "def dict_depth(d):\r\n    if isinstance(d, dict):\r\n        return 1 + (max(map(dict_depth, d.values())) if d else 0)\r\n    return 0",
         "id": 301,
         "test_setup_code": "",
@@ -3531,6 +3832,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the most significant bit number which is also a set bit.",
+        "label": "math",
         "code": "def set_Bit_Number(n): \r\n    if (n == 0): \r\n        return 0; \r\n    msb = 0; \r\n    n = int(n / 2); \r\n    while (n > 0): \r\n        n = int(n / 2); \r\n        msb += 1; \r\n    return (1 << msb)",
         "id": 302,
         "test_setup_code": "",
@@ -3543,6 +3845,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the count of inversion of two types are same or not.",
+        "label": "array",
         "code": "import sys \r\ndef solve(a,n):   \r\n    mx = -sys.maxsize - 1\r\n    for j in range(1,n):  \r\n        if (mx > a[j]):  \r\n            return False  \r\n        mx = max(mx,a[j - 1])    \r\n    return True",
         "id": 303,
         "test_setup_code": "",
@@ -3555,6 +3858,7 @@ problems = [
     },
     {
         "text": "Write a C function to find element at a given index after number of rotations.",
+        "label": "array",
         "code": "def find_Element(arr,ranges,rotations,index) :  \r\n    for i in range(rotations - 1,-1,-1 ) : \r\n        left = ranges[i][0] \r\n        right = ranges[i][1] \r\n        if (left <= index and right >= index) : \r\n            if (index == left) : \r\n                index = right \r\n            else : \r\n                index = index - 1 \r\n    return arr[index] ",
         "id": 304,
         "test_setup_code": "",
@@ -3567,6 +3871,7 @@ problems = [
     },
     {
         "text": "Write a C function to match two words from a list of words starting with letter 'p'.",
+        "label": "array",
         "code": 'import re\r\ndef start_withp(words):\r\n for w in words:\r\n        m = re.match("(P\\w+)\\W(P\\w+)", w)\r\n        if m:\r\n            return m.groups()',
         "id": 305,
         "test_setup_code": "",
@@ -3579,6 +3884,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum of increasing subsequence from prefix till ith index and also including a given kth element which is after i, i.e., k > i .",
+        "label": "array",
         "code": "def max_sum_increasing_subseq(a, n, index, k):\r\n\tdp = [[0 for i in range(n)] \r\n\t\t\tfor i in range(n)]\r\n\tfor i in range(n):\r\n\t\tif a[i] > a[0]:\r\n\t\t\tdp[0][i] = a[i] + a[0]\r\n\t\telse:\r\n\t\t\tdp[0][i] = a[i]\r\n\tfor i in range(1, n):\r\n\t\tfor j in range(n):\r\n\t\t\tif a[j] > a[i] and j > i:\r\n\t\t\t\tif dp[i - 1][i] + a[j] > dp[i - 1][j]:\r\n\t\t\t\t\tdp[i][j] = dp[i - 1][i] + a[j]\r\n\t\t\t\telse:\r\n\t\t\t\t\tdp[i][j] = dp[i - 1][j]\r\n\t\t\telse:\r\n\t\t\t\tdp[i][j] = dp[i - 1][j]\r\n\treturn dp[index][k]",
         "id": 306,
         "test_setup_code": "",
@@ -3591,6 +3897,7 @@ problems = [
     },
     {
         "text": "Write a C function to get a colon of a tuple.",
+        "label": "string",
         "code": "from copy import deepcopy\r\ndef colon_tuplex(tuplex,m,n):\r\n  tuplex_colon = deepcopy(tuplex)\r\n  tuplex_colon[m].append(n)\r\n  return tuplex_colon",
         "id": 307,
         "test_setup_code": "",
@@ -3603,6 +3910,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the specified number of largest products from two given lists.",
+        "label": "array",
         "code": "def large_product(nums1, nums2, N):\r\n    result = sorted([x*y for x in nums1 for y in nums2], reverse=True)[:N]\r\n    return result",
         "id": 308,
         "test_setup_code": "",
@@ -3615,6 +3923,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum of two numbers.",
+        "label": "math",
         "code": "def maximum(a,b):   \r\n    if a >= b: \r\n        return a \r\n    else: \r\n        return b ",
         "id": 309,
         "test_setup_code": "",
@@ -3623,6 +3932,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a given string to a tuple.",
+        "label": "string",
         "code": "def string_to_tuple(str1):\r\n    result = tuple(x for x in str1 if not x.isspace()) \r\n    return result",
         "id": 310,
         "test_setup_code": "",
@@ -3635,6 +3945,7 @@ problems = [
     },
     {
         "text": "Write a C function to set the left most unset bit.",
+        "label": "math",
         "code": "def set_left_most_unset_bit(n): \r\n    if not (n & (n + 1)): \r\n        return n \r\n    pos, temp, count = 0, n, 0 \r\n    while temp: \r\n        if not (temp & 1): \r\n            pos = count      \r\n        count += 1; temp>>=1\r\n    return (n | (1 << (pos))) ",
         "id": 311,
         "test_setup_code": "",
@@ -3647,6 +3958,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the volume of a cone.",
+        "label": "math",
         "code": "import math\r\ndef volume_cone(r,h):\r\n  volume = (1.0/3) * math.pi * r * r * h\r\n  return volume",
         "id": 312,
         "test_setup_code": "",
@@ -3659,6 +3971,7 @@ problems = [
     },
     {
         "text": "Write a C function to print positive numbers in a list.",
+        "label": "array",
         "code": "def pos_nos(list1):\r\n  for num in list1: \r\n    if num >= 0: \r\n       return num ",
         "id": 313,
         "test_setup_code": "",
@@ -3671,6 +3984,7 @@ problems = [
     },
     {
         "text": "Write a C function to find out the maximum sum such that no two chosen numbers are adjacent for the given rectangular grid of dimension 2 x n.",
+        "label": "matrix",
         "code": "def max_sum_rectangular_grid(grid, n) : \r\n\tincl = max(grid[0][0], grid[1][0]) \r\n\texcl = 0\r\n\tfor i in range(1, n) : \r\n\t\texcl_new = max(excl, incl) \r\n\t\tincl = excl + max(grid[0][i], grid[1][i]) \r\n\t\texcl = excl_new \r\n\treturn max(excl, incl)",
         "id": 314,
         "test_setup_code": "",
@@ -3683,6 +3997,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first maximum length of even word.",
+        "label": "string",
         "code": "def find_Max_Len_Even(str): \r\n    n = len(str) \r\n    i = 0\r\n    currlen = 0\r\n    maxlen = 0\r\n    st = -1\r\n    while (i < n): \r\n        if (str[i] == ' '): \r\n            if (currlen % 2 == 0): \r\n                if (maxlen < currlen): \r\n                    maxlen = currlen \r\n                    st = i - currlen \r\n            currlen = 0 \r\n        else : \r\n            currlen += 1\r\n        i += 1\r\n    if (currlen % 2 == 0): \r\n        if (maxlen < currlen): \r\n            maxlen = currlen \r\n            st = i - currlen \r\n    if (st == -1): \r\n        return \"-1\" \r\n    return str[st: st + maxlen] ",
         "id": 315,
         "test_setup_code": "",
@@ -3695,6 +4010,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the index of the last occurrence of a given number in a sorted array.",
+        "label": "array",
         "code": "def find_last_occurrence(A, x):\r\n    (left, right) = (0, len(A) - 1)\r\n    result = -1\r\n    while left <= right:\r\n        mid = (left + right) // 2\r\n        if x == A[mid]:\r\n            result = mid\r\n            left = mid + 1\r\n        elif x < A[mid]:\r\n            right = mid - 1\r\n        else:\r\n            left = mid + 1\r\n    return result ",
         "id": 316,
         "test_setup_code": "",
@@ -3707,6 +4023,7 @@ problems = [
     },
     {
         "text": "Write a C function to reflect the modified run-length encoding from a list.",
+        "label": "array",
         "code": "from itertools import groupby\r\ndef modified_encode(alist):\r\n        def ctr_ele(el):\r\n            if len(el)>1: return [len(el), el[0]]\r\n            else: return el[0]\r\n        return [ctr_ele(list(group)) for key, group in groupby(alist)]",
         "id": 317,
         "test_setup_code": "",
@@ -3719,6 +4036,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum volume of a cuboid with given sum of sides.",
+        "label": "math",
         "code": "def max_volume (s): \r\n    maxvalue = 0\r\n    i = 1\r\n    for i in range(s - 1): \r\n        j = 1\r\n        for j in range(s): \r\n            k = s - i - j \r\n            maxvalue = max(maxvalue, i * j * k)         \r\n    return maxvalue ",
         "id": 318,
         "test_setup_code": "",
@@ -3727,6 +4045,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all five characters long word in the given string by using regex.",
+        "label": "string",
         "code": 'import re\r\ndef find_long_word(text):\r\n  return (re.findall(r"\\b\\w{5},\\b", text))',
         "id": 319,
         "test_setup_code": "",
@@ -3739,6 +4058,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the difference between the squared sum of first n natural numbers and the sum of squared first n natural numbers.",
+        "label": "math",
         "code": "def sum_difference(n):\r\n    sumofsquares = 0\r\n    squareofsum = 0\r\n    for num in range(1, n+1):\r\n        sumofsquares += num * num\r\n        squareofsum += num\r\n    squareofsum = squareofsum ** 2\r\n    return squareofsum - sumofsquares",
         "id": 320,
         "test_setup_code": "",
@@ -3751,6 +4071,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the demlo number for the given number.",
+        "label": "string",
         "code": 'def find_demlo(s): \r\n\tl = len(s) \r\n\tres = "" \r\n\tfor i in range(1,l+1): \r\n\t\tres = res + str(i) \r\n\tfor i in range(l-1,0,-1): \r\n\t\tres = res + str(i) \r\n\treturn res \t',
         "id": 321,
         "test_setup_code": "",
@@ -3763,6 +4084,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all index positions of the minimum values in a given list.",
+        "label": "array",
         "code": "def position_min(list1):\r\n    min_val = min(list1)\r\n    min_result = [i for i, j in enumerate(list1) if j == min_val]\r\n    return min_result",
         "id": 322,
         "test_setup_code": "",
@@ -3775,6 +4097,7 @@ problems = [
     },
     {
         "text": "Write a C function to re-arrange the given array in alternating positive and negative items.",
+        "label": "array",
         "code": "def right_rotate(arr, n, out_of_place, cur):\r\n\ttemp = arr[cur]\r\n\tfor i in range(cur, out_of_place, -1):\r\n\t\tarr[i] = arr[i - 1]\r\n\tarr[out_of_place] = temp\r\n\treturn arr\r\ndef re_arrange(arr, n):\r\n\tout_of_place = -1\r\n\tfor index in range(n):\r\n\t\tif (out_of_place >= 0):\r\n\t\t\tif ((arr[index] >= 0 and arr[out_of_place] < 0) or\r\n\t\t\t(arr[index] < 0 and arr[out_of_place] >= 0)):\r\n\t\t\t\tarr = right_rotate(arr, n, out_of_place, index)\r\n\t\t\t\tif (index-out_of_place > 2):\r\n\t\t\t\t\tout_of_place += 2\r\n\t\t\t\telse:\r\n\t\t\t\t\tout_of_place = - 1\r\n\t\tif (out_of_place == -1):\r\n\t\t\tif ((arr[index] >= 0 and index % 2 == 0) or\r\n\t\t\t (arr[index] < 0 and index % 2 == 1)):\r\n\t\t\t\tout_of_place = index\r\n\treturn arr",
         "id": 323,
         "test_setup_code": "",
@@ -3787,6 +4110,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the sum of alternate chains of tuples.",
+        "label": "array",
         "code": "def sum_of_alternates(test_tuple):\r\n  sum1 = 0\r\n  sum2 = 0\r\n  for idx, ele in enumerate(test_tuple):\r\n    if idx % 2:\r\n      sum1 += ele\r\n    else:\r\n      sum2 += ele\r\n  return ((sum1),(sum2)) ",
         "id": 324,
         "test_setup_code": "",
@@ -3799,6 +4123,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum number of squares whose sum is equal to a given number.",
+        "label": "math",
         "code": "def get_Min_Squares(n):\r\n    if n <= 3:\r\n        return n;\r\n    res = n \r\n    for x in range(1,n + 1):\r\n        temp = x * x;\r\n        if temp > n:\r\n            break\r\n        else:\r\n            res = min(res,1 + get_Min_Squares(n  - temp)) \r\n    return res;",
         "id": 325,
         "test_setup_code": "",
@@ -3811,6 +4136,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the word with most number of occurrences in the given strings list.",
+        "label": "array",
         "code": "from collections import defaultdict \r\n\r\ndef most_occurrences(test_list):\r\n  temp = defaultdict(int)\r\n  for sub in test_list:\r\n    for wrd in sub.split():\r\n      temp[wrd] += 1\r\n  res = max(temp, key=temp.get)\r\n  return (str(res)) ",
         "id": 326,
         "test_setup_code": "",
@@ -3823,6 +4149,7 @@ problems = [
     },
     {
         "text": "Write a C function to print check if the triangle is isosceles or not.",
+        "label": "math",
         "code": "def check_isosceles(x,y,z):\r\n  if x==y or y==z or z==x:\r\n\t   return True\r\n  else:\r\n     return False",
         "id": 327,
         "test_setup_code": "",
@@ -3835,6 +4162,7 @@ problems = [
     },
     {
         "text": "Write a C function to rotate a given list by specified number of items to the left direction.",
+        "label": "array",
         "code": "def rotate_left(list1,m,n):\r\n  result =  list1[m:]+list1[:n]\r\n  return result",
         "id": 328,
         "test_setup_code": "",
@@ -3847,6 +4175,7 @@ problems = [
     },
     {
         "text": "Write a C function to count negative numbers in a list.",
+        "label": "array",
         "code": "def neg_count(list):\r\n  neg_count= 0\r\n  for num in list: \r\n    if num <= 0: \r\n      neg_count += 1\r\n  return neg_count ",
         "id": 329,
         "test_setup_code": "",
@@ -3859,6 +4188,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all three, four, five characters long words in the given string by using regex.",
+        "label": "string",
         "code": 'import re\r\ndef find_char(text):\r\n  return (re.findall(r"\\b\\w{3,5},\\b", text))',
         "id": 330,
         "test_setup_code": "",
@@ -3871,6 +4201,7 @@ problems = [
     },
     {
         "text": "Write a C function to count unset bits of a given number.",
+        "label": "math",
         "code": "def count_unset_bits(n): \r\n    count = 0\r\n    x = 1\r\n    while(x < n + 1): \r\n        if ((x & n) == 0): \r\n            count += 1\r\n        x = x << 1\r\n    return count  ",
         "id": 331,
         "test_setup_code": "",
@@ -3883,6 +4214,7 @@ problems = [
     },
     {
         "text": "Write a C function to count character frequency of a given string.",
+        "label": "string",
         "code": "def char_frequency(str1):\r\n    dict = {},\r\n    for n in str1:\r\n        keys = dict.keys()\r\n        if n in keys:\r\n            dict[n] += 1\r\n        else:\r\n            dict[n] = 1\r\n    return dict",
         "id": 332,
         "test_setup_code": "",
@@ -3895,6 +4227,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list according to the second element in sublist.",
+        "label": "matrix",
         "code": "def Sort(sub_li): \r\n    sub_li.sort(key = lambda x: x[1]) \r\n    return sub_li ",
         "id": 333,
         "test_setup_code": "",
@@ -3907,6 +4240,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the triangle is valid or not if sides are given.",
+        "label": "math",
         "code": "def check_Validity(a,b,c):  \r\n    if (a + b <= c) or (a + c <= b) or (b + c <= a) : \r\n        return False\r\n    else: \r\n        return True        ",
         "id": 334,
         "test_setup_code": "",
@@ -3919,6 +4253,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of arithmetic progression.",
+        "label": "math",
         "code": "def ap_sum(a,n,d):\r\n  total = (n * (2 * a + (n - 1) * d)) / 2\r\n  return total",
         "id": 335,
         "test_setup_code": "",
@@ -3927,6 +4262,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given month name contains 28 days or not.",
+        "label": "math",
         "code": 'def check_monthnum(monthname1):\r\n  if monthname1 == "February":\r\n    return True\r\n  else:\r\n    return False',
         "id": 336,
         "test_setup_code": "",
@@ -3939,6 +4275,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a word at the end of a string, with optional punctuation.",
+        "label": "string",
         "code": "import re\r\ndef text_match_word(text):\r\n        patterns = '\\w+\\S*$'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return 'Not matched!'",
         "id": 337,
         "test_setup_code": "",
@@ -3951,6 +4288,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of substrings with same first and last characters.",
+        "label": "string",
         "code": "def check_Equality(s): \r\n    return (ord(s[0]) == ord(s[len(s) - 1])); \r\ndef count_Substring_With_Equal_Ends(s): \r\n    result = 0; \r\n    n = len(s); \r\n    for i in range(n):\r\n        for j in range(1,n-i+1): \r\n            if (check_Equality(s[i:i+j])): \r\n                result+=1; \r\n    return result; ",
         "id": 338,
         "test_setup_code": "",
@@ -3963,6 +4301,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum occuring divisor in an interval.",
+        "label": "math",
         "code": "def find_Divisor(x,y):  \r\n    if (x==y): \r\n        return y \r\n    return 2",
         "id": 339,
         "test_setup_code": "",
@@ -3975,6 +4314,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of the three lowest positive numbers from a given list of numbers.",
+        "label": "array",
         "code": "def sum_three_smallest_nums(lst):\r\n\treturn sum(sorted([x for x in lst if x > 0])[:3])",
         "id": 340,
         "test_setup_code": "",
@@ -3987,6 +4327,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given set into ordered tuples.",
+        "label": "array",
         "code": "def set_to_tuple(s):\r\n  t = tuple(sorted(s))\r\n  return (t)",
         "id": 341,
         "test_setup_code": "",
@@ -3999,6 +4340,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the smallest range that includes at-least one element from each of the given arrays.",
+        "label": "matrix",
         "code": "from heapq import heappop, heappush\r\nclass Node:\r\n    def __init__(self, value, list_num, index):\r\n        self.value = value\r\n        self.list_num = list_num\r\n        self.index = index\r\n    def __lt__(self, other):\r\n        return self.value < other.value\r\ndef find_minimum_range(list):\r\n    high = float('-inf')\r\n    p = (0, float('inf'))\r\n    pq = []\r\n    for i in range(len(list)):\r\n        heappush(pq, Node(list[i][0], i, 0))\r\n        high = max(high, list[i][0])\r\n    while True:\r\n        top = heappop(pq)\r\n        low = top.value\r\n        i = top.list_num\r\n        j = top.index\r\n        if high - low < p[1] - p[0]:\r\n            p = (low, high)\r\n        if j == len(list[i]) - 1:\r\n            return p\r\n        heappush(pq, Node(list[i][j + 1], i, j + 1))\r\n        high = max(high, list[i][j + 1])",
         "id": 342,
         "test_setup_code": "",
@@ -4011,6 +4353,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the number of digits and letters in a string.",
+        "label": "string",
         "code": "def dig_let(s):\r\n d=l=0\r\n for c in s:\r\n    if c.isdigit():\r\n        d=d+1\r\n    elif c.isalpha():\r\n        l=l+1\r\n    else:\r\n        pass\r\n return (l,d)",
         "id": 343,
         "test_setup_code": "",
@@ -4023,6 +4366,7 @@ problems = [
     },
     {
         "text": "Write a C function to find number of elements with odd factors in a given range.",
+        "label": "math",
         "code": "def count_Odd_Squares(n,m): \r\n    return int(m**0.5) - int((n-1)**0.5) ",
         "id": 344,
         "test_setup_code": "",
@@ -4035,6 +4379,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the difference between two consecutive numbers in a given list.",
+        "label": "array",
         "code": "def diff_consecutivenums(nums):\r\n    result = [b-a for a, b in zip(nums[:-1], nums[1:])]\r\n    return result",
         "id": 345,
         "test_setup_code": "",
@@ -4047,6 +4392,7 @@ problems = [
     },
     {
         "text": "Write a C function to find entringer number e(n, k).",
+        "label": "math",
         "code": "def zigzag(n, k): \r\n\tif (n == 0 and k == 0): \r\n\t\treturn 1\r\n\tif (k == 0): \r\n\t\treturn 0\r\n\treturn zigzag(n, k - 1) + zigzag(n - 1, n - k)",
         "id": 346,
         "test_setup_code": "",
@@ -4055,6 +4401,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of squares in a rectangle.",
+        "label": "math",
         "code": "def count_Squares(m,n): \r\n    if (n < m): \r\n        temp = m \r\n        m = n \r\n        n = temp \r\n    return n * (n + 1) * (3 * m - n + 1) // 6",
         "id": 347,
         "test_setup_code": "",
@@ -4067,6 +4414,7 @@ problems = [
     },
     {
         "text": "Write a C function to count sequences of given length having non-negative prefix sums that can be generated by given values.",
+        "label": "math",
         "code": "def bin_coff(n, r): \r\n\tval = 1\r\n\tif (r > (n - r)): \r\n\t\tr = (n - r) \r\n\tfor i in range(0, r): \r\n\t\tval *= (n - i) \r\n\t\tval //= (i + 1) \r\n\treturn val \r\ndef find_ways(M): \r\n\tn = M // 2\r\n\ta = bin_coff(2 * n, n) \r\n\tb = a // (n + 1) \r\n\treturn (b) ",
         "id": 348,
         "test_setup_code": "",
@@ -4075,6 +4423,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given string is a binary string or not.",
+        "label": "string",
         "code": "def check(string) :\r\n    p = set(string) \r\n    s = {'0', '1'}, \r\n    if s == p or p == {'0'}, or p == {'1'},: \r\n        return (\"Yes\") \r\n    else : \r\n        return (\"No\") ",
         "id": 349,
         "test_setup_code": "",
@@ -4087,6 +4436,7 @@ problems = [
     },
     {
         "text": "Write a C function to minimize the length of the string by removing occurrence of only one character.",
+        "label": "string",
         "code": "def minimum_Length(s) : \r\n    maxOcc = 0\r\n    n = len(s) \r\n    arr = [0]*26\r\n    for i in range(n) : \r\n        arr[ord(s[i]) -ord('a')] += 1\r\n    for i in range(26) : \r\n        if arr[i] > maxOcc : \r\n            maxOcc = arr[i] \r\n    return n - maxOcc ",
         "id": 350,
         "test_setup_code": "",
@@ -4099,6 +4449,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first element occurring k times in a given array.",
+        "label": "array",
         "code": "def first_Element(arr,n,k): \r\n    count_map = {},; \r\n    for i in range(0, n): \r\n        if(arr[i] in count_map.keys()): \r\n            count_map[arr[i]] += 1\r\n        else: \r\n            count_map[arr[i]] = 1\r\n        i += 1\r\n    for i in range(0, n):  \r\n        if (count_map[arr[i]] == k): \r\n            return arr[i] \r\n        i += 1 \r\n    return -1",
         "id": 351,
         "test_setup_code": "",
@@ -4111,6 +4462,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether all the characters in a given string are unique.",
+        "label": "string",
         "code": "def unique_Characters(str):\r\n    for i in range(len(str)):\r\n        for j in range(i + 1,len(str)): \r\n            if (str[i] == str[j]):\r\n                return False;\r\n    return True;",
         "id": 352,
         "test_setup_code": "",
@@ -4123,6 +4475,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove a specified column from a given nested list.",
+        "label": "matrix",
         "code": "def remove_column(list1, n):\r\n   for i in list1: \r\n    del i[n] \r\n   return list1",
         "id": 353,
         "test_setup_code": "",
@@ -4135,6 +4488,7 @@ problems = [
     },
     {
         "text": "Write a C function to find t-nth term of arithemetic progression.",
+        "label": "math",
         "code": "def tn_ap(a,n,d):\r\n  tn = a + (n - 1) * d\r\n  return tn",
         "id": 354,
         "test_setup_code": "",
@@ -4143,6 +4497,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of rectangles in a circle of radius r.",
+        "label": "math",
         "code": "def count_Rectangles(radius):  \r\n    rectangles = 0 \r\n    diameter = 2 * radius \r\n    diameterSquare = diameter * diameter \r\n    for a in range(1, 2 * radius):  \r\n        for b in range(1, 2 * radius): \r\n            diagnalLengthSquare = (a * a +  b * b)  \r\n            if (diagnalLengthSquare <= diameterSquare) : \r\n                rectangles += 1\r\n    return rectangles ",
         "id": 355,
         "test_setup_code": "",
@@ -4155,6 +4510,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the third angle of a triangle using two angles.",
+        "label": "math",
         "code": "def find_angle(a,b):\r\n c = 180 - (a + b)\r\n return c\r\n",
         "id": 356,
         "test_setup_code": "",
@@ -4163,6 +4519,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum element of all the given tuple records.",
+        "label": "matrix",
         "code": "def find_max(test_list):\r\n  res = max(int(j) for i in test_list for j in i)\r\n  return (res) ",
         "id": 357,
         "test_setup_code": "",
@@ -4175,6 +4532,7 @@ problems = [
     },
     {
         "text": "Write a C function to find modulo division of two lists.",
+        "label": "array",
         "code": "def moddiv_list(nums1,nums2):\r\n  result = map(lambda x, y: x % y, nums1, nums2)\r\n  return list(result)",
         "id": 358,
         "test_setup_code": "",
@@ -4187,6 +4545,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether one root of the quadratic equation is twice of the other or not.",
+        "label": "math",
         "code": 'def Check_Solution(a,b,c): \r\n    if (2*b*b == 9*a*c): \r\n        return ("Yes"); \r\n    else: \r\n        return ("No"); ',
         "id": 359,
         "test_setup_code": "",
@@ -4199,6 +4558,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n\u2019th carol number.",
+        "label": "math",
         "code": "def get_carol(n): \r\n\tresult = (2**n) - 1\r\n\treturn result * result - 2",
         "id": 360,
         "test_setup_code": "",
@@ -4207,6 +4567,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove empty lists from a given list of lists.",
+        "label": "matrix",
         "code": "def remove_empty(list1):\r\n  remove_empty = [x for x in list1 if x]\r\n  return remove_empty",
         "id": 361,
         "test_setup_code": "",
@@ -4219,6 +4580,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the item with maximum occurrences in a given list.",
+        "label": "array",
         "code": "def max_occurrences(nums):\r\n    max_val = 0\r\n    result = nums[0] \r\n    for i in nums:\r\n        occu = nums.count(i)\r\n        if occu > max_val:\r\n            max_val = occu\r\n            result = i \r\n    return result",
         "id": 362,
         "test_setup_code": "",
@@ -4231,6 +4593,7 @@ problems = [
     },
     {
         "text": "Write a C function to add the k elements to each element in the tuple.",
+        "label": "matrix",
         "code": "def add_K_element(test_list, K):\r\n  res = [tuple(j + K for j in sub ) for sub in test_list]\r\n  return (res) ",
         "id": 363,
         "test_setup_code": "",
@@ -4243,6 +4606,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of flips required to make the given binary string a sequence of alternate characters.",
+        "label": "string",
         "code": "def make_flip(ch): \r\n\treturn '1' if (ch == '0') else '0'\r\ndef get_flip_with_starting_charcter(str, expected): \r\n\tflip_count = 0\r\n\tfor i in range(len( str)): \r\n\t\tif (str[i] != expected): \r\n\t\t\tflip_count += 1\r\n\t\texpected = make_flip(expected) \r\n\treturn flip_count \r\ndef min_flip_to_make_string_alternate(str): \r\n\treturn min(get_flip_with_starting_charcter(str, '0'),get_flip_with_starting_charcter(str, '1')) ",
         "id": 364,
         "test_setup_code": "",
@@ -4255,6 +4619,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of digits of a given number.",
+        "label": "string",
         "code": "def count_Digit(n):\r\n    count = 0\r\n    while n != 0:\r\n        n //= 10\r\n        count += 1\r\n    return count",
         "id": 365,
         "test_setup_code": "",
@@ -4267,6 +4632,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest product of the pair of adjacent elements from a given list of integers.",
+        "label": "array",
         "code": "def adjacent_num_product(list_nums):\r\n    return max(a*b for a, b in zip(list_nums, list_nums[1:]))",
         "id": 366,
         "test_setup_code": "",
@@ -4279,6 +4645,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a binary tree is balanced or not.",
+        "label": "tree",
         "code": "class Node: \r\n\tdef __init__(self, data): \r\n\t\tself.data = data \r\n\t\tself.left = None\r\n\t\tself.right = None\r\ndef get_height(root): \r\n\tif root is None: \r\n\t\treturn 0\r\n\treturn max(get_height(root.left), get_height(root.right)) + 1\r\ndef is_tree_balanced(root): \r\n\tif root is None: \r\n\t\treturn True\r\n\tlh = get_height(root.left) \r\n\trh = get_height(root.right) \r\n\tif (abs(lh - rh) <= 1) and is_tree_balanced( \r\n\troot.left) is True and is_tree_balanced( root.right) is True: \r\n\t\treturn True\r\n\treturn False",
         "id": 367,
         "test_setup_code": "root = Node(1) \r\nroot.left = Node(2) \r\nroot.right = Node(3) \r\nroot.left.left = Node(4) \r\nroot.left.right = Node(5) \r\nroot.left.left.left = Node(8) \r\nroot1 = Node(1) \r\nroot1.left = Node(2) \r\nroot1.right = Node(3) \r\nroot1.left.left = Node(4) \r\nroot1.left.right = Node(5) \r\nroot1.right.left = Node(6) \r\nroot1.left.left.left = Node(7)\r\nroot2 = Node(1) \r\nroot2.left = Node(2) \r\nroot2.right = Node(3) \r\nroot2.left.left = Node(4) \r\nroot2.left.right = Node(5)\r\nroot2.left.left.left = Node(7)",
@@ -4291,6 +4658,7 @@ problems = [
     },
     {
         "text": "Write a C function to repeat the given tuple n times.",
+        "label": "array",
         "code": "def repeat_tuples(test_tup, N):\r\n  res = ((test_tup, ) * N)\r\n  return (res) ",
         "id": 368,
         "test_setup_code": "",
@@ -4303,6 +4671,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the lateral surface area of cuboid",
+        "label": "math",
         "code": "def lateralsurface_cuboid(l,w,h):\r\n  LSA = 2*h*(l+w)\r\n  return LSA",
         "id": 369,
         "test_setup_code": "",
@@ -4315,6 +4684,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a tuple by its float element.",
+        "label": "matrix",
         "code": "def float_sort(price):\r\n  float_sort=sorted(price, key=lambda x: float(x[1]), reverse=True)\r\n  return float_sort",
         "id": 370,
         "test_setup_code": "",
@@ -4327,6 +4697,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the smallest missing element in a sorted array.",
+        "label": "array",
         "code": "def smallest_missing(A, left_element, right_element):\r\n    if left_element > right_element:\r\n        return left_element\r\n    mid = left_element + (right_element - left_element) // 2\r\n    if A[mid] == mid:\r\n        return smallest_missing(A, mid + 1, right_element)\r\n    else:\r\n        return smallest_missing(A, left_element, mid - 1)",
         "id": 371,
         "test_setup_code": "",
@@ -4339,6 +4710,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a given list of elements in ascending order using heap queue algorithm.",
+        "label": "array",
         "code": "import heapq as hq\r\ndef heap_assending(nums):\r\n  hq.heapify(nums)\r\n  s_result = [hq.heappop(nums) for i in range(len(nums))]\r\n  return s_result",
         "id": 372,
         "test_setup_code": "",
@@ -4351,6 +4723,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the volume of a cuboid.",
+        "label": "math",
         "code": "def volume_cuboid(l,w,h):\r\n  volume=l*w*h\r\n  return volume",
         "id": 373,
         "test_setup_code": "",
@@ -4363,6 +4736,7 @@ problems = [
     },
     {
         "text": "Write a C function to print all permutations of a given string including duplicates.",
+        "label": "string",
         "code": "def permute_string(str):\r\n    if len(str) == 0:\r\n        return ['']\r\n    prev_list = permute_string(str[1:len(str)])\r\n    next_list = []\r\n    for i in range(0,len(prev_list)):\r\n        for j in range(0,len(str)):\r\n            new_str = prev_list[i][0:j]+str[0]+prev_list[i][j:len(str)-1]\r\n            if new_str not in next_list:\r\n                next_list.append(new_str)\r\n    return next_list",
         "id": 374,
         "test_setup_code": "",
@@ -4375,6 +4749,7 @@ problems = [
     },
     {
         "text": "Write a C function to round the given number to the nearest multiple of a specific number.",
+        "label": "math",
         "code": "def round_num(n,m):\r\n    a = (n //m) * m\r\n    b = a + m\r\n    return (b if n - a > b - n else a)",
         "id": 375,
         "test_setup_code": "",
@@ -4387,6 +4762,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove tuple elements that occur more than once and replace the duplicates with some custom value.",
+        "label": "array",
         "code": "def remove_replica(test_tup):\r\n  temp = set()\r\n  res = tuple(ele if ele not in temp and not temp.add(ele) \r\n\t\t\t\telse 'MSP' for ele in test_tup)\r\n  return (res)",
         "id": 376,
         "test_setup_code": "",
@@ -4399,6 +4775,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all occurrences of a character in a given string.",
+        "label": "string",
         "code": "def remove_Char(s,c) :  \r\n    counts = s.count(c) \r\n    s = list(s) \r\n    while counts :  \r\n        s.remove(c) \r\n        counts -= 1 \r\n    s = '' . join(s)   \r\n    return (s) ",
         "id": 377,
         "test_setup_code": "",
@@ -4411,6 +4788,7 @@ problems = [
     },
     {
         "text": "Write a C function to shift last element to first position in the given list.",
+        "label": "array",
         "code": "def move_first(test_list):\r\n  test_list = test_list[-1:] + test_list[:-1]  \r\n  return test_list",
         "id": 378,
         "test_setup_code": "",
@@ -4423,6 +4801,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the surface area of a cuboid.",
+        "label": "math",
         "code": "def surfacearea_cuboid(l,w,h):\r\n  SA = 2*(l*w + l * h + w * h)\r\n  return SA",
         "id": 379,
         "test_setup_code": "",
@@ -4435,6 +4814,7 @@ problems = [
     },
     {
         "text": "Write a C function to generate a two-dimensional array.",
+        "label": "matrix",
         "code": "def multi_list(rownum,colnum):\r\n  multi_list = [[0 for col in range(colnum)] for row in range(rownum)]\r\n  for row in range(rownum):\r\n    for col in range(colnum):\r\n        multi_list[row][col]= row*col\r\n  return multi_list\r\n",
         "id": 380,
         "test_setup_code": "",
@@ -4447,6 +4827,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of lists by a given index of the inner list.",
+        "label": "matrix",
         "code": "from operator import itemgetter\r\ndef index_on_inner_list(list_data, index_no):\r\n    result = sorted(list_data, key=itemgetter(index_no))\r\n    return result",
         "id": 381,
         "test_setup_code": "",
@@ -4459,6 +4840,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of rotations in a circularly sorted array.",
+        "label": "array",
         "code": "def find_rotation_count(A):\r\n    (left, right) = (0, len(A) - 1)\r\n    while left <= right:\r\n        if A[left] <= A[right]:\r\n            return left\r\n        mid = (left + right) // 2\r\n        next = (mid + 1) % len(A)\r\n        prev = (mid - 1 + len(A)) % len(A)\r\n        if A[mid] <= A[next] and A[mid] <= A[prev]:\r\n            return mid\r\n        elif A[mid] <= A[right]:\r\n            right = mid - 1\r\n        elif A[mid] >= A[left]:\r\n            left = mid + 1\r\n    return -1",
         "id": 382,
         "test_setup_code": "",
@@ -4471,6 +4853,7 @@ problems = [
     },
     {
         "text": "Write a C function to toggle all odd bits of a given number.",
+        "label": "math",
         "code": "def even_bit_toggle_number(n) : \r\n    res = 0; count = 0; temp = n    \r\n    while(temp > 0 ) : \r\n        if (count % 2 == 0) : \r\n            res = res | (1 << count)      \r\n        count = count + 1\r\n        temp >>= 1 \r\n    return n ^ res ",
         "id": 383,
         "test_setup_code": "",
@@ -4483,6 +4866,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the frequency of the smallest value in a given array.",
+        "label": "array",
         "code": "def frequency_Of_Smallest(n,arr): \r\n    mn = arr[0] \r\n    freq = 1\r\n    for i in range(1,n): \r\n        if (arr[i] < mn): \r\n            mn = arr[i] \r\n            freq = 1\r\n        elif (arr[i] == mn): \r\n            freq += 1\r\n    return freq ",
         "id": 384,
         "test_setup_code": "",
@@ -4495,6 +4879,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n'th perrin number using recursion.",
+        "label": "math",
         "code": "def get_perrin(n):\r\n  if (n == 0):\r\n    return 3\r\n  if (n == 1):\r\n    return 0\r\n  if (n == 2):\r\n    return 2 \r\n  return get_perrin(n - 2) + get_perrin(n - 3)",
         "id": 385,
         "test_setup_code": "",
@@ -4503,6 +4888,7 @@ problems = [
     },
     {
         "text": "Write a C function to find out the minimum no of swaps required for bracket balancing in the given string.",
+        "label": "string",
         "code": "def swap_count(s):\r\n\tchars = s\r\n\tcount_left = 0\r\n\tcount_right = 0\r\n\tswap = 0\r\n\timbalance = 0; \r\n\tfor i in range(len(chars)):\r\n\t\tif chars[i] == '[':\r\n\t\t\tcount_left += 1\r\n\t\t\tif imbalance > 0:\r\n\t\t\t\tswap += imbalance\r\n\t\t\t\timbalance -= 1\r\n\t\telif chars[i] == ']':\r\n\t\t\tcount_right += 1\r\n\t\t\timbalance = (count_right - count_left) \r\n\treturn swap",
         "id": 386,
         "test_setup_code": "",
@@ -4515,6 +4901,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the hexadecimal number is even or odd.",
+        "label": "math",
         "code": "def even_or_odd(N): \r\n    l = len(N) \r\n    if (N[l-1] =='0'or N[l-1] =='2'or \r\n        N[l-1] =='4'or N[l-1] =='6'or \r\n        N[l-1] =='8'or N[l-1] =='A'or \r\n        N[l-1] =='C'or N[l-1] =='E'): \r\n        return (\"Even\") \r\n    else: \r\n        return (\"Odd\") ",
         "id": 387,
         "test_setup_code": "",
@@ -4527,6 +4914,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the highest power of 2 that is less than or equal to n.",
+        "label": "math",
         "code": "def highest_Power_of_2(n): \r\n    res = 0; \r\n    for i in range(n, 0, -1): \r\n        if ((i & (i - 1)) == 0): \r\n            res = i; \r\n            break; \r\n    return res; ",
         "id": 388,
         "test_setup_code": "",
@@ -4539,6 +4927,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n'th lucas number.",
+        "label": "math",
         "code": "def find_lucas(n): \r\n\tif (n == 0): \r\n\t\treturn 2\r\n\tif (n == 1): \r\n\t\treturn 1\r\n\treturn find_lucas(n - 1) + find_lucas(n - 2) ",
         "id": 389,
         "test_setup_code": "",
@@ -4547,6 +4936,7 @@ problems = [
     },
     {
         "text": "Write a C function to insert a given string at the beginning of all items in a list.",
+        "label": "array",
         "code": "def add_string(list,string):\r\n add_string=[string.format(i) for i in  list]\r\n return add_string",
         "id": 390,
         "test_setup_code": "",
@@ -4559,6 +4949,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert more than one list to nested dictionary.",
+        "label": "array",
         "code": "def convert_list_dictionary(l1, l2, l3):\r\n     result = [{x: {y: z},}, for (x, y, z) in zip(l1, l2, l3)]\r\n     return result",
         "id": 391,
         "test_setup_code": "",
@@ -4571,6 +4962,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum possible by using the given equation f(n) = max( (f(n/2) + f(n/3) + f(n/4) + f(n/5)), n).",
+        "label": "math",
         "code": "def get_max_sum (n):\r\n\tres = list()\r\n\tres.append(0)\r\n\tres.append(1)\r\n\ti = 2\r\n\twhile i<n + 1:\r\n\t\tres.append(max(i, (res[int(i / 2)] \r\n\t\t\t\t\t\t+ res[int(i / 3)] +\r\n\t\t\t\t\t\t\tres[int(i / 4)]\r\n\t\t\t\t\t\t+ res[int(i / 5)])))\r\n\t\ti = i + 1\r\n\treturn res[n]",
         "id": 392,
         "test_setup_code": "",
@@ -4579,6 +4971,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the list with maximum length.",
+        "label": "matrix",
         "code": "def max_length_list(input_list):\r\n    max_length = max(len(x) for x in input_list )   \r\n    max_list = max(input_list, key = lambda i: len(i))    \r\n    return(max_length, max_list)",
         "id": 393,
         "test_setup_code": "",
@@ -4591,6 +4984,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if given tuple is distinct or not.",
+        "label": "array",
         "code": "def check_distinct(test_tup):\r\n  res = True\r\n  temp = set()\r\n  for ele in test_tup:\r\n    if ele in temp:\r\n      res = False\r\n      break\r\n    temp.add(ele)\r\n  return (res) ",
         "id": 394,
         "test_setup_code": "",
@@ -4603,6 +4997,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first non-repeated character in a given string.",
+        "label": "string",
         "code": "def first_non_repeating_character(str1):\r\n  char_order = []\r\n  ctr = {},\r\n  for c in str1:\r\n    if c in ctr:\r\n      ctr[c] += 1\r\n    else:\r\n      ctr[c] = 1 \r\n      char_order.append(c)\r\n  for c in char_order:\r\n    if ctr[c] == 1:\r\n      return c\r\n  return None",
         "id": 395,
         "test_setup_code": "",
@@ -4615,6 +5010,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given string starts and ends with the same character or not using regex.",
+        "label": "string",
         "code": 'import re  \r\nregex = r\'^[a-z]$|^([a-z]).*\\1$\'\r\ndef check_char(string): \r\n\tif(re.search(regex, string)): \r\n\t\treturn "Valid" \r\n\telse: \r\n\t\treturn "Invalid" ',
         "id": 396,
         "test_setup_code": "",
@@ -4627,6 +5023,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the median of three specific numbers.",
+        "label": "math",
         "code": "def median_numbers(a,b,c):\r\n if a > b:\r\n    if a < c:\r\n        median = a\r\n    elif b > c:\r\n        median = b\r\n    else:\r\n        median = c\r\n else:\r\n    if a > c:\r\n        median = a\r\n    elif b < c:\r\n        median = b\r\n    else:\r\n        median = c\r\n return median",
         "id": 397,
         "test_setup_code": "",
@@ -4639,6 +5036,7 @@ problems = [
     },
     {
         "text": "Write a C function to compute the sum of digits of each number of a given list.",
+        "label": "array",
         "code": "def sum_of_digits(nums):\r\n    return sum(int(el) for n in nums for el in str(n) if el.isdigit())",
         "id": 398,
         "test_setup_code": "",
@@ -4651,6 +5049,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform the mathematical bitwise xor operation across the given tuples.",
+        "label": "array",
         "code": "def bitwise_xor(test_tup1, test_tup2):\r\n  res = tuple(ele1 ^ ele2 for ele1, ele2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 399,
         "test_setup_code": "",
@@ -4663,6 +5062,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the frequency of unique tuples in the given list order irrespective.",
+        "label": "matrix",
         "code": "def extract_freq(test_list):\r\n  res = len(list(set(tuple(sorted(sub)) for sub in test_list)))\r\n  return (res)",
         "id": 400,
         "test_setup_code": "",
@@ -4675,6 +5075,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform index wise addition of tuple elements in the given two nested tuples.",
+        "label": "matrix",
         "code": "def add_nested_tuples(test_tup1, test_tup2):\r\n  res = tuple(tuple(a + b for a, b in zip(tup1, tup2))\r\n   for tup1, tup2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 401,
         "test_setup_code": "",
@@ -4687,6 +5088,7 @@ problems = [
     },
     {
         "text": "Write a C function to compute the value of ncr%p.",
+        "label": "math",
         "code": "def ncr_modp(n, r, p): \r\n    C = [0 for i in range(r+1)]   \r\n    C[0] = 1\r\n    for i in range(1, n+1): \r\n        for j in range(min(i, r), 0, -1): \r\n            C[j] = (C[j] + C[j-1]) % p   \r\n    return C[r] ",
         "id": 402,
         "test_setup_code": "",
@@ -4695,6 +5097,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a url is valid or not using regex.",
+        "label": "string",
         "code": 'import re\r\ndef is_valid_URL(str):\r\n\tregex = ("((http|https)://)(www.)?" +\r\n\t\t\t"[a-zA-Z0-9@:%._\\\\+~#?&//=]" +\r\n\t\t\t"{2,256},\\\\.[a-z]" +\r\n\t\t\t"{2,6},\\\\b([-a-zA-Z0-9@:%" +\r\n\t\t\t"._\\\\+~#?&//=]*)")\r\n\tp = re.compile(regex)\r\n\tif (str == None):\r\n\t\treturn False\r\n\tif(re.search(p, str)):\r\n\t\treturn True\r\n\telse:\r\n\t\treturn False',
         "id": 403,
         "test_setup_code": "",
@@ -4707,6 +5110,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum of two numbers.",
+        "label": "math",
         "code": "def minimum(a,b):   \r\n    if a <= b: \r\n        return a \r\n    else: \r\n        return b ",
         "id": 404,
         "test_setup_code": "",
@@ -4715,6 +5119,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether an element exists within a tuple.",
+        "label": "array",
         "code": "def check_tuplex(tuplex,tuple1): \r\n  if tuple1 in tuplex:\r\n    return True\r\n  else:\r\n     return False",
         "id": 405,
         "test_setup_code": "",
@@ -4727,6 +5132,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the parity of a given number.",
+        "label": "math",
         "code": 'def find_Parity(x): \r\n    y = x ^ (x >> 1); \r\n    y = y ^ (y >> 2); \r\n    y = y ^ (y >> 4); \r\n    y = y ^ (y >> 8); \r\n    y = y ^ (y >> 16); \r\n    if (y & 1): \r\n        return ("Odd Parity"); \r\n    return ("Even Parity"); ',
         "id": 406,
         "test_setup_code": "",
@@ -4739,6 +5145,7 @@ problems = [
     },
     {
         "text": "Write a C function to create the next bigger number by rearranging the digits of a given number.",
+        "label": "math",
         "code": 'def rearrange_bigger(n):\r\n    nums = list(str(n))\r\n    for i in range(len(nums)-2,-1,-1):\r\n        if nums[i] < nums[i+1]:\r\n            z = nums[i:]\r\n            y = min(filter(lambda x: x > z[0], z))\r\n            z.remove(y)\r\n            z.sort()\r\n            nums[i:] = [y] + z\r\n            return int("".join(nums))\r\n    return False',
         "id": 407,
         "test_setup_code": "",
@@ -4751,6 +5158,7 @@ problems = [
     },
     {
         "text": "Write a C function to find k number of pairs which consist of one element from the first array and one element from the second array.",
+        "label": "array",
         "code": "import heapq\r\ndef k_smallest_pairs(nums1, nums2, k):\r\n   queue = []\r\n   def push(i, j):\r\n       if i < len(nums1) and j < len(nums2):\r\n           heapq.heappush(queue, [nums1[i] + nums2[j], i, j])\r\n   push(0, 0)\r\n   pairs = []\r\n   while queue and len(pairs) < k:\r\n       _, i, j = heapq.heappop(queue)\r\n       pairs.append([nums1[i], nums2[j]])\r\n       push(i, j + 1)\r\n       if j == 0:\r\n           push(i + 1, 0)\r\n   return pairs",
         "id": 408,
         "test_setup_code": "",
@@ -4763,6 +5171,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum product from the pairs of tuples within a given list.",
+        "label": "matrix",
         "code": "def min_product_tuple(list1):\r\n    result_min = min([abs(x * y) for x, y in list1] )\r\n    return result_min",
         "id": 409,
         "test_setup_code": "",
@@ -4775,6 +5184,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum value in a given heterogeneous list.",
+        "label": "array",
         "code": "def min_val(listval):\r\n     min_val = min(i for i in listval if isinstance(i, int))\r\n     return min_val",
         "id": 410,
         "test_setup_code": "",
@@ -4787,6 +5197,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given snake case string to camel case string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef snake_to_camel(word):\r\n  return ''.join(x.capitalize() or '_' for x in word.split('_'))",
         "id": 411,
         "test_setup_code": "",
@@ -4799,6 +5210,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove odd numbers from a given list.",
+        "label": "array",
         "code": "def remove_odd(l):\r\n    for i in l:\r\n        if i % 2 != 0:\r\n            l.remove(i)\r\n    return l",
         "id": 412,
         "test_setup_code": "",
@@ -4811,6 +5223,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the nth element from a given list of tuples.",
+        "label": "matrix",
         "code": "def extract_nth_element(list1, n):\r\n    result = [x[n] for x in list1]\r\n    return result",
         "id": 413,
         "test_setup_code": "",
@@ -4823,6 +5236,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the value exists in a sequence or not.",
+        "label": "array",
         "code": "def overlapping(list1,list2):  \r\n    c=0\r\n    d=0\r\n    for i in list1: \r\n        c+=1\r\n    for i in list2: \r\n        d+=1\r\n    for i in range(0,c): \r\n        for j in range(0,d): \r\n            if(list1[i]==list2[j]): \r\n                return 1\r\n    return 0",
         "id": 414,
         "test_setup_code": "",
@@ -4835,6 +5249,7 @@ problems = [
     },
     {
         "text": "Write a C function to find a pair with highest product from a given array of integers.",
+        "label": "array",
         "code": 'def max_Product(arr): \r\n    arr_len = len(arr) \r\n    if (arr_len < 2): \r\n        return ("No pairs exists")           \r\n    x = arr[0]; y = arr[1]      \r\n    for i in range(0,arr_len): \r\n        for j in range(i + 1,arr_len): \r\n            if (arr[i] * arr[j] > x * y): \r\n                x = arr[i]; y = arr[j] \r\n    return x,y    ',
         "id": 415,
         "test_setup_code": "",
@@ -4847,6 +5262,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum we can make by dividing number in three parts recursively and summing them up together for the given number.",
+        "label": "math",
         "code": "MAX = 1000000\r\ndef breakSum(n): \r\n\tdp = [0]*(n+1) \r\n\tdp[0] = 0\r\n\tdp[1] = 1\r\n\tfor i in range(2, n+1): \r\n\t\tdp[i] = max(dp[int(i/2)] + dp[int(i/3)] + dp[int(i/4)], i); \r\n\treturn dp[n]",
         "id": 416,
         "test_setup_code": "",
@@ -4855,6 +5271,7 @@ problems = [
     },
     {
         "text": "Write a C function to find common first element in given list of tuple.",
+        "label": "matrix",
         "code": "def group_tuples(Input): \r\n\tout = {}, \r\n\tfor elem in Input: \r\n\t\ttry: \r\n\t\t\tout[elem[0]].extend(elem[1:]) \r\n\t\texcept KeyError: \r\n\t\t\tout[elem[0]] = list(elem) \r\n\treturn [tuple(values) for values in out.values()] ",
         "id": 417,
         "test_setup_code": "",
@@ -4867,6 +5284,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sublist having maximum length.",
+        "label": "matrix",
         "code": "def Find_Max(lst): \r\n    maxList = max((x) for x in lst) \r\n    return maxList",
         "id": 418,
         "test_setup_code": "",
@@ -4879,6 +5297,7 @@ problems = [
     },
     {
         "text": "Write a C function to round every number of a given list of numbers and print the total sum multiplied by the length of the list.",
+        "label": "array",
         "code": "def round_and_sum(list1):\r\n  lenght=len(list1)\r\n  round_and_sum=sum(list(map(round,list1))* lenght)\r\n  return round_and_sum",
         "id": 419,
         "test_setup_code": "",
@@ -4891,6 +5310,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the cube sum of first n even natural numbers.",
+        "label": "math",
         "code": "def cube_Sum(n): \r\n    sum = 0\r\n    for i in range(1,n + 1): \r\n        sum += (2*i)*(2*i)*(2*i) \r\n    return sum",
         "id": 420,
         "test_setup_code": "",
@@ -4899,6 +5319,7 @@ problems = [
     },
     {
         "text": "Write a C function to concatenate each element of tuple by the delimiter.",
+        "label": "array",
         "code": "def concatenate_tuple(test_tup):\r\n    delim = \"-\"\r\n    res = ''.join([str(ele) + delim for ele in test_tup])\r\n    res = res[ : len(res) - len(delim)]\r\n    return (str(res)) ",
         "id": 421,
         "test_setup_code": "",
@@ -4911,6 +5332,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the average of cubes of first n natural numbers.",
+        "label": "math",
         "code": "def find_Average_Of_Cube(n):  \r\n    sum = 0\r\n    for i in range(1, n + 1): \r\n        sum += i * i * i  \r\n    return round(sum / n, 6) ",
         "id": 422,
         "test_setup_code": "",
@@ -4923,6 +5345,7 @@ problems = [
     },
     {
         "text": "Write a C function to solve gold mine problem.",
+        "label": "matrix",
         "code": "def get_maxgold(gold, m, n): \r\n    goldTable = [[0 for i in range(n)] \r\n                        for j in range(m)]   \r\n    for col in range(n-1, -1, -1): \r\n        for row in range(m):  \r\n            if (col == n-1): \r\n                right = 0\r\n            else: \r\n                right = goldTable[row][col+1] \r\n            if (row == 0 or col == n-1): \r\n                right_up = 0\r\n            else: \r\n                right_up = goldTable[row-1][col+1] \r\n            if (row == m-1 or col == n-1): \r\n                right_down = 0\r\n            else: \r\n                right_down = goldTable[row+1][col+1] \r\n            goldTable[row][col] = gold[row][col] + max(right, right_up, right_down) \r\n    res = goldTable[0][0] \r\n    for i in range(1, m): \r\n        res = max(res, goldTable[i][0])  \r\n    return res ",
         "id": 423,
         "test_setup_code": "",
@@ -4935,6 +5358,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract only the rear index element of each string in the given array.",
+        "label": "array",
         "code": "def extract_rear(test_tuple):\r\n  res = list(sub[len(sub) - 1] for sub in test_tuple)\r\n  return (res) ",
         "id": 424,
         "test_setup_code": "",
@@ -4947,6 +5371,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of sublists containing a particular element.",
+        "label": "matrix",
         "code": "def count_element_in_list(list1, x): \r\n    ctr = 0\r\n    for i in range(len(list1)): \r\n        if x in list1[i]: \r\n            ctr+= 1          \r\n    return ctr",
         "id": 425,
         "test_setup_code": "",
@@ -4959,6 +5384,7 @@ problems = [
     },
     {
         "text": "Write a C function to filter odd numbers.",
+        "label": "array",
         "code": "def filter_oddnumbers(nums):\r\n odd_nums = list(filter(lambda x: x%2 != 0, nums))\r\n return odd_nums",
         "id": 426,
         "test_setup_code": "",
@@ -4971,6 +5397,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format by using regex.",
+        "label": "string",
         "code": "import re\r\ndef change_date_format(dt):\r\n        return re.sub(r'(\\d{4},)-(\\d{1,2},)-(\\d{1,2},)', '\\\\3-\\\\2-\\\\1', dt)",
         "id": 427,
         "test_setup_code": "",
@@ -4983,6 +5410,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given array by using shell sort.",
+        "label": "array",
         "code": "def shell_sort(my_list):\r\n    gap = len(my_list) // 2\r\n    while gap > 0:\r\n        for i in range(gap, len(my_list)):\r\n            current_item = my_list[i]\r\n            j = i\r\n            while j >= gap and my_list[j - gap] > current_item:\r\n                my_list[j] = my_list[j - gap]\r\n                j -= gap\r\n            my_list[j] = current_item\r\n        gap //= 2\r\n\r\n    return my_list",
         "id": 428,
         "test_setup_code": "",
@@ -4995,6 +5423,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the elementwise and tuples from the given two tuples.",
+        "label": "array",
         "code": "def and_tuples(test_tup1, test_tup2):\r\n  res = tuple(ele1 & ele2 for ele1, ele2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 429,
         "test_setup_code": "",
@@ -5007,6 +5436,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the directrix of a parabola.",
+        "label": "math",
         "code": "def parabola_directrix(a, b, c): \r\n  directrix=((int)(c - ((b * b) + 1) * 4 * a ))\r\n  return directrix",
         "id": 430,
         "test_setup_code": "",
@@ -5019,6 +5449,7 @@ problems = [
     },
     {
         "text": "Write a C function that takes two lists and returns true if they have at least one common element.",
+        "label": "array",
         "code": "def common_element(list1, list2):\r\n     result = False\r\n     for x in list1:\r\n         for y in list2:\r\n             if x == y:\r\n                 result = True\r\n                 return result",
         "id": 431,
         "test_setup_code": "",
@@ -5031,6 +5462,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the median of a trapezium.",
+        "label": "math",
         "code": "def median_trapezium(base1,base2,height):\r\n median = 0.5 * (base1+ base2)\r\n return median",
         "id": 432,
         "test_setup_code": "",
@@ -5043,6 +5475,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the entered number is greater than the elements of the given array.",
+        "label": "array",
         "code": "def check_greater(arr, number):\r\n  arr.sort()\r\n  if number > arr[-1]:\r\n    return ('Yes, the entered number is greater than those in the array')\r\n  else:\r\n    return ('No, entered number is less than those in the array')",
         "id": 433,
         "test_setup_code": "",
@@ -5055,6 +5488,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an a followed by one or more b's.",
+        "label": "string",
         "code": "import re\r\ndef text_match_one(text):\r\n        patterns = 'ab+?'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')\r\n",
         "id": 434,
         "test_setup_code": "",
@@ -5067,6 +5501,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the last digit of a given number.",
+        "label": "math",
         "code": "def last_Digit(n) :\r\n    return (n % 10) ",
         "id": 435,
         "test_setup_code": "",
@@ -5075,6 +5510,7 @@ problems = [
     },
     {
         "text": "Write a C function to print negative numbers in a list.",
+        "label": "array",
         "code": "def neg_nos(list1):\r\n  for num in list1: \r\n    if num < 0: \r\n       return num ",
         "id": 436,
         "test_setup_code": "",
@@ -5087,6 +5523,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove odd characters in a string.",
+        "label": "string",
         "code": "def remove_odd(str1):\r\n str2 = ''\r\n for i in range(1, len(str1) + 1):\r\n    if(i % 2 == 0):\r\n        str2 = str2 + str1[i - 1]\r\n return str2",
         "id": 437,
         "test_setup_code": "",
@@ -5099,6 +5536,7 @@ problems = [
     },
     {
         "text": "Write a C function to count bidirectional tuple pairs.",
+        "label": "matrix",
         "code": "def count_bidirectional(test_list):\r\n  res = 0\r\n  for idx in range(0, len(test_list)):\r\n    for iidx in range(idx + 1, len(test_list)):\r\n      if test_list[iidx][0] == test_list[idx][1] and test_list[idx][1] == test_list[iidx][0]:\r\n        res += 1\r\n  return (str(res)) ",
         "id": 438,
         "test_setup_code": "",
@@ -5111,6 +5549,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a list of multiple integers into a single integer.",
+        "label": "array",
         "code": 'def multiple_to_single(L):\r\n  x = int("".join(map(str, L)))\r\n  return x',
         "id": 439,
         "test_setup_code": "",
@@ -5123,6 +5562,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all adverbs and their positions in a given sentence.",
+        "label": "string",
         "code": 'import re\r\ndef find_adverb_position(text):\r\n for m in re.finditer(r"\\w+ly", text):\r\n    return (m.start(), m.end(), m.group(0))',
         "id": 440,
         "test_setup_code": "",
@@ -5135,6 +5575,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the surface area of a cube.",
+        "label": "math",
         "code": "def surfacearea_cube(l):\r\n  surfacearea= 6*l*l\r\n  return surfacearea",
         "id": 441,
         "test_setup_code": "",
@@ -5147,6 +5588,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the ration of positive numbers in an array of integers.",
+        "label": "array",
         "code": "from array import array\r\ndef positive_count(nums):\r\n    n = len(nums)\r\n    n1 = 0\r\n    for x in nums:\r\n        if x > 0:\r\n            n1 += 1\r\n        else:\r\n          None\r\n    return round(n1/n,2)",
         "id": 442,
         "test_setup_code": "",
@@ -5159,6 +5601,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest negative number from the given list.",
+        "label": "array",
         "code": "def largest_neg(list1): \r\n    max = list1[0] \r\n    for x in list1: \r\n        if x < max : \r\n             max = x  \r\n    return max",
         "id": 443,
         "test_setup_code": "",
@@ -5171,6 +5614,7 @@ problems = [
     },
     {
         "text": "Write a C function to trim each tuple by k in the given tuple list.",
+        "label": "matrix",
         "code": "def trim_tuple(test_list, K):\r\n  res = []\r\n  for ele in test_list:\r\n    N = len(ele)\r\n    res.append(tuple(list(ele)[K: N - K]))\r\n  return (str(res)) ",
         "id": 444,
         "test_setup_code": "",
@@ -5183,6 +5627,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform index wise multiplication of tuple elements in the given two tuples.",
+        "label": "matrix",
         "code": "def index_multiplication(test_tup1, test_tup2):\r\n  res = tuple(tuple(a * b for a, b in zip(tup1, tup2))\r\n   for tup1, tup2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 445,
         "test_setup_code": "",
@@ -5195,6 +5640,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the occurence of all elements of list in a tuple.",
+        "label": "array",
         "code": "from collections import Counter \r\ndef count_Occurrence(tup, lst): \r\n    count = 0\r\n    for item in tup: \r\n        if item in lst: \r\n            count+= 1 \r\n    return count  ",
         "id": 446,
         "test_setup_code": "",
@@ -5207,6 +5653,7 @@ problems = [
     },
     {
         "text": "Write a C function to find cubes of individual elements in a list.",
+        "label": "array",
         "code": "def cube_nums(nums):\r\n cube_nums = list(map(lambda x: x ** 3, nums))\r\n return cube_nums",
         "id": 447,
         "test_setup_code": "",
@@ -5219,6 +5666,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of perrin numbers.",
+        "label": "math",
         "code": "def cal_sum(n): \r\n\ta = 3\r\n\tb = 0\r\n\tc = 2\r\n\tif (n == 0): \r\n\t\treturn 3\r\n\tif (n == 1): \r\n\t\treturn 3\r\n\tif (n == 2): \r\n\t\treturn 5\r\n\tsum = 5\r\n\twhile (n > 2): \r\n\t\td = a + b \r\n\t\tsum = sum + d \r\n\t\ta = b \r\n\t\tb = c \r\n\t\tc = d \r\n\t\tn = n-1\r\n\treturn sum",
         "id": 448,
         "test_setup_code": "",
@@ -5227,6 +5675,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the triangle is valid or not if 3 points are given.",
+        "label": "math",
         "code": "def check_Triangle(x1,y1,x2,y2,x3,y3): \r\n    a = (x1*(y2-y3)+x2*(y3-y1)+x3*(y1-y2))   \r\n    if a == 0: \r\n        return ('No') \r\n    else: \r\n        return ('Yes') ",
         "id": 449,
         "test_setup_code": "",
@@ -5239,6 +5688,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract specified size of strings from a give list of string values.",
+        "label": "array",
         "code": "def extract_string(str, l):\r\n    result = [e for e in str if len(e) == l] \r\n    return result",
         "id": 450,
         "test_setup_code": "",
@@ -5251,6 +5701,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all whitespaces from the given string using regex.",
+        "label": "string",
         "code": "import re\r\ndef remove_whitespaces(text1):\r\n  return (re.sub(r'\\s+', '',text1))",
         "id": 451,
         "test_setup_code": "",
@@ -5263,6 +5714,7 @@ problems = [
     },
     {
         "text": "Write a C function that gives loss amount if the given amount has loss else return none.",
+        "label": "math",
         "code": "def loss_amount(actual_cost,sale_amount): \r\n  if(sale_amount > actual_cost):\r\n    amount = sale_amount - actual_cost\r\n    return amount\r\n  else:\r\n    return None",
         "id": 452,
         "test_setup_code": "",
@@ -5275,6 +5727,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of even factors of a number.",
+        "label": "math",
         "code": "import math \r\ndef sumofFactors(n) : \r\n    if (n % 2 != 0) : \r\n        return 0\r\n    res = 1\r\n    for i in range(2, (int)(math.sqrt(n)) + 1) :    \r\n        count = 0\r\n        curr_sum = 1\r\n        curr_term = 1\r\n        while (n % i == 0) : \r\n            count= count + 1\r\n            n = n // i \r\n            if (i == 2 and count == 1) : \r\n                curr_sum = 0\r\n            curr_term = curr_term * i \r\n            curr_sum = curr_sum + curr_term \r\n        res = res * curr_sum  \r\n    if (n >= 2) : \r\n        res = res * (1 + n) \r\n    return res ",
         "id": 453,
         "test_setup_code": "",
@@ -5283,6 +5736,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a word containing 'z'.",
+        "label": "string",
         "code": "import re\r\ndef text_match_wordz(text):\r\n        patterns = '\\w*z.\\w*'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 454,
         "test_setup_code": "",
@@ -5295,6 +5749,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given month number contains 31 days or not.",
+        "label": "math",
         "code": "def check_monthnumb_number(monthnum2):\r\n  if(monthnum2==1 or monthnum2==3 or monthnum2==5 or monthnum2==7 or monthnum2==8 or monthnum2==10 or monthnum2==12):\r\n    return True\r\n  else:\r\n    return False",
         "id": 455,
         "test_setup_code": "",
@@ -5307,6 +5762,7 @@ problems = [
     },
     {
         "text": "Write a C function to reverse strings in a given list of string values.",
+        "label": "array",
         "code": "def reverse_string_list(stringlist):\r\n    result = [x[::-1] for x in stringlist]\r\n    return result",
         "id": 456,
         "test_setup_code": "",
@@ -5319,6 +5775,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sublist having minimum length.",
+        "label": "matrix",
         "code": "def Find_Min(lst): \r\n    minList = min((x) for x in lst) \r\n    return minList",
         "id": 457,
         "test_setup_code": "",
@@ -5331,6 +5788,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the area of a rectangle.",
+        "label": "math",
         "code": "def rectangle_area(l,b):\r\n  area=l*b\r\n  return area",
         "id": 458,
         "test_setup_code": "",
@@ -5343,6 +5801,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove uppercase substrings from a given string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef remove_uppercase(str1):\r\n  remove_upper = lambda text: re.sub('[A-Z]', '', text)\r\n  result =  remove_upper(str1)\r\n  return (result)",
         "id": 459,
         "test_setup_code": "",
@@ -5355,6 +5814,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the first element of each sublist.",
+        "label": "array",
         "code": "def Extract(lst): \r\n    return [item[0] for item in lst] ",
         "id": 460,
         "test_setup_code": "",
@@ -5367,6 +5827,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the upper case characters in a given string.",
+        "label": "string",
         "code": "def upper_ctr(str):\r\n    upper_ctr = 0\r\n    for i in range(len(str)):\r\n          if str[i] >= 'A' and str[i] <= 'Z': upper_ctr += 1\r\n          return upper_ctr",
         "id": 461,
         "test_setup_code": "",
@@ -5379,6 +5840,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all possible combinations of the elements of a given list.",
+        "label": "array",
         "code": "def combinations_list(list1):\r\n    if len(list1) == 0:\r\n        return [[]]\r\n    result = []\r\n    for el in combinations_list(list1[1:]):\r\n        result += [el, el+[list1[0]]]\r\n    return result",
         "id": 462,
         "test_setup_code": "",
@@ -5391,6 +5853,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum product subarray of the given array.",
+        "label": "array",
         "code": "def max_subarray_product(arr):\r\n\tn = len(arr)\r\n\tmax_ending_here = 1\r\n\tmin_ending_here = 1\r\n\tmax_so_far = 0\r\n\tflag = 0\r\n\tfor i in range(0, n):\r\n\t\tif arr[i] > 0:\r\n\t\t\tmax_ending_here = max_ending_here * arr[i]\r\n\t\t\tmin_ending_here = min (min_ending_here * arr[i], 1)\r\n\t\t\tflag = 1\r\n\t\telif arr[i] == 0:\r\n\t\t\tmax_ending_here = 1\r\n\t\t\tmin_ending_here = 1\r\n\t\telse:\r\n\t\t\ttemp = max_ending_here\r\n\t\t\tmax_ending_here = max (min_ending_here * arr[i], 1)\r\n\t\t\tmin_ending_here = temp * arr[i]\r\n\t\tif (max_so_far < max_ending_here):\r\n\t\t\tmax_so_far = max_ending_here\r\n\tif flag == 0 and max_so_far == 0:\r\n\t\treturn 0\r\n\treturn max_so_far",
         "id": 463,
         "test_setup_code": "",
@@ -5403,6 +5866,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if all values are same in a dictionary.",
+        "label": "matrix",
         "code": "def check_value(dict, n):\r\n    result = all(x == n for x in dict.values()) \r\n    return result",
         "id": 464,
         "test_setup_code": "",
@@ -5415,6 +5879,7 @@ problems = [
     },
     {
         "text": "Write a C function to drop empty items from a given dictionary.",
+        "label": "matrix",
         "code": "def drop_empty(dict1):\r\n  dict1 = {key:value for (key, value) in dict1.items() if value is not None},\r\n  return dict1",
         "id": 465,
         "test_setup_code": "",
@@ -5427,6 +5892,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the peak element in the given array.",
+        "label": "array",
         "code": "def find_peak_util(arr, low, high, n): \r\n\tmid = low + (high - low)/2\r\n\tmid = int(mid) \r\n\tif ((mid == 0 or arr[mid - 1] <= arr[mid]) and\r\n\t\t(mid == n - 1 or arr[mid + 1] <= arr[mid])): \r\n\t\treturn mid \r\n\telif (mid > 0 and arr[mid - 1] > arr[mid]): \r\n\t\treturn find_peak_util(arr, low, (mid - 1), n) \r\n\telse: \r\n\t\treturn find_peak_util(arr, (mid + 1), high, n) \r\ndef find_peak(arr, n): \r\n\treturn find_peak_util(arr, 0, n - 1, n) ",
         "id": 466,
         "test_setup_code": "",
@@ -5439,6 +5905,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert decimal number to octal number.",
+        "label": "math",
         "code": "def decimal_to_Octal(deciNum):\r\n    octalNum = 0\r\n    countval = 1;\r\n    dNo = deciNum;\r\n    while (deciNum!= 0):\r\n        remainder= deciNum % 8;\r\n        octalNum+= remainder*countval;\r\n        countval= countval*10;\r\n        deciNum //= 8; \r\n    return (octalNum)",
         "id": 467,
         "test_setup_code": "",
@@ -5451,6 +5918,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum product formed by multiplying numbers of an increasing subsequence of that array.",
+        "label": "array",
         "code": "def max_product(arr, n ): \r\n\tmpis =[0] * (n) \r\n\tfor i in range(n): \r\n\t\tmpis[i] = arr[i] \r\n\tfor i in range(1, n): \r\n\t\tfor j in range(i): \r\n\t\t\tif (arr[i] > arr[j] and\r\n\t\t\t\t\tmpis[i] < (mpis[j] * arr[i])): \r\n\t\t\t\t\t\tmpis[i] = mpis[j] * arr[i] \r\n\treturn max(mpis)",
         "id": 468,
         "test_setup_code": "",
@@ -5463,6 +5931,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum profit earned from a maximum of k stock transactions",
+        "label": "array",
         "code": "def max_profit(price, k):\r\n    n = len(price)\r\n    final_profit = [[None for x in range(n)] for y in range(k + 1)]\r\n    for i in range(k + 1):\r\n        for j in range(n):\r\n            if i == 0 or j == 0:\r\n                final_profit[i][j] = 0\r\n            else:\r\n                max_so_far = 0\r\n                for x in range(j):\r\n                    curr_price = price[j] - price[x] + final_profit[i-1][x]\r\n                    if max_so_far < curr_price:\r\n                        max_so_far = curr_price\r\n                final_profit[i][j] = max(final_profit[i][j-1], max_so_far)\r\n    return final_profit[k][n-1]",
         "id": 469,
         "test_setup_code": "",
@@ -5475,6 +5944,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the pairwise addition of the elements of the given tuples.",
+        "label": "array",
         "code": "def add_pairwise(test_tup):\r\n  res = tuple(i + j for i, j in zip(test_tup, test_tup[1:]))\r\n  return (res) ",
         "id": 470,
         "test_setup_code": "",
@@ -5487,6 +5957,7 @@ problems = [
     },
     {
         "text": "Write a C function to find remainder of array multiplication divided by n.",
+        "label": "array",
         "code": "def find_remainder(arr, lens, n): \r\n    mul = 1\r\n    for i in range(lens):  \r\n        mul = (mul * (arr[i] % n)) % n \r\n    return mul % n ",
         "id": 471,
         "test_setup_code": "",
@@ -5499,6 +5970,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given list contains consecutive numbers or not.",
+        "label": "array",
         "code": "def check_Consecutive(l): \r\n    return sorted(l) == list(range(min(l),max(l)+1)) ",
         "id": 472,
         "test_setup_code": "",
@@ -5511,6 +5983,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the tuple intersection of elements in the given tuple list irrespective of their order.",
+        "label": "matrix",
         "code": "def tuple_intersection(test_list1, test_list2):\r\n  res = set([tuple(sorted(ele)) for ele in test_list1]) & set([tuple(sorted(ele)) for ele in test_list2])\r\n  return (res)",
         "id": 473,
         "test_setup_code": "",
@@ -5523,6 +5996,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace characters in a string.",
+        "label": "string",
         "code": "def replace_char(str1,ch,newch):\r\n str2 = str1.replace(ch, newch)\r\n return str2",
         "id": 474,
         "test_setup_code": "",
@@ -5535,6 +6009,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort counter by value.",
+        "label": "matrix",
         "code": "from collections import Counter\r\ndef sort_counter(dict1):\r\n x = Counter(dict1)\r\n sort_counter=x.most_common()\r\n return sort_counter",
         "id": 475,
         "test_setup_code": "",
@@ -5547,6 +6022,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of the largest and smallest value in a given array.",
+        "label": "array",
         "code": "def big_sum(nums):\r\n      sum= max(nums)+min(nums)\r\n      return sum",
         "id": 476,
         "test_setup_code": "",
@@ -5559,6 +6035,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given string to lower case.",
+        "label": "string",
         "code": "def is_lower(string):\r\n  return (string.lower())",
         "id": 477,
         "test_setup_code": "",
@@ -5571,6 +6048,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove lowercase substrings from a given string.",
+        "label": "string",
         "code": "import re\r\ndef remove_lowercase(str1):\r\n remove_lower = lambda text: re.sub('[a-z]', '', text)\r\n result =  remove_lower(str1)\r\n return result",
         "id": 478,
         "test_setup_code": "",
@@ -5583,6 +6061,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first digit of a given number.",
+        "label": "math",
         "code": "def first_Digit(n) :  \r\n    while n >= 10:  \r\n        n = n / 10; \r\n    return int(n) ",
         "id": 479,
         "test_setup_code": "",
@@ -5591,6 +6070,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum occurring character in a given string.",
+        "label": "string",
         "code": "def get_max_occuring_char(str1):\r\n  ASCII_SIZE = 256\r\n  ctr = [0] * ASCII_SIZE\r\n  max = -1\r\n  ch = ''\r\n  for i in str1:\r\n    ctr[ord(i)]+=1;\r\n  for i in str1:\r\n    if max < ctr[ord(i)]:\r\n      max = ctr[ord(i)]\r\n      ch = i\r\n  return ch",
         "id": 480,
         "test_setup_code": "",
@@ -5603,6 +6083,7 @@ problems = [
     },
     {
         "text": "Write a C function to determine if there is a subset of the given set with sum equal to the given sum.",
+        "label": "array",
         "code": "def is_subset_sum(set, n, sum):\r\n\tif (sum == 0):\r\n\t\treturn True\r\n\tif (n == 0):\r\n\t\treturn False\r\n\tif (set[n - 1] > sum):\r\n\t\treturn is_subset_sum(set, n - 1, sum)\r\n\treturn is_subset_sum(set, n-1, sum) or is_subset_sum(set, n-1, sum-set[n-1])",
         "id": 481,
         "test_setup_code": "",
@@ -5615,6 +6096,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sequences of one upper case letter followed by lower case letters in the given string by using regex.",
+        "label": "string",
         "code": "import re \r\ndef match(text): \r\n\t\tpattern = '[A-Z]+[a-z]+$'\r\n\t\tif re.search(pattern, text): \r\n\t\t\t\treturn('Yes') \r\n\t\telse: \r\n\t\t\t\treturn('No') ",
         "id": 482,
         "test_setup_code": "",
@@ -5627,6 +6109,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first natural number whose factorial is divisible by x.",
+        "label": "math",
         "code": "def first_Factorial_Divisible_Number(x): \r\n    i = 1;\r\n    fact = 1; \r\n    for i in range(1,x): \r\n        fact = fact * i \r\n        if (fact % x == 0): \r\n            break\r\n    return i ",
         "id": 483,
         "test_setup_code": "",
@@ -5639,6 +6122,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove the matching tuples from the given two tuples.",
+        "label": "matrix",
         "code": "def remove_matching_tuple(test_list1, test_list2):\r\n  res = [sub for sub in test_list1 if sub not in test_list2]\r\n  return (res) ",
         "id": 484,
         "test_setup_code": "",
@@ -5651,6 +6135,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest palindromic number in the given array.",
+        "label": "array",
         "code": "def is_palindrome(n) : \r\n\tdivisor = 1\r\n\twhile (n / divisor >= 10) : \r\n\t\tdivisor *= 10\r\n\twhile (n != 0) : \r\n\t\tleading = n // divisor \r\n\t\ttrailing = n % 10\r\n\t\tif (leading != trailing) : \r\n\t\t\treturn False\r\n\t\tn = (n % divisor) // 10\r\n\t\tdivisor = divisor // 100\r\n\treturn True\r\ndef largest_palindrome(A, n) : \r\n\tA.sort() \r\n\tfor i in range(n - 1, -1, -1) : \r\n\t\tif (is_palindrome(A[i])) : \r\n\t\t\treturn A[i] \r\n\treturn -1",
         "id": 485,
         "test_setup_code": "",
@@ -5663,6 +6148,7 @@ problems = [
     },
     {
         "text": "Write a C function to compute binomial probability for the given number.",
+        "label": "math",
         "code": "def nCr(n, r): \r\n\tif (r > n / 2): \r\n\t\tr = n - r \r\n\tanswer = 1 \r\n\tfor i in range(1, r + 1): \r\n\t\tanswer *= (n - r + i) \r\n\t\tanswer /= i \r\n\treturn answer \r\ndef binomial_probability(n, k, p): \r\n\treturn (nCr(n, k) * pow(p, k) *\tpow(1 - p, n - k)) ",
         "id": 486,
         "test_setup_code": "",
@@ -5675,6 +6161,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of tuples in increasing order by the last element in each tuple.",
+        "label": "matrix",
         "code": "def sort_tuple(tup): \r\n\tlst = len(tup) \r\n\tfor i in range(0, lst): \r\n\t\tfor j in range(0, lst-i-1): \r\n\t\t\tif (tup[j][-1] > tup[j + 1][-1]): \r\n\t\t\t\ttemp = tup[j] \r\n\t\t\t\ttup[j]= tup[j + 1] \r\n\t\t\t\ttup[j + 1]= temp \r\n\treturn tup",
         "id": 487,
         "test_setup_code": "",
@@ -5687,6 +6174,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the area of a pentagon.",
+        "label": "math",
         "code": "import math\r\ndef area_pentagon(a):\r\n  area=(math.sqrt(5*(5+2*math.sqrt(5)))*pow(a,2))/4.0\r\n  return area",
         "id": 488,
         "test_setup_code": "",
@@ -5699,6 +6187,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the frequency of the largest value in a given array.",
+        "label": "array",
         "code": "def frequency_Of_Largest(n,arr): \r\n    mn = arr[0] \r\n    freq = 1\r\n    for i in range(1,n): \r\n        if (arr[i] >mn): \r\n            mn = arr[i] \r\n            freq = 1\r\n        elif (arr[i] == mn): \r\n            freq += 1\r\n    return freq ",
         "id": 489,
         "test_setup_code": "",
@@ -5711,6 +6200,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract all the pairs which are symmetric in the given tuple list.",
+        "label": "matrix",
         "code": "def extract_symmetric(test_list):\r\n  temp = set(test_list) & {(b, a) for a, b in test_list},\r\n  res = {(a, b) for a, b in temp if a < b},\r\n  return (res) ",
         "id": 490,
         "test_setup_code": "",
@@ -5723,6 +6213,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of geometric progression series.",
+        "label": "math",
         "code": "import math\r\ndef sum_gp(a,n,r):\r\n total = (a * (1 - math.pow(r, n ))) / (1- r)\r\n return total",
         "id": 491,
         "test_setup_code": "",
@@ -5731,6 +6222,7 @@ problems = [
     },
     {
         "text": "Write a C function to search an element in the given array by using binary search.",
+        "label": "array",
         "code": "def binary_search(item_list,item):\r\n\tfirst = 0\r\n\tlast = len(item_list)-1\r\n\tfound = False\r\n\twhile( first<=last and not found):\r\n\t\tmid = (first + last)//2\r\n\t\tif item_list[mid] == item :\r\n\t\t\tfound = True\r\n\t\telse:\r\n\t\t\tif item < item_list[mid]:\r\n\t\t\t\tlast = mid - 1\r\n\t\t\telse:\r\n\t\t\t\tfirst = mid + 1\t\r\n\treturn found",
         "id": 492,
         "test_setup_code": "",
@@ -5743,6 +6235,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate a grid of hexagon coordinates where function returns a list of lists containing 6 tuples of x, y point coordinates.",
+        "label": "matrix",
         "code": "import math\r\ndef calculate_polygons(startx, starty, endx, endy, radius):\r\n    sl = (2 * radius) * math.tan(math.pi / 6)\r\n    p = sl * 0.5\r\n    b = sl * math.cos(math.radians(30))\r\n    w = b * 2\r\n    h = 2 * sl   \r\n    startx = startx - w\r\n    starty = starty - h\r\n    endx = endx + w\r\n    endy = endy + h\r\n    origx = startx\r\n    origy = starty\r\n    xoffset = b\r\n    yoffset = 3 * p\r\n    polygons = []\r\n    row = 1\r\n    counter = 0\r\n    while starty < endy:\r\n        if row % 2 == 0:\r\n            startx = origx + xoffset\r\n        else:\r\n            startx = origx\r\n        while startx < endx:\r\n            p1x = startx\r\n            p1y = starty + p\r\n            p2x = startx\r\n            p2y = starty + (3 * p)\r\n            p3x = startx + b\r\n            p3y = starty + h\r\n            p4x = startx + w\r\n            p4y = starty + (3 * p)\r\n            p5x = startx + w\r\n            p5y = starty + p\r\n            p6x = startx + b\r\n            p6y = starty\r\n            poly = [\r\n                (p1x, p1y),\r\n                (p2x, p2y),\r\n                (p3x, p3y),\r\n                (p4x, p4y),\r\n                (p5x, p5y),\r\n                (p6x, p6y),\r\n                (p1x, p1y)]\r\n            polygons.append(poly)\r\n            counter += 1\r\n            startx += w\r\n        starty += yoffset\r\n        row += 1\r\n    return polygons",
         "id": 493,
         "test_setup_code": "",
@@ -5755,6 +6248,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given binary tuple to integer.",
+        "label": "array",
         "code": 'def binary_to_integer(test_tup):\r\n  res = int("".join(str(ele) for ele in test_tup), 2)\r\n  return (str(res)) ',
         "id": 494,
         "test_setup_code": "",
@@ -5767,6 +6261,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove lowercase substrings from a given string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef remove_lowercase(str1):\r\n  remove_lower = lambda text: re.sub('[a-z]', '', text)\r\n  result =  remove_lower(str1)\r\n  return (result)",
         "id": 495,
         "test_setup_code": "",
@@ -5779,6 +6274,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the smallest integers from a given list of numbers using heap queue algorithm.",
+        "label": "array",
         "code": "import heapq as hq\r\ndef heap_queue_smallest(nums,n):\r\n  smallest_nums = hq.nsmallest(n, nums)\r\n  return smallest_nums",
         "id": 496,
         "test_setup_code": "",
@@ -5791,6 +6287,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the surface area of a cone.",
+        "label": "math",
         "code": "import math\r\ndef surfacearea_cone(r,h):\r\n  l = math.sqrt(r * r + h * h)\r\n  SA = math.pi * r * (r + l)\r\n  return SA",
         "id": 497,
         "test_setup_code": "",
@@ -5803,6 +6300,7 @@ problems = [
     },
     {
         "text": "Write a C function to find gcd of two positive integers.",
+        "label": "math",
         "code": "def gcd(x, y):\r\n    gcd = 1\r\n    if x % y == 0:\r\n        return y\r\n    for k in range(int(y / 2), 0, -1):\r\n        if x % k == 0 and y % k == 0:\r\n            gcd = k\r\n            break  \r\n    return gcd",
         "id": 498,
         "test_setup_code": "",
@@ -5811,6 +6309,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the diameter of a circle.",
+        "label": "math",
         "code": "def diameter_circle(r):\r\n  diameter=2*r\r\n  return diameter",
         "id": 499,
         "test_setup_code": "",
@@ -5823,6 +6322,7 @@ problems = [
     },
     {
         "text": "Write a C function to concatenate all elements of the given list into a string.",
+        "label": "array",
         "code": "def concatenate_elements(list):\r\n  ans = ' '\r\n  for i in list:\r\n    ans = ans+ ' '+i\r\n  return (ans) ",
         "id": 500,
         "test_setup_code": "",
@@ -5835,6 +6335,7 @@ problems = [
     },
     {
         "text": "Write a C function to find common divisor between two numbers in a given pair.",
+        "label": "math",
         "code": "def ngcd(x,y):\r\n    i=1\r\n    while(i<=x and i<=y):\r\n        if(x%i==0 and y%i == 0):\r\n            gcd=i;\r\n        i+=1\r\n    return gcd;\r\ndef num_comm_div(x,y):\r\n  n = ngcd(x,y)\r\n  result = 0\r\n  z = int(n**0.5)\r\n  i = 1\r\n  while(i <= z):\r\n    if(n % i == 0):\r\n      result += 2 \r\n      if(i == n/i):\r\n        result-=1\r\n    i+=1\r\n  return result",
         "id": 501,
         "test_setup_code": "",
@@ -5847,6 +6348,7 @@ problems = [
     },
     {
         "text": "Write a C function to find remainder of two numbers.",
+        "label": "math",
         "code": "def find(n,m):\r\n  r = n%m\r\n  return (r)",
         "id": 502,
         "test_setup_code": "",
@@ -5855,6 +6357,7 @@ problems = [
     },
     {
         "text": "Write a C function to add consecutive numbers of a given list.",
+        "label": "array",
         "code": "def add_consecutive_nums(nums):\r\n    result = [b+a for a, b in zip(nums[:-1], nums[1:])]\r\n    return result",
         "id": 503,
         "test_setup_code": "",
@@ -5867,6 +6370,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the cube sum of first n natural numbers.",
+        "label": "math",
         "code": "def sum_Of_Series(n): \r\n    sum = 0\r\n    for i in range(1,n + 1): \r\n        sum += i * i*i       \r\n    return sum",
         "id": 504,
         "test_setup_code": "",
@@ -5879,6 +6383,7 @@ problems = [
     },
     {
         "text": "Write a C function to move all zeroes to the end of the given array.",
+        "label": "array",
         "code": "def re_order(A):\r\n    k = 0\r\n    for i in A:\r\n        if i:\r\n            A[k] = i\r\n            k = k + 1\r\n    for i in range(k, len(A)):\r\n        A[i] = 0\r\n    return A",
         "id": 505,
         "test_setup_code": "",
@@ -5891,6 +6396,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the permutation coefficient of given p(n, k).",
+        "label": "math",
         "code": "def permutation_coefficient(n, k): \r\n\tP = [[0 for i in range(k + 1)] \r\n\t\t\tfor j in range(n + 1)] \r\n\tfor i in range(n + 1): \r\n\t\tfor j in range(min(i, k) + 1): \r\n\t\t\tif (j == 0): \r\n\t\t\t\tP[i][j] = 1\r\n\t\t\telse: \r\n\t\t\t\tP[i][j] = P[i - 1][j] + ( \r\n\t\t\t\t\t\tj * P[i - 1][j - 1]) \r\n\t\t\tif (j < k): \r\n\t\t\t\tP[i][j + 1] = 0\r\n\treturn P[n][k] ",
         "id": 506,
         "test_setup_code": "",
@@ -5903,6 +6409,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove specific words from a given list.",
+        "label": "array",
         "code": "def remove_words(list1, removewords):\r\n    for word in list(list1):\r\n        if word in removewords:\r\n            list1.remove(word)\r\n    return list1  ",
         "id": 507,
         "test_setup_code": "",
@@ -5915,6 +6422,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the common elements between two given lists are in the same order or not.",
+        "label": "array",
         "code": "def same_order(l1, l2):\r\n    common_elements = set(l1) & set(l2)\r\n    l1 = [e for e in l1 if e in common_elements]\r\n    l2 = [e for e in l2 if e in common_elements]\r\n    return l1 == l2",
         "id": 508,
         "test_setup_code": "",
@@ -5927,6 +6435,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the average of odd numbers till a given odd number.",
+        "label": "math",
         "code": 'def average_Odd(n) : \r\n    if (n%2==0) : \r\n        return ("Invalid Input") \r\n        return -1 \r\n    sm =0\r\n    count =0\r\n    while (n>=1) : \r\n        count=count+1\r\n        sm = sm + n \r\n        n = n-2\r\n    return sm//count ',
         "id": 509,
         "test_setup_code": "",
@@ -5935,6 +6444,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number of subsequences having product smaller than k for the given non negative array.",
+        "label": "array",
         "code": "def no_of_subsequences(arr, k): \r\n\tn = len(arr) \r\n\tdp = [[0 for i in range(n + 1)] \r\n\t\t\tfor j in range(k + 1)] \r\n\tfor i in range(1, k + 1): \r\n\t\tfor j in range(1, n + 1): \r\n\t\t\tdp[i][j] = dp[i][j - 1] \r\n\t\t\tif arr[j - 1] <= i and arr[j - 1] > 0: \r\n\t\t\t\tdp[i][j] += dp[i // arr[j - 1]][j - 1] + 1\r\n\treturn dp[k][n]",
         "id": 510,
         "test_setup_code": "",
@@ -5947,6 +6457,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum sum of factors of a given number.",
+        "label": "math",
         "code": "def find_Min_Sum(num): \r\n    sum = 0\r\n    i = 2\r\n    while(i * i <= num): \r\n        while(num % i == 0): \r\n            sum += i \r\n            num /= i \r\n        i += 1\r\n    sum += num \r\n    return sum",
         "id": 511,
         "test_setup_code": "",
@@ -5955,6 +6466,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the element frequency in the mixed nested tuple.",
+        "label": "matrix",
         "code": "def flatten(test_tuple): \r\n\tfor tup in test_tuple: \r\n\t\tif isinstance(tup, tuple): \r\n\t\t\tyield from flatten(tup) \r\n\t\telse: \r\n\t\t\tyield tup \r\ndef count_element_freq(test_tuple):\r\n  res = {},\r\n  for ele in flatten(test_tuple):\r\n    if ele not in res:\r\n      res[ele] = 0\r\n    res[ele] += 1\r\n  return (res) ",
         "id": 512,
         "test_setup_code": "",
@@ -5967,6 +6479,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert tuple into list by adding the given string after every element.",
+        "label": "array",
         "code": "def add_str(test_tup, K):\r\n  res = [ele for sub in test_tup for ele in (sub, K)]\r\n  return (res) ",
         "id": 513,
         "test_setup_code": "",
@@ -5979,6 +6492,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the summation of tuple elements in the given tuple list.",
+        "label": "array",
         "code": "def sum_elements(test_tup):\r\n  res = sum(list(test_tup))\r\n  return (res) ",
         "id": 514,
         "test_setup_code": "",
@@ -5991,6 +6505,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if there is a subset with sum divisible by m.",
+        "label": "array",
         "code": "def modular_sum(arr, n, m): \r\n\tif (n > m): \r\n\t\treturn True\r\n\tDP = [False for i in range(m)] \r\n\tfor i in range(n): \r\n\t\tif (DP[0]): \r\n\t\t\treturn True\r\n\t\ttemp = [False for i in range(m)] \r\n\t\tfor j in range(m): \r\n\t\t\tif (DP[j] == True): \r\n\t\t\t\tif (DP[(j + arr[i]) % m] == False): \r\n\t\t\t\t\ttemp[(j + arr[i]) % m] = True\r\n\t\tfor j in range(m): \r\n\t\t\tif (temp[j]): \r\n\t\t\t\tDP[j] = True\r\n\t\tDP[arr[i] % m] = True\r\n\treturn DP[0]",
         "id": 515,
         "test_setup_code": "",
@@ -6003,6 +6518,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of elements using radix sort.",
+        "label": "array",
         "code": "def radix_sort(nums):\r\n    RADIX = 10\r\n    placement = 1\r\n    max_digit = max(nums)\r\n\r\n    while placement < max_digit:\r\n      buckets = [list() for _ in range( RADIX )]\r\n      for i in nums:\r\n        tmp = int((i / placement) % RADIX)\r\n        buckets[tmp].append(i)\r\n      a = 0\r\n      for b in range( RADIX ):\r\n        buck = buckets[b]\r\n        for i in buck:\r\n          nums[a] = i\r\n          a += 1\r\n      placement *= RADIX\r\n    return nums",
         "id": 516,
         "test_setup_code": "",
@@ -6015,6 +6531,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest postive number from the given list.",
+        "label": "array",
         "code": "def largest_pos(list1): \r\n    max = list1[0] \r\n    for x in list1: \r\n        if x > max : \r\n             max = x  \r\n    return max",
         "id": 517,
         "test_setup_code": "",
@@ -6027,6 +6544,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the square root of a perfect number.",
+        "label": "math",
         "code": "import math\r\ndef sqrt_root(num):\r\n sqrt_root = math.pow(num, 0.5)\r\n return sqrt_root ",
         "id": 518,
         "test_setup_code": "",
@@ -6035,6 +6553,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate volume of a tetrahedron.",
+        "label": "math",
         "code": "import math\r\ndef volume_tetrahedron(num):\r\n\tvolume = (num ** 3 / (6 * math.sqrt(2)))\t\r\n\treturn round(volume, 2)",
         "id": 519,
         "test_setup_code": "",
@@ -6047,6 +6566,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the lcm of the given array elements.",
+        "label": "array",
         "code": "def find_lcm(num1, num2): \r\n\tif(num1>num2): \r\n\t\tnum = num1 \r\n\t\tden = num2 \r\n\telse: \r\n\t\tnum = num2 \r\n\t\tden = num1 \r\n\trem = num % den \r\n\twhile (rem != 0): \r\n\t\tnum = den \r\n\t\tden = rem \r\n\t\trem = num % den \r\n\tgcd = den \r\n\tlcm = int(int(num1 * num2)/int(gcd)) \r\n\treturn lcm \r\ndef get_lcm(l):\r\n  num1 = l[0]\r\n  num2 = l[1]\r\n  lcm = find_lcm(num1, num2)\r\n  for i in range(2, len(l)):\r\n    lcm = find_lcm(lcm, l[i])\r\n  return lcm ",
         "id": 520,
         "test_setup_code": "",
@@ -6059,6 +6579,7 @@ problems = [
     },
     {
         "text": "Write a C function to print check if the triangle is scalene or not.",
+        "label": "math",
         "code": "def check_isosceles(x,y,z):\r\n  if x!=y & y!=z & z!=x:\r\n\t   return True\r\n  else:\r\n     return False",
         "id": 521,
         "test_setup_code": "",
@@ -6071,6 +6592,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest bitonic subsequence for the given array.",
+        "label": "array",
         "code": "def lbs(arr): \r\n\tn = len(arr) \r\n\tlis = [1 for i in range(n+1)] \r\n\tfor i in range(1 , n): \r\n\t\tfor j in range(0 , i): \r\n\t\t\tif ((arr[i] > arr[j]) and (lis[i] < lis[j] +1)): \r\n\t\t\t\tlis[i] = lis[j] + 1\r\n\tlds = [1 for i in range(n+1)] \r\n\tfor i in reversed(range(n-1)): \r\n\t\tfor j in reversed(range(i-1 ,n)): \r\n\t\t\tif(arr[i] > arr[j] and lds[i] < lds[j] + 1): \r\n\t\t\t\tlds[i] = lds[j] + 1\r\n\tmaximum = lis[0] + lds[0] - 1\r\n\tfor i in range(1 , n): \r\n\t\tmaximum = max((lis[i] + lds[i]-1), maximum) \r\n\treturn maximum",
         "id": 522,
         "test_setup_code": "",
@@ -6083,6 +6605,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a given string has a capital letter, a lower case letter, a number and specified length.",
+        "label": "string",
         "code": "def check_string(str1):\r\n    messg = [\r\n    lambda str1: any(x.isupper() for x in str1) or 'String must have 1 upper case character.',\r\n    lambda str1: any(x.islower() for x in str1) or 'String must have 1 lower case character.',\r\n    lambda str1: any(x.isdigit() for x in str1) or 'String must have 1 number.',\r\n    lambda str1: len(str1) >= 7                 or 'String length should be atleast 8.',]\r\n    result = [x for x in [i(str1) for i in messg] if x != True]\r\n    if not result:\r\n        result.append('Valid string.')\r\n    return result  ",
         "id": 523,
         "test_setup_code": "",
@@ -6095,6 +6618,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of maximum increasing subsequence of the given array.",
+        "label": "array",
         "code": "def max_sum_increasing_subsequence(arr, n): \r\n\tmax = 0\r\n\tmsis = [0 for x in range(n)] \r\n\tfor i in range(n): \r\n\t\tmsis[i] = arr[i] \r\n\tfor i in range(1, n): \r\n\t\tfor j in range(i): \r\n\t\t\tif (arr[i] > arr[j] and\r\n\t\t\t\tmsis[i] < msis[j] + arr[i]): \r\n\t\t\t\tmsis[i] = msis[j] + arr[i] \r\n\tfor i in range(n): \r\n\t\tif max < msis[i]: \r\n\t\t\tmax = msis[i] \r\n\treturn max",
         "id": 524,
         "test_setup_code": "",
@@ -6107,6 +6631,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether two given lines are parallel or not.",
+        "label": "math",
         "code": "def parallel_lines(line1, line2):\r\n  return line1[0]/line1[1] == line2[0]/line2[1]",
         "id": 525,
         "test_setup_code": "",
@@ -6119,6 +6644,7 @@ problems = [
     },
     {
         "text": "Write a C function to capitalize first and last letters of each word of a given string.",
+        "label": "string",
         "code": 'def capitalize_first_last_letters(str1):\r\n     str1 = result = str1.title()\r\n     result =  ""\r\n     for word in str1.split():\r\n        result += word[:-1] + word[-1].upper() + " "\r\n     return result[:-1]  ',
         "id": 526,
         "test_setup_code": "",
@@ -6131,6 +6657,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all pairs in an integer array whose sum is equal to a given number.",
+        "label": "array",
         "code": "def get_pairs_count(arr, n, sum):\r\n    count = 0 \r\n    for i in range(0, n):\r\n        for j in range(i + 1, n):\r\n            if arr[i] + arr[j] == sum:\r\n                count += 1\r\n    return count",
         "id": 527,
         "test_setup_code": "",
@@ -6143,6 +6670,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the list of lists with minimum length.",
+        "label": "matrix",
         "code": "def min_length(list1):\r\n   min_length = min(len(x) for x in  list1 )  \r\n   min_list = min((x) for x in   list1)\r\n   return(min_length, min_list)     ",
         "id": 528,
         "test_setup_code": "",
@@ -6155,6 +6683,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth jacobsthal-lucas number.",
+        "label": "math",
         "code": "def jacobsthal_lucas(n): \r\n\tdp=[0] * (n + 1) \r\n\tdp[0] = 2\r\n\tdp[1] = 1\r\n\tfor i in range(2, n+1): \r\n\t\tdp[i] = dp[i - 1] + 2 * dp[i - 2]; \r\n\treturn dp[n]",
         "id": 529,
         "test_setup_code": "",
@@ -6167,6 +6696,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the ration of negative numbers in an array of integers.",
+        "label": "array",
         "code": "from array import array\r\ndef negative_count(nums):\r\n    n = len(nums)\r\n    n1 = 0\r\n    for x in nums:\r\n        if x < 0:\r\n            n1 += 1\r\n        else:\r\n          None\r\n    return round(n1/n,2)",
         "id": 530,
         "test_setup_code": "",
@@ -6179,6 +6709,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum number of coins that make a given value.",
+        "label": "array",
         "code": "import sys \r\ndef min_coins(coins, m, V): \r\n    if (V == 0): \r\n        return 0\r\n    res = sys.maxsize \r\n    for i in range(0, m): \r\n        if (coins[i] <= V): \r\n            sub_res = min_coins(coins, m, V-coins[i]) \r\n            if (sub_res != sys.maxsize and sub_res + 1 < res): \r\n                res = sub_res + 1  \r\n    return res ",
         "id": 531,
         "test_setup_code": "",
@@ -6191,6 +6722,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the two given strings are permutations of each other.",
+        "label": "string",
         "code": 'def check_permutation(str1, str2):\r\n  n1=len(str1)\r\n  n2=len(str2)\r\n  if(n1!=n2):\r\n    return False\r\n  a=sorted(str1)\r\n  str1=" ".join(a)\r\n  b=sorted(str2)\r\n  str2=" ".join(b)\r\n  for i in range(0, n1, 1):\r\n    if(str1[i] != str2[i]):\r\n      return False\r\n  return True',
         "id": 532,
         "test_setup_code": "",
@@ -6203,6 +6735,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove particular data type elements from the given tuple.",
+        "label": "array",
         "code": "def remove_datatype(test_tuple, data_type):\r\n  res = []\r\n  for ele in test_tuple:\r\n    if not isinstance(ele, data_type):\r\n      res.append(ele)\r\n  return (res) ",
         "id": 533,
         "test_setup_code": "",
@@ -6215,6 +6748,7 @@ problems = [
     },
     {
         "text": "Write a C function to search a literals string in a string and also find the location within the original string where the pattern occurs.",
+        "label": "string",
         "code": "import re\r\ndef search_literal(pattern,text):\r\n match = re.search(pattern, text)\r\n s = match.start()\r\n e = match.end()\r\n return (s, e)",
         "id": 534,
         "test_setup_code": "",
@@ -6227,6 +6761,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the top or bottom surface area of a cylinder.",
+        "label": "math",
         "code": "def topbottom_surfacearea(r):\r\n  toporbottomarea=3.1415*r*r\r\n  return toporbottomarea",
         "id": 535,
         "test_setup_code": "",
@@ -6239,6 +6774,7 @@ problems = [
     },
     {
         "text": "Write a C function to select the nth items of a list.",
+        "label": "array",
         "code": "def nth_items(list,n):\r\n return list[::n]",
         "id": 536,
         "test_setup_code": "",
@@ -6251,6 +6787,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first repeated word in a given string.",
+        "label": "string",
         "code": "def first_repeated_word(str1):\r\n  temp = set()\r\n  for word in str1.split():\r\n    if word in temp:\r\n      return word;\r\n    else:\r\n      temp.add(word)\r\n  return 'None'",
         "id": 537,
         "test_setup_code": "",
@@ -6263,6 +6800,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a given string list to a tuple.",
+        "label": "string",
         "code": "def string_list_to_tuple(str1):\r\n    result = tuple(x for x in str1 if not x.isspace()) \r\n    return result",
         "id": 538,
         "test_setup_code": "",
@@ -6275,6 +6813,7 @@ problems = [
     },
     {
         "text": "Write a C function to create a list containing the power of said number in bases raised to the corresponding number in the index using map function.",
+        "label": "array",
         "code": "def basesnum_coresspondingnum(bases_num,index):\r\n  result = list(map(pow, bases_num, index))\r\n  return result",
         "id": 539,
         "test_setup_code": "",
@@ -6287,6 +6826,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the difference between highest and least frequencies in a given array.",
+        "label": "array",
         "code": "def find_Diff(arr,n): \r\n    arr.sort()  \r\n    count = 0; max_count = 0; min_count = n \r\n    for i in range(0,(n-1)): \r\n        if arr[i] == arr[i + 1]: \r\n            count += 1\r\n            continue\r\n        else: \r\n            max_count = max(max_count,count) \r\n            min_count = min(min_count,count) \r\n            count = 0\r\n    return max_count - min_count ",
         "id": 540,
         "test_setup_code": "",
@@ -6299,6 +6839,7 @@ problems = [
     },
     {
         "text": "Write a C function to find if the given number is abundant or not.",
+        "label": "math",
         "code": "import math \r\ndef get_sum(n): \r\n\tsum = 0\r\n\ti = 1\r\n\twhile i <= (math.sqrt(n)): \r\n\t\tif n%i == 0: \r\n\t\t\tif n/i == i : \r\n\t\t\t\tsum = sum + i \r\n\t\t\telse: \r\n\t\t\t\tsum = sum + i \r\n\t\t\t\tsum = sum + (n / i ) \r\n\t\ti = i + 1\r\n\tsum = sum - n \r\n\treturn sum\r\ndef check_abundant(n): \r\n\tif (get_sum(n) > n): \r\n\t\treturn True\r\n\telse: \r\n\t\treturn False",
         "id": 541,
         "test_setup_code": "",
@@ -6311,6 +6852,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace all occurrences of spaces, commas, or dots with a colon in the given string by using regex.",
+        "label": "string",
         "code": 'import re\r\ndef fill_spaces(text):\r\n  return (re.sub("[ ,.]", ":", text))',
         "id": 542,
         "test_setup_code": "",
@@ -6323,6 +6865,7 @@ problems = [
     },
     {
         "text": "Write a C function to add two numbers and print number of digits of sum.",
+        "label": "math",
         "code": "def count_digits(num1,num2):\r\n    number=num1+num2\r\n    count = 0\r\n    while(number > 0):\r\n        number = number // 10\r\n        count = count + 1\r\n    return count",
         "id": 543,
         "test_setup_code": "",
@@ -6335,6 +6878,7 @@ problems = [
     },
     {
         "text": "Write a C function to flatten the tuple list to a string.",
+        "label": "matrix",
         "code": "def flatten_tuple(test_list):\r\n  res = ' '.join([idx for tup in test_list for idx in tup])\r\n  return (res) ",
         "id": 544,
         "test_setup_code": "",
@@ -6347,6 +6891,7 @@ problems = [
     },
     {
         "text": "Write a C function to toggle only first and last bits of a given number.",
+        "label": "math",
         "code": "def take_L_and_F_set_bits(n) : \r\n    n = n | n >> 1\r\n    n = n | n >> 2\r\n    n = n | n >> 4\r\n    n = n | n >> 8\r\n    n = n | n >> 16 \r\n    return ((n + 1) >> 1) + 1      \r\ndef toggle_F_and_L_bits(n) :  \r\n    if (n == 1) : \r\n        return 0 \r\n    return n ^ take_L_and_F_set_bits(n) ",
         "id": 545,
         "test_setup_code": "",
@@ -6359,6 +6904,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the last occurrence of a character in a string.",
+        "label": "string",
         "code": "def last_occurence_char(string,char):\r\n flag = -1\r\n for i in range(len(string)):\r\n     if(string[i] == char):\r\n         flag = i\r\n if(flag == -1):\r\n    return None\r\n else:\r\n    return flag + 1",
         "id": 546,
         "test_setup_code": "",
@@ -6371,6 +6917,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of hamming distances of all consecutive numbers from o to n.",
+        "label": "math",
         "code": "def Total_Hamming_Distance(n):   \r\n    i = 1\r\n    sum = 0\r\n    while (n // i > 0):  \r\n        sum = sum + n // i  \r\n        i = i * 2     \r\n    return sum",
         "id": 547,
         "test_setup_code": "",
@@ -6383,6 +6930,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the length of the longest increasing subsequence of the given sequence.",
+        "label": "array",
         "code": "def longest_increasing_subsequence(arr): \r\n\tn = len(arr) \r\n\tlongest_increasing_subsequence = [1]*n \r\n\tfor i in range (1 , n): \r\n\t\tfor j in range(0 , i): \r\n\t\t\tif arr[i] > arr[j] and longest_increasing_subsequence[i]< longest_increasing_subsequence[j] + 1 : \r\n\t\t\t\tlongest_increasing_subsequence[i] = longest_increasing_subsequence[j]+1\r\n\tmaximum = 0\r\n\tfor i in range(n): \r\n\t\tmaximum = max(maximum , longest_increasing_subsequence[i]) \r\n\treturn maximum",
         "id": 548,
         "test_setup_code": "",
@@ -6395,6 +6943,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of fifth power of first n odd natural numbers.",
+        "label": "math",
         "code": "def odd_Num_Sum(n) : \r\n    j = 0\r\n    sm = 0\r\n    for i in range(1,n+1) : \r\n        j = (2*i-1) \r\n        sm = sm + (j*j*j*j*j)     \r\n    return sm ",
         "id": 549,
         "test_setup_code": "",
@@ -6403,6 +6952,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum element in a sorted and rotated array.",
+        "label": "array",
         "code": "def find_Max(arr,low,high): \r\n    if (high < low): \r\n        return arr[0] \r\n    if (high == low): \r\n        return arr[low] \r\n    mid = low + (high - low) // 2 \r\n    if (mid < high and arr[mid + 1] < arr[mid]): \r\n        return arr[mid] \r\n    if (mid > low and arr[mid] < arr[mid - 1]): \r\n        return arr[mid - 1]  \r\n    if (arr[low] > arr[mid]): \r\n        return find_Max(arr,low,mid - 1) \r\n    else: \r\n        return find_Max(arr,mid + 1,high) ",
         "id": 550,
         "test_setup_code": "",
@@ -6415,6 +6965,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract a specified column from a given nested list.",
+        "label": "matrix",
         "code": "def extract_column(list1, n):\r\n   result = [i.pop(n) for i in list1]\r\n   return result ",
         "id": 551,
         "test_setup_code": "",
@@ -6427,6 +6978,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a given sequence is linear or not.",
+        "label": "array",
         "code": 'def Seq_Linear(seq_nums):\r\n  seq_nums = [seq_nums[x] - seq_nums[x-1] for x in range(1, len(seq_nums))]\r\n  if len(set(seq_nums)) == 1: \r\n    return "Linear Sequence"\r\n  else:\r\n    return "Non Linear Sequence"',
         "id": 552,
         "test_setup_code": "",
@@ -6439,6 +6991,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given tuple to a floating-point number.",
+        "label": "math",
         "code": "def tuple_to_float(test_tup):\r\n  res = float('.'.join(str(ele) for ele in test_tup))\r\n  return (res) ",
         "id": 553,
         "test_setup_code": "",
@@ -6451,6 +7004,7 @@ problems = [
     },
     {
         "text": "Write a C function to find odd numbers from a mixed list.",
+        "label": "array",
         "code": "def Split(list): \r\n    od_li = [] \r\n    for i in list: \r\n        if (i % 2 != 0): \r\n            od_li.append(i)  \r\n    return od_li",
         "id": 554,
         "test_setup_code": "",
@@ -6463,6 +7017,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the difference between sum of cubes of first n natural numbers and the sum of first n natural numbers.",
+        "label": "math",
         "code": "def difference(n) :  \r\n    S = (n*(n + 1))//2;  \r\n    res = S*(S-1);  \r\n    return res;  ",
         "id": 555,
         "test_setup_code": "",
@@ -6471,6 +7026,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the pairs with xor as an odd number.",
+        "label": "array",
         "code": "def find_Odd_Pair(A,N) : \r\n    oddPair = 0\r\n    for i in range(0,N) :  \r\n        for j in range(i+1,N) :  \r\n            if ((A[i] ^ A[j]) % 2 != 0):  \r\n                oddPair+=1  \r\n    return oddPair  ",
         "id": 556,
         "test_setup_code": "",
@@ -6483,6 +7039,7 @@ problems = [
     },
     {
         "text": "Write a C function to toggle characters case in a string.",
+        "label": "string",
         "code": "def toggle_string(string):\r\n string1 = string.swapcase()\r\n return string1",
         "id": 557,
         "test_setup_code": "",
@@ -6495,6 +7052,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the digit distance between two integers.",
+        "label": "math",
         "code": "def digit_distance_nums(n1, n2):\r\n         return sum(map(int,str(abs(n1-n2))))",
         "id": 558,
         "test_setup_code": "",
@@ -6507,6 +7065,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest sum of contiguous subarray in the given array.",
+        "label": "array",
         "code": "def max_sub_array_sum(a, size):\r\n  max_so_far = 0\r\n  max_ending_here = 0\r\n  for i in range(0, size):\r\n    max_ending_here = max_ending_here + a[i]\r\n    if max_ending_here < 0:\r\n      max_ending_here = 0\r\n    elif (max_so_far < max_ending_here):\r\n      max_so_far = max_ending_here\r\n  return max_so_far",
         "id": 559,
         "test_setup_code": "",
@@ -6519,6 +7078,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the union of elements of the given tuples.",
+        "label": "array",
         "code": "def union_elements(test_tup1, test_tup2):\r\n  res = tuple(set(test_tup1 + test_tup2))\r\n  return (res) ",
         "id": 560,
         "test_setup_code": "",
@@ -6531,6 +7091,7 @@ problems = [
     },
     {
         "text": "Write a C function to assign with each element, its pair elements from other similar pairs in the given tuple.",
+        "label": "matrix",
         "code": "def assign_elements(test_list):\r\n  res = dict()\r\n  for key, val in test_list:\r\n    res.setdefault(val, [])\r\n    res.setdefault(key, []).append(val)\r\n  return (res) ",
         "id": 561,
         "test_setup_code": "",
@@ -6543,6 +7104,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum length of sublist.",
+        "label": "array",
         "code": "def Find_Max_Length(lst):  \r\n    maxLength = max(len(x) for x in lst )\r\n    return maxLength ",
         "id": 562,
         "test_setup_code": "",
@@ -6555,6 +7117,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract values between quotation marks of a string.",
+        "label": "string",
         "code": "import re\r\ndef extract_values(text):\r\n return (re.findall(r'\"(.*?)\"', text))",
         "id": 563,
         "test_setup_code": "",
@@ -6567,6 +7130,7 @@ problems = [
     },
     {
         "text": "Write a C function to count unequal element pairs from the given array.",
+        "label": "array",
         "code": "def count_Pairs(arr,n): \r\n    cnt = 0; \r\n    for i in range(n): \r\n        for j in range(i + 1,n): \r\n            if (arr[i] != arr[j]): \r\n                cnt += 1; \r\n    return cnt; ",
         "id": 564,
         "test_setup_code": "",
@@ -6579,6 +7143,7 @@ problems = [
     },
     {
         "text": "Write a C function to split a string into characters.",
+        "label": "string",
         "code": "def split(word): \r\n    return [char for char in word] ",
         "id": 565,
         "test_setup_code": "",
@@ -6591,6 +7156,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the sum of a non-negative integer.",
+        "label": "math",
         "code": "def sum_digits(n):\r\n  if n == 0:\r\n    return 0\r\n  else:\r\n    return n % 10 + sum_digits(int(n / 10))",
         "id": 566,
         "test_setup_code": "",
@@ -6599,6 +7165,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a specified list is sorted or not.",
+        "label": "array",
         "code": "def issort_list(list1):\r\n    result = all(list1[i] <= list1[i+1] for i in range(len(list1)-1))\r\n    return result",
         "id": 567,
         "test_setup_code": "",
@@ -6611,6 +7178,7 @@ problems = [
     },
     {
         "text": "Write a C function to create a list of empty dictionaries.",
+        "label": "matrix",
         "code": "def empty_list(length):\r\n empty_list = [{}, for _ in range(length)]\r\n return empty_list",
         "id": 568,
         "test_setup_code": "",
@@ -6623,6 +7191,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort each sublist of strings in a given list of lists.",
+        "label": "matrix",
         "code": "def sort_sublists(list1):\r\n    result = list(map(sorted,list1)) \r\n    return result",
         "id": 569,
         "test_setup_code": "",
@@ -6635,6 +7204,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove words from a given list of strings containing a character or string.",
+        "label": "array",
         "code": "def remove_words(list1, charlist):\r\n    new_list = []\r\n    for line in list1:\r\n        new_words = ' '.join([word for word in line.split() if not any([phrase in word for phrase in charlist])])\r\n        new_list.append(new_words)\r\n    return new_list",
         "id": 570,
         "test_setup_code": "",
@@ -6647,6 +7217,7 @@ problems = [
     },
     {
         "text": "Write a C function to find maximum possible sum of disjoint pairs for the given array of integers and a number k.",
+        "label": "array",
         "code": "def max_sum_pair_diff_lessthan_K(arr, N, K): \r\n\tarr.sort() \r\n\tdp = [0] * N \r\n\tdp[0] = 0\r\n\tfor i in range(1, N): \r\n\t\tdp[i] = dp[i-1] \r\n\t\tif (arr[i] - arr[i-1] < K): \r\n\t\t\tif (i >= 2): \r\n\t\t\t\tdp[i] = max(dp[i], dp[i-2] + arr[i] + arr[i-1]); \r\n\t\t\telse: \r\n\t\t\t\tdp[i] = max(dp[i], arr[i] + arr[i-1]); \r\n\treturn dp[N - 1]",
         "id": 571,
         "test_setup_code": "",
@@ -6659,6 +7230,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove two duplicate numbers from a given number of lists.",
+        "label": "array",
         "code": "def two_unique_nums(nums):\r\n  return [i for i in nums if nums.count(i)==1]",
         "id": 572,
         "test_setup_code": "",
@@ -6671,6 +7243,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the product of the unique numbers of a given list.",
+        "label": "array",
         "code": "def unique_product(list_data):\r\n    temp = list(set(list_data))\r\n    p = 1\r\n    for i in temp:\r\n        p *= i\r\n    return p",
         "id": 573,
         "test_setup_code": "",
@@ -6683,6 +7256,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the surface area of a cylinder.",
+        "label": "math",
         "code": "def surfacearea_cylinder(r,h):\r\n  surfacearea=((2*3.1415*r*r) +(2*3.1415*r*h))\r\n  return surfacearea",
         "id": 574,
         "test_setup_code": "",
@@ -6695,6 +7269,7 @@ problems = [
     },
     {
         "text": "Write a C function to find nth number in a sequence which is not a multiple of a given number.",
+        "label": "math",
         "code": "def count_no (A,N,L,R): \r\n    count = 0\r\n    for i in range (L,R + 1): \r\n        if (i % A != 0): \r\n            count += 1\r\n        if (count == N): \r\n            break\r\n    return (i) ",
         "id": 575,
         "test_setup_code": "",
@@ -6707,6 +7282,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether an array is subarray of another or not.",
+        "label": "array",
         "code": "def is_Sub_Array(A,B,n,m): \r\n    i = 0; j = 0; \r\n    while (i < n and j < m):  \r\n        if (A[i] == B[j]): \r\n            i += 1; \r\n            j += 1; \r\n            if (j == m): \r\n                return True;  \r\n        else: \r\n            i = i - j + 1; \r\n            j = 0;       \r\n    return False; ",
         "id": 576,
         "test_setup_code": "",
@@ -6719,6 +7295,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the last digit in factorial of a given number.",
+        "label": "math",
         "code": "def last_Digit_Factorial(n): \r\n    if (n == 0): return 1\r\n    elif (n <= 2): return n  \r\n    elif (n == 3): return 6\r\n    elif (n == 4): return 4 \r\n    else: \r\n      return 0",
         "id": 577,
         "test_setup_code": "",
@@ -6731,6 +7308,7 @@ problems = [
     },
     {
         "text": "Write a C function to interleave lists of the same length.",
+        "label": "array",
         "code": "def interleave_lists(list1,list2,list3):\r\n    result = [el for pair in zip(list1, list2, list3) for el in pair]\r\n    return result",
         "id": 578,
         "test_setup_code": "",
@@ -6743,6 +7321,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the dissimilar elements in the given two tuples.",
+        "label": "array",
         "code": "def find_dissimilar(test_tup1, test_tup2):\r\n  res = tuple(set(test_tup1) ^ set(test_tup2))\r\n  return (res) ",
         "id": 579,
         "test_setup_code": "",
@@ -6755,6 +7334,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the even elements in the nested mixed tuple.",
+        "label": "array",
         "code": "def even_ele(test_tuple, even_fnc): \r\n\tres = tuple() \r\n\tfor ele in test_tuple: \r\n\t\tif isinstance(ele, tuple): \r\n\t\t\tres += (even_ele(ele, even_fnc), ) \r\n\t\telif even_fnc(ele): \r\n\t\t\tres += (ele, ) \r\n\treturn res \r\ndef extract_even(test_tuple):\r\n  res = even_ele(test_tuple, lambda x: x % 2 == 0)\r\n  return (res) ",
         "id": 580,
         "test_setup_code": "",
@@ -6767,6 +7347,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the surface area of the square pyramid.",
+        "label": "math",
         "code": "def surface_Area(b,s): \r\n    return 2 * b * s + pow(b,2) ",
         "id": 581,
         "test_setup_code": "",
@@ -6779,6 +7360,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a dictionary is empty or not.",
+        "label": "matrix",
         "code": "def my_dict(dict1):\r\n  if bool(dict1):\r\n     return False\r\n  else:\r\n     return True",
         "id": 582,
         "test_setup_code": "",
@@ -6787,6 +7369,7 @@ problems = [
     },
     {
         "text": "Write a C function for nth catalan number.",
+        "label": "math",
         "code": "def catalan_number(num):\r\n    if num <=1:\r\n         return 1   \r\n    res_num = 0\r\n    for i in range(num):\r\n        res_num += catalan_number(i) * catalan_number(num-i-1)\r\n    return res_num",
         "id": 583,
         "test_setup_code": "",
@@ -6799,6 +7382,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all adverbs and their positions in a given sentence by using regex.",
+        "label": "string",
         "code": "import re\r\ndef find_adverbs(text):\r\n  for m in re.finditer(r\"\\w+ly\", text):\r\n    return ('%d-%d: %s' % (m.start(), m.end(), m.group(0)))",
         "id": 584,
         "test_setup_code": "",
@@ -6811,6 +7395,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n - expensive price items from a given dataset using heap queue algorithm.",
+        "label": "matrix",
         "code": "import heapq\r\ndef expensive_items(items,n):\r\n  expensive_items = heapq.nlargest(n, items, key=lambda s: s['price'])\r\n  return expensive_items",
         "id": 585,
         "test_setup_code": "",
@@ -6823,6 +7408,7 @@ problems = [
     },
     {
         "text": "Write a C function to split the array and add the first part to the end.",
+        "label": "array",
         "code": "def split_Arr(a,n,k):  \r\n   b = a[:k] \r\n   return (a[k::]+b[::]) ",
         "id": 586,
         "test_setup_code": "",
@@ -6835,6 +7421,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a list to a tuple.",
+        "label": "array",
         "code": "def list_tuple(listx):\r\n  tuplex = tuple(listx)\r\n  return tuplex",
         "id": 587,
         "test_setup_code": "",
@@ -6847,6 +7434,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the difference between largest and smallest value in a given array.",
+        "label": "array",
         "code": "def big_diff(nums):\r\n     diff= max(nums)-min(nums)\r\n     return diff",
         "id": 588,
         "test_setup_code": "",
@@ -6859,6 +7447,7 @@ problems = [
     },
     {
         "text": "Write a C function to find perfect squares between two given numbers.",
+        "label": "math",
         "code": "def perfect_squares(a, b):\r\n    lists=[]\r\n    for i in range (a,b+1):\r\n        j = 1;\r\n        while j*j <= i:\r\n            if j*j == i:\r\n                 lists.append(i)  \r\n            j = j+1\r\n        i = i+1\r\n    return lists",
         "id": 589,
         "test_setup_code": "",
@@ -6871,6 +7460,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert polar coordinates to rectangular coordinates.",
+        "label": "math",
         "code": "import cmath\r\ndef polar_rect(x,y):\r\n cn = complex(x,y)\r\n cn=cmath.polar(cn)\r\n cn1 = cmath.rect(2, cmath.pi)\r\n return (cn,cn1)",
         "id": 590,
         "test_setup_code": "",
@@ -6883,6 +7473,7 @@ problems = [
     },
     {
         "text": "Write a C function to interchange the first and last elements in a list.",
+        "label": "array",
         "code": "def swap_List(newList): \r\n    size = len(newList) \r\n    temp = newList[0] \r\n    newList[0] = newList[size - 1] \r\n    newList[size - 1] = temp  \r\n    return newList ",
         "id": 591,
         "test_setup_code": "",
@@ -6895,6 +7486,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of product of binomial co-efficients.",
+        "label": "math",
         "code": "def binomial_Coeff(n,k): \r\n    C = [0] * (k + 1); \r\n    C[0] = 1; # nC0 is 1 \r\n    for i in range(1,n + 1):  \r\n        for j in range(min(i, k),0,-1): \r\n            C[j] = C[j] + C[j - 1]; \r\n    return C[k]; \r\ndef sum_Of_product(n): \r\n    return binomial_Coeff(2 * n,n - 1); ",
         "id": 592,
         "test_setup_code": "",
@@ -6907,6 +7499,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove leading zeroes from an ip address.",
+        "label": "string",
         "code": "import re\r\ndef removezero_ip(ip):\r\n string = re.sub('\\.[0]*', '.', ip)\r\n return string\r",
         "id": 593,
         "test_setup_code": "",
@@ -6919,6 +7512,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the difference of first even and odd number of a given list.",
+        "label": "array",
         "code": "def diff_even_odd(list1):\r\n    first_even = next((el for el in list1 if el%2==0),-1)\r\n    first_odd = next((el for el in list1 if el%2!=0),-1)\r\n    return (first_even-first_odd)",
         "id": 594,
         "test_setup_code": "",
@@ -6931,6 +7525,7 @@ problems = [
     },
     {
         "text": "Write a C function to count minimum number of swaps required to convert one binary string to another.",
+        "label": "string",
         "code": 'def min_Swaps(str1,str2) : \r\n    count = 0\r\n    for i in range(len(str1)) :  \r\n        if str1[i] != str2[i] : \r\n            count += 1\r\n    if count % 2 == 0 : \r\n        return (count // 2) \r\n    else : \r\n        return ("Not Possible") ',
         "id": 595,
         "test_setup_code": "",
@@ -6943,6 +7538,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the size of the given tuple.",
+        "label": "array",
         "code": "import sys \r\ndef tuple_size(tuple_list):\r\n  return (sys.getsizeof(tuple_list)) ",
         "id": 596,
         "test_setup_code": "",
@@ -6955,6 +7551,7 @@ problems = [
     },
     {
         "text": "Write a C function to find kth element from the given two sorted arrays.",
+        "label": "array",
         "code": "def find_kth(arr1, arr2, m, n, k):\r\n\tsorted1 = [0] * (m + n)\r\n\ti = 0\r\n\tj = 0\r\n\td = 0\r\n\twhile (i < m and j < n):\r\n\t\tif (arr1[i] < arr2[j]):\r\n\t\t\tsorted1[d] = arr1[i]\r\n\t\t\ti += 1\r\n\t\telse:\r\n\t\t\tsorted1[d] = arr2[j]\r\n\t\t\tj += 1\r\n\t\td += 1\r\n\twhile (i < m):\r\n\t\tsorted1[d] = arr1[i]\r\n\t\td += 1\r\n\t\ti += 1\r\n\twhile (j < n):\r\n\t\tsorted1[d] = arr2[j]\r\n\t\td += 1\r\n\t\tj += 1\r\n\treturn sorted1[k - 1]",
         "id": 597,
         "test_setup_code": "",
@@ -6967,6 +7564,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number is armstrong or not.",
+        "label": "math",
         "code": "def armstrong_number(number):\r\n sum = 0\r\n times = 0\r\n temp = number\r\n while temp > 0:\r\n           times = times + 1\r\n           temp = temp // 10\r\n temp = number\r\n while temp > 0:\r\n           reminder = temp % 10\r\n           sum = sum + (reminder ** times)\r\n           temp //= 10\r\n if number == sum:\r\n           return True\r\n else:\r\n           return False",
         "id": 598,
         "test_setup_code": "",
@@ -6979,6 +7577,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum and average of first n natural numbers.",
+        "label": "math",
         "code": "def sum_average(number):\r\n total = 0\r\n for value in range(1, number + 1):\r\n    total = total + value\r\n average = total / number\r\n return (total,average)",
         "id": 599,
         "test_setup_code": "",
@@ -6991,6 +7590,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number is even or not using bitwise operator.",
+        "label": "math",
         "code": "def is_Even(n) : \r\n    if (n^1 == n+1) :\r\n        return True; \r\n    else :\r\n        return False; ",
         "id": 600,
         "test_setup_code": "",
@@ -6999,6 +7599,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest chain which can be formed from the given set of pairs.",
+        "label": "matrix",
         "code": "class Pair(object): \r\n\tdef __init__(self, a, b): \r\n\t\tself.a = a \r\n\t\tself.b = b \r\ndef max_chain_length(arr, n): \r\n\tmax = 0\r\n\tmcl = [1 for i in range(n)] \r\n\tfor i in range(1, n): \r\n\t\tfor j in range(0, i): \r\n\t\t\tif (arr[i].a > arr[j].b and\r\n\t\t\t\tmcl[i] < mcl[j] + 1): \r\n\t\t\t\tmcl[i] = mcl[j] + 1\r\n\tfor i in range(n): \r\n\t\tif (max < mcl[i]): \r\n\t\t\tmax = mcl[i] \r\n\treturn max",
         "id": 601,
         "test_setup_code": "",
@@ -7011,6 +7612,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first repeated character in a given string.",
+        "label": "string",
         "code": 'def first_repeated_char(str1):\r\n  for index,c in enumerate(str1):\r\n    if str1[:index+1].count(c) > 1:\r\n      return c \r\n  return "None"',
         "id": 602,
         "test_setup_code": "",
@@ -7023,6 +7625,7 @@ problems = [
     },
     {
         "text": "Write a C function to get a lucid number smaller than or equal to n.",
+        "label": "math",
         "code": "def get_ludic(n):\r\n\tludics = []\r\n\tfor i in range(1, n + 1):\r\n\t\tludics.append(i)\r\n\tindex = 1\r\n\twhile(index != len(ludics)):\r\n\t\tfirst_ludic = ludics[index]\r\n\t\tremove_index = index + first_ludic\r\n\t\twhile(remove_index < len(ludics)):\r\n\t\t\tludics.remove(ludics[remove_index])\r\n\t\t\tremove_index = remove_index + first_ludic - 1\r\n\t\tindex += 1\r\n\treturn ludics",
         "id": 603,
         "test_setup_code": "",
@@ -7035,6 +7638,7 @@ problems = [
     },
     {
         "text": "Write a C function to reverse words in a given string.",
+        "label": "string",
         "code": "def reverse_words(s):\r\n        return ' '.join(reversed(s.split()))",
         "id": 604,
         "test_setup_code": "",
@@ -7047,6 +7651,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given integer is a prime number.",
+        "label": "math",
         "code": "def prime_num(num):\r\n  if num >=1:\r\n   for i in range(2, num//2):\r\n     if (num % i) == 0:\r\n                return False\r\n     else:\r\n                return True\r\n  else:\r\n          return False",
         "id": 605,
         "test_setup_code": "",
@@ -7055,6 +7660,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert degrees to radians.",
+        "label": "math",
         "code": "import math\r\ndef radian_degree(degree):\r\n radian = degree*(math.pi/180)\r\n return radian",
         "id": 606,
         "test_setup_code": "",
@@ -7067,6 +7673,7 @@ problems = [
     },
     {
         "text": "Write a C function to search a literals string in a string and also find the location within the original string where the pattern occurs by using regex.",
+        "label": "string",
         "code": "import re\r\npattern = 'fox'\r\ntext = 'The quick brown fox jumps over the lazy dog.'\r\ndef find_literals(text, pattern):\r\n  match = re.search(pattern, text)\r\n  s = match.start()\r\n  e = match.end()\r\n  return (match.re.pattern, s, e)",
         "id": 607,
         "test_setup_code": "",
@@ -7079,6 +7686,7 @@ problems = [
     },
     {
         "text": "Write a C function to find nth bell number.",
+        "label": "math",
         "code": "def bell_Number(n): \r\n    bell = [[0 for i in range(n+1)] for j in range(n+1)] \r\n    bell[0][0] = 1\r\n    for i in range(1, n+1):\r\n        bell[i][0] = bell[i-1][i-1]\r\n        for j in range(1, i+1): \r\n            bell[i][j] = bell[i-1][j-1] + bell[i][j-1] \r\n    return bell[n][0] ",
         "id": 608,
         "test_setup_code": "",
@@ -7087,6 +7695,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum possible value for the given periodic function.",
+        "label": "math",
         "code": "def floor_Min(A,B,N):\r\n    x = max(B - 1,N)\r\n    return (A*x) // B",
         "id": 609,
         "test_setup_code": "",
@@ -7099,6 +7708,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove the k'th element from a given list.",
+        "label": "array",
         "code": "def remove_kth_element(list1, L):\r\n    return  list1[:L-1] + list1[L:]",
         "id": 610,
         "test_setup_code": "",
@@ -7111,6 +7721,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum of nth column from the given tuple list.",
+        "label": "matrix",
         "code": "def max_of_nth(test_list, N):\r\n  res = max([sub[N] for sub in test_list])\r\n  return (res) ",
         "id": 611,
         "test_setup_code": "",
@@ -7123,6 +7734,7 @@ problems = [
     },
     {
         "text": "Write a C function to merge the first and last elements separately in a list of lists.",
+        "label": "matrix",
         "code": "def merge(lst):  \r\n    return [list(ele) for ele in list(zip(*lst))] ",
         "id": 612,
         "test_setup_code": "",
@@ -7135,6 +7747,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum value in record list as tuple attribute in the given tuple list.",
+        "label": "matrix",
         "code": "def maximum_value(test_list):\r\n  res = [(key, max(lst)) for key, lst in test_list]\r\n  return (res) ",
         "id": 613,
         "test_setup_code": "",
@@ -7147,6 +7760,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the cumulative sum of all the values that are present in the given tuple list.",
+        "label": "matrix",
         "code": "def cummulative_sum(test_list):\r\n  res = sum(map(sum, test_list))\r\n  return (res)",
         "id": 614,
         "test_setup_code": "",
@@ -7159,6 +7773,7 @@ problems = [
     },
     {
         "text": "Write a C function to find average value of the numbers in a given tuple of tuples.",
+        "label": "matrix",
         "code": "def average_tuple(nums):\r\n    result = [sum(x) / len(x) for x in zip(*nums)]\r\n    return result",
         "id": 615,
         "test_setup_code": "",
@@ -7171,6 +7786,7 @@ problems = [
     },
     {
         "text": "Write a C function to perfom the modulo of tuple elements in the given two tuples.",
+        "label": "array",
         "code": "def tuple_modulo(test_tup1, test_tup2):\r\n  res = tuple(ele1 % ele2 for ele1, ele2 in zip(test_tup1, test_tup2)) \r\n  return (res) ",
         "id": 616,
         "test_setup_code": "",
@@ -7183,6 +7799,7 @@ problems = [
     },
     {
         "text": "Write a C function to check for the number of jumps required of given length to reach a point of form (d, 0) from origin in a 2d plane.",
+        "label": "math",
         "code": "def min_Jumps(a, b, d): \r\n    temp = a \r\n    a = min(a, b) \r\n    b = max(temp, b) \r\n    if (d >= b): \r\n        return (d + b - 1) / b \r\n    if (d == 0): \r\n        return 0\r\n    if (d == a): \r\n        return 1\r\n    else:\r\n        return 2",
         "id": 617,
         "test_setup_code": "",
@@ -7191,6 +7808,7 @@ problems = [
     },
     {
         "text": "Write a C function to divide two lists.",
+        "label": "array",
         "code": "def div_list(nums1,nums2):\r\n  result = map(lambda x, y: x / y, nums1, nums2)\r\n  return list(result)",
         "id": 618,
         "test_setup_code": "",
@@ -7203,6 +7821,7 @@ problems = [
     },
     {
         "text": "Write a C function to move all the numbers in it to the given string.",
+        "label": "string",
         "code": "def move_num(test_str):\r\n  res = ''\r\n  dig = ''\r\n  for ele in test_str:\r\n    if ele.isdigit():\r\n      dig += ele\r\n    else:\r\n      res += ele\r\n  res += dig\r\n  return (res) ",
         "id": 619,
         "test_setup_code": "",
@@ -7215,6 +7834,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest subset where each pair is divisible.",
+        "label": "array",
         "code": "def largest_subset(a, n):\r\n\tdp = [0 for i in range(n)]\r\n\tdp[n - 1] = 1; \r\n\tfor i in range(n - 2, -1, -1):\r\n\t\tmxm = 0;\r\n\t\tfor j in range(i + 1, n):\r\n\t\t\tif a[j] % a[i] == 0 or a[i] % a[j] == 0:\r\n\t\t\t\tmxm = max(mxm, dp[j])\r\n\t\tdp[i] = 1 + mxm\r\n\treturn max(dp)",
         "id": 620,
         "test_setup_code": "",
@@ -7227,6 +7847,7 @@ problems = [
     },
     {
         "text": "Write a C function to increment the numeric values in the given strings by k.",
+        "label": "array",
         "code": "def increment_numerics(test_list, K):\r\n  res = [str(int(ele) + K) if ele.isdigit() else ele for ele in test_list]\r\n  return res ",
         "id": 621,
         "test_setup_code": "",
@@ -7239,6 +7860,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the median of two sorted arrays of same size.",
+        "label": "array",
         "code": "def get_median(arr1, arr2, n):\r\n  i = 0\r\n  j = 0\r\n  m1 = -1\r\n  m2 = -1\r\n  count = 0\r\n  while count < n + 1:\r\n    count += 1\r\n    if i == n:\r\n      m1 = m2\r\n      m2 = arr2[0]\r\n      break\r\n    elif j == n:\r\n      m1 = m2\r\n      m2 = arr1[0]\r\n      break\r\n    if arr1[i] <= arr2[j]:\r\n      m1 = m2\r\n      m2 = arr1[i]\r\n      i += 1\r\n    else:\r\n      m1 = m2\r\n      m2 = arr2[j]\r\n      j += 1\r\n  return (m1 + m2)/2",
         "id": 622,
         "test_setup_code": "",
@@ -7251,6 +7873,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n-th power of individual elements in a list.",
+        "label": "array",
         "code": "def nth_nums(nums,n):\r\n nth_nums = list(map(lambda x: x ** n, nums))\r\n return nth_nums",
         "id": 623,
         "test_setup_code": "",
@@ -7263,6 +7886,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given string to upper case.",
+        "label": "string",
         "code": "def is_upper(string):\r\n  return (string.upper())",
         "id": 624,
         "test_setup_code": "",
@@ -7275,6 +7899,7 @@ problems = [
     },
     {
         "text": "Write a C function to interchange first and last elements in a given list.",
+        "label": "array",
         "code": "def swap_List(newList): \r\n    size = len(newList) \r\n    temp = newList[0] \r\n    newList[0] = newList[size - 1] \r\n    newList[size - 1] = temp   \r\n    return newList ",
         "id": 625,
         "test_setup_code": "",
@@ -7287,6 +7912,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest triangle that can be inscribed in the semicircle.",
+        "label": "math",
         "code": "def triangle_area(r) :  \r\n    if r < 0 : \r\n        return -1\r\n    return r * r ",
         "id": 626,
         "test_setup_code": "",
@@ -7295,6 +7921,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the smallest missing number from the given array.",
+        "label": "array",
         "code": "def find_First_Missing(array,start,end): \r\n    if (start > end): \r\n        return end + 1\r\n    if (start != array[start]): \r\n        return start; \r\n    mid = int((start + end) / 2) \r\n    if (array[mid] == mid): \r\n        return find_First_Missing(array,mid+1,end) \r\n    return find_First_Missing(array,start,mid) ",
         "id": 627,
         "test_setup_code": "",
@@ -7307,6 +7934,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace all spaces in the given string with character * list item * list item * list item * list item '%20'.",
+        "label": "string",
         "code": "MAX=1000;\r\ndef replace_spaces(string):\r\n  string=string.strip()\r\n  i=len(string)\r\n  space_count=string.count(' ')\r\n  new_length = i + space_count*2\r\n  if new_length > MAX:\r\n    return -1\r\n  index = new_length-1\r\n  string=list(string)\r\n  for f in range(i-2, new_length-2):\r\n    string.append('0')\r\n  for j in range(i-1, 0, -1):\r\n    if string[j] == ' ':\r\n      string[index] = '0'\r\n      string[index-1] = '2'\r\n      string[index-2] = '%'\r\n      index=index-3\r\n    else:\r\n      string[index] = string[j]\r\n      index -= 1\r\n  return ''.join(string)",
         "id": 628,
         "test_setup_code": "",
@@ -7319,6 +7947,7 @@ problems = [
     },
     {
         "text": "Write a C function to find even numbers from a mixed list.",
+        "label": "array",
         "code": "def Split(list): \r\n    ev_li = [] \r\n    for i in list: \r\n        if (i % 2 == 0): \r\n            ev_li.append(i)  \r\n    return ev_li",
         "id": 629,
         "test_setup_code": "",
@@ -7331,6 +7960,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract all the adjacent coordinates of the given coordinate tuple.",
+        "label": "matrix",
         "code": "def adjac(ele, sub = []): \r\n  if not ele: \r\n     yield sub \r\n  else: \r\n     yield from [idx for j in range(ele[0] - 1, ele[0] + 2) \r\n                for idx in adjac(ele[1:], sub + [j])] \r\ndef get_coordinates(test_tup):\r\n  res = list(adjac(test_tup))\r\n  return (res) ",
         "id": 630,
         "test_setup_code": "",
@@ -7343,6 +7973,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace whitespaces with an underscore and vice versa in a given string by using regex.",
+        "label": "string",
         "code": 'import re\r\ntext = \'Python Exercises\'\r\ndef replace_spaces(text):\r\n  text =text.replace (" ", "_")\r\n  return (text)\r\n  text =text.replace ("_", " ")\r\n  return (text)',
         "id": 631,
         "test_setup_code": "",
@@ -7355,6 +7986,7 @@ problems = [
     },
     {
         "text": "Write a C function to move all zeroes to the end of the given list.",
+        "label": "array",
         "code": "def move_zero(num_list):\r\n    a = [0 for i in range(num_list.count(0))]\r\n    x = [ i for i in num_list if i != 0]\r\n    x.extend(a)\r\n    return (x)",
         "id": 632,
         "test_setup_code": "",
@@ -7367,6 +7999,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of xor of all pairs of numbers in the given array.",
+        "label": "array",
         "code": "def pair_OR_Sum(arr,n) : \r\n    ans = 0 \r\n    for i in range(0,n) :    \r\n        for j in range(i + 1,n) :   \r\n            ans = ans + (arr[i] ^ arr[j])          \r\n    return ans ",
         "id": 633,
         "test_setup_code": "",
@@ -7379,6 +8012,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of fourth power of first n even natural numbers.",
+        "label": "math",
         "code": "def even_Power_Sum(n): \r\n    sum = 0; \r\n    for i in range(1,n + 1): \r\n        j = 2*i; \r\n        sum = sum + (j*j*j*j); \r\n    return sum; ",
         "id": 634,
         "test_setup_code": "",
@@ -7391,6 +8025,7 @@ problems = [
     },
     {
         "text": "Write a C function to push all values into a heap and then pop off the smallest values one at a time.",
+        "label": "array",
         "code": "import heapq as hq\r\ndef heap_sort(iterable):\r\n    h = []\r\n    for value in iterable:\r\n        hq.heappush(h, value)\r\n    return [hq.heappop(h) for i in range(len(h))]",
         "id": 635,
         "test_setup_code": "",
@@ -7403,6 +8038,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if roots of a quadratic equation are reciprocal of each other or not.",
+        "label": "math",
         "code": 'def Check_Solution(a,b,c): \r\n    if (a == c): \r\n        return ("Yes"); \r\n    else: \r\n        return ("No"); ',
         "id": 636,
         "test_setup_code": "",
@@ -7415,6 +8051,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given amount has no profit and no loss",
+        "label": "math",
         "code": "def noprofit_noloss(actual_cost,sale_amount): \r\n  if(sale_amount == actual_cost):\r\n    return True\r\n  else:\r\n    return False",
         "id": 637,
         "test_setup_code": "",
@@ -7427,6 +8064,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate wind chill index.",
+        "label": "math",
         "code": "import math\r\ndef wind_chill(v,t):\r\n windchill = 13.12 + 0.6215*t -  11.37*math.pow(v, 0.16) + 0.3965*t*math.pow(v, 0.16)\r\n return int(round(windchill, 0))",
         "id": 638,
         "test_setup_code": "",
@@ -7439,6 +8077,7 @@ problems = [
     },
     {
         "text": "Write a C function to sum the length of the names of a given list of names after removing the names that start with a lowercase letter.",
+        "label": "array",
         "code": "def sample_nam(sample_names):\r\n  sample_names=list(filter(lambda el:el[0].isupper() and el[1:].islower(),sample_names))\r\n  return len(''.join(sample_names))",
         "id": 639,
         "test_setup_code": "",
@@ -7451,6 +8090,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove the parenthesis area in a string.",
+        "label": "string",
         "code": 'import re\r\ndef remove_parenthesis(items):\r\n for item in items:\r\n    return (re.sub(r" ?\\([^)]+\\)", "", item))',
         "id": 640,
         "test_setup_code": "",
@@ -7463,6 +8103,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth nonagonal number.",
+        "label": "math",
         "code": "def is_nonagonal(n): \r\n\treturn int(n * (7 * n - 5) / 2) ",
         "id": 641,
         "test_setup_code": "",
@@ -7475,6 +8116,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove similar rows from the given tuple matrix.",
+        "label": "matrix",
         "code": "def remove_similar_row(test_list):\r\n  res = set(sorted([tuple(sorted(set(sub))) for sub in test_list]))\r\n  return (res) ",
         "id": 642,
         "test_setup_code": "",
@@ -7487,6 +8129,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a word containing 'z', not at the start or end of the word.",
+        "label": "string",
         "code": "import re\r\ndef text_match_wordz_middle(text):\r\n        patterns = '\\Bz\\B'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 643,
         "test_setup_code": "",
@@ -7499,6 +8142,7 @@ problems = [
     },
     {
         "text": "Write a C function to reverse an array upto a given position.",
+        "label": "array",
         "code": "def reverse_Array_Upto_K(input, k): \r\n  return (input[k-1::-1] + input[k:]) ",
         "id": 644,
         "test_setup_code": "",
@@ -7511,6 +8155,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the product of it\u2019s kth index in the given tuples.",
+        "label": "matrix",
         "code": "def get_product(val) : \r\n\tres = 1\r\n\tfor ele in val: \r\n\t\tres *= ele \r\n\treturn res \r\ndef find_k_product(test_list, K):\r\n  res = get_product([sub[K] for sub in test_list])\r\n  return (res) ",
         "id": 645,
         "test_setup_code": "",
@@ -7523,6 +8168,7 @@ problems = [
     },
     {
         "text": "Write a C function to count number of cubes of size k in a cube of size n.",
+        "label": "math",
         "code": "def No_of_cubes(N,K):\r\n    No = 0\r\n    No = (N - K + 1)\r\n    No = pow(No, 3)\r\n    return No",
         "id": 646,
         "test_setup_code": "",
@@ -7531,6 +8177,7 @@ problems = [
     },
     {
         "text": "Write a C function to split a string at uppercase letters.",
+        "label": "string",
         "code": "import re\r\ndef split_upperstring(text):\r\n return (re.findall('[A-Z][^A-Z]*', text))",
         "id": 647,
         "test_setup_code": "",
@@ -7543,6 +8190,7 @@ problems = [
     },
     {
         "text": "Write a C function to exchange the position of every n-th value with (n+1)th value and (n+1)th value with n-th value in a given list.",
+        "label": "array",
         "code": "from itertools import zip_longest, chain, tee\r\ndef exchange_elements(lst):\r\n    lst1, lst2 = tee(iter(lst), 2)\r\n    return list(chain.from_iterable(zip_longest(lst[1::2], lst[::2])))",
         "id": 648,
         "test_setup_code": "",
@@ -7555,6 +8203,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of the numbers in a list between the indices of a specified range.",
+        "label": "array",
         "code": "def sum_Range_list(nums, m, n):                                                                                                                                                                                                \r\n    sum_range = 0                                                                                                                                                                                                         \r\n    for i in range(m, n+1, 1):                                                                                                                                                                                        \r\n        sum_range += nums[i]                                                                                                                                                                                                  \r\n    return sum_range   ",
         "id": 649,
         "test_setup_code": "",
@@ -7567,6 +8216,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given two arrays are equal or not.",
+        "label": "array",
         "code": "def are_Equal(arr1,arr2,n,m):\r\n    if (n != m):\r\n        return False\r\n    arr1.sort()\r\n    arr2.sort()\r\n    for i in range(0,n - 1):\r\n        if (arr1[i] != arr2[i]):\r\n            return False\r\n    return True",
         "id": 650,
         "test_setup_code": "",
@@ -7579,6 +8229,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if one tuple is a subset of another tuple.",
+        "label": "array",
         "code": "def check_subset(test_tup1, test_tup2):\r\n  res = set(test_tup2).issubset(test_tup1)\r\n  return (res) ",
         "id": 651,
         "test_setup_code": "",
@@ -7591,6 +8242,7 @@ problems = [
     },
     {
         "text": "Write a C function to flatten the given tuple matrix into the tuple list with each tuple representing each column.",
+        "label": "matrix",
         "code": "def matrix_to_list(test_list):\r\n  temp = [ele for sub in test_list for ele in sub]\r\n  res = list(zip(*temp))\r\n  return (str(res))",
         "id": 652,
         "test_setup_code": "",
@@ -7603,6 +8255,7 @@ problems = [
     },
     {
         "text": "Write a C function to group a sequence of key-value pairs into a map of lists.",
+        "label": "matrix",
         "code": "from collections import defaultdict\r\ndef grouping_dictionary(l):\r\n    d = defaultdict(list)\r\n    for k, v in l:\r\n        d[k].append(v)\r\n    return d",
         "id": 653,
         "test_setup_code": "",
@@ -7615,6 +8268,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the perimeter of a rectangle.",
+        "label": "math",
         "code": "def rectangle_perimeter(l,b):\r\n  perimeter=2*(l+b)\r\n  return perimeter",
         "id": 654,
         "test_setup_code": "",
@@ -7627,6 +8281,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of fifth power of n natural numbers.",
+        "label": "math",
         "code": "def fifth_Power_Sum(n) : \r\n    sm = 0 \r\n    for i in range(1,n+1) : \r\n        sm = sm + (i*i*i*i*i) \r\n    return sm ",
         "id": 655,
         "test_setup_code": "",
@@ -7639,6 +8294,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum sum of absolute differences of two arrays.",
+        "label": "array",
         "code": "def find_Min_Sum(a,b,n): \r\n    a.sort() \r\n    b.sort() \r\n    sum = 0  \r\n    for i in range(n): \r\n        sum = sum + abs(a[i] - b[i]) \r\n    return sum",
         "id": 656,
         "test_setup_code": "",
@@ -7651,6 +8307,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first digit in factorial of a given number.",
+        "label": "math",
         "code": "import math \r\ndef first_Digit(n) : \r\n    fact = 1\r\n    for i in range(2,n + 1) : \r\n        fact = fact * i \r\n        while (fact % 10 == 0) :  \r\n            fact = int(fact / 10) \r\n    while (fact >= 10) : \r\n        fact = int(fact / 10) \r\n    return math.floor(fact) ",
         "id": 657,
         "test_setup_code": "",
@@ -7659,6 +8316,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the item with maximum occurrences in a given list.",
+        "label": "array",
         "code": "def max_occurrences(list1):\r\n    max_val = 0\r\n    result = list1[0] \r\n    for i in list1:\r\n        occu = list1.count(i)\r\n        if occu > max_val:\r\n            max_val = occu\r\n            result = i \r\n    return result",
         "id": 658,
         "test_setup_code": "",
@@ -7671,6 +8329,7 @@ problems = [
     },
     {
         "text": "Write a C function to print duplicants from a list of integers.",
+        "label": "array",
         "code": "def Repeat(x): \r\n    _size = len(x) \r\n    repeated = [] \r\n    for i in range(_size): \r\n        k = i + 1\r\n        for j in range(k, _size): \r\n            if x[i] == x[j] and x[i] not in repeated: \r\n                repeated.append(x[i]) \r\n    return repeated ",
         "id": 659,
         "test_setup_code": "",
@@ -7683,6 +8342,7 @@ problems = [
     },
     {
         "text": "Write a C function to choose points from two ranges such that no point lies in both the ranges.",
+        "label": "math",
         "code": "def find_Points(l1,r1,l2,r2): \r\n    x = min(l1,l2) if (l1 != l2) else -1\r\n    y = max(r1,r2) if (r1 != r2) else -1\r\n    return (x,y)",
         "id": 660,
         "test_setup_code": "",
@@ -7695,6 +8355,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum that can be formed which has no three consecutive elements present.",
+        "label": "array",
         "code": "def max_sum_of_three_consecutive(arr, n): \r\n\tsum = [0 for k in range(n)] \r\n\tif n >= 1: \r\n\t\tsum[0] = arr[0] \r\n\tif n >= 2: \r\n\t\tsum[1] = arr[0] + arr[1] \r\n\tif n > 2: \r\n\t\tsum[2] = max(sum[1], max(arr[1] + arr[2], arr[0] + arr[2])) \r\n\tfor i in range(3, n): \r\n\t\tsum[i] = max(max(sum[i-1], sum[i-2] + arr[i]), arr[i] + arr[i-1] + sum[i-3]) \r\n\treturn sum[n-1]",
         "id": 661,
         "test_setup_code": "",
@@ -7707,6 +8368,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list in a dictionary.",
+        "label": "matrix",
         "code": "def sorted_dict(dict1):\r\n  sorted_dict = {x: sorted(y) for x, y in dict1.items()},\r\n  return sorted_dict",
         "id": 662,
         "test_setup_code": "",
@@ -7719,6 +8381,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the largest possible value of k such that k modulo x is y.",
+        "label": "math",
         "code": "import sys \r\ndef find_max_val(n, x, y): \r\n\tans = -sys.maxsize \r\n\tfor k in range(n + 1): \r\n\t\tif (k % x == y): \r\n\t\t\tans = max(ans, k) \r\n\treturn (ans if (ans >= 0 and\r\n\t\t\t\t\tans <= n) else -1) ",
         "id": 663,
         "test_setup_code": "",
@@ -7731,6 +8394,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the average of even numbers till a given even number.",
+        "label": "math",
         "code": 'def average_Even(n) : \r\n    if (n% 2!= 0) : \r\n        return ("Invalid Input") \r\n        return -1  \r\n    sm = 0\r\n    count = 0\r\n    while (n>= 2) : \r\n        count = count+1\r\n        sm = sm+n \r\n        n = n-2\r\n    return sm // count ',
         "id": 664,
         "test_setup_code": "",
@@ -7739,6 +8403,7 @@ problems = [
     },
     {
         "text": "Write a C function to shift first element to the end of given list.",
+        "label": "array",
         "code": "def move_last(num_list):\r\n    a = [num_list[0] for i in range(num_list.count(num_list[0]))]\r\n    x = [ i for i in num_list if i != num_list[0]]\r\n    x.extend(a)\r\n    return (x)",
         "id": 665,
         "test_setup_code": "",
@@ -7751,6 +8416,7 @@ problems = [
     },
     {
         "text": "Write a C function to count occurrence of a character in a string.",
+        "label": "string",
         "code": "def count_char(string,char):\r\n count = 0\r\n for i in range(len(string)):\r\n    if(string[i] == char):\r\n        count = count + 1\r\n return count",
         "id": 666,
         "test_setup_code": "",
@@ -7763,6 +8429,7 @@ problems = [
     },
     {
         "text": "Write a C function to count number of vowels in the string.",
+        "label": "string",
         "code": "def Check_Vow(string, vowels): \r\n    final = [each for each in string if each in vowels] \r\n    return(len(final)) \r\n",
         "id": 667,
         "test_setup_code": "",
@@ -7775,6 +8442,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace multiple occurence of character by single.",
+        "label": "string",
         "code": "import re \r\ndef replace(string, char): \r\n    pattern = char + '{2,},'\r\n    string = re.sub(pattern, char, string) \r\n    return string ",
         "id": 668,
         "test_setup_code": "",
@@ -7787,6 +8455,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given ip address is valid or not using regex.",
+        "label": "string",
         "code": "import re \r\nregex = '''^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.( \r\n\t\t\t25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.( \r\n\t\t\t25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.( \r\n\t\t\t25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$'''\r\ndef check_IP(Ip): \r\n\tif(re.search(regex, Ip)): \r\n\t\treturn (\"Valid IP address\") \r\n\telse: \r\n\t\treturn (\"Invalid IP address\") ",
         "id": 669,
         "test_setup_code": "",
@@ -7799,6 +8468,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a sequence of numbers has a decreasing trend or not.",
+        "label": "array",
         "code": "def decreasing_trend(nums):\r\n    if (sorted(nums)== nums):\r\n        return True\r\n    else:\r\n        return False",
         "id": 670,
         "test_setup_code": "",
@@ -7811,6 +8481,7 @@ problems = [
     },
     {
         "text": "Write a C function to set the right most unset bit.",
+        "label": "math",
         "code": "import math \r\ndef get_Pos_Of_Right_most_Set_Bit(n): \r\n    return int(math.log2(n&-n)+1)   \r\ndef set_Right_most_Unset_Bit(n): \r\n    if (n == 0): \r\n        return 1\r\n    if ((n & (n + 1)) == 0):     \r\n        return n \r\n    pos = get_Pos_Of_Right_most_Set_Bit(~n)      \r\n    return ((1 << (pos - 1)) | n) ",
         "id": 671,
         "test_setup_code": "",
@@ -7823,6 +8494,7 @@ problems = [
     },
     {
         "text": "Write a C function to find maximum of three numbers.",
+        "label": "math",
         "code": "def max_of_three(num1,num2,num3): \r\n    if (num1 >= num2) and (num1 >= num3):\r\n       lnum = num1\r\n    elif (num2 >= num1) and (num2 >= num3):\r\n       lnum = num2\r\n    else:\r\n       lnum = num3\r\n    return lnum",
         "id": 672,
         "test_setup_code": "",
@@ -7835,6 +8507,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a list of multiple integers into a single integer.",
+        "label": "array",
         "code": 'def convert(list): \r\n    s = [str(i) for i in list] \r\n    res = int("".join(s))  \r\n    return (res) ',
         "id": 673,
         "test_setup_code": "",
@@ -7847,6 +8520,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove duplicate words from a given string using collections module.",
+        "label": "string",
         "code": "from collections import OrderedDict\r\ndef remove_duplicate(string):\r\n  result = ' '.join(OrderedDict((w,w) for w in string.split()).keys())\r\n  return result",
         "id": 674,
         "test_setup_code": "",
@@ -7859,6 +8533,7 @@ problems = [
     },
     {
         "text": "Write a C function to add two integers. however, if the sum is between the given range it will return 20.",
+        "label": "math",
         "code": "def sum_nums(x, y,m,n):\r\n    sum_nums= x + y\r\n    if sum_nums in range(m, n):\r\n        return 20\r\n    else:\r\n        return sum_nums",
         "id": 675,
         "test_setup_code": "",
@@ -7871,6 +8546,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove everything except alphanumeric characters from the given string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef remove_extra_char(text1):\r\n  pattern = re.compile('[\\W_]+')\r\n  return (pattern.sub('', text1))",
         "id": 676,
         "test_setup_code": "",
@@ -7883,6 +8559,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the triangle is valid or not.",
+        "label": "math",
         "code": "def validity_triangle(a,b,c):\r\n total = a + b + c\r\n if total == 180:\r\n    return True\r\n else:\r\n    return False",
         "id": 677,
         "test_setup_code": "",
@@ -7895,6 +8572,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove spaces from a given string.",
+        "label": "string",
         "code": "def remove_spaces(str1):\r\n  str1 = str1.replace(' ','')\r\n  return str1",
         "id": 678,
         "test_setup_code": "",
@@ -7907,6 +8585,7 @@ problems = [
     },
     {
         "text": "Write a C function to access dictionary key\u2019s element by index.",
+        "label": "matrix",
         "code": "def access_key(ditionary,key):\r\n  return list(ditionary)[key]",
         "id": 679,
         "test_setup_code": "",
@@ -7919,6 +8598,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether a sequence of numbers has an increasing trend or not.",
+        "label": "array",
         "code": "def increasing_trend(nums):\r\n    if (sorted(nums)== nums):\r\n        return True\r\n    else:\r\n        return False",
         "id": 680,
         "test_setup_code": "",
@@ -7931,6 +8611,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the smallest prime divisor of a number.",
+        "label": "math",
         "code": "def smallest_Divisor(n): \r\n    if (n % 2 == 0): \r\n        return 2; \r\n    i = 3;  \r\n    while (i*i <= n): \r\n        if (n % i == 0): \r\n            return i; \r\n        i += 2; \r\n    return n; ",
         "id": 681,
         "test_setup_code": "",
@@ -7943,6 +8624,7 @@ problems = [
     },
     {
         "text": "Write a C function to multiply two lists.",
+        "label": "array",
         "code": "def mul_list(nums1,nums2):\r\n  result = map(lambda x, y: x * y, nums1, nums2)\r\n  return list(result)",
         "id": 682,
         "test_setup_code": "",
@@ -7955,6 +8637,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number can be represented by sum of two squares or not.",
+        "label": "math",
         "code": "def sum_Square(n) : \r\n    i = 1 \r\n    while i*i <= n : \r\n        j = 1\r\n        while (j*j <= n) : \r\n            if (i*i+j*j == n) : \r\n                return True\r\n            j = j+1\r\n        i = i+1     \r\n    return False",
         "id": 683,
         "test_setup_code": "",
@@ -7967,6 +8650,7 @@ problems = [
     },
     {
         "text": "Write a C function to count occurences of a character in a repeated string.",
+        "label": "string",
         "code": "def count_Char(str,x): \r\n    count = 0\r\n    for i in range(len(str)):  \r\n        if (str[i] == x) : \r\n            count += 1\r\n    n = 10\r\n    repititions = n // len(str)  \r\n    count = count * repititions  \r\n    l = n % len(str)  \r\n    for i in range(l): \r\n        if (str[i] == x):  \r\n            count += 1\r\n    return count  ",
         "id": 684,
         "test_setup_code": "",
@@ -7979,6 +8663,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of prime numbers between 1 to n.",
+        "label": "math",
         "code": "def sum_Of_Primes(n): \r\n    prime = [True] * (n + 1)  \r\n    p = 2\r\n    while p * p <= n: \r\n        if prime[p] == True:  \r\n            i = p * 2\r\n            while i <= n: \r\n                prime[i] = False\r\n                i += p \r\n        p += 1    \r\n    sum = 0\r\n    for i in range (2,n + 1): \r\n        if(prime[i]): \r\n            sum += i \r\n    return sum",
         "id": 685,
         "test_setup_code": "",
@@ -7991,6 +8676,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the frequency of each element in the given list.",
+        "label": "array",
         "code": "from collections import defaultdict \r\ndef freq_element(test_tup):\r\n  res = defaultdict(int)\r\n  for ele in test_tup:\r\n    res[ele] += 1\r\n  return (str(dict(res))) ",
         "id": 686,
         "test_setup_code": "",
@@ -8003,6 +8689,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the greatest common divisor (gcd) of two integers by using recursion.",
+        "label": "math",
         "code": "def recur_gcd(a, b):\r\n\tlow = min(a, b)\r\n\thigh = max(a, b)\r\n\tif low == 0:\r\n\t\treturn high\r\n\telif low == 1:\r\n\t\treturn 1\r\n\telse:\r\n\t\treturn recur_gcd(low, high%low)",
         "id": 687,
         "test_setup_code": "",
@@ -8011,6 +8698,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the length of a complex number.",
+        "label": "math",
         "code": "import cmath\r\ndef len_complex(a,b):\r\n  cn=complex(a,b)\r\n  length=abs(cn)\r\n  return length",
         "id": 688,
         "test_setup_code": "",
@@ -8023,6 +8711,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum number of jumps to reach the end of the array for the given array of integers where each element represents the max number of steps that can be made forward from that element. > indented block > indented block",
+        "label": "array",
         "code": "def min_jumps(arr, n):\r\n\tjumps = [0 for i in range(n)]\r\n\tif (n == 0) or (arr[0] == 0):\r\n\t\treturn float('inf')\r\n\tjumps[0] = 0\r\n\tfor i in range(1, n):\r\n\t\tjumps[i] = float('inf')\r\n\t\tfor j in range(i):\r\n\t\t\tif (i <= j + arr[j]) and (jumps[j] != float('inf')):\r\n\t\t\t\tjumps[i] = min(jumps[i], jumps[j] + 1)\r\n\t\t\t\tbreak\r\n\treturn jumps[n-1]",
         "id": 689,
         "test_setup_code": "",
@@ -8035,6 +8724,7 @@ problems = [
     },
     {
         "text": "Write a C function to multiply consecutive numbers of a given list.",
+        "label": "array",
         "code": "def mul_consecutive_nums(nums):\r\n    result = [b*a for a, b in zip(nums[:-1], nums[1:])]\r\n    return result",
         "id": 690,
         "test_setup_code": "",
@@ -8047,6 +8737,7 @@ problems = [
     },
     {
         "text": "Write a C function to group the 1st elements on the basis of 2nd elements in the given tuple list.",
+        "label": "matrix",
         "code": "from itertools import groupby \r\ndef group_element(test_list):\r\n  res = dict()\r\n  for key, val in groupby(sorted(test_list, key = lambda ele: ele[1]), key = lambda ele: ele[1]):\r\n    res[key] = [ele[0] for ele in val] \r\n  return (res)\r\n",
         "id": 691,
         "test_setup_code": "",
@@ -8059,6 +8750,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the last two digits in factorial of a given number.",
+        "label": "math",
         "code": "def last_Two_Digits(N): \r\n    if (N >= 10): \r\n        return\r\n    fac = 1\r\n    for i in range(1,N + 1): \r\n        fac = (fac * i) % 100\r\n    return (fac) ",
         "id": 692,
         "test_setup_code": "",
@@ -8071,6 +8763,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove multiple spaces in a string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef remove_multiple_spaces(text1):\r\n  return (re.sub(' +',' ',text1))",
         "id": 693,
         "test_setup_code": "",
@@ -8083,6 +8776,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract unique values from the given dictionary values.",
+        "label": "matrix",
         "code": "def extract_unique(test_dict):\r\n  res = list(sorted({ele for val in test_dict.values() for ele in val},))\r\n  return res",
         "id": 694,
         "test_setup_code": "",
@@ -8095,6 +8789,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if each element of the second tuple is greater than its corresponding index in the first tuple.",
+        "label": "array",
         "code": "def check_greater(test_tup1, test_tup2):\r\n  res = all(x < y for x, y in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 695,
         "test_setup_code": "",
@@ -8107,6 +8802,7 @@ problems = [
     },
     {
         "text": "Write a C function to zip two given lists of lists.",
+        "label": "matrix",
         "code": "def zip_list(list1,list2):  \r\n result = list(map(list.__add__, list1, list2)) \r\n return result",
         "id": 696,
         "test_setup_code": "",
@@ -8119,6 +8815,7 @@ problems = [
     },
     {
         "text": "Write a C function to find number of even elements in the given list.",
+        "label": "array",
         "code": "def count_even(array_nums):\r\n   count_even = len(list(filter(lambda x: (x%2 == 0) , array_nums)))\r\n   return count_even",
         "id": 697,
         "test_setup_code": "",
@@ -8131,6 +8828,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort dictionary items by tuple product of keys for the given dictionary with tuple keys.",
+        "label": "matrix",
         "code": "def sort_dict_item(test_dict):\r\n  res = {key: test_dict[key] for key in sorted(test_dict.keys(), key = lambda ele: ele[1] * ele[0])},\r\n  return  (res) \r\n",
         "id": 698,
         "test_setup_code": "",
@@ -8143,6 +8841,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum number of swaps required to convert one binary string to another.",
+        "label": "string",
         "code": 'def min_Swaps(str1,str2) : \r\n    count = 0\r\n    for i in range(len(str1)) : \r\n        if str1[i] != str2[i] : \r\n            count += 1\r\n    if count % 2 == 0 : \r\n        return (count // 2) \r\n    else : \r\n        return ("Not Possible") ',
         "id": 699,
         "test_setup_code": "",
@@ -8155,6 +8854,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of elements in a list which are within a specific range.",
+        "label": "array",
         "code": "def count_range_in_list(li, min, max):\r\n\tctr = 0\r\n\tfor x in li:\r\n\t\tif min <= x <= max:\r\n\t\t\tctr += 1\r\n\treturn ctr",
         "id": 700,
         "test_setup_code": "",
@@ -8167,6 +8867,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the equilibrium index of the given array.",
+        "label": "array",
         "code": "def equilibrium_index(arr):\r\n  total_sum = sum(arr)\r\n  left_sum=0\r\n  for i, num in enumerate(arr):\r\n    total_sum -= num\r\n    if left_sum == total_sum:\r\n      return i\r\n    left_sum += num\r\n  return -1",
         "id": 701,
         "test_setup_code": "",
@@ -8179,6 +8880,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum number of elements that should be removed such that amax-amin<=k.",
+        "label": "array",
         "code": "def find_ind(key, i, n, \r\n\t\t\tk, arr):\r\n\tind = -1\r\n\tstart = i + 1\r\n\tend = n - 1;\r\n\twhile (start < end):\r\n\t\tmid = int(start +\r\n\t\t\t\t(end - start) / 2)\r\n\t\tif (arr[mid] - key <= k):\r\n\t\t\tind = mid\r\n\t\t\tstart = mid + 1\r\n\t\telse:\r\n\t\t\tend = mid\r\n\treturn ind\r\ndef removals(arr, n, k):\r\n\tans = n - 1\r\n\tarr.sort()\r\n\tfor i in range(0, n):\r\n\t\tj = find_ind(arr[i], i, \r\n\t\t\t\t\tn, k, arr)\r\n\t\tif (j != -1):\r\n\t\t\tans = min(ans, n -\r\n\t\t\t\t\t\t(j - i + 1))\r\n\treturn ans",
         "id": 702,
         "test_setup_code": "",
@@ -8191,6 +8893,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given key is present in the dictionary or not.",
+        "label": "matrix",
         "code": "def is_key_present(d,x):\r\n  if x in d:\r\n    return True\r\n  else:\r\n     return False",
         "id": 703,
         "test_setup_code": "",
@@ -8203,6 +8906,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the harmonic sum of n-1.",
+        "label": "math",
         "code": "def harmonic_sum(n):\r\n  if n < 2:\r\n    return 1\r\n  else:\r\n    return 1 / n + (harmonic_sum(n - 1))",
         "id": 704,
         "test_setup_code": "",
@@ -8215,6 +8919,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of lists by length and value.",
+        "label": "matrix",
         "code": "def sort_sublists(list1):\r\n      list1.sort()  \r\n      list1.sort(key=len)\r\n      return  list1",
         "id": 705,
         "test_setup_code": "",
@@ -8227,6 +8932,7 @@ problems = [
     },
     {
         "text": "Write a C function to find whether an array is subset of another array.",
+        "label": "array",
         "code": "def is_subset(arr1, m, arr2, n): \r\n\thashset = set() \r\n\tfor i in range(0, m): \r\n\t\thashset.add(arr1[i]) \r\n\tfor i in range(0, n): \r\n\t\tif arr2[i] in hashset: \r\n\t\t\tcontinue\r\n\t\telse: \r\n\t\t\treturn False\r\n\treturn True\t\t",
         "id": 706,
         "test_setup_code": "",
@@ -8239,6 +8945,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the total set bits from 1 to n.",
+        "label": "math",
         "code": "def count_Set_Bits(n) :  \r\n    n += 1; \r\n    powerOf2 = 2;   \r\n    cnt = n // 2;  \r\n    while (powerOf2 <= n) : \r\n        totalPairs = n // powerOf2;  \r\n        cnt += (totalPairs // 2) * powerOf2;  \r\n        if (totalPairs & 1) : \r\n            cnt += (n % powerOf2) \r\n        else : \r\n            cnt += 0\r\n        powerOf2 <<= 1;    \r\n    return cnt;  ",
         "id": 707,
         "test_setup_code": "",
@@ -8251,6 +8958,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a string to a list.",
+        "label": "string",
         "code": 'def Convert(string): \r\n    li = list(string.split(" ")) \r\n    return li ',
         "id": 708,
         "test_setup_code": "",
@@ -8263,6 +8971,7 @@ problems = [
     },
     {
         "text": "Write a C function to count unique keys for each value present in the tuple.",
+        "label": "matrix",
         "code": "from collections import defaultdict \r\ndef get_unique(test_list):\r\n  res = defaultdict(list)\r\n  for sub in test_list:\r\n    res[sub[1]].append(sub[0])\r\n  res = dict(res)\r\n  res_dict = dict()\r\n  for key in res:\r\n    res_dict[key] = len(list(set(res[key])))\r\n  return (str(res_dict)) ",
         "id": 709,
         "test_setup_code": "",
@@ -8275,6 +8984,7 @@ problems = [
     },
     {
         "text": "Write a C function to access the initial and last data of the given tuple record.",
+        "label": "array",
         "code": "def front_and_rear(test_tup):\r\n  res = (test_tup[0], test_tup[-1])\r\n  return (res) ",
         "id": 710,
         "test_setup_code": "",
@@ -8287,6 +8997,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the product of digits of a number at even and odd places is equal or not.",
+        "label": "math",
         "code": "def product_Equal(n): \r\n    if n < 10: \r\n        return False\r\n    prodOdd = 1; prodEven = 1\r\n    while n > 0: \r\n        digit = n % 10\r\n        prodOdd *= digit \r\n        n = n//10\r\n        if n == 0: \r\n            break; \r\n        digit = n % 10\r\n        prodEven *= digit \r\n        n = n//10\r\n    if prodOdd == prodEven: \r\n        return True\r\n    return False",
         "id": 711,
         "test_setup_code": "",
@@ -8299,6 +9010,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove duplicates from a list of lists.",
+        "label": "array",
         "code": "import itertools\r\ndef remove_duplicate(list1):\r\n list.sort(list1)\r\n remove_duplicate = list(list1 for list1,_ in itertools.groupby(list1))\r\n return remove_duplicate",
         "id": 712,
         "test_setup_code": "",
@@ -8311,6 +9023,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given tuple contains all valid values or not.",
+        "label": "math",
         "code": "def check_valid(test_tup):\r\n  res = not any(map(lambda ele: not ele, test_tup))\r\n  return (res) ",
         "id": 713,
         "test_setup_code": "",
@@ -8323,6 +9036,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of distinct power of prime factor of given number.",
+        "label": "math",
         "code": "def count_Fac(n):  \r\n    m = n \r\n    count = 0\r\n    i = 2\r\n    while((i * i) <= m): \r\n        total = 0\r\n        while (n % i == 0): \r\n            n /= i \r\n            total += 1 \r\n        temp = 0\r\n        j = 1\r\n        while((temp + j) <= total): \r\n            temp += j \r\n            count += 1\r\n            j += 1 \r\n        i += 1\r\n    if (n != 1): \r\n        count += 1 \r\n    return count ",
         "id": 714,
         "test_setup_code": "",
@@ -8331,6 +9045,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given string of integers into a tuple.",
+        "label": "string",
         "code": "def str_to_tuple(test_str):\r\n  res = tuple(map(int, test_str.split(', ')))\r\n  return (res) ",
         "id": 715,
         "test_setup_code": "",
@@ -8343,6 +9058,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the perimeter of a rombus.",
+        "label": "math",
         "code": "def rombus_perimeter(a):\r\n  perimeter=4*a\r\n  return perimeter",
         "id": 716,
         "test_setup_code": "",
@@ -8355,6 +9071,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the standard deviation.",
+        "label": "array",
         "code": "import math\r\nimport sys\r\ndef sd_calc(data):\r\n    n = len(data)\r\n    if n <= 1:\r\n        return 0.0\r\n    mean, sd = avg_calc(data), 0.0\r\n    for el in data:\r\n        sd += (float(el) - mean)**2\r\n    sd = math.sqrt(sd / float(n-1))\r\n    return sd\r\ndef avg_calc(ls):\r\n    n, mean = len(ls), 0.0\r\n    if n <= 1:\r\n        return ls[0]\r\n    for el in ls:\r\n        mean = mean + float(el)\r\n    mean = mean / float(n)\r\n    return mean",
         "id": 717,
         "test_setup_code": "",
@@ -8367,6 +9084,7 @@ problems = [
     },
     {
         "text": "Write a C function to create a list taking alternate elements from another given list.",
+        "label": "array",
         "code": "def alternate_elements(list1):\r\n    result=[]\r\n    for item in list1[::2]:\r\n        result.append(item)\r\n    return result ",
         "id": 718,
         "test_setup_code": "",
@@ -8379,6 +9097,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an a followed by zero or more b's.",
+        "label": "string",
         "code": "import re\r\ndef text_match(text):\r\n        patterns = 'ab*?'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 719,
         "test_setup_code": "",
@@ -8391,6 +9110,7 @@ problems = [
     },
     {
         "text": "Write a C function to add a dictionary to the tuple.",
+        "label": "matrix",
         "code": "def add_dict_to_tuple(test_tup, test_dict):\r\n  test_tup = list(test_tup)\r\n  test_tup.append(test_dict)\r\n  test_tup = tuple(test_tup)\r\n  return (test_tup) ",
         "id": 720,
         "test_setup_code": "",
@@ -8403,6 +9123,7 @@ problems = [
     },
     {
         "text": "Write a C function to find a path with the maximum average over all existing paths for the given square matrix of size n*n.",
+        "label": "matrix",
         "code": "M = 100\r\ndef maxAverageOfPath(cost, N): \r\n\tdp = [[0 for i in range(N + 1)] for j in range(N + 1)] \r\n\tdp[0][0] = cost[0][0] \r\n\tfor i in range(1, N): \r\n\t\tdp[i][0] = dp[i - 1][0] + cost[i][0] \r\n\tfor j in range(1, N): \r\n\t\tdp[0][j] = dp[0][j - 1] + cost[0][j] \r\n\tfor i in range(1, N): \r\n\t\tfor j in range(1, N): \r\n\t\t\tdp[i][j] = max(dp[i - 1][j], \r\n\t\t\t\t\t\tdp[i][j - 1]) + cost[i][j] \r\n\treturn dp[N - 1][N - 1] / (2 * N - 1)",
         "id": 721,
         "test_setup_code": "",
@@ -8415,6 +9136,7 @@ problems = [
     },
     {
         "text": "Write a C function to filter the height and width of students which are stored in a dictionary.",
+        "label": "matrix",
         "code": "def filter_data(students,h,w):\r\n    result = {k: s for k, s in students.items() if s[0] >=h and s[1] >=w},\r\n    return result    ",
         "id": 722,
         "test_setup_code": "",
@@ -8427,6 +9149,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the same pair in two given lists using map function.",
+        "label": "array",
         "code": "from operator import eq\r\ndef count_same_pair(nums1, nums2):\r\n    result = sum(map(eq, nums1, nums2))\r\n    return result",
         "id": 723,
         "test_setup_code": "",
@@ -8439,6 +9162,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of all digits of the base to the specified power.",
+        "label": "math",
         "code": "def power_base_sum(base, power):\r\n    return sum([int(i) for i in str(pow(base, power))])",
         "id": 724,
         "test_setup_code": "",
@@ -8451,6 +9175,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract values between quotation marks of the given string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef extract_quotation(text1):\r\n  return (re.findall(r'\"(.*?)\"', text1))",
         "id": 725,
         "test_setup_code": "",
@@ -8463,6 +9188,7 @@ problems = [
     },
     {
         "text": "Write a C function to multiply the adjacent elements of the given tuple.",
+        "label": "array",
         "code": "def multiply_elements(test_tup):\r\n  res = tuple(i * j for i, j in zip(test_tup, test_tup[1:]))\r\n  return (res) ",
         "id": 726,
         "test_setup_code": "",
@@ -8475,6 +9201,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all characters except letters and numbers using regex",
+        "label": "string",
         "code": "import re \r\ndef remove_char(S):\r\n  result = re.sub('[\\W_]+', '', S) \r\n  return result",
         "id": 727,
         "test_setup_code": "",
@@ -8487,6 +9214,7 @@ problems = [
     },
     {
         "text": "Write a C function to sum elements in two lists.",
+        "label": "array",
         "code": "def sum_list(lst1,lst2):\r\n  res_list = [lst1[i] + lst2[i] for i in range(len(lst1))] \r\n  return res_list",
         "id": 728,
         "test_setup_code": "",
@@ -8499,6 +9227,7 @@ problems = [
     },
     {
         "text": "Write a C function to add two lists.",
+        "label": "array",
         "code": "def add_list(nums1,nums2):\r\n  result = map(lambda x, y: x + y, nums1, nums2)\r\n  return list(result)",
         "id": 729,
         "test_setup_code": "",
@@ -8511,6 +9240,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove consecutive duplicates of a given list.",
+        "label": "array",
         "code": "from itertools import groupby\r\ndef consecutive_duplicates(nums):\r\n    return [key for key, group in groupby(nums)] ",
         "id": 730,
         "test_setup_code": "",
@@ -8523,6 +9253,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the lateral surface area of a cone.",
+        "label": "math",
         "code": "import math\r\ndef lateralsurface_cone(r,h):\r\n  l = math.sqrt(r * r + h * h)\r\n  LSA = math.pi * r  * l\r\n  return LSA",
         "id": 731,
         "test_setup_code": "",
@@ -8535,6 +9266,7 @@ problems = [
     },
     {
         "text": "Write a C function to replace all occurrences of spaces, commas, or dots with a colon.",
+        "label": "string",
         "code": 'import re\r\ndef replace_specialchar(text):\r\n return (re.sub("[ ,.]", ":", text))\r',
         "id": 732,
         "test_setup_code": "",
@@ -8547,6 +9279,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the index of the first occurrence of a given number in a sorted array.",
+        "label": "array",
         "code": "def find_first_occurrence(A, x):\r\n    (left, right) = (0, len(A) - 1)\r\n    result = -1\r\n    while left <= right:\r\n        mid = (left + right) // 2\r\n        if x == A[mid]:\r\n            result = mid\r\n            right = mid - 1\r\n        elif x < A[mid]:\r\n            right = mid - 1\r\n        else:\r\n            left = mid + 1\r\n    return result",
         "id": 733,
         "test_setup_code": "",
@@ -8559,6 +9292,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of products of all possible subarrays.",
+        "label": "array",
         "code": "def sum_Of_Subarray_Prod(arr,n):\r\n    ans = 0\r\n    res = 0\r\n    i = n - 1\r\n    while (i >= 0):\r\n        incr = arr[i]*(1 + res)\r\n        ans += incr\r\n        res = incr\r\n        i -= 1\r\n    return (ans)",
         "id": 734,
         "test_setup_code": "",
@@ -8571,6 +9305,7 @@ problems = [
     },
     {
         "text": "Write a C function to toggle bits of the number except the first and the last bit.",
+        "label": "math",
         "code": "def set_middle_bits(n):  \r\n    n |= n >> 1; \r\n    n |= n >> 2; \r\n    n |= n >> 4; \r\n    n |= n >> 8; \r\n    n |= n >> 16;  \r\n    return (n >> 1) ^ 1\r\ndef toggle_middle_bits(n): \r\n    if (n == 1): \r\n        return 1\r\n    return n ^ set_middle_bits(n) ",
         "id": 735,
         "test_setup_code": "",
@@ -8583,6 +9318,7 @@ problems = [
     },
     {
         "text": "Write a C function to locate the left insertion point for a specified value in sorted order.",
+        "label": "array",
         "code": "import bisect\r\ndef left_insertion(a, x):\r\n    i = bisect.bisect_left(a, x)\r\n    return i",
         "id": 736,
         "test_setup_code": "",
@@ -8595,6 +9331,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given string is starting with a vowel or not using regex.",
+        "label": "string",
         "code": 'import re \r\nregex = \'^[aeiouAEIOU][A-Za-z0-9_]*\'\r\ndef check_str(string): \r\n\tif(re.search(regex, string)): \r\n\t\treturn ("Valid") \r\n\telse: \r\n\t\treturn ("Invalid") ',
         "id": 737,
         "test_setup_code": "",
@@ -8607,6 +9344,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the geometric sum of n-1.",
+        "label": "math",
         "code": "def geometric_sum(n):\r\n  if n < 0:\r\n    return 0\r\n  else:\r\n    return 1 / (pow(2, n)) + geometric_sum(n - 1)",
         "id": 738,
         "test_setup_code": "",
@@ -8619,6 +9357,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the index of smallest triangular number with n digits.",
+        "label": "math",
         "code": "import math \r\ndef find_Index(n): \r\n    x = math.sqrt(2 * math.pow(10,(n - 1))); \r\n    return round(x); ",
         "id": 739,
         "test_setup_code": "",
@@ -8627,6 +9366,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given tuple to a key-value dictionary using adjacent elements.",
+        "label": "array",
         "code": "def tuple_to_dict(test_tup):\r\n  res = dict(test_tup[idx : idx + 2] for idx in range(0, len(test_tup), 2))\r\n  return (res) ",
         "id": 740,
         "test_setup_code": "",
@@ -8639,6 +9379,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether all the characters are same or not.",
+        "label": "string",
         "code": "def all_Characters_Same(s) :\r\n    n = len(s)\r\n    for i in range(1,n) :\r\n        if s[i] != s[0] :\r\n            return False\r\n    return True",
         "id": 741,
         "test_setup_code": "",
@@ -8651,6 +9392,7 @@ problems = [
     },
     {
         "text": "Write a C function to caluclate the area of a tetrahedron.",
+        "label": "math",
         "code": "import math\r\ndef area_tetrahedron(side):\r\n  area = math.sqrt(3)*(side*side)\r\n  return area",
         "id": 742,
         "test_setup_code": "",
@@ -8663,6 +9405,7 @@ problems = [
     },
     {
         "text": "Write a C function to rotate a given list by specified number of items to the right direction.",
+        "label": "array",
         "code": "def rotate_right(list1,m,n):\r\n  result =  list1[-(m):]+list1[:-(n)]\r\n  return result",
         "id": 743,
         "test_setup_code": "",
@@ -8675,6 +9418,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given tuple has any none value or not.",
+        "label": "array",
         "code": "def check_none(test_tup):\r\n  res = any(map(lambda ele: ele is None, test_tup))\r\n  return (res) ",
         "id": 744,
         "test_setup_code": "",
@@ -8687,6 +9431,7 @@ problems = [
     },
     {
         "text": "Write a C function to find numbers within a given range where every number is divisible by every digit it contains.",
+        "label": "math",
         "code": "def divisible_by_digits(startnum, endnum):\r\n    return [n for n in range(startnum, endnum+1) \\\r\n                if not any(map(lambda x: int(x) == 0 or n%int(x) != 0, str(n)))]",
         "id": 745,
         "test_setup_code": "",
@@ -8699,6 +9444,7 @@ problems = [
     },
     {
         "text": "Write a C function to find area of a sector.",
+        "label": "math",
         "code": "def sector_area(r,a):\r\n    pi=22/7\r\n    if a >= 360:\r\n        return None\r\n    sectorarea = (pi*r**2) * (a/360)\r\n    return sectorarea",
         "id": 746,
         "test_setup_code": "",
@@ -8711,6 +9457,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the longest common subsequence for the given three string sequence.",
+        "label": "string",
         "code": "def lcs_of_three(X, Y, Z, m, n, o): \r\n\tL = [[[0 for i in range(o+1)] for j in range(n+1)] \r\n\t\tfor k in range(m+1)] \r\n\tfor i in range(m+1): \r\n\t\tfor j in range(n+1): \r\n\t\t\tfor k in range(o+1): \r\n\t\t\t\tif (i == 0 or j == 0 or k == 0): \r\n\t\t\t\t\tL[i][j][k] = 0\r\n\t\t\t\telif (X[i-1] == Y[j-1] and\r\n\t\t\t\t\tX[i-1] == Z[k-1]): \r\n\t\t\t\t\tL[i][j][k] = L[i-1][j-1][k-1] + 1\r\n\t\t\t\telse: \r\n\t\t\t\t\tL[i][j][k] = max(max(L[i-1][j][k], \r\n\t\t\t\t\tL[i][j-1][k]), \r\n\t\t\t\t\t\t\t\t\tL[i][j][k-1]) \r\n\treturn L[m][n][o]",
         "id": 747,
         "test_setup_code": "",
@@ -8723,6 +9470,7 @@ problems = [
     },
     {
         "text": "Write a C function to put spaces between words starting with capital letters in a given string by using regex.",
+        "label": "string",
         "code": 'import re\r\ndef capital_words_spaces(str1):\r\n  return re.sub(r"(\\w)([A-Z])", r"\\1 \\2", str1)',
         "id": 748,
         "test_setup_code": "",
@@ -8735,6 +9483,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a given list of strings of numbers numerically.",
+        "label": "array",
         "code": "def sort_numeric_strings(nums_str):\r\n    result = [int(x) for x in nums_str]\r\n    result.sort()\r\n    return result",
         "id": 749,
         "test_setup_code": "",
@@ -8747,6 +9496,7 @@ problems = [
     },
     {
         "text": "Write a C function to add the given tuple to the given list.",
+        "label": "matrix",
         "code": "def add_tuple(test_list, test_tup):\r\n  test_list += test_tup\r\n  return (test_list) ",
         "id": 750,
         "test_setup_code": "",
@@ -8759,6 +9509,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given array represents min heap or not.",
+        "label": "array",
         "code": "def check_min_heap(arr, i):\r\n    if 2 * i + 2 > len(arr):\r\n        return True\r\n    left_child = (arr[i] <= arr[2 * i + 1]) and check_min_heap(arr, 2 * i + 1)\r\n    right_child = (2 * i + 2 == len(arr)) or (arr[i] <= arr[2 * i + 2] \r\n                                      and check_min_heap(arr, 2 * i + 2))\r\n    return left_child and right_child",
         "id": 751,
         "test_setup_code": "",
@@ -8771,6 +9522,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth jacobsthal number.",
+        "label": "math",
         "code": "def jacobsthal_num(n): \r\n\tdp = [0] * (n + 1) \r\n\tdp[0] = 0\r\n\tdp[1] = 1\r\n\tfor i in range(2, n+1): \r\n\t\tdp[i] = dp[i - 1] + 2 * dp[i - 2] \r\n\treturn dp[n]",
         "id": 752,
         "test_setup_code": "",
@@ -8783,6 +9535,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum k records from tuple list.",
+        "label": "matrix",
         "code": "def min_k(test_list, K):\r\n  res = sorted(test_list, key = lambda x: x[1])[:K]\r\n  return (res) ",
         "id": 753,
         "test_setup_code": "",
@@ -8795,6 +9548,7 @@ problems = [
     },
     {
         "text": "Write a C function to find common index elements from three lists.",
+        "label": "array",
         "code": "def extract_index_list(l1, l2, l3):\r\n    result = []\r\n    for m, n, o in zip(l1, l2, l3):\r\n        if (m == n == o):\r\n            result.append(m)\r\n    return result",
         "id": 754,
         "test_setup_code": "",
@@ -8807,6 +9561,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the second smallest number in a list.",
+        "label": "array",
         "code": "def second_smallest(numbers):\r\n  if (len(numbers)<2):\r\n    return\r\n  if ((len(numbers)==2)  and (numbers[0] == numbers[1]) ):\r\n    return\r\n  dup_items = set()\r\n  uniq_items = []\r\n  for x in numbers:\r\n    if x not in dup_items:\r\n      uniq_items.append(x)\r\n      dup_items.add(x)\r\n  uniq_items.sort()    \r\n  return  uniq_items[1] ",
         "id": 755,
         "test_setup_code": "",
@@ -8819,6 +9574,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an a followed by zero or one 'b'.",
+        "label": "string",
         "code": "import re\r\ndef text_match_zero_one(text):\r\n        patterns = 'ab?'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 756,
         "test_setup_code": "",
@@ -8831,6 +9587,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the pairs of reverse strings in the given string list.",
+        "label": "array",
         "code": "def count_reverse_pairs(test_list):\r\n  res = sum([1 for idx in range(0, len(test_list)) for idxn in range(idx, len( \r\n\ttest_list)) if test_list[idxn] == str(''.join(list(reversed(test_list[idx]))))]) \r\n  return str(res)",
         "id": 757,
         "test_setup_code": "",
@@ -8843,6 +9600,7 @@ problems = [
     },
     {
         "text": "Write a C function to count number of unique lists within a list.",
+        "label": "array",
         "code": "def unique_sublists(list1):\r\n    result ={},\r\n    for l in  list1: \r\n        result.setdefault(tuple(l), list()).append(1) \r\n    for a, b in result.items(): \r\n        result[a] = sum(b)\r\n    return result",
         "id": 758,
         "test_setup_code": "",
@@ -8855,6 +9613,7 @@ problems = [
     },
     {
         "text": "Write a C function to check a decimal with a precision of 2.",
+        "label": "math",
         "code": 'def is_decimal(num):\r\n    import re\r\n    dnumre = re.compile(r"""^[0-9]+(\\.[0-9]{1,2},)?$""")\r\n    result = dnumre.search(num)\r\n    return bool(result)',
         "id": 759,
         "test_setup_code": "",
@@ -8867,6 +9626,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether an array contains only one distinct element or not.",
+        "label": "array",
         "code": "def unique_Element(arr,n):\r\n    s = set(arr)\r\n    if (len(s) == 1):\r\n        return ('YES')\r\n    else:\r\n        return ('NO')",
         "id": 760,
         "test_setup_code": "",
@@ -8879,6 +9639,7 @@ problems = [
     },
     {
         "text": "Write a C function to caluclate arc length of an angle.",
+        "label": "math",
         "code": "def arc_length(d,a):\r\n    pi=22/7\r\n    if a >= 360:\r\n        return None\r\n    arclength = (pi*d) * (a/360)\r\n    return arclength",
         "id": 761,
         "test_setup_code": "",
@@ -8891,6 +9652,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given month number contains 30 days or not.",
+        "label": "math",
         "code": "def check_monthnumber_number(monthnum3):\r\n  if(monthnum3==4 or monthnum3==6 or monthnum3==9 or monthnum3==11):\r\n    return True\r\n  else:\r\n    return False",
         "id": 762,
         "test_setup_code": "",
@@ -8903,6 +9665,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum difference between any two elements in a given array.",
+        "label": "array",
         "code": "def find_Min_Diff(arr,n): \r\n    arr = sorted(arr) \r\n    diff = 10**20 \r\n    for i in range(n-1): \r\n        if arr[i+1] - arr[i] < diff: \r\n            diff = arr[i+1] - arr[i]  \r\n    return diff ",
         "id": 763,
         "test_setup_code": "",
@@ -8915,6 +9678,7 @@ problems = [
     },
     {
         "text": "Write a C function to count numeric values in a given string.",
+        "label": "string",
         "code": "def number_ctr(str):\r\n      number_ctr= 0\r\n      for i in range(len(str)):\r\n          if str[i] >= '0' and str[i] <= '9': number_ctr += 1     \r\n      return  number_ctr",
         "id": 764,
         "test_setup_code": "",
@@ -8927,6 +9691,7 @@ problems = [
     },
     {
         "text": "Write a C function to find nth polite number.",
+        "label": "math",
         "code": "import math \r\ndef is_polite(n): \r\n\tn = n + 1\r\n\treturn (int)(n+(math.log((n + math.log(n, 2)), 2))) ",
         "id": 765,
         "test_setup_code": "",
@@ -8935,6 +9700,7 @@ problems = [
     },
     {
         "text": "Write a C function to iterate over all pairs of consecutive items in a given list.",
+        "label": "array",
         "code": "def pair_wise(l1):\r\n    temp = []\r\n    for i in range(len(l1) - 1):\r\n        current_element, next_element = l1[i], l1[i + 1]\r\n        x = (current_element, next_element)\r\n        temp.append(x)\r\n    return temp",
         "id": 766,
         "test_setup_code": "",
@@ -8947,6 +9713,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of pairs whose sum is equal to \u2018sum\u2019.",
+        "label": "array",
         "code": "def get_Pairs_Count(arr,n,sum):\r\n    count = 0  \r\n    for i in range(0,n):\r\n        for j in range(i + 1,n):\r\n            if arr[i] + arr[j] == sum:\r\n                count += 1\r\n    return count",
         "id": 767,
         "test_setup_code": "",
@@ -8959,6 +9726,7 @@ problems = [
     },
     {
         "text": "Write a C function to check for odd parity of a given number.",
+        "label": "math",
         "code": "def check_Odd_Parity(x): \r\n    parity = 0\r\n    while (x != 0): \r\n        x = x & (x - 1) \r\n        parity += 1\r\n    if (parity % 2 == 1): \r\n        return True\r\n    else: \r\n        return False",
         "id": 768,
         "test_setup_code": "",
@@ -8971,6 +9739,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the difference between two lists.",
+        "label": "array",
         "code": "def Diff(li1,li2):\r\n    return (list(list(set(li1)-set(li2)) + list(set(li2)-set(li1))))\r\n ",
         "id": 769,
         "test_setup_code": "",
@@ -8983,6 +9752,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of fourth power of first n odd natural numbers.",
+        "label": "math",
         "code": "def odd_Num_Sum(n) : \r\n    j = 0\r\n    sm = 0\r\n    for i in range(1,n + 1) : \r\n        j = (2*i-1) \r\n        sm = sm + (j*j*j*j)   \r\n    return sm ",
         "id": 770,
         "test_setup_code": "",
@@ -8991,6 +9761,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given expression is balanced or not.",
+        "label": "string",
         "code": "from collections import deque\r\ndef check_expression(exp):\r\n    if len(exp) & 1:\r\n        return False\r\n    stack = deque()\r\n    for ch in exp:\r\n        if ch == '(' or ch == '{' or ch == '[':\r\n            stack.append(ch)\r\n        if ch == ')' or ch == '},' or ch == ']':\r\n            if not stack:\r\n                return False\r\n            top = stack.pop()\r\n            if (top == '(' and ch != ')') or (top == '{' and ch != '},' or (top == '[' and ch != ']')):\r\n                return False\r\n    return not stack",
         "id": 771,
         "test_setup_code": "",
@@ -9003,6 +9774,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all the words with k length in the given string.",
+        "label": "string",
         "code": "def remove_length(test_str, K):\r\n  temp = test_str.split()\r\n  res = [ele for ele in temp if len(ele) != K]\r\n  res = ' '.join(res)\r\n  return (res) ",
         "id": 772,
         "test_setup_code": "",
@@ -9015,6 +9787,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the occurrence and position of the substrings within a string.",
+        "label": "string",
         "code": "import re\r\ndef occurance_substring(text,pattern):\r\n for match in re.finditer(pattern, text):\r\n    s = match.start()\r\n    e = match.end()\r\n    return (text[s:e], s, e)",
         "id": 773,
         "test_setup_code": "",
@@ -9027,6 +9800,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the string is a valid email address or not using regex.",
+        "label": "string",
         "code": 'import re \r\nregex = \'^[a-z0-9]+[\\._]?[a-z0-9]+[@]\\w+[.]\\w{2,3},$\'\r\ndef check_email(email): \r\n\tif(re.search(regex,email)): \r\n\t\treturn ("Valid Email") \r\n\telse: \r\n\t\treturn ("Invalid Email") ',
         "id": 774,
         "test_setup_code": "",
@@ -9039,6 +9813,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether every odd index contains odd numbers of a given list.",
+        "label": "array",
         "code": "def odd_position(nums):\r\n\treturn all(nums[i]%2==i%2 for i in range(len(nums)))",
         "id": 775,
         "test_setup_code": "",
@@ -9051,6 +9826,7 @@ problems = [
     },
     {
         "text": "Write a C function to count those characters which have vowels as their neighbors in the given string.",
+        "label": "string",
         "code": "def count_vowels(test_str):\r\n  res = 0\r\n  vow_list = ['a', 'e', 'i', 'o', 'u']\r\n  for idx in range(1, len(test_str) - 1):\r\n    if test_str[idx] not in vow_list and (test_str[idx - 1] in vow_list or test_str[idx + 1] in vow_list):\r\n      res += 1\r\n  if test_str[0] not in vow_list and test_str[1] in vow_list:\r\n    res += 1\r\n  if test_str[-1] not in vow_list and test_str[-2] in vow_list:\r\n    res += 1\r\n  return (res) ",
         "id": 776,
         "test_setup_code": "",
@@ -9063,6 +9839,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of non-repeated elements in a given array.",
+        "label": "array",
         "code": "def find_Sum(arr,n): \r\n    arr.sort() \r\n    sum = arr[0] \r\n    for i in range(0,n-1): \r\n        if (arr[i] != arr[i+1]): \r\n            sum = sum + arr[i+1]   \r\n    return sum",
         "id": 777,
         "test_setup_code": "",
@@ -9075,6 +9852,7 @@ problems = [
     },
     {
         "text": "Write a C function to pack consecutive duplicates of a given list elements into sublists.",
+        "label": "array",
         "code": "from itertools import groupby\r\ndef pack_consecutive_duplicates(list1):\r\n    return [list(group) for key, group in groupby(list1)]",
         "id": 778,
         "test_setup_code": "",
@@ -9087,6 +9865,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of unique lists within a list.",
+        "label": "matrix",
         "code": "def unique_sublists(list1):\r\n    result ={},\r\n    for l in list1: \r\n        result.setdefault(tuple(l), list()).append(1) \r\n    for a, b in result.items(): \r\n        result[a] = sum(b)\r\n    return result",
         "id": 779,
         "test_setup_code": "",
@@ -9099,6 +9878,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the combinations of sums with tuples in the given tuple list.",
+        "label": "matrix",
         "code": "from itertools import combinations \r\ndef find_combinations(test_list):\r\n  res = [(b1 + a1, b2 + a2) for (a1, a2), (b1, b2) in combinations(test_list, 2)]\r\n  return (res) ",
         "id": 780,
         "test_setup_code": "",
@@ -9111,6 +9891,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the count of divisors is even or odd.",
+        "label": "math",
         "code": 'import math \r\ndef count_Divisors(n) : \r\n    count = 0\r\n    for i in range(1, (int)(math.sqrt(n)) + 2) : \r\n        if (n % i == 0) : \r\n            if( n // i == i) : \r\n                count = count + 1\r\n            else : \r\n                count = count + 2\r\n    if (count % 2 == 0) : \r\n        return ("Even") \r\n    else : \r\n        return ("Odd") ',
         "id": 781,
         "test_setup_code": "",
@@ -9123,6 +9904,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of all odd length subarrays.",
+        "label": "array",
         "code": "def Odd_Length_Sum(arr):\r\n    Sum = 0\r\n    l = len(arr)\r\n    for i in range(l):\r\n        Sum += ((((i + 1) *(l - i) + 1) // 2) * arr[i])\r\n    return Sum",
         "id": 782,
         "test_setup_code": "",
@@ -9135,6 +9917,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert rgb color to hsv color.",
+        "label": "math",
         "code": "def rgb_to_hsv(r, g, b):\r\n    r, g, b = r/255.0, g/255.0, b/255.0\r\n    mx = max(r, g, b)\r\n    mn = min(r, g, b)\r\n    df = mx-mn\r\n    if mx == mn:\r\n        h = 0\r\n    elif mx == r:\r\n        h = (60 * ((g-b)/df) + 360) % 360\r\n    elif mx == g:\r\n        h = (60 * ((b-r)/df) + 120) % 360\r\n    elif mx == b:\r\n        h = (60 * ((r-g)/df) + 240) % 360\r\n    if mx == 0:\r\n        s = 0\r\n    else:\r\n        s = (df/mx)*100\r\n    v = mx*100\r\n    return h, s, v",
         "id": 783,
         "test_setup_code": "",
@@ -9147,6 +9930,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the product of first even and odd number of a given list.",
+        "label": "array",
         "code": "def mul_even_odd(list1):\r\n    first_even = next((el for el in list1 if el%2==0),-1)\r\n    first_odd = next((el for el in list1 if el%2!=0),-1)\r\n    return (first_even*first_odd)",
         "id": 784,
         "test_setup_code": "",
@@ -9159,6 +9943,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert tuple string to integer tuple.",
+        "label": "string",
         "code": "def tuple_str_int(test_str):\r\n  res = tuple(int(num) for num in test_str.replace('(', '').replace(')', '').replace('...', '').split(', '))\r\n  return (res) ",
         "id": 785,
         "test_setup_code": "",
@@ -9171,6 +9956,7 @@ problems = [
     },
     {
         "text": "Write a C function to locate the right insertion point for a specified value in sorted order.",
+        "label": "array",
         "code": "import bisect\r\ndef right_insertion(a, x):\r\n    i = bisect.bisect_right(a, x)\r\n    return i",
         "id": 786,
         "test_setup_code": "",
@@ -9183,6 +9969,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an a followed by three 'b'.",
+        "label": "string",
         "code": "import re\r\ndef text_match_three(text):\r\n        patterns = 'ab{3},?'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 787,
         "test_setup_code": "",
@@ -9195,6 +9982,7 @@ problems = [
     },
     {
         "text": "Write a C function to create a new tuple from the given string and list.",
+        "label": "array",
         "code": "def new_tuple(test_list, test_str):\r\n  res = tuple(test_list + [test_str])\r\n  return (res) ",
         "id": 788,
         "test_setup_code": "",
@@ -9207,6 +9995,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the perimeter of a regular polygon.",
+        "label": "math",
         "code": "from math import tan, pi\r\ndef perimeter_polygon(s,l):\r\n  perimeter = s*l\r\n  return perimeter",
         "id": 789,
         "test_setup_code": "",
@@ -9219,6 +10008,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether every even index contains even numbers of a given list.",
+        "label": "array",
         "code": "def even_position(nums):\r\n\treturn all(nums[i]%2==i%2 for i in range(len(nums)))",
         "id": 790,
         "test_setup_code": "",
@@ -9231,6 +10021,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove the nested record from the given tuple.",
+        "label": "matrix",
         "code": "def remove_nested(test_tup):\r\n  res = tuple()\r\n  for count, ele in enumerate(test_tup):\r\n    if not isinstance(ele, tuple):\r\n      res = res + (ele, )\r\n  return (res) ",
         "id": 791,
         "test_setup_code": "",
@@ -9243,6 +10034,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of lists in a given number of lists.",
+        "label": "array",
         "code": "def count_list(input_list): \r\n    return len(input_list)",
         "id": 792,
         "test_setup_code": "",
@@ -9255,6 +10047,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the last position of an element in a sorted array.",
+        "label": "array",
         "code": "def last(arr,x,n):\r\n    low = 0\r\n    high = n - 1\r\n    res = -1  \r\n    while (low <= high):\r\n        mid = (low + high) // 2 \r\n        if arr[mid] > x:\r\n            high = mid - 1\r\n        elif arr[mid] < x:\r\n            low = mid + 1\r\n        else:\r\n            res = mid\r\n            low = mid + 1\r\n    return res",
         "id": 793,
         "test_setup_code": "",
@@ -9267,6 +10060,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an 'a' followed by anything, ending in 'b'.",
+        "label": "string",
         "code": "import re\r\ndef text_starta_endb(text):\r\n        patterns = 'a.*?b$'\r\n        if re.search(patterns,  text):\r\n                return 'Found a match!'\r\n        else:\r\n                return('Not matched!')",
         "id": 794,
         "test_setup_code": "",
@@ -9279,6 +10073,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the n - cheap price items from a given dataset using heap queue algorithm.",
+        "label": "matrix",
         "code": "import heapq\r\ndef cheap_items(items,n):\r\n  cheap_items = heapq.nsmallest(n, items, key=lambda s: s['price'])\r\n  return cheap_items",
         "id": 795,
         "test_setup_code": "",
@@ -9291,6 +10086,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of all items in the given dictionary.",
+        "label": "matrix",
         "code": "def return_sum(dict):\r\n  sum = 0\r\n  for i in dict.values():\r\n    sum = sum + i\r\n  return sum",
         "id": 796,
         "test_setup_code": "",
@@ -9303,6 +10099,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of all odd natural numbers within the range l and r.",
+        "label": "math",
         "code": "def sum_Odd(n): \r\n    terms = (n + 1)//2\r\n    sum1 = terms * terms \r\n    return sum1  \r\ndef sum_in_Range(l,r): \r\n    return sum_Odd(r) - sum_Odd(l - 1)",
         "id": 797,
         "test_setup_code": "",
@@ -9315,6 +10112,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of an array.",
+        "label": "array",
         "code": "def _sum(arr):  \r\n    sum=0\r\n    for i in arr: \r\n        sum = sum + i      \r\n    return(sum)  ",
         "id": 798,
         "test_setup_code": "",
@@ -9327,6 +10125,7 @@ problems = [
     },
     {
         "text": "Write a C function to left rotate the bits of a given number.",
+        "label": "math",
         "code": "INT_BITS = 32\r\ndef left_Rotate(n,d):   \r\n    return (n << d)|(n >> (INT_BITS - d))  ",
         "id": 799,
         "test_setup_code": "",
@@ -9339,6 +10138,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all whitespaces from a string.",
+        "label": "string",
         "code": "import re\r\ndef remove_all_spaces(text):\r\n return (re.sub(r'\\s+', '',text))",
         "id": 800,
         "test_setup_code": "",
@@ -9351,6 +10151,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of equal numbers from three given integers.",
+        "label": "math",
         "code": "def test_three_equal(x,y,z):\r\n  result= set([x,y,z])\r\n  if len(result)==3:\r\n    return 0\r\n  else:\r\n    return (4-len(result))",
         "id": 801,
         "test_setup_code": "",
@@ -9363,6 +10164,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of rotations required to generate a sorted array.",
+        "label": "array",
         "code": "def count_Rotation(arr,n):   \r\n    for i in range (1,n): \r\n        if (arr[i] < arr[i - 1]): \r\n            return i  \r\n    return 0",
         "id": 802,
         "test_setup_code": "",
@@ -9375,6 +10177,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number is a perfect square or not.",
+        "label": "math",
         "code": "def is_Perfect_Square(n) :\r\n    i = 1\r\n    while (i * i<= n):\r\n        if ((n % i == 0) and (n / i == i)):\r\n            return True     \r\n        i = i + 1\r\n    return False",
         "id": 803,
         "test_setup_code": "",
@@ -9387,6 +10190,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the product of numbers is even or not.",
+        "label": "array",
         "code": "def is_Product_Even(arr,n): \r\n    for i in range(0,n): \r\n        if ((arr[i] & 1) == 0): \r\n            return True\r\n    return False",
         "id": 804,
         "test_setup_code": "",
@@ -9399,6 +10203,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the list in a list of lists whose sum of elements is the highest.",
+        "label": "matrix",
         "code": "def max_sum_list(lists):\r\n return max(lists, key=sum)",
         "id": 805,
         "test_setup_code": "",
@@ -9411,6 +10216,7 @@ problems = [
     },
     {
         "text": "Write a C function to find maximum run of uppercase characters in the given string.",
+        "label": "string",
         "code": "def max_run_uppercase(test_str):\r\n  cnt = 0\r\n  res = 0\r\n  for idx in range(0, len(test_str)):\r\n    if test_str[idx].isupper():\r\n      cnt += 1\r\n    else:\r\n      res = cnt\r\n      cnt = 0\r\n  if test_str[len(test_str) - 1].isupper():\r\n    res = cnt\r\n  return (res)",
         "id": 806,
         "test_setup_code": "",
@@ -9423,6 +10229,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the first odd number in a given list of numbers.",
+        "label": "array",
         "code": "def first_odd(nums):\r\n  first_odd = next((el for el in nums if el%2!=0),-1)\r\n  return first_odd",
         "id": 807,
         "test_setup_code": "",
@@ -9435,6 +10242,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given tuples contain the k or not.",
+        "label": "array",
         "code": "def check_K(test_tup, K):\r\n  res = False\r\n  for ele in test_tup:\r\n    if ele == K:\r\n      res = True\r\n      break\r\n  return (res) ",
         "id": 808,
         "test_setup_code": "",
@@ -9447,6 +10255,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if each element of second tuple is smaller than its corresponding index in first tuple.",
+        "label": "array",
         "code": "def check_smaller(test_tup1, test_tup2):\r\n  res = all(x > y for x, y in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 809,
         "test_setup_code": "",
@@ -9459,6 +10268,7 @@ problems = [
     },
     {
         "text": "Write a C function to iterate over elements repeating each as many times as its count.",
+        "label": "math",
         "code": "from collections import Counter\r\ndef count_variable(a,b,c,d):\r\n  c = Counter(p=a, q=b, r=c, s=d)\r\n  return list(c.elements())",
         "id": 810,
         "test_setup_code": "",
@@ -9471,6 +10281,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if two lists of tuples are identical or not.",
+        "label": "matrix",
         "code": "def check_identical(test_list1, test_list2):\r\n  res = test_list1 == test_list2\r\n  return (res) ",
         "id": 811,
         "test_setup_code": "",
@@ -9483,6 +10294,7 @@ problems = [
     },
     {
         "text": "Write a C function to abbreviate 'road' as 'rd.' in a given string.",
+        "label": "string",
         "code": "import re\r\ndef road_rd(street):\r\n  return (re.sub('Road$', 'Rd.', street))",
         "id": 812,
         "test_setup_code": "",
@@ -9495,6 +10307,7 @@ problems = [
     },
     {
         "text": "Write a C function to find length of the string.",
+        "label": "string",
         "code": "def string_length(str1):\r\n    count = 0\r\n    for char in str1:\r\n        count += 1\r\n    return count",
         "id": 813,
         "test_setup_code": "",
@@ -9507,6 +10320,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the area of a rombus.",
+        "label": "math",
         "code": "def rombus_area(p,q):\r\n  area=(p*q)/2\r\n  return area",
         "id": 814,
         "test_setup_code": "",
@@ -9515,6 +10329,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given array without using any sorting algorithm. the given array consists of only 0, 1, and 2.",
+        "label": "array",
         "code": "def sort_by_dnf(arr, n):\r\n  low=0\r\n  mid=0\r\n  high=n-1\r\n  while mid <= high:\r\n    if arr[mid] == 0:\r\n      arr[low], arr[mid] = arr[mid], arr[low]\r\n      low = low + 1\r\n      mid = mid + 1\r\n    elif arr[mid] == 1:\r\n      mid = mid + 1\r\n    else:\r\n      arr[mid], arr[high] = arr[high], arr[mid]\r\n      high = high - 1\r\n  return arr",
         "id": 815,
         "test_setup_code": "",
@@ -9527,6 +10342,7 @@ problems = [
     },
     {
         "text": "Write a C function to clear the values of the given tuples.",
+        "label": "array",
         "code": "def clear_tuple(test_tup):\r\n  temp = list(test_tup)\r\n  temp.clear()\r\n  test_tup = tuple(temp)\r\n  return (test_tup) ",
         "id": 816,
         "test_setup_code": "",
@@ -9539,6 +10355,7 @@ problems = [
     },
     {
         "text": "Write a C function to find numbers divisible by m or n from a list of numbers.",
+        "label": "array",
         "code": "def div_of_nums(nums,m,n):\r\n result = list(filter(lambda x: (x % m == 0 or x % n == 0), nums)) \r\n return result",
         "id": 817,
         "test_setup_code": "",
@@ -9551,6 +10368,7 @@ problems = [
     },
     {
         "text": "Write a C function to count lower case letters in a given string.",
+        "label": "string",
         "code": "def lower_ctr(str):\r\n      lower_ctr= 0\r\n      for i in range(len(str)):\r\n          if str[i] >= 'a' and str[i] <= 'z': lower_ctr += 1     \r\n      return  lower_ctr",
         "id": 818,
         "test_setup_code": "",
@@ -9563,6 +10381,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the frequency of consecutive duplicate elements in a given list of numbers.",
+        "label": "array",
         "code": "def count_duplic(lists):\r\n    element = []\r\n    frequency = []\r\n    if not lists:\r\n        return element\r\n    running_count = 1\r\n    for i in range(len(lists)-1):\r\n        if lists[i] == lists[i+1]:\r\n            running_count += 1\r\n        else:\r\n            frequency.append(running_count)\r\n            element.append(lists[i])\r\n            running_count = 1\r\n    frequency.append(running_count)\r\n    element.append(lists[i+1])\r\n    return element,frequency\r\n",
         "id": 819,
         "test_setup_code": "",
@@ -9575,6 +10394,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given month number contains 28 days or not.",
+        "label": "math",
         "code": "def check_monthnum_number(monthnum1):\r\n  if monthnum1 == 2:\r\n    return True\r\n  else:\r\n    return False",
         "id": 820,
         "test_setup_code": "",
@@ -9587,6 +10407,7 @@ problems = [
     },
     {
         "text": "Write a C function to merge two dictionaries into a single expression.",
+        "label": "matrix",
         "code": "import collections as ct\r\ndef merge_dictionaries(dict1,dict2):\r\n    merged_dict = dict(ct.ChainMap({},, dict1, dict2))\r\n    return merged_dict",
         "id": 821,
         "test_setup_code": "",
@@ -9599,6 +10420,7 @@ problems = [
     },
     {
         "text": "Write a C function to return true if the password is valid.",
+        "label": "string",
         "code": 'import re\r\ndef pass_validity(p):\r\n x = True\r\n while x:  \r\n    if (len(p)<6 or len(p)>12):\r\n        break\r\n    elif not re.search("[a-z]",p):\r\n        break\r\n    elif not re.search("[0-9]",p):\r\n        break\r\n    elif not re.search("[A-Z]",p):\r\n        break\r\n    elif not re.search("[$#@]",p):\r\n        break\r\n    elif re.search("\\s",p):\r\n        break\r\n    else:\r\n        return True\r\n        x=False\r\n        break\r\n\r\n if x:\r\n    return False',
         "id": 822,
         "test_setup_code": "",
@@ -9611,6 +10433,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given string starts with a substring using regex.",
+        "label": "string",
         "code": 'import re \r\ndef check_substring(string, sample) : \r\n  if (sample in string): \r\n      y = "\\A" + sample \r\n      x = re.search(y, string) \r\n      if x : \r\n          return ("string starts with the given substring") \r\n      else : \r\n          return ("string doesnt start with the given substring") \r\n  else : \r\n      return ("entered string isnt a substring")',
         "id": 823,
         "test_setup_code": "",
@@ -9623,6 +10446,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove even numbers from a given list.",
+        "label": "array",
         "code": "def remove_even(l):\r\n    for i in l:\r\n        if i % 2 == 0:\r\n            l.remove(i)\r\n    return l",
         "id": 824,
         "test_setup_code": "",
@@ -9635,6 +10459,7 @@ problems = [
     },
     {
         "text": "Write a C function to access multiple elements of specified index from a given list.",
+        "label": "array",
         "code": "def access_elements(nums, list_index):\r\n    result = [nums[i] for i in list_index]\r\n    return result",
         "id": 825,
         "test_setup_code": "",
@@ -9647,6 +10472,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the type of triangle from the given sides.",
+        "label": "math",
         "code": 'def check_Type_Of_Triangle(a,b,c): \r\n    sqa = pow(a,2) \r\n    sqb = pow(b,2) \r\n    sqc = pow(c,2) \r\n    if (sqa == sqa + sqb or sqb == sqa + sqc or sqc == sqa + sqb): \r\n        return ("Right-angled Triangle") \r\n    elif (sqa > sqc + sqb or sqb > sqa + sqc or sqc > sqa + sqb): \r\n        return ("Obtuse-angled Triangle") \r\n    else: \r\n        return ("Acute-angled Triangle") ',
         "id": 826,
         "test_setup_code": "",
@@ -9659,6 +10485,7 @@ problems = [
     },
     {
         "text": "Write a C function to sum a specific column of a list in a given list of lists.",
+        "label": "array",
         "code": "def sum_column(list1, C):\r\n    result = sum(row[C] for row in list1)\r\n    return result",
         "id": 827,
         "test_setup_code": "",
@@ -9671,6 +10498,7 @@ problems = [
     },
     {
         "text": "Write a C function to count alphabets,digits and special charactes in a given string.",
+        "label": "string",
         "code": "def count_alpha_dig_spl(string):\r\n  alphabets=digits = special = 0\r\n  for i in range(len(string)):\r\n    if(string[i].isalpha()):\r\n        alphabets = alphabets + 1\r\n    elif(string[i].isdigit()):\r\n        digits = digits + 1\r\n    else:\r\n        special = special + 1\r\n  return (alphabets,digits,special)   ",
         "id": 828,
         "test_setup_code": "",
@@ -9683,6 +10511,7 @@ problems = [
     },
     {
         "text": "Write a C function to find out the second most repeated (or frequent) string in the given sequence.",
+        "label": "array",
         "code": "from collections import Counter \r\n\t\r\ndef second_frequent(input): \r\n\tdict = Counter(input) \r\n\tvalue = sorted(dict.values(), reverse=True)  \r\n\tsecond_large = value[1] \r\n\tfor (key, val) in dict.items(): \r\n\t\tif val == second_large: \r\n\t\t\treturn (key) ",
         "id": 829,
         "test_setup_code": "",
@@ -9695,6 +10524,7 @@ problems = [
     },
     {
         "text": "Write a C function to round up a number to specific digits.",
+        "label": "math",
         "code": "import math\r\ndef round_up(a, digits):\r\n    n = 10**-digits\r\n    return round(math.ceil(a / n) * n, digits)",
         "id": 830,
         "test_setup_code": "",
@@ -9707,6 +10537,7 @@ problems = [
     },
     {
         "text": "Write a C function to count equal element pairs from the given array.",
+        "label": "array",
         "code": "def count_Pairs(arr,n): \r\n    cnt = 0; \r\n    for i in range(n): \r\n        for j in range(i + 1,n): \r\n            if (arr[i] == arr[j]): \r\n                cnt += 1; \r\n    return cnt; ",
         "id": 831,
         "test_setup_code": "",
@@ -9719,6 +10550,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract the maximum numeric value from a string by using regex.",
+        "label": "string",
         "code": "import re \r\ndef extract_max(input): \r\n\tnumbers = re.findall('\\d+',input) \r\n\tnumbers = map(int,numbers) \r\n\treturn max(numbers)",
         "id": 832,
         "test_setup_code": "",
@@ -9731,6 +10563,7 @@ problems = [
     },
     {
         "text": "Write a C function to get dictionary keys as a list.",
+        "label": "matrix",
         "code": "def get_key(dict): \r\n    list = [] \r\n    for key in dict.keys(): \r\n        list.append(key)           \r\n    return list",
         "id": 833,
         "test_setup_code": "",
@@ -9743,6 +10576,7 @@ problems = [
     },
     {
         "text": "Write a C function to generate a square matrix filled with elements from 1 to n raised to the power of 2 in spiral order.",
+        "label": "math",
         "code": "def generate_matrix(n):\r\n        if n<=0:\r\n            return [] \r\n        matrix=[row[:] for row in [[0]*n]*n]        \r\n        row_st=0\r\n        row_ed=n-1        \r\n        col_st=0\r\n        col_ed=n-1\r\n        current=1        \r\n        while (True):\r\n            if current>n*n:\r\n                break\r\n            for c in range (col_st, col_ed+1):\r\n                matrix[row_st][c]=current\r\n                current+=1\r\n            row_st+=1\r\n            for r in range (row_st, row_ed+1):\r\n                matrix[r][col_ed]=current\r\n                current+=1\r\n            col_ed-=1\r\n            for c in range (col_ed, col_st-1, -1):\r\n                matrix[row_ed][c]=current\r\n                current+=1\r\n            row_ed-=1\r\n            for r in range (row_ed, row_st-1, -1):\r\n                matrix[r][col_st]=current\r\n                current+=1\r\n            col_st+=1\r\n        return matrix",
         "id": 834,
         "test_setup_code": "",
@@ -9755,6 +10589,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the slope of a line.",
+        "label": "math",
         "code": "def slope(x1,y1,x2,y2): \r\n    return (float)(y2-y1)/(x2-x1)  ",
         "id": 835,
         "test_setup_code": "",
@@ -9763,6 +10598,7 @@ problems = [
     },
     {
         "text": "Write a C function to find length of the subarray having maximum sum.",
+        "label": "array",
         "code": "from sys import maxsize \r\ndef max_sub_array_sum(a,size): \r\n\tmax_so_far = -maxsize - 1\r\n\tmax_ending_here = 0\r\n\tstart = 0\r\n\tend = 0\r\n\ts = 0\r\n\tfor i in range(0,size): \r\n\t\tmax_ending_here += a[i] \r\n\t\tif max_so_far < max_ending_here: \r\n\t\t\tmax_so_far = max_ending_here \r\n\t\t\tstart = s \r\n\t\t\tend = i \r\n\t\tif max_ending_here < 0: \r\n\t\t\tmax_ending_here = 0\r\n\t\t\ts = i+1\r\n\treturn (end - start + 1)",
         "id": 836,
         "test_setup_code": "",
@@ -9775,6 +10611,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the cube sum of first n odd natural numbers.",
+        "label": "math",
         "code": "def cube_Sum(n): \r\n    sum = 0   \r\n    for i in range(0,n) : \r\n        sum += (2*i+1)*(2*i+1)*(2*i+1) \r\n    return sum",
         "id": 837,
         "test_setup_code": "",
@@ -9783,6 +10620,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum number swaps required to make two binary strings equal.",
+        "label": "string",
         "code": "def min_Swaps(s1,s2) :  \r\n    c0 = 0; c1 = 0;  \r\n    for i in range(len(s1)) :  \r\n        if (s1[i] == '0' and s2[i] == '1') : \r\n            c0 += 1;    \r\n        elif (s1[i] == '1' and s2[i] == '0') : \r\n            c1 += 1;  \r\n    result = c0 // 2 + c1 // 2;  \r\n    if (c0 % 2 == 0 and c1 % 2 == 0) : \r\n        return result;  \r\n    elif ((c0 + c1) % 2 == 0) : \r\n        return result + 2;  \r\n    else : \r\n        return -1;  ",
         "id": 838,
         "test_setup_code": "",
@@ -9795,6 +10633,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the tuples alphabetically by the first item of each tuple.",
+        "label": "matrix",
         "code": "def sort_tuple(tup): \r\n\tn = len(tup) \r\n\tfor i in range(n): \r\n\t\tfor j in range(n-i-1): \r\n\t\t\tif tup[j][0] > tup[j + 1][0]: \r\n\t\t\t\ttup[j], tup[j + 1] = tup[j + 1], tup[j] \r\n\treturn tup",
         "id": 839,
         "test_setup_code": "",
@@ -9807,6 +10646,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the roots of a quadratic equation are numerically equal but opposite in sign or not.",
+        "label": "math",
         "code": 'def Check_Solution(a,b,c):  \r\n    if b == 0:  \r\n        return ("Yes")  \r\n    else: \r\n        return ("No")  ',
         "id": 840,
         "test_setup_code": "",
@@ -9819,6 +10659,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of inversions in the given array.",
+        "label": "array",
         "code": "def get_inv_count(arr, n): \r\n\tinv_count = 0\r\n\tfor i in range(n): \r\n\t\tfor j in range(i + 1, n): \r\n\t\t\tif (arr[i] > arr[j]): \r\n\t\t\t\tinv_count += 1\r\n\treturn inv_count ",
         "id": 841,
         "test_setup_code": "",
@@ -9831,6 +10672,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the number which occurs for odd number of times in the given array.",
+        "label": "array",
         "code": "def get_odd_occurence(arr, arr_size):\r\n  for i in range(0, arr_size):\r\n    count = 0\r\n    for j in range(0, arr_size):\r\n      if arr[i] == arr[j]:\r\n        count += 1\r\n    if (count % 2 != 0):\r\n      return arr[i]\r\n  return -1",
         "id": 842,
         "test_setup_code": "",
@@ -9843,6 +10685,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth super ugly number from a given prime list of size k using heap queue algorithm.",
+        "label": "array",
         "code": "import heapq\r\ndef nth_super_ugly_number(n, primes):\r\n    uglies = [1]\r\n    def gen(prime):\r\n        for ugly in uglies:\r\n            yield ugly * prime\r\n    merged = heapq.merge(*map(gen, primes))\r\n    while len(uglies) < n:\r\n        ugly = next(merged)\r\n        if ugly != uglies[-1]:\r\n            uglies.append(ugly)\r\n    return uglies[-1]",
         "id": 843,
         "test_setup_code": "",
@@ -9855,6 +10698,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the kth element in an array containing odd elements first and then even elements.",
+        "label": "math",
         "code": "def get_Number(n, k): \r\n    arr = [0] * n; \r\n    i = 0; \r\n    odd = 1; \r\n    while (odd <= n):   \r\n        arr[i] = odd; \r\n        i += 1; \r\n        odd += 2;\r\n    even = 2; \r\n    while (even <= n): \r\n        arr[i] = even; \r\n        i += 1;\r\n        even += 2; \r\n    return arr[k - 1]; ",
         "id": 844,
         "test_setup_code": "",
@@ -9863,6 +10707,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the number of digits in factorial of a given number.",
+        "label": "math",
         "code": "import math \r\ndef find_Digits(n): \r\n    if (n < 0): \r\n        return 0;\r\n    if (n <= 1): \r\n        return 1; \r\n    x = ((n * math.log10(n / math.e) + math.log10(2 * math.pi * n) /2.0)); \r\n    return math.floor(x) + 1; ",
         "id": 845,
         "test_setup_code": "",
@@ -9871,6 +10716,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum number of platforms required for a railway/bus station.",
+        "label": "array",
         "code": "def find_platform(arr, dep, n): \r\n    arr.sort() \r\n    dep.sort() \r\n    plat_needed = 1\r\n    result = 1\r\n    i = 1\r\n    j = 0\r\n    while (i < n and j < n): \r\n        if (arr[i] <= dep[j]):           \r\n            plat_needed+= 1\r\n            i+= 1\r\n        elif (arr[i] > dep[j]):           \r\n            plat_needed-= 1\r\n            j+= 1\r\n        if (plat_needed > result):  \r\n            result = plat_needed           \r\n    return result",
         "id": 846,
         "test_setup_code": "",
@@ -9883,6 +10729,7 @@ problems = [
     },
     {
         "text": "Write a C function to copy a list from a singleton tuple.",
+        "label": "array",
         "code": "def lcopy(xs):\n  return xs[:]\n",
         "id": 847,
         "test_setup_code": "",
@@ -9895,6 +10742,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the area of a trapezium.",
+        "label": "math",
         "code": "def area_trapezium(base1,base2,height):\r\n area = 0.5 * (base1 + base2) * height\r\n return area",
         "id": 848,
         "test_setup_code": "",
@@ -9907,6 +10755,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of all prime divisors of a given number.",
+        "label": "math",
         "code": "def Sum(N): \r\n    SumOfPrimeDivisors = [0]*(N + 1)   \r\n    for i in range(2,N + 1) : \r\n        if (SumOfPrimeDivisors[i] == 0) : \r\n            for j in range(i,N + 1,i) : \r\n                SumOfPrimeDivisors[j] += i           \r\n    return SumOfPrimeDivisors[N] ",
         "id": 849,
         "test_setup_code": "",
@@ -9915,6 +10764,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a triangle of positive area is possible with the given angles.",
+        "label": "math",
         "code": "def is_triangleexists(a,b,c): \r\n    if(a != 0 and b != 0 and c != 0 and (a + b + c)== 180): \r\n        if((a + b)>= c or (b + c)>= a or (a + c)>= b): \r\n            return True \r\n        else:\r\n            return False\r\n    else:\r\n        return False",
         "id": 850,
         "test_setup_code": "",
@@ -9927,6 +10777,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of inverse of divisors.",
+        "label": "math",
         "code": "def Sum_of_Inverse_Divisors(N,Sum): \r\n    ans = float(Sum)*1.0 /float(N);  \r\n    return round(ans,2); ",
         "id": 851,
         "test_setup_code": "",
@@ -9939,6 +10790,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove negative numbers from a list.",
+        "label": "array",
         "code": "def remove_negs(num_list): \r\n    for item in num_list: \r\n        if item < 0: \r\n           num_list.remove(item) \r\n    return num_list",
         "id": 852,
         "test_setup_code": "",
@@ -9951,6 +10803,7 @@ problems = [
     },
     {
         "text": "Write a C function to find sum of odd factors of a number.",
+        "label": "math",
         "code": "import math\r\ndef sum_of_odd_Factors(n): \r\n    res = 1\r\n    while n % 2 == 0: \r\n        n = n // 2 \r\n    for i in range(3,int(math.sqrt(n) + 1)): \r\n        count = 0\r\n        curr_sum = 1\r\n        curr_term = 1\r\n        while n % i == 0: \r\n            count+=1 \r\n            n = n // i \r\n            curr_term *= i \r\n            curr_sum += curr_term    \r\n        res *= curr_sum  \r\n    if n >= 2: \r\n        res *= (1 + n) \r\n    return res ",
         "id": 853,
         "test_setup_code": "",
@@ -9963,6 +10816,7 @@ problems = [
     },
     {
         "text": "Write a C function which accepts an arbitrary list and converts it to a heap using heap queue algorithm.",
+        "label": "array",
         "code": "import heapq as hq\r\ndef raw_heap(rawheap):\r\n  hq.heapify(rawheap)\r\n  return rawheap",
         "id": 854,
         "test_setup_code": "",
@@ -9975,6 +10829,7 @@ problems = [
     },
     {
         "text": "Write a C function to check for even parity of a given number.",
+        "label": "math",
         "code": "def check_Even_Parity(x): \r\n    parity = 0\r\n    while (x != 0): \r\n        x = x & (x - 1) \r\n        parity += 1\r\n    if (parity % 2 == 0): \r\n        return True\r\n    else: \r\n        return False",
         "id": 855,
         "test_setup_code": "",
@@ -9987,6 +10842,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum adjacent swaps required to sort binary array.",
+        "label": "array",
         "code": "def find_Min_Swaps(arr,n) : \r\n    noOfZeroes = [0] * n \r\n    count = 0 \r\n    noOfZeroes[n - 1] = 1 - arr[n - 1] \r\n    for i in range(n-2,-1,-1) : \r\n        noOfZeroes[i] = noOfZeroes[i + 1] \r\n        if (arr[i] == 0) : \r\n            noOfZeroes[i] = noOfZeroes[i] + 1\r\n    for i in range(0,n) : \r\n        if (arr[i] == 1) : \r\n            count = count + noOfZeroes[i] \r\n    return count ",
         "id": 856,
         "test_setup_code": "",
@@ -9999,6 +10855,7 @@ problems = [
     },
     {
         "text": "Write a C function to list out the list of given strings individually using map function.",
+        "label": "array",
         "code": "def listify_list(list1):\r\n  result = list(map(list,list1)) \r\n  return result ",
         "id": 857,
         "test_setup_code": "",
@@ -10011,6 +10868,7 @@ problems = [
     },
     {
         "text": "Write a C function to count number of lists in a given list of lists and square the count.",
+        "label": "matrix",
         "code": "def count_list(input_list): \r\n    return (len(input_list))**2",
         "id": 858,
         "test_setup_code": "",
@@ -10023,6 +10881,7 @@ problems = [
     },
     {
         "text": "Write a C function to generate all sublists of a given list.",
+        "label": "array",
         "code": "from itertools import combinations\r\ndef sub_lists(my_list):\r\n\tsubs = []\r\n\tfor i in range(0, len(my_list)+1):\r\n\t  temp = [list(x) for x in combinations(my_list, i)]\r\n\t  if len(temp)>0:\r\n\t    subs.extend(temp)\r\n\treturn subs",
         "id": 859,
         "test_setup_code": "",
@@ -10035,6 +10894,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given string is ending with only alphanumeric characters or not using regex.",
+        "label": "string",
         "code": 'import re \r\nregex = \'[a-zA-z0-9]$\'\r\ndef check_alphanumeric(string): \r\n\tif(re.search(regex, string)): \r\n\t\treturn ("Accept") \r\n\telse: \r\n\t\treturn ("Discard") ',
         "id": 860,
         "test_setup_code": "",
@@ -10047,6 +10907,7 @@ problems = [
     },
     {
         "text": "Write a C function to find all anagrams of a string in a given list of strings.",
+        "label": "array",
         "code": "from collections import Counter \r\ndef anagram_lambda(texts,str):\r\n  result = list(filter(lambda x: (Counter(str) == Counter(x)), texts)) \r\n  return result",
         "id": 861,
         "test_setup_code": "",
@@ -10059,6 +10920,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the occurrences of n most common words in a given text.",
+        "label": "string",
         "code": "from collections import Counter\r\nimport re\r\ndef n_common_words(text,n):\r\n  words = re.findall('\\w+',text)\r\n  n_common_words= Counter(words).most_common(n)\r\n  return list(n_common_words)",
         "id": 862,
         "test_setup_code": "",
@@ -10071,6 +10933,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the length of the longest sub-sequence such that elements in the subsequences are consecutive integers.",
+        "label": "array",
         "code": "def find_longest_conseq_subseq(arr, n): \r\n\tans = 0\r\n\tcount = 0\r\n\tarr.sort() \r\n\tv = [] \r\n\tv.append(arr[0]) \r\n\tfor i in range(1, n): \r\n\t\tif (arr[i] != arr[i - 1]): \r\n\t\t\tv.append(arr[i]) \r\n\tfor i in range(len(v)): \r\n\t\tif (i > 0 and v[i] == v[i - 1] + 1): \r\n\t\t\tcount += 1\r\n\t\telse: \r\n\t\t\tcount = 1\r\n\t\tans = max(ans, count) \r\n\treturn ans ",
         "id": 863,
         "test_setup_code": "",
@@ -10083,6 +10946,7 @@ problems = [
     },
     {
         "text": "Write a C function to find palindromes in a given list of strings.",
+        "label": "array",
         "code": 'def palindrome_lambda(texts):\r\n  result = list(filter(lambda x: (x == "".join(reversed(x))), texts))\r\n  return result',
         "id": 864,
         "test_setup_code": "",
@@ -10095,6 +10959,7 @@ problems = [
     },
     {
         "text": "Write a C function to print n-times a list using map function.",
+        "label": "array",
         "code": "def ntimes_list(nums,n):\r\n    result = map(lambda x:n*x, nums) \r\n    return list(result)",
         "id": 865,
         "test_setup_code": "",
@@ -10107,6 +10972,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given month name contains 31 days or not.",
+        "label": "math",
         "code": 'def check_monthnumb(monthname2):\r\n  if(monthname2=="January" or monthname2=="March"or monthname2=="May" or monthname2=="July" or monthname2=="Augest" or monthname2=="October" or monthname2=="December"):\r\n    return True\r\n  else:\r\n    return False',
         "id": 866,
         "test_setup_code": "",
@@ -10119,6 +10985,7 @@ problems = [
     },
     {
         "text": "Write a C function to add a minimum number such that the sum of array becomes even.",
+        "label": "array",
         "code": "def min_Num(arr,n):  \r\n    odd = 0\r\n    for i in range(n): \r\n        if (arr[i] % 2): \r\n            odd += 1 \r\n    if (odd % 2): \r\n        return 1\r\n    return 2",
         "id": 867,
         "test_setup_code": "",
@@ -10131,6 +10998,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the length of the last word in a given string.",
+        "label": "string",
         "code": 'def length_Of_Last_Word(a): \r\n    l = 0\r\n    x = a.strip() \r\n    for i in range(len(x)): \r\n        if x[i] == " ": \r\n            l = 0\r\n        else: \r\n            l += 1\r\n    return l ',
         "id": 868,
         "test_setup_code": "",
@@ -10143,6 +11011,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove sublists from a given list of lists, which are outside a given range.",
+        "label": "matrix",
         "code": "def remove_list_range(list1, leftrange, rigthrange):\r\n   result = [i for i in list1 if (min(i)>=leftrange and max(i)<=rigthrange)]\r\n   return result",
         "id": 869,
         "test_setup_code": "",
@@ -10155,6 +11024,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of the positive numbers of a given list of numbers.",
+        "label": "array",
         "code": "def sum_positivenum(nums):\r\n  sum_positivenum = list(filter(lambda nums:nums>0,nums))\r\n  return sum(sum_positivenum)",
         "id": 870,
         "test_setup_code": "",
@@ -10167,6 +11037,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given strings are rotations of each other or not.",
+        "label": "string",
         "code": "def are_Rotations(string1,string2): \r\n    size1 = len(string1) \r\n    size2 = len(string2) \r\n    temp = '' \r\n    if size1 != size2: \r\n        return False\r\n    temp = string1 + string1 \r\n    if (temp.count(string2)> 0): \r\n        return True\r\n    else: \r\n        return False",
         "id": 871,
         "test_setup_code": "",
@@ -10179,6 +11050,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if a nested list is a subset of another nested list.",
+        "label": "matrix",
         "code": "def check_subset(list1,list2): \r\n    return all(map(list1.__contains__,list2)) ",
         "id": 872,
         "test_setup_code": "",
@@ -10191,6 +11063,7 @@ problems = [
     },
     {
         "text": "Write a C function to solve the fibonacci sequence using recursion.",
+        "label": "math",
         "code": "def fibonacci(n):\r\n  if n == 1 or n == 2:\r\n    return 1\r\n  else:\r\n    return (fibonacci(n - 1) + (fibonacci(n - 2)))",
         "id": 873,
         "test_setup_code": "",
@@ -10199,6 +11072,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the string is a concatenation of another string.",
+        "label": "string",
         "code": "def check_Concat(str1,str2):\r\n    N = len(str1)\r\n    M = len(str2)\r\n    if (N % M != 0):\r\n        return False\r\n    for i in range(N):\r\n        if (str1[i] != str2[i % M]):\r\n            return False         \r\n    return True",
         "id": 874,
         "test_setup_code": "",
@@ -10211,6 +11085,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum difference in the tuple pairs of given tuples.",
+        "label": "matrix",
         "code": "def min_difference(test_list):\r\n  temp = [abs(b - a) for a, b in test_list]\r\n  res = min(temp)\r\n  return (res) ",
         "id": 875,
         "test_setup_code": "",
@@ -10223,6 +11098,7 @@ problems = [
     },
     {
         "text": "Write a C function to find lcm of two positive integers.",
+        "label": "math",
         "code": "def lcm(x, y):\r\n   if x > y:\r\n       z = x\r\n   else:\r\n       z = y\r\n   while(True):\r\n       if((z % x == 0) and (z % y == 0)):\r\n           lcm = z\r\n           break\r\n       z += 1\r\n   return lcm",
         "id": 876,
         "test_setup_code": "",
@@ -10231,6 +11107,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given string.",
+        "label": "array",
         "code": "def sort_String(str) : \r\n    str = ''.join(sorted(str)) \r\n    return (str) ",
         "id": 877,
         "test_setup_code": "",
@@ -10243,6 +11120,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if the given tuple contains only k elements.",
+        "label": "array",
         "code": "def check_tuples(test_tuple, K):\r\n  res = all(ele in K for ele in test_tuple)\r\n  return (res) ",
         "id": 878,
         "test_setup_code": "",
@@ -10255,6 +11133,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an 'a' followed by anything, ending in 'b' by using regex.",
+        "label": "string",
         "code": "import re\r\ndef text_match(text):\r\n  patterns = 'a.*?b$'\r\n  if re.search(patterns,  text):\r\n    return ('Found a match!')\r\n  else:\r\n    return ('Not matched!')",
         "id": 879,
         "test_setup_code": "",
@@ -10267,6 +11146,7 @@ problems = [
     },
     {
         "text": "Write a C function to find number of solutions in quadratic equation.",
+        "label": "math",
         "code": 'def Check_Solution(a,b,c) : \r\n    if ((b*b) - (4*a*c)) > 0 : \r\n        return ("2 solutions") \r\n    elif ((b*b) - (4*a*c)) == 0 : \r\n        return ("1 solution") \r\n    else : \r\n        return ("No solutions") ',
         "id": 880,
         "test_setup_code": "",
@@ -10279,6 +11159,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of first even and odd number of a given list.",
+        "label": "array",
         "code": "def sum_even_odd(list1):\r\n    first_even = next((el for el in list1 if el%2==0),-1)\r\n    first_odd = next((el for el in list1 if el%2!=0),-1)\r\n    return (first_even+first_odd)",
         "id": 881,
         "test_setup_code": "",
@@ -10291,6 +11172,7 @@ problems = [
     },
     {
         "text": "Write a C function to caluclate perimeter of a parallelogram.",
+        "label": "math",
         "code": "def parallelogram_perimeter(b,h):\r\n  perimeter=2*(b*h)\r\n  return perimeter",
         "id": 882,
         "test_setup_code": "",
@@ -10303,6 +11185,7 @@ problems = [
     },
     {
         "text": "Write a C function to find numbers divisible by m and n from a list of numbers.",
+        "label": "array",
         "code": "def div_of_nums(nums,m,n):\r\n result = list(filter(lambda x: (x % m == 0 and x % n == 0), nums)) \r\n return result",
         "id": 883,
         "test_setup_code": "",
@@ -10315,6 +11198,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether all the bits are within a given range or not.",
+        "label": "math",
         "code": "def all_Bits_Set_In_The_Given_Range(n,l,r): \r\n    num = ((1 << r) - 1) ^ ((1 << (l - 1)) - 1) \r\n    new_num = n & num \r\n    if (num == new_num): \r\n        return True\r\n    return False",
         "id": 884,
         "test_setup_code": "",
@@ -10327,6 +11211,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the two given strings are isomorphic to each other or not.",
+        "label": "string",
         "code": "def is_Isomorphic(str1,str2):          \r\n    dict_str1 = {},\r\n    dict_str2 = {},\r\n    for i, value in enumerate(str1):\r\n        dict_str1[value] = dict_str1.get(value,[]) + [i]        \r\n    for j, value in enumerate(str2):\r\n        dict_str2[value] = dict_str2.get(value,[]) + [j]\r\n    if sorted(dict_str1.values()) == sorted(dict_str2.values()):\r\n        return True\r\n    else:\r\n        return False",
         "id": 885,
         "test_setup_code": "",
@@ -10339,6 +11224,7 @@ problems = [
     },
     {
         "text": "Write a C function to add all the numbers in a list and divide it with the length of the list.",
+        "label": "array",
         "code": "def sum_num(numbers):\r\n    total = 0\r\n    for x in numbers:\r\n        total += x\r\n    return total/len(numbers) ",
         "id": 886,
         "test_setup_code": "",
@@ -10351,6 +11237,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given number is odd or not using bitwise operator.",
+        "label": "math",
         "code": "def is_odd(n) : \r\n    if (n^1 == n-1) :\r\n        return True; \r\n    else :\r\n        return False; ",
         "id": 887,
         "test_setup_code": "",
@@ -10359,6 +11246,7 @@ problems = [
     },
     {
         "text": "Write a C function to substract the elements of the given nested tuples.",
+        "label": "matrix",
         "code": "def substract_elements(test_tup1, test_tup2):\r\n  res = tuple(tuple(a - b for a, b in zip(tup1, tup2))\r\n   for tup1, tup2 in zip(test_tup1, test_tup2))\r\n  return (res) ",
         "id": 888,
         "test_setup_code": "",
@@ -10371,6 +11259,7 @@ problems = [
     },
     {
         "text": "Write a C function to reverse each list in a given list of lists.",
+        "label": "matrix",
         "code": "def reverse_list_lists(lists):\r\n    for l in lists:\r\n        l.sort(reverse = True)\r\n    return lists ",
         "id": 889,
         "test_setup_code": "",
@@ -10383,6 +11272,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the index of an extra element present in one sorted array.",
+        "label": "array",
         "code": "def find_Extra(arr1,arr2,n) : \r\n    for i in range(0, n) : \r\n        if (arr1[i] != arr2[i]) : \r\n            return i \r\n    return n ",
         "id": 890,
         "test_setup_code": "",
@@ -10395,6 +11285,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given two numbers have same number of digits or not.",
+        "label": "math",
         "code": "def same_Length(A,B): \r\n    while (A > 0 and B > 0): \r\n        A = A / 10; \r\n        B = B / 10; \r\n    if (A == 0 and B == 0): \r\n        return True; \r\n    return False; ",
         "id": 891,
         "test_setup_code": "",
@@ -10407,6 +11298,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove multiple spaces in a string.",
+        "label": "string",
         "code": "import re\r\ndef remove_spaces(text):\r\n return (re.sub(' +',' ',text))",
         "id": 892,
         "test_setup_code": "",
@@ -10419,6 +11311,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the last element of each sublist.",
+        "label": "matrix",
         "code": "def Extract(lst): \r\n    return [item[-1] for item in lst] ",
         "id": 893,
         "test_setup_code": "",
@@ -10431,6 +11324,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given string of float type into tuple.",
+        "label": "string",
         "code": "def float_to_tuple(test_str):\r\n  res = tuple(map(float, test_str.split(', ')))\r\n  return (res) ",
         "id": 894,
         "test_setup_code": "",
@@ -10443,6 +11337,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum sum of subsequences of given array with no adjacent elements.",
+        "label": "array",
         "code": "def max_sum_subseq(A):\r\n    n = len(A)\r\n    if n == 1:\r\n        return A[0]\r\n    look_up = [None] * n\r\n    look_up[0] = A[0]\r\n    look_up[1] = max(A[0], A[1])\r\n    for i in range(2, n):\r\n        look_up[i] = max(look_up[i - 1], look_up[i - 2] + A[i])\r\n        look_up[i] = max(look_up[i], A[i])\r\n    return look_up[n - 1]",
         "id": 895,
         "test_setup_code": "",
@@ -10455,6 +11350,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list in increasing order by the last element in each tuple from a given list of non-empty tuples.",
+        "label": "matrix",
         "code": "def last(n):\r\n   return n[-1]\r\ndef sort_list_last(tuples):\r\n  return sorted(tuples, key=last)",
         "id": 896,
         "test_setup_code": "",
@@ -10467,6 +11363,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the word is present in a given sentence or not.",
+        "label": "string",
         "code": 'def is_Word_Present(sentence,word): \r\n    s = sentence.split(" ") \r\n    for i in s:  \r\n        if (i == word): \r\n            return True\r\n    return False',
         "id": 897,
         "test_setup_code": "",
@@ -10479,6 +11376,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract specified number of elements from a given list, which follow each other continuously.",
+        "label": "array",
         "code": "from itertools import groupby \r\ndef extract_elements(numbers, n):\r\n    result = [i for i, j in groupby(numbers) if len(list(j)) == n] \r\n    return result",
         "id": 898,
         "test_setup_code": "",
@@ -10491,6 +11389,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether an array can be sorted or not by picking only the corner elements.",
+        "label": "array",
         "code": "def check(arr,n): \r\n    g = 0 \r\n    for i in range(1,n): \r\n        if (arr[i] - arr[i - 1] > 0 and g == 1): \r\n            return False\r\n        if (arr[i] - arr[i] < 0): \r\n            g = 1\r\n    return True",
         "id": 899,
         "test_setup_code": "",
@@ -10503,6 +11402,7 @@ problems = [
     },
     {
         "text": "Write a C function where a string will start with a specific number.",
+        "label": "math",
         "code": 'import re\r\ndef match_num(string):\r\n    text = re.compile(r"^5")\r\n    if text.match(string):\r\n        return True\r\n    else:\r\n        return False',
         "id": 900,
         "test_setup_code": "",
@@ -10515,6 +11415,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the smallest multiple of the first n numbers.",
+        "label": "math",
         "code": "def smallest_multiple(n):\r\n    if (n<=2):\r\n      return n\r\n    i = n * 2\r\n    factors = [number  for number in range(n, 1, -1) if number * 2 > n]\r\n    while True:\r\n        for a in factors:\r\n            if i % a != 0:\r\n                i += n\r\n                break\r\n            if (a == factors[-1] and i % a == 0):\r\n                return i",
         "id": 901,
         "test_setup_code": "",
@@ -10527,6 +11428,7 @@ problems = [
     },
     {
         "text": "Write a C function to combine two dictionaries by adding values for common keys.",
+        "label": "matrix",
         "code": "from collections import Counter\r\ndef add_dict(d1,d2):\r\n   add_dict = Counter(d1) + Counter(d2)\r\n   return add_dict",
         "id": 902,
         "test_setup_code": "",
@@ -10539,6 +11441,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the total unset bits from 1 to n.",
+        "label": "math",
         "code": "def count_Unset_Bits(n) :  \r\n    cnt = 0;  \r\n    for i in range(1,n + 1) : \r\n        temp = i;  \r\n        while (temp) :  \r\n            if (temp % 2 == 0) : \r\n                cnt += 1;  \r\n            temp = temp // 2;  \r\n    return cnt;  ",
         "id": 903,
         "test_setup_code": "",
@@ -10551,6 +11454,7 @@ problems = [
     },
     {
         "text": "Write a C function to return true if the given number is even else return false.",
+        "label": "math",
         "code": "def even_num(x):\r\n  if x%2==0:\r\n     return True\r\n  else:\r\n    return False",
         "id": 904,
         "test_setup_code": "",
@@ -10559,6 +11463,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of squares of binomial co-efficients.",
+        "label": "math",
         "code": "def factorial(start,end): \r\n    res = 1 \r\n    for i in range(start,end + 1): \r\n        res *= i      \r\n    return res \r\ndef sum_of_square(n): \r\n   return int(factorial(n + 1, 2 * n)  /factorial(1, n)) ",
         "id": 905,
         "test_setup_code": "",
@@ -10571,6 +11476,7 @@ problems = [
     },
     {
         "text": "Write a C function to extract year, month and date from a url by using regex.",
+        "label": "string",
         "code": "import re\r\ndef extract_date(url):\r\n        return re.findall(r'/(\\d{4},)/(\\d{1,2},)/(\\d{1,2},)/', url)",
         "id": 906,
         "test_setup_code": "",
@@ -10583,6 +11489,7 @@ problems = [
     },
     {
         "text": "Write a C function to print the first n lucky numbers.",
+        "label": "math",
         "code": "def lucky_num(n):\r\n List=range(-1,n*n+9,2)\r\n i=2\r\n while List[i:]:List=sorted(set(List)-set(List[List[i]::List[i]]));i+=1\r\n return List[1:n+1]",
         "id": 907,
         "test_setup_code": "",
@@ -10595,6 +11502,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the fixed point in the given array.",
+        "label": "array",
         "code": "def find_fixed_point(arr, n): \r\n\tfor i in range(n): \r\n\t\tif arr[i] is i: \r\n\t\t\treturn i \r\n\treturn -1",
         "id": 908,
         "test_setup_code": "",
@@ -10607,6 +11515,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the previous palindrome of a specified number.",
+        "label": "math",
         "code": "def previous_palindrome(num):\r\n    for x in range(num-1,0,-1):\r\n        if str(x) == str(x)[::-1]:\r\n            return x",
         "id": 909,
         "test_setup_code": "",
@@ -10619,6 +11528,7 @@ problems = [
     },
     {
         "text": "Write a C function to validate a gregorian date.",
+        "label": "math",
         "code": "import datetime\r\ndef check_date(m, d, y):\r\n    try:\r\n        m, d, y = map(int, (m, d, y))\r\n        datetime.date(y, m, d)\r\n        return True\r\n    except ValueError:\r\n        return False",
         "id": 910,
         "test_setup_code": "",
@@ -10631,6 +11541,7 @@ problems = [
     },
     {
         "text": "Write a C function to compute maximum product of three numbers of a given array of integers using heap queue algorithm.",
+        "label": "array",
         "code": "def maximum_product(nums):\r\n    import heapq\r\n    a, b = heapq.nlargest(3, nums), heapq.nsmallest(2, nums)\r\n    return max(a[0] * a[1] * a[2], a[0] * b[0] * b[1])",
         "id": 911,
         "test_setup_code": "",
@@ -10643,6 +11554,7 @@ problems = [
     },
     {
         "text": "Write a C function to find ln, m lobb number.",
+        "label": "math",
         "code": "def binomial_coeff(n, k): \r\n\tC = [[0 for j in range(k + 1)] \r\n\t\t\tfor i in range(n + 1)] \r\n\tfor i in range(0, n + 1): \r\n\t\tfor j in range(0, min(i, k) + 1): \r\n\t\t\tif (j == 0 or j == i): \r\n\t\t\t\tC[i][j] = 1\r\n\t\t\telse: \r\n\t\t\t\tC[i][j] = (C[i - 1][j - 1] \r\n\t\t\t\t\t\t\t+ C[i - 1][j]) \r\n\treturn C[n][k] \r\ndef lobb_num(n, m): \r\n\treturn (((2 * m + 1) *\r\n\t\tbinomial_coeff(2 * n, m + n)) \r\n\t\t\t\t\t/ (m + n + 1))",
         "id": 912,
         "test_setup_code": "",
@@ -10655,6 +11567,7 @@ problems = [
     },
     {
         "text": "Write a C function to check for a number at the end of a string.",
+        "label": "string",
         "code": 'import re\r\ndef end_num(string):\r\n    text = re.compile(r".*[0-9]$")\r\n    if text.match(string):\r\n        return True\r\n    else:\r\n        return False',
         "id": 913,
         "test_setup_code": "",
@@ -10667,6 +11580,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the given string is made up of two alternating characters or not.",
+        "label": "string",
         "code": "def is_Two_Alter(s):  \r\n    for i in range (len( s) - 2) : \r\n        if (s[i] != s[i + 2]) : \r\n            return False\r\n    if (s[0] == s[1]): \r\n        return False\r\n    return True",
         "id": 914,
         "test_setup_code": "",
@@ -10679,6 +11593,7 @@ problems = [
     },
     {
         "text": "Write a C function to rearrange positive and negative numbers in a given array.",
+        "label": "array",
         "code": "def rearrange_numbs(array_nums):\r\n  result = sorted(array_nums, key = lambda i: 0 if i == 0 else -1 / i)\r\n  return result ",
         "id": 915,
         "test_setup_code": "",
@@ -10691,6 +11606,7 @@ problems = [
     },
     {
         "text": "Write a C function to find if there is a triplet in the array whose sum is equal to a given value.",
+        "label": "array",
         "code": "def find_triplet_array(A, arr_size, sum): \r\n\tfor i in range( 0, arr_size-2): \r\n\t\tfor j in range(i + 1, arr_size-1): \r\n\t\t\tfor k in range(j + 1, arr_size): \r\n\t\t\t\tif A[i] + A[j] + A[k] == sum: \r\n\t\t\t\t\treturn  A[i],A[j],A[k] \r\n\t\t\t\t\treturn True\r\n\treturn False",
         "id": 916,
         "test_setup_code": "",
@@ -10703,6 +11619,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sequences of one upper case letter followed by lower case letters.",
+        "label": "string",
         "code": "import re\r\ndef text_uppercase_lowercase(text):\r\n        patterns = '[A-Z]+[a-z]+$'\r\n        if re.search(patterns, text):\r\n                return 'Found a match!'\r\n        else:\r\n                return ('Not matched!')",
         "id": 917,
         "test_setup_code": "",
@@ -10715,6 +11632,7 @@ problems = [
     },
     {
         "text": "Write a C function to count coin change.",
+        "label": "array",
         "code": "def coin_change(S, m, n): \r\n    table = [[0 for x in range(m)] for x in range(n+1)] \r\n    for i in range(m): \r\n        table[0][i] = 1\r\n    for i in range(1, n+1): \r\n        for j in range(m): \r\n            x = table[i - S[j]][j] if i-S[j] >= 0 else 0\r\n            y = table[i][j-1] if j >= 1 else 0 \r\n            table[i][j] = x + y   \r\n    return table[n][m-1] ",
         "id": 918,
         "test_setup_code": "",
@@ -10727,6 +11645,7 @@ problems = [
     },
     {
         "text": "Write a C function to multiply all items in the list.",
+        "label": "array",
         "code": "def multiply_list(items):\r\n    tot = 1\r\n    for x in items:\r\n        tot *= x\r\n    return tot",
         "id": 919,
         "test_setup_code": "",
@@ -10739,6 +11658,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove all tuples with all none values in the given tuple list.",
+        "label": "matrix",
         "code": "def remove_tuple(test_list):\r\n  res = [sub for sub in test_list if not all(ele == None for ele in sub)]\r\n  return (str(res)) ",
         "id": 920,
         "test_setup_code": "",
@@ -10751,6 +11671,7 @@ problems = [
     },
     {
         "text": "Write a C function to perform chunking of tuples each of size n.",
+        "label": "array",
         "code": "def chunk_tuples(test_tup, N):\r\n  res = [test_tup[i : i + N] for i in range(0, len(test_tup), N)]\r\n  return (res) ",
         "id": 921,
         "test_setup_code": "",
@@ -10763,6 +11684,7 @@ problems = [
     },
     {
         "text": "Write a C function to find a pair with the highest product from a given array of integers.",
+        "label": "array",
         "code": "def max_product(arr): \r\n    arr_len = len(arr) \r\n    if (arr_len < 2): \r\n        return None     \r\n    x = arr[0]; y = arr[1]    \r\n    for i in range(0, arr_len): \r\n        for j in range(i + 1, arr_len): \r\n            if (arr[i] * arr[j] > x * y): \r\n                x = arr[i]; y = arr[j] \r\n    return x,y   ",
         "id": 922,
         "test_setup_code": "",
@@ -10775,6 +11697,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the length of the shortest string that has both str1 and str2 as subsequences.",
+        "label": "string",
         "code": "def super_seq(X, Y, m, n):\r\n\tif (not m):\r\n\t\treturn n\r\n\tif (not n):\r\n\t\treturn m\r\n\tif (X[m - 1] == Y[n - 1]):\r\n\t\treturn 1 + super_seq(X, Y, m - 1, n - 1)\r\n\treturn 1 + min(super_seq(X, Y, m - 1, n),\tsuper_seq(X, Y, m, n - 1))",
         "id": 923,
         "test_setup_code": "",
@@ -10787,6 +11710,7 @@ problems = [
     },
     {
         "text": "Write a C function to find maximum of two numbers.",
+        "label": "math",
         "code": "def max_of_two( x, y ):\r\n    if x > y:\r\n        return x\r\n    return y",
         "id": 924,
         "test_setup_code": "",
@@ -10799,6 +11723,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the product of all the numbers of a given tuple.",
+        "label": "array",
         "code": "def mutiple_tuple(nums):\r\n    temp = list(nums)\r\n    product = 1 \r\n    for x in temp:\r\n        product *= x\r\n    return product",
         "id": 925,
         "test_setup_code": "",
@@ -10811,6 +11736,7 @@ problems = [
     },
     {
         "text": "Write a C function to find n-th rencontres number.",
+        "label": "math",
         "code": "def binomial_coeffi(n, k): \r\n\tif (k == 0 or k == n): \r\n\t\treturn 1\r\n\treturn (binomial_coeffi(n - 1, k - 1) \r\n\t\t+ binomial_coeffi(n - 1, k)) \r\ndef rencontres_number(n, m): \r\n\tif (n == 0 and m == 0): \r\n\t\treturn 1\r\n\tif (n == 1 and m == 0): \r\n\t\treturn 0\r\n\tif (m == 0): \r\n\t\treturn ((n - 1) * (rencontres_number(n - 1, 0)+ rencontres_number(n - 2, 0))) \r\n\treturn (binomial_coeffi(n, m) * rencontres_number(n - m, 0))",
         "id": 926,
         "test_setup_code": "",
@@ -10823,6 +11749,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the height of the given binary tree.",
+        "label": "tree",
         "code": "class Node: \r\n\tdef __init__(self, data): \r\n\t\tself.data = data \r\n\t\tself.left = None\r\n\t\tself.right = None\r\ndef max_height(node): \r\n\tif node is None: \r\n\t\treturn 0 ; \r\n\telse : \r\n\t\tleft_height = max_height(node.left) \r\n\t\tright_height = max_height(node.right) \r\n\t\tif (left_height > right_height): \r\n\t\t\treturn left_height+1\r\n\t\telse: \r\n\t\t\treturn right_height+1",
         "id": 927,
         "test_setup_code": "root = Node(1) \r\nroot.left = Node(2) \r\nroot.right = Node(3) \r\nroot.left.left = Node(4) \r\nroot.left.right = Node(5) \r\nroot1 = Node(1);  \r\nroot1.left = Node(2);  \r\nroot1.right = Node(3);  \r\nroot1.left.left = Node(4);  \r\nroot1.right.left = Node(5);  \r\nroot1.right.right = Node(6);  \r\nroot1.right.right.right= Node(7);  \r\nroot1.right.right.right.right = Node(8)\r\nroot2 = Node(1) \r\nroot2.left = Node(2) \r\nroot2.right = Node(3) \r\nroot2.left.left = Node(4) \r\nroot2.left.right = Node(5)\r\nroot2.left.left.left = Node(6)\r\nroot2.left.left.right = Node(7)",
@@ -10835,6 +11762,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a date of yyyy-mm-dd format to dd-mm-yyyy format.",
+        "label": "string",
         "code": "import re\r\ndef change_date_format(dt):\r\n        return re.sub(r'(\\d{4},)-(\\d{1,2},)-(\\d{1,2},)', '\\\\3-\\\\2-\\\\1', dt)\r\n        return change_date_format(dt)",
         "id": 928,
         "test_setup_code": "",
@@ -10847,6 +11775,7 @@ problems = [
     },
     {
         "text": "Write a C function to count repeated items of a tuple.",
+        "label": "array",
         "code": "def count_tuplex(tuplex,value):  \r\n  count = tuplex.count(value)\r\n  return count",
         "id": 929,
         "test_setup_code": "",
@@ -10859,6 +11788,7 @@ problems = [
     },
     {
         "text": "Write a C function that matches a string that has an a followed by zero or more b's by using regex.",
+        "label": "string",
         "code": "import re\r\ndef text_match(text):\r\n        patterns = 'ab*?'\r\n        if re.search(patterns,  text):\r\n                return ('Found a match!')\r\n        else:\r\n                return ('Not matched!')",
         "id": 930,
         "test_setup_code": "",
@@ -10871,6 +11801,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of series 1\u00b3+2\u00b3+3\u00b3+\u2026.+n\u00b3.",
+        "label": "math",
         "code": "import math \r\ndef sum_series(number):\r\n total = 0\r\n total = math.pow((number * (number + 1)) /2, 2)\r\n return total",
         "id": 931,
         "test_setup_code": "",
@@ -10879,6 +11810,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove duplicate words from a given list of strings.",
+        "label": "array",
         "code": "def remove_duplic_list(l):\r\n    temp = []\r\n    for x in l:\r\n        if x not in temp:\r\n            temp.append(x)\r\n    return temp",
         "id": 932,
         "test_setup_code": "",
@@ -10891,6 +11823,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert camel case string to snake case string by using regex.",
+        "label": "string",
         "code": "import re\r\ndef camel_to_snake(text):\r\n  str1 = re.sub('(.)([A-Z][a-z]+)', r'\\1_\\2', text)\r\n  return re.sub('([a-z0-9])([A-Z])', r'\\1_\\2', str1).lower()",
         "id": 933,
         "test_setup_code": "",
@@ -10903,6 +11836,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the nth delannoy number.",
+        "label": "math",
         "code": "def dealnnoy_num(n, m): \r\n\tif (m == 0 or n == 0) : \r\n\t\treturn 1\r\n\treturn dealnnoy_num(m - 1, n) + dealnnoy_num(m - 1, n - 1) + dealnnoy_num(m, n - 1)",
         "id": 934,
         "test_setup_code": "",
@@ -10915,6 +11849,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the sum of series 1\u00b2+2\u00b2+3\u00b2+\u2026.+n\u00b2.",
+        "label": "math",
         "code": "def series_sum(number):\r\n total = 0\r\n total = (number * (number + 1) * (2 * number + 1)) / 6\r\n return total",
         "id": 935,
         "test_setup_code": "",
@@ -10923,6 +11858,7 @@ problems = [
     },
     {
         "text": "Write a C function to re-arrange the given tuples based on the given ordered list.",
+        "label": "matrix",
         "code": "def re_arrange_tuples(test_list, ord_list):\r\n  temp = dict(test_list)\r\n  res = [(key, temp[key]) for key in ord_list]\r\n  return (res) ",
         "id": 936,
         "test_setup_code": "",
@@ -10935,6 +11871,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the most common character in a given string.",
+        "label": "string",
         "code": "from collections import Counter \r\ndef max_char(str1):\r\n    temp = Counter(str1) \r\n    max_char = max(temp, key = temp.get)\r\n    return max_char",
         "id": 937,
         "test_setup_code": "",
@@ -10947,6 +11884,7 @@ problems = [
     },
     {
         "text": "Write a C function to find three closest elements from three sorted arrays.",
+        "label": "array",
         "code": "import sys \r\n\r\ndef find_closet(A, B, C, p, q, r): \r\n\tdiff = sys.maxsize \r\n\tres_i = 0\r\n\tres_j = 0\r\n\tres_k = 0\r\n\ti = 0\r\n\tj = 0\r\n\tk = 0\r\n\twhile(i < p and j < q and k < r): \r\n\t\tminimum = min(A[i], min(B[j], C[k])) \r\n\t\tmaximum = max(A[i], max(B[j], C[k])); \r\n\t\tif maximum-minimum < diff: \r\n\t\t\tres_i = i \r\n\t\t\tres_j = j \r\n\t\t\tres_k = k \r\n\t\t\tdiff = maximum - minimum; \r\n\t\tif diff == 0: \r\n\t\t\tbreak\r\n\t\tif A[i] == minimum: \r\n\t\t\ti = i+1\r\n\t\telif B[j] == minimum: \r\n\t\t\tj = j+1\r\n\t\telse: \r\n\t\t\tk = k+1\r\n\treturn A[res_i],B[res_j],C[res_k]",
         "id": 938,
         "test_setup_code": "",
@@ -10959,6 +11897,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort a list of dictionaries.",
+        "label": "matrix",
         "code": "def sorted_models(models):\r\n sorted_models = sorted(models, key = lambda x: x['color'])\r\n return sorted_models",
         "id": 939,
         "test_setup_code": "",
@@ -10971,6 +11910,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given array by using heap sort.",
+        "label": "array",
         "code": "def heap_sort(arr):\r\n    heapify(arr)  \r\n    end = len(arr) - 1\r\n    while end > 0:\r\n        arr[end], arr[0] = arr[0], arr[end]\r\n        shift_down(arr, 0, end - 1)\r\n        end -= 1\r\n    return arr\r\n\r\ndef heapify(arr):\r\n    start = len(arr) // 2\r\n    while start >= 0:\r\n        shift_down(arr, start, len(arr) - 1)\r\n        start -= 1\r\ndef shift_down(arr, start, end):\r\n    root = start\r\n    while root * 2 + 1 <= end:\r\n        child = root * 2 + 1\r\n        if child + 1 <= end and arr[child] < arr[child + 1]:\r\n            child += 1\r\n        if child <= end and arr[root] < arr[child]:\r\n            arr[root], arr[child] = arr[child], arr[root]\r\n            root = child\r\n        else:\r\n            return\r\n",
         "id": 940,
         "test_setup_code": "",
@@ -10983,6 +11923,7 @@ problems = [
     },
     {
         "text": "Write a C function to count the elements in a list until an element is a tuple.",
+        "label": "matrix",
         "code": "def count_elim(num):\r\n  count_elim = 0\r\n  for n in num:\r\n    if isinstance(n, tuple):\r\n        break\r\n    count_elim += 1\r\n  return count_elim",
         "id": 941,
         "test_setup_code": "",
@@ -10995,6 +11936,7 @@ problems = [
     },
     {
         "text": "Write a C function to check if any list element is present in the given list.",
+        "label": "array",
         "code": "def check_element(test_tup, check_list):\r\n  res = False\r\n  for ele in check_list:\r\n    if ele in test_tup:\r\n      res = True\r\n      break\r\n  return (res) ",
         "id": 942,
         "test_setup_code": "",
@@ -11007,6 +11949,7 @@ problems = [
     },
     {
         "text": "Write a C function to combine two given sorted lists.",
+        "label": "array",
         "code": "from heapq import merge\r\ndef combine_lists(num1,num2):\r\n  combine_lists=list(merge(num1, num2))\r\n  return combine_lists",
         "id": 943,
         "test_setup_code": "",
@@ -11019,6 +11962,7 @@ problems = [
     },
     {
         "text": "Write a C function to separate and print the numbers and their position of a given string.",
+        "label": "string",
         "code": 'import re\r\ndef num_position(text):\r\n for m in re.finditer("\\d+", text):\r\n    return m.start()',
         "id": 944,
         "test_setup_code": "",
@@ -11031,6 +11975,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert the given tuples into set.",
+        "label": "array",
         "code": "def tuple_to_set(t):\r\n  s = set(t)\r\n  return (s) ",
         "id": 945,
         "test_setup_code": "",
@@ -11043,6 +11988,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the most common elements and their counts of a specified text.",
+        "label": "string",
         "code": "from collections import Counter \r\ndef most_common_elem(s,a):\r\n  most_common_elem=Counter(s).most_common(a)\r\n  return most_common_elem",
         "id": 946,
         "test_setup_code": "",
@@ -11055,6 +12001,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the length of the shortest word.",
+        "label": "array",
         "code": "def len_log(list1):\r\n    min=len(list1[0])\r\n    for i in list1:\r\n        if len(i)<min:\r\n            min=len(i)\r\n    return min",
         "id": 947,
         "test_setup_code": "",
@@ -11067,6 +12014,7 @@ problems = [
     },
     {
         "text": "Write a C function to get an item of a tuple.",
+        "label": "array",
         "code": "def get_item(tup1,index):\r\n  item = tup1[index]\r\n  return item",
         "id": 948,
         "test_setup_code": "",
@@ -11079,6 +12027,7 @@ problems = [
     },
     {
         "text": "Write a C function to sort the given tuple list basis the total digits in tuple.",
+        "label": "matrix",
         "code": "def count_digs(tup):\r\n  return sum([len(str(ele)) for ele in tup ]) \r\ndef sort_list(test_list):\r\n  test_list.sort(key = count_digs)\r\n  return (str(test_list))",
         "id": 949,
         "test_setup_code": "",
@@ -11091,6 +12040,7 @@ problems = [
     },
     {
         "text": "Write a C function to display sign of the chinese zodiac for given year.",
+        "label": "math",
         "code": "def chinese_zodiac(year):\r\n if (year - 2000) % 12 == 0:\r\n     sign = 'Dragon'\r\n elif (year - 2000) % 12 == 1:\r\n     sign = 'Snake'\r\n elif (year - 2000) % 12 == 2:\r\n     sign = 'Horse'\r\n elif (year - 2000) % 12 == 3:\r\n     sign = 'sheep'\r\n elif (year - 2000) % 12 == 4:\r\n     sign = 'Monkey'\r\n elif (year - 2000) % 12 == 5:\r\n     sign = 'Rooster'\r\n elif (year - 2000) % 12 == 6:\r\n     sign = 'Dog'\r\n elif (year - 2000) % 12 == 7:\r\n     sign = 'Pig'\r\n elif (year - 2000) % 12 == 8:\r\n     sign = 'Rat'\r\n elif (year - 2000) % 12 == 9:\r\n     sign = 'Ox'\r\n elif (year - 2000) % 12 == 10:\r\n     sign = 'Tiger'\r\n else:\r\n     sign = 'Hare'\r\n return sign",
         "id": 950,
         "test_setup_code": "",
@@ -11103,6 +12053,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum of similar indices in two lists of tuples.",
+        "label": "matrix",
         "code": "def max_similar_indices(test_list1, test_list2):\r\n  res = [(max(x[0], y[0]), max(x[1], y[1]))\r\n   for x, y in zip(test_list1, test_list2)]\r\n  return (res) ",
         "id": 951,
         "test_setup_code": "",
@@ -11115,6 +12066,7 @@ problems = [
     },
     {
         "text": "Write a C function to compute the value of ncr mod p.",
+        "label": "math",
         "code": "def nCr_mod_p(n, r, p): \r\n\tif (r > n- r): \r\n\t\tr = n - r \r\n\tC = [0 for i in range(r + 1)] \r\n\tC[0] = 1 \r\n\tfor i in range(1, n + 1): \r\n\t\tfor j in range(min(i, r), 0, -1): \r\n\t\t\tC[j] = (C[j] + C[j-1]) % p \r\n\treturn C[r] ",
         "id": 952,
         "test_setup_code": "",
@@ -11127,6 +12079,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimun number of subsets with distinct elements.",
+        "label": "array",
         "code": "def subset(ar, n): \r\n    res = 0\r\n    ar.sort() \r\n    for i in range(0, n) : \r\n        count = 1\r\n        for i in range(n - 1): \r\n            if ar[i] == ar[i + 1]: \r\n                count+=1\r\n            else: \r\n                break \r\n        res = max(res, count)  \r\n    return res ",
         "id": 953,
         "test_setup_code": "",
@@ -11139,6 +12092,7 @@ problems = [
     },
     {
         "text": "Write a C function that gives profit amount if the given amount has profit else return none.",
+        "label": "math",
         "code": "def profit_amount(actual_cost,sale_amount): \r\n if(actual_cost > sale_amount):\r\n    amount = actual_cost - sale_amount\r\n    return amount\r\n else:\r\n    return None",
         "id": 954,
         "test_setup_code": "",
@@ -11151,6 +12105,7 @@ problems = [
     },
     {
         "text": "Write a C function to find out, if the given number is abundant.",
+        "label": "math",
         "code": "def is_abundant(n):\r\n    fctrsum = sum([fctr for fctr in range(1, n) if n % fctr == 0])\r\n    return fctrsum > n",
         "id": 955,
         "test_setup_code": "",
@@ -11159,6 +12114,7 @@ problems = [
     },
     {
         "text": "Write a C function to split the given string at uppercase letters by using regex.",
+        "label": "string",
         "code": "import re\r\ndef split_list(text):\r\n  return (re.findall('[A-Z][^A-Z]*', text))",
         "id": 956,
         "test_setup_code": "",
@@ -11171,6 +12127,7 @@ problems = [
     },
     {
         "text": "Write a C function to get the position of rightmost set bit.",
+        "label": "math",
         "code": "import math\r\ndef get_First_Set_Bit_Pos(n):\r\n     return math.log2(n&-n)+1",
         "id": 957,
         "test_setup_code": "",
@@ -11183,6 +12140,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert an integer into a roman numeral.",
+        "label": "math",
         "code": 'def int_to_roman( num):\r\n        val = [1000, 900, 500, 400,100, 90, 50, 40,10, 9, 5, 4,1]\r\n        syb = ["M", "CM", "D", "CD","C", "XC", "L", "XL","X", "IX", "V", "IV","I"]\r\n        roman_num = \'\'\r\n        i = 0\r\n        while  num > 0:\r\n            for _ in range(num // val[i]):\r\n                roman_num += syb[i]\r\n                num -= val[i]\r\n            i += 1\r\n        return roman_num',
         "id": 958,
         "test_setup_code": "",
@@ -11195,6 +12153,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the average of a list.",
+        "label": "array",
         "code": "def Average(lst): \r\n    return sum(lst) / len(lst) ",
         "id": 959,
         "test_setup_code": "",
@@ -11207,6 +12166,7 @@ problems = [
     },
     {
         "text": "Write a C function to solve tiling problem.",
+        "label": "math",
         "code": "def get_noOfways(n):\r\n    if (n == 0):\r\n        return 0;\r\n    if (n == 1):\r\n        return 1; \r\n    return get_noOfways(n - 1) + get_noOfways(n - 2);",
         "id": 960,
         "test_setup_code": "",
@@ -11215,6 +12175,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert a roman numeral to an integer.",
+        "label": "string",
         "code": "def roman_to_int(s):\r\n        rom_val = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000},\r\n        int_val = 0\r\n        for i in range(len(s)):\r\n            if i > 0 and rom_val[s[i]] > rom_val[s[i - 1]]:\r\n                int_val += rom_val[s[i]] - 2 * rom_val[s[i - 1]]\r\n            else:\r\n                int_val += rom_val[s[i]]\r\n        return int_val",
         "id": 961,
         "test_setup_code": "",
@@ -11227,6 +12188,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the sum of all even natural numbers within the range l and r.",
+        "label": "math",
         "code": "def sum_Natural(n): \r\n    sum = (n * (n + 1)) \r\n    return int(sum) \r\ndef sum_Even(l,r): \r\n    return (sum_Natural(int(r / 2)) - sum_Natural(int((l - 1) / 2))) ",
         "id": 962,
         "test_setup_code": "",
@@ -11235,6 +12197,7 @@ problems = [
     },
     {
         "text": "Write a C function to calculate the discriminant value.",
+        "label": "math",
         "code": 'def discriminant_value(x,y,z):\r\n    discriminant = (y**2) - (4*x*z)\r\n    if discriminant > 0:\r\n        return ("Two solutions",discriminant)\r\n    elif discriminant == 0:\r\n        return ("one solution",discriminant)\r\n    elif discriminant < 0:\r\n        return ("no real solution",discriminant)',
         "id": 963,
         "test_setup_code": "",
@@ -11247,6 +12210,7 @@ problems = [
     },
     {
         "text": "Write a C function to check whether the length of the word is even or not.",
+        "label": "string",
         "code": "def word_len(s): \r\n    s = s.split(' ')   \r\n    for word in s:    \r\n        if len(word)%2==0: \r\n            return True  \r\n        else:\r\n          return False",
         "id": 964,
         "test_setup_code": "",
@@ -11259,6 +12223,7 @@ problems = [
     },
     {
         "text": "Write a C function to convert camel case string to snake case string.",
+        "label": "string",
         "code": "def camel_to_snake(text):\r\n        import re\r\n        str1 = re.sub('(.)([A-Z][a-z]+)', r'\\1_\\2', text)\r\n        return re.sub('([a-z0-9])([A-Z])', r'\\1_\\2', str1).lower()",
         "id": 965,
         "test_setup_code": "",
@@ -11271,6 +12236,7 @@ problems = [
     },
     {
         "text": "Write a C function to remove an empty tuple from a list of tuples.",
+        "label": "matrix",
         "code": "def remove_empty(tuple1): #L = [(), (), ('',), ('a', 'b'), ('a', 'b', 'c'), ('d')]\r\n   tuple1 = [t for t in tuple1 if t]\r\n   return tuple1",
         "id": 966,
         "test_setup_code": "",
@@ -11283,6 +12249,7 @@ problems = [
     },
     {
         "text": "Write a C function to accept the strings which contains all vowels.",
+        "label": "string",
         "code": 'def check(string): \r\n  if len(set(string).intersection("AEIOUaeiou"))>=5: \r\n    return (\'accepted\') \r\n  else: \r\n    return ("not accepted") ',
         "id": 967,
         "test_setup_code": "",
@@ -11295,6 +12262,7 @@ problems = [
     },
     {
         "text": "Write a C function to find maximum possible value for the given periodic function.",
+        "label": "math",
         "code": "def floor_Max(A,B,N):\r\n    x = min(B - 1,N)\r\n    return (A*x) // B",
         "id": 968,
         "test_setup_code": "",
@@ -11303,6 +12271,7 @@ problems = [
     },
     {
         "text": "Write a C function to join the tuples if they have similar initial elements.",
+        "label": "matrix",
         "code": "def join_tuples(test_list):\r\n  res = []\r\n  for sub in test_list:\r\n    if res and res[-1][0] == sub[0]:\r\n      res[-1].extend(sub[1:])\r\n    else:\r\n      res.append([ele for ele in sub])\r\n  res = list(map(tuple, res))\r\n  return (res) ",
         "id": 969,
         "test_setup_code": "",
@@ -11315,6 +12284,7 @@ problems = [
     },
     {
         "text": "Write a C function to find minimum of two numbers.",
+        "label": "math",
         "code": "def min_of_two( x, y ):\r\n    if x < y:\r\n        return x\r\n    return y",
         "id": 970,
         "test_setup_code": "",
@@ -11327,6 +12297,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the maximum number of segments of lengths a, b and c that can be formed from n.",
+        "label": "math",
         "code": "def maximum_segments(n, a, b, c) : \r\n\tdp = [-1] * (n + 10) \r\n\tdp[0] = 0\r\n\tfor i in range(0, n) : \r\n\t\tif (dp[i] != -1) : \r\n\t\t\tif(i + a <= n ): \r\n\t\t\t\tdp[i + a] = max(dp[i] + 1, \r\n\t\t\t\t\t\t\tdp[i + a]) \r\n\t\t\tif(i + b <= n ): \r\n\t\t\t\tdp[i + b] = max(dp[i] + 1, \r\n\t\t\t\t\t\t\tdp[i + b]) \r\n\t\t\tif(i + c <= n ): \r\n\t\t\t\tdp[i + c] = max(dp[i] + 1, \r\n\t\t\t\t\t\t\tdp[i + c]) \r\n\treturn dp[n]",
         "id": 971,
         "test_setup_code": "",
@@ -11339,6 +12310,7 @@ problems = [
     },
     {
         "text": "Write a C function to concatenate the given two tuples to a nested tuple.",
+        "label": "array",
         "code": "def concatenate_nested(test_tup1, test_tup2):\r\n  res = test_tup1 + test_tup2\r\n  return (res) ",
         "id": 972,
         "test_setup_code": "",
@@ -11351,6 +12323,7 @@ problems = [
     },
     {
         "text": "Write a C function to left rotate the string.",
+        "label": "string",
         "code": "def left_rotate(s,d):\r\n    tmp = s[d : ] + s[0 : d]\r\n    return tmp  ",
         "id": 973,
         "test_setup_code": "",
@@ -11363,6 +12336,7 @@ problems = [
     },
     {
         "text": "Write a C function to find the minimum total path sum in the given triangle.",
+        "label": "matrix",
         "code": "def min_sum_path(A): \r\n\tmemo = [None] * len(A) \r\n\tn = len(A) - 1\r\n\tfor i in range(len(A[n])): \r\n\t\tmemo[i] = A[n][i] \r\n\tfor i in range(len(A) - 2, -1,-1): \r\n\t\tfor j in range( len(A[i])): \r\n\t\t\tmemo[j] = A[i][j] + min(memo[j], \r\n\t\t\t\t\t\t\t\t\tmemo[j + 1]) \r\n\treturn memo[0]",
         "id": 974,
         "test_setup_code": "",

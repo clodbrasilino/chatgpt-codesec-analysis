@@ -85,6 +85,10 @@ If it does not generate C code (in some cases it generated python code), just tr
 
 All data preprocessing information steps can be found in its [Jupyter Notebook](data_preprocessing.ipynb).
 
+### Clustering analysis
+
+After the data preprocessing, a [frequency distribution over problem, CWE and static analysis tool](k-mean-clustring/cwes_by_problem.csv) is generated as output for a second stage of processing, present in the clustering analysis, which you can find in [this notebook](k-mean-clustring/cwe_clustering_analysis.ipynb).
+
 ### Issues
 
 Some of the code generated might not compile. ChatGPT might miss dependency inclusion or might just write wrong code, it's rare but happens.

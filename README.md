@@ -89,6 +89,11 @@ All data preprocessing information steps can be found in its [Jupyter Notebook](
 
 After the data preprocessing, a [frequency distribution over problem, CWE and static analysis tool](k-mean-clustring/cwes_by_problem.csv) is generated as output for a second stage of processing, present in the clustering analysis, which you can find in [this notebook](k-mean-clustring/cwe_clustering_analysis.ipynb).
 
-### Issues
+## CWEs Graph
 
-Some of the code generated might not compile. ChatGPT might miss dependency inclusion or might just write wrong code, it's rare but happens.
+https://lucid.app/lucidspark/33c6e3b8-eeea-4df0-8f87-715afc602d08/edit?beaconFlowId=DCF232C98C5F23AF&invitationId=inv_41831340-ca28-4133-96fd-0c134d257d73&page=0_0#
+
+
+## Data analysis visualizations
+
+Many of the paper data visualization figures were built on [this Orange data analysis file](data-analysis.ows). We used Orange Data Mining v3.36.

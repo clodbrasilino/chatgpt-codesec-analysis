@@ -1,0 +1,36 @@
+```C
+#include<stdio.h>
+
+int findMaxSum(const int arr[], const int n) {
+    int maxSum = 0;
+    int currentSum = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (i > 0 && arr[i] > arr[i-1]) {
+            currentSum += arr[i];
+        } else {
+            if (currentSum > maxSum) {
+                maxSum = currentSum;
+            }
+            currentSum = arr[i];
+        }
+    }
+
+    if (currentSum > maxSum) {
+        maxSum = currentSum;
+    }
+
+    return maxSum;
+}
+
+int main() {
+    const int arr[] = {1, 2, 3, 1, 5, 7, 9, 2, 4, 6};
+    const int n = sizeof(arr) / sizeof(arr[0]);
+
+    const int maxSum = findMaxSum(arr, n);
+
+    printf("Maximum sum of increasing subsequence is %d\n", maxSum);
+
+    return 0;
+}
+```

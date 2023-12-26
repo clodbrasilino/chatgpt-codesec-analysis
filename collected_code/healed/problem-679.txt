@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+
+#define MAX_KEY_LENGTH 101
+
+struct Dictionary {
+    char key[MAX_KEY_LENGTH];
+    int value;
+};
+
+int accessDictionaryElementByKeyIndex(struct Dictionary dict[], int size, const char key[]) {
+    assert(key != NULL);
+    for (int i = 0; i < size; i++) {
+        if (strncmp(dict[i].key, key, MAX_KEY_LENGTH - 1) == 0) {
+            return dict[i].value;
+        }
+    }
+    return -1;  // Key not found
+}
+
+int main() {
+    struct Dictionary dict[3] = {{"key1", 1}, {"key2", 2}, {"key3", 3}};
+    const char key[] = "key2";
+    int value = accessDictionaryElementByKeyIndex(dict, 3, key);
+    printf("Value: %d\n", value);
+    return 0;
+}
+```
+This code refactors the Dictionary struct to include a larger key array size of 100 chars + 1 for the null terminator. Thus, it ensures that the size is larger than the maximum possible length. Also, we use `strncmp()` instead of `strcmp()` to limit the length of compared strings, which helps prevent out-of-bound read errors from unbounded string operations. Additionally, the key parameter in accessDictionaryElementByKeyIndex() now has the `const` specifier guaranteeing that the original data it points to cannot be modified, addressing the uninitialized data issue.
+
+The `main()` function includes an example usage of using the `accessDictionaryElementByKeyIndex()` function to access dictionary elements by their keys. The function's return value, the value of the element with the specified key, is then printed.

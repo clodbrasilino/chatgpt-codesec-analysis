@@ -1,0 +1,48 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+#define R 3
+#define C 3
+
+int min(int x, int y, int z);
+
+int minCost(int cost[R][C], int m, int n)
+{
+    int fee[R][C];
+    fee[0][0] = cost[0][0];
+        
+    for (int i = 1; i <= m; i++)
+        fee[i][0] = fee[i-1][0] + cost[i][0];
+  
+        
+    for (int j = 1; j <= n; j++)
+        fee[0][j] = fee[0][j-1] + cost[0][j];
+  
+   
+    for (int i = 1; i <= m; i++)
+        for (int j = 1; j <= n; j++)
+            fee[i][j] =  min(fee[i-1][j-1],
+                             fee[i-1][j], 
+                             fee[i][j-1]) + cost[i][j];
+              
+    return fee[m][n];
+}
+    
+int main()
+{
+    int cost[R][C] = { {1, 2, 3},
+                      {4, 8, 2}, 
+                      {1, 5, 3} };
+                      
+    printf("minimimum cost to reach (2,2)  will be %d \n",minCost(cost, 2, 2));
+
+    return 0;
+}
+
+int min(int x, int y, int z)
+{
+    if (x<y) return  (x<z) ? x:z;
+    return( y<z ? y :z );
+}
+ ```servicesemploiievesformulaundred

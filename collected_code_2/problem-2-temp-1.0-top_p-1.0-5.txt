@@ -1,0 +1,45 @@
+```c
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+Tuple* common_elements(Tuple *tuple1, Tuple *tuple2) {
+    Tuple* result = (Tuple*)malloc(sizeof(Tuple));
+    result->elements = (int*)malloc(sizeof(int) * ((tuple1->size < tuple2->size) ? tuple1->size : tuple2->size));
+    result->size = 0;
+    
+    for(int i = 0; i < tuple1->size; i++) {
+        for(int j = 0; j < tuple2->size; j++) {
+            if(tuple1->elements[i] == tuple2->elements[j]){
+                result->elements[result->size++] = tuple1->elements[i];
+                break;
+            }
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    int elements1[5] = {1, 2, 3, 4, 5};
+    int elements2[6] = {4, 5, 6, 7, 8, 9};
+
+    Tuple tuple1 = {elements1, 5};
+    Tuple tuple2 = {elements2, 6};
+
+    Tuple *result = common_elements(&tuple1, &tuple2);
+
+    printf("Common Elements are: ");
+    for(int i = 0; i < result->size; i++)
+        printf("%d ", result->elements[i]);
+
+    free(result->elements);
+    free(result);
+
+    return 0;
+}
+```

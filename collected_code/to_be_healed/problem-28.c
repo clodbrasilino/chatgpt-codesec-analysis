@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int binomialCoeff(int n, int k) {
+    int res = 1;
+    if (k > n - k)
+        k = n - k;
+    for (int i = 0; i < k; ++i) {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+    return res;
+}
+
+int main() {
+    int n, k;
+    printf("Enter the values of n and k: ");
+    /* Possible weaknesses found:
+     *  Cannot determine that 'k' is initialized [premium-bughuntingUninit]
+     *  Cannot determine that 'n' is initialized [premium-bughuntingUninit]
+     */
+    scanf("%d%d", &n, &k);
+    printf("The binomial coefficient C(%d, %d) is %d\n", n, k, binomialCoeff(n, k));
+    return 0;
+}

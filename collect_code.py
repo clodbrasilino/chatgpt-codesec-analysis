@@ -4,8 +4,7 @@ from os import getenv
 from mbpp import problems
 from tqdm import tqdm
 
-openai.organization = getenv("OPENAI_ORGANIZATION")
-openai.api_key = getenv("OPENAI_KEY")
+openai.api_key = getenv("OPENAI_API_KEY_P")
 
 
 def collect_generated_code():
@@ -23,16 +22,8 @@ def collect_generated_code():
                 },
             ],
         )
-        with open(f"mbpp-answers/problem-{problem['id']}.c", "w") as f:
+        with open(f"collected_code/problem-{problem['id']}.c", "w") as f:
             code = str(completion.choices[0].message.content)
-            code = code.replace("```c\n", "")
-            code = code.replace("```cpp\n", "")
-            code = code.replace("```c++\n", "")
-            code = code.replace("```C\n", "")
-            code = code.replace("```CPP\n", "")
-            code = code.replace("```C++\n", "")
-            code = code.replace("```\n", "")
-            code = code.replace("\n```", "")
             f.write(code)
 
 

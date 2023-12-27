@@ -1,0 +1,13 @@
+collected_code/healed/problem-717.c: In function 'main':
+collected_code/healed/problem-717.c:34:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   34 |     printf("The standard deviation is %.2f\n", stdDev);
+      |     ^~~~~~
+collected_code/healed/problem-717.c:4:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    3 | #include <assert.h>
+  +++ |+#include <stdio.h>
+    4 | 
+collected_code/healed/problem-717.c:34:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   34 |     printf("The standard deviation is %.2f\n", stdDev);
+      |     ^~~~~~
+collected_code/healed/problem-717.c:34:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+-macosx_version_min has been renamed to -macos_version_min

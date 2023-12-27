@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+int evenWordMaxLength(char *sentence) {
+    if (sentence == NULL) {
+        return 0;
+    }
+    
+    int maxLength = 0;    
+    char *word = strtok(sentence, " "); 
+
+    while (word != NULL) {
+        size_t length = strlen(word);
+
+        if (length % 2 == 0 && length > maxLength) {
+            maxLength = length;
+        }
+
+        word = strtok(NULL, " ");
+    }
+    
+    return maxLength;
+}
+
+int main() {
+    const int MAX_SIZE = 256;
+    char sentence[MAX_SIZE];
+    memset(sentence, 0, MAX_SIZE);
+
+    printf("Enter a sentence: ");
+    if (fgets(sentence, sizeof(sentence), stdin) == NULL) {
+        printf("Failed to read a line.\n");
+        return 1;
+    }
+
+    sentence[strcspn(sentence, "\n")] = '\0';
+
+    int maxLength = evenWordMaxLength(sentence);
+    printf("The maximum length of an even word is: %d\n", maxLength);
+
+    return 0;
+}

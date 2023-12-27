@@ -1,0 +1,13 @@
+collected_code/healed/problem-965.c: In function 'main':
+collected_code/healed/problem-965.c:28:13: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   28 |     if (str[strlen(str)-1] == '\n')
+      |             ^~~~~~
+collected_code/healed/problem-965.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <ctype.h>
+  +++ |+#include <string.h>
+    3 | #define MAX_LENGTH 101
+collected_code/healed/problem-965.c:28:13: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   28 |     if (str[strlen(str)-1] == '\n')
+      |             ^~~~~~
+collected_code/healed/problem-965.c:28:13: note: include '<string.h>' or provide a declaration of 'strlen'
+-macosx_version_min has been renamed to -macos_version_min

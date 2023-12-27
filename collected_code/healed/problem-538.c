@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **data;
+    int size;
+} Tuple;
+
+Tuple convertStringListToTuple(char **stringList, int size) {
+    Tuple tuple;
+    tuple.data = (char **)malloc(size * sizeof(char *));
+    if (tuple.data == NULL) {
+        return tuple;
+    }
+    tuple.size = size;
+    for (int i = 0; i < size; i++) {
+        if (stringList[i] != NULL) {
+            tuple.data[i] = (char *)malloc((strlen(stringList[i]) + 1) * sizeof(char));
+            if (tuple.data[i] != NULL) {
+                strncpy(tuple.data[i], stringList[i], strlen(stringList[i]) + 1);
+            }
+        }
+    }
+    return tuple;
+}
+
+int main() {
+    char *stringList[] = {"Hello", "World", "Example"};
+    int size = sizeof(stringList) / sizeof(stringList[0]);
+    Tuple tuple = convertStringListToTuple(stringList, size);
+
+    for (int i = 0; i < tuple.size; i++) {
+        if (tuple.data[i] != NULL) {
+            printf("%d: %s\n", i, tuple.data[i]);
+        }
+    }
+    for (int i = 0; i < tuple.size; i++) {
+        if (tuple.data[i] != NULL) {
+            free(tuple.data[i]);
+        }
+    }
+    free(tuple.data);
+    return 0;
+}

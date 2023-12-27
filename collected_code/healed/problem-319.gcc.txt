@@ -1,0 +1,13 @@
+collected_code/healed/problem-319.c: In function 'findFiveCharacterWords':
+collected_code/healed/problem-319.c:13:27: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   13 |   const char* end = str + strlen(str);
+      |                           ^~~~~~
+collected_code/healed/problem-319.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <regex.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code/healed/problem-319.c:13:27: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   13 |   const char* end = str + strlen(str);
+      |                           ^~~~~~
+collected_code/healed/problem-319.c:13:27: note: include '<string.h>' or provide a declaration of 'strlen'
+-macosx_version_min has been renamed to -macos_version_min

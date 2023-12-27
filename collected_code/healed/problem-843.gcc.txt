@@ -1,0 +1,73 @@
+collected_code/healed/problem-843.c: In function 'nthSuperUglyNumber':
+collected_code/healed/problem-843.c:10:20: warning: dereference of possibly-NULL 'uglyNumbers' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |     uglyNumbers[0] = 1;
+      |     ~~~~~~~~~~~~~~~^~~
+  'nthSuperUglyNumber': events 1-2
+    |
+    |    6 |     int* uglyNumbers = (int*) calloc(n, sizeof(int));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |......
+    |   10 |     uglyNumbers[0] = 1;
+    |      |     ~~~~~~~~~~~~~~~~~~         
+    |      |                    |
+    |      |                    (2) 'uglyNumbers' could be NULL: unchecked value from (1)
+    |
+collected_code/healed/problem-843.c:14:23: warning: dereference of possibly-NULL 'ugNums' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |             ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'nthSuperUglyNumber': events 1-6
+    |
+    |    8 |     int* ugNums  = (int*) calloc(k, sizeof(int));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   11 |     for(int i = 1; i < n; i++) {
+    |      |                    ~~~~~   
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < n')...
+    |   12 |         int minUgly = INT_MAX;
+    |      |             ~~~~~~~        
+    |      |             |
+    |      |             (3) ...to here
+    |   13 |         for(int j = 0; j < k; j++){
+    |      |                        ~~~~~
+    |      |                          |
+    |      |                          (4) following 'true' branch (when 'j < k')...
+    |   14 |             ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |                    |
+    |      |                       |                    (5) ...to here
+    |      |                       (6) 'ugNums + (long unsigned int)j * 4' could be NULL: unchecked value from (1)
+    |
+collected_code/healed/problem-843.c:14:44: warning: dereference of possibly-NULL 'indices' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |             ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+      |                                     ~~~~~~~^~~
+  'nthSuperUglyNumber': events 1-6
+    |
+    |    7 |     int* indices = (int*) calloc(k, sizeof(int));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   11 |     for(int i = 1; i < n; i++) {
+    |      |                    ~~~~~   
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < n')...
+    |   12 |         int minUgly = INT_MAX;
+    |      |             ~~~~~~~        
+    |      |             |
+    |      |             (3) ...to here
+    |   13 |         for(int j = 0; j < k; j++){
+    |      |                        ~~~~~
+    |      |                          |
+    |      |                          (4) following 'true' branch (when 'j < k')...
+    |   14 |             ugNums[j] = uglyNumbers[indices[j]] * primes[j];
+    |      |                                     ~~~~~~~~~~
+    |      |                                            |
+    |      |                                            (5) ...to here
+    |      |                                            (6) 'indices + (long unsigned int)j * 4' could be NULL: unchecked value from (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

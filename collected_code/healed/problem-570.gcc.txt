@@ -1,0 +1,9 @@
+collected_code/healed/problem-570.c: In function 'removeWords':
+collected_code/healed/problem-570.c:7:37: warning: passing argument 1 of 'strtok' discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+    7 |         char* token = strtok(strings[i], characterOrString);
+      |                              ~~~~~~~^~~
+In file included from collected_code/healed/problem-570.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/string.h:90:23: note: expected 'char *' but argument is of type 'const char *'
+   90 | char    *strtok(char *__str, const char *__sep);
+      |                 ~~~~~~^~~~~
+-macosx_version_min has been renamed to -macos_version_min

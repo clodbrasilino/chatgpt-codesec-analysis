@@ -1,0 +1,22 @@
+collected_code/healed/problem-232.c: In function 'getNLargestItems':
+collected_code/healed/problem-232.c:12:15: warning: dereference of possibly-NULL 'copy' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |       copy[i] = arr[i];
+      |       ~~~~~~~~^~~~~~~~
+  'getNLargestItems': events 1-4
+    |
+    |    9 |    int* copy = (int*) calloc(size, sizeof(int));
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |   10 | 
+    |   11 |    for(int i = 0; i < size; i++) {
+    |      |                   ~~~~~~~~
+    |      |                     |
+    |      |                     (2) following 'true' branch (when 'i < size')...
+    |   12 |       copy[i] = arr[i];
+    |      |       ~~~~~~~~~~~~~~~~ 
+    |      |               |    |
+    |      |               |    (3) ...to here
+    |      |               (4) 'copy + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

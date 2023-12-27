@@ -1,0 +1,90 @@
+collected_code/healed/problem-226.c: In function 'removeOddIndexChars':
+collected_code/healed/problem-226.c:9:21: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+    9 |         str[i] = str[j];
+      |                  ~~~^~~
+  'main': events 1-3
+    |
+    |   14 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   15 |     char str[] = "abcdefgh";
+    |      |          ~~~
+    |      |          |
+    |      |          (2) capacity: 9 bytes
+    |   16 |     removeOddIndexChars(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'removeOddIndexChars' from 'main'
+    |
+    +--> 'removeOddIndexChars': events 4-15
+           |
+           |    4 | void removeOddIndexChars(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'removeOddIndexChars'
+           |......
+           |    8 |     for (i = 0, j = 1; j < length; i++, j += 2) {
+           |      |                        ~~~~~~~~~~
+           |      |                          |
+           |      |                          (5) following 'true' branch (when 'j < length')...
+           |      |                          (7) following 'true' branch (when 'j < length')...
+           |      |                          (9) following 'true' branch (when 'j < length')...
+           |      |                          (11) following 'true' branch (when 'j < length')...
+           |      |                          (13) following 'true' branch (when 'j < length')...
+           |    9 |         str[i] = str[j];
+           |      |                  ~~~~~~
+           |      |                     |
+           |      |                     (6) ...to here
+           |      |                     (8) ...to here
+           |      |                     (10) ...to here
+           |      |                     (12) ...to here
+           |      |                     (14) ...to here
+           |      |                     (15) out-of-bounds read at byte 9 but 'str' ends at byte 9
+           |
+collected_code/healed/problem-226.c:9:21: note: read of 1 byte from after the end of 'str'
+    9 |         str[i] = str[j];
+      |                  ~~~^~~
+collected_code/healed/problem-226.c:9:21: note: valid subscripts for 'str' are '[0]' to '[8]'
+collected_code/healed/problem-226.c:9:21: warning: use of uninitialized value '*str_13(D) + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+  'main': events 1-3
+    |
+    |   14 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   15 |     char str[] = "abcdefgh";
+    |      |          ~~~
+    |      |          |
+    |      |          (2) region created on stack here
+    |   16 |     removeOddIndexChars(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'removeOddIndexChars' from 'main'
+    |
+    +--> 'removeOddIndexChars': events 4-15
+           |
+           |    4 | void removeOddIndexChars(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'removeOddIndexChars'
+           |......
+           |    8 |     for (i = 0, j = 1; j < length; i++, j += 2) {
+           |      |                        ~~~~~~~~~~
+           |      |                          |
+           |      |                          (5) following 'true' branch (when 'j < length')...
+           |      |                          (7) following 'true' branch (when 'j < length')...
+           |      |                          (9) following 'true' branch (when 'j < length')...
+           |      |                          (11) following 'true' branch (when 'j < length')...
+           |      |                          (13) following 'true' branch (when 'j < length')...
+           |    9 |         str[i] = str[j];
+           |      |                  ~~~~~~
+           |      |                     |
+           |      |                     (6) ...to here
+           |      |                     (8) ...to here
+           |      |                     (10) ...to here
+           |      |                     (12) ...to here
+           |      |                     (14) ...to here
+           |      |                     (15) use of uninitialized value '*str_13(D) + _2' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

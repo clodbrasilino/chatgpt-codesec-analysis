@@ -1,0 +1,7 @@
+collected_code/healed/problem-533.c: In function 'removeElements':
+collected_code/healed/problem-533.c:9:26: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)index++ * 4))'
+    9 |             arr[index++] = arr[i];
+      |                          ^
+collected_code/healed/problem-533.c:14:22: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)index++ * 4))'
+   14 |         arr[index++] = 0;
+      |                      ^

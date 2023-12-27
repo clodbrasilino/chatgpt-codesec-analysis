@@ -1,0 +1,308 @@
+collected_code/healed/problem-290.c: In function 'findMaxLists':
+collected_code/healed/problem-290.c:44:30: warning: dereference of possibly-NULL 'max_lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   44 |             max_lists[index] = arr[i];
+      |             ~~~~~~~~~~~~~~~~~^~~~~~~~
+  'findMaxLists': events 1-8
+    |
+    |   28 |     if(num_lists == 0)
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'num_lists != 0')...
+    |......
+    |   31 |     int** max_lists = malloc(num_lists * sizeof(int*));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) ...to here
+    |      |                       (3) this call could return NULL
+    |......
+    |   34 |     for (int i = 0; i < rows; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < rows')...
+    |   35 |         int length = 0;
+    |      |             ~~~~~~
+    |      |             |
+    |      |             (5) ...to here
+    |......
+    |   43 |         if (length == max_length) {
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'true' branch (when 'length == max_length')...
+    |   44 |             max_lists[index] = arr[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |    |
+    |      |                              |    (7) ...to here
+    |      |                              (8) 'max_lists + (long unsigned int)index * 8' could be NULL: unchecked value from (3)
+    |
+collected_code/healed/problem-290.c: In function 'main':
+collected_code/healed/problem-290.c:66:14: warning: dereference of NULL 'max_lists' [CWE-476] [-Wanalyzer-null-dereference]
+   66 |         int* list = max_lists[i];
+      |              ^~~~
+  'main': events 1-2
+    |
+    |   52 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     int** max_lists = findMaxLists(input, 5);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) calling 'findMaxLists' from 'main'
+    |
+    +--> 'findMaxLists': events 3-8
+           |
+           |    6 | int** findMaxLists(int** arr, int rows) {
+           |      |       ^~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findMaxLists'
+           |......
+           |   10 |     for (int i = 0; i < rows; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < rows')...
+           |   11 |         int length = 0;
+           |      |             ~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |......
+           |   14 |         while (*list != -1) {
+           |      |                ~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) following 'true' branch...
+           |   15 |             length++;
+           |      |             ~~~~~~~~
+           |      |                   |
+           |      |                   (7) ...to here
+           |......
+           |   28 |     if(num_lists == 0)
+           |      |       ~
+           |      |       |
+           |      |       (8) following 'true' branch (when 'num_lists == 0')...
+           |
+         'findMaxLists': event 9
+           |
+           |   29 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (9) ...to here
+           |
+         'findMaxLists': event 10
+           |
+           |   29 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (10) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 11-15
+    |
+    |   61 |     int** max_lists = findMaxLists(input, 5);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (11) returning to 'main' from 'findMaxLists'
+    |......
+    |   64 |     for (int i = 0; i < 2; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (12) following 'true' branch (when 'i <= 1')...
+    |   65 | 
+    |   66 |         int* list = max_lists[i];
+    |      |              ~~~~            ~
+    |      |              |               |
+    |      |              |               (13) ...to here
+    |      |              |               (14) 'max_lists' is NULL
+    |      |              (15) dereference of NULL 'max_lists + (long unsigned int)i * 8'
+    |
+collected_code/healed/problem-290.c:66:14: warning: use of uninitialized value '*max_lists_31 + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   66 |         int* list = max_lists[i];
+      |              ^~~~
+  'main': events 1-2
+    |
+    |   52 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     int** max_lists = findMaxLists(input, 5);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) calling 'findMaxLists' from 'main'
+    |
+    +--> 'findMaxLists': events 3-16
+           |
+           |    6 | int** findMaxLists(int** arr, int rows) {
+           |      |       ^~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findMaxLists'
+           |......
+           |   10 |     for (int i = 0; i < rows; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < rows')...
+           |   11 |         int length = 0;
+           |      |             ~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |......
+           |   14 |         while (*list != -1) {
+           |      |                ~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) following 'true' branch...
+           |   15 |             length++;
+           |      |             ~~~~~~~~
+           |      |                   |
+           |      |                   (7) ...to here
+           |......
+           |   28 |     if(num_lists == 0)
+           |      |       ~
+           |      |       |
+           |      |       (8) following 'false' branch (when 'num_lists != 0')...
+           |......
+           |   31 |     int** max_lists = malloc(num_lists * sizeof(int*));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (9) ...to here
+           |      |                       (10) region created on heap here
+           |......
+           |   34 |     for (int i = 0; i < rows; i++) {
+           |      |                     ~~~~~~~~  ~~~
+           |      |                       |        |
+           |      |                       |        (16) ...to here
+           |      |                       (11) following 'true' branch (when 'i < rows')...
+           |   35 |         int length = 0;
+           |      |             ~~~~~~
+           |      |             |
+           |      |             (12) ...to here
+           |......
+           |   38 |         while (*list != -1) {
+           |      |                ~~~~~~~~~~~
+           |      |                      |
+           |      |                      (13) following 'true' branch...
+           |   39 |             length++;
+           |      |             ~~~~~~~~
+           |      |                   |
+           |      |                   (14) ...to here
+           |......
+           |   43 |         if (length == max_length) {
+           |      |            ~
+           |      |            |
+           |      |            (15) following 'false' branch (when 'length != max_length')...
+           |
+    <------+
+    |
+  'main': events 17-20
+    |
+    |   61 |     int** max_lists = findMaxLists(input, 5);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (17) returning to 'main' from 'findMaxLists'
+    |......
+    |   64 |     for (int i = 0; i < 2; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (18) following 'true' branch (when 'i <= 1')...
+    |   65 | 
+    |   66 |         int* list = max_lists[i];
+    |      |              ~~~~            ~
+    |      |              |               |
+    |      |              |               (19) ...to here
+    |      |              (20) use of uninitialized value '*max_lists_31 + _2' here
+    |
+collected_code/healed/problem-290.c:66:14: warning: dereference of possibly-NULL 'max_lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   66 |         int* list = max_lists[i];
+      |              ^~~~
+  'main': events 1-2
+    |
+    |   52 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     int** max_lists = findMaxLists(input, 5);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) calling 'findMaxLists' from 'main'
+    |
+    +--> 'findMaxLists': events 3-16
+           |
+           |    6 | int** findMaxLists(int** arr, int rows) {
+           |      |       ^~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findMaxLists'
+           |......
+           |   10 |     for (int i = 0; i < rows; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < rows')...
+           |   11 |         int length = 0;
+           |      |             ~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |......
+           |   14 |         while (*list != -1) {
+           |      |                ~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) following 'true' branch...
+           |   15 |             length++;
+           |      |             ~~~~~~~~
+           |      |                   |
+           |      |                   (7) ...to here
+           |......
+           |   28 |     if(num_lists == 0)
+           |      |       ~
+           |      |       |
+           |      |       (8) following 'false' branch (when 'num_lists != 0')...
+           |......
+           |   31 |     int** max_lists = malloc(num_lists * sizeof(int*));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (9) ...to here
+           |      |                       (10) this call could return NULL
+           |......
+           |   34 |     for (int i = 0; i < rows; i++) {
+           |      |                     ~~~~~~~~  ~~~
+           |      |                       |        |
+           |      |                       |        (16) ...to here
+           |      |                       (11) following 'true' branch (when 'i < rows')...
+           |   35 |         int length = 0;
+           |      |             ~~~~~~
+           |      |             |
+           |      |             (12) ...to here
+           |......
+           |   38 |         while (*list != -1) {
+           |      |                ~~~~~~~~~~~
+           |      |                      |
+           |      |                      (13) following 'true' branch...
+           |   39 |             length++;
+           |      |             ~~~~~~~~
+           |      |                   |
+           |      |                   (14) ...to here
+           |......
+           |   43 |         if (length == max_length) {
+           |      |            ~
+           |      |            |
+           |      |            (15) following 'false' branch (when 'length != max_length')...
+           |
+    <------+
+    |
+  'main': events 17-20
+    |
+    |   61 |     int** max_lists = findMaxLists(input, 5);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (17) possible return of NULL to 'main' from 'findMaxLists'
+    |......
+    |   64 |     for (int i = 0; i < 2; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (18) following 'true' branch (when 'i <= 1')...
+    |   65 | 
+    |   66 |         int* list = max_lists[i];
+    |      |              ~~~~            ~
+    |      |              |               |
+    |      |              |               (19) ...to here
+    |      |              (20) 'max_lists + (long unsigned int)i * 8' could be NULL: unchecked value from (10)
+    |
+-macosx_version_min has been renamed to -macos_version_min

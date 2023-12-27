@@ -1,0 +1,48 @@
+collected_code/healed/problem-538.c: In function 'main':
+collected_code/healed/problem-538.c:33:30: warning: use of uninitialized value 'tuple.size' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   33 |     for (int i = 0; i < tuple.size; i++) {
+      |                         ~~~~~^~~~~
+  'main': events 1-3
+    |
+    |   28 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   31 |     Tuple tuple = convertStringListToTuple(stringList, size);
+    |      |           ~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |           |       |
+    |      |           |       (3) calling 'convertStringListToTuple' from 'main'
+    |      |           (2) region created on stack here
+    |
+    +--> 'convertStringListToTuple': events 4-6
+           |
+           |   10 | Tuple convertStringListToTuple(char **stringList, int size) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (4) entry to 'convertStringListToTuple'
+           |......
+           |   13 |     if (tuple.data == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'true' branch...
+           |   14 |         return tuple;
+           |      |                ~~~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   31 |     Tuple tuple = convertStringListToTuple(stringList, size);
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (7) returning to 'main' from 'convertStringListToTuple'
+    |   32 | 
+    |   33 |     for (int i = 0; i < tuple.size; i++) {
+    |      |                         ~~~~~~~~~~
+    |      |                              |
+    |      |                              (8) use of uninitialized value 'tuple.size' here
+    |
+-macosx_version_min has been renamed to -macos_version_min

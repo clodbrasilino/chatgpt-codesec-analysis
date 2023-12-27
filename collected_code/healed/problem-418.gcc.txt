@@ -1,0 +1,62 @@
+collected_code/healed/problem-418.c: In function 'findMaxSublist':
+collected_code/healed/problem-418.c:21:15: warning: use of uninitialized value '*curr.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |     while(curr->next != NULL) {
+      |           ~~~~^~~~~~
+  'main': events 1-3
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   52 |     struct Node* head = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (2) region created on heap here
+    |......
+    |   57 |     if(head != NULL && second != NULL && third != NULL && fourth != NULL){
+    |      |       ~
+    |      |       |
+    |      |       (3) following 'true' branch (when 'head' is non-NULL)...
+    |
+  'main': event 4
+    |
+    |   57 |     if(head != NULL && second != NULL && third != NULL && fourth != NULL){
+    |      |                     ^
+    |      |                     |
+    |      |                     (4) ...to here
+    |
+  'main': events 5-7
+    |
+    |   57 |     if(head != NULL && second != NULL && third != NULL && fourth != NULL){
+    |      |                     ^
+    |      |                     |
+    |      |                     (5) following 'false' branch (when 'second' is NULL)...
+    |......
+    |   71 |     struct Node* result = findMaxSublist(head);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (6) ...to here
+    |      |                           (7) calling 'findMaxSublist' from 'main'
+    |
+    +--> 'findMaxSublist': events 8-11
+           |
+           |    9 | struct Node* findMaxSublist(struct Node* head) {
+           |      |              ^~~~~~~~~~~~~~
+           |      |              |
+           |      |              (8) entry to 'findMaxSublist'
+           |   10 |     if(head == NULL) {
+           |      |       ~       
+           |      |       |
+           |      |       (9) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   14 |     struct Node* curr = head;
+           |      |                  ~~~~
+           |      |                  |
+           |      |                  (10) ...to here
+           |......
+           |   21 |     while(curr->next != NULL) {
+           |      |           ~~~~~~~~~~
+           |      |               |
+           |      |               (11) use of uninitialized value '*curr.next' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,44 @@
+collected_code/healed/problem-656.c: In function 'minSumOfAbsDiff':
+collected_code/healed/problem-656.c:12:21: warning: dereference of possibly-NULL 'sortArr1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |         sortArr1[i] = arr1[i];
+      |         ~~~~~~~~~~~~^~~~~~~~~
+  'minSumOfAbsDiff': events 1-4
+    |
+    |    9 |     int *sortArr1 = malloc(n * sizeof(int));
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   10 |     int *sortArr2 = malloc(n * sizeof(int));
+    |   11 |     for(int i = 0; i < n; i++){
+    |      |                    ~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < n')...
+    |   12 |         sortArr1[i] = arr1[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |     |
+    |      |                     |     (3) ...to here
+    |      |                     (4) 'sortArr1 + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+collected_code/healed/problem-656.c:13:21: warning: dereference of possibly-NULL 'sortArr2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |         sortArr2[i] = arr2[i];
+      |         ~~~~~~~~~~~~^~~~~~~~~
+  'minSumOfAbsDiff': events 1-4
+    |
+    |   10 |     int *sortArr2 = malloc(n * sizeof(int));
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   11 |     for(int i = 0; i < n; i++){
+    |      |                    ~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < n')...
+    |   12 |         sortArr1[i] = arr1[i];
+    |      |                           ~
+    |      |                           |
+    |      |                           (3) ...to here
+    |   13 |         sortArr2[i] = arr2[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (4) 'sortArr2 + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

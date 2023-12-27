@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <limits.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+int findOperations(int arr[], int n, int k) {
+    int max_val = INT_MIN;
+    int min_val = INT_MAX;
+    for (int i = 0; i < n; i++) {
+        max_val = max(max_val, arr[i]);
+        min_val = min(min_val, arr[i]);
+    }
+    int operations = 0;
+    while (max_val - min_val > k) {
+        max_val -= k;
+        min_val += k;
+        operations++;
+    }
+    return operations;
+}
+
+int main() {
+    int arr[] = {1, 3, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 1;
+    int result = findOperations(arr, n, k);
+    printf("The number of operation to equalize array elements: %d\n", result);
+    return 0;
+}

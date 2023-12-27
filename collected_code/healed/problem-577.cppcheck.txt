@@ -1,0 +1,9 @@
+collected_code/healed/problem-577.c:15:12: warning: Uninitialized variable: lastDigit [uninitvar]
+    return lastDigit;
+           ^
+collected_code/healed/problem-577.c:7:23: note: Assuming condition is false
+    for (int i = 2; i <= n; i++) {
+                      ^
+collected_code/healed/problem-577.c:15:12: note: Uninitialized variable: lastDigit
+    return lastDigit;
+           ^

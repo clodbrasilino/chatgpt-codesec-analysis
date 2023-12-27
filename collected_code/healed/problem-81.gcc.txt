@@ -1,0 +1,39 @@
+collected_code/healed/problem-81.c: In function 'zipTuples':
+collected_code/healed/problem-81.c:4:21: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    4 |     int* zipTuple = malloc(size * 2 * sizeof(int));
+      |                     ^~~~~~
+collected_code/healed/problem-81.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code/healed/problem-81.c:4:21: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    4 |     int* zipTuple = malloc(size * 2 * sizeof(int));
+      |                     ^~~~~~
+collected_code/healed/problem-81.c:4:21: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code/healed/problem-81.c:16:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   16 |     free(zipTuple);
+      |     ^~~~
+collected_code/healed/problem-81.c:16:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/healed/problem-81.c:16:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code/healed/problem-81.c:16:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code/healed/problem-81.c:7:21: warning: dereference of possibly-NULL 'zipTuple' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |         zipTuple[i] = tuple1[i / 2];
+      |         ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'zipTuples': events 1-4
+    |
+    |    4 |     int* zipTuple = malloc(size * 2 * sizeof(int));
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |    5 | 
+    |    6 |     for (int i = 0; i < size * 2; i += 2) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |    7 |         zipTuple[i] = tuple1[i / 2];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |          |
+    |      |                     |          (3) ...to here
+    |      |                     (4) 'zipTuple + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

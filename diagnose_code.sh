@@ -1,6 +1,11 @@
 #!/bin/bash
 
-COLLECTED_CODE=collected_code/*
+# Please change these paths to suit your environment configurations (where the tools were installed)
+GCC_PATH=/usr/local/bin/gcc-13
+FLAWFINDER_PATH=/usr/local/bin/flawfinder
+CPPCHECK_PATH=./cppcheckpremium/cppcheck
+
+COLLECTED_CODE=collected_code/healed/*
 
 for file in $COLLECTED_CODE ; do
 	if [ "${file: -2}" == ".c" ] ; then

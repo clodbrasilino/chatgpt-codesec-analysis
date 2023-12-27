@@ -1,0 +1,133 @@
+collected_code/healed/problem-795.c: In function 'findNcheapItems':
+collected_code/healed/problem-795.c:91:17: warning: dereference of NULL 'heap' [CWE-476] [-Wanalyzer-null-dereference]
+   91 |         if (heap->size < n) {
+      |             ~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  113 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findNcheapItems(dataset, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNcheapItems' from 'main'
+    |
+    +--> 'findNcheapItems': events 3-4
+           |
+           |   87 | void findNcheapItems(Item* dataset, int size, int n) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNcheapItems'
+           |   88 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNcheapItems'
+           |
+           +--> 'createHeap': events 5-9
+                  |
+                  |   39 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   40 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) allocated here
+                  |   41 | 
+                  |   42 |     if(heap==NULL)   // Null check for malloc
+                  |      |       ~
+                  |      |       |
+                  |      |       (7) assuming 'heap' is NULL
+                  |      |       (8) following 'true' branch (when 'heap' is NULL)...
+                  |   43 |         return heap;
+                  |      |                ~~~~
+                  |      |                |
+                  |      |                (9) ...to here
+                  |
+           <------+
+           |
+         'findNcheapItems': events 10-13
+           |
+           |   88 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (10) return of NULL to 'findNcheapItems' from 'createHeap'
+           |   89 | 
+           |   90 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (11) following 'true' branch (when 'i < size')...
+           |   91 |         if (heap->size < n) {
+           |      |             ~~~~~~~~~~
+           |      |                 |
+           |      |                 (12) ...to here
+           |      |                 (13) dereference of NULL 'heap'
+           |
+collected_code/healed/problem-795.c:91:17: warning: use of uninitialized value '*heap.size' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   91 |         if (heap->size < n) {
+      |             ~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  113 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  127 |     findNcheapItems(dataset, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNcheapItems' from 'main'
+    |
+    +--> 'findNcheapItems': events 3-4
+           |
+           |   87 | void findNcheapItems(Item* dataset, int size, int n) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNcheapItems'
+           |   88 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNcheapItems'
+           |
+           +--> 'createHeap': events 5-8
+                  |
+                  |   39 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   40 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) region created on heap here
+                  |   41 | 
+                  |   42 |     if(heap==NULL)   // Null check for malloc
+                  |      |       ~
+                  |      |       |
+                  |      |       (7) following 'true' branch (when 'heap' is NULL)...
+                  |   43 |         return heap;
+                  |      |                ~~~~
+                  |      |                |
+                  |      |                (8) ...to here
+                  |
+           <------+
+           |
+         'findNcheapItems': events 9-12
+           |
+           |   88 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) returning to 'findNcheapItems' from 'createHeap'
+           |   89 | 
+           |   90 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (10) following 'true' branch (when 'i < size')...
+           |   91 |         if (heap->size < n) {
+           |      |             ~~~~~~~~~~
+           |      |                 |
+           |      |                 (11) ...to here
+           |      |                 (12) use of uninitialized value '*heap.size' here
+           |
+-macosx_version_min has been renamed to -macos_version_min

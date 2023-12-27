@@ -1,0 +1,7 @@
+collected_code/healed/problem-591.c: In function 'interchangeElements':
+collected_code/healed/problem-591.c:5:12: error: assignment of read-only location '*arr'
+    5 |     arr[0] = arr[size - 1];
+      |            ^
+collected_code/healed/problem-591.c:6:19: error: assignment of read-only location '*(arr + ((sizetype)((long unsigned int)size * 4) + 18446744073709551612))'
+    6 |     arr[size - 1] = temp;
+      |                   ^

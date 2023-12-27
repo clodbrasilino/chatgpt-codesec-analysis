@@ -1,0 +1,38 @@
+collected_code/healed/problem-108.c: In function 'mergeSortedInputs':
+collected_code/healed/problem-108.c:35:23: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |         heap[i].value = inputs[i][0];
+      |         ~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   71 |     mergeSortedInputs(inputs, numInputs, numElements);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeSortedInputs' from 'main'
+    |
+    +--> 'mergeSortedInputs': events 3-7
+           |
+           |   31 | void mergeSortedInputs(int *inputs[], int numInputs, int numElements) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeSortedInputs'
+           |   32 |     Node* heap = (Node*) malloc(numInputs * sizeof(Node));
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) this call could return NULL
+           |   33 | 
+           |   34 |     for (int i = 0; i < numInputs; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < numInputs')...
+           |   35 |         heap[i].value = inputs[i][0];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |       |
+           |      |                       |       (6) ...to here
+           |      |                       (7) 'heap + (long unsigned int)i * 12' could be NULL: unchecked value from (4)
+           |
+-macosx_version_min has been renamed to -macos_version_min

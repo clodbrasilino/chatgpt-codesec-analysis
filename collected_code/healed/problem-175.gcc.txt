@@ -1,0 +1,13 @@
+collected_code/healed/problem-175.c: In function 'main':
+collected_code/healed/problem-175.c:22:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   22 |     printf("%s is %s\n", test, isValidParentheses(test) ? "valid" : "invalid");
+      |     ^~~~~~
+collected_code/healed/problem-175.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+collected_code/healed/problem-175.c:22:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   22 |     printf("%s is %s\n", test, isValidParentheses(test) ? "valid" : "invalid");
+      |     ^~~~~~
+collected_code/healed/problem-175.c:22:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+-macosx_version_min has been renamed to -macos_version_min

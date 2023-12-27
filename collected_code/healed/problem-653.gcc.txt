@@ -1,0 +1,81 @@
+collected_code/healed/problem-653.c: In function 'insert':
+collected_code/healed/problem-653.c:64:42: warning: dereference of NULL 'map' [CWE-476] [-Wanalyzer-null-dereference]
+   64 |     unsigned long index = hash(key) % map->capacity;
+      |                                       ~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |  113 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |  114 |     Map* map = createMap(10);
+    |      |                ~~~~~~~~~~~~~
+    |      |                |
+    |      |                (2) calling 'createMap' from 'main'
+    |
+    +--> 'createMap': event 3
+           |
+           |   29 | Map* createMap(int capacity) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'createMap'
+           |
+         'createMap': event 4
+           |
+           |   33 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (4) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |  114 |     Map* map = createMap(10);
+    |      |                ^~~~~~~~~~~~~
+    |      |                |
+    |      |                (5) return of NULL to 'main' from 'createMap'
+    |  115 | 
+    |  116 |     insert(map, "fruit", "apple");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-8
+           |
+           |   63 | void insert(Map* map, const char* key, const char* value) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   64 |     unsigned long index = hash(key) % map->capacity;
+           |      |                           ~~~~~~~~~
+           |      |                           |
+           |      |                           (8) calling 'hash' from 'insert'
+           |
+           +--> 'hash': events 9-11
+                  |
+                  |   52 | unsigned long hash(const char* key) {
+                  |      |               ^~~~
+                  |      |               |
+                  |      |               (9) entry to 'hash'
+                  |......
+                  |   56 |     while ((c = *key++)) {
+                  |      |            ~   
+                  |      |            |
+                  |      |            (10) following 'true' branch (when 'c != 0')...
+                  |   57 |         hash = ((hash << 5) + hash) + c;
+                  |      |                 ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (11) ...to here
+                  |
+           <------+
+           |
+         'insert': events 12-13
+           |
+           |   64 |     unsigned long index = hash(key) % map->capacity;
+           |      |                           ^~~~~~~~~   ~~~~~~~~~~~~~
+           |      |                           |              |
+           |      |                           |              (13) dereference of NULL 'map'
+           |      |                           (12) returning to 'insert' from 'hash'
+           |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,25 @@
+#include <stdbool.h>
+
+bool areElementsUnique(const int list[], int size)
+{
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = i + 1; j < size; j++)
+        {
+            if (list[i] == list[j])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main()
+{
+    int list[] = {1, 2, 3, 4, 5};
+    int size = sizeof(list) / sizeof(list[0]);
+
+    bool result = areElementsUnique(list, size);
+    return 0;
+}

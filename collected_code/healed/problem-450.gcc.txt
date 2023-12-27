@@ -1,0 +1,14 @@
+collected_code/healed/problem-450.c: In function 'extractStrings':
+collected_code/healed/problem-450.c:5:19: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+    5 |         output[i] = list[i];
+      |                   ^
+collected_code/healed/problem-450.c: In function 'main':
+collected_code/healed/problem-450.c:15:50: warning: passing argument 3 of 'extractStrings' from incompatible pointer type [-Wincompatible-pointer-types]
+   15 |     extractStrings(stringList, stringsToExtract, extractedStrings);
+      |                                                  ^~~~~~~~~~~~~~~~
+      |                                                  |
+      |                                                  const char **
+collected_code/healed/problem-450.c:3:57: note: expected 'char **' but argument is of type 'const char **'
+    3 | void extractStrings(const char **list, int size, char** output) {
+      |                                                  ~~~~~~~^~~~~~
+-macosx_version_min has been renamed to -macos_version_min

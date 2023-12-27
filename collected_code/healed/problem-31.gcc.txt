@@ -1,0 +1,100 @@
+collected_code/healed/problem-31.c: In function 'findTopKFrequent':
+collected_code/healed/problem-31.c:93:29: warning: dereference of NULL 'heap' [CWE-476] [-Wanalyzer-null-dereference]
+   93 |         for (j = 0; j < heap->size; ++j) {
+      |                         ~~~~^~~~~~
+  'main': events 1-2
+    |
+    |  123 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |  138 |     findTopKFrequent(arr, size, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findTopKFrequent' from 'main'
+    |
+    +--> 'findTopKFrequent': events 3-4
+           |
+           |   88 | void findTopKFrequent(int arr[], int size, int k) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findTopKFrequent'
+           |   89 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'buildHeap' from 'findTopKFrequent'
+           |
+           +--> 'buildHeap': events 5-6
+                  |
+                  |   56 | Heap* buildHeap(Element *arr, int size) {
+                  |      |       ^~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'buildHeap'
+                  |   57 |     Heap* heap = createHeap(size);
+                  |      |                  ~~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (6) calling 'createHeap' from 'buildHeap'
+                  |
+                  +--> 'createHeap': event 7
+                         |
+                         |   17 | Heap* createHeap(int capacity) {
+                         |      |       ^~~~~~~~~~
+                         |      |       |
+                         |      |       (7) entry to 'createHeap'
+                         |
+                       'createHeap': event 8
+                         |
+                         |   20 |         return NULL;
+                         |      |                ^~~~
+                         |      |                |
+                         |      |                (8) '0' is NULL
+                         |
+                  <------+
+                  |
+                'buildHeap': events 9-10
+                  |
+                  |   57 |     Heap* heap = createHeap(size);
+                  |      |                  ^~~~~~~~~~~~~~~~
+                  |      |                  |
+                  |      |                  (9) returning to 'buildHeap' from 'createHeap'
+                  |   58 |     if (!heap)
+                  |      |        ~          
+                  |      |        |
+                  |      |        (10) following 'true' branch (when 'heap' is NULL)...
+                  |
+                'buildHeap': event 11
+                  |
+                  |   59 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (11) ...to here
+                  |
+                'buildHeap': event 12
+                  |
+                  |   59 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (12) '0' is NULL
+                  |
+           <------+
+           |
+         'findTopKFrequent': events 13-16
+           |
+           |   89 |     Heap* heap = buildHeap(NULL, k);
+           |      |                  ^~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (13) return of NULL to 'findTopKFrequent' from 'buildHeap'
+           |   90 | 
+           |   91 |     for (int i = 0; i < size; ++i) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (14) following 'true' branch (when 'i < size')...
+           |   92 |         int j;
+           |   93 |         for (j = 0; j < heap->size; ++j) {
+           |      |              ~~~~~      ~~~~~~~~~~
+           |      |                |            |
+           |      |                |            (16) dereference of NULL 'heap'
+           |      |                (15) ...to here
+           |
+-macosx_version_min has been renamed to -macos_version_min

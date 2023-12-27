@@ -1,0 +1,9 @@
+collected_code/healed/problem-586.c:15:18: warning: Uninitialized variable: temp [uninitvar]
+        arr[i] = temp[j];
+                 ^
+collected_code/healed/problem-586.c:6:23: note: Assuming condition is false
+    for (int i = 0; i < k; i++) {
+                      ^
+collected_code/healed/problem-586.c:15:18: note: Uninitialized variable: temp
+        arr[i] = temp[j];
+                 ^

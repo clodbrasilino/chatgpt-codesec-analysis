@@ -11,5 +11,6 @@ uncompiled = []
 for filename in get_files_from_folder(path):
     if not isfile(join(path, filename[:-2] + ".o")):
         uncompiled.append(filename)
-        print(filename)
 print(len(uncompiled))
+# for filename in uncompiled:
+#     print(filename)

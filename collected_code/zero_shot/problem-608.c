@@ -19,4 +19,3 @@ int main() {
     printf("The %dth Bell Number is %lld", n, bellNumber(n));
     return 0;
 }
-Note: Replace `n` with the desired value to find the nth Bell number.

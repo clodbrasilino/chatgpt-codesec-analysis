@@ -1,0 +1,39 @@
+collected_code/heal_round_2/healed/problem-923.c: In function 'main':
+collected_code/heal_round_2/healed/problem-923.c:46:10: warning: use of possibly-NULL 'str1' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   46 |     str1[strcspn(str1, "\n")] = 0;
+      |          ^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   37 |     char *str1 = malloc(MAX_STR_LEN * sizeof(char));
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |......
+    |   46 |     str1[strcspn(str1, "\n")] = 0;
+    |      |          ~~~~~~~~~~~~~~~~~~~
+    |      |          |
+    |      |          (2) argument 1 ('str1') from (1) could be NULL where non-null expected
+    |
+In file included from collected_code/heal_round_2/healed/problem-923.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/string.h:80:10: note: argument 1 of 'strcspn' must be non-null
+   80 | size_t   strcspn(const char *__s, const char *__charset);
+      |          ^~~~~~~
+collected_code/heal_round_2/healed/problem-923.c:47:10: warning: use of possibly-NULL 'str2' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   47 |     str2[strcspn(str2, "\n")] = 0;
+      |          ^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   38 |     char *str2 = malloc(MAX_STR_LEN * sizeof(char));
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |......
+    |   47 |     str2[strcspn(str2, "\n")] = 0;
+    |      |          ~~~~~~~~~~~~~~~~~~~
+    |      |          |
+    |      |          (2) argument 1 ('str2') from (1) could be NULL where non-null expected
+    |
+/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/string.h:80:10: note: argument 1 of 'strcspn' must be non-null
+   80 | size_t   strcspn(const char *__s, const char *__charset);
+      |          ^~~~~~~
+-macosx_version_min has been renamed to -macos_version_min

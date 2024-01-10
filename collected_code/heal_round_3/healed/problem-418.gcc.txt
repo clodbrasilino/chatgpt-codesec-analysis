@@ -1,0 +1,62 @@
+collected_code/heal_round_3/healed/problem-418.c: In function 'main':
+collected_code/heal_round_3/healed/problem-418.c:57:16: warning: dereference of possibly-NULL 'head' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   57 |     head->data = 1;
+      |     ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   52 |     struct Node* head = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (1) this call could return NULL
+    |......
+    |   57 |     head->data = 1;
+    |      |     ~~~~~~~~~~~~~~                     
+    |      |                |
+    |      |                (2) 'head' could be NULL: unchecked value from (1)
+    |
+collected_code/heal_round_3/healed/problem-418.c:60:18: warning: dereference of possibly-NULL 'second' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   60 |     second->data = 2;
+      |     ~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   53 |     struct Node* second = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |......
+    |   60 |     second->data = 2;
+    |      |     ~~~~~~~~~~~~~~~~                     
+    |      |                  |
+    |      |                  (2) 'second' could be NULL: unchecked value from (1)
+    |
+collected_code/heal_round_3/healed/problem-418.c:63:17: warning: dereference of possibly-NULL 'third' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   63 |     third->data = 2;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   54 |     struct Node* third = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (1) this call could return NULL
+    |......
+    |   63 |     third->data = 2;
+    |      |     ~~~~~~~~~~~~~~~                     
+    |      |                 |
+    |      |                 (2) 'third' could be NULL: unchecked value from (1)
+    |
+collected_code/heal_round_3/healed/problem-418.c:66:18: warning: dereference of possibly-NULL 'fourth' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   66 |     fourth->data = 3;
+      |     ~~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   55 |     struct Node* fourth = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |......
+    |   66 |     fourth->data = 3;
+    |      |     ~~~~~~~~~~~~~~~~                     
+    |      |                  |
+    |      |                  (2) 'fourth' could be NULL: unchecked value from (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

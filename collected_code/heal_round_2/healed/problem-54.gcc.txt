@@ -1,0 +1,77 @@
+collected_code/heal_round_2/healed/problem-54.c: In function 'countingSort':
+collected_code/heal_round_2/healed/problem-54.c:19:26: warning: dereference of possibly-NULL 'count' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |         count[i] += count[i - 1];
+      |                     ~~~~~^~~~~~~
+  'countingSort': events 1-8
+    |
+    |   12 |     int *count = calloc((max + 1), sizeof(int));
+    |      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (1) this call could return NULL
+    |   13 | 
+    |   14 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < n')...
+    |      |                       (4) following 'false' branch (when 'i >= n')...
+    |   15 |         count[arr[i]]++;
+    |      |                  ~
+    |      |                  |
+    |      |                  (3) ...to here
+    |......
+    |   18 |     for (int i = 1; i <= max; i++) {
+    |      |              ~      ~~~~~~~~
+    |      |              |        |
+    |      |              |        (6) following 'true' branch (when 'i <= max')...
+    |      |              (5) ...to here
+    |   19 |         count[i] += count[i - 1];
+    |      |         ~~~~~~~~    ~~~~~~~~~~~~
+    |      |              |           |
+    |      |              |           (8) 'count + ((long unsigned int)i * 4 + 18446744073709551612)' could be NULL: unchecked value from (1)
+    |      |              (7) ...to here
+    |
+collected_code/heal_round_2/healed/problem-54.c:28:24: warning: dereference of possibly-NULL 'output' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |         arr[i] = output[i];
+      |                  ~~~~~~^~~
+  'countingSort': events 1-10
+    |
+    |   11 |     int *output = malloc(n * sizeof(int));
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |......
+    |   14 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < n')...
+    |   15 |         count[arr[i]]++;
+    |      |                  ~ 
+    |      |                  |
+    |      |                  (3) ...to here
+    |......
+    |   18 |     for (int i = 1; i <= max; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i > max')...
+    |......
+    |   22 |     for (int i = n - 1; i >= 0; i--) {
+    |      |              ~          ~~~~~~
+    |      |              |            |
+    |      |              |            (6) following 'true' branch (when 'i >= 0')...
+    |      |              (5) ...to here
+    |   23 |         output[count[arr[i]] - 1] = arr[i];
+    |      |                                        ~
+    |      |                                        |
+    |      |                                        (7) ...to here
+    |......
+    |   27 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (8) following 'true' branch (when 'i < n')...
+    |   28 |         arr[i] = output[i];
+    |      |                  ~~~~~~~~~
+    |      |                        |
+    |      |                        (9) ...to here
+    |      |                        (10) 'output + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

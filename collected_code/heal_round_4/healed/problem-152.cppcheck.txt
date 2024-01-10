@@ -1,0 +1,18 @@
+collected_code/heal_round_4/healed/problem-152.c:24:14: warning: Uninitialized variable: L [uninitvar]
+    arr[k] = L[i]; i++; k++
+             ^
+collected_code/heal_round_4/healed/problem-152.c:7:17: note: Assuming condition is false
+  for (i = 0; i < n1; i++)
+                ^
+collected_code/heal_round_4/healed/problem-152.c:24:14: note: Uninitialized variable: L
+    arr[k] = L[i]; i++; k++
+             ^
+collected_code/heal_round_4/healed/problem-152.c:28:14: warning: Uninitialized variable: R [uninitvar]
+    arr[k] = R[j]; j++; k++
+             ^
+collected_code/heal_round_4/healed/problem-152.c:9:17: note: Assuming condition is false
+  for (j = 0; j < n2; j++)
+                ^
+collected_code/heal_round_4/healed/problem-152.c:28:14: note: Uninitialized variable: R
+    arr[k] = R[j]; j++; k++
+             ^

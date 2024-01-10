@@ -1,0 +1,19 @@
+collected_code/heal_round_3/healed/problem-676.c: In function 'removeNonAlphanumeric':
+collected_code/heal_round_3/healed/problem-676.c:29:23: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   29 |       size_t length = strlen(result);
+      |                       ^~~~~~
+collected_code/heal_round_3/healed/problem-676.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <stdio.h>
+  +++ |+#include <string.h>
+    4 | 
+collected_code/heal_round_3/healed/problem-676.c:29:23: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   29 |       size_t length = strlen(result);
+      |                       ^~~~~~
+collected_code/heal_round_3/healed/problem-676.c:29:23: note: include '<string.h>' or provide a declaration of 'strlen'
+collected_code/heal_round_3/healed/problem-676.c:32:7: warning: implicit declaration of function 'strncpy' [-Wimplicit-function-declaration]
+   32 |       strncpy(str, result, length);
+      |       ^~~~~~~
+collected_code/heal_round_3/healed/problem-676.c:32:7: note: include '<string.h>' or provide a declaration of 'strncpy'
+collected_code/heal_round_3/healed/problem-676.c:32:7: warning: incompatible implicit declaration of built-in function 'strncpy' [-Wbuiltin-declaration-mismatch]
+collected_code/heal_round_3/healed/problem-676.c:32:7: note: include '<string.h>' or provide a declaration of 'strncpy'
+-macosx_version_min has been renamed to -macos_version_min

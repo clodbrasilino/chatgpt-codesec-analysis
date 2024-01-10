@@ -1,0 +1,13 @@
+collected_code/heal_round_4/healed/problem-500.c: In function 'concatenateList':
+collected_code/heal_round_4/healed/problem-500.c:41:38: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   41 |         char* temp = realloc(result, strlen(result) + size + 2);
+      |                                      ^~~~~~
+collected_code/heal_round_4/healed/problem-500.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code/heal_round_4/healed/problem-500.c:41:38: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   41 |         char* temp = realloc(result, strlen(result) + size + 2);
+      |                                      ^~~~~~
+collected_code/heal_round_4/healed/problem-500.c:41:38: note: include '<string.h>' or provide a declaration of 'strlen'
+-macosx_version_min has been renamed to -macos_version_min

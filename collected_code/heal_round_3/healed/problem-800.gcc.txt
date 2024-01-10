@@ -1,0 +1,13 @@
+collected_code/heal_round_3/healed/problem-800.c: In function 'main':
+collected_code/heal_round_3/healed/problem-800.c:23:25: warning: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+   23 |         char* newline = strchr(str, '\n'); // Check for newline character in string
+      |                         ^~~~~~
+collected_code/heal_round_3/healed/problem-800.c:2:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    1 | #include<stdio.h>
+  +++ |+#include <string.h>
+    2 | 
+collected_code/heal_round_3/healed/problem-800.c:23:25: warning: incompatible implicit declaration of built-in function 'strchr' [-Wbuiltin-declaration-mismatch]
+   23 |         char* newline = strchr(str, '\n'); // Check for newline character in string
+      |                         ^~~~~~
+collected_code/heal_round_3/healed/problem-800.c:23:25: note: include '<string.h>' or provide a declaration of 'strchr'
+-macosx_version_min has been renamed to -macos_version_min

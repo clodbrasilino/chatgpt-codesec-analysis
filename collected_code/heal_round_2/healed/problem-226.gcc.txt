@@ -1,0 +1,86 @@
+collected_code/heal_round_2/healed/problem-226.c: In function 'removeOddIndexChars':
+collected_code/heal_round_2/healed/problem-226.c:9:41: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+    9 |     for (i = 0, j = 1; j < length && str[j] != '\0'; i++, j += 2) {
+      |                                      ~~~^~~
+  'main': events 1-3
+    |
+    |   15 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   16 |     char str[] = "abcdefgh";
+    |      |          ~~~
+    |      |          |
+    |      |          (2) capacity: 9 bytes
+    |   17 |     removeOddIndexChars(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'removeOddIndexChars' from 'main'
+    |
+    +--> 'removeOddIndexChars': events 4-9
+           |
+           |    4 | void removeOddIndexChars(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'removeOddIndexChars'
+           |    5 |     if (str == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'str' is non-NULL)...
+           |    6 | 
+           |    7 |     int length = strlen(str);
+           |      |                  ~~~~~~~~~~~
+           |      |                  |
+           |      |                  (6) ...to here
+           |    8 |     int i, j;
+           |    9 |     for (i = 0, j = 1; j < length && str[j] != '\0'; i++, j += 2) {
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |     |
+           |      |                                   |     (8) ...to here
+           |      |                                   |     (9) out-of-bounds read at byte 9 but 'str' ends at byte 9
+           |      |                                   (7) following 'true' branch...
+           |
+collected_code/heal_round_2/healed/problem-226.c:9:41: note: read of 1 byte from after the end of 'str'
+    9 |     for (i = 0, j = 1; j < length && str[j] != '\0'; i++, j += 2) {
+      |                                      ~~~^~~
+collected_code/heal_round_2/healed/problem-226.c:9:41: note: valid subscripts for 'str' are '[0]' to '[8]'
+collected_code/heal_round_2/healed/problem-226.c:9:41: warning: use of uninitialized value '*str_16(D) + _7' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+  'main': events 1-3
+    |
+    |   15 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   16 |     char str[] = "abcdefgh";
+    |      |          ~~~
+    |      |          |
+    |      |          (2) region created on stack here
+    |   17 |     removeOddIndexChars(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'removeOddIndexChars' from 'main'
+    |
+    +--> 'removeOddIndexChars': events 4-9
+           |
+           |    4 | void removeOddIndexChars(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'removeOddIndexChars'
+           |    5 |     if (str == NULL) return;
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'str' is non-NULL)...
+           |    6 | 
+           |    7 |     int length = strlen(str);
+           |      |                  ~~~~~~~~~~~
+           |      |                  |
+           |      |                  (6) ...to here
+           |    8 |     int i, j;
+           |    9 |     for (i = 0, j = 1; j < length && str[j] != '\0'; i++, j += 2) {
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |     |
+           |      |                                   |     (8) ...to here
+           |      |                                   |     (9) use of uninitialized value '*str_16(D) + _7' here
+           |      |                                   (7) following 'true' branch...
+           |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+#define MAX_STRING_SIZE 256
+
+void snakeToCamel(char* snakeCase, char* camelCase, size_t maxStringLength) {
+    regex_t regex;
+    regmatch_t match;
+    int currentIndex = 0;
+
+    if (snakeCase == NULL || camelCase == NULL || maxStringLength == 0)
+        return;
+
+    regcomp(&regex, "_[a-z]", REG_EXTENDED);
+
+    while (regexec(&regex, &snakeCase[currentIndex], 1, &match, 0) == 0) {
+        if(currentIndex + match.rm_so >= maxStringLength - 1)
+            break;
+
+        camelCase[match.rm_so + currentIndex + 1] = toupper(snakeCase[match.rm_so + 1 + currentIndex]);
+        size_t length = strlen(&snakeCase[match.rm_so + currentIndex]);
+
+        if (length + currentIndex + match.rm_eo + 1 >= maxStringLength)
+            break;
+            
+        memmove(&snakeCase[match.rm_so + currentIndex], &snakeCase[match.rm_eo + currentIndex + 1], length);
+
+        currentIndex += match.rm_eo;
+        camelCase[currentIndex] = '\0';
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char snakeCase[MAX_STRING_SIZE] = "convert_snake_case";
+    char camelCase[MAX_STRING_SIZE];
+    
+    strncpy(camelCase, snakeCase, MAX_STRING_SIZE-1);
+    camelCase[MAX_STRING_SIZE-1] = '\0';
+    
+    snakeToCamel(snakeCase, camelCase, MAX_STRING_SIZE);
+    
+    printf("Camel case: %s\n", camelCase);
+
+    return 0;
+}

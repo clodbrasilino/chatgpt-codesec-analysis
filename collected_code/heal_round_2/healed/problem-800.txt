@@ -1,0 +1,38 @@
+```C
+#include<stdio.h>
+#include<string.h>
+
+void removeWhitespace(char *str) {
+    if (!str) return;
+
+    int i = 0, j = 0;
+
+    size_t size_of_str = strlen(str);
+
+    for(i = 0; i < size_of_str; i++) {
+        if (str[i] != ' ') {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {    
+    char str[101] = {0};
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+
+    if (strlen(str) > 0 && str[strlen(str) - 1] == '\n')
+        str[strlen(str) - 1] = '\0';
+
+    printf("Before removing whitespaces: %s\n", str);
+
+    removeWhitespace(str);
+
+    printf("After removing whitespaces: %s\n", str);
+
+    return 0;
+}
+```
+This simple code refactor ensures that we don't try to remove a newline character if the string is empty. Furthermore, it increases the maximum string size by 1, allowing for the newline character when the user enters exactly 100 characters (not counting the terminating null byte, '\0'). Finally, it adds an initial null check in the removeWhitespace() function to prevent accessing null pointers which would result in a segmentation fault, even though the code should never pass a null pointer in this context.

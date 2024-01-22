@@ -97,4 +97,4 @@ https://lucid.app/lucidspark/33c6e3b8-eeea-4df0-8f87-715afc602d08/edit?beaconFlo
 
 ## Data analysis visualizations
 
-Many of the paper data visualization figures were built on [this Orange data analysis file](data-analysis.ows). We used Orange Data Mining v3.36.
+Many of the paper data visualization figures were built in [this Orange data analysis file](data-analysis.ows). We used Orange Data Mining v3.36.

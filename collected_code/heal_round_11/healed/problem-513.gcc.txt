@@ -1,0 +1,123 @@
+collected_code/heal_round_11/healed/problem-513.c: In function 'tupleToList':
+collected_code/heal_round_11/healed/problem-513.c:12:19: warning: leak of 'list' [CWE-401] [-Wanalyzer-malloc-leak]
+   12 |             *list = malloc(len_tuple + len_string + 1);
+      |             ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   26 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   30 |     char *list = malloc(size_list);
+    |      |                  ~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) allocated here
+    |   31 | 
+    |   32 |     if (list) {
+    |      |        ~
+    |      |        |
+    |      |        (3) assuming 'list' is non-NULL
+    |      |        (4) following 'true' branch...
+    |   33 |         tupleToList(tuple, string, &list, &size_list);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (5) ...to here
+    |      |         (6) calling 'tupleToList' from 'main'
+    |
+    +--> 'tupleToList': events 7-12
+           |
+           |    7 | void tupleToList(const char *tuple, const char *string, char **list, size_t *size_list) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'tupleToList'
+           |    8 |     if (tuple != NULL && string != NULL && list != NULL && size_list > 0) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'true' branch...
+           |    9 |         size_t len_tuple = strnlen(tuple, MAX_SIZE - 1);
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (9) ...to here
+           |   10 |         size_t len_string = strnlen(string, MAX_SIZE - len_tuple - 1);
+           |   11 |         if ((len_tuple + len_string + 1) <= *size_list) {
+           |      |            ~
+           |      |            |
+           |      |            (10) following 'true' branch...
+           |   12 |             *list = malloc(len_tuple + len_string + 1);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |                  |
+           |      |                   |                  (11) ...to here
+           |      |                   (12) 'list' leaks here; was allocated at (2)
+           |
+collected_code/heal_round_11/healed/problem-513.c: In function 'main':
+collected_code/heal_round_11/healed/problem-513.c:34:9: warning: use of NULL 'list' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+   34 |         printf("%s\n", list);
+      |         ^~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   26 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   32 |     if (list) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'true' branch...
+    |   33 |         tupleToList(tuple, string, &list, &size_list);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) ...to here
+    |      |         (4) calling 'tupleToList' from 'main'
+    |
+    +--> 'tupleToList': events 5-13
+           |
+           |    7 | void tupleToList(const char *tuple, const char *string, char **list, size_t *size_list) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (5) entry to 'tupleToList'
+           |    8 |     if (tuple != NULL && string != NULL && list != NULL && size_list > 0) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'true' branch...
+           |    9 |         size_t len_tuple = strnlen(tuple, MAX_SIZE - 1);
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (7) ...to here
+           |   10 |         size_t len_string = strnlen(string, MAX_SIZE - len_tuple - 1);
+           |   11 |         if ((len_tuple + len_string + 1) <= *size_list) {
+           |      |            ~
+           |      |            |
+           |      |            (8) following 'true' branch...
+           |   12 |             *list = malloc(len_tuple + len_string + 1);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                |
+           |      |                     |                (9) ...to here
+           |      |                     (10) allocated here
+           |   13 |             if (*list) {
+           |      |                ~
+           |      |                |
+           |      |                (11) assuming 'list' is NULL
+           |      |                (12) following 'false' branch...
+           |......
+           |   18 |                 printf("Failed to allocate memory\n");
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (13) ...to here
+           |
+    <------+
+    |
+  'main': events 14-15
+    |
+    |   33 |         tupleToList(tuple, string, &list, &size_list);
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (14) returning to 'main' from 'tupleToList'
+    |   34 |         printf("%s\n", list);
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (15) argument 1 ('list') NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null
+-macosx_version_min has been renamed to -macos_version_min

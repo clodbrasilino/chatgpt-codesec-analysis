@@ -1,0 +1,8 @@
+collected_code/heal_round_9/healed/problem-421.c: In function 'concatenateTuple':
+collected_code/heal_round_9/healed/problem-421.c:9:59: warning: 'sizeof' on array function parameter 'delimiter' will return size of 'const char *' [-Wsizeof-array-argument]
+    9 |     unsigned int delimiter_len = strnlen(delimiter, sizeof(delimiter));
+      |                                                           ^
+collected_code/heal_round_9/healed/problem-421.c:6:76: note: declared here
+    6 | void concatenateTuple(const char tuple[][MAX_LENGTH], int size, const char delimiter[]) {
+      |                                                                 ~~~~~~~~~~~^~~~~~~~~~~
+-macosx_version_min has been renamed to -macos_version_min

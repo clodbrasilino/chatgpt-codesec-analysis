@@ -1,0 +1,5 @@
+collected_code/heal_round_13/healed/problem-79.c: In function 'main':
+collected_code/heal_round_13/healed/problem-79.c:13:19: warning: 'strnlen' specified bound 8 exceeds source size 6 [-Wstringop-overread]
+   13 |     size_t size = strnlen(word, sizeof(word)) + 1;
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+-macosx_version_min has been renamed to -macos_version_min

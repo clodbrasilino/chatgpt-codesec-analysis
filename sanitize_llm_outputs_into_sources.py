@@ -1,4 +1,5 @@
 import re
+import sys
 
 
 def get_files_from_folder(search_path) -> list:
@@ -15,7 +16,7 @@ def sanitize_llm_output(input: str) -> str:
     return output
 
 
-path = "./collected_code/healed/"
+path = f"./collected_code/heal_round_{sys.argv[1]}/healed/"
 for filename in get_files_from_folder(path):
     file_content = ""
     with open(path + filename, "r") as txt_file:

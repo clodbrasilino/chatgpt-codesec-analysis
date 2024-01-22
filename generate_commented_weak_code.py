@@ -1,4 +1,10 @@
-import os
+from os.path import isfile
+import sys
+
+current = sys.argv[1]
+last = int(current) - 1
+input_dir = f"./collected_code/heal_round_{last}/healed"
+output_dir = f"./collected_code/heal_round_{current}/to_be_healed"
 
 
 def generate_commented_weak_code() -> None:
@@ -10,16 +16,15 @@ def generate_commented_weak_code() -> None:
 
     # Add the comments to the sources (saving on new files)
     for problem_id in range(1, 975):
-        with open(f"./collected_code/problem-{problem_id}.c", "r") as inputfile:
-            with open(f"./collected_code/to_be_healed/problem-{problem_id}.c", "w+") as outputfile:
-                outputfile.write(add_comments_to_weak_source(input=inputfile.read(), errors=pw_map[problem_id]))
-
-    # Remove files that are equal to their sources (this means no heal is needed)
-    for problem_id in range(1, 975):
-        with open(f"./collected_code/problem-{problem_id}.c", "r") as uncommented:
-            with open(f"./collected_code/to_be_healed/problem-{problem_id}.c", "r") as commented:
-                if uncommented.read() == commented.read():
-                    os.remove(f"./collected_code/to_be_healed/problem-{problem_id}.c")
+        # Only write files which has weaknesses found
+        if problem_id in pw_map.keys() and pw_map[problem_id] and isfile(f"{input_dir}/problem-{problem_id}.c"):
+            with open(f"{input_dir}/problem-{problem_id}.c", "r") as inputfile:
+                with open(f"{output_dir}/problem-{problem_id}.c", "w+") as outputfile:
+                    try:
+                        outputfile.write(add_comments_to_weak_source(input=inputfile.read(), errors=pw_map[problem_id]))
+                    except Exception:
+                        print(f"problem: {problem_id}")
+                        continue
 
 
 def get_problems_weaknesses() -> list[dict[str, int | list[dict[str, int | str]]]]:
@@ -30,16 +35,17 @@ def get_problems_weaknesses() -> list[dict[str, int | list[dict[str, int | str]]
             "errors": [],
         }
         text = ""
-        with open(f"collected_code/problem-{i}.cppcheck.txt", "r") as file:
-            text += file.read()
-            errors["errors"].extend(extract_cppcheck_messages(text))
-        with open(f"collected_code/problem-{i}.flawfinder.txt", "r") as file:
-            text += file.read()
-            errors["errors"].extend(extract_flawfinder_messages(text))
-        with open(f"collected_code/problem-{i}.gcc.txt", "r") as file:
-            text += file.read()
-            errors["errors"].extend(extract_gcc_messages(text))
-        problems_weaknesses.append(errors)
+        if isfile(f"{input_dir}/problem-{i}.c"):
+            with open(f"{input_dir}/problem-{i}.cppcheck.txt", "r") as file:
+                text += file.read()
+                errors["errors"].extend(extract_cppcheck_messages(text))
+            with open(f"{input_dir}/problem-{i}.flawfinder.txt", "r") as file:
+                text += file.read()
+                errors["errors"].extend(extract_flawfinder_messages(text))
+            with open(f"{input_dir}/problem-{i}.gcc.txt", "r") as file:
+                text += file.read()
+                errors["errors"].extend(extract_gcc_messages(text))
+            problems_weaknesses.append(errors)
     return problems_weaknesses
 
 
@@ -107,7 +113,10 @@ def add_comments_to_weak_source(input: str, errors: dict[int, list[str]]) -> str
     for current_line in range(0, len(error_line_numbers)):
         error_line = error_line_numbers[current_line]
         weaknesses_comment = ""
-        padding = leading_spaces(input_lines[error_line - 1])
+        try:
+            padding = leading_spaces(input_lines[error_line - 1])
+        except Exception:
+            continue
         weaknesses_comment += padding + first_line
         for error_msg in set(errors[error_line]):
             weaknesses_comment += padding + weakness_line_start + error_msg + weakness_line_end

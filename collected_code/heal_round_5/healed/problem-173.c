@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX_SIZE 256
+
+void removeNonAlphanumeric(char* str) {
+    if (str == NULL) {
+        return;
+    }
+
+    for (int i = 0, j = 0; str[i] != '\0'; i++) {
+        if (isalnum((unsigned char)str[i])) {
+            str[j++] = str[i];
+        } 
+    }
+}
+
+int main() {
+    char str[MAX_SIZE] = "";
+    char* newLineCheck;
+
+    printf("Enter a string: ");
+    newLineCheck = fgets(str, sizeof(str), stdin);
+
+    if(newLineCheck != NULL && str[MAX_SIZE-1] != '\0') {
+        str[MAX_SIZE - 1] = '\0';
+        size_t ln = strlen(str) - 1;
+        if (str[ln] == '\n') {
+            str[ln] = '\0';
+        }
+    }
+
+    if (str != NULL && *str != '\0') {
+        removeNonAlphanumeric(str);
+        printf("String after removing non-alphanumeric characters: %s\n", str);
+    }
+
+    return 0;
+}

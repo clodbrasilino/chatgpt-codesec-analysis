@@ -1,0 +1,24 @@
+collected_code/heal_round_9/healed/problem-667.c: In function 'main':
+collected_code/heal_round_9/healed/problem-667.c:26:24: warning: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   26 |     int fgets_status = fgets(str, MAX_SIZE, stdin);
+      |                        ^~~~~
+collected_code/heal_round_9/healed/problem-667.c:28:21: warning: comparison between pointer and integer
+   28 |     if(fgets_status != NULL) {
+      |                     ^~
+collected_code/heal_round_9/healed/problem-667.c: In function 'countVowels':
+collected_code/heal_round_9/healed/problem-667.c:10:7: warning: check of 'str' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   10 |     if(str == NULL)
+      |       ^
+  'countVowels': events 1-2
+    |
+    |    8 |     int str_length = strnlen(str, MAX_SIZE);
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) pointer 'str' is dereferenced here
+    |    9 | 
+    |   10 |     if(str == NULL)
+    |      |       ~               
+    |      |       |
+    |      |       (2) pointer 'str' is checked for NULL here but it was already dereferenced at (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

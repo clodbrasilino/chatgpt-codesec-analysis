@@ -1,0 +1,56 @@
+collected_code/heal_round_9/healed/problem-9.c: In function 'findMinRotations':
+collected_code/heal_round_9/healed/problem-9.c:30:22: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   30 |     concat[size - 1] = '\0';
+      |     ~~~~~~~~~~~~~~~~~^~~~~~
+  'findMinRotations': events 1-8
+    |
+    |    8 |     if (str == NULL)
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'str' is non-NULL)...
+    |......
+    |   11 |     size_t len = strlen(str);
+    |      |                  ~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) ...to here
+    |   12 | 
+    |   13 |     if (len <= 0)
+    |      |        ~
+    |      |        |
+    |      |        (3) following 'false' branch (when 'len != 0')...
+    |......
+    |   16 |     if (len > MAX_STRING_SIZE)
+    |      |        ~
+    |      |        |
+    |      |        (4) ...to here
+    |      |        (5) following 'false' branch (when 'len <= 1024')...
+    |......
+    |   19 |     size_t size = (len * 2) + 1;
+    |      |                   ~~~~~~~~~
+    |      |                        |
+    |      |                        (6) ...to here
+    |   20 |     char* concat = (char*)calloc(size, sizeof(char));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (7) capacity: 'len * 2 + 1' bytes
+    |   21 | 
+    |   22 |     if (!concat) {
+    |      |        ~
+    |      |        |
+    |      |        (8) following 'false' branch (when 'concat' is non-NULL)...
+    |
+  'findMinRotations': event 9
+    |
+    |   27 |     memcpy(concat, str, len < size ? len : size - 1);
+    |      |     ^~~~~~
+    |      |     |
+    |      |     (9) ...to here
+    |
+  'findMinRotations': event 10
+    |
+    |   30 |     concat[size - 1] = '\0';
+    |      |     ~~~~~~~~~~~~~~~~~^~~~~~
+    |      |                      |
+    |      |                      (10) write of 1 byte at offset 'len * 2 + 1 + 18446744073709551615' exceeds the buffer
+    |
+-macosx_version_min has been renamed to -macos_version_min

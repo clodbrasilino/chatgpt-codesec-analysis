@@ -1,5 +1,6 @@
 import openai
 import time
+import traceback
 
 from os import getenv, path
 from mbpp import problems
@@ -73,6 +74,7 @@ def call_llm(
                 ],
                 temperature=temperature,
                 top_p=top_p,
+                max_tokens=4096,
             )
         progress.update()
         print(f"{filename} finished.")
@@ -80,7 +82,7 @@ def call_llm(
     except KeyboardInterrupt:
         exit(1)
     except BaseException as ex:
-        print(ex)
+        traceback.print_exc(ex)
         print(
             f"Problem {problem['id']}, temperature {temperature}, Top P {top_p}, round {round}: Connection failed. Retrying..."
         )

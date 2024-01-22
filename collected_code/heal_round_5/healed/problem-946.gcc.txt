@@ -1,0 +1,322 @@
+collected_code/heal_round_5/healed/problem-946.c: In function 'find_most_common_elements':
+collected_code/heal_round_5/healed/problem-946.c:34:21: warning: use of possibly-NULL '*elements_92 + _25.element' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   34 |                 if (strcmp(elements[k].element, current_element) == 0) {
+      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   68 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   76 |     find_most_common_elements(text, result, &num_elements);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'find_most_common_elements' from 'main'
+    |
+    +--> 'find_most_common_elements': events 3-17
+           |
+           |   13 | void find_most_common_elements(char *text, Element *result, int *num_elements) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'find_most_common_elements'
+           |......
+           |   21 |     for (i = 0; i < length; i++) {
+           |      |                 ~~~~~~~~~~
+           |      |                   |
+           |      |                   (4) following 'true' branch...
+           |      |                   (6) following 'true' branch...
+           |      |                   (13) following 'true' branch...
+           |   22 | 
+           |   23 |         char current_element[MAX_TEXT_LENGTH] = {0};
+           |      |              ~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (5) ...to here
+           |      |              (7) ...to here
+           |      |              (14) ...to here
+           |......
+           |   33 |             for (k = 0; k < num_unique_elements; k++) {
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (8) following 'false' branch (when 'k >= num_unique_elements')...
+           |      |                           (15) following 'true' branch (when 'k < num_unique_elements')...
+           |   34 |                 if (strcmp(elements[k].element, current_element) == 0) {
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |              |
+           |      |                     |              (16) ...to here
+           |      |                     (17) argument 1 ('*elements_92 + _25.element') from (12) could be NULL where non-null expected
+           |......
+           |   41 |             if (!element_found && num_unique_elements < MAX_UNIQUE_ELEMENTS) {
+           |      |                ~
+           |      |                |
+           |      |                (9) ...to here
+           |      |                (10) following 'true' branch...
+           |   42 |                 elements[num_unique_elements].element = strdup(current_element);
+           |      |                         ~                               ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                               |
+           |      |                         (11) ...to here                 (12) this call could return NULL
+           |
+In file included from collected_code/heal_round_5/healed/problem-946.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/usr/include/string.h:77:10: note: argument 1 of 'strcmp' must be non-null
+   77 | int      strcmp(const char *__s1, const char *__s2);
+      |          ^~~~~~
+collected_code/heal_round_5/healed/problem-946.c:42:55: warning: dereference of possibly-NULL 'elements' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   42 |                 elements[num_unique_elements].element = strdup(current_element);
+      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   68 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   76 |     find_most_common_elements(text, result, &num_elements);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'find_most_common_elements' from 'main'
+    |
+    +--> 'find_most_common_elements': events 3-13
+           |
+           |   13 | void find_most_common_elements(char *text, Element *result, int *num_elements) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'find_most_common_elements'
+           |   14 |     Element *elements = calloc(MAX_UNIQUE_ELEMENTS, sizeof(Element));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) this call could return NULL
+           |......
+           |   21 |     for (i = 0; i < length; i++) {
+           |      |                 ~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch...
+           |      |                   (7) following 'true' branch...
+           |   22 | 
+           |   23 |         char current_element[MAX_TEXT_LENGTH] = {0};
+           |      |              ~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (6) ...to here
+           |      |              (8) ...to here
+           |......
+           |   33 |             for (k = 0; k < num_unique_elements; k++) {
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (9) following 'false' branch (when 'k >= num_unique_elements')...
+           |......
+           |   41 |             if (!element_found && num_unique_elements < MAX_UNIQUE_ELEMENTS) {
+           |      |                ~
+           |      |                |
+           |      |                (10) ...to here
+           |      |                (11) following 'true' branch...
+           |   42 |                 elements[num_unique_elements].element = strdup(current_element);
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                             |
+           |      |                         (12) ...to here               (13) 'elements + (long unsigned int)num_unique_elements * 16' could be NULL: unchecked value from (4)
+           |
+collected_code/heal_round_5/healed/problem-946.c:60:31: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   60 |             result[j].element = strdup(elements[i].element);
+      |             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   68 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   69 |     char text[MAX_TEXT_LENGTH] = {0};
+    |   70 |     Element *result = calloc(MAX_UNIQUE_ELEMENTS, sizeof(Element));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) this call could return NULL
+    |......
+    |   76 |     find_most_common_elements(text, result, &num_elements);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'find_most_common_elements' from 'main'
+    |
+    +--> 'find_most_common_elements': events 4-29
+           |
+           |   13 | void find_most_common_elements(char *text, Element *result, int *num_elements) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'find_most_common_elements'
+           |......
+           |   21 |     for (i = 0; i < length; i++) {
+           |      |                 ~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch...
+           |      |                   (7) following 'true' branch...
+           |      |                   (13) following 'true' branch...
+           |      |                   (19) following 'true' branch...
+           |   22 | 
+           |   23 |         char current_element[MAX_TEXT_LENGTH] = {0};
+           |      |              ~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (6) ...to here
+           |      |              (8) ...to here
+           |      |              (14) ...to here
+           |      |              (20) ...to here
+           |......
+           |   33 |             for (k = 0; k < num_unique_elements; k++) {
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (9) following 'false' branch (when 'k >= num_unique_elements')...
+           |      |                           (15) following 'true' branch (when 'k < num_unique_elements')...
+           |   34 |                 if (strcmp(elements[k].element, current_element) == 0) {
+           |      |                                    ~
+           |      |                                    |
+           |      |                                    (16) ...to here
+           |......
+           |   41 |             if (!element_found && num_unique_elements < MAX_UNIQUE_ELEMENTS) {
+           |      |                ~
+           |      |                |
+           |      |                (10) ...to here
+           |      |                (11) following 'true' branch...
+           |      |                (17) following 'false' branch (when 'element_found != 0')...
+           |      |                (21) following 'false' branch (when 'element_found != 0')...
+           |   42 |                 elements[num_unique_elements].element = strdup(current_element);
+           |      |                         ~
+           |      |                         |
+           |      |                         (12) ...to here
+           |......
+           |   46 |             i = j;
+           |      |             ~~~~~
+           |      |               |
+           |      |               (18) ...to here
+           |      |               (22) ...to here
+           |......
+           |   52 |     for (i = 0; i < num_unique_elements; i++) {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (23) following 'true' branch (when 'i < num_unique_elements')...
+           |   53 |         if (elements[i].count > max_count) {
+           |      |                     ~
+           |      |                     |
+           |      |                     (24) ...to here
+           |......
+           |   58 |     for (i = 0, j = 0; i < num_unique_elements; i++) {
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (25) following 'true' branch (when 'i < num_unique_elements')...
+           |   59 |         if (elements[i].count == max_count) {
+           |      |            ~        ~
+           |      |            |        |
+           |      |            |        (26) ...to here
+           |      |            (27) following 'true' branch...
+           |   60 |             result[j].element = strdup(elements[i].element);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |                |
+           |      |                               |                (28) ...to here
+           |      |                               (29) 'result + (long unsigned int)j * 16' could be NULL: unchecked value from (2)
+           |
+collected_code/heal_round_5/healed/problem-946.c:65:5: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   65 |     free(elements);
+      |     ^~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   68 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   76 |     find_most_common_elements(text, result, &num_elements);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'find_most_common_elements' from 'main'
+    |
+    +--> 'find_most_common_elements': events 3-27
+           |
+           |   13 | void find_most_common_elements(char *text, Element *result, int *num_elements) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'find_most_common_elements'
+           |......
+           |   21 |     for (i = 0; i < length; i++) {
+           |      |                 ~~~~~~~~~~
+           |      |                   |
+           |      |                   (4) following 'true' branch...
+           |      |                   (6) following 'true' branch...
+           |      |                   (13) following 'true' branch...
+           |      |                   (20) following 'true' branch...
+           |      |                   (24) following 'true' branch...
+           |   22 | 
+           |   23 |         char current_element[MAX_TEXT_LENGTH] = {0};
+           |      |              ~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (5) ...to here
+           |      |              (7) ...to here
+           |      |              (14) ...to here
+           |      |              (21) ...to here
+           |      |              (25) ...to here
+           |......
+           |   33 |             for (k = 0; k < num_unique_elements; k++) {
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (8) following 'false' branch (when 'k >= num_unique_elements')...
+           |      |                           (15) following 'true' branch (when 'k < num_unique_elements')...
+           |      |                           (26) following 'true' branch (when 'k < num_unique_elements')...
+           |   34 |                 if (strcmp(elements[k].element, current_element) == 0) {
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |              |
+           |      |                     |              (16) ...to here
+           |      |                     |              (27) ...to here
+           |      |                     (17) assuming '<unknown>' is non-NULL
+           |......
+           |   41 |             if (!element_found && num_unique_elements < MAX_UNIQUE_ELEMENTS) {
+           |      |                ~
+           |      |                |
+           |      |                (9) ...to here
+           |      |                (10) following 'true' branch...
+           |      |                (18) following 'false' branch (when 'element_found != 0')...
+           |      |                (22) following 'false' branch (when 'element_found != 0')...
+           |   42 |                 elements[num_unique_elements].element = strdup(current_element);
+           |      |                         ~                               ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                               |
+           |      |                         (11) ...to here                 (12) allocated here
+           |......
+           |   46 |             i = j;
+           |      |             ~~~~~
+           |      |               |
+           |      |               (19) ...to here
+           |      |               (23) ...to here
+           |
+         'find_most_common_elements': events 28-37
+           |
+           |   41 |             if (!element_found && num_unique_elements < MAX_UNIQUE_ELEMENTS) {
+           |      |                                ^
+           |      |                                |
+           |      |                                (28) following 'true' branch (when 'num_unique_elements <= 99')...
+           |   42 |                 elements[num_unique_elements].element = strdup(current_element);
+           |      |                         ~                               ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                               |
+           |      |                         (29) ...to here                 (30) allocated here
+           |......
+           |   52 |     for (i = 0; i < num_unique_elements; i++) {
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (31) following 'true' branch (when 'i < num_unique_elements')...
+           |   53 |         if (elements[i].count > max_count) {
+           |      |                     ~           
+           |      |                     |
+           |      |                     (32) ...to here
+           |......
+           |   58 |     for (i = 0, j = 0; i < num_unique_elements; i++) {
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (33) following 'true' branch (when 'i < num_unique_elements')...
+           |   59 |         if (elements[i].count == max_count) {
+           |      |            ~        ~           
+           |      |            |        |
+           |      |            |        (34) ...to here
+           |      |            (35) following 'false' branch...
+           |......
+           |   63 |         free(elements[i].element);
+           |      |                      ~          
+           |      |                      |
+           |      |                      (36) ...to here
+           |   64 |     }
+           |   65 |     free(elements);
+           |      |     ~~~~~~~~~~~~~~              
+           |      |     |
+           |      |     (37) '<unknown>' leaks here; was allocated at (30)
+           |
+-macosx_version_min has been renamed to -macos_version_min

@@ -1,0 +1,72 @@
+collected_code/heal_round_10/healed/problem-542.c: In function 'replace_chars':
+collected_code/heal_round_10/healed/problem-542.c:46:27: warning: stack-based buffer overflow [CWE-121] [-Wanalyzer-out-of-bounds]
+   46 |                 str[9999] = '\0';
+      |                 ~~~~~~~~~~^~~~~~
+  'main': events 1-3
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   56 |     char str[] = "This is a string, with spaces and commas.";
+    |      |          ~~~
+    |      |          |
+    |      |          (2) capacity: 42 bytes
+    |   57 |     replace_chars(str);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'replace_chars' from 'main'
+    |
+    +--> 'replace_chars': events 4-11
+           |
+           |    6 | void replace_chars(char *str) {
+           |      |      ^~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'replace_chars'
+           |......
+           |    9 |     if (str != NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'true' branch (when 'str' is non-NULL)...
+           |   10 |         size_t len = strnlen(str, 10000);
+           |      |                      ~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) ...to here
+           |......
+           |   17 |         if (!new_str)
+           |      |            ~
+           |      |            |
+           |      |            (7) following 'false' branch (when 'new_str' is non-NULL)...
+           |......
+           |   20 |         if (len < 10000) {
+           |      |            ~
+           |      |            |
+           |      |            (8) ...to here
+           |......
+           |   40 |         if (str_len >= len) {
+           |      |            ~
+           |      |            |
+           |      |            (9) following 'true' branch (when 'str_len >= len')...
+           |   41 |             if (len < 10000) {
+           |      |                ~
+           |      |                |
+           |      |                (10) ...to here
+           |      |                (11) following 'false' branch (when 'len > 9999')...
+           |
+         'replace_chars': event 12
+           |
+           |   45 |                 memcpy(str, new_str, 9999);
+           |      |                 ^~~~~~
+           |      |                 |
+           |      |                 (12) ...to here
+           |
+         'replace_chars': event 13
+           |
+           |   46 |                 str[9999] = '\0';
+           |      |                 ~~~~~~~~~~^~~~~~
+           |      |                           |
+           |      |                           (13) out-of-bounds write at byte 9999 but 'str' ends at byte 42
+           |
+collected_code/heal_round_10/healed/problem-542.c:46:27: note: write of 1 byte to beyond the end of 'str'
+collected_code/heal_round_10/healed/problem-542.c:46:27: note: valid subscripts for 'str' are '[0]' to '[41]'
+-macosx_version_min has been renamed to -macos_version_min

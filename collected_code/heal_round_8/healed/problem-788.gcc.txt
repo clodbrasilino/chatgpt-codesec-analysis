@@ -1,0 +1,16 @@
+collected_code/heal_round_8/healed/problem-788.c: In function 'createNewTuple':
+collected_code/heal_round_8/healed/problem-788.c:15:8: warning: check of 'str' for NULL after already dereferencing it [-Wanalyzer-deref-before-check]
+   15 |     if (str == NULL || list == NULL || list_size <= 0 || !isStrNullTerminated) {
+      |        ^
+  'createNewTuple': events 1-2
+    |
+    |   14 |     bool isStrNullTerminated = str[strlen(str)] == '\0';
+    |      |                                    ^~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (1) pointer 'str' is dereferenced here
+    |   15 |     if (str == NULL || list == NULL || list_size <= 0 || !isStrNullTerminated) {
+    |      |        ~                            
+    |      |        |
+    |      |        (2) pointer 'str' is checked for NULL here but it was already dereferenced at (1)
+    |
+-macosx_version_min has been renamed to -macos_version_min

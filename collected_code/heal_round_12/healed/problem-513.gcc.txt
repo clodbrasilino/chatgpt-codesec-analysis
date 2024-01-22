@@ -1,0 +1,54 @@
+collected_code/heal_round_12/healed/problem-513.c: In function 'tupleToList':
+collected_code/heal_round_12/healed/problem-513.c:12:19: warning: leak of 'list' [CWE-401] [-Wanalyzer-malloc-leak]
+   12 |             *list = (char *)realloc(*list, len_tuple + len_string + 1);
+      |             ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   26 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   30 |     char *list = malloc(size_list);
+    |      |                  ~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) allocated here
+    |   31 | 
+    |   32 |     if (list) {
+    |      |        ~
+    |      |        |
+    |      |        (3) assuming 'list' is non-NULL
+    |      |        (4) following 'true' branch...
+    |   33 |         tupleToList(tuple, string, &list, &size_list);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (5) ...to here
+    |      |         (6) calling 'tupleToList' from 'main'
+    |
+    +--> 'tupleToList': events 7-13
+           |
+           |    7 | void tupleToList(const char *tuple, const char *string, char **list, size_t *size_list) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'tupleToList'
+           |    8 |     if (tuple != NULL && string != NULL && list != NULL && *size_list > 0) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'true' branch...
+           |    9 |         size_t len_tuple = strnlen(tuple, MAX_SIZE - 1);
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (9) ...to here
+           |   10 |         size_t len_string = strnlen(string, MAX_SIZE - len_tuple - 1);
+           |   11 |         if (*size_list >= (len_tuple + len_string + 1)) {
+           |      |            ~
+           |      |            |
+           |      |            (10) following 'true' branch...
+           |   12 |             *list = (char *)realloc(*list, len_tuple + len_string + 1);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |         |                        |
+           |      |                   |         |                        (11) ...to here
+           |      |                   |         (12) when 'realloc' fails
+           |      |                   (13) 'list' leaks here; was allocated at (2)
+           |
+-macosx_version_min has been renamed to -macos_version_min

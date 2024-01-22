@@ -1,0 +1,47 @@
+collected_code/heal_round_10/healed/problem-513.c: In function 'tupleToList':
+collected_code/heal_round_10/healed/problem-513.c:13:19: warning: leak of 'list' [CWE-401] [-Wanalyzer-malloc-leak]
+   13 |             *list = malloc(len_tuple + len_string + 1);
+      |             ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-3
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     char *list = malloc(size_list);
+    |      |                  ~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) allocated here
+    |   28 | 
+    |   29 |     tupleToList(tuple, string, &list, &size_list);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'tupleToList' from 'main'
+    |
+    +--> 'tupleToList': events 4-9
+           |
+           |    7 | void tupleToList(const char *tuple, const char *string, char **list, size_t *size_list) {
+           |      |      ^~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'tupleToList'
+           |    8 |     if (tuple != NULL && string != NULL && list != NULL && size_list > 0) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'true' branch...
+           |    9 |         size_t len_tuple = strnlen(tuple, MAX_SIZE - 1);
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (6) ...to here
+           |......
+           |   12 |         if((len_tuple + len_string + 1) <= *size_list) {
+           |      |           ~
+           |      |           |
+           |      |           (7) following 'true' branch...
+           |   13 |             *list = malloc(len_tuple + len_string + 1);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |                  |
+           |      |                   |                  (8) ...to here
+           |      |                   (9) 'list' leaks here; was allocated at (2)
+           |
+-macosx_version_min has been renamed to -macos_version_min

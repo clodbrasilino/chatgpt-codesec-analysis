@@ -1,4 +1,4 @@
-# Investigating unsecure code generation from ChatGPT
+# Investigating vulnerable code generation from ChatGPT
 
 This project contains assets used for the experiment in the paper [to be published]().
 
@@ -9,10 +9,11 @@ You are welcome to mimic our experiment and check the results yourself. Use the 
 Our dataset is based on [Most Basic Python Problems](https://github.com/google-research/google-research/tree/master/mbpp) dataset, adapted for C code generation instead of python code.
 
 I'd like to thank all supporters of this project.
- - 许海涛 (Xu Haitao), my supervisor, and all of his team
- - 浙江大学 (Zhejiang University)
- - 中华人民共和国教育部 (Ministry of Education of the People's Republic of China) for the grants provided
- - Instituto Federal do Piauí
+ - 许海涛 (Xu Haitao), my supervisor;
+ - 浙江大学 (Zhejiang University);
+ - 中华人民共和国教育部 (Ministry of Education of the People's Republic of China) for the grants provided;
+ - Instituto Federal do Piauí, for the financial support;
+ - [Gabriel Habib Medeiros Oliveira](https://github.com/enggabrielhabib), for his contributions.
 
 ## What is this experiment?
 
@@ -40,7 +41,7 @@ The tools we used for analysis were:
 
 GCC and flawfinder were installed via [Homebrew](https://brew.sh). CPP-Check the company shared the pre-built binaries.
 
-## Running steps
+## Running steps (`//TODO Update this`)
 
 ### Retrieve the problems solution source code
 

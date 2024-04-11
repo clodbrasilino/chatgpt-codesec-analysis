@@ -6,7 +6,7 @@ from cwe2.database import Database
 from cwe2.weakness import Weakness
 
 
-dataset_dir = f"collected_code/heal_round_{sys.argv[1]}/healed/"
+dataset_dir = sys.argv[1]
 
 
 def extract_tokens() -> list[str]:
@@ -135,6 +135,7 @@ cwe_mapping = {
         "[legacyUninitvar]",
         "[uninitStructMember]",
         "[-Wanalyzer-use-of-uninitialized-value]",
+        "[uninitdata]",
     ],
     467: [  # https://cwe.mitre.org/data/definitions/467.html
         "[-Wsizeof-array-argument]",
@@ -152,21 +153,18 @@ cwe_mapping = {
     628: [  # https://cwe.mitre.org/data/definitions/628.html
         "[invalidFunctionArg]",
     ],
-    686: [  # https://cwe.mitre.org/data/definitions/686.html
-        "[-Wimplicit-function-declaration]",
-        "[-Wbuiltin-declaration-mismatch]",
-    ],
     690: [  # https://cwe.mitre.org/data/definitions/690.html
         "[-Wanalyzer-possible-null-dereference]",
     ],
     704: [  # https://cwe.mitre.org/data/definitions/704.html
         "[-Wint-conversion]",
     ],
+    758: [  # https://cwe.mitre.org/data/definitions/758.html
+        "[-Wimplicit-function-declaration]",
+        "[-Wbuiltin-declaration-mismatch]",
+    ],
     843: [  # https://cwe.mitre.org/data/definitions/843.html
         "[-Wincompatible-pointer-types]",
-    ],
-    908: [  # https://cwe.mitre.org/data/definitions/908.html
-        "[uninitdata]",
     ],
     1260: [  # https://cwe.mitre.org/data/definitions/1260.html
         "[overlappingWriteFunction]",

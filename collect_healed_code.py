@@ -1,28 +1,39 @@
 import openai
+import sys
 import time
 import traceback
-
-from os import getenv, path
+from os import getenv, path, mkdir
 from mbpp import problems
 from tqdm import tqdm
 from multiprocessing.pool import ThreadPool
 
 openai.api_key = getenv("OPENAI_API_KEY_P")
-source_code_path = "./collected_code/to_be_healed/"
-collected_code_path = "./collected_code/healed/"
 
 
-def collect_generated_healed_code() -> None:
+def collect_generated_healed_code(source_code_path: str, collected_code_path: str) -> None:
+    create_output_folders(collected_code_path)
     progress = tqdm(total=len(problems))
-    with ThreadPool(processes=5) as threadpool:
+    with ThreadPool(processes=20) as threadpool:
         for problem in problems:
             threadpool.apply_async(
                 call_llm,
-                args=(problem, progress),
+                args=(problem, progress, source_code_path, collected_code_path),
                 callback=llm_result_callback,
             )
         threadpool.close()
         threadpool.join()
+
+
+def create_output_folders(path: str) -> None:
+    path_elements = path.split("/")
+    path = ""
+    for i in range(1, len(path_elements)):
+        path += path_elements[i] + "/"
+        try:
+            if i != 1:
+                mkdir(path)
+        except FileExistsError:
+            pass
 
 
 def llm_result_callback(result):
@@ -37,6 +48,8 @@ def llm_result_callback(result):
 def call_llm(
     problem: dict[str, str | list[str]],
     progress: tqdm,
+    source_code_path: str,
+    collected_code_path: str,
     temperature: int = 1,
     top_p: int = 1,
     round: int = 1,
@@ -46,11 +59,9 @@ def call_llm(
         sourcename = f"{source_code_path}/problem-{problem['id']}.c"
         if path.exists(filename):
             progress.update()
-            print(f"{filename} already processed. Skipping.")
             return (None, None)
         if not path.exists(sourcename):
             progress.update()
-            print(f"{sourcename} not found. Skipping.")
             return (None, None)
         print(f"{filename} started.")
         with open(sourcename, "r") as weak_source:
@@ -91,4 +102,4 @@ def call_llm(
 
 
 if __name__ == "__main__":
-    collect_generated_healed_code()
+    collect_generated_healed_code(sys.argv[1], sys.argv[2])

@@ -4,8 +4,12 @@
 GCC_PATH=/usr/local/bin/gcc-13
 FLAWFINDER_PATH=/usr/local/bin/flawfinder
 CPPCHECK_PATH=./cppcheckpremium/cppcheck
-
-COLLECTED_CODE=collected_code/heal_round_$1/healed/*
+if [[ -n $1 ]]
+then
+	COLLECTED_CODE=$1/*
+else
+	COLLECTED_CODE=./*
+fi
 
 for file in $COLLECTED_CODE ; do
 	if [ "${file: -2}" == ".c" ] ; then

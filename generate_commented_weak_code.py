@@ -1,18 +1,17 @@
-from os.path import isfile
+import os
 import sys
-
-current = sys.argv[1]
-last = int(current) - 1
-input_dir = f"./collected_code/heal_round_{last}/healed"
-output_dir = f"./collected_code/heal_round_{current}/to_be_healed"
+from os.path import isfile
 
 
-def generate_commented_weak_code() -> None:
+def generate_commented_weak_code(input_dir: str, output_dir: str) -> None:
     # Obtain the weaknesses listings from the files
-    problems_weaknesses = get_problems_weaknesses()
+    problems_weaknesses = get_problems_weaknesses(input_dir)
 
     # Prepare a simpler map for adding the comments to the sources
     pw_map = convert_to_map(problems_weaknesses)
+
+    # Create output directory structure
+    create_output_folders(output_dir)
 
     # Add the comments to the sources (saving on new files)
     for problem_id in range(1, 975):
@@ -27,7 +26,19 @@ def generate_commented_weak_code() -> None:
                         continue
 
 
-def get_problems_weaknesses() -> list[dict[str, int | list[dict[str, int | str]]]]:
+def create_output_folders(path: str) -> None:
+    path_elements = path.split("/")
+    path = ""
+    for i in range(1, len(path_elements)):
+        path += path_elements[i] + "/"
+        try:
+            if i != 1:
+                os.mkdir(path)
+        except FileExistsError:
+            pass
+
+
+def get_problems_weaknesses(input_dir: str) -> list[dict[str, int | list[dict[str, int | str]]]]:
     problems_weaknesses = []
     for i in range(1, 975):
         errors: dict[str, int | list[dict[str, int | str]]] = {
@@ -36,15 +47,24 @@ def get_problems_weaknesses() -> list[dict[str, int | list[dict[str, int | str]]
         }
         text = ""
         if isfile(f"{input_dir}/problem-{i}.c"):
-            with open(f"{input_dir}/problem-{i}.cppcheck.txt", "r") as file:
-                text += file.read()
-                errors["errors"].extend(extract_cppcheck_messages(text))
-            with open(f"{input_dir}/problem-{i}.flawfinder.txt", "r") as file:
-                text += file.read()
-                errors["errors"].extend(extract_flawfinder_messages(text))
-            with open(f"{input_dir}/problem-{i}.gcc.txt", "r") as file:
-                text += file.read()
-                errors["errors"].extend(extract_gcc_messages(text))
+            try:
+                with open(f"{input_dir}/problem-{i}.cppcheck.txt", "r") as file:
+                    text += file.read()
+                    errors["errors"].extend(extract_cppcheck_messages(text))
+            except FileNotFoundError:
+                pass
+            try:
+                with open(f"{input_dir}/problem-{i}.flawfinder.txt", "r") as file:
+                    text += file.read()
+                    errors["errors"].extend(extract_flawfinder_messages(text))
+            except FileNotFoundError:
+                pass
+            try:
+                with open(f"{input_dir}/problem-{i}.gcc.txt", "r") as file:
+                    text += file.read()
+                    errors["errors"].extend(extract_gcc_messages(text))
+            except FileNotFoundError:
+                pass
             problems_weaknesses.append(errors)
     return problems_weaknesses
 
@@ -155,4 +175,4 @@ def convert_to_map(
 
 
 if __name__ == "__main__":
-    generate_commented_weak_code()
+    generate_commented_weak_code(sys.argv[1], sys.argv[2])

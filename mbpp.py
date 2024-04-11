@@ -243,7 +243,7 @@ problems = [
         "challenge_test_list": [],
     },
     {
-        "text": "Write a C function to check if the given number is woodball or not.",
+        "text": "Write a C function to check if the given number is woodall or not.",
         "label": "array",
         "code": "def is_woodall(x): \r\n\tif (x % 2 == 0): \r\n\t\treturn False\r\n\tif (x == 1): \r\n\t\treturn True\r\n\tx = x + 1 \r\n\tp = 0\r\n\twhile (x % 2 == 0): \r\n\t\tx = x/2\r\n\t\tp = p + 1\r\n\t\tif (p == x): \r\n\t\t\treturn True\r\n\treturn False",
         "id": 20,

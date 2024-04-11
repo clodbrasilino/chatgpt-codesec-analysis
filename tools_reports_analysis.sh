@@ -1,4 +1,4 @@
-FOLDER=collected_code
+FOLDER=$1
 
 echo Total sources generated: `ls -l $FOLDER/*.c | wc -l`
 # 871

@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100000
+
+int firstKTimes(int arr[], int n, int k) {
+    int count[MAX] = {0};
+    for (int i = 0; i < n; i++)
+        count[arr[i]]++;
+    for (int i = 0; i < n; i++)
+        if (count[arr[i]] == k)
+            return arr[i];
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 7, 4, 3, 4, 8, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    printf("%d", firstKTimes(arr, n, k));
+    return 0;
+}

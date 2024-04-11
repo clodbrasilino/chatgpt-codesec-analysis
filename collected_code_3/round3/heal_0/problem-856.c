@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int minSwaps(int arr[], int n) {
+    int count = 0;
+    int right = n - 1;
+
+    while (right > 0) {
+        if (arr[right] == 0) {
+            right--;
+        } else {
+            int left = right - 1;
+            while (arr[left] == 1 && left >= 0) {
+                left--;
+            }
+            if (left >= 0) {
+                arr[left] = 1;
+                arr[right] = 0;
+                count += right - left;
+                right--;
+            } else {
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 0, 1, 0, 1, 0, 0, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("%d\n", minSwaps(arr, n));
+    return 0;
+}

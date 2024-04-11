@@ -1,0 +1,16 @@
+collected_code_3/problem-109-1.c: In function 'countOddRotations':
+collected_code_3/problem-109-1.c:10:13: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |     temp[0] = '\0';
+      |     ~~~~~~~~^~~~~~
+  'countOddRotations': events 1-2
+    |
+    |    7 |     char *temp = (char *)malloc(sizeof(char)*(len*2 + 1));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |......
+    |   10 |     temp[0] = '\0';
+    |      |     ~~~~~~~~~~~~~~        
+    |      |             |
+    |      |             (2) 'temp' could be NULL: unchecked value from (1)
+    |

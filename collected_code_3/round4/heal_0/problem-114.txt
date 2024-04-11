@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    char *data;
+    int frequency;
+} Tuple;
+
+typedef struct TupleList {
+    Tuple *tuples;
+    int size;
+} TupleList;
+
+void assignFrequency(TupleList *tupleList) {
+    for(int i = 0; i < tupleList->size; i++) {
+        int count = 0;
+        for(int j = 0; j < tupleList->size; j++) {
+            if(strcmp(tupleList->tuples[i].data, tupleList->tuples[j].data) == 0) {
+                count++;
+            }
+        }
+        tupleList->tuples[i].frequency = count;
+    }
+}
+
+int main() {
+    TupleList tupleList;
+    tupleList.size = 3;
+    tupleList.tuples = (Tuple*) malloc(tupleList.size * sizeof(Tuple));
+
+    tupleList.tuples[0].data = "tuple1";
+    tupleList.tuples[1].data = "tuple2";
+    tupleList.tuples[2].data = "tuple1";
+
+    assignFrequency(&tupleList);
+
+    for(int i = 0; i < tupleList.size; i++) {
+        printf("Data: %s, Frequency: %d\n", tupleList.tuples[i].data, tupleList.tuples[i].frequency);
+    }
+
+    free(tupleList.tuples);
+
+    return 0;
+}
+```

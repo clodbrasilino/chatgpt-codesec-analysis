@@ -1,0 +1,66 @@
+collected_code_3/problem-956-1.c: In function 'split_string':
+collected_code_3/problem-956-1.c:12:13: warning: use of possibly-NULL 'temp' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   12 |             printf("%s\n", temp);
+      |             ^~~~~~~~~~~~~~~~~~~~
+  'split_string': events 1-6
+    |
+    |    8 |     char *temp = (char *)malloc(sizeof(char) * len);
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |    9 | 
+    |   10 |     for(i = 0; i < len; i++) {
+    |      |                ~~~~~~~    
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < len')...
+    |   11 |         if(isupper(str[i])) {
+    |      |           ~           ~   
+    |      |           |           |
+    |      |           |           (3) ...to here
+    |      |           (4) following 'true' branch...
+    |   12 |             printf("%s\n", temp);
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (5) ...to here
+    |      |             (6) argument 1 ('temp') from (1) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null
+collected_code_3/problem-956-1.c:18:5: warning: use of possibly-NULL 'temp' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   18 |     printf("%s\n", temp);
+      |     ^~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   23 |     char str[] = "HelloWorldThisIsATest";
+    |   24 |     split_string(str);
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'split_string' from 'main'
+    |
+    +--> 'split_string': events 3-7
+           |
+           |    6 | void split_string(char *str) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'split_string'
+           |    7 |     int i, len = strlen(str);
+           |    8 |     char *temp = (char *)malloc(sizeof(char) * len);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) this call could return NULL
+           |    9 | 
+           |   10 |     for(i = 0; i < len; i++) {
+           |      |                ~~~~~~~
+           |      |                  |
+           |      |                  (5) following 'false' branch (when 'i >= len')...
+           |......
+           |   18 |     printf("%s\n", temp);
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (6) ...to here
+           |      |     (7) argument 1 ('temp') from (4) could be NULL where non-null expected
+           |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

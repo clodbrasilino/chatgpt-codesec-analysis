@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+typedef struct {
+    int x;
+    int y;
+    int z;
+} Tuple;
+
+Tuple subtractTuples(Tuple t1, Tuple t2) {
+    Tuple result;
+    result.x = t1.x - t2.x;
+    result.y = t1.y - t2.y;
+    result.z = t1.z - t2.z;
+    return result;
+}
+
+int main() {
+    Tuple t1 = {10, 20, 30};
+    Tuple t2 = {5, 15, 25};
+    Tuple result = subtractTuples(t1, t2);
+    printf("Result: (%d, %d, %d)\n", result.x, result.y, result.z);
+    return 0;
+}

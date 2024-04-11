@@ -1,0 +1,139 @@
+collected_code_3/problem-539-3.c: In function 'createList':
+collected_code_3/problem-539-3.c:29:24: warning: dereference of NULL 'temp' [CWE-476] [-Wanalyzer-null-dereference]
+   29 |             temp->next = createNode(pow(base, i));
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   45 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   48 |     Node* list = createList(base, n);
+    |      |                  ~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createList' from 'main'
+    |
+    +--> 'createList': events 3-14
+           |
+           |   21 | Node* createList(int base, int n) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createList'
+           |   22 |     Node* head = NULL;
+           |      |           ~~~~
+           |      |           |
+           |      |           (4) 'head' is NULL
+           |   23 |     Node* temp = NULL;
+           |      |           ~~~~
+           |      |           |
+           |      |           (5) 'head' is NULL
+           |   24 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (6) following 'true' branch (when 'i < n')...
+           |      |                       (10) following 'true' branch (when 'i < n')...
+           |   25 |         if (head == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (7) ...to here
+           |      |            (8) following 'true' branch (when 'head' is NULL)...
+           |      |            (11) ...to here
+           |      |            (12) following 'false' branch (when 'head' is non-NULL)...
+           |   26 |             head = createNode(pow(base, i));
+           |      |                               ~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (9) ...to here
+           |......
+           |   29 |             temp->next = createNode(pow(base, i));
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |          |
+           |      |                          |          (13) ...to here
+           |      |                          (14) calling 'createNode' from 'createList'
+           |
+           +--> 'createNode': events 15-17
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (15) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   12 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (16) following 'true' branch (when 'newNode' is NULL)...
+                  |   13 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (17) ...to here
+                  |
+                'createNode': event 18
+                  |
+                  |   14 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (18) '0' is NULL
+                  |
+           <------+
+           |
+         'createList': events 19-25
+           |
+           |   24 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~ 
+           |      |                       |
+           |      |                       (21) following 'true' branch (when 'i < n')...
+           |   25 |         if (head == NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (22) ...to here
+           |      |            (23) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   29 |             temp->next = createNode(pow(base, i));
+           |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |          |
+           |      |                          |          (24) ...to here
+           |      |                          (19) returning to 'createList' from 'createNode'
+           |      |                          (25) calling 'createNode' from 'createList'
+           |   30 |             temp = temp->next;
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (20) 'temp' is NULL
+           |
+           +--> 'createNode': events 26-28
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (26) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   12 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (27) following 'true' branch (when 'newNode' is NULL)...
+                  |   13 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (28) ...to here
+                  |
+                'createNode': event 29
+                  |
+                  |   14 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (29) 'temp' is NULL
+                  |
+           <------+
+           |
+         'createList': events 30-33
+           |
+           |   29 |             temp->next = createNode(pow(base, i));
+           |      |             ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        | |
+           |      |                        | (30) returning to 'createList' from 'createNode'
+           |      |                        (31) 'temp' is NULL
+           |      |                        (33) dereference of NULL 'temp'
+           |   30 |             temp = temp->next;
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (32) 'temp' is NULL
+           |

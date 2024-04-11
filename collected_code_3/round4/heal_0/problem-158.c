@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findOperations(int arr[], int n, int k) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    int operations = 0;
+    for (int i = 0; i < n; i++) {
+        operations += max - arr[i];
+    }
+
+    if (operations % k == 0) {
+        return operations / k;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    int result = findOperations(arr, n, k);
+    if (result == -1) {
+        printf("It is not possible to make all elements equal with %d operations.\n", k);
+    } else {
+        printf("The number of operations required to make all elements equal is: %d\n", result);
+    }
+    return 0;
+}

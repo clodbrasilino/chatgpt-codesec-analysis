@@ -1,0 +1,4 @@
+collected_code_3/problem-923-2.c: In function 'shortestSupersequence':
+collected_code_3/problem-923-2.c:18:32: warning: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+   18 |                 dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1]);
+      |                                ^~~

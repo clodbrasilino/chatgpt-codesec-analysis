@@ -1,0 +1,25 @@
+Unfortunately, C does not have built-in support for regular expressions. You would need to use a library like POSIX regex or PCRE to use regular expressions in C. However, you can accomplish the task without regex by using ASCII values to identify uppercase letters. Here is a simple C program that does this:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void splitString(char *str) {
+    int len = strlen(str);
+    for(int i = 0; i < len; i++) {
+        if(isupper(str[i])) {
+            printf("\n");
+        }
+        printf("%c", str[i]);
+    }
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    splitString(str);
+    return 0;
+}
+```
+
+This program will print each segment of the string that is separated by an uppercase letter on a new line. It uses the `isupper` function from the `ctype.h` library to check if a character is uppercase. If it is, it prints a newline character before printing the character.

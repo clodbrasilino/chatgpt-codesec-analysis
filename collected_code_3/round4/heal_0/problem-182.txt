@@ -1,0 +1,54 @@
+```C
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void find_characters(char *str) {
+    regex_t regex;
+    int reti;
+    char msgbuf[100];
+
+    /* Compile regular expression */
+    reti = regcomp(&regex, "[A-Z]", 0);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    /* Execute regular expression */
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        puts("String contains uppercase character");
+    }
+
+    regcomp(&regex, "[a-z]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        puts("String contains lowercase character");
+    }
+
+    regcomp(&regex, "[0-9]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        puts("String contains numeric character");
+    }
+
+    regcomp(&regex, "[^a-zA-Z0-9]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        puts("String contains special character");
+    }
+
+    /* Free compiled regular expression if you want to use the regex_t again */
+    regfree(&regex);
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    fgets(str, 100, stdin);
+    find_characters(str);
+    return 0;
+}
+```
+Please note that this code uses POSIX regular expressions which may not be available on all platforms. Also, this code does not handle Unicode characters.

@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+void clearTuple(Tuple *t) {
+    t->x = 0;
+    t->y = 0;
+}
+
+int main() {
+    Tuple t1 = {5, 10};
+    clearTuple(&t1);
+    printf("Tuple values after clearing: %d, %d\n", t1.x, t1.y);
+    return 0;
+}
+```

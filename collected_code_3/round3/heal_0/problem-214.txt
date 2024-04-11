@@ -1,0 +1,18 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double radianToDegree(double radian) {
+    double degree;
+    degree = radian * (180.0 / M_PI);
+    return degree;
+}
+
+int main() {
+    double radian;
+    printf("Enter radians: ");
+    scanf("%lf", &radian);
+    printf("Degrees: %.2lf", radianToDegree(radian));
+    return 0;
+}
+```

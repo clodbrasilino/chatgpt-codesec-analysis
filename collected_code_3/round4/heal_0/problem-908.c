@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int fixedPoint(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == i) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {0, 2, 5, 8, 17};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = fixedPoint(arr, n);
+    if (result == -1) {
+        printf("No Fixed Point");
+    } else {
+        printf("Fixed Point is %d", result);
+    }
+    return 0;
+}

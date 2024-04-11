@@ -1,0 +1,142 @@
+./collected_code_3/round3/heal_1/healed/problem-539.c: In function 'createList':
+./collected_code_3/round3/heal_1/healed/problem-539.c:25:29: warning: leak of 'head' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |     for (int i = 0; i < n; i++) {
+      |                            ~^~
+  'main': events 1-2
+    |
+    |   48 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     Node* list = createList(base, n);
+    |      |                  ~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createList' from 'main'
+    |
+    +--> 'createList': events 3-8
+           |
+           |   21 | Node* createList(int base, int n) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createList'
+           |......
+           |   25 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < n')...
+           |   26 |         if (i == 0) {
+           |      |            ~
+           |      |            |
+           |      |            (5) ...to here
+           |      |            (6) following 'true' branch (when 'i == 0')...
+           |   27 |             head = createNode(pow(base, i));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |          |
+           |      |                    |          (7) ...to here
+           |      |                    (8) calling 'createNode' from 'createList'
+           |
+           +--> 'createNode': events 9-10
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (9) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (10) allocated here
+                  |
+           <------+
+           |
+         'createList': events 11-20
+           |
+           |   25 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~  ~~~
+           |      |                       |     |
+           |      |                       |     (17) ...to here
+           |      |                       (12) following 'true' branch (when 'i < n')...
+           |      |                       (18) following 'true' branch (when 'i < n')...
+           |   26 |         if (i == 0) {
+           |      |            ~        
+           |      |            |
+           |      |            (13) ...to here
+           |      |            (14) following 'false' branch (when 'i != 0')...
+           |      |            (19) ...to here
+           |   27 |             head = createNode(pow(base, i));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (11) returning to 'createList' from 'createNode'
+           |      |                    (20) calling 'createNode' from 'createList'
+           |......
+           |   30 |             if (temp != NULL) {
+           |      |                ~    
+           |      |                |
+           |      |                (15) ...to here
+           |      |                (16) following 'false' branch (when 'temp' is NULL)...
+           |
+           +--> 'createNode': events 21-23
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (21) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (22) allocated here
+                  |   12 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (23) assuming 'newNode' is non-NULL
+                  |
+           <------+
+           |
+         'createList': events 24-29
+           |
+           |   25 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (25) following 'true' branch (when 'i < n')...
+           |   26 |         if (i == 0) {
+           |      |            ~        
+           |      |            |
+           |      |            (26) ...to here
+           |      |            (27) following 'true' branch (when 'i == 0')...
+           |   27 |             head = createNode(pow(base, i));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |          |
+           |      |                    |          (28) ...to here
+           |      |                    (24) returning to 'createList' from 'createNode'
+           |      |                    (29) calling 'createNode' from 'createList'
+           |
+           +--> 'createNode': events 30-32
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (30) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   12 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (31) following 'true' branch (when 'newNode' is NULL)...
+                  |   13 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (32) ...to here
+                  |
+           <------+
+           |
+         'createList': events 33-34
+           |
+           |   25 |     for (int i = 0; i < n; i++) {
+           |      |                            ~~~
+           |      |                             |
+           |      |                             (34) 'head' leaks here; was allocated at (22)
+           |   26 |         if (i == 0) {
+           |   27 |             head = createNode(pow(base, i));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (33) returning to 'createList' from 'createNode'
+           |

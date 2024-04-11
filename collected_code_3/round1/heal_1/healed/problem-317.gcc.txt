@@ -1,0 +1,444 @@
+collected_code_3/round1/heal_1/healed/problem-317.c: In function 'modifiedRLE':
+collected_code_3/round1/heal_1/healed/problem-317.c:44:18: warning: use after 'free' of 'curr' [CWE-416] [-Wanalyzer-use-after-free]
+   44 |             curr = curr->next;
+      |             ~~~~~^~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   58 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   59 |     Node* head = createNode(1);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 3-5
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(!newNode) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   59 |     Node* head = createNode(1);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (6) returning to 'main' from 'createNode'
+    |   60 |     if(!head){
+    |      |       ~           
+    |      |       |
+    |      |       (7) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   63 |     Node* temp = createNode(1);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) ...to here
+    |      |                  (9) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 10-14
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (10) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (11) allocated here
+           |   11 |     if(!newNode) {
+           |      |       ~
+           |      |       |
+           |      |       (12) assuming 'newNode' is non-NULL
+           |      |       (13) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (14) ...to here
+           |
+    <------+
+    |
+  'main': events 15-18
+    |
+    |   63 |     Node* temp = createNode(1);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'createNode'
+    |   64 |     if(!temp){
+    |      |       ~           
+    |      |       |
+    |      |       (16) following 'false' branch (when 'temp' is non-NULL)...
+    |......
+    |   67 |     head->next = temp;
+    |      |     ~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (17) ...to here
+    |   68 |     temp = createNode(2);
+    |      |            ~~~~~~~~~~~~~
+    |      |            |
+    |      |            (18) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 19-21
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (19) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(!newNode) {
+           |      |       ~
+           |      |       |
+           |      |       (20) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-25
+    |
+    |   68 |     temp = createNode(2);
+    |      |            ^~~~~~~~~~~~~
+    |      |            |
+    |      |            (22) returning to 'main' from 'createNode'
+    |   69 |     if(!temp){
+    |      |       ~     
+    |      |       |
+    |      |       (23) following 'false' branch (when 'temp' is non-NULL)...
+    |......
+    |   72 |     head->next->next = temp;
+    |      |     ~~~~~~~~~~
+    |      |         |
+    |      |         (24) ...to here
+    |   73 |     temp = createNode(2);
+    |      |            ~~~~~~~~~~~~~
+    |      |            |
+    |      |            (25) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 26-28
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (26) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(!newNode) {
+           |      |       ~
+           |      |       |
+           |      |       (27) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (28) ...to here
+           |
+    <------+
+    |
+  'main': events 29-32
+    |
+    |   73 |     temp = createNode(2);
+    |      |            ^~~~~~~~~~~~~
+    |      |            |
+    |      |            (29) returning to 'main' from 'createNode'
+    |   74 |     if(!temp){
+    |      |       ~     
+    |      |       |
+    |      |       (30) following 'false' branch (when 'temp' is non-NULL)...
+    |......
+    |   77 |     head->next->next->next = temp;
+    |      |     ~~~~~~~~~~
+    |      |         |
+    |      |         (31) ...to here
+    |   78 |     temp = createNode(2);
+    |      |            ~~~~~~~~~~~~~
+    |      |            |
+    |      |            (32) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 33-35
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (33) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(!newNode) {
+           |      |       ~
+           |      |       |
+           |      |       (34) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (35) ...to here
+           |
+    <------+
+    |
+  'main': events 36-39
+    |
+    |   78 |     temp = createNode(2);
+    |      |            ^~~~~~~~~~~~~
+    |      |            |
+    |      |            (36) returning to 'main' from 'createNode'
+    |   79 |     if(!temp){
+    |      |       ~     
+    |      |       |
+    |      |       (37) following 'false' branch (when 'temp' is non-NULL)...
+    |......
+    |   82 |     head->next->next->next->next = temp;
+    |      |     ~~~~~~~~~~
+    |      |         |
+    |      |         (38) ...to here
+    |   83 |     temp = createNode(3);
+    |      |            ~~~~~~~~~~~~~
+    |      |            |
+    |      |            (39) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 40-42
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (40) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(!newNode) {
+           |      |       ~
+           |      |       |
+           |      |       (41) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (42) ...to here
+           |
+    <------+
+    |
+  'main': events 43-46
+    |
+    |   83 |     temp = createNode(3);
+    |      |            ^~~~~~~~~~~~~
+    |      |            |
+    |      |            (43) returning to 'main' from 'createNode'
+    |   84 |     if(!temp){
+    |      |       ~     
+    |      |       |
+    |      |       (44) following 'false' branch (when 'temp' is non-NULL)...
+    |......
+    |   87 |     head->next->next->next->next->next = temp;
+    |      |     ~~~~~~~~~~
+    |      |         |
+    |      |         (45) ...to here
+    |......
+    |   90 |     printList(head);
+    |      |     ~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (46) calling 'printList' from 'main'
+    |
+    +--> 'printList': event 47
+           |
+           |   50 | void printList(Node* head) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (47) entry to 'printList'
+           |
+         'printList': events 48-49
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (48) following 'true' branch (when 'head' is non-NULL)...
+           |   52 |         printf("%d ", head->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (49) ...to here
+           |
+         'printList': events 50-51
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (50) following 'true' branch (when 'head' is non-NULL)...
+           |   52 |         printf("%d ", head->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (51) ...to here
+           |
+         'printList': events 52-53
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (52) following 'true' branch (when 'head' is non-NULL)...
+           |   52 |         printf("%d ", head->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (53) ...to here
+           |
+         'printList': events 54-55
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (54) following 'true' branch (when 'head' is non-NULL)...
+           |   52 |         printf("%d ", head->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (55) ...to here
+           |
+         'printList': events 56-57
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (56) following 'true' branch (when 'head' is non-NULL)...
+           |   52 |         printf("%d ", head->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (57) ...to here
+           |
+         'printList': events 58-59
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (58) following 'true' branch (when 'head' is non-NULL)...
+           |   52 |         printf("%d ", head->data);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (59) ...to here
+           |
+         'printList': events 60-61
+           |
+           |   51 |     while(head != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (60) following 'false' branch (when 'head' is NULL)...
+           |......
+           |   55 |     printf("\n");
+           |      |     ~~~~~~~~~~~~
+           |      |     |
+           |      |     (61) ...to here
+           |
+    <------+
+    |
+  'main': events 62-63
+    |
+    |   90 |     printList(head);
+    |      |     ^~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (62) returning to 'main' from 'printList'
+    |   91 | 
+    |   92 |     head = modifiedRLE(head);
+    |      |            ~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (63) calling 'modifiedRLE' from 'main'
+    |
+    +--> 'modifiedRLE': events 64-66
+           |
+           |   20 | Node* modifiedRLE(Node* head) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (64) entry to 'modifiedRLE'
+           |   21 |     if(head == NULL || head->next == NULL)
+           |      |       ~
+           |      |       |
+           |      |       (65) following 'false' branch...
+           |......
+           |   24 |     Node* prev = head;
+           |      |           ~~~~
+           |      |           |
+           |      |           (66) ...to here
+           |
+         'modifiedRLE': events 67-75
+           |
+           |   27 |     while(curr != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (67) following 'true' branch (when 'curr' is non-NULL)...
+           |   28 |         if(prev->data == curr->data) {
+           |      |           ~~~~~~~~~~~
+           |      |           |    |
+           |      |           |    (68) ...to here
+           |      |           (69) following 'true' branch...
+           |   29 |             int count = 2;
+           |      |                 ~~~~~
+           |      |                 |
+           |      |                 (70) ...to here
+           |   30 |             while(curr->next != NULL && curr->next->data == prev->data) {
+           |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                      |      |
+           |      |                                      |      (72) ...to here
+           |      |                                      (71) following 'true' branch...
+           |      |                                      (73) following 'false' branch...
+           |......
+           |   34 |             Node* temp = createNode(count);
+           |      |                          ~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (74) ...to here
+           |      |                          (75) calling 'createNode' from 'modifiedRLE'
+           |
+           +--> 'createNode': events 76-78
+                  |
+                  |    9 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (76) entry to 'createNode'
+                  |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   11 |     if(!newNode) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (77) following 'false' branch (when 'newNode' is non-NULL)...
+                  |......
+                  |   15 |     newNode->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (78) ...to here
+                  |
+           <------+
+           |
+         'modifiedRLE': events 79-85
+           |
+           |   34 |             Node* temp = createNode(count);
+           |      |                          ^~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (79) returning to 'modifiedRLE' from 'createNode'
+           |   35 |             if(!temp){
+           |      |               ~           
+           |      |               |
+           |      |               (80) following 'false' branch (when 'temp' is non-NULL)...
+           |......
+           |   38 |             prev->next = temp;
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (81) ...to here
+           |   39 |             prev->next->next = curr->next;
+           |   40 |             free(curr);
+           |      |             ~~~~~~~~~~    
+           |      |             |
+           |      |             (82) freed here
+           |......
+           |   43 |         if(curr){
+           |      |           ~               
+           |      |           |
+           |      |           (83) following 'true' branch (when 'curr' is non-NULL)...
+           |   44 |             curr = curr->next;
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (84) ...to here
+           |      |                  (85) use after 'free' of 'curr'; freed at (82)
+           |

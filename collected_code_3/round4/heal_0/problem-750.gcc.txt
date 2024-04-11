@@ -1,0 +1,15 @@
+collected_code_3/round4/heal_0/problem-750.c: In function 'add_tuple_to_list':
+collected_code_3/round4/heal_0/problem-750.c:16:20: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     new_node->data = t;
+      |     ~~~~~~~~~~~~~~~^~~
+  'add_tuple_to_list': events 1-2
+    |
+    |   15 |     Node* new_node = (Node*)malloc(sizeof(Node));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   16 |     new_node->data = t;
+    |      |     ~~~~~~~~~~~~~~~~~~       
+    |      |                    |
+    |      |                    (2) 'new_node' could be NULL: unchecked value from (1)
+    |

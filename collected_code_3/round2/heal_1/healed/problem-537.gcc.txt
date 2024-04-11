@@ -1,0 +1,246 @@
+./collected_code_3/round2/heal_1/healed/problem-537.c: In function 'findFirstRepeatedWord':
+./collected_code_3/round2/heal_1/healed/problem-537.c:44:1: warning: leak of 'words[0]' [CWE-401] [-Wanalyzer-malloc-leak]
+   44 | }
+      | ^
+  'main': events 1-2
+    |
+    |   46 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   47 |     char str[] = "This is a test string for testing";
+    |   48 |     char* word = findFirstRepeatedWord(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'findFirstRepeatedWord' from 'main'
+    |
+    +--> 'findFirstRepeatedWord': events 3-16
+           |
+           |    7 | char* findFirstRepeatedWord(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findFirstRepeatedWord'
+           |......
+           |   12 |     if (word == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'word' is non-NULL)...
+           |......
+           |   16 |     for(i = 0; i <= strlen(str); i++) {
+           |      |         ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |           |      |
+           |      |           |      (6) following 'true' branch...
+           |      |           |      (10) following 'true' branch...
+           |      |           (5) ...to here
+           |   17 |         if(str[i] == ' ' || str[i] == '\0') {
+           |      |           ~   ~
+           |      |           |   |
+           |      |           |   (7) ...to here
+           |      |           |   (11) ...to here
+           |      |           (8) following 'false' branch...
+           |   18 |             word[j] = '\0';
+           |   19 |             for(k = 0; k < w; k++) {
+           |      |                        ~~~~~
+           |      |                          |
+           |      |                          (12) following 'false' branch (when 'k >= w')...
+           |......
+           |   27 |             words[w] = (char*)malloc(strlen(word) + 1);
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |      |
+           |      |                               |      (13) ...to here
+           |      |                               (14) allocated here
+           |   28 |             if(words[w] == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (15) assuming 'words[w]' is non-NULL
+           |      |               (16) following 'false' branch...
+           |......
+           |   36 |             word[j++] = str[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (9) ...to here
+           |
+         'findFirstRepeatedWord': event 17
+           |
+           |   32 |             strcpy(words[w], word);
+           |      |                    ~~~~~^~~
+           |      |                         |
+           |      |                         (17) ...to here
+           |
+         'findFirstRepeatedWord': events 18-26
+           |
+           |   16 |     for(i = 0; i <= strlen(str); i++) {
+           |      |                ~~^~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (18) following 'true' branch...
+           |   17 |         if(str[i] == ' ' || str[i] == '\0') {
+           |      |               ~   
+           |      |               |
+           |      |               (19) ...to here
+           |   18 |             word[j] = '\0';
+           |   19 |             for(k = 0; k < w; k++) {
+           |      |                        ~~~~~  ~~~
+           |      |                          |     |
+           |      |                          |     (23) ...to here
+           |      |                          (20) following 'true' branch (when 'k < w')...
+           |   20 |                 if(strcmp(words[k], word) == 0) {
+           |      |                   ~       ~~~~~~~~
+           |      |                   |            |
+           |      |                   |            (21) ...to here
+           |      |                   (22) following 'false' branch (when the strings are non-equal)...
+           |......
+           |   28 |             if(words[w] == NULL) {
+           |      |               ~   
+           |      |               |
+           |      |               (24) following 'true' branch...
+           |   29 |                 free(word);
+           |      |                 ~~~~~~~~~~
+           |      |                 |
+           |      |                 (25) ...to here
+           |......
+           |   44 | }
+           |      | ~                 
+           |      | |
+           |      | (26) 'words[0]' leaks here; was allocated at (14)
+           |
+./collected_code_3/round2/heal_1/healed/problem-537.c:44:1: warning: leak of 'words[1]' [CWE-401] [-Wanalyzer-malloc-leak]
+   44 | }
+      | ^
+  'main': events 1-2
+    |
+    |   46 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   47 |     char str[] = "This is a test string for testing";
+    |   48 |     char* word = findFirstRepeatedWord(str);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'findFirstRepeatedWord' from 'main'
+    |
+    +--> 'findFirstRepeatedWord': events 3-14
+           |
+           |    7 | char* findFirstRepeatedWord(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'findFirstRepeatedWord'
+           |......
+           |   12 |     if (word == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'word' is non-NULL)...
+           |......
+           |   16 |     for(i = 0; i <= strlen(str); i++) {
+           |      |         ~~~~~  ~~~~~~~~~~~~~~~~
+           |      |           |      |
+           |      |           |      (6) following 'true' branch...
+           |      |           |      (10) following 'true' branch...
+           |      |           (5) ...to here
+           |   17 |         if(str[i] == ' ' || str[i] == '\0') {
+           |      |           ~   ~
+           |      |           |   |
+           |      |           |   (7) ...to here
+           |      |           |   (11) ...to here
+           |      |           (8) following 'false' branch...
+           |   18 |             word[j] = '\0';
+           |   19 |             for(k = 0; k < w; k++) {
+           |      |                        ~~~~~
+           |      |                          |
+           |      |                          (12) following 'false' branch (when 'k >= w')...
+           |......
+           |   27 |             words[w] = (char*)malloc(strlen(word) + 1);
+           |      |                                      ~~~~~~~~~~~~
+           |      |                                      |
+           |      |                                      (13) ...to here
+           |   28 |             if(words[w] == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (14) following 'false' branch...
+           |......
+           |   36 |             word[j++] = str[i];
+           |      |                            ~
+           |      |                            |
+           |      |                            (9) ...to here
+           |
+         'findFirstRepeatedWord': event 15
+           |
+           |   32 |             strcpy(words[w], word);
+           |      |                    ~~~~~^~~
+           |      |                         |
+           |      |                         (15) ...to here
+           |
+         'findFirstRepeatedWord': events 16-24
+           |
+           |   16 |     for(i = 0; i <= strlen(str); i++) {
+           |      |                ~~^~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (16) following 'true' branch...
+           |   17 |         if(str[i] == ' ' || str[i] == '\0') {
+           |      |               ~   
+           |      |               |
+           |      |               (17) ...to here
+           |   18 |             word[j] = '\0';
+           |   19 |             for(k = 0; k < w; k++) {
+           |      |                        ~~~~~  ~~~
+           |      |                          |     |
+           |      |                          |     (21) ...to here
+           |      |                          (18) following 'true' branch (when 'k < w')...
+           |   20 |                 if(strcmp(words[k], word) == 0) {
+           |      |                   ~       ~~~~~~~~
+           |      |                   |            |
+           |      |                   |            (19) ...to here
+           |      |                   (20) following 'false' branch (when the strings are non-equal)...
+           |......
+           |   27 |             words[w] = (char*)malloc(strlen(word) + 1);
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (22) allocated here
+           |   28 |             if(words[w] == NULL) {
+           |      |               ~   
+           |      |               |
+           |      |               (23) assuming 'words[w]' is non-NULL
+           |      |               (24) following 'false' branch...
+           |
+         'findFirstRepeatedWord': event 25
+           |
+           |   32 |             strcpy(words[w], word);
+           |      |                    ~~~~~^~~
+           |      |                         |
+           |      |                         (25) ...to here
+           |
+         'findFirstRepeatedWord': events 26-34
+           |
+           |   16 |     for(i = 0; i <= strlen(str); i++) {
+           |      |                ~~^~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (26) following 'true' branch...
+           |   17 |         if(str[i] == ' ' || str[i] == '\0') {
+           |      |               ~   
+           |      |               |
+           |      |               (27) ...to here
+           |   18 |             word[j] = '\0';
+           |   19 |             for(k = 0; k < w; k++) {
+           |      |                        ~~~~~  ~~~
+           |      |                          |     |
+           |      |                          |     (31) ...to here
+           |      |                          (28) following 'true' branch (when 'k < w')...
+           |   20 |                 if(strcmp(words[k], word) == 0) {
+           |      |                   ~       ~~~~~~~~
+           |      |                   |            |
+           |      |                   |            (29) ...to here
+           |      |                   (30) following 'false' branch (when the strings are non-equal)...
+           |......
+           |   28 |             if(words[w] == NULL) {
+           |      |               ~   
+           |      |               |
+           |      |               (32) following 'true' branch...
+           |   29 |                 free(word);
+           |      |                 ~~~~~~~~~~
+           |      |                 |
+           |      |                 (33) ...to here
+           |......
+           |   44 | }
+           |      | ~                 
+           |      | |
+           |      | (34) 'words[1]' leaks here; was allocated at (22)
+           |

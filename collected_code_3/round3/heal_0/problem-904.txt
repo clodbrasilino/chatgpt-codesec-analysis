@@ -1,0 +1,13 @@
+```C
+#include <stdbool.h>
+
+bool isEven(int num) {
+    return num % 2 == 0;
+}
+
+int main() {
+    int num = 10;
+    bool result = isEven(num);
+    return 0;
+}
+```

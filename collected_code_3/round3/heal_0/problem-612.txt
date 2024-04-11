@@ -1,0 +1,71 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(Node** head, int data) {
+    if (*head == NULL) {
+        *head = createNode(data);
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = createNode(data);
+    }
+}
+
+Node* mergeFirstAndLast(Node* head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+    Node* first = head;
+    Node* last = head;
+    Node* prev = NULL;
+    while (last->next != NULL) {
+        prev = last;
+        last = last->next;
+    }
+    prev->next = NULL;
+    last->next = first->next;
+    first->next = last;
+    return first;
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = NULL;
+    insertNode(&head, 1);
+    insertNode(&head, 2);
+    insertNode(&head, 3);
+    insertNode(&head, 4);
+    insertNode(&head, 5);
+    printList(head);
+    head = mergeFirstAndLast(head);
+    printList(head);
+    return 0;
+}
+```

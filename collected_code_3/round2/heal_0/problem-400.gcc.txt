@@ -1,0 +1,60 @@
+collected_code_3/problem-400-2.c: In function 'countTupleFrequencies':
+collected_code_3/problem-400-2.c:33:38: warning: dereference of possibly-NULL 'tupleCounts' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   33 |             tupleCounts[count].tuple = tuples[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'countTupleFrequencies': events 1-5
+    |
+    |   24 | void countTupleFrequencies(Tuple* tuples, int n) {
+    |      |      ^~~~~~~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'countTupleFrequencies'
+    |   25 |     TupleCount* tupleCounts = (TupleCount*)malloc(n * sizeof(TupleCount));
+    |      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                            |
+    |      |                                            (2) this call could return NULL
+    |......
+    |   28 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i < n')...
+    |   29 |         int index = findTupleIndex(tupleCounts, count, tuples[i]);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |                                        |
+    |      |                     |                                        (4) ...to here
+    |      |                     (5) calling 'findTupleIndex' from 'countTupleFrequencies'
+    |
+    +--> 'findTupleIndex': events 6-8
+           |
+           |   15 | int findTupleIndex(TupleCount* tupleCounts, int n, Tuple tuple) {
+           |      |     ^~~~~~~~~~~~~~
+           |      |     |
+           |      |     (6) entry to 'findTupleIndex'
+           |   16 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (7) following 'false' branch (when 'i >= n')...
+           |......
+           |   21 |     return -1;
+           |      |            ~
+           |      |            |
+           |      |            (8) ...to here
+           |
+    <------+
+    |
+  'countTupleFrequencies': events 9-12
+    |
+    |   29 |         int index = findTupleIndex(tupleCounts, count, tuples[i]);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (9) returning to 'countTupleFrequencies' from 'findTupleIndex'
+    |   30 |         if (index != -1) {
+    |      |            ~         
+    |      |            |
+    |      |            (10) following 'false' branch (when 'index == -1')...
+    |......
+    |   33 |             tupleCounts[count].tuple = tuples[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                      |       |
+    |      |                                      |       (11) ...to here
+    |      |                                      (12) 'tupleCounts + (long unsigned int)count * 12' could be NULL: unchecked value from (2)
+    |

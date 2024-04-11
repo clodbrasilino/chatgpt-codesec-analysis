@@ -1,0 +1,53 @@
+In C, there are no built-in dictionary or list data types like in Python or other high-level languages. However, we can use a struct to represent a dictionary and an array of structs to represent a list of dictionaries. Here's an example of how you might sort a list of dictionaries by a specific key:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_DICTS 100
+#define MAX_KEY_LENGTH 50
+#define MAX_VALUE_LENGTH 50
+
+typedef struct {
+    char key[MAX_KEY_LENGTH];
+    char value[MAX_VALUE_LENGTH];
+} Dictionary;
+
+int compare(const void* a, const void* b) {
+    Dictionary* dictA = (Dictionary*) a;
+    Dictionary* dictB = (Dictionary*) b;
+    return strcmp(dictA->key, dictB->key);
+}
+
+void sortDictionaries(Dictionary* dicts, int size) {
+    qsort(dicts, size, sizeof(Dictionary), compare);
+}
+
+int main() {
+    Dictionary dicts[MAX_DICTS];
+    int size = 0;
+
+    strcpy(dicts[size].key, "z");
+    strcpy(dicts[size].value, "1");
+    size++;
+
+    strcpy(dicts[size].key, "a");
+    strcpy(dicts[size].value, "2");
+    size++;
+
+    strcpy(dicts[size].key, "m");
+    strcpy(dicts[size].value, "3");
+    size++;
+
+    sortDictionaries(dicts, size);
+
+    for(int i = 0; i < size; i++) {
+        printf("%s: %s\n", dicts[i].key, dicts[i].value);
+    }
+
+    return 0;
+}
+```
+
+This code defines a struct called Dictionary that has two char arrays, key and value. It then defines a compare function that can be used by the qsort function to sort an array of Dictionaries. The main function creates an array of Dictionaries, adds some values to it, sorts it, and then prints out the sorted list of dictionaries.

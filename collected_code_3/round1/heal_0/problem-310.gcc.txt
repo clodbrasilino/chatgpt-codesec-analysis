@@ -1,0 +1,16 @@
+collected_code_3/problem-310-1.c: In function 'string_to_tuple':
+collected_code_3/problem-310-1.c:16:18: warning: dereference of possibly-NULL 'tuple' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     tuple->first = malloc(strlen(token) + 1);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'string_to_tuple': events 1-2
+    |
+    |   13 |     Tuple* tuple = malloc(sizeof(Tuple));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |......
+    |   16 |     tuple->first = malloc(strlen(token) + 1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) 'tuple' could be NULL: unchecked value from (1)
+    |

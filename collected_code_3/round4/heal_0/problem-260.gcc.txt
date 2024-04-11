@@ -1,0 +1,79 @@
+collected_code_3/round4/heal_0/problem-260.c: In function 'newmanShanksWilliams':
+collected_code_3/round4/heal_0/problem-260.c:15:12: warning: use of uninitialized value 'current' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   15 |     return current;
+      |            ^~~~~~~
+  'newmanShanksWilliams': events 1-7
+    |
+    |    4 |     if (n == 0 || n == 1) {
+    |      |        ~       
+    |      |        |
+    |      |        (3) following 'false' branch...
+    |......
+    |    7 |     long long prevPrev = 1;
+    |      |               ~~~~~~~~
+    |      |               |
+    |      |               (4) ...to here
+    |    8 |     long long prev = 1;
+    |    9 |     long long current;
+    |      |               ^~~~~~~
+    |      |               |
+    |      |               (1) region created on stack here
+    |      |               (2) capacity: 8 bytes
+    |   10 |     for (int i = 2; i <= n; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (5) following 'false' branch (when 'i > n')...
+    |......
+    |   15 |     return current;
+    |      |            ~~~~~~~
+    |      |            |
+    |      |            (6) ...to here
+    |      |            (7) use of uninitialized value 'current' here
+    |
+collected_code_3/round4/heal_0/problem-260.c:15:12: warning: use of uninitialized value 'current' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   15 |     return current;
+      |            ^~~~~~~
+  'main': events 1-2
+    |
+    |   18 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   22 |     printf("The %dth Newman-Shanks-Williams prime number is %lld\n", n, newmanShanksWilliams(n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'newmanShanksWilliams' from 'main'
+    |
+    +--> 'newmanShanksWilliams': events 3-10
+           |
+           |    3 | long long newmanShanksWilliams(int n) {
+           |      |           ^~~~~~~~~~~~~~~~~~~~
+           |      |           |
+           |      |           (3) entry to 'newmanShanksWilliams'
+           |    4 |     if (n == 0 || n == 1) {
+           |      |        ~   
+           |      |        |
+           |      |        (6) following 'false' branch...
+           |......
+           |    7 |     long long prevPrev = 1;
+           |      |               ~~~~~~~~
+           |      |               |
+           |      |               (7) ...to here
+           |    8 |     long long prev = 1;
+           |    9 |     long long current;
+           |      |               ~~~~~~~
+           |      |               |
+           |      |               (4) region created on stack here
+           |      |               (5) capacity: 8 bytes
+           |   10 |     for (int i = 2; i <= n; i++) {
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (8) following 'false' branch (when 'i > n')...
+           |......
+           |   15 |     return current;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (9) ...to here
+           |      |            (10) use of uninitialized value 'current' here
+           |

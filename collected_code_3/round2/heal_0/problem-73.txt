@@ -1,0 +1,41 @@
+C language does not natively support regular expressions. However, we can use POSIX regex library available on Unix-based systems. Here is a simple example of how you can split a string using multiple delimiters using regex in C.
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string(char *str, char *regex_pattern) {
+    char *p = str;
+    regex_t regex;
+    regmatch_t match;
+
+    if (regcomp(&regex, regex_pattern, REG_EXTENDED) != 0) {
+        printf("Failed to compile regex.\n");
+        return;
+    }
+
+    while (1) {
+        if (regexec(&regex, p, 1, &match, 0) == 0) {
+            if (match.rm_so != 0) {
+                printf("%.*s\n", (int)match.rm_so, p);
+            }
+            p += match.rm_eo;
+        } else {
+            printf("%s\n", p);
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, how are you? I am fine.";
+    char regex_pattern[] = "[ ,.?!]+";
+    split_string(str, regex_pattern);
+    return 0;
+}
+```
+
+In this code, the `split_string` function compiles the regex pattern and then uses it to split the input string. The `regexec` function finds the next match of the regex pattern in the string, and the code then prints the part of the string before the match. This process repeats until there are no more matches. Finally, the remaining part of the string after the last match is printed. The `regfree` function is used to free the memory allocated for the regex pattern. The `main` function demonstrates how to use the `split_string` function.

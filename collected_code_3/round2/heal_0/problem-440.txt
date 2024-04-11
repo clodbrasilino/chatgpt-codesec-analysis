@@ -1,0 +1,33 @@
+Here is a simple C program that finds all adverbs and their positions in a given sentence. This program assumes that adverbs are words that end with "ly". This is a very simplistic approach and may not cover all adverbs in English language.
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void find_adverbs(char* sentence) {
+    char* word;
+    int position = 0;
+
+    word = strtok(sentence, " ");
+    while(word != NULL) {
+        position++;
+        int len = strlen(word);
+        if(len > 2 && word[len-2] == 'l' && word[len-1] == 'y') {
+            printf("Adverb: %s, Position: %d\n", word, position);
+        }
+        word = strtok(NULL, " ");
+    }
+}
+
+int main() {
+    char sentence[100];
+    printf("Enter a sentence: ");
+    fgets(sentence, 100, stdin);
+    sentence[strcspn(sentence, "\n")] = 0;
+    find_adverbs(sentence);
+    return 0;
+}
+```
+
+Please note that this program uses `strtok` function which modifies the original string. If you want to keep the original string intact, you need to make a copy of it before passing it to `find_adverbs` function. Also, this program does not handle punctuation marks. If you want to handle them, you need to modify the code accordingly.

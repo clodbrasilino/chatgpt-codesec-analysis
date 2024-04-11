@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple extractNthElement(Tuple* list, int size, int n) {
+    if(n < size) {
+        return list[n];
+    }
+    return (Tuple){0, 0};
+}
+
+int main() {
+    Tuple list[5] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+    int n = 2;
+    Tuple nthElement = extractNthElement(list, 5, n);
+    printf("The %dth element is: {%d, %d}\n", n, nthElement.a, nthElement.b);
+    return 0;
+}

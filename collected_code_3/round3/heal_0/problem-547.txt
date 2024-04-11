@@ -1,0 +1,33 @@
+```C
+#include <stdio.h>
+
+int hammingDistance(int n1, int n2) {
+    int x = n1 ^ n2;
+    int setBits = 0;
+
+    while (x > 0) {
+        setBits += x & 1;
+        x >>= 1;
+    }
+
+    return setBits;
+}
+
+int totalHammingDistance(int n) {
+    int total = 0;
+    for (int i = 0; i <= n; i++) {
+        for (int j = i+1; j <= n; j++) {
+            total += hammingDistance(i, j);
+        }
+    }
+    return total;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Total Hamming distance is: %d\n", totalHammingDistance(n));
+    return 0;
+}
+```

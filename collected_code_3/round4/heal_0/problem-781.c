@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <math.h>
+
+int checkDivisorCount(int num) {
+    int count = 0;
+    int sqrt_num = sqrt(num);
+    for (int i = 1; i <= sqrt_num; i++) {
+        if (num % i == 0) {
+            if (num / i == i)
+                count++;
+            else
+                count += 2;
+        }
+    }
+    return count % 2;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if (checkDivisorCount(num))
+        printf("Count of divisors is Odd\n");
+    else
+        printf("Count of divisors is Even\n");
+    return 0;
+}

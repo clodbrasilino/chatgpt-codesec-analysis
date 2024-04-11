@@ -1,0 +1,72 @@
+collected_code_3/problem-585-3.c: In function 'pushHeap':
+collected_code_3/problem-585-3.c:26:9: warning: dereference of NULL 'h' [CWE-476] [-Wanalyzer-null-dereference]
+   26 |     if(h->count == h->size)
+      |        ~^~~~~~~
+  'main': events 1-2
+    |
+    |   77 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   80 |     findNExpensiveItems(prices, n, sizeof(prices) / sizeof(prices[0]));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNExpensiveItems' from 'main'
+    |
+    +--> 'findNExpensiveItems': events 3-4
+           |
+           |   61 | void findNExpensiveItems(int *prices, int n, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNExpensiveItems'
+           |   62 |     Heap *h = createHeap(n);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findNExpensiveItems'
+           |
+           +--> 'createHeap': event 5
+                  |
+                  |   10 | Heap *createHeap(int size) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |
+                'createHeap': event 6
+                  |
+                  |   13 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (6) '0' is NULL
+                  |
+           <------+
+           |
+         'findNExpensiveItems': events 7-10
+           |
+           |   62 |     Heap *h = createHeap(n);
+           |      |               ^~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) return of NULL to 'findNExpensiveItems' from 'createHeap'
+           |   63 |     int i;
+           |   64 |     for(i = 0; i < n; i++)
+           |      |                ~~~~~
+           |      |                  |
+           |      |                  (8) following 'true' branch (when 'i < n')...
+           |   65 |         pushHeap(h, prices[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (9) ...to here
+           |      |         (10) calling 'pushHeap' from 'findNExpensiveItems'
+           |
+           +--> 'pushHeap': events 11-12
+                  |
+                  |   24 | void pushHeap(Heap *h, int value) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'pushHeap'
+                  |   25 |     int i;
+                  |   26 |     if(h->count == h->size)
+                  |      |        ~~~~~~~~
+                  |      |         |
+                  |      |         (12) dereference of NULL 'h'
+                  |

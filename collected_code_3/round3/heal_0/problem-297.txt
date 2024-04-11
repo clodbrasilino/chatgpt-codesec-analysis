@@ -1,0 +1,66 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+Node* createNode(int val) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->val = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int val) {
+    Node* newNode = createNode(val);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void flattenList(Node* head, Node** result) {
+    Node* temp = head;
+    while (temp != NULL) {
+        appendNode(result, temp->val);
+        temp = temp->next;
+    }
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->val);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head1 = NULL;
+    appendNode(&head1, 1);
+    appendNode(&head1, 2);
+    appendNode(&head1, 3);
+
+    Node* head2 = NULL;
+    appendNode(&head2, 4);
+    appendNode(&head2, 5);
+    appendNode(&head2, 6);
+
+    Node* result = NULL;
+    flattenList(head1, &result);
+    flattenList(head2, &result);
+
+    printList(result);
+
+    return 0;
+}
+```

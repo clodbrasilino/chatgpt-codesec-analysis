@@ -1,0 +1,120 @@
+collected_code_3/problem-843-3.c: In function 'nthSuperUglyNumber':
+collected_code_3/problem-843-3.c:37:17: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   37 |         heap[i] = (HeapNode*)malloc(sizeof(HeapNode));
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   59 |     printf("%d\n", nthSuperUglyNumber(n, primes, primesSize));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-7
+           |
+           |   33 | int nthSuperUglyNumber(int n, int* primes, int primesSize) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |   34 |     int* ugly = (int*)malloc(sizeof(int) * n);
+           |   35 |     HeapNode** heap = (HeapNode**)malloc(sizeof(HeapNode*) * primesSize);
+           |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (4) this call could return NULL
+           |   36 |     for (int i = 0; i < primesSize; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < primesSize')...
+           |   37 |         heap[i] = (HeapNode*)malloc(sizeof(HeapNode));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |   |
+           |      |             |   (7) 'heap + (long unsigned int)i * 8' could be NULL: unchecked value from (4)
+           |      |             (6) ...to here
+           |
+collected_code_3/problem-843-3.c:38:22: warning: dereference of possibly-NULL '*heap_67 + _13' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   38 |         heap[i]->val = primes[i];
+      |         ~~~~~~~~~~~~~^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   59 |     printf("%d\n", nthSuperUglyNumber(n, primes, primesSize));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-7
+           |
+           |   33 | int nthSuperUglyNumber(int n, int* primes, int primesSize) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |......
+           |   36 |     for (int i = 0; i < primesSize; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < primesSize')...
+           |   37 |         heap[i] = (HeapNode*)malloc(sizeof(HeapNode));
+           |      |             ~                ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                |
+           |      |             (5) ...to here   (6) this call could return NULL
+           |   38 |         heap[i]->val = primes[i];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) '*heap_67 + _13' could be NULL: unchecked value from (6)
+           |
+collected_code_3/problem-843-3.c:43:13: warning: dereference of possibly-NULL 'ugly' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   43 |     ugly[0] = 1;
+      |     ~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   55 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   59 |     printf("%d\n", nthSuperUglyNumber(n, primes, primesSize));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'nthSuperUglyNumber' from 'main'
+    |
+    +--> 'nthSuperUglyNumber': events 3-15
+           |
+           |   33 | int nthSuperUglyNumber(int n, int* primes, int primesSize) {
+           |      |     ^~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'nthSuperUglyNumber'
+           |   34 |     int* ugly = (int*)malloc(sizeof(int) * n);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) this call could return NULL
+           |   35 |     HeapNode** heap = (HeapNode**)malloc(sizeof(HeapNode*) * primesSize);
+           |   36 |     for (int i = 0; i < primesSize; i++) {
+           |      |                     ~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < primesSize')...
+           |      |                       (7) following 'true' branch (when 'i < primesSize')...
+           |      |                       (9) following 'true' branch (when 'i < primesSize')...
+           |      |                       (11) following 'true' branch (when 'i < primesSize')...
+           |      |                       (13) following 'false' branch (when 'i >= primesSize')...
+           |   37 |         heap[i] = (HeapNode*)malloc(sizeof(HeapNode));
+           |      |             ~
+           |      |             |
+           |      |             (6) ...to here
+           |      |             (8) ...to here
+           |      |             (10) ...to here
+           |      |             (12) ...to here
+           |......
+           |   43 |     ugly[0] = 1;
+           |      |     ~~~~~~~~~~~
+           |      |             |
+           |      |             (14) ...to here
+           |      |             (15) 'ugly' could be NULL: unchecked value from (4)
+           |

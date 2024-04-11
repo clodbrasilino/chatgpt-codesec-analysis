@@ -1,0 +1,21 @@
+collected_code_3/round4/heal_0/problem-936.c: In function 'rearrangeTuples':
+collected_code_3/round4/heal_0/problem-936.c:13:17: warning: dereference of possibly-NULL 'temp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |         temp[i] = tuples[order[i]];
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~
+  'rearrangeTuples': events 1-4
+    |
+    |   10 |     Tuple* temp = (Tuple*)malloc(size * sizeof(Tuple));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   11 | 
+    |   12 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   13 |         temp[i] = tuples[order[i]];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |             |
+    |      |                 |             (3) ...to here
+    |      |                 (4) 'temp + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

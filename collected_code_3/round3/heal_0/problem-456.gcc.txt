@@ -1,0 +1,211 @@
+collected_code_3/problem-456-3.c: In function 'reverseString':
+collected_code_3/problem-456-3.c:8:16: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+    8 |         str[i] = str[len - i - 1];
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     reverseStringList(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStringList' from 'main'
+    |
+    +--> 'reverseStringList': events 3-6
+           |
+           |   13 | void reverseStringList(char** list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStringList'
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |   15 |         reverseString(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStringList'
+           |
+           +--> 'reverseString': events 7-10
+                  |
+                  |    4 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |    5 |     int len = strlen(str);
+                  |    6 |     for (int i = 0; i < len / 2; i++) {
+                  |      |                     ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (8) following 'true' branch...
+                  |    7 |         char temp = str[i];
+                  |      |                        ~
+                  |      |                        |
+                  |      |                        (9) ...to here
+                  |    8 |         str[i] = str[len - i - 1];
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (10) write to string literal here
+                  |
+collected_code_3/problem-456-3.c:8:16: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+    8 |         str[i] = str[len - i - 1];
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     reverseStringList(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStringList' from 'main'
+    |
+    +--> 'reverseStringList': events 3-6
+           |
+           |   13 | void reverseStringList(char** list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStringList'
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |   15 |         reverseString(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStringList'
+           |
+           +--> 'reverseString': events 7-12
+                  |
+                  |    4 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |    5 |     int len = strlen(str);
+                  |    6 |     for (int i = 0; i < len / 2; i++) {
+                  |      |                     ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (8) following 'true' branch...
+                  |      |                       (10) following 'true' branch...
+                  |    7 |         char temp = str[i];
+                  |      |                        ~
+                  |      |                        |
+                  |      |                        (9) ...to here
+                  |      |                        (11) ...to here
+                  |    8 |         str[i] = str[len - i - 1];
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (12) write to string literal here
+                  |
+collected_code_3/problem-456-3.c:9:26: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+    9 |         str[len - i - 1] = temp;
+      |         ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     reverseStringList(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStringList' from 'main'
+    |
+    +--> 'reverseStringList': events 3-6
+           |
+           |   13 | void reverseStringList(char** list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStringList'
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |   15 |         reverseString(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStringList'
+           |
+           +--> 'reverseString': events 7-10
+                  |
+                  |    4 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |    5 |     int len = strlen(str);
+                  |    6 |     for (int i = 0; i < len / 2; i++) {
+                  |      |                     ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (8) following 'true' branch...
+                  |    7 |         char temp = str[i];
+                  |      |                        ~
+                  |      |                        |
+                  |      |                        (9) ...to here
+                  |    8 |         str[i] = str[len - i - 1];
+                  |    9 |         str[len - i - 1] = temp;
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                          |
+                  |      |                          (10) write to string literal here
+                  |
+collected_code_3/problem-456-3.c:9:26: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+    9 |         str[len - i - 1] = temp;
+      |         ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   19 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   23 |     reverseStringList(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'reverseStringList' from 'main'
+    |
+    +--> 'reverseStringList': events 3-6
+           |
+           |   13 | void reverseStringList(char** list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'reverseStringList'
+           |   14 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |   15 |         reverseString(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'reverseString' from 'reverseStringList'
+           |
+           +--> 'reverseString': events 7-12
+                  |
+                  |    4 | void reverseString(char* str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'reverseString'
+                  |    5 |     int len = strlen(str);
+                  |    6 |     for (int i = 0; i < len / 2; i++) {
+                  |      |                     ~~~~~~~~~~~
+                  |      |                       |
+                  |      |                       (8) following 'true' branch...
+                  |      |                       (10) following 'true' branch...
+                  |    7 |         char temp = str[i];
+                  |      |                        ~
+                  |      |                        |
+                  |      |                        (9) ...to here
+                  |      |                        (11) ...to here
+                  |    8 |         str[i] = str[len - i - 1];
+                  |    9 |         str[len - i - 1] = temp;
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                          |
+                  |      |                          (12) write to string literal here
+                  |

@@ -1,0 +1,34 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int isLucky(int n) {
+    static int counter = 2;
+    if (n % counter == 0) {
+        return 0;
+    }
+    if (counter > n) {
+        return 1;
+    }
+    int next_position = n - n / counter;
+    counter++;
+    return isLucky(next_position);
+}
+
+void printLuckyNumbers(int n) {
+    int i;
+    for (i = 1; i <= n; i++) {
+        if (isLucky(i)) {
+            printf("%d ", i);
+        }
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of lucky numbers to print: ");
+    scanf("%d", &n);
+    printLuckyNumbers(n);
+    return 0;
+}
+```

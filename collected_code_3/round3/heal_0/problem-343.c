@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void count_digits_letters(char *str, int *digits, int *letters) {
+    *digits = 0;
+    *letters = 0;
+
+    for(int i = 0; i < strlen(str); i++) {
+        if(isdigit(str[i])) {
+            (*digits)++;
+        } else if(isalpha(str[i])) {
+            (*letters)++;
+        }
+    }
+}
+
+int main() {
+    char str[] = "Hello123";
+    int digits, letters;
+
+    count_digits_letters(str, &digits, &letters);
+
+    printf("Digits: %d, Letters: %d\n", digits, letters);
+
+    return 0;
+}

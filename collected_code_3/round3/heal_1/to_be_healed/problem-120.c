@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+int maxProduct(int arr[], int n) {
+    int max_val = arr[0];
+    int min_val = arr[0];
+    int maxProduct = arr[0];
+    int prev_max = arr[0];
+    int prev_min = arr[0];
+    int i;
+
+    for (i = 1; i < n; i++) {
+        /* Possible weaknesses found:
+         *  implicit declaration of function 'max' [-Wimplicit-function-declaration]
+         */
+        max_val = max(prev_max * arr[i], max(prev_min * arr[i], arr[i]));
+        /* Possible weaknesses found:
+         *  implicit declaration of function 'min' [-Wimplicit-function-declaration]
+         */
+        min_val = min(prev_max * arr[i], min(prev_min * arr[i], arr[i]));
+
+        maxProduct = max(maxProduct, max_val);
+
+        prev_max = max_val;
+        prev_min = min_val;
+    }
+
+    return maxProduct;
+}
+
+int max(int x, int y) {
+    return x > y ? x : y;
+}
+
+int min(int x, int y) {
+    return x < y ? x : y;
+}
+
+int main() {
+    int arr[] = {1, -2, -3, 0, 7, -8, -2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Maximum Product is %d", maxProduct(arr, n));
+    return 0;
+}

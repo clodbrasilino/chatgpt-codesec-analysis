@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int startsWithSubstring(const char *str, const char *substr) {
+    regex_t regex;
+    char pattern[strlen(substr) + 3];
+    sprintf(pattern, "^%s", substr);
+    int result = regcomp(&regex, pattern, 0);
+    if (result) {
+        return 0;
+    }
+    result = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    if (result == REG_NOMATCH) {
+        return 0;
+    }
+    return 1;
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    char substr[] = "Hello";
+    int result = startsWithSubstring(str, substr);
+    printf("%d\n", result);
+    return 0;
+}
+```

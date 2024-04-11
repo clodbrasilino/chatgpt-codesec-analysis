@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} Tuple;
+
+Tuple stringToTuple(char *str) {
+    char *first = strtok(str, ",");
+    char *second = strtok(NULL, ",");
+
+    Tuple t;
+    t.first = first;
+    t.second = second;
+
+    return t;
+}
+
+int main() {
+    char str[] = "Hello,World";
+    Tuple t = stringToTuple(str);
+
+    printf("First: %s\n", t.first);
+    printf("Second: %s\n", t.second);
+
+    return 0;
+}
+```

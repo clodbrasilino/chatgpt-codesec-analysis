@@ -1,0 +1,93 @@
+collected_code_3/problem-585-1.c: In function 'createHeap':
+collected_code_3/problem-585-1.c:12:14: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     h->count = 0;
+      |     ~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-5
+           |
+           |   10 | Heap *createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap *) malloc(sizeof(Heap));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |   12 |     h->count = 0;
+           |      |     ~~~~~~~~~~~~
+           |      |              |
+           |      |              (5) 'h' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-585-1.c: In function 'insert':
+collected_code_3/problem-585-1.c:43:28: warning: dereference of possibly-NULL '*h.arr + (long unsigned int)*h.count * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   43 |         h->arr[h->count++] = value;
+      |         ~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   61 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   10 | Heap *createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |......
+           |   14 |     h->arr = (int *) malloc(sizeof(int) * h->capacity);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   61 |     Heap *h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (5) returning to 'main' from 'createHeap'
+    |   62 | 
+    |   63 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch (when 'i < n')...
+    |   64 |         insert(h, prices[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |      |         (8) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 9-12
+           |
+           |   41 | void insert(Heap *h, int value) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (9) entry to 'insert'
+           |   42 |     if (h->count < h->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'true' branch...
+           |   43 |         h->arr[h->count++] = value;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                 |
+           |      |          (11) ...to here   (12) '*h.arr + (long unsigned int)*h.count * 4' could be NULL: unchecked value from (4)
+           |

@@ -1,0 +1,162 @@
+./collected_code_3/round3/heal_1/healed/problem-469.c: In function 'maxProfit':
+./collected_code_3/round3/heal_1/healed/problem-469.c:16:41: warning: dereference of possibly-NULL 'buy' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     for (int i = 0; i <= k; i++) buy[i] = INT_MIN;
+      |                                         ^
+  'maxProfit': events 1-5
+    |
+    |    6 |     if (k >= n / 2) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   13 |     int *buy = malloc((k + 1) * sizeof(int));
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |         |
+    |      |                |         (2) ...to here
+    |      |                (3) this call could return NULL
+    |......
+    |   16 |     for (int i = 0; i <= k; i++) buy[i] = INT_MIN;
+    |      |                     ~~~~~~          ~
+    |      |                       |             |
+    |      |                       |             (5) ...to here
+    |      |                       (4) following 'true' branch (when 'i <= k')...
+    |
+  'maxProfit': event 6
+    |
+    |   16 |     for (int i = 0; i <= k; i++) buy[i] = INT_MIN;
+    |      |                                         ^
+    |      |                                         |
+    |      |                                         (6) 'buy + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |
+./collected_code_3/round3/heal_1/healed/problem-469.c:17:42: warning: dereference of possibly-NULL 'sell' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     for (int i = 0; i <= k; i++) sell[i] = 0;
+      |                                  ~~~~~~~~^~~
+  'maxProfit': events 1-8
+    |
+    |    6 |     if (k >= n / 2) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   13 |     int *buy = malloc((k + 1) * sizeof(int));
+    |      |                       ~~~~~~~
+    |      |                          |
+    |      |                          (2) ...to here
+    |   14 |     int *sell = malloc((k + 1) * sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (3) this call could return NULL
+    |   15 | 
+    |   16 |     for (int i = 0; i <= k; i++) buy[i] = INT_MIN;
+    |      |                     ~~~~~~          ~
+    |      |                       |             |
+    |      |                       |             (5) ...to here
+    |      |                       (4) following 'true' branch (when 'i <= k')...
+    |   17 |     for (int i = 0; i <= k; i++) sell[i] = 0;
+    |      |                     ~~~~~~       ~~~~~~~~~~~
+    |      |                       |              |   |
+    |      |                       |              |   (8) 'sell + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |      |                       |              (7) ...to here
+    |      |                       (6) following 'true' branch (when 'i <= k')...
+    |
+./collected_code_3/round3/heal_1/healed/problem-469.c:21:37: warning: use of uninitialized value '*buy_88 + _34' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |             sell[j] = (sell[j] > buy[j] + prices[i]) ? sell[j] : buy[j] + prices[i];
+      |                                  ~~~^~~
+  'main': events 1-2
+    |
+    |   33 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     printf("Maximum profit earned: %d\n", maxProfit(k, n, prices));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-19
+           |
+           |    5 | int maxProfit(int k, int n, int prices[]) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    6 |     if (k >= n / 2) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |   13 |     int *buy = malloc((k + 1) * sizeof(int));
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |         |
+           |      |                |         (5) ...to here
+           |      |                (6) region created on heap here
+           |......
+           |   16 |     for (int i = 0; i <= k; i++) buy[i] = INT_MIN;
+           |      |                     ~~~~~~          ~
+           |      |                       |             |
+           |      |                       |             (8) ...to here
+           |      |                       (7) following 'true' branch...
+           |      |                       (9) following 'false' branch (when 'i > k')...
+           |   17 |     for (int i = 0; i <= k; i++) sell[i] = 0;
+           |      |              ~      ~~~~~~           ~
+           |      |              |        |              |
+           |      |              |        |              (12) ...to here
+           |      |              |        (11) following 'true' branch...
+           |      |              |        (13) following 'false' branch (when 'i > k')...
+           |      |              (10) ...to here
+           |   18 | 
+           |   19 |     for (int i = 0; i < n; i++) {
+           |      |              ~      ~~~~~
+           |      |              |        |
+           |      |              |        (15) following 'true' branch (when 'i < n')...
+           |      |              (14) ...to here
+           |   20 |         for (int j = k; j > 0; j--) {
+           |      |                  ~      ~~~~~
+           |      |                  |        |
+           |      |                  |        (17) following 'true' branch (when 'j > 0')...
+           |      |                  (16) ...to here
+           |   21 |             sell[j] = (sell[j] > buy[j] + prices[i]) ? sell[j] : buy[j] + prices[i];
+           |      |                                  ~~~~~~
+           |      |                                     |
+           |      |                                     (18) ...to here
+           |      |                                     (19) use of uninitialized value '*buy_88 + _34' here
+           |
+./collected_code_3/round3/heal_1/healed/problem-469.c:26:9: warning: use of uninitialized value '*sell_90 + _69' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |     int maxProfit = sell[k];
+      |         ^~~~~~~~~
+  'maxProfit': events 1-8
+    |
+    |    6 |     if (k >= n / 2) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   13 |     int *buy = malloc((k + 1) * sizeof(int));
+    |      |                       ~~~~~~~
+    |      |                          |
+    |      |                          (2) ...to here
+    |   14 |     int *sell = malloc((k + 1) * sizeof(int));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (3) region created on heap here
+    |   15 | 
+    |   16 |     for (int i = 0; i <= k; i++) buy[i] = INT_MIN;
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i > k')...
+    |   17 |     for (int i = 0; i <= k; i++) sell[i] = 0;
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (6) following 'false' branch (when 'i > k')...
+    |      |              (5) ...to here
+    |   18 | 
+    |   19 |     for (int i = 0; i < n; i++) {
+    |      |              ~
+    |      |              |
+    |      |              (7) ...to here
+    |......
+    |   26 |     int maxProfit = sell[k];
+    |      |         ~~~~~~~~~
+    |      |         |
+    |      |         (8) use of uninitialized value '*sell_90 + _69' here
+    |

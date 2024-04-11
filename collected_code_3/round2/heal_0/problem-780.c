@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+void findCombination(int arr[], int n, int sum, int start, int data[], int index) {
+    if (sum == 0) {
+        for (int i = 0; i < index; i++)
+            printf("%d ", data[i]);
+        printf("\n");
+        return;
+    }
+
+    for (int i = start; i < n; i++) {
+        if (sum - arr[i] >= 0) {
+            data[index] = arr[i];
+            findCombination(arr, n, sum - arr[i], i + 1, data, index + 1);
+        }
+    }
+}
+
+void findSumCombinations(int arr[], int n, int sum) {
+    int data[n];
+    findCombination(arr, n, sum, 0, data, 0);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int sum = 5;
+    findSumCombinations(arr, n, sum);
+    return 0;
+}

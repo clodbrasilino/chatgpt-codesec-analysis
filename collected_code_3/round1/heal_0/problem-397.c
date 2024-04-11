@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+double findMedian(int a, int b, int c) {
+    if ((a - b) * (c - a) >= 0)
+        return a;
+    else if ((b - a) * (c - b) >= 0)
+        return b;
+    else
+        return c;
+}
+
+int main() {
+    int a = 10, b = 20, c = 30;
+    printf("Median of %d, %d and %d is %lf\n", a, b, c, findMedian(a, b, c));
+    return 0;
+}

@@ -1,0 +1,20 @@
+collected_code_3/round4/heal_0/problem-23.c: In function 'main':
+collected_code_3/round4/heal_0/problem-23.c:22:16: warning: dereference of possibly-NULL 'arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |         arr[i] = (int *)malloc(m * sizeof(int));
+      |         ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   20 |     int **arr = (int **)malloc(n * sizeof(int *));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   21 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~~~~ 
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < n')...
+    |   22 |         arr[i] = (int *)malloc(m * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |        |
+    |      |                |        (3) ...to here
+    |      |                (4) 'arr + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

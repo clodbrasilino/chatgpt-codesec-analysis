@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LENGTH 50
+#define MAX_WORDS 100
+
+void removeWord(char* words[], int* count, char* word) {
+    int i, j;
+    for(i = 0; i < *count; i++) {
+        if(strcmp(words[i], word) == 0) {
+            free(words[i]);
+            for(j = i; j < *count - 1; j++) {
+                words[j] = words[j + 1];
+            }
+            (*count)--;
+            i--;
+        }
+    }
+}
+
+int main() {
+    char* words[MAX_WORDS];
+    int count = 0;
+    char word[MAX_WORD_LENGTH];
+    char remove[MAX_WORD_LENGTH];
+
+    printf("Enter words (type 'end' to finish):\n");
+    while(1) {
+        scanf("%s", word);
+        if(strcmp(word, "end") == 0) {
+            break;
+        }
+        words[count] = malloc(strlen(word) + 1);
+        strcpy(words[count], word);
+        count++;
+    }
+
+    printf("Enter word to remove:\n");
+    scanf("%s", remove);
+
+    removeWord(words, &count, remove);
+
+    printf("Words after removal:\n");
+    for(int i = 0; i < count; i++) {
+        printf("%s\n", words[i]);
+        free(words[i]);
+    }
+
+    return 0;
+}

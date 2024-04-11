@@ -1,0 +1,11 @@
+#include <stdio.h>
+
+unsigned int setEvenBits(unsigned int num) {
+    return num | 0xAAAAAAAA;
+}
+
+int main() {
+    unsigned int num = 5;
+    printf("Result: %u\n", setEvenBits(num));
+    return 0;
+}

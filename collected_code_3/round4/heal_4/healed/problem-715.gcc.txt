@@ -1,0 +1,98 @@
+./collected_code_3/round4/heal_4/healed/problem-715.c: In function 'main':
+./collected_code_3/round4/heal_4/healed/problem-715.c:50:5: warning: double-'free' of 'tuple.data' [CWE-415] [-Wanalyzer-double-free]
+   50 |     free(tuple.data);
+      |     ^~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     tuple = string_to_tuple(str);
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (2) calling 'string_to_tuple' from 'main'
+    |
+    +--> 'string_to_tuple': event 3
+           |
+           |   10 | Tuple string_to_tuple(char *str) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'string_to_tuple'
+           |
+         'string_to_tuple': events 4-9
+           |
+           |   16 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (4) following 'true' branch (when 'token' is non-NULL)...
+           |   17 |         int* realloc_ptr = realloc(tuple.data, (count + 1) * sizeof(int));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |                          |
+           |      |                            |                          (5) ...to here
+           |      |                            (6) state of '&HEAP_ALLOCATED_REGION(64)': 'start' -> 'nonnull' (NULL origin)
+           |      |                            (7) when 'realloc' succeeds, moving buffer
+           |   18 |         if (realloc_ptr == NULL) {
+           |      |            ~      
+           |      |            |
+           |      |            (8) following 'false' branch (when 'realloc_ptr' is non-NULL)...
+           |......
+           |   23 |         tuple.data = realloc_ptr;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (9) ...to here
+           |
+         'string_to_tuple': events 10-15
+           |
+           |   16 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (10) following 'true' branch (when 'token' is non-NULL)...
+           |   17 |         int* realloc_ptr = realloc(tuple.data, (count + 1) * sizeof(int));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |                          |
+           |      |                            (12) when 'realloc' fails  (11) ...to here
+           |   18 |         if (realloc_ptr == NULL) {
+           |      |            ~      
+           |      |            |
+           |      |            (13) following 'true' branch (when 'realloc_ptr' is NULL)...
+           |   19 |             free(tuple.data);
+           |      |             ~~~~~~~~~~~~~~~~
+           |      |             |         |
+           |      |             |         (14) ...to here
+           |      |             (15) first 'free' here
+           |
+    <------+
+    |
+  'main': events 16-21
+    |
+    |   37 |     tuple = string_to_tuple(str);
+    |      |             ^~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (16) returning to 'main' from 'string_to_tuple'
+    |   38 | 
+    |   39 |     if (tuple.data == NULL) return 1;
+    |      |        ~     
+    |      |        |
+    |      |        (17) following 'false' branch...
+    |   40 | 
+    |   41 |     printf("(");
+    |      |     ~~~~~~~~~~~
+    |      |     |
+    |      |     (18) ...to here
+    |   42 |     for (i = 0; i < tuple.size; i++) {
+    |      |                 ~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (19) following 'false' branch...
+    |......
+    |   48 |     printf(")\n");
+    |      |     ~~~~~~~~~~~~~
+    |      |     |
+    |      |     (20) ...to here
+    |   49 | 
+    |   50 |     free(tuple.data);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (21) second 'free' here; first 'free' was at (15)
+    |

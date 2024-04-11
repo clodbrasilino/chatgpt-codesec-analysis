@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+
+#define SIZE 5
+
+void extractElements(int arr1[], int arr2[], int n) {
+    int i;
+    for(i = 0; i < n; i++) {
+        printf("(%d, %d)\n", arr1[i], arr2[i]);
+    }
+}
+
+int main() {
+    int arr1[SIZE] = {1, 2, 3, 4, 5};
+    int arr2[SIZE] = {6, 7, 8, 9, 10};
+
+    extractElements(arr1, arr2, SIZE);
+
+    return 0;
+}
+```

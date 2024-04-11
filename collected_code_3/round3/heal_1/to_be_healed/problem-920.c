@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int size;
+} TupleList;
+
+int isNoneTuple(Tuple tuple) {
+    for (int i = 0; i < tuple.size; i++) {
+        if (tuple.values[i] != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+TupleList removeNoneTuples(TupleList list) {
+    int noneTuplesCount = 0;
+    for (int i = 0; i < list.size; i++) {
+        if (isNoneTuple(list.tuples[i])) {
+            noneTuplesCount++;
+        }
+    }
+
+    TupleList newList;
+    newList.size = list.size - noneTuplesCount;
+    newList.tuples = (Tuple *)malloc(newList.size * sizeof(Tuple));
+
+    int j = 0;
+    for (int i = 0; i < list.size; i++) {
+        if (!isNoneTuple(list.tuples[i])) {
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'newList.tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            newList.tuples[j++] = list.tuples[i];
+        }
+    }
+
+    return newList;
+}
+
+int main() {
+    Tuple tuple1 = {(int[]){0, 0, 0}, 3};
+    Tuple tuple2 = {(int[]){1, 2, 3}, 3};
+    Tuple tuple3 = {(int[]){0, 0, 0}, 3};
+    Tuple tuple4 = {(int[]){4, 5, 6}, 3};
+
+    TupleList list = {(Tuple[]){tuple1, tuple2, tuple3, tuple4}, 4};
+
+    TupleList newList = removeNoneTuples(list);
+
+    for (int i = 0; i < newList.size; i++) {
+        /* Possible weaknesses found:
+         *  dereference of possibly-NULL 'newList.tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+         *  use of uninitialized value '*_10 + _12.size' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+         */
+        for (int j = 0; j < newList.tuples[i].size; j++) {
+            printf("%d ", newList.tuples[i].values[j]);
+        }
+        printf("\n");
+    }
+
+    free(newList.tuples);
+
+    return 0;
+}

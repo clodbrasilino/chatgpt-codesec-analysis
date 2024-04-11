@@ -1,0 +1,207 @@
+./collected_code_3/round3/heal_1/healed/problem-932.c: In function 'removeDuplicates':
+./collected_code_3/round3/heal_1/healed/problem-932.c:42:18: warning: use after 'free' of 'words' [CWE-416] [-Wanalyzer-use-after-free]
+   42 |         words[i] = newWords[i];
+      |         ~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-26
+    |
+    |   47 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   48 |     int numWords = 5;
+    |   49 |     char** words = (char**)malloc(sizeof(char*) * numWords);
+    |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) allocated here
+    |   50 | 
+    |   51 |     if(!words) {
+    |      |       ~
+    |      |       |
+    |      |       (3) assuming 'words' is non-NULL
+    |      |       (4) following 'false' branch (when 'words' is non-NULL)...
+    |......
+    |   55 |     for(int i = 0; i < numWords; i++) {
+    |      |             ~      ~~~~~~~~~~~~  ~~~
+    |      |             |        |            |
+    |      |             |        |            (9) ...to here
+    |      |             |        |            (13) ...to here
+    |      |             |        |            (17) ...to here
+    |      |             |        |            (21) ...to here
+    |      |             |        |            (25) ...to here
+    |      |             |        (6) following 'true' branch...
+    |      |             |        (10) following 'true' branch...
+    |      |             |        (14) following 'true' branch...
+    |      |             |        (18) following 'true' branch...
+    |      |             |        (22) following 'true' branch...
+    |      |             |        (26) following 'false' branch...
+    |      |             (5) ...to here
+    |   56 |         words[i] = (char*)malloc(sizeof(char) * MAX_WORD_SIZE);
+    |      |              ~
+    |      |              |
+    |      |              (7) ...to here
+    |      |              (11) ...to here
+    |      |              (15) ...to here
+    |      |              (19) ...to here
+    |      |              (23) ...to here
+    |   57 |         if(!words[i]) return -1;
+    |      |           ~
+    |      |           |
+    |      |           (8) following 'false' branch...
+    |      |           (12) following 'false' branch...
+    |      |           (16) following 'false' branch...
+    |      |           (20) following 'false' branch...
+    |      |           (24) following 'false' branch...
+    |
+  'main': event 27
+    |
+    |   60 |     strcpy(words[0], "Hello");
+    |      |     ^~~~~~
+    |      |     |
+    |      |     (27) ...to here
+    |
+  'main': event 28
+    |
+    |   66 |     removeDuplicates(words, &numWords);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) calling 'removeDuplicates' from 'main'
+    |
+    +--> 'removeDuplicates': events 29-34
+           |
+           |   17 | void removeDuplicates(char** words, int* numWords) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (29) entry to 'removeDuplicates'
+           |......
+           |   21 |     if(!newWords) {
+           |      |       ~
+           |      |       |
+           |      |       (30) following 'false' branch (when 'newWords' is non-NULL)...
+           |......
+           |   25 |     for(int i = 0; i < *numWords; i++) {
+           |      |             ~      ~~~~~~~~~~~~~
+           |      |             |        |
+           |      |             |        (32) following 'true' branch...
+           |      |             (31) ...to here
+           |   26 |         if(!isDuplicate(words[i], newWords, newNumWords)) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                |
+           |      |             |                (33) ...to here
+           |      |             (34) calling 'isDuplicate' from 'removeDuplicates'
+           |
+           +--> 'isDuplicate': events 35-37
+                  |
+                  |    8 | int isDuplicate(char* word, char** newWords, int newNumWords) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (35) entry to 'isDuplicate'
+                  |    9 |     for(int i = 0; i < newNumWords; i++) {
+                  |      |                    ~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (36) following 'false' branch (when 'i >= newNumWords')...
+                  |......
+                  |   14 |     return 0;
+                  |      |            ~
+                  |      |            |
+                  |      |            (37) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 38-41
+           |
+           |   26 |         if(!isDuplicate(words[i], newWords, newNumWords)) {
+           |      |           ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           | |
+           |      |           | (38) returning to 'removeDuplicates' from 'isDuplicate'
+           |      |           (39) following 'true' branch...
+           |   27 |             newWords[newNumWords] = (char*)malloc(sizeof(char) * MAX_WORD_SIZE);
+           |      |                     ~
+           |      |                     |
+           |      |                     (40) ...to here
+           |   28 |             if(!newWords[newNumWords]) continue;
+           |      |               ~
+           |      |               |
+           |      |               (41) following 'false' branch...
+           |
+         'removeDuplicates': event 42
+           |
+           |   29 |             strcpy(newWords[newNumWords], words[i]);
+           |      |                            ^
+           |      |                            |
+           |      |                            (42) ...to here
+           |
+         'removeDuplicates': events 43-45
+           |
+           |   25 |     for(int i = 0; i < *numWords; i++) {
+           |      |                    ~~^~~~~~~~~~~
+           |      |                      |
+           |      |                      (43) following 'true' branch...
+           |   26 |         if(!isDuplicate(words[i], newWords, newNumWords)) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                |
+           |      |             |                (44) ...to here
+           |      |             (45) calling 'isDuplicate' from 'removeDuplicates'
+           |
+           +--> 'isDuplicate': events 46-48
+                  |
+                  |    8 | int isDuplicate(char* word, char** newWords, int newNumWords) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (46) entry to 'isDuplicate'
+                  |    9 |     for(int i = 0; i < newNumWords; i++) {
+                  |      |                    ~~~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (47) following 'true' branch (when 'i < newNumWords')...
+                  |   10 |         if(strcmp(word, newWords[i]) == 0) {
+                  |      |                                 ~
+                  |      |                                 |
+                  |      |                                 (48) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 49-67
+           |
+           |   25 |     for(int i = 0; i < *numWords; i++) {
+           |      |                                   ~~~
+           |      |                                    |
+           |      |                                    (51) ...to here
+           |   26 |         if(!isDuplicate(words[i], newWords, newNumWords)) {
+           |      |           ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           | |
+           |      |           | (49) returning to 'removeDuplicates' from 'isDuplicate'
+           |      |           (50) following 'false' branch...
+           |......
+           |   34 |     for(int i = 0; i < *numWords; i++) {
+           |      |                    ~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (52) following 'true' branch...
+           |      |                      (54) following 'true' branch...
+           |      |                      (56) following 'true' branch...
+           |      |                      (58) following 'true' branch...
+           |      |                      (60) following 'true' branch...
+           |      |                      (62) following 'false' branch...
+           |   35 |         free(words[i]);
+           |      |                   ~
+           |      |                   |
+           |      |                   (53) ...to here
+           |      |                   (55) ...to here
+           |      |                   (57) ...to here
+           |      |                   (59) ...to here
+           |      |                   (61) ...to here
+           |   36 |     }
+           |   37 |     free(words);
+           |      |     ~~~~~~~~~~~
+           |      |     |
+           |      |     (63) ...to here
+           |      |     (64) freed here
+           |......
+           |   41 |     for (int i = 0; i < *numWords; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (65) following 'true' branch...
+           |   42 |         words[i] = newWords[i];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |         |
+           |      |                  |         (66) ...to here
+           |      |                  (67) use after 'free' of 'words + (long unsigned int)i * 8'; freed at (64)
+           |

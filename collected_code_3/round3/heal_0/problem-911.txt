@@ -1,0 +1,72 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEAP_SIZE 100000
+
+typedef struct {
+    int size;
+    int data[MAX_HEAP_SIZE];
+} MaxHeap;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void maxHeapify(MaxHeap *h, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < h->size && h->data[left] > h->data[largest])
+        largest = left;
+
+    if (right < h->size && h->data[right] > h->data[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&h->data[i], &h->data[largest]);
+        maxHeapify(h, largest);
+    }
+}
+
+void buildMaxHeap(MaxHeap *h, int *arr, int n) {
+    int i;
+    for (i = 0; i < n; i++)
+        h->data[i] = arr[i];
+    h->size = n;
+
+    for (i = n / 2 - 1; i >= 0; i--)
+        maxHeapify(h, i);
+}
+
+int extractMax(MaxHeap *h) {
+    int max = h->data[0];
+    h->data[0] = h->data[h->size - 1];
+    h->size--;
+    maxHeapify(h, 0);
+    return max;
+}
+
+int maxProduct(int *arr, int n) {
+    MaxHeap h;
+    buildMaxHeap(&h, arr, n);
+
+    int max1 = extractMax(&h);
+    int max2 = extractMax(&h);
+    int max3 = extractMax(&h);
+
+    return max1 * max2 * max3;
+}
+
+int main() {
+    int arr[] = {1, 20, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Maximum product is %d\n", maxProduct(arr, n));
+
+    return 0;
+}
+```

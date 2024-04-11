@@ -1,0 +1,43 @@
+collected_code_3/problem-237-2.c: In function 'checkOccurrences':
+collected_code_3/problem-237-2.c:14:26: warning: dereference of possibly-NULL 'records' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |             if(records[i].count == records[j].count) {
+      |                ~~~~~~~~~~^~~~~~
+  'main': events 1-3
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   26 |     Record *records = (Record *)malloc(n * sizeof(Record));
+    |      |                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (2) this call could return NULL
+    |......
+    |   31 |     if(checkOccurrences(records, n)) {
+    |      |        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |        |
+    |      |        (3) calling 'checkOccurrences' from 'main'
+    |
+    +--> 'checkOccurrences': events 4-9
+           |
+           |   10 | int checkOccurrences(Record *records, int size) {
+           |      |     ^~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (4) entry to 'checkOccurrences'
+           |   11 |     int i, j;
+           |   12 |     for(i = 0; i < size; i++) {
+           |      |                ~~~~~~~~
+           |      |                  |
+           |      |                  (5) following 'true' branch (when 'i < size')...
+           |   13 |         for(j = i + 1; j < size; j++) {
+           |      |             ~~~~~~~~~  ~~~~~~~~
+           |      |               |          |
+           |      |               |          (7) following 'true' branch (when 'j < size')...
+           |      |               (6) ...to here
+           |   14 |             if(records[i].count == records[j].count) {
+           |      |                ~~~~~~~~~~~~~~~~
+           |      |                       |  |
+           |      |                       |  (9) 'records + (long unsigned int)i * 56' could be NULL: unchecked value from (2)
+           |      |                       (8) ...to here
+           |

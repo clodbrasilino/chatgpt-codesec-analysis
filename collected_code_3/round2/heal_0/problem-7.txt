@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void find_words(char *str) {
+    regex_t regex;
+    regmatch_t match[2];
+    char *pattern = "\\b\\w{4,}\\b";
+    regcomp(&regex, pattern, REG_EXTENDED);
+    while (regexec(&regex, str, 2, match, 0) == 0) {
+        int start = match[0].rm_so;
+        int end = match[0].rm_eo;
+        char word[end - start + 1];
+        strncpy(word, str + start, end - start);
+        word[end - start] = '\0';
+        printf("%s\n", word);
+        str += end;
+    }
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This is a test string with some long words.";
+    find_words(str);
+    return 0;
+}
+```
+Please note that the C standard library does not support regex natively. The above code uses POSIX regex, which is supported on Unix-like systems, including Linux and MacOS. If you're using a different system, you may need to use a different library to use regex in C.

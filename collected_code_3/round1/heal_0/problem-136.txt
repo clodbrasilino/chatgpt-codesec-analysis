@@ -1,0 +1,50 @@
+```C
+#include <stdio.h>
+
+float calculateElectricityBill(float units)
+{
+    float bill_amount;
+
+    if(units <= 50)
+    {
+        bill_amount = units * 0.50;
+    }
+    else if(units <= 150)
+    {
+        bill_amount = 25 + ((units-50) * 0.75);
+    }
+    else if(units <= 250)
+    {
+        bill_amount = 100 + ((units-150) * 1.20);
+    }
+    else
+    {
+        bill_amount = 220 + ((units-250) * 1.50);
+    }
+
+    bill_amount = bill_amount + (bill_amount * 0.20);
+
+    return bill_amount;
+}
+
+int main()
+{
+    float units, bill;
+
+    printf("Enter total units consumed: ");
+    scanf("%f", &units);
+
+    bill = calculateElectricityBill(units);
+
+    printf("Electricity Bill = %.2f\n", bill);
+
+    return 0;
+}
+```
+This program calculates the electricity bill according to the following conditions:
+
+- For the first 50 units, the cost is $0.50/unit.
+- For the next 100 units (i.e., from 51 to 150), the cost is $0.75/unit.
+- For the next 100 units (i.e., from 151 to 250), the cost is $1.20/unit.
+- Beyond 250 units, the cost is $1.50/unit.
+- Additionally, a 20% surcharge is added to the bill.

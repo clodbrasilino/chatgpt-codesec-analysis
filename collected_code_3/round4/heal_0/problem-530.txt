@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+
+double findNegativeRatio(int arr[], int size) {
+    int i, negativeCount = 0;
+    for(i = 0; i < size; i++) {
+        if(arr[i] < 0) {
+            negativeCount++;
+        }
+    }
+    return (double)negativeCount / size;
+}
+
+int main() {
+    int arr[] = {-1, 2, -3, 4, -5, 6, -7, 8, -9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    double ratio = findNegativeRatio(arr, size);
+    printf("The ratio of negative numbers is: %.2f\n", ratio);
+    return 0;
+}
+```

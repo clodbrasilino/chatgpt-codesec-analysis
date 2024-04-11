@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void splitList(struct Node* head, int length, struct Node** firstPart, struct Node** secondPart) {
+    struct Node* current = head;
+    int count = 1;
+
+    if (head == NULL) {
+        return;
+    }
+
+    while (count < length && current != NULL) {
+        current = current->next;
+        count++;
+    }
+
+    if (current == NULL) {
+        return;
+    }
+
+    *firstPart = head;
+    *secondPart = current->next;
+    current->next = NULL;
+}
+
+void push(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    newNode->data = data;
+    newNode->next = (*head);
+    (*head) = newNode;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    struct Node* head = NULL;
+    struct Node* firstPart = NULL;
+    struct Node* secondPart = NULL;
+
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+
+    printf("Original list: ");
+    printList(head);
+
+    splitList(head, 3, &firstPart, &secondPart);
+
+    printf("First part: ");
+    printList(firstPart);
+
+    printf("Second part: ");
+    printList(secondPart);
+
+    return 0;
+}

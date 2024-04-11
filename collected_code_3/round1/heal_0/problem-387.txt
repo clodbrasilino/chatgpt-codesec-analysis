@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkEvenOddHex(char *hex) {
+    int num = (int)strtol(hex, NULL, 16);
+    return num % 2 == 0;
+}
+
+int main() {
+    char hex[10];
+    printf("Enter a hexadecimal number: ");
+    scanf("%s", hex);
+    if(checkEvenOddHex(hex)) {
+        printf("The number is even.\n");
+    } else {
+        printf("The number is odd.\n");
+    }
+    return 0;
+}
+```

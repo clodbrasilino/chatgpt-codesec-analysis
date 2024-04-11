@@ -1,0 +1,23 @@
+Unfortunately, C does not natively support regular expressions (regex). However, you can achieve the same result using standard C libraries. Here's a simple C program that removes multiple spaces from a string:
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void removeMultipleSpaces(char* str) {
+    int count = 0, i;
+    for (i = 0; str[i]; i++)
+        if (str[i] != ' ' || (i > 0 && str[i-1] != ' '))
+            str[count++] = str[i];
+    str[count] = '\0';
+}
+
+int main() {
+    char str[] = "C   Programming    Language";
+    removeMultipleSpaces(str);
+    printf("%s", str);
+    return 0;
+}
+```
+
+This program will output: "C Programming Language". It works by iterating over the string and copying each character to a new position in the string unless the character is a space and the previous character was also a space.

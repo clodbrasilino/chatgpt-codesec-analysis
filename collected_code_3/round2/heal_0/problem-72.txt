@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isDiffOfSquares(int n) {
+    if (n % 2 == 0) {
+        return true;
+    } else if ((n + 1) % 4 == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+
+    if (isDiffOfSquares(num)) {
+        printf("The number can be represented as the difference of two squares.\n");
+    } else {
+        printf("The number cannot be represented as the difference of two squares.\n");
+    }
+
+    return 0;
+}
+```

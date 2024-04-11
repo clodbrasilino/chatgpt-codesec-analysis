@@ -1,0 +1,154 @@
+collected_code_3/round4/heal_0/problem-696.c: In function 'newNode':
+collected_code_3/round4/heal_0/problem-696.c:11:16: warning: dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     node->data = data;
+      |     ~~~~~~~~~~~^~~~~~
+  'newNode': events 1-2
+    |
+    |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   11 |     node->data = data;
+    |      |     ~~~~~~~~~~~~~~~~~    
+    |      |                |
+    |      |                (2) 'node' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-696.c: In function 'zipLists':
+collected_code_3/round4/heal_0/problem-696.c:31:16: warning: leak of 'head' [CWE-401] [-Wanalyzer-malloc-leak]
+   31 |     return head->next;
+      |            ~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   42 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     Node* zippedList = zipLists(list1, list2);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'zipLists' from 'main'
+    |
+    +--> 'zipLists': events 3-4
+           |
+           |   16 | Node* zipLists(Node* list1, Node* list2) {
+           |      |       ^~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'zipLists'
+           |   17 |     Node* head = newNode(0);
+           |      |                  ~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'newNode' from 'zipLists'
+           |
+           +--> 'newNode': events 5-7
+                  |
+                  |    9 | Node* newNode(int data) {
+                  |      |       ^~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'newNode'
+                  |   10 |     Node* node = (Node*)malloc(sizeof(Node));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) allocated here
+                  |   11 |     node->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (7) assuming 'node' is non-NULL
+                  |
+           <------+
+           |
+         'zipLists': event 8
+           |
+           |   17 |     Node* head = newNode(0);
+           |      |                  ^~~~~~~~~~
+           |      |                  |
+           |      |                  (8) returning to 'zipLists' from 'newNode'
+           |
+         'zipLists': events 9-14
+           |
+           |   19 |     while (list1 != NULL || list2 != NULL) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (9) following 'true' branch (when 'list1' is non-NULL)...
+           |   20 |         if (list1 != NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (10) ...to here
+           |      |            (11) following 'true' branch (when 'list1' is non-NULL)...
+           |   21 |             current->next = list1;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (12) ...to here
+           |......
+           |   25 |         if (list2 != NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (13) following 'true' branch (when 'list2' is non-NULL)...
+           |   26 |             current->next = list2;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (14) ...to here
+           |
+         'zipLists': events 15-20
+           |
+           |   19 |     while (list1 != NULL || list2 != NULL) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (15) following 'true' branch (when 'list1' is non-NULL)...
+           |   20 |         if (list1 != NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (16) ...to here
+           |      |            (17) following 'true' branch (when 'list1' is non-NULL)...
+           |   21 |             current->next = list1;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (18) ...to here
+           |......
+           |   25 |         if (list2 != NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (19) following 'true' branch (when 'list2' is non-NULL)...
+           |   26 |             current->next = list2;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (20) ...to here
+           |
+         'zipLists': events 21-26
+           |
+           |   19 |     while (list1 != NULL || list2 != NULL) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (21) following 'true' branch (when 'list1' is non-NULL)...
+           |   20 |         if (list1 != NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (22) ...to here
+           |      |            (23) following 'true' branch (when 'list1' is non-NULL)...
+           |   21 |             current->next = list1;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (24) ...to here
+           |......
+           |   25 |         if (list2 != NULL) {
+           |      |            ~              
+           |      |            |
+           |      |            (25) following 'true' branch (when 'list2' is non-NULL)...
+           |   26 |             current->next = list2;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (26) ...to here
+           |
+         'zipLists': events 27-29
+           |
+           |   19 |     while (list1 != NULL || list2 != NULL) {
+           |      |                          ^
+           |      |                          |
+           |      |                          (27) following 'false' branch...
+           |......
+           |   31 |     return head->next;
+           |      |            ~~~~~~~~~~     
+           |      |                |
+           |      |                (28) ...to here
+           |      |                (29) 'head' leaks here; was allocated at (6)
+           |

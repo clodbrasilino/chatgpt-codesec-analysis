@@ -1,0 +1,48 @@
+In C, there are no built-in data structures like dictionary or tuple as in Python or other high-level languages. However, you can create similar structures using arrays, structures, linked lists, etc. Here is an example of how you can create a dictionary-like structure and a tuple-like structure and add the dictionary to the tuple:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char key[MAX_SIZE];
+    int value;
+} Dictionary;
+
+typedef struct {
+    Dictionary dict[MAX_SIZE];
+    int size;
+} Tuple;
+
+void addDictionaryToTuple(Tuple *tuple, Dictionary dict) {
+    tuple->dict[tuple->size] = dict;
+    tuple->size++;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.size = 0;
+
+    Dictionary dict1;
+    strcpy(dict1.key, "key1");
+    dict1.value = 1;
+
+    Dictionary dict2;
+    strcpy(dict2.key, "key2");
+    dict2.value = 2;
+
+    addDictionaryToTuple(&tuple, dict1);
+    addDictionaryToTuple(&tuple, dict2);
+
+    for(int i = 0; i < tuple.size; i++) {
+        printf("Key: %s, Value: %d\n", tuple.dict[i].key, tuple.dict[i].value);
+    }
+
+    return 0;
+}
+```
+
+This code defines a `Dictionary` structure that acts like a key-value pair and a `Tuple` structure that holds an array of `Dictionary` structures. The `addDictionaryToTuple` function adds a `Dictionary` to the `Tuple`. In the `main` function, two `Dictionary` structures are created and added to a `Tuple`. The contents of the `Tuple` are then printed.

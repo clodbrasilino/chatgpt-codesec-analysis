@@ -1,0 +1,9 @@
+collected_code_3/problem-222-1.c: In function 'checkSameType':
+collected_code_3/problem-222-1.c:6:12: warning: implicit declaration of function 'typeid' [-Wimplicit-function-declaration]
+    6 |         if(typeid(arr[i]) != typeid(arr[i+1])) {
+      |            ^~~~~~
+ld: Undefined symbols:
+  _typeid, referenced from:
+      _checkSameType in ccDguhZN.o
+      _checkSameType in ccDguhZN.o
+collect2: error: ld returned 1 exit status

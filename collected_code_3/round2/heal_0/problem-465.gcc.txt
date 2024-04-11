@@ -1,0 +1,15 @@
+collected_code_3/problem-465-2.c: In function 'main':
+collected_code_3/problem-465-2.c:23:18: warning: dereference of possibly-NULL 'items' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |     items[0].key = "key1"; items[0].value = "value1";
+      |     ~~~~~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   22 |     Item *items = malloc(size * sizeof(Item));
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |   23 |     items[0].key = "key1"; items[0].value = "value1";
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) 'items' could be NULL: unchecked value from (1)
+    |

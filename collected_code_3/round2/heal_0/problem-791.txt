@@ -1,0 +1,41 @@
+Here is a simple example of a C program that removes a nested record from a given tuple. This example assumes that the tuple is represented as a struct and the nested record is an integer array. 
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    int *nestedRecord;
+    int nestedRecordSize;
+} Tuple;
+
+void removeNestedRecord(Tuple *tuple) {
+    free(tuple->nestedRecord);
+    tuple->nestedRecord = NULL;
+    tuple->nestedRecordSize = 0;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.id = 1;
+    tuple.nestedRecordSize = 5;
+    tuple.nestedRecord = (int*) malloc(tuple.nestedRecordSize * sizeof(int));
+
+    for(int i = 0; i < tuple.nestedRecordSize; i++) {
+        tuple.nestedRecord[i] = i;
+    }
+
+    removeNestedRecord(&tuple);
+
+    if(tuple.nestedRecord == NULL) {
+        printf("Nested record removed successfully.\n");
+    } else {
+        printf("Failed to remove nested record.\n");
+    }
+
+    return 0;
+}
+```
+
+This program first creates a tuple with an id of 1 and a nested record of 5 integers. It then calls the `removeNestedRecord` function to remove the nested record from the tuple. After the function call, it checks if the nested record was successfully removed by checking if `tuple.nestedRecord` is `NULL`. If it is, it prints "Nested record removed successfully." If not, it prints "Failed to remove nested record."

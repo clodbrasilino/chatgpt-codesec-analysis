@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int findNthDigit(int numerator, int denominator, int n) {
+    int digit = 0;
+    for(int i = 0; i < n; i++) {
+        numerator = (numerator % denominator) * 10;
+        digit = numerator / denominator;
+    }
+    return digit;
+}
+
+int main() {
+    int numerator, denominator, n;
+    printf("Enter numerator: ");
+    scanf("%d", &numerator);
+    printf("Enter denominator: ");
+    scanf("%d", &denominator);
+    printf("Enter n: ");
+    scanf("%d", &n);
+    printf("The %dth digit in the proper fraction %d/%d is: %d\n", n, numerator, denominator, findNthDigit(numerator, denominator, n));
+    return 0;
+}

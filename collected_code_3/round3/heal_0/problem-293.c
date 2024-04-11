@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <math.h>
+
+double findThirdSide(double side1, double side2, char type) {
+    double thirdSide;
+    if(type == 'h') {
+        thirdSide = sqrt((side1 * side1) + (side2 * side2));
+    } else {
+        thirdSide = sqrt((side1 * side1) - (side2 * side2));
+    }
+    return thirdSide;
+}
+
+int main() {
+    double side1, side2;
+    char type;
+
+    printf("Enter the first side: ");
+    scanf("%lf", &side1);
+
+    printf("Enter the second side: ");
+    scanf("%lf", &side2);
+
+    printf("Enter 'h' if you are finding hypotenuse, 's' if you are finding side: ");
+    scanf(" %c", &type);
+
+    double thirdSide = findThirdSide(side1, side2, type);
+
+    printf("The third side is: %.2lf\n", thirdSide);
+
+    return 0;
+}

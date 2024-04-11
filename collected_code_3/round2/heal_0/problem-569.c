@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LISTS 10
+#define MAX_STRINGS 10
+#define MAX_STRING_LENGTH 100
+
+void sortSublist(char list[MAX_LISTS][MAX_STRINGS][MAX_STRING_LENGTH], int sublistSize, int listIndex) {
+    char temp[MAX_STRING_LENGTH];
+    for (int i = 0; i < sublistSize - 1; i++) {
+        for (int j = i + 1; j < sublistSize; j++) {
+            if (strcmp(list[listIndex][i], list[listIndex][j]) > 0) {
+                strcpy(temp, list[listIndex][i]);
+                strcpy(list[listIndex][i], list[listIndex][j]);
+                strcpy(list[listIndex][j], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    char list[MAX_LISTS][MAX_STRINGS][MAX_STRING_LENGTH] = {
+        {"apple", "banana", "cherry"},
+        {"dog", "cat", "elephant"},
+        {"grape", "fig", "date"}
+    };
+
+    int sublistSizes[MAX_LISTS] = {3, 3, 3};
+
+    for (int i = 0; i < MAX_LISTS; i++) {
+        sortSublist(list, sublistSizes[i], i);
+    }
+
+    for (int i = 0; i < MAX_LISTS; i++) {
+        for (int j = 0; j < sublistSizes[i]; j++) {
+            printf("%s ", list[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

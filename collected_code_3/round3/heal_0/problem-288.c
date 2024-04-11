@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int modularInverse(int a, int m) {
+    a = a % m;
+    for (int x = 1; x < m; x++)
+        if ((a * x) % m == 1)
+            return x;
+    return -1;
+}
+
+int countElements(int arr[], int n, int p) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (modularInverse(arr[i], p) == arr[i])
+            count++;
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int p = 7;
+    printf("Count of elements having modular inverse under %d equal to itself is %d", p, countElements(arr, n, p));
+    return 0;
+}

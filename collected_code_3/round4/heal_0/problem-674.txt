@@ -1,0 +1,30 @@
+C language does not have a built-in collections module like Python. However, we can achieve the task by using a combination of string manipulation functions and data structures. Here is a simple implementation:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* removeDuplicates(char* str) {
+    char* result = malloc(strlen(str) + 1);
+    char* word = strtok(str, " ");
+    while (word != NULL) {
+        if (!strstr(result, word)) {
+            strcat(result, " ");
+            strcat(result, word);
+        }
+        word = strtok(NULL, " ");
+    }
+    return result;
+}
+
+int main() {
+    char str[] = "This is a test. This is only a test.";
+    char* result = removeDuplicates(str);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}
+```
+
+This code first tokenizes the input string into words. Then it checks each word to see if it already exists in the result string. If it does not, it appends the word to the result string. Note that this code uses dynamic memory allocation to create the result string, so it must be freed after use to avoid memory leaks.

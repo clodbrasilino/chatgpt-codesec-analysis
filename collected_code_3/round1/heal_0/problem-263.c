@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[50];
+    char value[50];
+} Item;
+
+typedef struct {
+    Item *items;
+    int size;
+} Dictionary;
+
+Dictionary mergeDictionaries(Dictionary dict1, Dictionary dict2) {
+    Dictionary mergedDict;
+    mergedDict.size = dict1.size + dict2.size;
+    mergedDict.items = (Item *)malloc(mergedDict.size * sizeof(Item));
+
+    for (int i = 0; i < dict1.size; i++) {
+        strcpy(mergedDict.items[i].key, dict1.items[i].key);
+        strcpy(mergedDict.items[i].value, dict1.items[i].value);
+    }
+
+    for (int i = 0; i < dict2.size; i++) {
+        strcpy(mergedDict.items[i + dict1.size].key, dict2.items[i].key);
+        strcpy(mergedDict.items[i + dict1.size].value, dict2.items[i].value);
+    }
+
+    return mergedDict;
+}
+
+int main() {
+    Dictionary dict1;
+    dict1.size = 2;
+    dict1.items = (Item *)malloc(dict1.size * sizeof(Item));
+    strcpy(dict1.items[0].key, "key1");
+    strcpy(dict1.items[0].value, "value1");
+    strcpy(dict1.items[1].key, "key2");
+    strcpy(dict1.items[1].value, "value2");
+
+    Dictionary dict2;
+    dict2.size = 2;
+    dict2.items = (Item *)malloc(dict2.size * sizeof(Item));
+    strcpy(dict2.items[0].key, "key3");
+    strcpy(dict2.items[0].value, "value3");
+    strcpy(dict2.items[1].key, "key4");
+    strcpy(dict2.items[1].value, "value4");
+
+    Dictionary mergedDict = mergeDictionaries(dict1, dict2);
+
+    for (int i = 0; i < mergedDict.size; i++) {
+        printf("Key: %s, Value: %s\n", mergedDict.items[i].key, mergedDict.items[i].value);
+    }
+
+    free(dict1.items);
+    free(dict2.items);
+    free(mergedDict.items);
+
+    return 0;
+}

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 100
+#define MAX_STR_COUNT 1000
+
+struct StringCount {
+    char str[MAX_STR_LEN];
+    int count;
+};
+
+int findIndex(struct StringCount arr[], int n, char* str) {
+    for (int i = 0; i < n; i++) {
+        if (strcmp(arr[i].str, str) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+char* secondMostRepeated(char* sequence[], int n) {
+    struct StringCount arr[MAX_STR_COUNT];
+    int index, arrSize = 0;
+
+    for (int i = 0; i < n; i++) {
+        index = findIndex(arr, arrSize, sequence[i]);
+        if (index != -1) {
+            arr[index].count++;
+        } else {
+            strcpy(arr[arrSize].str, sequence[i]);
+            arr[arrSize].count = 1;
+            arrSize++;
+        }
+    }
+
+    int firstMax = 0, secondMax = 0;
+    for (int i = 0; i < arrSize; i++) {
+        if (arr[i].count > arr[firstMax].count) {
+            secondMax = firstMax;
+            firstMax = i;
+        } else if (arr[i].count > arr[secondMax].count && arr[i].count < arr[firstMax].count) {
+            secondMax = i;
+        }
+    }
+
+    return arr[secondMax].str;
+}
+
+int main() {
+    char* sequence[] = {"apple", "banana", "apple", "orange", "banana", "banana", "orange", "apple"};
+    int n = sizeof(sequence) / sizeof(sequence[0]);
+
+    char* res = secondMostRepeated(sequence, n);
+    printf("Second most repeated string is %s\n", res);
+
+    return 0;
+}

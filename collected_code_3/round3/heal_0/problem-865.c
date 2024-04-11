@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+void print(int* arr, int n) {
+    for(int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+void map(void (*f)(int*, int), int* arr, int n, int times) {
+    for(int i = 0; i < times; i++) {
+        f(arr, n);
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    map(print, arr, n, 3);
+    return 0;
+}

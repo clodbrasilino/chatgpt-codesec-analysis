@@ -1,0 +1,26 @@
+collected_code_3/problem-65-1.c: In function 'createNewNode':
+collected_code_3/problem-65-1.c:17:43: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   17 |     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+      |                                           ^~~~~~
+collected_code_3/problem-65-1.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code_3/problem-65-1.c:17:43: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   17 |     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+      |                                           ^~~~~~
+collected_code_3/problem-65-1.c:17:43: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/problem-65-1.c:18:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     newNode->data = data;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'createNewNode': events 1-2
+    |
+    |   17 |     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |   18 |     newNode->data = data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~                   
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |

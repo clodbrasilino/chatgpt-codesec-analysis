@@ -1,0 +1,221 @@
+collected_code_3/round4/heal_0/problem-358.c: In function 'insertNode':
+collected_code_3/round4/heal_0/problem-358.c:30:16: warning: leak of 'newNode' [CWE-401] [-Wanalyzer-malloc-leak]
+   30 |     temp->next = newNode;
+      |     ~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   43 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   46 |     insertNode(&head1, 10);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'insertNode' from 'main'
+    |
+    +--> 'insertNode': events 3-4
+           |
+           |   20 | void insertNode(Node** head, int data) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'insertNode'
+           |   21 |     Node* newNode = createNode(data);
+           |      |                     ~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (4) calling 'createNode' from 'insertNode'
+           |
+           +--> 'createNode': events 5-7
+                  |
+                  |    9 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createNode'
+                  |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   11 |     if(!newNode) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (6) following 'false' branch (when 'newNode' is non-NULL)...
+                  |......
+                  |   15 |     newNode->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (7) ...to here
+                  |
+           <------+
+           |
+         'insertNode': events 8-10
+           |
+           |   21 |     Node* newNode = createNode(data);
+           |      |                     ^~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (8) returning to 'insertNode' from 'createNode'
+           |   22 |     if(*head == NULL) {
+           |      |       ~              
+           |      |       |
+           |      |       (9) following 'true' branch...
+           |   23 |         *head = newNode;
+           |      |         ~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (10) ...to here
+           |
+    <------+
+    |
+  'main': events 11-12
+    |
+    |   46 |     insertNode(&head1, 10);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (11) returning to 'main' from 'insertNode'
+    |   47 |     insertNode(&head1, 20);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (12) calling 'insertNode' from 'main'
+    |
+    +--> 'insertNode': events 13-14
+           |
+           |   20 | void insertNode(Node** head, int data) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (13) entry to 'insertNode'
+           |   21 |     Node* newNode = createNode(data);
+           |      |                     ~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (14) calling 'createNode' from 'insertNode'
+           |
+           +--> 'createNode': events 15-18
+                  |
+                  |    9 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (15) entry to 'createNode'
+                  |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (16) allocated here
+                  |   11 |     if(!newNode) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (17) following 'true' branch (when 'newNode' is NULL)...
+                  |   12 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (18) ...to here
+                  |
+           <------+
+           |
+         'insertNode': events 19-21
+           |
+           |   21 |     Node* newNode = createNode(data);
+           |      |                     ^~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (19) returning to 'insertNode' from 'createNode'
+           |   22 |     if(*head == NULL) {
+           |      |       ~              
+           |      |       |
+           |      |       (20) following 'false' branch...
+           |......
+           |   26 |     Node* temp = *head;
+           |      |           ~~~~       
+           |      |           |
+           |      |           (21) ...to here
+           |
+         'insertNode': events 22-23
+           |
+           |   27 |     while(temp->next != NULL) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (22) following 'false' branch...
+           |......
+           |   30 |     temp->next = newNode;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (23) ...to here
+           |
+    <------+
+    |
+  'main': events 24-25
+    |
+    |   47 |     insertNode(&head1, 20);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) returning to 'main' from 'insertNode'
+    |   48 |     insertNode(&head1, 30);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (25) calling 'insertNode' from 'main'
+    |
+    +--> 'insertNode': events 26-27
+           |
+           |   20 | void insertNode(Node** head, int data) {
+           |      |      ^~~~~~~~~~
+           |      |      |
+           |      |      (26) entry to 'insertNode'
+           |   21 |     Node* newNode = createNode(data);
+           |      |                     ~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (27) calling 'createNode' from 'insertNode'
+           |
+           +--> 'createNode': events 28-32
+                  |
+                  |    9 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (28) entry to 'createNode'
+                  |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (29) allocated here
+                  |   11 |     if(!newNode) {
+                  |      |       ~
+                  |      |       |
+                  |      |       (30) assuming 'newNode' is non-NULL
+                  |      |       (31) following 'false' branch (when 'newNode' is non-NULL)...
+                  |......
+                  |   15 |     newNode->data = data;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                   |
+                  |      |                   (32) ...to here
+                  |
+           <------+
+           |
+         'insertNode': events 33-35
+           |
+           |   21 |     Node* newNode = createNode(data);
+           |      |                     ^~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (33) returning to 'insertNode' from 'createNode'
+           |   22 |     if(*head == NULL) {
+           |      |       ~              
+           |      |       |
+           |      |       (34) following 'false' branch...
+           |......
+           |   26 |     Node* temp = *head;
+           |      |           ~~~~       
+           |      |           |
+           |      |           (35) ...to here
+           |
+         'insertNode': events 36-37
+           |
+           |   27 |     while(temp->next != NULL) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (36) following 'true' branch...
+           |   28 |         temp = temp->next;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (37) ...to here
+           |
+         'insertNode': events 38-40
+           |
+           |   27 |     while(temp->next != NULL) {
+           |      |                      ^
+           |      |                      |
+           |      |                      (38) following 'false' branch...
+           |......
+           |   30 |     temp->next = newNode;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (39) ...to here
+           |      |                (40) 'newNode' leaks here; was allocated at (29)
+           |

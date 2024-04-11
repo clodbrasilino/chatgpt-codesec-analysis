@@ -1,0 +1,21 @@
+Sorry, but you can't use regex in C without using a third-party library. C doesn't have built-in support for regex. However, you can achieve the same result by using sscanf and sprintf functions in C. Here is the code:
+
+```c
+#include <stdio.h>
+
+void convert_date_format(char* date, char* new_date) {
+    int yyyy, mm, dd;
+    sscanf(date, "%d-%d-%d", &yyyy, &mm, &dd);
+    sprintf(new_date, "%02d-%02d-%04d", dd, mm, yyyy);
+}
+
+int main() {
+    char date[] = "2022-03-01";
+    char new_date[11];
+    convert_date_format(date, new_date);
+    printf("New date format: %s\n", new_date);
+    return 0;
+}
+```
+
+In this code, `sscanf` is used to extract the year, month, and day from the input date string. Then `sprintf` is used to format these extracted values into the desired format and store it in the `new_date` string. The `%02d` format specifier in `sprintf` ensures that the day and month are always two digits long, padding with a zero if necessary.

@@ -1,0 +1,96 @@
+./collected_code_3/round4/heal_1/healed/problem-570.c: In function 'removeWords':
+./collected_code_3/round4/heal_1/healed/problem-570.c:17:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |                 free(newList);
+      |                 ^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   28 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   32 |     char **newList = removeWords(list, listSize, "a", &newSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'removeWords' from 'main'
+    |
+    +--> 'removeWords': events 3-12
+           |
+           |    5 | char **removeWords(char **list, int listSize, char *str, int *newSize) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'removeWords'
+           |......
+           |    8 |     if (newList == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'newList' is non-NULL)...
+           |......
+           |   11 |     for (i = 0; i < listSize; i++) {
+           |      |          ~~~~~  ~~~~~~~~~~~~
+           |      |            |      |
+           |      |            |      (6) following 'true' branch (when 'i < listSize')...
+           |      |            (5) ...to here
+           |   12 |         if (strstr(list[i], str) == NULL) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (7) ...to here
+           |      |            (8) following 'true' branch...
+           |   13 |             newList[j] = (char *)malloc((strlen(list[i]) + 1) * sizeof(char));
+           |      |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |                  |
+           |      |                                  |                  (9) ...to here
+           |      |                                  (10) allocated here
+           |   14 |             if (newList[j] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) assuming '<unknown>' is non-NULL
+           |      |                (12) following 'false' branch...
+           |
+         'removeWords': event 13
+           |
+           |   20 |             strcpy(newList[j], list[i]);
+           |      |                           ^
+           |      |                           |
+           |      |                           (13) ...to here
+           |
+         'removeWords': events 14-18
+           |
+           |   11 |     for (i = 0; i < listSize; i++) {
+           |      |                 ~~^~~~~~~~~~
+           |      |                   |
+           |      |                   (14) following 'true' branch (when 'i < listSize')...
+           |   12 |         if (strstr(list[i], str) == NULL) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (15) ...to here
+           |      |            (16) following 'true' branch...
+           |   13 |             newList[j] = (char *)malloc((strlen(list[i]) + 1) * sizeof(char));
+           |      |                                                     ~
+           |      |                                                     |
+           |      |                                                     (17) ...to here
+           |   14 |             if (newList[j] == NULL) {
+           |      |                ~   
+           |      |                |
+           |      |                (18) following 'true' branch...
+           |
+         'removeWords': event 19
+           |
+           |cc1:
+           | (19): ...to here
+           |
+         'removeWords': events 20-22
+           |
+           |   15 |                 for (; j >= 0; --j)
+           |      |                        ~~^~~~
+           |      |                          |
+           |      |                          (20) following 'true' branch (when 'j >= 0')...
+           |   16 |                     free(newList[j]);
+           |      |                                 ~
+           |      |                                 |
+           |      |                                 (21) ...to here
+           |   17 |                 free(newList);
+           |      |                 ~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (22) '<unknown>' leaks here; was allocated at (10)
+           |

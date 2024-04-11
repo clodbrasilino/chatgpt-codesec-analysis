@@ -1,0 +1,37 @@
+C does not have built-in support for regular expressions. However, you can use external libraries such as POSIX regex library. Here is a simple example of how you can use it to remove multiple spaces from a string:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_multiple_spaces(char* str) {
+    regex_t regex;
+    char *p = str;
+    int ret;
+    regmatch_t match;
+
+    if (regcomp(&regex, "  +", 0)) {
+        printf("Could not compile regex\n");
+        return;
+    }
+
+    while (!regexec(&regex, p, 1, &match, 0)) {
+        memmove(p + match.rm_so + 1, p + match.rm_eo, strlen(p + match.rm_eo) + 1);
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This  is   a    test";
+    printf("Before: %s\n", str);
+    remove_multiple_spaces(str);
+    printf("After: %s\n", str);
+    return 0;
+}
+```
+
+This program uses the POSIX regex library to compile a regular expression that matches one or more spaces. It then uses `regexec` to find matches in the input string. For each match, it uses `memmove` to remove the extra spaces. The process continues until no more matches are found.
+
+Please note that this code does not handle errors properly. In a real-world application, you should check the return values of `regcomp`, `regexec`, and `memmove` and handle any errors that occur.

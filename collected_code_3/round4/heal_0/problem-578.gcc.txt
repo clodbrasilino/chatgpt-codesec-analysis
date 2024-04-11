@@ -1,0 +1,58 @@
+collected_code_3/round4/heal_0/problem-578.c: In function 'interleaveLists':
+collected_code_3/round4/heal_0/problem-578.c:15:24: warning: dereference of possibly-NULL 'newNode1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |         newNode1->data = list1->data;
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'interleaveLists': events 1-4
+    |
+    |   13 |     while (list1 != NULL && list2 != NULL) {
+    |      |                          ^
+    |      |                          |
+    |      |                          (1) following 'true' branch...
+    |   14 |         Node* newNode1 = (Node*)malloc(sizeof(Node));
+    |      |                                 ~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (2) ...to here
+    |      |                                 (3) this call could return NULL
+    |   15 |         newNode1->data = list1->data;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (4) 'newNode1' could be NULL: unchecked value from (3)
+    |
+collected_code_3/round4/heal_0/problem-578.c:21:24: warning: dereference of possibly-NULL 'newNode2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |         newNode2->data = list2->data;
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'interleaveLists': events 1-4
+    |
+    |   13 |     while (list1 != NULL && list2 != NULL) {
+    |      |                          ^
+    |      |                          |
+    |      |                          (1) following 'true' branch...
+    |   14 |         Node* newNode1 = (Node*)malloc(sizeof(Node));
+    |      |                                 ~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (2) ...to here
+    |......
+    |   20 |         Node* newNode2 = (Node*)malloc(sizeof(Node));
+    |      |                                 ~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (3) this call could return NULL
+    |   21 |         newNode2->data = list2->data;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (4) 'newNode2' could be NULL: unchecked value from (3)
+    |
+collected_code_3/round4/heal_0/problem-578.c: In function 'newNode':
+collected_code_3/round4/heal_0/problem-578.c:35:16: warning: dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |     node->data = data;
+      |     ~~~~~~~~~~~^~~~~~
+  'newNode': events 1-2
+    |
+    |   34 |     Node* node = (Node*)malloc(sizeof(Node));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   35 |     node->data = data;
+    |      |     ~~~~~~~~~~~~~~~~~    
+    |      |                |
+    |      |                (2) 'node' could be NULL: unchecked value from (1)
+    |

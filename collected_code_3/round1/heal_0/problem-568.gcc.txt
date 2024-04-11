@@ -1,0 +1,107 @@
+collected_code_3/problem-568-1.c: In function 'createNode':
+collected_code_3/problem-568-1.c:16:18: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     newNode->key = NULL;
+      |                  ^
+  'createListOfDictionaries': events 1-4
+    |
+    |   28 | List** createListOfDictionaries(int size) {
+    |      |        ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |        |
+    |      |        (1) entry to 'createListOfDictionaries'
+    |   29 |     List** listOfDictionaries = (List**)malloc(size * sizeof(List*));
+    |   30 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   31 |         listOfDictionaries[i] = createList();
+    |      |                           ~     ~~~~~~~~~~~~
+    |      |                           |     |
+    |      |                           |     (4) calling 'createList' from 'createListOfDictionaries'
+    |      |                           (3) ...to here
+    |
+    +--> 'createList': events 5-6
+           |
+           |   22 | List* createList() {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createList'
+           |   23 |     List* newList = (List*)malloc(sizeof(List));
+           |   24 |     newList->head = createNode();
+           |      |                     ~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (6) calling 'createNode' from 'createList'
+           |
+           +--> 'createNode': events 7-8
+                  |
+                  |   14 | Node* createNode() {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (7) entry to 'createNode'
+                  |   15 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (8) this call could return NULL
+                  |
+                'createNode': event 9
+                  |
+                  |   16 |     newNode->key = NULL;
+                  |      |                  ^
+                  |      |                  |
+                  |      |                  (9) 'newNode' could be NULL: unchecked value from (8)
+                  |
+collected_code_3/problem-568-1.c: In function 'createList':
+collected_code_3/problem-568-1.c:24:19: warning: dereference of possibly-NULL 'newList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |     newList->head = createNode();
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+  'createListOfDictionaries': events 1-4
+    |
+    |   28 | List** createListOfDictionaries(int size) {
+    |      |        ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |        |
+    |      |        (1) entry to 'createListOfDictionaries'
+    |   29 |     List** listOfDictionaries = (List**)malloc(size * sizeof(List*));
+    |   30 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   31 |         listOfDictionaries[i] = createList();
+    |      |                           ~     ~~~~~~~~~~~~
+    |      |                           |     |
+    |      |                           |     (4) calling 'createList' from 'createListOfDictionaries'
+    |      |                           (3) ...to here
+    |
+    +--> 'createList': events 5-7
+           |
+           |   22 | List* createList() {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createList'
+           |   23 |     List* newList = (List*)malloc(sizeof(List));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (6) this call could return NULL
+           |   24 |     newList->head = createNode();
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (7) 'newList' could be NULL: unchecked value from (6)
+           |
+collected_code_3/problem-568-1.c: In function 'createListOfDictionaries':
+collected_code_3/problem-568-1.c:31:31: warning: dereference of possibly-NULL 'listOfDictionaries' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |         listOfDictionaries[i] = createList();
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+  'createListOfDictionaries': events 1-4
+    |
+    |   29 |     List** listOfDictionaries = (List**)malloc(size * sizeof(List*));
+    |      |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                         |
+    |      |                                         (1) this call could return NULL
+    |   30 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~              
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   31 |         listOfDictionaries[i] = createList();
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |   |
+    |      |                           |   (4) 'listOfDictionaries + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                           (3) ...to here
+    |

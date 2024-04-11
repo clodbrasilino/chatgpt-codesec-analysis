@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STR_LEN 100
+#define MAX_LIST_LEN 100
+
+void sortSublist(char list[MAX_LIST_LEN][MAX_STR_LEN], int n) {
+    char temp[MAX_STR_LEN];
+    for (int i = 0; i < n-1; i++) {
+        for (int j = i+1; j < n; j++) {
+            if (strcmp(list[i], list[j]) > 0) {
+                strcpy(temp, list[i]);
+                strcpy(list[i], list[j]);
+                strcpy(list[j], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    char list[MAX_LIST_LEN][MAX_STR_LEN] = {"Hello", "World", "C", "Programming", "Language"};
+    int n = 5;
+
+    sortSublist(list, n);
+
+    for(int i = 0; i < n; i++) {
+        printf("%s ", list[i]);
+    }
+
+    return 0;
+}

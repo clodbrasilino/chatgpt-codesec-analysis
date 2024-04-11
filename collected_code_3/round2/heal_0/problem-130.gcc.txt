@@ -1,0 +1,21 @@
+collected_code_3/problem-130-2.c: In function 'findMaxFrequency':
+collected_code_3/problem-130-2.c:13:23: warning: dereference of possibly-NULL 'freq' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |         freq[i].value = arr[i];
+      |         ~~~~~~~~~~~~~~^~~~~~~~
+  'findMaxFrequency': events 1-4
+    |
+    |   10 |     struct Item* freq = (struct Item*)malloc(sizeof(struct Item) * n);
+    |      |                                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                       |
+    |      |                                       (1) this call could return NULL
+    |   11 |     int i, j, maxCountIndex = 0;
+    |   12 |     for(i = 0; i < n; i++) {
+    |      |                ~~~~~                   
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'i < n')...
+    |   13 |         freq[i].value = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~         
+    |      |                       |    |
+    |      |                       |    (3) ...to here
+    |      |                       (4) 'freq + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

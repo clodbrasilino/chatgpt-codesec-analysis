@@ -1,0 +1,27 @@
+collected_code_3/problem-969-3.c: In function 'joinTuples':
+collected_code_3/problem-969-3.c:18:27: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |             result[count] = tuples[i];
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~
+  'joinTuples': events 1-6
+    |
+    |   11 |     Tuple *result = (Tuple*)malloc(sizeof(Tuple) * size);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |......
+    |   14 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~  
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   15 |         if(i > 0 && strcmp(tuples[i].initial, tuples[i-1].initial) == 0) {
+    |      |           ~                  
+    |      |           |
+    |      |           (3) ...to here
+    |      |           (4) following 'false' branch (when 'i <= 0')...
+    |......
+    |   18 |             result[count] = tuples[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |       |
+    |      |                           |       (5) ...to here
+    |      |                           (6) 'result + (long unsigned int)count * 16' could be NULL: unchecked value from (1)
+    |

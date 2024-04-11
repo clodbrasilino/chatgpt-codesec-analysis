@@ -1,0 +1,18 @@
+collected_code_3/problem-822-3.c: In function 'main':
+collected_code_3/problem-822-3.c:26:5: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   26 |     printf("Enter your password: ");
+      |     ^~~~~~
+collected_code_3/problem-822-3.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+collected_code_3/problem-822-3.c:26:5: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   26 |     printf("Enter your password: ");
+      |     ^~~~~~
+collected_code_3/problem-822-3.c:26:5: note: include '<stdio.h>' or provide a declaration of 'printf'
+collected_code_3/problem-822-3.c:27:5: warning: implicit declaration of function 'scanf' [-Wimplicit-function-declaration]
+   27 |     scanf("%s", password);
+      |     ^~~~~
+collected_code_3/problem-822-3.c:27:5: note: include '<stdio.h>' or provide a declaration of 'scanf'
+collected_code_3/problem-822-3.c:27:5: warning: incompatible implicit declaration of built-in function 'scanf' [-Wbuiltin-declaration-mismatch]
+collected_code_3/problem-822-3.c:27:5: note: include '<stdio.h>' or provide a declaration of 'scanf'

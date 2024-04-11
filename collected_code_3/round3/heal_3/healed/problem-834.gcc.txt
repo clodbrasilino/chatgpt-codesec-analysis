@@ -1,0 +1,71 @@
+./collected_code_3/round3/heal_3/healed/problem-834.c: In function 'generateSpiralMatrix':
+./collected_code_3/round3/heal_3/healed/problem-834.c:8:19: warning: dereference of possibly-NULL 'matrix' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    8 |         matrix[i] = (int *)calloc(n, sizeof(int));
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'generateSpiralMatrix': events 1-4
+    |
+    |    5 |     int **matrix = (int **)calloc(n, sizeof(int *));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |    6 | 
+    |    7 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~   
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < n')...
+    |    8 |         matrix[i] = (int *)calloc(n, sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |        |
+    |      |                   |        (3) ...to here
+    |      |                   (4) 'matrix + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+./collected_code_3/round3/heal_3/healed/problem-834.c:24:19: warning: dereference of possibly-NULL 'matrix' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   24 |             matrix[rowStart][i] = value++;
+      |             ~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   54 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   58 |     generateSpiralMatrix(n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'generateSpiralMatrix' from 'main'
+    |
+    +--> 'generateSpiralMatrix': events 3-11
+           |
+           |    4 | void generateSpiralMatrix(int n) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'generateSpiralMatrix'
+           |    5 |     int **matrix = (int **)calloc(n, sizeof(int *));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) this call could return NULL
+           |    6 | 
+           |    7 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (5) following 'false' branch (when 'i >= n')...
+           |......
+           |   18 |     int value = 1;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (6) ...to here
+           |......
+           |   22 |     while (value <= n * n) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) following 'true' branch...
+           |   23 |         for (int i = colStart; i <= colEnd; i++) {
+           |      |                  ~             ~~~~~~~~~~~
+           |      |                  |               |
+           |      |                  (8) ...to here  (9) following 'true' branch (when 'i <= colEnd')...
+           |   24 |             matrix[rowStart][i] = value++;
+           |      |             ~~~~~~~~~~~~~~~~      ~~~~~~~
+           |      |                   |                    |
+           |      |                   |                    (10) ...to here
+           |      |                   (11) 'matrix + (long unsigned int)rowStart * 8' could be NULL: unchecked value from (4)
+           |

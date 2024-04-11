@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int newman_conway(int n) {
+    if (n == 1 || n == 2)
+        return 1;
+    else
+        return newman_conway(newman_conway(n - 1)) + newman_conway(n - newman_conway(n - 1));
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("The %d-th number in Newman Conway sequence is: %d\n", n, newman_conway(n));
+    return 0;
+}

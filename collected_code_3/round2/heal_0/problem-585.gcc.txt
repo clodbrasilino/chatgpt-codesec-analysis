@@ -1,0 +1,116 @@
+collected_code_3/problem-585-2.c: In function 'createHeap':
+collected_code_3/problem-585-2.c:12:16: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     heap->data = (int*)malloc(capacity * sizeof(int));
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   71 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   76 |     findNExpensiveItems(prices, n, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNExpensiveItems' from 'main'
+    |
+    +--> 'findNExpensiveItems': events 3-4
+           |
+           |   56 | void findNExpensiveItems(int* prices, int n, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNExpensiveItems'
+           |   57 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNExpensiveItems'
+           |
+           +--> 'createHeap': events 5-7
+                  |
+                  |   10 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   11 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |      |                         ~~~~~~~~~~~~~~~~~~~~
+                  |      |                         |
+                  |      |                         (6) this call could return NULL
+                  |   12 |     heap->data = (int*)malloc(capacity * sizeof(int));
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (7) 'heap' could be NULL: unchecked value from (6)
+                  |
+collected_code_3/problem-585-2.c: In function 'insert':
+collected_code_3/problem-585-2.c:49:34: warning: dereference of possibly-NULL '*heap.data + (long unsigned int)*heap.size * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   49 |         heap->data[heap->size++] = value;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   71 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   76 |     findNExpensiveItems(prices, n, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNExpensiveItems' from 'main'
+    |
+    +--> 'findNExpensiveItems': events 3-4
+           |
+           |   56 | void findNExpensiveItems(int* prices, int n, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNExpensiveItems'
+           |   57 |     Heap* heap = createHeap(n);
+           |      |                  ~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (4) calling 'createHeap' from 'findNExpensiveItems'
+           |
+           +--> 'createHeap': events 5-6
+                  |
+                  |   10 | Heap* createHeap(int capacity) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |   11 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+                  |   12 |     heap->data = (int*)malloc(capacity * sizeof(int));
+                  |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                        |
+                  |      |                        (6) this call could return NULL
+                  |
+           <------+
+           |
+         'findNExpensiveItems': events 7-10
+           |
+           |   57 |     Heap* heap = createHeap(n);
+           |      |                  ^~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (7) returning to 'findNExpensiveItems' from 'createHeap'
+           |   58 | 
+           |   59 |     for (int i = 0; i < size; i++)
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |   60 |         insert(heap, prices[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                  |
+           |      |         |                  (9) ...to here
+           |      |         (10) calling 'insert' from 'findNExpensiveItems'
+           |
+           +--> 'insert': events 11-14
+                  |
+                  |   41 | void insert(Heap* heap, int value) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'insert'
+                  |   42 |     if (heap->size == heap->capacity) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) following 'false' branch...
+                  |......
+                  |   49 |         heap->data[heap->size++] = value;
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |             |                    |
+                  |      |             (13) ...to here      (14) '*heap.data + (long unsigned int)*heap.size * 4' could be NULL: unchecked value from (6)
+                  |

@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX 100
+
+void sort_sublist(char arr[MAX][MAX], int n) {
+    char temp[MAX];
+    for (int i = 0; i < n-1; i++) {
+        for (int j = i+1; j < n; j++) {
+            if (strcmp(arr[i], arr[j]) > 0) {
+                strcpy(temp, arr[i]);
+                strcpy(arr[i], arr[j]);
+                strcpy(arr[j], temp);
+            }
+        }
+    }
+}
+
+int main() {
+    char list[MAX][MAX][MAX];
+    int n, m;
+
+    printf("Enter the number of sublists: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter the number of strings in sublist %d: ", i+1);
+        scanf("%d", &m);
+        printf("Enter the strings:\n");
+        for (int j = 0; j < m; j++) {
+            scanf("%s", list[i][j]);
+        }
+        sort_sublist(list[i], m);
+    }
+
+    printf("\nSorted sublists:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            printf("%s ", list[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

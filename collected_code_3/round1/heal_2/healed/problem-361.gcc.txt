@@ -1,0 +1,64 @@
+collected_code_3/round1/heal_2/healed/problem-361.c: In function 'addList':
+collected_code_3/round1/heal_2/healed/problem-361.c:54:19: warning: dereference of NULL 'newList' [CWE-476] [-Wanalyzer-null-dereference]
+   54 |     newList->next = *list;
+      |     ~~~~~~~~~~~~~~^~~~~~~
+  'addList': events 1-4
+    |
+    |   49 | void addList(List** list, Node* node) {
+    |      |      ^~~~~~~
+    |      |      |
+    |      |      (1) entry to 'addList'
+    |   50 |     if (node == NULL || list == NULL)
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch...
+    |......
+    |   53 |     List* newList = createList(node);
+    |      |                     ~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (3) ...to here
+    |      |                     (4) calling 'createList' from 'addList'
+    |
+    +--> 'createList': events 5-6
+           |
+           |   24 | List* createList(Node* node) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (5) entry to 'createList'
+           |   25 |     List* newList = (List*)malloc(sizeof(List));
+           |   26 |     if (!newList)
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'true' branch (when 'newList' is NULL)...
+           |
+         'createList': event 7
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (7) ...to here
+           |
+         'createList': event 8
+           |
+           |   27 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (8) '0' is NULL
+           |
+    <------+
+    |
+  'addList': events 9-11
+    |
+    |   53 |     List* newList = createList(node);
+    |      |                     ^~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (9) returning to 'addList' from 'createList'
+    |   54 |     newList->next = *list;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (11) dereference of NULL 'newList'
+    |   55 |     *list = newList;
+    |      |     ~~~~~~~~~~~~~~~  
+    |      |           |
+    |      |           (10) 'newList' is NULL
+    |

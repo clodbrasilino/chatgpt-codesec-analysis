@@ -1,0 +1,26 @@
+C language does not have a built-in map function like Python or JavaScript. However, we can achieve similar functionality by creating a function that iterates over an array of strings and performs an operation on each string. Here is an example:
+
+```c
+#include <stdio.h>
+
+void printString(char* str) {
+    printf("%s\n", str);
+}
+
+void map(char** arr, int size, void (*func)(char*)) {
+    for(int i = 0; i < size; i++) {
+        func(arr[i]);
+    }
+}
+
+int main() {
+    char* strings[] = {"Hello", "World", "This", "Is", "C"};
+    int size = sizeof(strings) / sizeof(strings[0]);
+
+    map(strings, size, printString);
+
+    return 0;
+}
+```
+
+In this code, `map` is a function that takes an array of strings, the size of the array, and a function pointer. It applies the function to each string in the array. The `printString` function is used to print each string. In the `main` function, we create an array of strings and pass it to the `map` function along with the `printString` function.

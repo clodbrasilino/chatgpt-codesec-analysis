@@ -1,0 +1,27 @@
+./collected_code_3/round3/heal_1/healed/problem-945.c: In function 'convertToSet':
+./collected_code_3/round3/heal_1/healed/problem-945.c:28:18: warning: leak of 'set.elements' [CWE-401] [-Wanalyzer-malloc-leak]
+   28 |     set.elements = realloc(set.elements, set.size * sizeof(int));
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'convertToSet': events 1-6
+    |
+    |   11 |     set.elements = (int *)malloc(size * sizeof(int));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) allocated here
+    |   12 |     if (!set.elements)
+    |      |        ~                   
+    |      |        |
+    |      |        (2) assuming 'set.elements' is non-NULL
+    |      |        (3) following 'false' branch...
+    |......
+    |   15 |     set.size = 0;
+    |      |     ~~~~~~~~~~~~           
+    |      |              |
+    |      |              (4) ...to here
+    |......
+    |   28 |     set.elements = realloc(set.elements, set.size * sizeof(int));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  | |
+    |      |                  | (5) when 'realloc' fails
+    |      |                  (6) 'set.elements' leaks here; was allocated at (1)
+    |

@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+#define NO_OF_CHARS 256
+
+bool areCharsUnique(char *str)
+{
+    bool chars[NO_OF_CHARS] = {0};
+    int i;
+    for (i = 0; *(str + i); i++)
+    {
+        if (chars[*(str + i)] == true)
+            return false;
+        chars[*(str + i)] = true;
+    }
+    return true;
+}
+
+int main()
+{
+    char str[] = "Hello, World!";
+    if(areCharsUnique(str))
+        printf("The String has all unique characters\n");
+    else
+        printf("The String has duplicate characters\n");
+    return 0;
+}
+```

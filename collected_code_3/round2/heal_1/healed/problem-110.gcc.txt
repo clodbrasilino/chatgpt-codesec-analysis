@@ -1,0 +1,167 @@
+./collected_code_3/round2/heal_1/healed/problem-110.c: In function 'findMissingRanges':
+./collected_code_3/round2/heal_1/healed/problem-110.c:9:34: warning: dereference of possibly-NULL '*_10 + _12' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |             (*pReturnSize)[j][0] = lower;
+      |             ~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-14
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   30 |     for (int i = 0; i < numsSize; i++)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |      |                       (4) following 'true' branch (when 'i < numsSize')...
+    |      |                       (6) following 'true' branch (when 'i < numsSize')...
+    |      |                       (8) following 'true' branch (when 'i < numsSize')...
+    |      |                       (10) following 'true' branch (when 'i < numsSize')...
+    |      |                       (12) following 'false' branch (when 'i >= numsSize')...
+    |   31 |         returnSize[i] = 0;
+    |      |                   ~
+    |      |                   |
+    |      |                   (3) ...to here
+    |      |                   (5) ...to here
+    |      |                   (7) ...to here
+    |      |                   (9) ...to here
+    |      |                   (11) ...to here
+    |   32 |     findMissingRanges(nums, numsSize, lower, upper, &returnSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (13) ...to here
+    |      |     (14) calling 'findMissingRanges' from 'main'
+    |
+    +--> 'findMissingRanges': events 15-27
+           |
+           |    4 | void findMissingRanges(int* nums, int numsSize, int lower, int upper, int*** pReturnSize) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'findMissingRanges'
+           |    5 |     int j = 0;
+           |    6 |     for (int i = 0; i < numsSize; i++) {
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (16) following 'true' branch (when 'i < numsSize')...
+           |      |                       (22) following 'true' branch (when 'i < numsSize')...
+           |    7 |         if (nums[i] > lower) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (17) ...to here
+           |      |            |    (23) ...to here
+           |      |            (18) following 'false' branch...
+           |      |            (24) following 'true' branch...
+           |    8 |             (*pReturnSize)[j] = (int*)malloc(2 * sizeof(int));
+           |      |             ~~~~~~~~~~~~~~            ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |                        |
+           |      |              (25) ...to here          (26) this call could return NULL
+           |    9 |             (*pReturnSize)[j][0] = lower;
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |
+           |      |                                  (27) '*_10 + _12' could be NULL: unchecked value from (26)
+           |......
+           |   13 |         if (nums[i] == upper) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (19) ...to here
+           |      |            (20) following 'false' branch...
+           |......
+           |   16 |         lower = nums[i] + 1;
+           |      |                     ~
+           |      |                     |
+           |      |                     (21) ...to here
+           |
+./collected_code_3/round2/heal_1/healed/problem-110.c:20:30: warning: dereference of possibly-NULL '*_39 + _41' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |         (*pReturnSize)[j][0] = lower;
+      |         ~~~~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-14
+    |
+    |   25 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   30 |     for (int i = 0; i < numsSize; i++)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |      |                       (4) following 'true' branch (when 'i < numsSize')...
+    |      |                       (6) following 'true' branch (when 'i < numsSize')...
+    |      |                       (8) following 'true' branch (when 'i < numsSize')...
+    |      |                       (10) following 'true' branch (when 'i < numsSize')...
+    |      |                       (12) following 'false' branch (when 'i >= numsSize')...
+    |   31 |         returnSize[i] = 0;
+    |      |                   ~
+    |      |                   |
+    |      |                   (3) ...to here
+    |      |                   (5) ...to here
+    |      |                   (7) ...to here
+    |      |                   (9) ...to here
+    |      |                   (11) ...to here
+    |   32 |     findMissingRanges(nums, numsSize, lower, upper, &returnSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (13) ...to here
+    |      |     (14) calling 'findMissingRanges' from 'main'
+    |
+    +--> 'findMissingRanges': events 15-25
+           |
+           |    4 | void findMissingRanges(int* nums, int numsSize, int lower, int upper, int*** pReturnSize) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'findMissingRanges'
+           |    5 |     int j = 0;
+           |    6 |     for (int i = 0; i < numsSize; i++) {
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (16) following 'true' branch (when 'i < numsSize')...
+           |    7 |         if (nums[i] > lower) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (17) ...to here
+           |      |            (18) following 'false' branch...
+           |......
+           |   13 |         if (nums[i] == upper) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (19) ...to here
+           |      |            (20) following 'false' branch...
+           |......
+           |   16 |         lower = nums[i] + 1;
+           |      |                     ~
+           |      |                     |
+           |      |                     (21) ...to here
+           |   17 |     }
+           |   18 |     if (lower <= upper) {
+           |      |        ~
+           |      |        |
+           |      |        (22) following 'true' branch (when 'lower <= upper')...
+           |   19 |         (*pReturnSize)[j] = (int*)malloc(2 * sizeof(int));
+           |      |         ~~~~~~~~~~~~~~            ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                        |
+           |      |          (23) ...to here          (24) this call could return NULL
+           |   20 |         (*pReturnSize)[j][0] = lower;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (25) '*_39 + _41' could be NULL: unchecked value from (24)
+           |
+./collected_code_3/round2/heal_1/healed/problem-110.c: In function 'main':
+./collected_code_3/round2/heal_1/healed/problem-110.c:31:23: warning: dereference of possibly-NULL 'returnSize' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |         returnSize[i] = 0;
+      |         ~~~~~~~~~~~~~~^~~
+  'main': events 1-4
+    |
+    |   29 |     int** returnSize = (int**)malloc(numsSize * sizeof(int*));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |   30 |     for (int i = 0; i < numsSize; i++)
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |   31 |         returnSize[i] = 0;
+    |      |         ~~~~~~~~~~~~~~~~~      
+    |      |                   |   |
+    |      |                   |   (4) 'returnSize + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                   (3) ...to here
+    |

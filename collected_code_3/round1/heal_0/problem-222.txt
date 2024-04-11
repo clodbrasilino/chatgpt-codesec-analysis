@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkSameType(int arr[], int n) {
+    for(int i = 0; i < n-1; i++) {
+        if(typeid(arr[i]) != typeid(arr[i+1])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr)/sizeof(arr[0]);
+
+    if(checkSameType(arr, n)) {
+        printf("All elements are of the same type.\n");
+    } else {
+        printf("All elements are not of the same type.\n");
+    }
+
+    return 0;
+}
+```
+Note: The above code assumes that the tuple is an array of integers. The C language does not support tuples as a built-in data type. Also, C does not have a built-in way to check the data type of a variable at runtime, unlike some other languages. The `typeid` operator used in the code is a feature of C++, not C. Therefore, in C, you would typically know the data types of your variables at compile time, and you would not need to check them at runtime.

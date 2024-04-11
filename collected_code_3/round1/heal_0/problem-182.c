@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void find_characters(char *str) {
+    regex_t regex;
+    int reti;
+    char msgbuf[100];
+
+    /* Compile regular expression for uppercase letters */
+    reti = regcomp(&regex, "[A-Z]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        printf("String contains uppercase letters.\n");
+    }
+
+    /* Compile regular expression for lowercase letters */
+    reti = regcomp(&regex, "[a-z]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        printf("String contains lowercase letters.\n");
+    }
+
+    /* Compile regular expression for special characters */
+    reti = regcomp(&regex, "[^a-zA-Z0-9]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        printf("String contains special characters.\n");
+    }
+
+    /* Compile regular expression for numeric values */
+    reti = regcomp(&regex, "[0-9]", 0);
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        printf("String contains numeric values.\n");
+    }
+
+    /* Free memory allocated to the pattern buffer by regcomp() */
+    regfree(&regex);
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strlen(str) - 1] = '\0'; // Remove newline character from input
+    find_characters(str);
+    return 0;
+}

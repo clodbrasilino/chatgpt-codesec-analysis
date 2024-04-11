@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int countEvenXorPairs(int arr[], int n) {
+    int even_count = 0, odd_count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] % 2 == 0)
+            even_count++;
+        else
+            odd_count++;
+    }
+    return (even_count * (even_count - 1) / 2) + (odd_count * (odd_count - 1) / 2);
+}
+
+int main() {
+    int arr[] = {3, 2, 1, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Count of pairs with even XOR is %d\n", countEvenXorPairs(arr, n));
+    return 0;
+}

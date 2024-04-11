@@ -1,0 +1,28 @@
+C language does not have built-in support for regular expressions (regex). However, you can use external libraries such as POSIX regex library. Here is a C program that uses POSIX regex to remove lowercase substrings from a given string.
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void removeLowercaseSubstrings(char *str) {
+    regex_t regex;
+    regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    regmatch_t matches[1];
+    while (regexec(&regex, str, 1, matches, 0) == 0) {
+        int pos = matches[0].rm_so;
+        int len = matches[0].rm_eo - matches[0].rm_so;
+        memmove(&str[pos], &str[pos + len], strlen(str) - len - pos + 1);
+    }
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "HelloWORLD123abcXYZ";
+    removeLowercaseSubstrings(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+This program first compiles a regular expression that matches one or more lowercase letters. Then it repeatedly applies this regular expression to the string, and each time it finds a match, it removes the matched substring from the string by shifting the rest of the string to the left. The process continues until no more matches are found. The result is printed out in the main function.

@@ -1,0 +1,36 @@
+collected_code_3/round4/heal_0/problem-847.c: In function 'copyList':
+collected_code_3/round4/heal_0/problem-847.c:15:19: warning: dereference of possibly-NULL 'newHead' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |     newHead->data = head->data;
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~
+  'copyList': events 1-4
+    |
+    |   10 |     if (head == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   14 |     Node* newHead = (Node*)malloc(sizeof(Node));
+    |      |                            ~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (2) ...to here
+    |      |                            (3) this call could return NULL
+    |   15 |     newHead->data = head->data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (4) 'newHead' could be NULL: unchecked value from (3)
+    |
+collected_code_3/round4/heal_0/problem-847.c: In function 'main':
+collected_code_3/round4/heal_0/problem-847.c:23:16: warning: dereference of possibly-NULL 'head' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |     head->data = 1;
+      |     ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   22 |     Node* head = (Node*)malloc(sizeof(Node));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   23 |     head->data = 1;
+    |      |     ~~~~~~~~~~~~~~       
+    |      |                |
+    |      |                (2) 'head' could be NULL: unchecked value from (1)
+    |

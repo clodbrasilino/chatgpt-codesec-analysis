@@ -1,0 +1,26 @@
+collected_code_3/round4/heal_0/problem-412.c: In function 'removeOdd':
+collected_code_3/round4/heal_0/problem-412.c:9:25: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |             result[j++] = nums[i];
+      |             ~~~~~~~~~~~~^~~~~~~~~
+  'removeOdd': events 1-6
+    |
+    |    5 |     int* result = (int*)malloc(numsSize * sizeof(int));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |    6 |     int j = 0;
+    |    7 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < numsSize')...
+    |    8 |         if (nums[i] % 2 == 0) {
+    |      |            ~    ~        
+    |      |            |    |
+    |      |            |    (3) ...to here
+    |      |            (4) following 'true' branch...
+    |    9 |             result[j++] = nums[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |     |
+    |      |                         |     (5) ...to here
+    |      |                         (6) 'result + (long unsigned int)j * 4' could be NULL: unchecked value from (1)
+    |

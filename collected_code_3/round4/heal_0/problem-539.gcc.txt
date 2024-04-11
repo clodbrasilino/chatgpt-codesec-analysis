@@ -1,0 +1,148 @@
+collected_code_3/round4/heal_0/problem-539.c: In function 'powerList':
+collected_code_3/round4/heal_0/problem-539.c:30:24: warning: dereference of NULL 'tail' [CWE-476] [-Wanalyzer-null-dereference]
+   30 |             tail->next = newNode;
+      |             ~~~~~~~~~~~^~~~~~~~~
+  'main': events 1-2
+    |
+    |   46 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |     Node* head = powerList(base, index, n);
+    |      |                  ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'powerList' from 'main'
+    |
+    +--> 'powerList': events 3-12
+           |
+           |   21 | Node* powerList(int base[], int index[], int n) {
+           |      |       ^~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'powerList'
+           |   22 |     Node* head = NULL;
+           |      |           ~~~~
+           |      |           |
+           |      |           (4) 'head' is NULL
+           |   23 |     Node* tail = NULL;
+           |      |           ~~~~
+           |      |           |
+           |      |           (5) 'head' is NULL
+           |   24 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (6) following 'true' branch (when 'i < n')...
+           |      |                       (10) following 'true' branch (when 'i < n')...
+           |   25 |         Node* newNode = createNode(pow(base[i], index[i]));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                            |
+           |      |                         |                            (7) ...to here
+           |      |                         |                            (11) ...to here
+           |      |                         (12) calling 'createNode' from 'powerList'
+           |   26 |         if (head == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (8) following 'true' branch (when 'head' is NULL)...
+           |   27 |             head = newNode;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (9) ...to here
+           |
+           +--> 'createNode': events 13-15
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (13) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   12 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (14) following 'true' branch (when 'newNode' is NULL)...
+                  |   13 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (15) ...to here
+                  |
+                'createNode': event 16
+                  |
+                  |   14 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (16) '0' is NULL
+                  |
+           <------+
+           |
+         'powerList': events 17-23
+           |
+           |   24 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (21) following 'true' branch (when 'i < n')...
+           |   25 |         Node* newNode = createNode(pow(base[i], index[i]));
+           |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |                            |
+           |      |                         |                            (22) ...to here
+           |      |                         (17) returning to 'powerList' from 'createNode'
+           |      |                         (23) calling 'createNode' from 'powerList'
+           |   26 |         if (head == NULL) {
+           |      |            ~             
+           |      |            |
+           |      |            (18) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   30 |             tail->next = newNode;
+           |      |             ~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (19) ...to here
+           |   31 |             tail = newNode;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (20) 'newNode' is NULL
+           |
+           +--> 'createNode': events 24-26
+                  |
+                  |   10 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (24) entry to 'createNode'
+                  |   11 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   12 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (25) following 'true' branch (when 'newNode' is NULL)...
+                  |   13 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (26) ...to here
+                  |
+                'createNode': event 27
+                  |
+                  |   14 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (27) 'tail' is NULL
+                  |
+           <------+
+           |
+         'powerList': events 28-33
+           |
+           |   25 |         Node* newNode = createNode(pow(base[i], index[i]));
+           |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (28) returning to 'powerList' from 'createNode'
+           |   26 |         if (head == NULL) {
+           |      |            ~             
+           |      |            |
+           |      |            (29) following 'false' branch (when 'head' is non-NULL)...
+           |......
+           |   30 |             tail->next = newNode;
+           |      |             ~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (30) ...to here
+           |      |                        (31) 'tail' is NULL
+           |      |                        (33) dereference of NULL 'tail'
+           |   31 |             tail = newNode;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (32) 'tail' is NULL
+           |

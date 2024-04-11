@@ -1,0 +1,30 @@
+Here is a simple C program that subtracts the elements of two arrays. C doesn't have built-in support for tuples, but we can use arrays instead.
+
+```c
+#include <stdio.h>
+
+#define SIZE 5
+
+void subtractArrays(int a[], int b[], int subtract[], int size) {
+    for(int i = 0; i < size; i++) {
+        subtract[i] = a[i] - b[i];
+    }
+}
+
+int main() {
+    int a[SIZE] = {1, 2, 3, 4, 5};
+    int b[SIZE] = {5, 4, 3, 2, 1};
+    int subtract[SIZE];
+
+    subtractArrays(a, b, subtract, SIZE);
+
+    printf("Result of subtraction: ");
+    for(int i = 0; i < SIZE; i++) {
+        printf("%d ", subtract[i]);
+    }
+
+    return 0;
+}
+```
+
+In this program, the `subtractArrays` function takes two arrays `a` and `b` and their size, and subtracts the elements of `b` from `a`, storing the result in the `subtract` array. The `main` function initializes two arrays `a` and `b`, calls `subtractArrays` to subtract their elements, and then prints the result.

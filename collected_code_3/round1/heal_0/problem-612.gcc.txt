@@ -1,0 +1,70 @@
+collected_code_3/problem-612-1.c: In function 'mergeFirstLast':
+collected_code_3/problem-612-1.c:48:16: warning: dereference of NULL 'tail' [CWE-476] [-Wanalyzer-null-dereference]
+   48 |     tail->next = NULL;
+      |                ^
+  'mergeFirstLast': events 1-4
+    |
+    |   35 | Node* mergeFirstLast(Node* head) {
+    |      |       ^~~~~~~~~~~~~~
+    |      |       |
+    |      |       (1) entry to 'mergeFirstLast'
+    |   36 |     if(head == NULL)
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   39 |     Node* cursor = head;
+    |      |           ~~~~~~
+    |      |           |
+    |      |           (3) ...to here
+    |   40 |     Node* tail = NULL;
+    |      |           ~~~~
+    |      |           |
+    |      |           (4) 'tail' is NULL
+    |
+  'mergeFirstLast': events 5-7
+    |
+    |   41 |     while(cursor->next != NULL) {
+    |      |                        ^
+    |      |                        |
+    |      |                        (5) following 'false' branch...
+    |......
+    |   46 |     Node* newHead = createNode(head->data + cursor->data);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |              |
+    |      |                     |              (6) ...to here
+    |      |                     (7) calling 'createNode' from 'mergeFirstLast'
+    |
+    +--> 'createNode': events 8-10
+           |
+           |    9 | Node* createNode(int data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (8) entry to 'createNode'
+           |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(newNode == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (9) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   15 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (10) ...to here
+           |
+    <------+
+    |
+  'mergeFirstLast': event 11
+    |
+    |   46 |     Node* newHead = createNode(head->data + cursor->data);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (11) returning to 'mergeFirstLast' from 'createNode'
+    |
+  'mergeFirstLast': event 12
+    |
+    |   48 |     tail->next = NULL;
+    |      |                ^
+    |      |                |
+    |      |                (12) dereference of NULL 'tail'
+    |

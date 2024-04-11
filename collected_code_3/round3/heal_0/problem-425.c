@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int countSublists(int arr[], int n, int x) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == x) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 2, 3, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 2;
+    printf("Number of sublists containing %d is %d", x, countSublists(arr, n, x));
+    return 0;
+}

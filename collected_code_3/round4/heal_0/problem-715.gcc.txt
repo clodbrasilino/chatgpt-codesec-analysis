@@ -1,0 +1,125 @@
+collected_code_3/round4/heal_0/problem-715.c: In function 'string_to_tuple':
+collected_code_3/round4/heal_0/problem-715.c:17:35: warning: use of uninitialized value 'tuple.data' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+      |                              ~~~~~^~~~~
+  'string_to_tuple': event 1
+    |
+    |   11 |     Tuple tuple;
+    |      |           ^~~~~
+    |      |           |
+    |      |           (1) region created on stack here
+    |
+  'string_to_tuple': events 2-4
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+    |      |                              ~~~~~~~~~~  ~~~~~~~~~~~
+    |      |                                   |             |
+    |      |                                   |             (3) ...to here
+    |      |                                   (4) use of uninitialized value 'tuple.data' here
+    |
+collected_code_3/round4/heal_0/problem-715.c:17:35: warning: use of uninitialized value 'tuple.data' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+      |                              ~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   26 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   31 |     tuple = string_to_tuple(str);
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (2) calling 'string_to_tuple' from 'main'
+    |
+    +--> 'string_to_tuple': events 3-4
+           |
+           |   10 | Tuple string_to_tuple(char *str) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'string_to_tuple'
+           |   11 |     Tuple tuple;
+           |      |           ~~~~~
+           |      |           |
+           |      |           (4) region created on stack here
+           |
+         'string_to_tuple': events 5-7
+           |
+           |   16 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (5) following 'true' branch (when 'token' is non-NULL)...
+           |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+           |      |                              ~~~~~~~~~~  ~~~~~~~~~~~
+           |      |                                   |             |
+           |      |                                   |             (6) ...to here
+           |      |                                   (7) use of uninitialized value 'tuple.data' here
+           |
+collected_code_3/round4/heal_0/problem-715.c: In function 'main':
+collected_code_3/round4/heal_0/problem-715.c:42:15: warning: use of uninitialized value 'tuple.data' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   42 |     free(tuple.data);
+      |          ~~~~~^~~~~
+  'main': events 1-3
+    |
+    |   26 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   27 |     char str[] = "1,2,3,4,5";
+    |   28 |     Tuple tuple;
+    |      |           ~~~~~
+    |      |           |
+    |      |           (2) region created on stack here
+    |......
+    |   31 |     tuple = string_to_tuple(str);
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (3) calling 'string_to_tuple' from 'main'
+    |
+    +--> 'string_to_tuple': event 4
+           |
+           |   10 | Tuple string_to_tuple(char *str) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (4) entry to 'string_to_tuple'
+           |
+         'string_to_tuple': events 5-6
+           |
+           |   16 |     while (token != NULL) {
+           |      |                  ^
+           |      |                  |
+           |      |                  (5) following 'false' branch (when 'token' is NULL)...
+           |......
+           |   21 |     tuple.size = count;
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   31 |     tuple = string_to_tuple(str);
+    |      |             ^~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (7) returning to 'main' from 'string_to_tuple'
+    |......
+    |   34 |     for (i = 0; i < tuple.size; i++) {
+    |      |                 ~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (8) following 'false' branch...
+    |......
+    |   40 |     printf(")\n");
+    |      |     ~~~~~~~~~~~~~
+    |      |     |
+    |      |     (9) ...to here
+    |   41 | 
+    |   42 |     free(tuple.data);
+    |      |          ~~~~~~~~~~
+    |      |               |
+    |      |               (10) use of uninitialized value 'tuple.data' here
+    |

@@ -1,0 +1,23 @@
+In C, there's no built-in concept of a tuple like in Python or some other languages. However, we can use a struct to represent a tuple. Here's an example of how you might write a function to find the size of a struct (which is acting as our tuple):
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    double b;
+    char c;
+} Tuple;
+
+size_t get_tuple_size(Tuple *tuple) {
+    return sizeof(*tuple);
+}
+
+int main() {
+    Tuple tuple = {1, 2.0, 'a'};
+    printf("Size of tuple: %zu bytes\n", get_tuple_size(&tuple));
+    return 0;
+}
+```
+
+In this code, we define a `Tuple` struct that can hold an `int`, a `double`, and a `char`. The `get_tuple_size` function takes a pointer to a `Tuple` and returns the size of the `Tuple` in bytes. The `main` function creates a `Tuple`, prints its size, and returns 0 to indicate successful execution.

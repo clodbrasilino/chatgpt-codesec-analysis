@@ -1,0 +1,26 @@
+collected_code_3/problem-425-1.c: In function 'insert':
+collected_code_3/problem-425-1.c:13:40: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+   13 |     struct Node *link = (struct Node*) malloc(sizeof(struct Node));
+      |                                        ^~~~~~
+collected_code_3/problem-425-1.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code_3/problem-425-1.c:13:40: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+   13 |     struct Node *link = (struct Node*) malloc(sizeof(struct Node));
+      |                                        ^~~~~~
+collected_code_3/problem-425-1.c:13:40: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/problem-425-1.c:14:15: warning: dereference of possibly-NULL 'link' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |     link->key = key;
+      |     ~~~~~~~~~~^~~~~
+  'insert': events 1-2
+    |
+    |   13 |     struct Node *link = (struct Node*) malloc(sizeof(struct Node));
+    |      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (1) this call could return NULL
+    |   14 |     link->key = key;
+    |      |     ~~~~~~~~~~~~~~~                     
+    |      |               |
+    |      |               (2) 'link' could be NULL: unchecked value from (1)
+    |

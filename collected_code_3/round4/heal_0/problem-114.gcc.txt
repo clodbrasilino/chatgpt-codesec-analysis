@@ -1,0 +1,16 @@
+collected_code_3/round4/heal_0/problem-114.c: In function 'main':
+collected_code_3/round4/heal_0/problem-114.c:32:30: warning: dereference of possibly-NULL 'tupleList.tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     tupleList.tuples[0].data = "tuple1";
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-2
+    |
+    |   30 |     tupleList.tuples = (Tuple*) malloc(tupleList.size * sizeof(Tuple));
+    |      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (1) this call could return NULL
+    |   31 | 
+    |   32 |     tupleList.tuples[0].data = "tuple1";
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (2) 'tupleList.tuples' could be NULL: unchecked value from (1)
+    |

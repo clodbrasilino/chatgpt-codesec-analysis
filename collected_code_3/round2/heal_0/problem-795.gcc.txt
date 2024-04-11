@@ -1,0 +1,326 @@
+collected_code_3/problem-795-2.c: In function 'createHeap':
+collected_code_3/problem-795-2.c:17:14: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     h->items = (Item*)malloc(sizeof(Item) * size);
+      |     ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     Heap* h = createHeap(n);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-5
+           |
+           |   15 | Heap* createHeap(int size) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   16 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) this call could return NULL
+           |   17 |     h->items = (Item*)malloc(sizeof(Item) * size);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |              |
+           |      |              (5) 'h' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-795-2.c: In function 'push':
+collected_code_3/problem-795-2.c:25:18: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |         h->items = (Item*)realloc(h->items, sizeof(Item) * h->size * 2);
+      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     Heap* h = createHeap(n);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   15 | Heap* createHeap(int size) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   16 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |   17 |     h->items = (Item*)malloc(sizeof(Item) * size);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) allocated here
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   65 |     Heap* h = createHeap(n);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (5) returning to 'main' from 'createHeap'
+    |   66 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch...
+    |   67 |         int price;
+    |   68 |         scanf("%d", &price);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |   69 |         push(h, (Item){price, i + 1});
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (8) calling 'push' from 'main'
+    |
+    +--> 'push': events 9-14
+           |
+           |   23 | void push(Heap* h, Item item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (9) entry to 'push'
+           |   24 |     if (h->len == h->size) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   28 |     h->items[h->len] = item;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |               |
+           |      |      (11) ...to here (12) assuming '<unknown>' is non-NULL
+           |   29 |     int i = h->len;
+           |   30 |     while (i > 0) {
+           |      |            ~~~~~
+           |      |              |
+           |      |              (13) following 'false' branch (when 'i <= 0')...
+           |......
+           |   38 |     h->len++;
+           |      |     ~~~~~~
+           |      |      |
+           |      |      (14) ...to here
+           |
+    <------+
+    |
+  'main': events 15-18
+    |
+    |   66 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (16) following 'true' branch...
+    |   67 |         int price;
+    |   68 |         scanf("%d", &price);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (17) ...to here
+    |   69 |         push(h, (Item){price, i + 1});
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (15) returning to 'main' from 'push'
+    |      |         (18) calling 'push' from 'main'
+    |
+    +--> 'push': events 19-23
+           |
+           |   23 | void push(Heap* h, Item item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (19) entry to 'push'
+           |   24 |     if (h->len == h->size) {
+           |      |        ~
+           |      |        |
+           |      |        (20) following 'true' branch...
+           |   25 |         h->items = (Item*)realloc(h->items, sizeof(Item) * h->size * 2);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |        |                                 |
+           |      |                  |        (22) when 'realloc' fails         (21) ...to here
+           |      |                  (23) '<unknown>' leaks here; was allocated at (4)
+           |
+collected_code_3/problem-795-2.c:28:22: warning: dereference of possibly-NULL '*h.items + (long unsigned int)*h.len * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   28 |     h->items[h->len] = item;
+      |     ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   65 |     Heap* h = createHeap(n);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   15 | Heap* createHeap(int size) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   16 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |   17 |     h->items = (Item*)malloc(sizeof(Item) * size);
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   65 |     Heap* h = createHeap(n);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (5) returning to 'main' from 'createHeap'
+    |   66 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch...
+    |   67 |         int price;
+    |   68 |         scanf("%d", &price);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (7) ...to here
+    |   69 |         push(h, (Item){price, i + 1});
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (8) calling 'push' from 'main'
+    |
+    +--> 'push': events 9-12
+           |
+           |   23 | void push(Heap* h, Item item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (9) entry to 'push'
+           |   24 |     if (h->len == h->size) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   28 |     h->items[h->len] = item;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |               |
+           |      |      (11) ...to here (12) '*h.items + (long unsigned int)*h.len * 8' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-795-2.c: In function 'main':
+collected_code_3/problem-795-2.c:76:21: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   76 |         result[i] = pop(h);
+      |                     ^~~~~~
+  'main': events 1-4
+    |
+    |   62 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   66 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |   67 |         int price;
+    |   68 |         scanf("%d", &price);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (3) ...to here
+    |   69 |         push(h, (Item){price, i + 1});
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (4) calling 'push' from 'main'
+    |
+    +--> 'push': events 5-9
+           |
+           |   23 | void push(Heap* h, Item item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (5) entry to 'push'
+           |   24 |     if (h->len == h->size) {
+           |      |        ~
+           |      |        |
+           |      |        (6) following 'false' branch...
+           |......
+           |   28 |     h->items[h->len] = item;
+           |      |     ~~~~~~~~
+           |      |      |
+           |      |      (7) ...to here
+           |   29 |     int i = h->len;
+           |   30 |     while (i > 0) {
+           |      |            ~~~~~
+           |      |              |
+           |      |              (8) following 'false' branch (when 'i <= 0')...
+           |......
+           |   38 |     h->len++;
+           |      |     ~~~~~~
+           |      |      |
+           |      |      (9) ...to here
+           |
+    <------+
+    |
+  'main': events 10-13
+    |
+    |   66 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (11) following 'true' branch...
+    |   67 |         int price;
+    |   68 |         scanf("%d", &price);
+    |      |         ~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (12) ...to here
+    |   69 |         push(h, (Item){price, i + 1});
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (10) returning to 'main' from 'push'
+    |      |         (13) calling 'push' from 'main'
+    |
+    +--> 'push': events 14-17
+           |
+           |   23 | void push(Heap* h, Item item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (14) entry to 'push'
+           |   24 |     if (h->len == h->size) {
+           |      |        ~
+           |      |        |
+           |      |        (15) following 'true' branch...
+           |   25 |         h->items = (Item*)realloc(h->items, sizeof(Item) * h->size * 2);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |                                 |
+           |      |                           (17) when 'realloc' fails         (16) ...to here
+           |
+    <------+
+    |
+  'main': events 18-26
+    |
+    |   66 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~  ~~~
+    |      |                       |     |
+    |      |                       |     (20) ...to here
+    |      |                       (21) following 'false' branch...
+    |......
+    |   69 |         push(h, (Item){price, i + 1});
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (18) returning to 'main' from 'push'
+    |   70 |         if (h->len > m) {
+    |      |            ~
+    |      |            |
+    |      |            (19) following 'false' branch...
+    |......
+    |   74 |     Item* result = (Item*)malloc(sizeof(Item) * m);
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (22) ...to here
+    |      |                           (23) this call could return NULL
+    |   75 |     for (int i = 0; i < m; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (24) following 'true' branch...
+    |   76 |         result[i] = pop(h);
+    |      |               ~     ~~~~~~
+    |      |               |     |
+    |      |               |     (26) 'result + (long unsigned int)i * 8' could be NULL: unchecked value from (23)
+    |      |               (25) ...to here
+    |

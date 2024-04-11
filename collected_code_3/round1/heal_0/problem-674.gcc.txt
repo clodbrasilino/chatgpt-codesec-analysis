@@ -1,0 +1,136 @@
+collected_code_3/problem-674-1.c: In function 'removeDuplicateWords':
+collected_code_3/problem-674-1.c:39:1: warning: leak of 'words[0]' [CWE-401] [-Wanalyzer-malloc-leak]
+   39 | }
+      | ^
+  'main': events 1-2
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   42 |     char str[] = "Hello world world Hello";
+    |   43 |     char* result = removeDuplicateWords(str);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeDuplicateWords' from 'main'
+    |
+    +--> 'removeDuplicateWords': event 3
+           |
+           |   17 | char* removeDuplicateWords(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeDuplicateWords'
+           |
+         'removeDuplicateWords': events 4-6
+           |
+           |   22 |     while(word != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (4) following 'true' branch (when 'word' is non-NULL)...
+           |   23 |         if(!isWordExist(word, words, count)) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (6) calling 'isWordExist' from 'removeDuplicateWords'
+           |
+           +--> 'isWordExist': events 7-9
+                  |
+                  |    8 | int isWordExist(char* word, char* words[], int count) {
+                  |      |     ^~~~~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'isWordExist'
+                  |    9 |     for(int i = 0; i < count; i++) {
+                  |      |                    ~~~~~~~~~
+                  |      |                      |
+                  |      |                      (8) following 'false' branch (when 'i >= count')...
+                  |......
+                  |   14 |     return 0;
+                  |      |            ~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicateWords': events 10-13
+           |
+           |   23 |         if(!isWordExist(word, words, count)) {
+           |      |           ~ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |           | |
+           |      |           | (10) returning to 'removeDuplicateWords' from 'isWordExist'
+           |      |           (11) following 'true' branch...
+           |   24 |             words[count] = malloc(strlen(word) + 1);
+           |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |      |
+           |      |                            |      (12) ...to here
+           |      |                            (13) allocated here
+           |
+         'removeDuplicateWords': event 14
+           |
+           |   25 |             strcpy(words[count++], word);
+           |      |             ^~~~~~
+           |      |             |
+           |      |             (14) assuming 'words[0]' is non-NULL
+           |
+         'removeDuplicateWords': events 15-17
+           |
+           |   32 |     for(int i = 1; i < count; i++) {
+           |      |                    ~~^~~~~~~
+           |      |                      |
+           |      |                      (15) following 'false' branch (when 'i >= count')...
+           |......
+           |   38 |     return result;
+           |      |            ~~~~~~     
+           |      |            |
+           |      |            (16) ...to here
+           |   39 | }
+           |      | ~                     
+           |      | |
+           |      | (17) 'words[0]' leaks here; was allocated at (13)
+           |
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:194,
+                 from collected_code_3/problem-674-1.c:2:
+collected_code_3/problem-674-1.c:31:25: warning: use of uninitialized value 'words[0]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   31 |     strcpy(result, words[0]);
+      |                    ~~~~~^~~
+  'main': events 1-2
+    |
+    |   41 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   42 |     char str[] = "Hello world world Hello";
+    |   43 |     char* result = removeDuplicateWords(str);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeDuplicateWords' from 'main'
+    |
+    +--> 'removeDuplicateWords': events 3-4
+           |
+           |   17 | char* removeDuplicateWords(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeDuplicateWords'
+           |   18 |     char* words[MAX_WORDS];
+           |      |           ~~~~~
+           |      |           |
+           |      |           (4) region created on stack here
+           |
+         'removeDuplicateWords': events 5-6
+           |
+           |   22 |     while(word != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (5) following 'false' branch (when 'word' is NULL)...
+           |......
+           |   30 |     char* result = malloc(strlen(str) + 1);
+           |      |                           ~~~~~~~~~~~
+           |      |                           |
+           |      |                           (6) ...to here
+           |
+         'removeDuplicateWords': event 7
+           |
+           |   31 |     strcpy(result, words[0]);
+           |      |                    ~~~~~^~~
+           |      |                         |
+           |      |                         (7) use of uninitialized value 'words[0]' here
+           |

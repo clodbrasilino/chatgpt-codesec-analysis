@@ -1,0 +1,59 @@
+collected_code_3/problem-36-2.c: In function 'findNthDigit':
+collected_code_3/problem-36-2.c:9:12: warning: use of uninitialized value 'digit' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    9 |     return digit;
+      |            ^~~~~
+  'findNthDigit': events 1-5
+    |
+    |    4 |     int digit;
+    |      |         ^~~~~
+    |      |         |
+    |      |         (1) region created on stack here
+    |      |         (2) capacity: 4 bytes
+    |    5 |     for(int i = 0; i < n; i++) {
+    |      |                    ~~~~~
+    |      |                      |
+    |      |                      (3) following 'false' branch (when 'i >= n')...
+    |......
+    |    9 |     return digit;
+    |      |            ~~~~~
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) use of uninitialized value 'digit' here
+    |
+collected_code_3/problem-36-2.c:9:12: warning: use of uninitialized value 'digit' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    9 |     return digit;
+      |            ^~~~~
+  'main': events 1-2
+    |
+    |   12 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   20 |     printf("The %dth digit in the fraction %d/%d is: %d\n", n, numerator, denominator, findNthDigit(numerator, denominator, n));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNthDigit' from 'main'
+    |
+    +--> 'findNthDigit': events 3-8
+           |
+           |    3 | int findNthDigit(int numerator, int denominator, int n) {
+           |      |     ^~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'findNthDigit'
+           |    4 |     int digit;
+           |      |         ~~~~~
+           |      |         |
+           |      |         (4) region created on stack here
+           |      |         (5) capacity: 4 bytes
+           |    5 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (6) following 'false' branch (when 'i >= n')...
+           |......
+           |    9 |     return digit;
+           |      |            ~~~~~
+           |      |            |
+           |      |            (7) ...to here
+           |      |            (8) use of uninitialized value 'digit' here
+           |

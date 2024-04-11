@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+#define MAX 100
+
+void countOccurrence(int list[], int tuple[], int m, int n) {
+    int i, j, count;
+    for(i = 0; i < m; i++) {
+        count = 0;
+        for(j = 0; j < n; j++) {
+            if(list[i] == tuple[j]) {
+                count++;
+            }
+        }
+        printf("Element %d occurs %d times\n", list[i], count);
+    }
+}
+
+int main() {
+    int list[MAX], tuple[MAX], m, n, i;
+    printf("Enter number of elements in list: ");
+    scanf("%d", &m);
+    printf("Enter elements of list: ");
+    for(i = 0; i < m; i++) {
+        scanf("%d", &list[i]);
+    }
+    printf("Enter number of elements in tuple: ");
+    scanf("%d", &n);
+    printf("Enter elements of tuple: ");
+    for(i = 0; i < n; i++) {
+        scanf("%d", &tuple[i]);
+    }
+    countOccurrence(list, tuple, m, n);
+    return 0;
+}

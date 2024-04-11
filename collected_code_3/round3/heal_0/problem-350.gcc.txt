@@ -1,0 +1,93 @@
+collected_code_3/problem-350-3.c: In function 'getMinLengthChar':
+collected_code_3/problem-350-3.c:28:12: warning: use of uninitialized value 'res' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |     return res;
+      |            ^~~
+  'getMinLengthChar': events 1-3
+    |
+    |   18 |     char res;
+    |      |          ^~~
+    |      |          |
+    |      |          (1) region created on stack here
+    |      |          (2) capacity: 1 byte
+    |......
+    |   28 |     return res;
+    |      |            ~~~
+    |      |            |
+    |      |            (3) use of uninitialized value 'res' here
+    |
+collected_code_3/problem-350-3.c:28:12: warning: use of uninitialized value 'res' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |     return res;
+      |            ^~~
+  'minimizeLength': events 1-2
+    |
+    |   31 | void minimizeLength(char* str) {
+    |      |      ^~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'minimizeLength'
+    |   32 |     char minChar = getMinLengthChar(str);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'getMinLengthChar' from 'minimizeLength'
+    |
+    +--> 'getMinLengthChar': events 3-6
+           |
+           |   15 | char getMinLengthChar(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'getMinLengthChar'
+           |......
+           |   18 |     char res;
+           |      |          ~~~
+           |      |          |
+           |      |          (4) region created on stack here
+           |      |          (5) capacity: 1 byte
+           |......
+           |   28 |     return res;
+           |      |            ~~~
+           |      |            |
+           |      |            (6) use of uninitialized value 'res' here
+           |
+collected_code_3/problem-350-3.c:28:12: warning: use of uninitialized value 'res' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   28 |     return res;
+      |            ^~~
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   39 |     minimizeLength(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'minimizeLength' from 'main'
+    |
+    +--> 'minimizeLength': events 3-4
+           |
+           |   31 | void minimizeLength(char* str) {
+           |      |      ^~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'minimizeLength'
+           |   32 |     char minChar = getMinLengthChar(str);
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'getMinLengthChar' from 'minimizeLength'
+           |
+           +--> 'getMinLengthChar': events 5-8
+                  |
+                  |   15 | char getMinLengthChar(char* str) {
+                  |      |      ^~~~~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (5) entry to 'getMinLengthChar'
+                  |......
+                  |   18 |     char res;
+                  |      |          ~~~
+                  |      |          |
+                  |      |          (6) region created on stack here
+                  |      |          (7) capacity: 1 byte
+                  |......
+                  |   28 |     return res;
+                  |      |            ~~~
+                  |      |            |
+                  |      |            (8) use of uninitialized value 'res' here
+                  |

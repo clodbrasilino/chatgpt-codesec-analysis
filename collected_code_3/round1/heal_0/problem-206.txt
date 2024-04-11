@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** concatenateAdjacent(char** tuples, int size) {
+    char** result = (char**)malloc(sizeof(char*) * (size - 1));
+    for(int i = 0; i < size - 1; i++) {
+        result[i] = (char*)malloc(sizeof(char) * (strlen(tuples[i]) + strlen(tuples[i+1]) + 1));
+        strcpy(result[i], tuples[i]);
+        strcat(result[i], tuples[i+1]);
+    }
+    return result;
+}
+
+int main() {
+    int size = 5;
+    char** tuples = (char**)malloc(sizeof(char*) * size);
+    for(int i = 0; i < size; i++) {
+        tuples[i] = (char*)malloc(sizeof(char) * 10);
+        sprintf(tuples[i], "Element%d", i+1);
+    }
+
+    char** result = concatenateAdjacent(tuples, size);
+    for(int i = 0; i < size - 1; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    for(int i = 0; i < size; i++) {
+        free(tuples[i]);
+    }
+    free(tuples);
+
+    return 0;
+}
+```

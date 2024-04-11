@@ -1,0 +1,69 @@
+collected_code_3/problem-618-2.c: In function 'divideLists':
+collected_code_3/problem-618-2.c:4:31: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    4 |     double* result = (double*)malloc(size * sizeof(double));
+      |                               ^~~~~~
+collected_code_3/problem-618-2.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 
+collected_code_3/problem-618-2.c:4:31: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    4 |     double* result = (double*)malloc(size * sizeof(double));
+      |                               ^~~~~~
+collected_code_3/problem-618-2.c:4:31: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/problem-618-2.c: In function 'main':
+collected_code_3/problem-618-2.c:23:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   23 |     free(result);
+      |     ^~~~
+collected_code_3/problem-618-2.c:23:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-618-2.c:23:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/problem-618-2.c:23:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/problem-618-2.c: In function 'divideLists':
+collected_code_3/problem-618-2.c:7:23: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |             result[i] = list1[i] / list2[i];
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+  'divideLists': events 1-6
+    |
+    |    4 |     double* result = (double*)malloc(size * sizeof(double));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |    5 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~    
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |    6 |         if(list2[i] != 0) {
+    |      |           ~     ~              
+    |      |           |     |
+    |      |           |     (3) ...to here
+    |      |           (4) following 'true' branch...
+    |    7 |             result[i] = list1[i] / list2[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |      |
+    |      |                       |      (5) ...to here
+    |      |                       (6) 'result + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-618-2.c:9:23: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    9 |             result[i] = 0;
+      |             ~~~~~~~~~~^~~
+  'divideLists': events 1-6
+    |
+    |    4 |     double* result = (double*)malloc(size * sizeof(double));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |    5 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~    
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |    6 |         if(list2[i] != 0) {
+    |      |           ~     ~              
+    |      |           |     |
+    |      |           |     (3) ...to here
+    |      |           (4) following 'false' branch...
+    |......
+    |    9 |             result[i] = 0;
+    |      |             ~~~~~~~~~~~~~      
+    |      |                   |   |
+    |      |                   |   (6) 'result + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |                   (5) ...to here
+    |

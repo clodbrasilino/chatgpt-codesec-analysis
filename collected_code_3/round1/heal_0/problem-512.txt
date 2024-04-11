@@ -1,0 +1,24 @@
+I'm sorry for the confusion, but C language does not support tuples or nested tuples like Python or some other languages. However, you can achieve similar functionality using structures or arrays. If you want to count the frequency of an element in an array, here is a simple example:
+
+```c
+#include <stdio.h>
+
+#define ARRAY_SIZE 10
+
+int count_frequency(int arr[], int n, int x) {
+    int count = 0;
+    for (int i = 0; i < n; i++)
+       if (arr[i] == x)
+          count++;
+    return count;
+}
+
+int main() {
+    int arr[ARRAY_SIZE] = {1, 2, 3, 4, 2, 5, 2, 6, 7, 2};
+    int x = 2;
+    printf("Frequency of %d = %d", x, count_frequency(arr, ARRAY_SIZE, x));
+    return 0;
+}
+```
+
+This program will count the frequency of the number `2` in the array. Please adjust the code according to your needs.

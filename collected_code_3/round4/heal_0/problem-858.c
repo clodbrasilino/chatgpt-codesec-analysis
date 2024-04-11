@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct List {
+    struct Node* head;
+    struct List* next;
+};
+
+int countLists(struct List* head) {
+    int count = 0;
+    while (head != NULL) {
+        count++;
+        head = head->next;
+    }
+    return count * count;
+}
+
+int main() {
+    struct List* head = NULL;
+    // Add lists to head
+    // ...
+    printf("Square of the number of lists: %d\n", countLists(head));
+    return 0;
+}

@@ -1,0 +1,36 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double findThirdSide(double side1, double side2, char sideToFind) {
+    double thirdSide;
+
+    if(sideToFind == 'h') {
+        thirdSide = sqrt((side1 * side1) + (side2 * side2));
+    } else {
+        thirdSide = sqrt((side1 * side1) - (side2 * side2));
+    }
+
+    return thirdSide;
+}
+
+int main() {
+    double side1, side2;
+    char sideToFind;
+
+    printf("Enter the length of the first side: ");
+    scanf("%lf", &side1);
+
+    printf("Enter the length of the second side: ");
+    scanf("%lf", &side2);
+
+    printf("Enter 'h' if you want to find the hypotenuse, or 's' if you want to find the other side: ");
+    scanf(" %c", &sideToFind);
+
+    double thirdSide = findThirdSide(side1, side2, sideToFind);
+
+    printf("The length of the third side is: %.2lf\n", thirdSide);
+
+    return 0;
+}
+```

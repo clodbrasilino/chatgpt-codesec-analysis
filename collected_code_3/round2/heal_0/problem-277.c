@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    int value;
+} dict;
+
+void filter_dict(dict *dictionary, int size, int filter_value) {
+    for(int i = 0; i < size; i++) {
+        if(dictionary[i].value == filter_value) {
+            printf("%s\n", dictionary[i].key);
+        }
+    }
+}
+
+int main() {
+    dict dictionary[] = {
+        {"key1", 1},
+        {"key2", 2},
+        {"key3", 3},
+        {"key4", 2},
+        {"key5", 1}
+    };
+
+    int size = sizeof(dictionary) / sizeof(dictionary[0]);
+    int filter_value = 2;
+
+    filter_dict(dictionary, size, filter_value);
+
+    return 0;
+}

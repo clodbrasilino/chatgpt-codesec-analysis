@@ -1,0 +1,33 @@
+collected_code_3/problem-945-3.c: In function 'convertToSet':
+collected_code_3/problem-945-3.c:21:36: warning: dereference of possibly-NULL 'set.elements' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |             set.elements[set.size] = tuple[i];
+      |             ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'convertToSet': events 1-8
+    |
+    |   11 |     set.elements = (int *)malloc(size * sizeof(int));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |......
+    |   14 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < size')...
+    |   15 |         int j;
+    |   16 |         for (j = 0; j < i; j++)
+    |      |              ~~~~~  ~~~~~  
+    |      |                |      |
+    |      |                |      (4) following 'false' branch (when 'j >= i')...
+    |      |                (3) ...to here
+    |......
+    |   20 |         if (i == j) {
+    |      |            ~               
+    |      |            |
+    |      |            (5) ...to here
+    |      |            (6) following 'true' branch (when 'i == j')...
+    |   21 |             set.elements[set.size] = tuple[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |      |
+    |      |                                    |      (7) ...to here
+    |      |                                    (8) 'set.elements + (long unsigned int)set.size * 4' could be NULL: unchecked value from (1)
+    |

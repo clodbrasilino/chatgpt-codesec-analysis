@@ -1,0 +1,32 @@
+collected_code_3/round4/heal_0/problem-200.c: In function 'findMaxIndexes':
+collected_code_3/round4/heal_0/problem-200.c:15:30: warning: dereference of possibly-NULL 'indexes' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   15 |             indexes[count++] = i;
+      |             ~~~~~~~~~~~~~~~~~^~~
+  'findMaxIndexes': events 1-8
+    |
+    |    6 |     int* indexes = (int*)malloc(size * sizeof(int));
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |......
+    |    9 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   10 |         if(arr[i] > max) {
+    |      |           ~   ~           
+    |      |           |   |
+    |      |           |   (3) ...to here
+    |      |           (4) following 'false' branch...
+    |......
+    |   14 |         } else if(arr[i] == max) {
+    |      |                  ~   ~    
+    |      |                  |   |
+    |      |                  |   (5) ...to here
+    |      |                  (6) following 'true' branch...
+    |   15 |             indexes[count++] = i;
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |                          |   |
+    |      |                          |   (8) 'indexes + (long unsigned int)count * 4' could be NULL: unchecked value from (1)
+    |      |                          (7) ...to here
+    |

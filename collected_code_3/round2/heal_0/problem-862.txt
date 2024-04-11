@@ -1,0 +1,62 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_WORD_LENGTH 50
+#define MAX_WORDS 1000
+
+typedef struct {
+    char word[MAX_WORD_LENGTH];
+    int count;
+} Word;
+
+int find_word(Word words[], int num_words, char *word) {
+    for (int i = 0; i < num_words; i++) {
+        if (strcmp(words[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void print_most_common_words(Word words[], int num_words, int n) {
+    for (int i = 0; i < n && i < num_words; i++) {
+        int max_index = i;
+        for (int j = i + 1; j < num_words; j++) {
+            if (words[j].count > words[max_index].count) {
+                max_index = j;
+            }
+        }
+        Word temp = words[i];
+        words[i] = words[max_index];
+        words[max_index] = temp;
+        printf("%s: %d\n", words[i].word, words[i].count);
+    }
+}
+
+int main() {
+    char text[] = "This is a sample text. This text is meant to test the function.";
+    char *word = strtok(text, " .,;!?");
+
+    Word words[MAX_WORDS];
+    int num_words = 0;
+
+    while (word != NULL) {
+        int index = find_word(words, num_words, word);
+        if (index == -1) {
+            strcpy(words[num_words].word, word);
+            words[num_words].count = 1;
+            num_words++;
+        } else {
+            words[index].count++;
+        }
+        word = strtok(NULL, " .,;!?");
+    }
+
+    int n = 3;
+    print_most_common_words(words, num_words, n);
+
+    return 0;
+}
+```

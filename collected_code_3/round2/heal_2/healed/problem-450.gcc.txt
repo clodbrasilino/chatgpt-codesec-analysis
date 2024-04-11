@@ -1,0 +1,82 @@
+./collected_code_3/round2/heal_2/healed/problem-450.c: In function 'extractStrings':
+./collected_code_3/round2/heal_2/healed/problem-450.c:29:12: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   29 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   37 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-12
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     int index = 0;
+           |    7 |     char **result = (char **)calloc(numStrings + 1, sizeof(char *));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) allocated here
+           |    8 | 
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (5) assuming 'result' is non-NULL
+           |      |        (6) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (8) following 'true' branch (when 'i < numStrings')...
+           |      |              (7) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (9) ...to here
+           |      |            (10) following 'true' branch...
+           |   14 |             result[index] = (char *)calloc((size + 1), sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (11) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (12) following 'false' branch...
+           |
+         'extractStrings': event 13
+           |
+           |   21 |             strncpy(result[index], strings[i], size);
+           |      |                           ^
+           |      |                           |
+           |      |                           (13) ...to here
+           |
+         'extractStrings': events 14-19
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (17) ...to here
+           |      |                       (14) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (15) ...to here
+           |      |            (16) following 'false' branch...
+           |......
+           |   28 |     result = (char **)realloc(result, (index + 1) * sizeof(char *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) when 'realloc' fails
+           |   29 |     return result;
+           |      |            ~~~~~~      
+           |      |            |
+           |      |            (19) 'result' leaks here; was allocated at (4)
+           |

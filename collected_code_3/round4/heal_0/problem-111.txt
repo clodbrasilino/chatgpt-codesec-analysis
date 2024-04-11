@@ -1,0 +1,41 @@
+Here is a C function to find common elements in given nested lists. This function assumes that the lists are implemented as 2D arrays. 
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+#define ROW 4
+#define COL 5
+
+bool isCommon(int mat[ROW][COL], int x) {
+    for (int i = 0; i < ROW; i++) {
+        for (int j = 0; j < COL; j++) {
+            if (mat[i][j] == x)
+                return true;
+        }
+    }
+    return false;
+}
+
+void findCommon(int mat[ROW][COL]) {
+    for (int i = 0; i < COL; i++) {
+        if (isCommon(mat, mat[0][i]))
+            printf("%d ", mat[0][i]);
+    }
+}
+
+int main() {
+    int mat[ROW][COL] = {
+        {1, 2, 3, 4, 5},
+        {2, 3, 4, 5, 6},
+        {3, 4, 5, 6, 7},
+        {4, 5, 6, 7, 8}
+    };
+
+    findCommon(mat);
+
+    return 0;
+}
+```
+
+This code will print out the common elements in the given 2D array. Please note that this is a simple implementation and it does not handle cases where the elements in the arrays are not sorted or there are duplicate elements. For handling such cases, you would need to modify the code accordingly.

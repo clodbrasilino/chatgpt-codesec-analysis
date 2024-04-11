@@ -1,0 +1,30 @@
+collected_code_3/problem-484-1.c: In function 'removeMatchingTuples':
+collected_code_3/problem-484-1.c:22:29: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   22 |             result[index++] = tuple1[i];
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~
+  'removeMatchingTuples': events 1-6
+    |
+    |   10 |     Tuple* result = (Tuple*)malloc(sizeof(Tuple) * size1);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |......
+    |   13 |     for(int i = 0; i < size1; i++) {
+    |      |                    ~~~~~~~~~ 
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size1')...
+    |   14 |         int match = 0;
+    |      |             ~~~~~            
+    |      |             |
+    |      |             (3) ...to here
+    |......
+    |   21 |         if(!match) {
+    |      |           ~                  
+    |      |           |
+    |      |           (4) following 'true' branch (when 'match == 0')...
+    |   22 |             result[index++] = tuple1[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |       |
+    |      |                             |       (5) ...to here
+    |      |                             (6) 'result + (long unsigned int)index * 8' could be NULL: unchecked value from (1)
+    |

@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+typedef struct Tuple {
+    int a;
+    int b;
+} Tuple;
+
+int bitwise_xor(Tuple t) {
+    return t.a ^ t.b;
+}
+
+int main() {
+    Tuple t;
+    t.a = 5;
+    t.b = 3;
+    int result = bitwise_xor(t);
+    printf("The result of bitwise xor operation is: %d\n", result);
+    return 0;
+}

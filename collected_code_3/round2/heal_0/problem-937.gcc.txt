@@ -1,0 +1,62 @@
+collected_code_3/problem-937-2.c: In function 'getMostCommonChar':
+collected_code_3/problem-937-2.c:20:12: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   20 |     return result;
+      |            ^~~~~~
+  'getMostCommonChar': events 1-5
+    |
+    |   10 |     char result;
+    |      |          ^~~~~~
+    |      |          |
+    |      |          (1) region created on stack here
+    |      |          (2) capacity: 1 byte
+    |   11 | 
+    |   12 |     for (int i = 0; i < len; i++) {
+    |      |                     ~~~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch (when 'i >= len')...
+    |......
+    |   20 |     return result;
+    |      |            ~~~~~~
+    |      |            |
+    |      |            (4) ...to here
+    |      |            (5) use of uninitialized value 'result' here
+    |
+collected_code_3/problem-937-2.c:20:12: warning: use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   20 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   24 |     char str[] = "sample string";
+    |   25 |     printf("Most common character is %c", getMostCommonChar(str));
+    |      |                                           ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (2) calling 'getMostCommonChar' from 'main'
+    |
+    +--> 'getMostCommonChar': events 3-8
+           |
+           |    6 | char getMostCommonChar(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'getMostCommonChar'
+           |......
+           |   10 |     char result;
+           |      |          ~~~~~~
+           |      |          |
+           |      |          (4) region created on stack here
+           |      |          (5) capacity: 1 byte
+           |   11 | 
+           |   12 |     for (int i = 0; i < len; i++) {
+           |      |                     ~~~~~~~
+           |      |                       |
+           |      |                       (6) following 'false' branch (when 'i >= len')...
+           |......
+           |   20 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (7) ...to here
+           |      |            (8) use of uninitialized value 'result' here
+           |

@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <math.h>
+
+int check_decimal_precision(double num) {
+    double precision = 0.01;
+    double difference = num - (int)num;
+    return (difference < precision || difference > 1 - precision) ? 1 : 0;
+}
+
+int main() {
+    double num;
+    printf("Enter a decimal number: ");
+    scanf("%lf", &num);
+    if(check_decimal_precision(num)) {
+        printf("The number has a precision of 2.\n");
+    } else {
+        printf("The number does not have a precision of 2.\n");
+    }
+    return 0;
+}

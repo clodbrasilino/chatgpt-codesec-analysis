@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+float findQuotient(int num1, int num2) {
+    return (float)num1 / num2;
+}
+
+int main() {
+    int num1 = 10, num2 = 2;
+    float quotient;
+
+    quotient = findQuotient(num1, num2);
+
+    printf("Quotient of %d and %d is %.2f\n", num1, num2, quotient);
+
+    return 0;
+}

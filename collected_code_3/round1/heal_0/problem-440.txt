@@ -1,0 +1,37 @@
+It's important to note that identifying adverbs in a sentence is a complex task that involves natural language processing (NLP), which is beyond the scope of the C programming language. C is a low-level language that doesn't have built-in libraries for text processing or NLP.
+
+However, if we simplify the problem and assume that all adverbs end with "ly", we can write a C program that finds all words ending with "ly" in a sentence. Here is a simple implementation:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void findAdverbs(char* sentence) {
+    char* word;
+    int position = 0;
+
+    word = strtok(sentence, " ");
+    while(word != NULL) {
+        int len = strlen(word);
+        if(len > 2 && word[len-2] == 'l' && word[len-1] == 'y') {
+            printf("Adverb: %s, Position: %d\n", word, position);
+        }
+        word = strtok(NULL, " ");
+        position++;
+    }
+}
+
+int main() {
+    char sentence[100];
+    printf("Enter a sentence: ");
+    fgets(sentence, 100, stdin);
+    sentence[strcspn(sentence, "\n")] = 0;
+    findAdverbs(sentence);
+    return 0;
+}
+```
+
+This program reads a sentence from the user, splits it into words, and checks each word. If a word ends with "ly", it's considered an adverb and is printed along with its position in the sentence.
+
+Please note that this is a very naive approach and will not work for all cases. For example, it will consider "family" as an adverb. To correctly identify adverbs in a sentence, you would need a more sophisticated approach involving NLP, which would typically be done in a higher-level language like Python using libraries such as NLTK or SpaCy.

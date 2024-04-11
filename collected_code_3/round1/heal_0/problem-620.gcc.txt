@@ -1,0 +1,9 @@
+collected_code_3/problem-620-1.c: In function 'largestDivisibleSubset':
+collected_code_3/problem-620-1.c:10:41: error: '__compar_fn_t' undeclared (first use in this function)
+   10 |     qsort(nums, numsSize, sizeof(int), (__compar_fn_t)abs);
+      |                                         ^~~~~~~~~~~~~
+collected_code_3/problem-620-1.c:10:41: note: each undeclared identifier is reported only once for each function it appears in
+collected_code_3/problem-620-1.c:10:55: error: expected ')' before 'abs'
+   10 |     qsort(nums, numsSize, sizeof(int), (__compar_fn_t)abs);
+      |          ~                                            ^~~
+      |                                                       )

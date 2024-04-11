@@ -1,0 +1,89 @@
+collected_code_3/round4/heal_0/problem-413.c: In function 'main':
+collected_code_3/round4/heal_0/problem-413.c:20:23: warning: dereference of possibly-NULL 'list' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |         list[i].first = i;
+      |         ~~~~~~~~~~~~~~^~~
+  'main': events 1-4
+    |
+    |   18 |     Tuple* list = malloc(sizeof(Tuple) * size);
+    |      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (1) this call could return NULL
+    |   19 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < size')...
+    |   20 |         list[i].first = i;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |             |         |
+    |      |             |         (4) 'list + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |             (3) ...to here
+    |
+collected_code_3/round4/heal_0/problem-413.c:27:9: warning: use of uninitialized value '*nthElement.second' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   27 |         printf("The %dth element is (%d, %d)\n", n, nthElement->first, nthElement->second);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-9
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   17 |     int size = 5;
+    |   18 |     Tuple* list = malloc(sizeof(Tuple) * size);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) region created on heap here
+    |   19 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (3) following 'true' branch (when 'i < size')...
+    |      |                       (5) following 'true' branch (when 'i < size')...
+    |      |                       (7) following 'false' branch (when 'i >= size')...
+    |   20 |         list[i].first = i;
+    |      |             ~
+    |      |             |
+    |      |             (4) ...to here
+    |      |             (6) ...to here
+    |......
+    |   24 |     int n = 3;
+    |      |         ~
+    |      |         |
+    |      |         (8) ...to here
+    |   25 |     Tuple* nthElement = extractNthElement(list, size, n);
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (9) calling 'extractNthElement' from 'main'
+    |
+    +--> 'extractNthElement': events 10-12
+           |
+           |    9 | Tuple* extractNthElement(Tuple* list, int size, int n) {
+           |      |        ^~~~~~~~~~~~~~~~~
+           |      |        |
+           |      |        (10) entry to 'extractNthElement'
+           |   10 |     if (n < 0 || n >= size) {
+           |      |        ~
+           |      |        |
+           |      |        (11) following 'false' branch...
+           |......
+           |   13 |     return &list[n];
+           |      |                 ~
+           |      |                 |
+           |      |                 (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   25 |     Tuple* nthElement = extractNthElement(list, size, n);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (13) returning to 'main' from 'extractNthElement'
+    |   26 |     if (nthElement != NULL) {
+    |      |        ~                 
+    |      |        |
+    |      |        (14) following 'true' branch (when 'nthElement' is non-NULL)...
+    |   27 |         printf("The %dth element is (%d, %d)\n", n, nthElement->first, nthElement->second);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (15) ...to here
+    |      |         (16) use of uninitialized value '*nthElement.second' here
+    |

@@ -1,0 +1,91 @@
+collected_code_3/problem-635-2.c: In function 'createMinHeap':
+collected_code_3/problem-635-2.c:12:18: warning: dereference of possibly-NULL 'minHeap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     minHeap->arr = (int*) malloc(sizeof(int)*capacity);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   70 |     MinHeap* minHeap = createMinHeap(11);
+    |      |                        ~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createMinHeap' from 'main'
+    |
+    +--> 'createMinHeap': events 3-5
+           |
+           |   10 | MinHeap* createMinHeap(int capacity) {
+           |      |          ^~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createMinHeap'
+           |   11 |     MinHeap* minHeap = (MinHeap*) malloc(sizeof(MinHeap));
+           |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                   |
+           |      |                                   (4) this call could return NULL
+           |   12 |     minHeap->arr = (int*) malloc(sizeof(int)*capacity);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) 'minHeap' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-635-2.c: In function 'insert':
+collected_code_3/problem-635-2.c:48:21: warning: dereference of possibly-NULL '*minHeap.arr + (long unsigned int)i * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   48 |     minHeap->arr[i] = val;
+      |     ~~~~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   70 |     MinHeap* minHeap = createMinHeap(11);
+    |      |                        ~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createMinHeap' from 'main'
+    |
+    +--> 'createMinHeap': events 3-4
+           |
+           |   10 | MinHeap* createMinHeap(int capacity) {
+           |      |          ^~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createMinHeap'
+           |   11 |     MinHeap* minHeap = (MinHeap*) malloc(sizeof(MinHeap));
+           |   12 |     minHeap->arr = (int*) malloc(sizeof(int)*capacity);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   70 |     MinHeap* minHeap = createMinHeap(11);
+    |      |                        ^~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (5) returning to 'main' from 'createMinHeap'
+    |   71 |     insert(minHeap, 3);
+    |      |     ~~~~~~~~~~~~~~~~~~  
+    |      |     |
+    |      |     (6) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 7-10
+           |
+           |   42 | void insert(MinHeap* minHeap, int val) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (7) entry to 'insert'
+           |   43 |     if (minHeap->count == minHeap->capacity)
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   46 |     minHeap->count++;
+           |      |     ~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (9) ...to here
+           |   47 |     int i = minHeap->count - 1;
+           |   48 |     minHeap->arr[i] = val;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (10) '*minHeap.arr + (long unsigned int)i * 4' could be NULL: unchecked value from (4)
+           |

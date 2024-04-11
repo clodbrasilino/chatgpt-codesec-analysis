@@ -1,0 +1,20 @@
+```C
+#include <stdio.h>
+
+int sumInRange(int arr[], int start, int end) {
+    int sum = 0;
+    for(int i = start; i <= end; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int start = 2;
+    int end = 6;
+    int sum = sumInRange(arr, start, end);
+    printf("Sum of numbers in range is: %d\n", sum);
+    return 0;
+}
+```

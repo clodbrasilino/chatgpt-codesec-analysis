@@ -1,0 +1,159 @@
+collected_code_3/round1/heal_1/healed/problem-108.c: In function 'minHeapify':
+collected_code_3/round1/heal_1/healed/problem-108.c:25:32: warning: use of uninitialized value '*arr_37(D) + _14' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   25 |     if (right < heapSize && arr[right]->val < arr[smallest]->val)
+      |                             ~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   81 |     mergeSortedArrays(arr, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeSortedArrays' from 'main'
+    |
+    +--> 'mergeSortedArrays': events 3-11
+           |
+           |   40 | void mergeSortedArrays(int **arr, int *size, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeSortedArrays'
+           |   41 |     Node **heapArr = (Node **)malloc(sizeof(Node *) * n);
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (4) region created on heap here
+           |   42 |     int i;
+           |   43 |     for (i = 0; i < n; ++i) {
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch (when 'i < n')...
+           |      |                   (7) following 'true' branch (when 'i < n')...
+           |      |                   (9) following 'false' branch (when 'i >= n')...
+           |   44 |         Node *node = (Node *)malloc(sizeof(Node));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (6) ...to here
+           |      |                              (8) ...to here
+           |......
+           |   51 |     buildMinHeap(heapArr, n);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (10) ...to here
+           |      |     (11) calling 'buildMinHeap' from 'mergeSortedArrays'
+           |
+           +--> 'buildMinHeap': events 12-15
+                  |
+                  |   34 | void buildMinHeap(Node **arr, int n) {
+                  |      |      ^~~~~~~~~~~~
+                  |      |      |
+                  |      |      (12) entry to 'buildMinHeap'
+                  |   35 |     int i;
+                  |   36 |     for (i = (n - 2) / 2; i >= 0; --i)
+                  |      |                           ~~~~~~
+                  |      |                             |
+                  |      |                             (13) following 'true' branch (when 'i >= 0')...
+                  |   37 |         minHeapify(arr, i, n);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (14) ...to here
+                  |      |         (15) calling 'minHeapify' from 'buildMinHeap'
+                  |
+                  +--> 'minHeapify': events 16-21
+                         |
+                         |   17 | void minHeapify(Node **arr, int i, int heapSize) {
+                         |      |      ^~~~~~~~~~
+                         |      |      |
+                         |      |      (16) entry to 'minHeapify'
+                         |......
+                         |   22 |     if (left < heapSize && arr[left]->val < arr[smallest]->val)
+                         |      |        ~                      ~
+                         |      |        |                      |
+                         |      |        |                      (18) ...to here
+                         |      |        (17) following 'true' branch (when 'left < heapSize')...
+                         |......
+                         |   25 |     if (right < heapSize && arr[right]->val < arr[smallest]->val)
+                         |      |        ~                    ~~~~~~~~~~
+                         |      |        |                       |
+                         |      |        |                       (20) ...to here
+                         |      |        |                       (21) use of uninitialized value '*arr_37(D) + _14' here
+                         |      |        (19) following 'true' branch (when 'right < heapSize')...
+                         |
+collected_code_3/round1/heal_1/healed/problem-108.c: In function 'mergeSortedArrays':
+collected_code_3/round1/heal_1/healed/problem-108.c:45:19: warning: dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   45 |         node->val = arr[i][0];
+      |         ~~~~~~~~~~^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   81 |     mergeSortedArrays(arr, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeSortedArrays' from 'main'
+    |
+    +--> 'mergeSortedArrays': events 3-7
+           |
+           |   40 | void mergeSortedArrays(int **arr, int *size, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeSortedArrays'
+           |......
+           |   43 |     for (i = 0; i < n; ++i) {
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (4) following 'true' branch (when 'i < n')...
+           |   44 |         Node *node = (Node *)malloc(sizeof(Node));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (5) ...to here
+           |      |                              (6) this call could return NULL
+           |   45 |         node->val = arr[i][0];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (7) 'node' could be NULL: unchecked value from (6)
+           |
+collected_code_3/round1/heal_1/healed/problem-108.c:48:20: warning: dereference of possibly-NULL 'heapArr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   48 |         heapArr[i] = node;
+      |         ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   70 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   81 |     mergeSortedArrays(arr, size, n);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'mergeSortedArrays' from 'main'
+    |
+    +--> 'mergeSortedArrays': events 3-7
+           |
+           |   40 | void mergeSortedArrays(int **arr, int *size, int n) {
+           |      |      ^~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'mergeSortedArrays'
+           |   41 |     Node **heapArr = (Node **)malloc(sizeof(Node *) * n);
+           |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                               |
+           |      |                               (4) this call could return NULL
+           |   42 |     int i;
+           |   43 |     for (i = 0; i < n; ++i) {
+           |      |                 ~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch (when 'i < n')...
+           |   44 |         Node *node = (Node *)malloc(sizeof(Node));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (6) ...to here
+           |......
+           |   48 |         heapArr[i] = node;
+           |      |         ~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) 'heapArr + (long unsigned int)i * 8' could be NULL: unchecked value from (4)
+           |

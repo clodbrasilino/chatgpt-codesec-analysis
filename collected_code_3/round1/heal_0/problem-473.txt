@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    Tuple *tupleA = (Tuple *)a;
+    Tuple *tupleB = (Tuple *)b;
+
+    if (tupleA->first != tupleB->first)
+        return tupleA->first - tupleB->first;
+    else
+        return tupleA->second - tupleB->second;
+}
+
+void findIntersection(Tuple *arr1, Tuple *arr2, int n, int m) {
+    qsort(arr1, n, sizeof(Tuple), compare);
+    qsort(arr2, m, sizeof(Tuple), compare);
+
+    int i = 0, j = 0;
+    while (i < n && j < m) {
+        if (arr1[i].first == arr2[j].first && arr1[i].second == arr2[j].second) {
+            printf("(%d, %d) ", arr1[i].first, arr1[i].second);
+            i++;
+            j++;
+        } else if (compare(&arr1[i], &arr2[j]) < 0) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+}
+
+int main() {
+    Tuple arr1[] = {{1, 2}, {2, 1}, {3, 4}, {4, 3}};
+    Tuple arr2[] = {{2, 1}, {1, 2}, {3, 4}, {4, 3}};
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+    int m = sizeof(arr2) / sizeof(arr2[0]);
+
+    findIntersection(arr1, arr2, n, m);
+
+    return 0;
+}
+```

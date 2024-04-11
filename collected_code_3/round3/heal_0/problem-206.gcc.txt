@@ -1,0 +1,40 @@
+collected_code_3/problem-206-3.c: In function 'concatenate_adjacent':
+collected_code_3/problem-206-3.c:8:19: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    8 |         result[i] = (char*)malloc(sizeof(char) * (strlen(tuples[i]) + strlen(tuples[i+1]) + 1));
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'concatenate_adjacent': events 1-4
+    |
+    |    6 |     char** result = (char**)malloc(sizeof(char*) * (size - 1));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |    7 |     for(int i = 0; i < size - 1; i++) {
+    |      |                    ~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch...
+    |    8 |         result[i] = (char*)malloc(sizeof(char) * (strlen(tuples[i]) + strlen(tuples[i+1]) + 1));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |                                            |
+    |      |                   |                                            (3) ...to here
+    |      |                   (4) 'result + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-206-3.c: In function 'main':
+collected_code_3/problem-206-3.c:19:19: warning: dereference of possibly-NULL 'tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |         tuples[i] = (char*)malloc(sizeof(char) * 10);
+      |         ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   17 |     char** tuples = (char**)malloc(sizeof(char*) * size);
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   18 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~  
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   19 |         tuples[i] = (char*)malloc(sizeof(char) * 10);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |   |
+    |      |               |   (4) 'tuples + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |               (3) ...to here
+    |

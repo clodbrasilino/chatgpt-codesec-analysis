@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+
+int entringer(int n, int k) {
+    if (n == 0 && k == 0) {
+        return 1;
+    } else if (k == 0) {
+        return 0;
+    } else {
+        return entringer(n, k - 1) + entringer(n - 1, k);
+    }
+}
+
+int main() {
+    int n, k;
+    printf("Enter two numbers: ");
+    scanf("%d %d", &n, &k);
+    printf("Entringer number: %d\n", entringer(n, k));
+    return 0;
+}
+```

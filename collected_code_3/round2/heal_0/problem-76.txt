@@ -1,0 +1,22 @@
+```C
+#include <stdio.h>
+
+int countSquares(int length, int width) {
+    int squareCount = 0;
+    for(int i = 1; i <= length && i <= width; i++) {
+        squareCount += (length - i + 1) * (width - i + 1);
+    }
+    return squareCount;
+}
+
+int main() {
+    int length, width;
+    printf("Enter length of rectangle: ");
+    scanf("%d", &length);
+    printf("Enter width of rectangle: ");
+    scanf("%d", &width);
+    printf("Number of squares in rectangle: %d\n", countSquares(length, width));
+    return 0;
+}
+```
+This program will count the number of squares that can be formed within a rectangle of given length and width. It does this by iterating over all possible square sizes (from 1 to the smaller of the length and width), and for each size, counting how many squares of that size can fit in the rectangle. The total count of squares is then returned. The main function prompts the user to enter the dimensions of the rectangle, then prints the number of squares that can be formed within it.

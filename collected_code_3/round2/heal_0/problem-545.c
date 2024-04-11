@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+unsigned int toggleBits(unsigned int num) {
+    unsigned int numberOfBits = sizeof(num) * 8;
+
+    num = num ^ (1 << 0);
+    num = num ^ (1 << (numberOfBits - 1));
+
+    return num;
+}
+
+int main() {
+    unsigned int x = 23;
+    printf("%u", toggleBits(x));
+    return 0;
+}

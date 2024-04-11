@@ -1,0 +1,23 @@
+C language does not support dictionaries natively like Python or some other high-level languages. However, we can use a struct or an array to mimic a dictionary. Here is an example using an array:
+
+```c
+#include <stdio.h>
+
+int sumOfArray(int arr[], int size) {
+    int sum = 0;
+    for(int i = 0; i < size; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int sum = sumOfArray(arr, size);
+    printf("Sum of array is %d\n", sum);
+    return 0;
+}
+```
+
+In this code, we are treating the array as a dictionary. The index of the array is the key and the value at that index is the value. The function `sumOfArray` calculates the sum of all values in the array. The `main` function creates an array, calculates its size, and then calls `sumOfArray` to calculate the sum. The sum is then printed to the console.

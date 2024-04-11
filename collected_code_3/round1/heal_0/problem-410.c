@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int type; // 0 for int, 1 for float
+    union {
+        int i;
+        float f;
+    } value;
+    struct Node* next;
+} Node;
+
+Node* createNode(int type, int i, float f) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->type = type;
+    if (type == 0) {
+        node->value.i = i;
+    } else {
+        node->value.f = f;
+    }
+    node->next = NULL;
+    return node;
+}
+
+float findMin(Node* head) {
+    float min = head->value.f;
+    Node* temp = head->next;
+    while (temp != NULL) {
+        if (temp->type == 0) {
+            if (temp->value.i < min) {
+                min = temp->value.i;
+            }
+        } else {
+            if (temp->value.f < min) {
+                min = temp->value.f;
+            }
+        }
+        temp = temp->next;
+    }
+    return min;
+}
+
+int main() {
+    Node* head = createNode(0, 5, 0.0);
+    head->next = createNode(1, 0, 3.5);
+    head->next->next = createNode(0, 2, 0.0);
+    head->next->next->next = createNode(1, 0, 1.2);
+    printf("Minimum value: %.2f\n", findMin(head));
+    return 0;
+}

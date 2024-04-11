@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+#define MAX 100
+
+int dp[MAX][MAX];
+
+int countSeq(int n, int m) {
+    if (n == 0)
+        return 1;
+    if (m == 0)
+        return 0;
+    if (dp[n][m] != -1)
+        return dp[n][m];
+    int inclusive = countSeq(n - 1, m / 2);
+    int exclusive = countSeq(n, m - 1);
+    dp[n][m] = inclusive + exclusive;
+    return dp[n][m];
+}
+
+int main() {
+    int n, m;
+    printf("Enter the length of the sequence: ");
+    scanf("%d", &n);
+    printf("Enter the maximum value: ");
+    scanf("%d", &m);
+    for (int i = 0; i < MAX; i++)
+        for (int j = 0; j < MAX; j++)
+            dp[i][j] = -1;
+    printf("Number of possible sequences: %d\n", countSeq(n, m));
+    return 0;
+}

@@ -1,0 +1,823 @@
+collected_code_3/problem-174-1.c: In function 'createDictionary':
+collected_code_3/problem-174-1.c:18:21: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |         dict[i].key = NULL;
+      |                     ^
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   64 |     int size = 5;
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-6
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dict = malloc(sizeof(Dictionary) * size);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |   17 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (5) following 'true' branch (when 'i < size')...
+           |   18 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (6) ...to here
+           |
+         'createDictionary': event 7
+           |
+           |   18 |         dict[i].key = NULL;
+           |      |                     ^
+           |      |                     |
+           |      |                     (7) 'dict + (long unsigned int)i * 16' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-174-1.c: In function 'createNode':
+collected_code_3/problem-174-1.c:26:20: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |     newNode->value = strdup(value);
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   64 |     int size = 5;
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-15
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dict = malloc(sizeof(Dictionary) * size);
+           |   17 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |      |                       (6) following 'true' branch (when 'i < size')...
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |      |                       (10) following 'true' branch (when 'i < size')...
+           |      |                       (12) following 'true' branch (when 'i < size')...
+           |      |                       (14) following 'false' branch (when 'i >= size')...
+           |   18 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (7) ...to here
+           |      |             (9) ...to here
+           |      |             (11) ...to here
+           |      |             (13) ...to here
+           |......
+           |   21 |     return dict;
+           |      |            ~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) returning to 'main' from 'createDictionary'
+    |   66 | 
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 18-23
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (19) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (20) ...to here
+           |      |            (21) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (22) ...to here
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (23) calling 'createNode' from 'addValue'
+           |
+           +--> 'createNode': events 24-26
+                  |
+                  |   24 | Node *createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (24) entry to 'createNode'
+                  |   25 |     Node *newNode = malloc(sizeof(Node));
+                  |      |                     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (25) this call could return NULL
+                  |   26 |     newNode->value = strdup(value);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (26) 'newNode' could be NULL: unchecked value from (25)
+                  |
+collected_code_3/problem-174-1.c: In function 'addValue':
+collected_code_3/problem-174-1.c:35:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 |             dict[i].values = createNode(value);
+      |                 ^
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   64 |     int size = 5;
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-15
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dict = malloc(sizeof(Dictionary) * size);
+           |   17 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |      |                       (6) following 'true' branch (when 'i < size')...
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |      |                       (10) following 'true' branch (when 'i < size')...
+           |      |                       (12) following 'true' branch (when 'i < size')...
+           |      |                       (14) following 'false' branch (when 'i >= size')...
+           |   18 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (7) ...to here
+           |      |             (9) ...to here
+           |      |             (11) ...to here
+           |      |             (13) ...to here
+           |......
+           |   21 |     return dict;
+           |      |            ~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) returning to 'main' from 'createDictionary'
+    |   66 | 
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 18-23
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (19) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (20) ...to here
+           |      |            (21) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (22) ...to here
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (23) calling 'createNode' from 'addValue'
+           |
+           +--> 'createNode': events 24-25
+                  |
+                  |   24 | Node *createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (24) entry to 'createNode'
+                  |   25 |     Node *newNode = malloc(sizeof(Node));
+                  |   26 |     newNode->value = strdup(value);
+                  |      |                      ~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (25) allocated here
+                  |
+           <------+
+           |
+         'addValue': event 26
+           |
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ^~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (26) returning to 'addValue' from 'createNode'
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (27) returning to 'main' from 'addValue'
+    |   68 |     addValue(dict, size, "key1", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 29-35
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (29) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (30) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (31) ...to here
+           |      |            (32) following 'false' branch...
+           |......
+           |   38 |         if (strcmp(dict[i].key, key) == 0) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (33) ...to here
+           |      |            (34) following 'true' branch (when the strings are equal)...
+           |   39 |             Node *current = dict[i].values;
+           |      |                                 ~
+           |      |                                 |
+           |      |                                 (35) ...to here
+           |
+         'addValue': events 36-37
+           |
+           |   40 |             while (current->next != NULL) {
+           |      |                                  ^
+           |      |                                  |
+           |      |                                  (36) following 'false' branch...
+           |......
+           |   43 |             current->next = createNode(value);
+           |      |                             ~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (37) ...to here
+           |
+    <------+
+    |
+  'main': events 38-39
+    |
+    |   68 |     addValue(dict, size, "key1", "value2");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (38) returning to 'main' from 'addValue'
+    |   69 |     addValue(dict, size, "key2", "value3");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (39) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 40-49
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (40) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~  ~~~
+           |      |                       |        |
+           |      |                       |        (46) ...to here
+           |      |                       (41) following 'true' branch (when 'i < size')...
+           |      |                       (47) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (42) ...to here
+           |      |            |    (48) ...to here
+           |      |            (43) following 'false' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |   35 |             dict[i].values = createNode(value);
+           |      |                 ~
+           |      |                 |
+           |      |                 (49) '<unknown>' leaks here; was allocated at (25)
+           |......
+           |   38 |         if (strcmp(dict[i].key, key) == 0) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (44) ...to here
+           |      |            (45) following 'false' branch (when the strings are non-equal)...
+           |
+collected_code_3/problem-174-1.c:35:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 |             dict[i].values = createNode(value);
+      |                 ^
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   64 |     int size = 5;
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-15
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dict = malloc(sizeof(Dictionary) * size);
+           |   17 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |      |                       (6) following 'true' branch (when 'i < size')...
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |      |                       (10) following 'true' branch (when 'i < size')...
+           |      |                       (12) following 'true' branch (when 'i < size')...
+           |      |                       (14) following 'false' branch (when 'i >= size')...
+           |   18 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (7) ...to here
+           |      |             (9) ...to here
+           |      |             (11) ...to here
+           |      |             (13) ...to here
+           |......
+           |   21 |     return dict;
+           |      |            ~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) returning to 'main' from 'createDictionary'
+    |   66 | 
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 18-22
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (19) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (20) ...to here
+           |      |            (21) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (22) ...to here
+           |
+    <------+
+    |
+  'main': events 23-24
+    |
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) returning to 'main' from 'addValue'
+    |   68 |     addValue(dict, size, "key1", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (24) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 25-31
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (25) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (26) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (27) ...to here
+           |      |            (28) following 'false' branch...
+           |......
+           |   38 |         if (strcmp(dict[i].key, key) == 0) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (29) ...to here
+           |      |            (30) following 'true' branch (when the strings are equal)...
+           |   39 |             Node *current = dict[i].values;
+           |      |                                 ~
+           |      |                                 |
+           |      |                                 (31) ...to here
+           |
+         'addValue': events 32-34
+           |
+           |   40 |             while (current->next != NULL) {
+           |      |                                  ^
+           |      |                                  |
+           |      |                                  (32) following 'false' branch...
+           |......
+           |   43 |             current->next = createNode(value);
+           |      |                             ~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (33) ...to here
+           |      |                             (34) calling 'createNode' from 'addValue'
+           |
+           +--> 'createNode': events 35-37
+                  |
+                  |   24 | Node *createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (35) entry to 'createNode'
+                  |   25 |     Node *newNode = malloc(sizeof(Node));
+                  |      |                     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (36) allocated here
+                  |   26 |     newNode->value = strdup(value);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (37) assuming 'newNode' is non-NULL
+                  |
+           <------+
+           |
+         'addValue': event 38
+           |
+           |   43 |             current->next = createNode(value);
+           |      |                             ^~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (38) returning to 'addValue' from 'createNode'
+           |
+    <------+
+    |
+  'main': events 39-40
+    |
+    |   68 |     addValue(dict, size, "key1", "value2");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (39) returning to 'main' from 'addValue'
+    |   69 |     addValue(dict, size, "key2", "value3");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (40) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 41-50
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (41) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~  ~~~
+           |      |                       |        |
+           |      |                       |        (47) ...to here
+           |      |                       (42) following 'true' branch (when 'i < size')...
+           |      |                       (48) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (43) ...to here
+           |      |            |    (49) ...to here
+           |      |            (44) following 'false' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |   35 |             dict[i].values = createNode(value);
+           |      |                 ~
+           |      |                 |
+           |      |                 (50) '<unknown>' leaks here; was allocated at (36)
+           |......
+           |   38 |         if (strcmp(dict[i].key, key) == 0) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (45) ...to here
+           |      |            (46) following 'false' branch (when the strings are non-equal)...
+           |
+collected_code_3/problem-174-1.c:35:28: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 |             dict[i].values = createNode(value);
+      |             ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   64 |     int size = 5;
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-15
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dict = malloc(sizeof(Dictionary) * size);
+           |   17 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |      |                       (6) following 'true' branch (when 'i < size')...
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |      |                       (10) following 'true' branch (when 'i < size')...
+           |      |                       (12) following 'true' branch (when 'i < size')...
+           |      |                       (14) following 'false' branch (when 'i >= size')...
+           |   18 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (7) ...to here
+           |      |             (9) ...to here
+           |      |             (11) ...to here
+           |      |             (13) ...to here
+           |......
+           |   21 |     return dict;
+           |      |            ~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) returning to 'main' from 'createDictionary'
+    |   66 | 
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 18-23
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (19) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (20) ...to here
+           |      |            (21) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (22) ...to here
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (23) calling 'createNode' from 'addValue'
+           |
+           +--> 'createNode': events 24-25
+                  |
+                  |   24 | Node *createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (24) entry to 'createNode'
+                  |   25 |     Node *newNode = malloc(sizeof(Node));
+                  |   26 |     newNode->value = strdup(value);
+                  |      |                      ~~~~~~~~~~~~~
+                  |      |                      |
+                  |      |                      (25) allocated here
+                  |
+           <------+
+           |
+         'addValue': event 26
+           |
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ^~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (26) returning to 'addValue' from 'createNode'
+           |
+    <------+
+    |
+  'main': events 27-28
+    |
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (27) returning to 'main' from 'addValue'
+    |   68 |     addValue(dict, size, "key1", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 29-34
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (29) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (30) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (31) ...to here
+           |      |            (32) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (33) ...to here
+           |   35 |             dict[i].values = createNode(value);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (34) '<unknown>' leaks here; was allocated at (25)
+           |
+collected_code_3/problem-174-1.c:35:28: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   35 |             dict[i].values = createNode(value);
+      |             ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   64 |     int size = 5;
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-15
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary *dict = malloc(sizeof(Dictionary) * size);
+           |   17 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < size')...
+           |      |                       (6) following 'true' branch (when 'i < size')...
+           |      |                       (8) following 'true' branch (when 'i < size')...
+           |      |                       (10) following 'true' branch (when 'i < size')...
+           |      |                       (12) following 'true' branch (when 'i < size')...
+           |      |                       (14) following 'false' branch (when 'i >= size')...
+           |   18 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (7) ...to here
+           |      |             (9) ...to here
+           |      |             (11) ...to here
+           |      |             (13) ...to here
+           |......
+           |   21 |     return dict;
+           |      |            ~~~~
+           |      |            |
+           |      |            (15) ...to here
+           |
+    <------+
+    |
+  'main': events 16-17
+    |
+    |   65 |     Dictionary *dict = createDictionary(size);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (16) returning to 'main' from 'createDictionary'
+    |   66 | 
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (17) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 18-23
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (18) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (19) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (20) ...to here
+           |      |            (21) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (22) ...to here
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (23) calling 'createNode' from 'addValue'
+           |
+           +--> 'createNode': events 24-26
+                  |
+                  |   24 | Node *createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (24) entry to 'createNode'
+                  |   25 |     Node *newNode = malloc(sizeof(Node));
+                  |      |                     ~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (25) allocated here
+                  |   26 |     newNode->value = strdup(value);
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                    |
+                  |      |                    (26) assuming 'newNode' is non-NULL
+                  |
+           <------+
+           |
+         'addValue': event 27
+           |
+           |   35 |             dict[i].values = createNode(value);
+           |      |                              ^~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (27) returning to 'addValue' from 'createNode'
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   67 |     addValue(dict, size, "key1", "value1");
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) returning to 'main' from 'addValue'
+    |   68 |     addValue(dict, size, "key1", "value2");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (29) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 30-35
+           |
+           |   31 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (30) entry to 'addValue'
+           |   32 |     for (int i = 0; i < size; i++) {
+           |      |                     ~~~~~~~~
+           |      |                       |
+           |      |                       (31) following 'true' branch (when 'i < size')...
+           |   33 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (32) ...to here
+           |      |            (33) following 'true' branch...
+           |   34 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (34) ...to here
+           |   35 |             dict[i].values = createNode(value);
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (35) '<unknown>' leaks here; was allocated at (25)
+           |

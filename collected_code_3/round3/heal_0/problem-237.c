@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char name[MAX_SIZE];
+    int count;
+} Record;
+
+int findRecord(Record records[], int size, char *name) {
+    for(int i = 0; i < size; i++) {
+        if(strcmp(records[i].name, name) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void checkOccurrences(char *names[], int size) {
+    Record records[MAX_SIZE];
+    int recordSize = 0;
+
+    for(int i = 0; i < size; i++) {
+        int index = findRecord(records, recordSize, names[i]);
+        if(index == -1) {
+            strcpy(records[recordSize].name, names[i]);
+            records[recordSize].count = 1;
+            recordSize++;
+        } else {
+            records[index].count++;
+        }
+    }
+
+    for(int i = 0; i < recordSize; i++) {
+        printf("%s occurs %d times\n", records[i].name, records[i].count);
+    }
+}
+
+int main() {
+    char *names[] = {"John", "Paul", "George", "Ringo", "John", "Paul"};
+    int size = sizeof(names) / sizeof(names[0]);
+
+    checkOccurrences(names, size);
+
+    return 0;
+}

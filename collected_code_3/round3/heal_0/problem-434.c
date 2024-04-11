@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+
+int match(char *str) {
+    int length = strlen(str);
+    int i, count = 0;
+
+    for(i = 0; i < length; i++) {
+        if(str[i] == 'a') {
+            while(str[i+1] == 'b') {
+                count++;
+                i++;
+            }
+            if(count >= 1) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char str[100];
+    printf("Enter a string: ");
+    scanf("%s", str);
+
+    if(match(str)) {
+        printf("Matched\n");
+    } else {
+        printf("Not Matched\n");
+    }
+
+    return 0;
+}

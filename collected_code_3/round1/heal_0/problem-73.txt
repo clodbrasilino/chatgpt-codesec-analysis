@@ -1,0 +1,51 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_string_by_regex(char *str, char *regex_pattern) {
+    char **result = 0;
+    size_t count = 0;
+    regex_t regex_comp;
+    regmatch_t group_array[2];
+    if (regcomp(&regex_comp, regex_pattern, REG_EXTENDED)) {
+        printf("Could not compile regular expression.\n");
+        return NULL;
+    };
+    char *cursor = str;
+    while (!regexec(&regex_comp, cursor, 2, group_array, 0)) {
+        int start = group_array[0].rm_so;
+        int end = group_array[0].rm_eo;
+        char *token = strndup(cursor + start, end - start);
+        cursor += end;
+        count += 1;
+        result = realloc(result, sizeof(char*) * count);
+        if (result == NULL) {
+            exit(-1);
+        }
+        result[count-1] = token;
+    }
+    regfree(&regex_comp);
+    result = realloc(result, sizeof(char*) * (count + 1));
+    result[count] = 0;
+    return result;
+}
+
+int main() {
+    char **tokens;
+    char str[] = "Hello, World! This is a test.";
+    char regex_pattern[] = "\\s+|,\\s*|\\.\\s*";
+    tokens = split_string_by_regex(str, regex_pattern);
+    if (tokens) {
+        int i;
+        for (i = 0; tokens[i]; i++) {
+            printf("'%s'\n", tokens[i]);
+            free(tokens[i]);
+        }
+        printf("\n");
+        free(tokens);
+    }
+    return 0;
+}
+```

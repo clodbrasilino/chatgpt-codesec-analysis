@@ -1,0 +1,60 @@
+./collected_code_3/round1/heal_3/healed/problem-73.c: In function 'split_string_by_regex':
+./collected_code_3/round1/heal_3/healed/problem-73.c:36:12: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   36 |         if (temp == NULL) {
+      |            ^
+  'split_string_by_regex': events 1-16
+    |
+    |   13 |     if (regcomp(&regex_comp, regex_pattern, REG_EXTENDED)) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |   18 |     cursor = str;
+    |      |     ~~~~~~~~~~~~
+    |      |            |
+    |      |            (2) ...to here
+    |   19 | 
+    |   20 |     while (!regexec(&regex_comp, cursor, 2, group_array, 0)) {
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (3) following 'true' branch...
+    |      |            (12) following 'true' branch...
+    |   21 |         int start = group_array[0].rm_so;
+    |      |                     ~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (4) ...to here
+    |      |                                   (13) ...to here
+    |   22 |         int end = group_array[0].rm_eo;
+    |   23 |         char *token = strndup(cursor + start, end - start);
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (5) allocated here
+    |   24 | 
+    |   25 |         if (token == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (6) assuming 'token' is non-NULL
+    |      |            (7) following 'false' branch (when 'token' is non-NULL)...
+    |      |            (14) following 'false' branch (when 'token' is non-NULL)...
+    |......
+    |   33 |         cursor += end;
+    |      |                ~~
+    |      |                |
+    |      |                (8) ...to here
+    |      |                (15) ...to here
+    |   34 | 
+    |   35 |         char **temp = realloc(result, sizeof(char*) * (count + 2));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (9) when 'realloc' succeeds, moving buffer
+    |   36 |         if (temp == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (10) following 'false' branch (when 'temp' is non-NULL)...
+    |      |            (16) '<unknown>' leaks here; was allocated at (5)
+    |......
+    |   45 |         result = temp;
+    |      |         ~~~~~~~~~~~~~
+    |      |                |
+    |      |                (11) ...to here
+    |

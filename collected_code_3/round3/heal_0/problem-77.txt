@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+int findDifference(int num) {
+    int odd_sum = 0, even_sum = 0;
+    while (num != 0) {
+        int digit = num % 10;
+        if (digit % 2 == 0) {
+            even_sum += digit;
+        } else {
+            odd_sum += digit;
+        }
+        num /= 10;
+    }
+    return abs(even_sum - odd_sum);
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Difference between sum of even and odd digits: %d\n", findDifference(num));
+    return 0;
+}
+```

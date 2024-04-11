@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple extractNthElement(Tuple* list, int n, int size) {
+    if(n >= 0 && n < size) {
+        return list[n];
+    }
+    Tuple error = {-1, -1};
+    return error;
+}
+
+int main() {
+    Tuple list[5] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+    int n = 2;
+    Tuple result = extractNthElement(list, n, 5);
+    if(result.first != -1 && result.second != -1) {
+        printf("The %dth tuple is (%d, %d)\n", n, result.first, result.second);
+    } else {
+        printf("Invalid index\n");
+    }
+    return 0;
+}

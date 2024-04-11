@@ -1,0 +1,390 @@
+collected_code_3/problem-771-1.c: In function 'createStack':
+collected_code_3/problem-771-1.c:12:21: warning: dereference of possibly-NULL 'stack' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     stack->capacity = capacity;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'areParenthesisBalanced': events 1-2
+    |
+    |   55 | int areParenthesisBalanced(char exp[]) {
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'areParenthesisBalanced'
+    |   56 |     int i = 0;
+    |   57 |     struct Stack* stack = createStack(100);
+    |      |                           ~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'createStack' from 'areParenthesisBalanced'
+    |
+    +--> 'createStack': events 3-5
+           |
+           |   10 | struct Stack* createStack(int capacity) {
+           |      |               ^~~~~~~~~~~
+           |      |               |
+           |      |               (3) entry to 'createStack'
+           |   11 |     struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (4) this call could return NULL
+           |   12 |     stack->capacity = capacity;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (5) 'stack' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-771-1.c: In function 'push':
+collected_code_3/problem-771-1.c:29:31: warning: dereference of possibly-NULL '*stack.data + (sizetype)*stack.top' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |     stack->data[++stack->top] = item;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'areParenthesisBalanced': events 1-2
+    |
+    |   55 | int areParenthesisBalanced(char exp[]) {
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'areParenthesisBalanced'
+    |   56 |     int i = 0;
+    |   57 |     struct Stack* stack = createStack(100);
+    |      |                           ~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'createStack' from 'areParenthesisBalanced'
+    |
+    +--> 'createStack': events 3-4
+           |
+           |   10 | struct Stack* createStack(int capacity) {
+           |      |               ^~~~~~~~~~~
+           |      |               |
+           |      |               (3) entry to 'createStack'
+           |......
+           |   14 |     stack->data = (char*)malloc(stack->capacity * sizeof(char));
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) this call could return NULL
+           |
+    <------+
+    |
+  'areParenthesisBalanced': events 5-8
+    |
+    |   57 |     struct Stack* stack = createStack(100);
+    |      |                           ^~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (5) returning to 'areParenthesisBalanced' from 'createStack'
+    |   58 |     while (exp[i]) {
+    |      |            ~~~             
+    |      |            |
+    |      |            (6) following 'true' branch...
+    |   59 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+    |      |                ~           
+    |      |                |
+    |      |                (7) ...to here
+    |   60 |             push(stack, exp[i]);
+    |      |             ~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (8) calling 'push' from 'areParenthesisBalanced'
+    |
+    +--> 'push': events 9-12
+           |
+           |   26 | void push(struct Stack* stack, char item) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (9) entry to 'push'
+           |   27 |     if (isFull(stack))
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |   28 |         return;
+           |   29 |     stack->data[++stack->top] = item;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |          |                    |
+           |      |          (11) ...to here      (12) '*stack.data + (sizetype)*stack.top' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-771-1.c: In function 'areParenthesisBalanced':
+collected_code_3/problem-771-1.c:73:16: warning: leak of 'stack' [CWE-401] [-Wanalyzer-malloc-leak]
+   73 |         return 0;
+      |                ^
+  'main': events 1-2
+    |
+    |   76 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   77 |     char exp[100] = "{()}[]";
+    |   78 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   55 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   56 |     int i = 0;
+           |   57 |     struct Stack* stack = createStack(100);
+           |      |                           ~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-7
+                  |
+                  |   10 | struct Stack* createStack(int capacity) {
+                  |      |               ^~~~~~~~~~~
+                  |      |               |
+                  |      |               (5) entry to 'createStack'
+                  |   11 |     struct Stack* stack = (struct Stack*)malloc(sizeof(struct Stack));
+                  |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                          |
+                  |      |                                          (6) allocated here
+                  |   12 |     stack->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (7) assuming 'stack' is non-NULL
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 8-13
+           |
+           |   57 |     struct Stack* stack = createStack(100);
+           |      |                           ^~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (8) returning to 'areParenthesisBalanced' from 'createStack'
+           |   58 |     while (exp[i]) {
+           |      |            ~~~             
+           |      |            |
+           |      |            (9) following 'true' branch...
+           |   59 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+           |      |            ~   ~           
+           |      |            |   |
+           |      |            |   (10) ...to here
+           |      |            (11) following 'true' branch...
+           |   60 |             push(stack, exp[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~
+           |      |             |              |
+           |      |             |              (12) ...to here
+           |      |             (13) calling 'push' from 'areParenthesisBalanced'
+           |
+           +--> 'push': events 14-16
+                  |
+                  |   26 | void push(struct Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (14) entry to 'push'
+                  |   27 |     if (isFull(stack))
+                  |      |        ~
+                  |      |        |
+                  |      |        (15) following 'false' branch...
+                  |   28 |         return;
+                  |   29 |     stack->data[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~
+                  |      |          |
+                  |      |          (16) ...to here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 17-26
+           |
+           |   58 |     while (exp[i]) {
+           |      |            ~~~
+           |      |            |
+           |      |            (20) following 'true' branch...
+           |   59 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |   |          |     |
+           |      |            |   |          |     (23) ...to here
+           |      |            |   |          (24) following 'true' branch...
+           |      |            |   (21) ...to here
+           |      |            (22) following 'false' branch...
+           |   60 |             push(stack, exp[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~
+           |      |             |              |
+           |      |             |              (25) ...to here
+           |      |             (17) returning to 'areParenthesisBalanced' from 'push'
+           |      |             (26) calling 'push' from 'areParenthesisBalanced'
+           |   61 |         if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+           |      |            ~ 
+           |      |            |
+           |      |            (18) following 'false' branch...
+           |......
+           |   68 |         i++;
+           |      |         ~~~  
+           |      |          |
+           |      |          (19) ...to here
+           |
+           +--> 'push': events 27-29
+                  |
+                  |   26 | void push(struct Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (27) entry to 'push'
+                  |   27 |     if (isFull(stack))
+                  |      |        ~
+                  |      |        |
+                  |      |        (28) following 'false' branch...
+                  |   28 |         return;
+                  |   29 |     stack->data[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~
+                  |      |          |
+                  |      |          (29) ...to here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 30-33
+           |
+           |   60 |             push(stack, exp[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (30) returning to 'areParenthesisBalanced' from 'push'
+           |......
+           |   70 |     if (isEmpty(stack))
+           |      |        ~     
+           |      |        |
+           |      |        (31) following 'false' branch...
+           |......
+           |   73 |         return 0;
+           |      |                ~
+           |      |                |
+           |      |                (32) ...to here
+           |      |                (33) 'stack' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-771-1.c:73:16: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   73 |         return 0;
+      |                ^
+  'main': events 1-2
+    |
+    |   76 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   77 |     char exp[100] = "{()}[]";
+    |   78 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   55 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   56 |     int i = 0;
+           |   57 |     struct Stack* stack = createStack(100);
+           |      |                           ~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   10 | struct Stack* createStack(int capacity) {
+                  |      |               ^~~~~~~~~~~
+                  |      |               |
+                  |      |               (5) entry to 'createStack'
+                  |......
+                  |   14 |     stack->data = (char*)malloc(stack->capacity * sizeof(char));
+                  |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                          |
+                  |      |                          (6) allocated here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 7-12
+           |
+           |   57 |     struct Stack* stack = createStack(100);
+           |      |                           ^~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (7) returning to 'areParenthesisBalanced' from 'createStack'
+           |   58 |     while (exp[i]) {
+           |      |            ~~~             
+           |      |            |
+           |      |            (8) following 'true' branch...
+           |   59 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+           |      |            ~   ~           
+           |      |            |   |
+           |      |            |   (9) ...to here
+           |      |            (10) following 'true' branch...
+           |   60 |             push(stack, exp[i]);
+           |      |             ~~~~~~~~~~~~~~~~~~~
+           |      |             |              |
+           |      |             |              (11) ...to here
+           |      |             (12) calling 'push' from 'areParenthesisBalanced'
+           |
+           +--> 'push': events 13-16
+                  |
+                  |   26 | void push(struct Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (13) entry to 'push'
+                  |   27 |     if (isFull(stack))
+                  |      |        ~
+                  |      |        |
+                  |      |        (14) following 'false' branch...
+                  |   28 |         return;
+                  |   29 |     stack->data[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |          |                    |
+                  |      |          (15) ...to here      (16) assuming '*stack.data + (sizetype)*stack.top' is non-NULL
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 17-26
+           |
+           |   58 |     while (exp[i]) {
+           |      |            ~~~
+           |      |            |
+           |      |            (20) following 'true' branch...
+           |   59 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |   |          |     |
+           |      |            |   |          |     (23) ...to here
+           |      |            |   |          (24) following 'true' branch...
+           |      |            |   (21) ...to here
+           |      |            (22) following 'false' branch...
+           |   60 |             push(stack, exp[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~
+           |      |             |              |
+           |      |             |              (25) ...to here
+           |      |             (17) returning to 'areParenthesisBalanced' from 'push'
+           |      |             (26) calling 'push' from 'areParenthesisBalanced'
+           |   61 |         if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+           |      |            ~ 
+           |      |            |
+           |      |            (18) following 'false' branch...
+           |......
+           |   68 |         i++;
+           |      |         ~~~  
+           |      |          |
+           |      |          (19) ...to here
+           |
+           +--> 'push': events 27-29
+                  |
+                  |   26 | void push(struct Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (27) entry to 'push'
+                  |   27 |     if (isFull(stack))
+                  |      |        ~
+                  |      |        |
+                  |      |        (28) following 'false' branch...
+                  |   28 |         return;
+                  |   29 |     stack->data[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~
+                  |      |          |
+                  |      |          (29) ...to here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 30-33
+           |
+           |   60 |             push(stack, exp[i]);
+           |      |             ^~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (30) returning to 'areParenthesisBalanced' from 'push'
+           |......
+           |   70 |     if (isEmpty(stack))
+           |      |        ~     
+           |      |        |
+           |      |        (31) following 'false' branch...
+           |......
+           |   73 |         return 0;
+           |      |                ~
+           |      |                |
+           |      |                (32) ...to here
+           |      |                (33) '<unknown>' leaks here; was allocated at (6)
+           |

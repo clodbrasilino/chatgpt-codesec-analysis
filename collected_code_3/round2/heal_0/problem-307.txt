@@ -1,0 +1,26 @@
+It seems like there might be some confusion in your request. In C programming, there is no built-in support for tuples like in Python or other high-level languages. However, we can use a struct to simulate a tuple. If by "get a colon of a tuple" you mean accessing a specific element of a tuple, here is an example of how you could do it:
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int getFirst(Tuple tuple) {
+    return tuple.first;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.first = 1;
+    tuple.second = 2;
+
+    printf("First element of the tuple: %d\n", getFirst(tuple));
+
+    return 0;
+}
+```
+
+In this code, we define a `Tuple` struct that holds two integers. The `getFirst` function takes a `Tuple` and returns the first element. The `main` function creates a `Tuple`, assigns values to its elements, and then prints the first element by calling `getFirst`.

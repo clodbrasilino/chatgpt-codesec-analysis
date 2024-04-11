@@ -1,0 +1,19 @@
+```C
+#include <stdio.h>
+
+double harmonicSum(int n) {
+    double result = 0.0;
+    for (int i = 1; i <= n; i++) {
+        result += 1.0 / i;
+    }
+    return result;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("Harmonic Sum: %f\n", harmonicSum(n));
+    return 0;
+}
+```

@@ -1,0 +1,14 @@
+#include <stdio.h>
+
+void find_xy(int a, int b, int n, int *x, int *y) {
+    *x = n / a;
+    *y = (n - a * (*x)) / b;
+}
+
+int main() {
+    int a = 5, b = 3, n = 23;
+    int x, y;
+    find_xy(a, b, n, &x, &y);
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}

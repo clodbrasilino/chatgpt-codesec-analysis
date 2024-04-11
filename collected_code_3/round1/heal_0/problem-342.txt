@@ -1,0 +1,95 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+#define N 5
+
+typedef struct Element {
+    int value;
+    int arrayIndex;
+    int nextIndex;
+} Element;
+
+void swap(Element *a, Element *b) {
+    Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(Element heap[], int i, int heapSize) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heapSize && heap[left].value < heap[smallest].value)
+        smallest = left;
+
+    if (right < heapSize && heap[right].value < heap[smallest].value)
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        minHeapify(heap, smallest, heapSize);
+    }
+}
+
+void buildMinHeap(Element heap[], int n) {
+    int i;
+    for (i = n / 2 - 1; i >= 0; i--)
+        minHeapify(heap, i, n);
+}
+
+void findSmallestRange(int arr[][N], int k) {
+    int range = INT_MAX;
+    int min = INT_MAX, max = INT_MIN;
+    int start, end;
+
+    Element heap[k];
+    for (int i = 0; i < k; i++) {
+        heap[i].value = arr[i][0];
+        heap[i].arrayIndex = i;
+        heap[i].nextIndex = 1;
+
+        if (heap[i].value > max)
+            max = heap[i].value;
+    }
+
+    buildMinHeap(heap, k);
+
+    while (1) {
+        min = heap[0].value;
+        if (range > max - min + 1) {
+            range = max - min + 1;
+            start = min;
+            end = max;
+        }
+
+        if (heap[0].nextIndex < N) {
+            heap[0].value = arr[heap[0].arrayIndex][heap[0].nextIndex];
+            heap[0].nextIndex += 1;
+
+            if (heap[0].value > max)
+                max = heap[0].value;
+        } else
+            break;
+
+        minHeapify(heap, 0, k);
+    }
+
+    printf("The smallest range is [%d, %d]\n", start, end);
+}
+
+int main() {
+    int arr[][N] = {
+        {4, 7, 9, 12, 15},
+        {0, 8, 10, 14, 20},
+        {6, 12, 16, 30, 50}
+    };
+
+    int k = sizeof(arr) / sizeof(arr[0]);
+
+    findSmallestRange(arr, k);
+
+    return 0;
+}
+```

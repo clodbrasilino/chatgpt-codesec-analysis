@@ -1,0 +1,26 @@
+collected_code_3/problem-128-1.c: In function 'getLongWords':
+collected_code_3/problem-128-1.c:11:30: warning: dereference of possibly-NULL 'longWords' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |             longWords[count] = words[i];
+      |             ~~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'getLongWords': events 1-6
+    |
+    |    6 |     char **longWords = (char **)malloc(sizeof(char *) * wordCount);
+    |      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                 |
+    |      |                                 (1) this call could return NULL
+    |......
+    |    9 |     for (int i = 0; i < wordCount; i++) {
+    |      |                     ~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < wordCount')...
+    |   10 |         if (strlen(words[i]) > n) {
+    |      |            ~            ~        
+    |      |            |            |
+    |      |            |            (3) ...to here
+    |      |            (4) following 'true' branch...
+    |   11 |             longWords[count] = words[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |      |
+    |      |                              |      (5) ...to here
+    |      |                              (6) 'longWords + (long unsigned int)count * 8' could be NULL: unchecked value from (1)
+    |

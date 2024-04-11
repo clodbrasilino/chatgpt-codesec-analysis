@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void removeColumn(int **array, int rows, int cols, int colToRemove) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = colToRemove; j < cols - 1; j++) {
+            array[i][j] = array[i][j + 1];
+        }
+    }
+}
+
+int main() {
+    int rows = 3, cols = 3;
+    int **array = (int **)malloc(rows * sizeof(int *));
+    
+    if (array == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        array[i] = (int *)malloc(cols * sizeof(int));
+        
+        if (array[i] == NULL) {
+            for(int j = 0; j < i; j++) {
+                free(array[j]);
+            }
+            free(array);
+            return 1;
+        }
+    }
+
+    int count = 0;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            array[i][j] = ++count;
+        }
+    }
+
+    int colToRemove = 1;
+    removeColumn(array, rows, cols, colToRemove);
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols - 1; j++) {
+            printf("%d ", array[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < rows; i++) {
+        free(array[i]);
+    }
+    free(array);
+
+    return 0;
+}

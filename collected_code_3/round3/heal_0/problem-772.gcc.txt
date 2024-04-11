@@ -1,0 +1,41 @@
+collected_code_3/problem-772-3.c: In function 'main':
+collected_code_3/problem-772-3.c:22:5: warning: use of possibly-NULL 'result' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   22 |     printf("%s\n", result);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   18 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   21 |     char* result = removeWords(str, k);
+    |      |                    ~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeWords' from 'main'
+    |
+    +--> 'removeWords': events 3-4
+           |
+           |    5 | char* removeWords(char* str, int k) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeWords'
+           |    6 |     char* result = (char*)malloc(strlen(str) + 1);
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   21 |     char* result = removeWords(str, k);
+    |      |                    ^~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (5) possible return of NULL to 'main' from 'removeWords'
+    |   22 |     printf("%s\n", result);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) argument 1 ('result') from (4) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

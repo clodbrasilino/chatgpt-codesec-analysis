@@ -1,0 +1,81 @@
+collected_code_3/problem-358-3.c: In function 'push':
+collected_code_3/problem-358-3.c:22:20: warning: dereference of NULL 'new_node' [CWE-476] [-Wanalyzer-null-dereference]
+   22 |     new_node->next = (*head_ref);
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-5
+    |
+    |   48 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   49 |     Node* list1 = NULL;
+    |      |           ~~~~~
+    |      |           |
+    |      |           (2) 'list1' is NULL
+    |   50 |     Node* list2 = NULL;
+    |      |           ~~~~~
+    |      |           |
+    |      |           (3) 'list1' is NULL
+    |   51 |     Node* result = NULL;
+    |      |           ~~~~~~
+    |      |           |
+    |      |           (4) 'list1' is NULL
+    |   52 | 
+    |   53 |     push(&list1, 10);
+    |      |     ~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (5) calling 'push' from 'main'
+    |
+    +--> 'push': events 6-7
+           |
+           |   20 | void push(Node** head_ref, int new_data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (6) entry to 'push'
+           |   21 |     Node* new_node = createNode(new_data);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (7) calling 'createNode' from 'push'
+           |
+           +--> 'createNode': events 8-10
+                  |
+                  |    9 | Node* createNode(int data) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (8) entry to 'createNode'
+                  |   10 |     Node* newNode = (Node*)malloc(sizeof(Node));
+                  |   11 |     if (!newNode) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (9) following 'true' branch (when 'newNode' is NULL)...
+                  |   12 |         printf("Memory error\n");
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (10) ...to here
+                  |
+                'createNode': event 11
+                  |
+                  |   13 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (11) 'list1' is NULL
+                  |
+           <------+
+           |
+         'push': events 12-16
+           |
+           |   21 |     Node* new_node = createNode(new_data);
+           |      |                      ^~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (12) returning to 'push' from 'createNode'
+           |   22 |     new_node->next = (*head_ref);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |  |
+           |      |                    |  (13) 'new_node' is NULL
+           |      |                    (14) 'new_node' is NULL
+           |      |                    (16) dereference of NULL 'new_node'
+           |   23 |     (*head_ref) = new_node;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (15) 'new_node' is NULL
+           |

@@ -1,0 +1,27 @@
+C language does not natively support regular expressions. However, you can use the POSIX regex library to use regex in C. But for this specific task, we don't need regex. We can simply iterate over the string and remove the uppercase characters. Here is a simple C program that does this:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void remove_uppercase(char* str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (!isupper(str[i]) || str[i] == ' ') {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello World";
+    remove_uppercase(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+This program will output `ello orld`, which is the input string with all uppercase characters removed.

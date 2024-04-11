@@ -1,0 +1,21 @@
+collected_code_3/problem-468-3.c: In function 'maxProductIS':
+collected_code_3/problem-468-3.c:10:24: warning: dereference of possibly-NULL 'max_product' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |         max_product[i] = arr[i];
+      |         ~~~~~~~~~~~~~~~^~~~~~~~
+  'maxProductIS': events 1-4
+    |
+    |    5 |     int *max_product = (int*) malloc (n * sizeof(int));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |......
+    |    9 |     for (i = 0; i < n; i++)
+    |      |                 ~~~~~          
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < n')...
+    |   10 |         max_product[i] = arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |    |
+    |      |                        |    (3) ...to here
+    |      |                        (4) 'max_product + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

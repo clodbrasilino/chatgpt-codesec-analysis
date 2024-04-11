@@ -1,0 +1,237 @@
+collected_code_3/problem-795-3.c: In function 'createHeap':
+collected_code_3/problem-795-3.c:17:16: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     heap->size = 0;
+      |     ~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-5
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   16 |     Heap* heap = (Heap*)malloc(sizeof(Heap));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (4) this call could return NULL
+           |   17 |     heap->size = 0;
+           |      |     ~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) 'heap' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-795-3.c: In function 'insert':
+collected_code_3/problem-795-3.c:48:40: warning: use of uninitialized value '*heap_20(D)->items.price' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   48 |         if (item.price < heap->items[0].price) {
+      |                          ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |......
+           |   19 |     heap->items = (Item*)malloc(sizeof(Item) * capacity);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) region created on heap here
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'main' from 'createHeap'
+    |......
+    |   74 |     for (int i = 0; i < size; i++)
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch...
+    |   75 |         insert(heap, items[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                 |
+    |      |         |                 (7) ...to here
+    |      |         (8) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 9-12
+           |
+           |   46 | void insert(Heap* heap, Item item) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (9) entry to 'insert'
+           |   47 |     if (heap->size == heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'true' branch...
+           |   48 |         if (item.price < heap->items[0].price) {
+           |      |             ~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~
+           |      |                 |                      |
+           |      |                 (11) ...to here        (12) use of uninitialized value '*heap_20(D)->items.price' here
+           |
+collected_code_3/problem-795-3.c:48:40: warning: dereference of possibly-NULL '*heap.items' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   48 |         if (item.price < heap->items[0].price) {
+      |                          ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |......
+           |   19 |     heap->items = (Item*)malloc(sizeof(Item) * capacity);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'main' from 'createHeap'
+    |......
+    |   74 |     for (int i = 0; i < size; i++)
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch...
+    |   75 |         insert(heap, items[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                 |
+    |      |         |                 (7) ...to here
+    |      |         (8) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 9-12
+           |
+           |   46 | void insert(Heap* heap, Item item) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (9) entry to 'insert'
+           |   47 |     if (heap->size == heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'true' branch...
+           |   48 |         if (item.price < heap->items[0].price) {
+           |      |             ~~~~~~~~~~   ~~~~~~~~~~~~~~~~~~~~
+           |      |                 |                      |
+           |      |                 (11) ...to here        (12) '*heap.items' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-795-3.c:53:35: warning: dereference of possibly-NULL '*heap.items + (long unsigned int)*heap.size * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   53 |         heap->items[heap->size++] = item;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   59 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-4
+           |
+           |   15 | Heap* createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |......
+           |   19 |     heap->items = (Item*)malloc(sizeof(Item) * capacity);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-8
+    |
+    |   67 |     Heap* heap = createHeap(n);
+    |      |                  ^~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (5) returning to 'main' from 'createHeap'
+    |......
+    |   74 |     for (int i = 0; i < size; i++)
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch...
+    |   75 |         insert(heap, items[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                 |
+    |      |         |                 (7) ...to here
+    |      |         (8) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 9-12
+           |
+           |   46 | void insert(Heap* heap, Item item) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (9) entry to 'insert'
+           |   47 |     if (heap->size == heap->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (10) following 'false' branch...
+           |......
+           |   53 |         heap->items[heap->size++] = item;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |                     |
+           |      |             (11) ...to here       (12) '*heap.items + (long unsigned int)*heap.size * 8' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-795-3.c: In function 'main':
+collected_code_3/problem-795-3.c:75:9: warning: dereference of possibly-NULL 'items' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   75 |         insert(heap, items[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   68 |     Item* items = (Item*)malloc(sizeof(Item) * size);
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |......
+    |   74 |     for (int i = 0; i < size; i++)
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |   75 |         insert(heap, items[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                 |
+    |      |         |                 (3) ...to here
+    |      |         (4) 'items + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |

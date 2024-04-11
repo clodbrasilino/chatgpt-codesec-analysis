@@ -1,0 +1,43 @@
+Here is a simple C program that demonstrates a function to remove a nested record from a tuple. Please note that C doesn't have built-in support for tuples like Python. So, we will use a struct to simulate a tuple.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+    struct {
+        int c;
+        int d;
+    } nested;
+} Tuple;
+
+typedef struct {
+    int a;
+    int b;
+} SimplifiedTuple;
+
+SimplifiedTuple removeNested(Tuple t) {
+    SimplifiedTuple st;
+    st.a = t.a;
+    st.b = t.b;
+    return st;
+}
+
+int main() {
+    Tuple t;
+    t.a = 1;
+    t.b = 2;
+    t.nested.c = 3;
+    t.nested.d = 4;
+
+    SimplifiedTuple st = removeNested(t);
+
+    printf("Simplified Tuple: a = %d, b = %d\n", st.a, st.b);
+
+    return 0;
+}
+```
+
+In this code, `Tuple` is a struct that represents a tuple with a nested record, and `SimplifiedTuple` is a struct that represents a tuple without a nested record. The `removeNested` function takes a `Tuple` and returns a `SimplifiedTuple` that has the same `a` and `b` values as the input but does not include the nested record. The `main` function demonstrates how to use the `removeNested` function.

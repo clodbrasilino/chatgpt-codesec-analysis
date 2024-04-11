@@ -1,0 +1,32 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has28Days(int month, int year) {
+    if (month == 2) {
+        if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+            return false;
+        } else {
+            return true;
+        }
+    } else {
+        return false;
+    }
+}
+
+int main() {
+    int month, year;
+    printf("Enter month number: ");
+    scanf("%d", &month);
+    printf("Enter year: ");
+    scanf("%d", &year);
+
+    if (has28Days(month, year)) {
+        printf("The month has 28 days.\n");
+    } else {
+        printf("The month does not have 28 days.\n");
+    }
+
+    return 0;
+}
+```

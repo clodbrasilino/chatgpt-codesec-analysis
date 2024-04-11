@@ -1,0 +1,48 @@
+In C, there is no built-in support for regular expressions like in some other languages such as Python or JavaScript. However, we can use the POSIX regex library which is available in most Unix-like systems. But it's important to note that this library does not support finding all matches in a string, only the first one. To find all matches, we need to repeatedly call the regex function with an updated position.
+
+Also, identifying adverbs in a sentence is a complex task that goes beyond simple regular expressions. Adverbs in English can have many forms, not all of them end in "-ly", and they can appear in different positions in a sentence. A more reliable way to identify adverbs would be to use a natural language processing library, but this is beyond the scope of C and would typically be done in a higher-level language like Python.
+
+Here is a simple C program that uses regex to find words ending in "ly", which are often adverbs:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void find_adverbs(char *sentence) {
+    regex_t regex;
+    regmatch_t match;
+    int start = 0;
+    int result;
+
+    result = regcomp(&regex, "\\b\\w+ly\\b", REG_EXTENDED);
+    if (result) {
+        printf("Could not compile regex\n");
+        return;
+    }
+
+    while (!regexec(&regex, sentence + start, 1, &match, 0)) {
+        printf("Found adverb: %.*s at position: %d\n", 
+               (int)(match.rm_eo - match.rm_so), 
+               sentence + start + match.rm_so, 
+               start + match.rm_so);
+        start += match.rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char sentence[] = "He quickly ran home.";
+    find_adverbs(sentence);
+    return 0;
+}
+```
+
+This program will output:
+
+```
+Found adverb: quickly at position: 3
+```
+
+The position is the index of the first character of the adverb in the sentence, starting from 0.

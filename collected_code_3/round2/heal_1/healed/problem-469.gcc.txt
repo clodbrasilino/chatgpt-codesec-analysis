@@ -1,0 +1,263 @@
+./collected_code_3/round2/heal_1/healed/problem-469.c: In function 'maxProfit':
+./collected_code_3/round2/heal_1/healed/problem-469.c:17:34: warning: leak of 'dp' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |         if(dp[i] == NULL) return -1;
+      |                                  ^
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     int max_profit = maxProfit(k, prices, pricesSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-16
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize == 0) return 0;
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize != 0')...
+           |    6 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |         |
+           |      |                       |         (7) ...to here
+           |      |                       (8) allocated here
+           |   14 |     if(dp == NULL) return -1;
+           |      |       ~
+           |      |       |
+           |      |       (9) assuming 'dp' is non-NULL
+           |      |       (10) following 'false' branch (when 'dp' is non-NULL)...
+           |   15 |     for(int i = 0; i <= k; i++) {
+           |      |             ~      ~~~~~~
+           |      |             |        |
+           |      |             |        (12) following 'true' branch (when 'i <= k')...
+           |      |             (11) ...to here
+           |   16 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (13) ...to here
+           |   17 |         if(dp[i] == NULL) return -1;
+           |      |           ~                      ~
+           |      |           |                      |
+           |      |           |                      (15) ...to here
+           |      |           |                      (16) 'dp' leaks here; was allocated at (8)
+           |      |           (14) following 'true' branch...
+           |
+./collected_code_3/round2/heal_1/healed/problem-469.c:17:34: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |         if(dp[i] == NULL) return -1;
+      |                                  ^
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     int max_profit = maxProfit(k, prices, pricesSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-20
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize == 0) return 0;
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize != 0')...
+           |    6 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                              ~~~~~~~
+           |      |                                 |
+           |      |                                 (7) ...to here
+           |   14 |     if(dp == NULL) return -1;
+           |      |       ~
+           |      |       |
+           |      |       (8) following 'false' branch (when 'dp' is non-NULL)...
+           |   15 |     for(int i = 0; i <= k; i++) {
+           |      |             ~      ~~~~~~  ~~~
+           |      |             |        |      |
+           |      |             |        |      (15) ...to here
+           |      |             |        (10) following 'true' branch (when 'i <= k')...
+           |      |             |        (16) following 'true' branch (when 'i <= k')...
+           |      |             (9) ...to here
+           |   16 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (11) ...to here
+           |      |                       (12) allocated here
+           |      |                       (17) ...to here
+           |   17 |         if(dp[i] == NULL) return -1;
+           |      |           ~                      ~
+           |      |           |                      |
+           |      |           |                      (19) ...to here
+           |      |           |                      (20) '<unknown>' leaks here; was allocated at (12)
+           |      |           (13) assuming '<unknown>' is non-NULL
+           |      |           (14) following 'false' branch...
+           |      |           (18) following 'true' branch...
+           |
+./collected_code_3/round2/heal_1/healed/problem-469.c:25:29: warning: use of uninitialized value '*_56 + _59' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   25 |             dp[i][j] = dp[i][j - 1] > prices[j] + localMax ? dp[i][j - 1] : prices[j] + localMax;
+      |                        ~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   40 |     int max_profit = maxProfit(k, prices, pricesSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-33
+           |
+           |    4 | int maxProfit(int k, int* prices, int pricesSize) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if(pricesSize == 0) return 0;
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'pricesSize != 0')...
+           |    6 |     if(k >= pricesSize / 2) {
+           |      |       ~     ~~~~~~~~~~~~~~
+           |      |       |                |
+           |      |       |                (5) ...to here
+           |      |       (6) following 'false' branch...
+           |......
+           |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+           |      |                              ~~~~~~~
+           |      |                                 |
+           |      |                                 (7) ...to here
+           |   14 |     if(dp == NULL) return -1;
+           |      |       ~
+           |      |       |
+           |      |       (8) following 'false' branch (when 'dp' is non-NULL)...
+           |   15 |     for(int i = 0; i <= k; i++) {
+           |      |             ~      ~~~~~~  ~~~
+           |      |             |        |      |
+           |      |             |        |      (13) ...to here
+           |      |             |        |      (18) ...to here
+           |      |             |        |      (22) ...to here
+           |      |             |        (10) following 'true' branch (when 'i <= k')...
+           |      |             |        (14) following 'true' branch (when 'i <= k')...
+           |      |             |        (19) following 'true' branch (when 'i <= k')...
+           |      |             |        (23) following 'false' branch (when 'i > k')...
+           |      |             (9) ...to here
+           |   16 |         dp[i] = (int*)malloc(pricesSize * sizeof(int));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (11) ...to here
+           |      |                       (15) ...to here
+           |      |                       (16) region created on heap here
+           |      |                       (20) ...to here
+           |   17 |         if(dp[i] == NULL) return -1;
+           |      |           ~
+           |      |           |
+           |      |           (12) following 'false' branch...
+           |      |           (17) following 'false' branch...
+           |      |           (21) following 'false' branch...
+           |   18 |     }
+           |   19 |     for(int i = 0; i <= k; i++)
+           |      |             ~      ~~~~~~
+           |      |             |        |
+           |      |             |        (25) following 'true' branch (when 'i <= k')...
+           |      |             (24) ...to here
+           |   20 |         for(int j = 0; j < pricesSize; j++)
+           |      |                 ~      ~~~~~~~~~~~~~~
+           |      |                 |        |
+           |      |                 |        (27) following 'true' branch (when 'j < pricesSize')...
+           |      |                 (26) ...to here
+           |   21 |             dp[i][j] = 0;
+           |      |               ~
+           |      |               |
+           |      |               (28) ...to here
+           |   22 |     for(int i = 1; i <= k; i++) {
+           |      |                    ~~~~~~
+           |      |                      |
+           |      |                      (29) following 'true' branch (when 'i <= k')...
+           |   23 |         int localMax = dp[i - 1][0] - prices[0];
+           |      |                          ~
+           |      |                          |
+           |      |                          (30) ...to here
+           |   24 |         for(int j = 1; j < pricesSize; j++) {
+           |      |                        ~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (31) following 'true' branch (when 'j < pricesSize')...
+           |   25 |             dp[i][j] = dp[i][j - 1] > prices[j] + localMax ? dp[i][j - 1] : prices[j] + localMax;
+           |      |                        ~~~~~~~~~~~~         ~
+           |      |                             |               |
+           |      |                             |               (32) ...to here
+           |      |                             (33) use of uninitialized value '*_56 + _59' here
+           |
+./collected_code_3/round2/heal_1/healed/problem-469.c:29:20: warning: use of uninitialized value '*dp_118 + _85' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   29 |     int result = dp[k][pricesSize - 1];
+      |                  ~~^~~
+  'maxProfit': events 1-14
+    |
+    |    5 |     if(pricesSize == 0) return 0;
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'pricesSize != 0')...
+    |    6 |     if(k >= pricesSize / 2) {
+    |      |       ~     ~~~~~~~~~~~~~~
+    |      |       |                |
+    |      |       |                (2) ...to here
+    |      |       (3) following 'false' branch...
+    |......
+    |   13 |     int** dp = (int**)malloc((k + 1) * sizeof(int*));
+    |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |         |
+    |      |                       |         (4) ...to here
+    |      |                       (5) region created on heap here
+    |   14 |     if(dp == NULL) return -1;
+    |      |       ~
+    |      |       |
+    |      |       (6) following 'false' branch (when 'dp' is non-NULL)...
+    |   15 |     for(int i = 0; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (8) following 'false' branch (when 'i > k')...
+    |      |             (7) ...to here
+    |......
+    |   19 |     for(int i = 0; i <= k; i++)
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (10) following 'false' branch (when 'i > k')...
+    |      |             (9) ...to here
+    |......
+    |   22 |     for(int i = 1; i <= k; i++) {
+    |      |             ~      ~~~~~~
+    |      |             |        |
+    |      |             |        (12) following 'false' branch (when 'i > k')...
+    |      |             (11) ...to here
+    |......
+    |   29 |     int result = dp[k][pricesSize - 1];
+    |      |                  ~~~~~
+    |      |                    |
+    |      |                    (13) ...to here
+    |      |                    (14) use of uninitialized value '*dp_118 + _85' here
+    |

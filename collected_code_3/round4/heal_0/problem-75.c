@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int isDivisible(Tuple tuple, int k) {
+    for (int i = 0; i < tuple.size; i++) {
+        if (tuple.elements[i] % k != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void findDivisibleTuples(Tuple *tuples, int tuplesCount, int k) {
+    for (int i = 0; i < tuplesCount; i++) {
+        if (isDivisible(tuples[i], k)) {
+            printf("Tuple %d is divisible by %d\n", i, k);
+        }
+    }
+}
+
+int main() {
+    int elements1[] = {2, 4, 6};
+    int elements2[] = {3, 6, 9};
+    int elements3[] = {5, 10, 15};
+
+    Tuple tuples[] = {
+        {elements1, sizeof(elements1) / sizeof(int)},
+        {elements2, sizeof(elements2) / sizeof(int)},
+        {elements3, sizeof(elements3) / sizeof(int)}
+    };
+
+    findDivisibleTuples(tuples, sizeof(tuples) / sizeof(Tuple), 2);
+
+    return 0;
+}

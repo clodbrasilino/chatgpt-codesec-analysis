@@ -1,0 +1,25 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int binaryToInteger(char *binary) {
+    int decimal = 0;
+    int base = 1;
+    int len = strlen(binary);
+    for(int i=len-1; i>=0; i--) {
+        if(binary[i] == '1') {
+            decimal += base;
+        }
+        base = base * 2;
+    }
+    return decimal;
+}
+
+int main() {
+    char binary[100];
+    printf("Enter a binary number: ");
+    scanf("%s", binary);
+    printf("Decimal: %d", binaryToInteger(binary));
+    return 0;
+}
+```

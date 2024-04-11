@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error! unable to create a new node\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+Node* copyList(Node* head) {
+    if(head == NULL) return NULL;
+    Node* newHead = createNode(head->data);
+    Node* current = head->next;
+    Node* newCurrent = newHead;
+    while(current != NULL) {
+        newCurrent->next = createNode(current->data);
+        newCurrent = newCurrent->next;
+        current = current->next;
+    }
+    return newHead;
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while(temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    printf("Original List: ");
+    printList(head);
+
+    Node* copiedList = copyList(head);
+    printf("Copied List: ");
+    printList(copiedList);
+
+    return 0;
+}

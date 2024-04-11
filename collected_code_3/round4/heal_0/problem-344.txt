@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+int oddFactors(int low, int high) {
+    int count = 0;
+    for (int i = low; i <= high; i++) {
+        int root = sqrt(i);
+        if (root * root == i) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int low, high;
+    printf("Enter the lower limit: ");
+    scanf("%d", &low);
+    printf("Enter the upper limit: ");
+    scanf("%d", &high);
+    int count = oddFactors(low, high);
+    printf("Number of elements with odd factors in the given range: %d\n", count);
+    return 0;
+}
+```

@@ -1,0 +1,19 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+double findMedian(double a, double b, double h) {
+    return 0.5 * (a + b) * h;
+}
+
+int main() {
+    double a, b, h;
+    printf("Enter the lengths of the parallel sides of the trapezium: ");
+    scanf("%lf %lf", &a, &b);
+    printf("Enter the height of the trapezium: ");
+    scanf("%lf", &h);
+    printf("The median of the trapezium is: %.2lf\n", findMedian(a, b, h));
+    return 0;
+}
+```
+This program calculates the median of a trapezium. The median (also known as the mid-segment or mid-line) of a trapezium is the line segment linking the midpoints of the non-parallel sides. It is parallel to the bases. Its length m is equal to the average of the lengths of the bases a and b of the trapezium, i.e., m = 0.5 * (a + b). The height h is not relevant for calculating the median of a trapezium. However, the formula used in the function findMedian is the formula for the area of a trapezium, not its median.

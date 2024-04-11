@@ -1,0 +1,53 @@
+collected_code_3/problem-593-1.c: In function 'main':
+collected_code_3/problem-593-1.c:26:5: warning: use of possibly-NULL 'result' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   26 |     printf("%s\n", result);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   24 |     char ip[16] = "192.168.001.001";
+    |   25 |     char* result = removeLeadingZeroes(ip);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeLeadingZeroes' from 'main'
+    |
+    +--> 'removeLeadingZeroes': events 3-4
+           |
+           |    5 | char* removeLeadingZeroes(char* ip) {
+           |      |       ^~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeLeadingZeroes'
+           |    6 |     char* result = malloc(16);
+           |      |                    ~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) this call could return NULL
+           |
+         'removeLeadingZeroes': events 5-6
+           |
+           |   10 |     while(token != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (5) following 'false' branch (when 'token' is NULL)...
+           |......
+           |   20 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   25 |     char* result = removeLeadingZeroes(ip);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) possible return of NULL to 'main' from 'removeLeadingZeroes'
+    |   26 |     printf("%s\n", result);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) argument 1 ('result') from (4) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

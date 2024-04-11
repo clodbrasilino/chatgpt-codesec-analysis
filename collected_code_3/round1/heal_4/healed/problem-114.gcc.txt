@@ -1,0 +1,96 @@
+./collected_code_3/round1/heal_4/healed/problem-114.c: In function 'assignFrequency':
+./collected_code_3/round1/heal_4/healed/problem-114.c:34:7: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   34 |     if(tmp_tuples == NULL) {
+      |       ^
+  'main': events 1-2
+    |
+    |   48 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     assignFrequency(&tupleList, "tuple1", 5);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'assignFrequency' from 'main'
+    |
+    +--> 'assignFrequency': events 3-11
+           |
+           |   24 | void assignFrequency(TupleList* tupleList, char* key, int value) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'assignFrequency'
+           |   25 |     Tuple* tmp_tuples;
+           |   26 |     for(int i = 0; i < tupleList->size; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'false' branch...
+           |......
+           |   33 |     tmp_tuples = (Tuple*)realloc(tupleList->tuples, (tupleList->size + 1) * sizeof(Tuple));
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |                                    |
+           |      |                          |                                    (5) ...to here
+           |      |                          (6) when 'realloc' succeeds, moving buffer
+           |   34 |     if(tmp_tuples == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (7) following 'false' branch (when 'tmp_tuples' is non-NULL)...
+           |......
+           |   37 |     tupleList->tuples = tmp_tuples;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (8) ...to here
+           |   38 |     tupleList->tuples[tupleList->size].key = (char*)malloc(strlen(key) + 1);
+           |      |                                                     ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                                     |
+           |      |                                                     (9) allocated here
+           |   39 | 
+           |   40 |     if(tupleList->tuples[tupleList->size].key == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (10) assuming '<unknown>' is non-NULL
+           |      |       (11) following 'false' branch...
+           |
+         'assignFrequency': event 12
+           |
+           |   43 |     strcpy(tupleList->tuples[tupleList->size].key, key);
+           |      |            ~~~~~~~~~^~~~~~~~
+           |      |                     |
+           |      |                     (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-14
+    |
+    |   53 |     assignFrequency(&tupleList, "tuple1", 5);
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (13) returning to 'main' from 'assignFrequency'
+    |   54 |     assignFrequency(&tupleList, "tuple2", 10);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (14) calling 'assignFrequency' from 'main'
+    |
+    +--> 'assignFrequency': events 15-20
+           |
+           |   24 | void assignFrequency(TupleList* tupleList, char* key, int value) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'assignFrequency'
+           |   25 |     Tuple* tmp_tuples;
+           |   26 |     for(int i = 0; i < tupleList->size; i++) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~  ~~~
+           |      |                      |                   |
+           |      |                      |                   (19) ...to here
+           |      |                      (16) following 'true' branch...
+           |   27 |         if(strcmp(tupleList->tuples[i].key, key) == 0) {
+           |      |           ~       ~~~~~~~~~~~~~~~~~
+           |      |           |                |
+           |      |           |                (17) ...to here
+           |      |           (18) following 'false' branch (when the strings are non-equal)...
+           |......
+           |   34 |     if(tmp_tuples == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (20) '<unknown>' leaks here; was allocated at (9)
+           |

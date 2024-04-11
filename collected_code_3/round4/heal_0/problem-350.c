@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+char* minimizeString(char* str, char ch) {
+    int i, j = 0, len;
+    len = strlen(str);
+
+    for(i = 0; i < len; i++) {
+        if(str[i] != ch) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+
+    return str;
+}
+
+int main() {
+    char str[100];
+    char ch;
+
+    printf("Enter a string: ");
+    fgets(str, sizeof(str), stdin);
+    str[strlen(str) - 1] = '\0';
+
+    printf("Enter a character to remove: ");
+    scanf("%c", &ch);
+
+    printf("Modified string: %s\n", minimizeString(str, ch));
+
+    return 0;
+}

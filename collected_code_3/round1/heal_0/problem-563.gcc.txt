@@ -1,0 +1,77 @@
+collected_code_3/problem-563-1.c: In function 'extractValues':
+collected_code_3/problem-563-1.c:13:23: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |             result[i] = (char*)malloc(sizeof(char) * strlen(token) + 1);
+      |             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'extractValues': event 1
+    |
+    |    8 |     char** result = (char**)malloc(sizeof(char*) * strlen(str));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |
+  'extractValues': events 2-5
+    |
+    |   11 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'token' is non-NULL)...
+    |   12 |         if (count % 2 != 0) {
+    |      |            ~~~~~~~~~~~~~~~
+    |      |            |          |
+    |      |            |          (3) ...to here
+    |      |            (4) following 'false' branch...
+    |......
+    |   17 |         token = strtok(NULL, "\"");
+    |      |                 ~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (5) ...to here
+    |
+  'extractValues': events 6-8
+    |
+    |   11 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (6) following 'true' branch (when 'token' is non-NULL)...
+    |   12 |         if (count % 2 != 0) {
+    |      |             ~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (7) ...to here
+    |   13 |             result[i] = (char*)malloc(sizeof(char) * strlen(token) + 1);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) 'result + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-563-1.c:20:15: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |     result[i] = NULL;
+      |               ^
+  'main': events 1-2
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   25 |     char str[] = "This is a \"test\" string with \"multiple\" values \"in quotes\".";
+    |   26 |     char** values = extractValues(str);
+    |      |                     ~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractValues' from 'main'
+    |
+    +--> 'extractValues': events 3-4
+           |
+           |    5 | char** extractValues(char* str) {
+           |      |        ^~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractValues'
+           |......
+           |    8 |     char** result = (char**)malloc(sizeof(char*) * strlen(str));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (4) this call could return NULL
+           |
+         'extractValues': event 5
+           |
+           |   20 |     result[i] = NULL;
+           |      |               ^
+           |      |               |
+           |      |               (5) 'result + (long unsigned int)i * 8' could be NULL: unchecked value from (4)
+           |

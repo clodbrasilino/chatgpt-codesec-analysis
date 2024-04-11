@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[50];
+    void *value;
+    int type; // 0 for int, 1 for dict
+} Item;
+
+typedef struct {
+    Item items[50];
+    int count;
+} Dict;
+
+int findDepth(Dict *dict) {
+    int maxDepth = 0;
+    for (int i = 0; i < dict->count; i++) {
+        if (dict->items[i].type == 1) {
+            int depth = findDepth((Dict *)dict->items[i].value);
+            if (depth > maxDepth) {
+                maxDepth = depth;
+            }
+        }
+    }
+    return maxDepth + 1;
+}
+
+int main() {
+    Dict innerDict;
+    innerDict.count = 0;
+
+    Dict outerDict;
+    outerDict.count = 1;
+    outerDict.items[0].type = 1;
+    outerDict.items[0].value = &innerDict;
+
+    printf("Depth: %d\n", findDepth(&outerDict));
+
+    return 0;
+}

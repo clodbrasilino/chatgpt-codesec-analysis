@@ -1,0 +1,28 @@
+```C
+#include <math.h>
+#include <stdio.h>
+
+double standard_deviation(double* data, int n) {
+    double sum = 0.0, mean, std_dev = 0.0;
+
+    int i;
+
+    for(i = 0; i < n; ++i) {
+        sum += data[i];
+    }
+
+    mean = sum/n;
+
+    for(i = 0; i < n; ++i)
+        std_dev += pow(data[i] - mean, 2);
+
+    return sqrt(std_dev/n);
+}
+
+int main() {
+    double data[10] = {2.3, 3.4, 4.5, 2.2, 3.3, 4.4, 5.5, 2.1, 3.2, 4.3};
+    int n = sizeof(data)/sizeof(data[0]);
+    printf("Standard Deviation = %.6f", standard_deviation(data, n));
+    return 0;
+}
+```

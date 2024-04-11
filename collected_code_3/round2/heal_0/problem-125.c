@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int maxDifference(char* str) {
+    int maxDiff = 0;
+    int count = 0;
+    int n = strlen(str);
+
+    for (int i = 0; i < n; i++) {
+        count = (str[i] == '0') ? count + 1 : count - 1;
+
+        if (count < 0)
+            count = 0;
+
+        if (count > maxDiff)
+            maxDiff = count;
+    }
+
+    return maxDiff;
+}
+
+int main() {
+    char str[] = "110000100010111";
+    printf("Maximum difference is %d\n", maxDifference(str));
+    return 0;
+}

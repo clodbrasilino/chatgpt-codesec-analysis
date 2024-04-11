@@ -1,0 +1,29 @@
+collected_code_3/problem-115-2.c: In function 'main':
+collected_code_3/problem-115-2.c:26:17: warning: dereference of possibly-NULL 'dict1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |     dict1->size = 0;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   25 |     Dictionary *dict1 = malloc(sizeof(Dictionary));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   26 |     dict1->size = 0;
+    |      |     ~~~~~~~~~~~~~~~      
+    |      |                 |
+    |      |                 (2) 'dict1' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-115-2.c:29:17: warning: dereference of possibly-NULL 'dict2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |     dict2->size = 0;
+      |     ~~~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   28 |     Dictionary *dict2 = malloc(sizeof(Dictionary));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   29 |     dict2->size = 0;
+    |      |     ~~~~~~~~~~~~~~~      
+    |      |                 |
+    |      |                 (2) 'dict2' could be NULL: unchecked value from (1)
+    |

@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+
+int sumOfSquares(int n) {
+    int sum = 0;
+    int odd = 1;
+
+    for(int i = 0; i < n; i++) {
+        sum += odd * odd;
+        odd += 2;
+    }
+
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    int sum = sumOfSquares(n);
+    printf("The sum of squares of first %d odd natural numbers is %d\n", n, sum);
+
+    return 0;
+}
+```

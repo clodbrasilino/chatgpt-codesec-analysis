@@ -1,0 +1,94 @@
+```C
+#include <stdio.h>
+#include <limits.h>
+
+#define N 5
+
+typedef struct Element {
+    int value;
+    int arrayIndex;
+    int nextIndex;
+} Element;
+
+void swap(Element* a, Element* b) {
+    Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(Element harr[], int i, int heap_size) {
+    int l = i * 2 + 1;
+    int r = i * 2 + 2;
+    int smallest = i;
+    if (l < heap_size && harr[l].value < harr[i].value)
+        smallest = l;
+    if (r < heap_size && harr[r].value < harr[smallest].value)
+        smallest = r;
+    if (smallest != i) {
+        swap(&harr[i], &harr[smallest]);
+        minHeapify(harr, smallest, heap_size);
+    }
+}
+
+void buildMinHeap(Element harr[], int n) {
+    int i = (n - 1) / 2;
+    while (i >= 0) {
+        minHeapify(harr, i, n);
+        i--;
+    }
+}
+
+void findSmallestRange(int arr[][N], int k, int n) {
+    int range = INT_MAX;
+    int min = INT_MAX, max = INT_MIN;
+    int start, end;
+
+    Element harr[k];
+    for (int i = 0; i < k; i++) {
+        harr[i].value = arr[i][0];
+        harr[i].arrayIndex = i;
+        harr[i].nextIndex = 1;
+
+        if (harr[i].value > max)
+            max = harr[i].value;
+    }
+
+    buildMinHeap(harr, k);
+
+    while (1) {
+        min = harr[0].value;
+        if (range > max - min + 1) {
+            range = max - min + 1;
+            start = min;
+            end = max;
+        }
+
+        if (harr[0].nextIndex < n) {
+            harr[0].value = arr[harr[0].arrayIndex][harr[0].nextIndex];
+            harr[0].nextIndex += 1;
+
+            if (harr[0].value > max)
+                max = harr[0].value;
+        }
+        else break;
+
+        minHeapify(harr, 0, k);
+    }
+
+    printf("The smallest range is [%d, %d]\n", start, end);
+}
+
+int main() {
+    int arr[][N] = {
+        {4, 7, 9, 12, 15},
+        {0, 8, 10, 14, 20},
+        {6, 12, 16, 30, 50}
+    };
+
+    int k = sizeof(arr) / sizeof(arr[0]);
+
+    findSmallestRange(arr, k, N);
+
+    return 0;
+}
+```

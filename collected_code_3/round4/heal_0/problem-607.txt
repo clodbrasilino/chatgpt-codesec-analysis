@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int search_pattern(char *str, char *pattern) {
+    regex_t regex;
+    int ret;
+    regmatch_t matchptr[1];
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        printf("Could not compile regex\n");
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 1, matchptr, 0);
+    if (!ret) {
+        printf("Pattern found at position %d\n", (int)matchptr[0].rm_so);
+        regfree(&regex);
+        return (int)matchptr[0].rm_so;
+    } else if (ret == REG_NOMATCH) {
+        printf("No match\n");
+    } else {
+        char msgbuf[100];
+        regerror(ret, &regex, msgbuf, sizeof(msgbuf));
+        printf("Regex match failed: %s\n", msgbuf);
+    }
+
+    regfree(&regex);
+    return -1;
+}
+
+int main() {
+    char str[] = "Hello, World!";
+    char pattern[] = "World";
+    search_pattern(str, pattern);
+    return 0;
+}
+```

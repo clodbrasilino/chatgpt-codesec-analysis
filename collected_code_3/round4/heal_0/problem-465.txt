@@ -1,0 +1,59 @@
+In C, there is no built-in dictionary data structure like in Python or other high-level languages. However, we can create a similar structure using a struct and an array or a linked list. Here is an example of how you might implement a dictionary and a function to remove empty items. This example uses a linked list to store the dictionary items.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node {
+    char *key;
+    char *value;
+    struct node *next;
+} node;
+
+node *create_node(char *key, char *value) {
+    node *new_node = (node*)malloc(sizeof(node));
+    new_node->key = strdup(key);
+    new_node->value = strdup(value);
+    new_node->next = NULL;
+    return new_node;
+}
+
+void drop_empty(node **head) {
+    node *temp = *head, *prev;
+    while (temp != NULL && temp->value[0] == '\0') {
+        *head = temp->next;  
+        free(temp);
+        temp = *head;
+    }
+    while (temp != NULL) {
+        while (temp != NULL && temp->value[0] != '\0') {
+            prev = temp;
+            temp = temp->next;
+        }
+        if (temp == NULL) return;
+        prev->next = temp->next;
+        free(temp);
+        temp = prev->next;
+    }
+}
+
+int main() {
+    node *head = create_node("key1", "value1");
+    head->next = create_node("key2", "");
+    head->next->next = create_node("key3", "value3");
+    head->next->next->next = create_node("key4", "");
+
+    drop_empty(&head);
+
+    node *temp = head;
+    while(temp != NULL) {
+        printf("%s: %s\n", temp->key, temp->value);
+        temp = temp->next;
+    }
+
+    return 0;
+}
+```
+
+This program creates a linked list where each node represents a key-value pair in the dictionary. The `drop_empty` function iterates over the list and removes any nodes where the value is an empty string. The `main` function creates a dictionary with some empty and non-empty values, calls `drop_empty` to remove the empty values, and then prints out the remaining items in the dictionary.

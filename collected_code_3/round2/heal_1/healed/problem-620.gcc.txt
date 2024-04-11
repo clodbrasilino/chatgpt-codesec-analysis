@@ -1,0 +1,68 @@
+./collected_code_3/round2/heal_1/healed/problem-620.c: In function 'largestDivisibleSubset':
+./collected_code_3/round2/heal_1/healed/problem-620.c:9:16: warning: leak of 'pre' [CWE-401] [-Wanalyzer-malloc-leak]
+    9 |         return -1;
+      |                ^
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |    7 |     int *pre = (int*)malloc(sizeof(int)*numsSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) allocated here
+    |    8 |     if(count == NULL || pre == NULL) {
+    |      |       ~ 
+    |      |       |
+    |      |       (4) following 'true' branch (when 'count' is NULL)...
+    |    9 |         return -1;
+    |      |                ~
+    |      |                |
+    |      |                (5) ...to here
+    |      |                (6) 'pre' leaks here; was allocated at (3)
+    |
+./collected_code_3/round2/heal_1/healed/problem-620.c:9:16: warning: leak of 'count' [CWE-401] [-Wanalyzer-malloc-leak]
+    9 |         return -1;
+      |                ^
+  'largestDivisibleSubset': events 1-5
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) allocated here
+    |    7 |     int *pre = (int*)malloc(sizeof(int)*numsSize);
+    |    8 |     if(count == NULL || pre == NULL) {
+    |      |       ~ 
+    |      |       |
+    |      |       (4) assuming 'count' is non-NULL
+    |      |       (5) following 'false' branch (when 'count' is non-NULL)...
+    |
+  'largestDivisibleSubset': event 6
+    |
+    |    8 |     if(count == NULL || pre == NULL) {
+    |      |                      ^
+    |      |                      |
+    |      |                      (6) ...to here
+    |
+  'largestDivisibleSubset': events 7-9
+    |
+    |    8 |     if(count == NULL || pre == NULL) {
+    |      |                      ^
+    |      |                      |
+    |      |                      (7) following 'true' branch (when 'pre' is NULL)...
+    |    9 |         return -1;
+    |      |                ~      
+    |      |                |
+    |      |                (8) ...to here
+    |      |                (9) 'count' leaks here; was allocated at (3)
+    |

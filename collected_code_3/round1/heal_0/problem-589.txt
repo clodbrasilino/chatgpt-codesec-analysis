@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+#include <math.h>
+
+void findPerfectSquares(int start, int end) {
+    int i, squareRoot;
+    for(i = start; i <= end; i++) {
+        squareRoot = sqrt(i);
+        if(squareRoot * squareRoot == i) {
+            printf("%d ", i);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int start = 10, end = 100;
+    findPerfectSquares(start, end);
+    return 0;
+}
+```

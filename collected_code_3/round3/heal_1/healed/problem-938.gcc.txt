@@ -1,0 +1,25 @@
+./collected_code_3/round3/heal_1/healed/problem-938.c: In function 'findClosest':
+./collected_code_3/round3/heal_1/healed/problem-938.c:19:33: error: too few arguments to function 'min'
+   19 |         int minimum = min(A[i], min(B[j], C[k]));
+      |                                 ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:4:5: note: declared here
+    4 | int min(int x, int y, int z) {
+      |     ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:19:23: error: too few arguments to function 'min'
+   19 |         int minimum = min(A[i], min(B[j], C[k]));
+      |                       ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:4:5: note: declared here
+    4 | int min(int x, int y, int z) {
+      |     ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:20:33: error: too few arguments to function 'max'
+   20 |         int maximum = max(A[i], max(B[j], C[k]));
+      |                                 ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:9:5: note: declared here
+    9 | int max(int x, int y, int z) {
+      |     ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:20:23: error: too few arguments to function 'max'
+   20 |         int maximum = max(A[i], max(B[j], C[k]));
+      |                       ^~~
+./collected_code_3/round3/heal_1/healed/problem-938.c:9:5: note: declared here
+    9 | int max(int x, int y, int z) {
+      |     ^~~

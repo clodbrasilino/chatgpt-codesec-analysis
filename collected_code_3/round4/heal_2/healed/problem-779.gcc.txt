@@ -1,0 +1,489 @@
+./collected_code_3/round4/heal_2/healed/problem-779.c: In function 'main':
+./collected_code_3/round4/heal_2/healed/problem-779.c:56:15: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   56 |     if (arr[0]->next != NULL) arr[0]->next->next = newNode(30);
+      |         ~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   54 |     arr[0] = newNode(10);
+    |      |              ~~~~~~~~~~~
+    |      |              |
+    |      |              (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-4
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 5
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-13
+    |
+    |   54 |     arr[0] = newNode(10);
+    |      |     ~~~~~~~~~^~~~~~~~~~~
+    |      |            | |
+    |      |            | (7) returning to 'main' from 'newNode'
+    |      |            (8) '0' is NULL
+    |   55 |     if (arr[0] != NULL) arr[0]->next = newNode(20);
+    |      |        ~~~~~~~
+    |      |        |   |
+    |      |        |   (9) '0' is NULL
+    |      |        (10) following 'false' branch...
+    |   56 |     if (arr[0]->next != NULL) arr[0]->next->next = newNode(30);
+    |      |         ~~~~~~~~~~~~
+    |      |            |  |
+    |      |            |  (13) dereference of NULL 'arr[0]'
+    |      |            (11) ...to here
+    |      |            (12) '0' is NULL
+    |
+./collected_code_3/round4/heal_2/healed/problem-779.c:60:15: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   60 |     if (arr[1]->next != NULL) arr[1]->next->next = newNode(30);
+      |         ~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   54 |     arr[0] = newNode(10);
+    |      |              ~~~~~~~~~~~
+    |      |              |
+    |      |              (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   15 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   54 |     arr[0] = newNode(10);
+    |      |              ^~~~~~~~~~~
+    |      |              |
+    |      |              (7) returning to 'main' from 'newNode'
+    |   55 |     if (arr[0] != NULL) arr[0]->next = newNode(20);
+    |      |        ~                ~~~~~~         ~~~~~~~~~~~
+    |      |        |                   |           |
+    |      |        |                   |           (10) calling 'newNode' from 'main'
+    |      |        |                   (9) ...to here
+    |      |        (8) following 'true' branch...
+    |
+    +--> 'newNode': events 11-12
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 13
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-19
+    |
+    |   55 |     if (arr[0] != NULL) arr[0]->next = newNode(20);
+    |      |                                        ^~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (15) returning to 'main' from 'newNode'
+    |   56 |     if (arr[0]->next != NULL) arr[0]->next->next = newNode(30);
+    |      |        ~~~~~~~~~~~~~                    
+    |      |        |      |
+    |      |        |      (16) '0' is NULL
+    |      |        (17) following 'false' branch...
+    |   57 | 
+    |   58 |     arr[1] = newNode(10);
+    |      |              ~~~~~~~~~~~                
+    |      |              |
+    |      |              (18) ...to here
+    |      |              (19) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 20-21
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (20) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (21) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 22
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+         'newNode': event 23
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (23) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 24-30
+    |
+    |   58 |     arr[1] = newNode(10);
+    |      |     ~~~~~~~~~^~~~~~~~~~~
+    |      |            | |
+    |      |            | (24) returning to 'main' from 'newNode'
+    |      |            (25) '0' is NULL
+    |   59 |     if (arr[1] != NULL) arr[1]->next = newNode(20);
+    |      |        ~~~~~~~
+    |      |        |   |
+    |      |        |   (26) '0' is NULL
+    |      |        (27) following 'false' branch...
+    |   60 |     if (arr[1]->next != NULL) arr[1]->next->next = newNode(30);
+    |      |         ~~~~~~~~~~~~
+    |      |            |  |
+    |      |            |  (30) dereference of NULL 'arr[1]'
+    |      |            (28) ...to here
+    |      |            (29) '0' is NULL
+    |
+./collected_code_3/round4/heal_2/healed/problem-779.c:67:15: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   67 |     if (arr[3]->next != NULL) arr[3]->next->next = newNode(30);
+      |         ~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   54 |     arr[0] = newNode(10);
+    |      |              ~~~~~~~~~~~
+    |      |              |
+    |      |              (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |
+         'newNode': event 6
+           |
+           |   15 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (6) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 7-10
+    |
+    |   54 |     arr[0] = newNode(10);
+    |      |              ^~~~~~~~~~~
+    |      |              |
+    |      |              (7) returning to 'main' from 'newNode'
+    |   55 |     if (arr[0] != NULL) arr[0]->next = newNode(20);
+    |      |        ~                ~~~~~~         ~~~~~~~~~~~
+    |      |        |                   |           |
+    |      |        |                   |           (10) calling 'newNode' from 'main'
+    |      |        |                   (9) ...to here
+    |      |        (8) following 'true' branch...
+    |
+    +--> 'newNode': events 11-12
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (11) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 13
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (13) ...to here
+           |
+         'newNode': event 14
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (14) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 15-19
+    |
+    |   55 |     if (arr[0] != NULL) arr[0]->next = newNode(20);
+    |      |                                        ^~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (15) returning to 'main' from 'newNode'
+    |   56 |     if (arr[0]->next != NULL) arr[0]->next->next = newNode(30);
+    |      |        ~~~~~~~~~~~~~                    
+    |      |        |      |
+    |      |        |      (16) '0' is NULL
+    |      |        (17) following 'false' branch...
+    |   57 | 
+    |   58 |     arr[1] = newNode(10);
+    |      |              ~~~~~~~~~~~                
+    |      |              |
+    |      |              (18) ...to here
+    |      |              (19) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 20-22
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (20) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (21) following 'false' branch (when 'node' is non-NULL)...
+           |......
+           |   14 |     node->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (22) ...to here
+           |
+         'newNode': event 23
+           |
+           |   15 |     node->next = NULL;
+           |      |                ^
+           |      |                |
+           |      |                (23) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 24-27
+    |
+    |   58 |     arr[1] = newNode(10);
+    |      |              ^~~~~~~~~~~
+    |      |              |
+    |      |              (24) returning to 'main' from 'newNode'
+    |   59 |     if (arr[1] != NULL) arr[1]->next = newNode(20);
+    |      |        ~                ~~~~~~         ~~~~~~~~~~~
+    |      |        |                   |           |
+    |      |        |                   |           (27) calling 'newNode' from 'main'
+    |      |        |                   (26) ...to here
+    |      |        (25) following 'true' branch...
+    |
+    +--> 'newNode': events 28-29
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (28) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (29) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 30
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (30) ...to here
+           |
+         'newNode': event 31
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (31) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 32-36
+    |
+    |   59 |     if (arr[1] != NULL) arr[1]->next = newNode(20);
+    |      |                                        ^~~~~~~~~~~
+    |      |                                        |
+    |      |                                        (32) returning to 'main' from 'newNode'
+    |   60 |     if (arr[1]->next != NULL) arr[1]->next->next = newNode(30);
+    |      |        ~~~~~~~~~~~~~                    
+    |      |        |      |
+    |      |        |      (33) '0' is NULL
+    |      |        (34) following 'false' branch...
+    |   61 | 
+    |   62 |     arr[2] = newNode(40);
+    |      |              ~~~~~~~~~~~                
+    |      |              |
+    |      |              (35) ...to here
+    |      |              (36) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 37-38
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (37) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (38) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 39
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (39) ...to here
+           |
+         'newNode': event 40
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (40) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 41-46
+    |
+    |   62 |     arr[2] = newNode(40);
+    |      |     ~~~~~~~~~^~~~~~~~~~~
+    |      |            | |
+    |      |            | (41) returning to 'main' from 'newNode'
+    |      |            (42) '0' is NULL
+    |   63 |     if (arr[2] != NULL) arr[2]->next = newNode(50);
+    |      |        ~~~~~~~
+    |      |        |   |
+    |      |        |   (43) '0' is NULL
+    |      |        (44) following 'false' branch...
+    |   64 | 
+    |   65 |     arr[3] = newNode(10);
+    |      |              ~~~~~~~~~~~
+    |      |              |
+    |      |              (45) ...to here
+    |      |              (46) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 47-48
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (47) entry to 'newNode'
+           |   10 |     struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (node == NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (48) following 'true' branch (when 'node' is NULL)...
+           |
+         'newNode': event 49
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (49) ...to here
+           |
+         'newNode': event 50
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (50) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 51-57
+    |
+    |   65 |     arr[3] = newNode(10);
+    |      |     ~~~~~~~~~^~~~~~~~~~~
+    |      |            | |
+    |      |            | (51) returning to 'main' from 'newNode'
+    |      |            (52) '0' is NULL
+    |   66 |     if (arr[3] != NULL) arr[3]->next = newNode(20);
+    |      |        ~~~~~~~
+    |      |        |   |
+    |      |        |   (53) '0' is NULL
+    |      |        (54) following 'false' branch...
+    |   67 |     if (arr[3]->next != NULL) arr[3]->next->next = newNode(30);
+    |      |         ~~~~~~~~~~~~
+    |      |            |  |
+    |      |            |  (57) dereference of NULL 'arr[3]'
+    |      |            (55) ...to here
+    |      |            (56) '0' is NULL
+    |

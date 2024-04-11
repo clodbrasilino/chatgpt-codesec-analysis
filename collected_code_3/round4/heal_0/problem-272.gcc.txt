@@ -1,0 +1,15 @@
+collected_code_3/round4/heal_0/problem-272.c: In function 'create_tuple':
+collected_code_3/round4/heal_0/problem-272.c:11:18: warning: dereference of possibly-NULL 'new_tuple' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     new_tuple->a = a;
+      |     ~~~~~~~~~~~~~^~~
+  'create_tuple': events 1-2
+    |
+    |   10 |     Tuple* new_tuple = (Tuple*)malloc(sizeof(Tuple));
+    |      |                                ^~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (1) this call could return NULL
+    |   11 |     new_tuple->a = a;
+    |      |     ~~~~~~~~~~~~~~~~            
+    |      |                  |
+    |      |                  (2) 'new_tuple' could be NULL: unchecked value from (1)
+    |

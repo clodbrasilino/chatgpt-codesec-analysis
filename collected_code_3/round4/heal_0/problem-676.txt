@@ -1,0 +1,27 @@
+Unfortunately, the C language does not natively support regular expressions (regex). However, we can achieve the desired result using standard C functions without regex. Here is a simple C program that removes all non-alphanumeric characters from a string:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void remove_non_alphanumeric(char *str) {
+    int i, j = 0, len;
+    len = strlen(str);
+    for(i = 0; i < len; i++) {
+        if(isalnum(str[i])) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, World! 123";
+    remove_non_alphanumeric(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+In this program, the `remove_non_alphanumeric` function iterates over each character in the input string. If the character is alphanumeric (checked using the `isalnum` function), it is copied to the output string. All non-alphanumeric characters are effectively skipped, and the output string is terminated with a null character (`'\0'`). The `main` function demonstrates the usage of this function with a sample string.

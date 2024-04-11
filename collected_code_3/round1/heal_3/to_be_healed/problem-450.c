@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extractStrings(char **list, int listSize, int stringSize) {
+    char **result = calloc(listSize + 1, sizeof(char *));
+    if (!result) {
+        return NULL;
+    }
+    int count = 0;
+    for(int i = 0; i < listSize; i++) {
+        if(strlen(list[i]) == stringSize) {
+            /* Possible weaknesses found:
+             *  write of 8 bytes to beyond the end of the region
+             *  heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+             */
+            result[count] = calloc((stringSize + 1), sizeof(char));
+            /* Possible weaknesses found:
+             *  read of 8 bytes from after the end of the region
+             *  heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+             */
+            if (!result[count]) {
+                while (count) {
+                    free(result[--count]);
+                }
+                free(result);
+                return NULL;
+            }
+            strcpy(result[count++], list[i]);
+        }
+    }
+    char **tmp = realloc(result, (count + 1) * sizeof(char *));
+    if (!tmp) {
+        while (count) {
+            free(result[--count]);
+        }
+        free(result);
+        return NULL;
+    }
+    result = tmp;
+    return result;
+}
+
+int main() {
+    char *list[] = {"Hello", "World", "C", "Programming", "Language"};
+    int listSize = sizeof(list) / sizeof(list[0]);
+    int stringSize = 5;
+    char **result = extractStrings(list, listSize, stringSize);
+    if (!result) {
+        return 1;
+    }
+    for(int i = 0; result[i] != NULL; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+    return 0;
+}

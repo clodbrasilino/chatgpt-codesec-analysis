@@ -1,0 +1,150 @@
+collected_code_3/round1/heal_1/healed/problem-585.c: In function 'heapify':
+collected_code_3/round1/heal_1/healed/problem-585.c:36:34: warning: use of uninitialized value '*_4 + _6' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   36 |     if (left < h->count && h->arr[left] < h->arr[smallest])
+      |                            ~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   63 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   68 |     Heap *h = createHeap(k);
+    |      |               ~~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'main'
+    |
+    +--> 'createHeap': events 3-8
+           |
+           |   10 | Heap *createHeap(int capacity) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   11 |     Heap *h = (Heap *) malloc(sizeof(Heap));
+           |   12 |     if (h == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'h' is non-NULL)...
+           |......
+           |   15 |     h->count = 0;
+           |      |     ~~~~~~~~~~~~
+           |      |              |
+           |      |              (5) ...to here
+           |   16 |     h->capacity = capacity;
+           |   17 |     h->arr = (int *) malloc(sizeof(int) * h->capacity);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) region created on heap here
+           |   18 |     if (h->arr == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (7) following 'false' branch...
+           |......
+           |   22 |     return h;
+           |      |            ~
+           |      |            |
+           |      |            (8) ...to here
+           |
+    <------+
+    |
+  'main': events 9-14
+    |
+    |   68 |     Heap *h = createHeap(k);
+    |      |               ^~~~~~~~~~~~~
+    |      |               |
+    |      |               (9) returning to 'main' from 'createHeap'
+    |   69 |     if (h == NULL) {
+    |      |        ~       
+    |      |        |
+    |      |        (10) following 'false' branch (when 'h' is non-NULL)...
+    |......
+    |   73 |     for (int i = 0; i < n; i++)
+    |      |              ~      ~~~~~
+    |      |              |        |
+    |      |              |        (12) following 'true' branch (when 'i < n')...
+    |      |              (11) ...to here
+    |   74 |         insert(h, prices[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (13) ...to here
+    |      |         (14) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 15-19
+           |
+           |   48 | void insert(Heap *h, int value) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (15) entry to 'insert'
+           |   49 |     if (h->count < h->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'true' branch...
+           |   50 |         h->arr[h->count++] = value;
+           |      |         ~~~~~~
+           |      |          |
+           |      |          (17) ...to here
+           |......
+           |   53 |         while (i != 0 && h->arr[(i - 1) / 2] > h->arr[i]) {
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) following 'false' branch (when 'i == 0')...
+           |......
+           |   61 | }
+           |      | ~     
+           |      | |
+           |      | (19) ...to here
+           |
+    <------+
+    |
+  'main': events 20-23
+    |
+    |   73 |     for (int i = 0; i < n; i++)
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (21) following 'true' branch (when 'i < n')...
+    |   74 |         insert(h, prices[i]);
+    |      |         ^~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (20) returning to 'main' from 'insert'
+    |      |         (22) ...to here
+    |      |         (23) calling 'insert' from 'main'
+    |
+    +--> 'insert': events 24-29
+           |
+           |   48 | void insert(Heap *h, int value) {
+           |      |      ^~~~~~
+           |      |      |
+           |      |      (24) entry to 'insert'
+           |   49 |     if (h->count < h->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (25) following 'false' branch...
+           |......
+           |   57 |     } else if (value > h->arr[0]) {
+           |      |               ~        ~~~~~~
+           |      |               |         |
+           |      |               |         (26) ...to here
+           |      |               (27) following 'true' branch...
+           |   58 |         h->arr[0] = value;
+           |      |         ~~~~~~
+           |      |          |
+           |      |          (28) ...to here
+           |   59 |         heapify(h, 0);
+           |      |         ~~~~~~~~~~~~~
+           |      |         |
+           |      |         (29) calling 'heapify' from 'insert'
+           |
+           +--> 'heapify': events 30-33
+                  |
+                  |   31 | void heapify(Heap *h, int i) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (30) entry to 'heapify'
+                  |......
+                  |   36 |     if (left < h->count && h->arr[left] < h->arr[smallest])
+                  |      |        ~                   ~~~~~~~~~~~~
+                  |      |        |                    |    |
+                  |      |        |                    |    (33) use of uninitialized value '*_4 + _6' here
+                  |      |        |                    (32) ...to here
+                  |      |        (31) following 'true' branch...
+                  |

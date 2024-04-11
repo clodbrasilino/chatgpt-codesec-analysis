@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isNumberInSequence(int num) {
+    int sequenceNum = 0;
+    while (sequenceNum <= num) {
+        if (sequenceNum == num) {
+            return true;
+        }
+        sequenceNum = sequenceNum * 2 + 1;
+    }
+    return false;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if (isNumberInSequence(num)) {
+        printf("The number is present in the sequence.\n");
+    } else {
+        printf("The number is not present in the sequence.\n");
+    }
+    return 0;
+}
+```

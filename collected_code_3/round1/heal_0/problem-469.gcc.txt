@@ -1,0 +1,308 @@
+collected_code_3/problem-469-1.c: In function 'maxProfit':
+collected_code_3/problem-469-1.c:21:15: warning: dereference of possibly-NULL 'dp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |         dp[i] = (int *)malloc((n + 1) * sizeof(int));
+      |         ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'maxProfit': events 1-8
+    |
+    |    5 |     if (k == 0 || n == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |    9 |     if (k > n / 2) {
+    |      |        ~    ~~~~~
+    |      |        |      |
+    |      |        |      (2) ...to here
+    |      |        (3) following 'false' branch...
+    |......
+    |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |         |
+    |      |                        |         (4) ...to here
+    |      |                        (5) this call could return NULL
+    |   20 |     for (int i = 0; i <= k; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (6) following 'true' branch (when 'i <= k')...
+    |   21 |         dp[i] = (int *)malloc((n + 1) * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |               |                  |
+    |      |               |                  (7) ...to here
+    |      |               (8) 'dp + (long unsigned int)i * 8' could be NULL: unchecked value from (5)
+    |
+collected_code_3/problem-469-1.c:25:18: warning: dereference of possibly-NULL '*dp_104 + _32' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |         dp[i][0] = 0;
+      |         ~~~~~~~~~^~~
+  'maxProfit': events 1-12
+    |
+    |    5 |     if (k == 0 || n == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |    9 |     if (k > n / 2) {
+    |      |        ~    ~~~~~
+    |      |        |      |
+    |      |        |      (2) ...to here
+    |      |        (3) following 'false' branch...
+    |......
+    |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+    |      |                               ~~~~~~~
+    |      |                                  |
+    |      |                                  (4) ...to here
+    |   20 |     for (int i = 0; i <= k; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (5) following 'true' branch (when 'i <= k')...
+    |      |                       (8) following 'false' branch (when 'i > k')...
+    |   21 |         dp[i] = (int *)malloc((n + 1) * sizeof(int));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |         |
+    |      |                        |         (6) ...to here
+    |      |                        (7) this call could return NULL
+    |......
+    |   24 |     for (int i = 0; i <= k; i++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (10) following 'true' branch (when 'i <= k')...
+    |      |              (9) ...to here
+    |   25 |         dp[i][0] = 0;
+    |      |         ~~~~~~~~~~~~
+    |      |           |      |
+    |      |           |      (12) '*dp_104 + _32' could be NULL: unchecked value from (7)
+    |      |           (11) ...to here
+    |
+collected_code_3/problem-469-1.c:29:11: warning: use of uninitialized value '*dp' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   29 |         dp[0][j] = 0;
+      |         ~~^~~
+  'maxProfit': events 1-12
+    |
+    |    5 |     if (k == 0 || n == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |    9 |     if (k > n / 2) {
+    |      |        ~    ~~~~~
+    |      |        |      |
+    |      |        |      (2) ...to here
+    |      |        (3) following 'false' branch...
+    |......
+    |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |         |
+    |      |                        |         (4) ...to here
+    |      |                        (5) region created on heap here
+    |   20 |     for (int i = 0; i <= k; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (6) following 'false' branch (when 'i > k')...
+    |......
+    |   24 |     for (int i = 0; i <= k; i++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (8) following 'false' branch (when 'i > k')...
+    |      |              (7) ...to here
+    |......
+    |   28 |     for (int j = 0; j <= n; j++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (10) following 'true' branch (when 'j <= n')...
+    |      |              (9) ...to here
+    |   29 |         dp[0][j] = 0;
+    |      |         ~~~~~
+    |      |           |
+    |      |           (11) ...to here
+    |      |           (12) use of uninitialized value '*dp' here
+    |
+collected_code_3/problem-469-1.c:29:11: warning: dereference of possibly-NULL 'dp' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |         dp[0][j] = 0;
+      |         ~~^~~
+  'maxProfit': events 1-12
+    |
+    |    5 |     if (k == 0 || n == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |    9 |     if (k > n / 2) {
+    |      |        ~    ~~~~~
+    |      |        |      |
+    |      |        |      (2) ...to here
+    |      |        (3) following 'false' branch...
+    |......
+    |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |         |
+    |      |                        |         (4) ...to here
+    |      |                        (5) this call could return NULL
+    |   20 |     for (int i = 0; i <= k; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (6) following 'false' branch (when 'i > k')...
+    |......
+    |   24 |     for (int i = 0; i <= k; i++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (8) following 'false' branch (when 'i > k')...
+    |      |              (7) ...to here
+    |......
+    |   28 |     for (int j = 0; j <= n; j++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (10) following 'true' branch (when 'j <= n')...
+    |      |              (9) ...to here
+    |   29 |         dp[0][j] = 0;
+    |      |         ~~~~~
+    |      |           |
+    |      |           (11) ...to here
+    |      |           (12) 'dp' could be NULL: unchecked value from (5)
+    |
+collected_code_3/problem-469-1.c:40:14: warning: use of uninitialized value '*dp_104 + _77' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   40 |     return dp[k][n - 1];
+      |            ~~^~~
+  'maxProfit': events 1-14
+    |
+    |    5 |     if (k == 0 || n == 0) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch...
+    |......
+    |    9 |     if (k > n / 2) {
+    |      |        ~    ~~~~~
+    |      |        |      |
+    |      |        |      (2) ...to here
+    |      |        (3) following 'false' branch...
+    |......
+    |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |         |
+    |      |                        |         (4) ...to here
+    |      |                        (5) region created on heap here
+    |   20 |     for (int i = 0; i <= k; i++) {
+    |      |                     ~~~~~~
+    |      |                       |
+    |      |                       (6) following 'false' branch (when 'i > k')...
+    |......
+    |   24 |     for (int i = 0; i <= k; i++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (8) following 'false' branch (when 'i > k')...
+    |      |              (7) ...to here
+    |......
+    |   28 |     for (int j = 0; j <= n; j++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (10) following 'false' branch (when 'j > n')...
+    |      |              (9) ...to here
+    |......
+    |   32 |     for (int i = 1; i <= k; i++) {
+    |      |              ~      ~~~~~~
+    |      |              |        |
+    |      |              |        (12) following 'false' branch (when 'i > k')...
+    |      |              (11) ...to here
+    |......
+    |   40 |     return dp[k][n - 1];
+    |      |            ~~~~~
+    |      |              |
+    |      |              (13) ...to here
+    |      |              (14) use of uninitialized value '*dp_104 + _77' here
+    |
+collected_code_3/problem-469-1.c:40:17: warning: use of uninitialized value '*_79 + _82' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   40 |     return dp[k][n - 1];
+      |            ~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   43 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   47 |     printf("Maximum profit is %d", maxProfit(k, n, prices));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'maxProfit' from 'main'
+    |
+    +--> 'maxProfit': events 3-31
+           |
+           |    4 | int maxProfit(int k, int n, int prices[]) {
+           |      |     ^~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'maxProfit'
+           |    5 |     if (k == 0 || n == 0) {
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch...
+           |......
+           |    9 |     if (k > n / 2) {
+           |      |        ~    ~~~~~
+           |      |        |      |
+           |      |        |      (5) ...to here
+           |      |        (6) following 'false' branch...
+           |......
+           |   19 |     int **dp = (int **)malloc((k + 1) * sizeof(int *));
+           |      |                               ~~~~~~~
+           |      |                                  |
+           |      |                                  (7) ...to here
+           |   20 |     for (int i = 0; i <= k; i++) {
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (8) following 'true' branch (when 'i <= k')...
+           |      |                       (10) following 'true' branch (when 'i <= k')...
+           |      |                       (12) following 'true' branch (when 'i <= k')...
+           |      |                       (15) following 'false' branch (when 'i > k')...
+           |   21 |         dp[i] = (int *)malloc((n + 1) * sizeof(int));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |         |
+           |      |                        |         (9) ...to here
+           |      |                        |         (11) ...to here
+           |      |                        |         (13) ...to here
+           |      |                        (14) region created on heap here
+           |......
+           |   24 |     for (int i = 0; i <= k; i++) {
+           |      |              ~      ~~~~~~
+           |      |              |        |
+           |      |              |        (17) following 'true' branch (when 'i <= k')...
+           |      |              |        (19) following 'true' branch (when 'i <= k')...
+           |      |              |        (21) following 'true' branch (when 'i <= k')...
+           |      |              |        (23) following 'false' branch (when 'i > k')...
+           |      |              (16) ...to here
+           |   25 |         dp[i][0] = 0;
+           |      |           ~
+           |      |           |
+           |      |           (18) ...to here
+           |      |           (20) ...to here
+           |      |           (22) ...to here
+           |......
+           |   28 |     for (int j = 0; j <= n; j++) {
+           |      |              ~      ~~~~~~
+           |      |              |        |
+           |      |              |        (25) following 'true' branch (when 'j <= n')...
+           |      |              (24) ...to here
+           |   29 |         dp[0][j] = 0;
+           |      |         ~~~~~
+           |      |           |
+           |      |           (26) ...to here
+           |......
+           |   32 |     for (int i = 1; i <= k; i++) {
+           |      |                     ~~~~~~
+           |      |                       |
+           |      |                       (27) following 'true' branch (when 'i <= k')...
+           |   33 |         int maxDiff = -prices[0];
+           |      |                        ~~~~~~~~~
+           |      |                              |
+           |      |                              (28) ...to here
+           |   34 |         for (int j = 1; j < n; j++) {
+           |      |                         ~~~~~
+           |      |                           |
+           |      |                           (29) following 'true' branch (when 'j < n')...
+           |   35 |             dp[i][j] = dp[i][j - 1] > (prices[j] + maxDiff) ? dp[i][j - 1] : (prices[j] + maxDiff);
+           |      |                                              ~
+           |      |                                              |
+           |      |                                              (30) ...to here
+           |......
+           |   40 |     return dp[k][n - 1];
+           |      |            ~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (31) use of uninitialized value '*_79 + _82' here
+           |

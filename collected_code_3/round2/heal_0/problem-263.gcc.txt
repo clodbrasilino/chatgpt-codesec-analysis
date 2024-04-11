@@ -1,0 +1,81 @@
+collected_code_3/problem-263-2.c: In function 'createDictionary':
+collected_code_3/problem-263-2.c:17:17: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |     dict->pairs = malloc(sizeof(KeyValuePair) * size);
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   42 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   43 |     Dictionary* dict1 = createDictionary(2);
+    |      |                         ~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-5
+           |
+           |   15 | Dictionary* createDictionary(size_t size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary* dict = malloc(sizeof(Dictionary));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |   17 |     dict->pairs = malloc(sizeof(KeyValuePair) * size);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (5) 'dict' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-263-2.c: In function 'setKeyValuePair':
+collected_code_3/problem-263-2.c:23:28: warning: dereference of possibly-NULL '*dict.pairs + index * 16' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |     dict->pairs[index].key = strdup(key);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   42 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   43 |     Dictionary* dict1 = createDictionary(2);
+    |      |                         ~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-4
+           |
+           |   15 | Dictionary* createDictionary(size_t size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     Dictionary* dict = malloc(sizeof(Dictionary));
+           |   17 |     dict->pairs = malloc(sizeof(KeyValuePair) * size);
+           |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   43 |     Dictionary* dict1 = createDictionary(2);
+    |      |                         ^~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (5) returning to 'main' from 'createDictionary'
+    |   44 |     setKeyValuePair(dict1, 0, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'setKeyValuePair' from 'main'
+    |
+    +--> 'setKeyValuePair': events 7-8
+           |
+           |   22 | void setKeyValuePair(Dictionary* dict, size_t index, char* key, char* value) {
+           |      |      ^~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'setKeyValuePair'
+           |   23 |     dict->pairs[index].key = strdup(key);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (8) '*dict.pairs + index * 16' could be NULL: unchecked value from (4)
+           |

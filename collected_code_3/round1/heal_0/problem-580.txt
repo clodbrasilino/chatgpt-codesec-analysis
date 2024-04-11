@@ -1,0 +1,27 @@
+Here is a C program that extracts the even elements from a 2D array (since C doesn't have a tuple data structure like Python). This program assumes that the 2D array is of fixed size for simplicity.
+
+```c
+#include <stdio.h>
+
+#define ROW 3
+#define COL 3
+
+void extractEven(int arr[ROW][COL]) {
+    int i, j;
+    for(i = 0; i < ROW; i++) {
+        for(j = 0; j < COL; j++) {
+            if(arr[i][j] % 2 == 0) {
+                printf("%d ", arr[i][j]);
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[ROW][COL] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    extractEven(arr);
+    return 0;
+}
+```
+
+In this program, the `extractEven` function goes through each element in the 2D array and checks if it is even by using the modulus operator. If it is even, it prints the element. The `main` function initializes a 2D array and calls the `extractEven` function.

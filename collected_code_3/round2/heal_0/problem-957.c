@@ -1,0 +1,11 @@
+#include <stdio.h>
+
+int rightmostSetBitPos(int n) {
+    return log2(n & -n) + 1;
+}
+
+int main() {
+    int n = 18;
+    printf("%d", rightmostSetBitPos(n));
+    return 0;
+}

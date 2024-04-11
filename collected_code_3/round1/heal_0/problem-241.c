@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+void generate3DArray(int x, int y, int z) {
+    char array3D[x][y][z];
+    for(int i = 0; i < x; i++) {
+        for(int j = 0; j < y; j++) {
+            for(int k = 0; k < z; k++) {
+                array3D[i][j][k] = '*';
+                printf("%c ", array3D[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int x = 3, y = 3, z = 3;
+    generate3DArray(x, y, z);
+    return 0;
+}

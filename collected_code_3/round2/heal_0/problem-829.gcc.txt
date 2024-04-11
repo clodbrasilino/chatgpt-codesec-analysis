@@ -1,0 +1,94 @@
+collected_code_3/problem-829-2.c: In function 'second_most_repeated':
+collected_code_3/problem-829-2.c:47:12: warning: function returns address of local variable [-Wreturn-local-addr]
+   47 |     return wc[second_max].str;
+      |            ^~
+collected_code_3/problem-829-2.c: In function 'main':
+collected_code_3/problem-829-2.c:54:5: warning: use of NULL 'res' where non-null expected [CWE-476] [-Wanalyzer-null-argument]
+   54 |     printf("%s\n", res);
+      |     ^~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   50 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   53 |     char* res = second_most_repeated(str, n);
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) calling 'second_most_repeated' from 'main'
+    |
+    +--> 'second_most_repeated': events 3-6
+           |
+           |   22 | char* second_most_repeated(char* str[], int n) {
+           |      |       ^~~~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'second_most_repeated'
+           |......
+           |   26 |     for(int i = 0; i < n; i++) {
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < n')...
+           |   27 |         int index = find_index(wc, distinct_word_count, str[i]);
+           |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |                                      |
+           |      |                     |                                      (5) ...to here
+           |      |                     (6) calling 'find_index' from 'second_most_repeated'
+           |
+           +--> 'find_index': events 7-9
+                  |
+                  |   13 | int find_index(WordCount wc[], int n, char* str) {
+                  |      |     ^~~~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'find_index'
+                  |   14 |     for(int i = 0; i < n; i++) {
+                  |      |                    ~~~~~
+                  |      |                      |
+                  |      |                      (8) following 'false' branch (when 'i >= n')...
+                  |......
+                  |   19 |     return -1;
+                  |      |            ~
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'second_most_repeated': events 10-11
+           |
+           |   27 |         int index = find_index(wc, distinct_word_count, str[i]);
+           |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (10) returning to 'second_most_repeated' from 'find_index'
+           |   28 |         if(index == -1) {
+           |      |           ~          
+           |      |           |
+           |      |           (11) following 'true' branch (when 'index == -1')...
+           |
+         'second_most_repeated': event 12
+           |
+           |   29 |             strcpy(wc[distinct_word_count].str, str[i]);
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~^~~~
+           |      |                                           |
+           |      |                                           (12) ...to here
+           |
+         'second_most_repeated': event 13
+           |
+           |   47 |     return wc[second_max].str;
+           |      |            ^~
+           |      |            |
+           |      |            (13) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 14-15
+    |
+    |   53 |     char* res = second_most_repeated(str, n);
+    |      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (14) returning to 'main' from 'second_most_repeated'
+    |   54 |     printf("%s\n", res);
+    |      |     ~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (15) argument 1 ('res') NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

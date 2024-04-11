@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void extract_values(char *str) {
+    regex_t regex;
+    regmatch_t matches[2];
+    char pattern[] = "\"([^\"]*)\"";
+
+    regcomp(&regex, pattern, REG_EXTENDED);
+
+    while (regexec(&regex, str, 2, matches, 0) == 0) {
+        int length = matches[1].rm_eo - matches[1].rm_so;
+        char match[length + 1];
+        strncpy(match, &str[matches[1].rm_so], length);
+        match[length] = '\0';
+        printf("%s\n", match);
+        str += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This is a \"test\" string with \"multiple\" values in \"quotes\".";
+    extract_values(str);
+    return 0;
+}

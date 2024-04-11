@@ -1,0 +1,116 @@
+./collected_code_3/round3/heal_3/healed/problem-551.c: In function 'extractColumn':
+./collected_code_3/round3/heal_3/healed/problem-551.c:26:37: warning: use of uninitialized value '*_18 + _20' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   26 |         *(column[i]) = nestedList[i][colToExtract];
+      |                        ~~~~~~~~~~~~~^~~~~~~~~~~~~~
+  'main': events 1-27
+    |
+    |   32 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   35 |     if (nestedList == NULL) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'nestedList' is non-NULL)...
+    |......
+    |   39 |     for(int i = 0; i < rows; i++) {
+    |      |             ~      ~~~~~~~~  ~~~
+    |      |             |        |        |
+    |      |             |        |        (24) ...to here
+    |      |             |        (4) following 'true' branch (when 'i < rows')...
+    |      |             |        (10) following 'true' branch (when 'i < rows')...
+    |      |             |        (16) following 'true' branch (when 'i < rows')...
+    |      |             |        (25) following 'false' branch (when 'i >= rows')...
+    |      |             (3) ...to here
+    |   40 |         nestedList[i] = (int*)malloc(cols * sizeof(int));
+    |      |                               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (5) ...to here
+    |      |                               (11) ...to here
+    |      |                               (17) ...to here
+    |      |                               (18) region created on heap here
+    |   41 | 
+    |   42 |         if (nestedList[i] == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'false' branch...
+    |      |            (12) following 'false' branch...
+    |      |            (19) following 'false' branch...
+    |......
+    |   50 |         for(int j = 0; j < cols; j++) {
+    |      |                 ~      ~~~~~~~~
+    |      |                 |        |
+    |      |                 |        (8) following 'true' branch (when 'j < cols')...
+    |      |                 |        (14) following 'true' branch (when 'j < cols')...
+    |      |                 |        (21) following 'true' branch (when 'j < cols')...
+    |      |                 |        (23) following 'false' branch (when 'j >= cols')...
+    |      |                 (7) ...to here
+    |      |                 (13) ...to here
+    |      |                 (20) ...to here
+    |   51 |             nestedList[i][j] = i * cols + j;
+    |      |                                ~~~~~~~~
+    |      |                                  |
+    |      |                                  (9) ...to here
+    |      |                                  (15) ...to here
+    |      |                                  (22) ...to here
+    |......
+    |   55 |     int returnSize = 0;
+    |      |         ~~~~~~~~~~
+    |      |         |
+    |      |         (26) ...to here
+    |   56 |     int** column = extractColumn(nestedList, rows, cols, 1, &returnSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (27) calling 'extractColumn' from 'main'
+    |
+    +--> 'extractColumn': events 28-45
+           |
+           |    4 | int** extractColumn(int** nestedList, int rows, int cols, int colToExtract, int* returnSize) {
+           |      |       ^~~~~~~~~~~~~
+           |      |       |
+           |      |       (28) entry to 'extractColumn'
+           |    5 |     if (nestedList == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (29) following 'false' branch (when 'nestedList' is non-NULL)...
+           |......
+           |    9 |     *returnSize = rows;
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (30) ...to here
+           |   10 |     int** column = (int**)malloc(rows * sizeof(int*));
+           |   11 |     if (column == NULL) {
+           |      |        ~
+           |      |        |
+           |      |        (31) following 'false' branch (when 'column' is non-NULL)...
+           |......
+           |   15 |     for (int i = 0; i < rows; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (33) following 'true' branch (when 'i < rows')...
+           |      |              |        (37) following 'true' branch (when 'i < rows')...
+           |      |              |        (41) following 'true' branch (when 'i < rows')...
+           |      |              (32) ...to here
+           |   16 |         column[i] = (int*)malloc(sizeof(int));
+           |      |               ~
+           |      |               |
+           |      |               (34) ...to here
+           |      |               (38) ...to here
+           |      |               (42) ...to here
+           |   17 | 
+           |   18 |         if (column[i] == NULL) {
+           |      |            ~
+           |      |            |
+           |      |            (35) following 'false' branch...
+           |      |            (39) following 'false' branch...
+           |      |            (43) following 'false' branch...
+           |......
+           |   26 |         *(column[i]) = nestedList[i][colToExtract];
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                  |  |
+           |      |                                  |  (45) use of uninitialized value '*_18 + _20' here
+           |      |                                  (36) ...to here
+           |      |                                  (40) ...to here
+           |      |                                  (44) ...to here
+           |

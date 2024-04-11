@@ -1,0 +1,132 @@
+collected_code_3/round1/heal_1/healed/problem-117.c: In function 'main':
+collected_code_3/round1/heal_1/healed/problem-117.c:41:9: warning: double-'free' of '*head.next' [CWE-415] [-Wanalyzer-double-free]
+   41 |         free(head->next);
+      |         ^~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   28 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   29 |     Node *head = createNode("10");
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (2) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 3-5
+           |
+           |    9 | Node* createNode(char *data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createNode'
+           |   10 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(newNode == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   14 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   29 |     Node *head = createNode("10");
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (6) returning to 'main' from 'createNode'
+    |   30 |     if(head == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (7) following 'false' branch (when 'head' is non-NULL)...
+    |......
+    |   33 |     head->next = createNode("20");
+    |      |                  ~~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (8) ...to here
+    |      |                  (9) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 10-14
+           |
+           |    9 | Node* createNode(char *data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (10) entry to 'createNode'
+           |   10 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (11) allocated here
+           |   11 |     if(newNode == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (12) assuming 'newNode' is non-NULL
+           |      |       (13) following 'false' branch (when 'newNode' is non-NULL)...
+           |......
+           |   14 |     newNode->data = data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (14) ...to here
+           |
+    <------+
+    |
+  'main': events 15-18
+    |
+    |   33 |     head->next = createNode("20");
+    |      |                  ^~~~~~~~~~~~~~~~
+    |      |                  |
+    |      |                  (15) returning to 'main' from 'createNode'
+    |   34 |     if(head->next == NULL) {
+    |      |       ~           
+    |      |       |
+    |      |       (16) following 'false' branch...
+    |......
+    |   38 |     head->next->next = createNode("30");
+    |      |     ~~~~~~~~~~         ~~~~~~~~~~~~~~~~
+    |      |         |              |
+    |      |         |              (18) calling 'createNode' from 'main'
+    |      |         (17) ...to here
+    |
+    +--> 'createNode': events 19-20
+           |
+           |    9 | Node* createNode(char *data) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (19) entry to 'createNode'
+           |   10 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |   11 |     if(newNode == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (20) following 'true' branch (when 'newNode' is NULL)...
+           |
+         'createNode': event 21
+           |
+           |   12 |         return NULL;
+           |      |                ^~~~
+           |      |                |
+           |      |                (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-26
+    |
+    |   38 |     head->next->next = createNode("30");
+    |      |                        ^~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (22) returning to 'main' from 'createNode'
+    |   39 |     if(head->next->next == NULL) {
+    |      |       ~                 
+    |      |       |
+    |      |       (23) following 'true' branch...
+    |   40 |         free(head->next);
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |        |
+    |      |         |        (24) ...to here
+    |      |         (25) first 'free' here
+    |   41 |         free(head->next);
+    |      |         ~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (26) second 'free' here; first 'free' was at (25)
+    |

@@ -1,0 +1,44 @@
+In C, there is no built-in support for tuples and lists as in Python or other high-level languages. However, we can simulate this behavior using structures and linked lists. Here is a simple example of how you can add a tuple to a list:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct tuple {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct node {
+    Tuple data;
+    struct node* next;
+} Node;
+
+Node* add_tuple_to_list(Node* head, Tuple t) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->data = t;
+    new_node->next = head;
+    return new_node;
+}
+
+int main() {
+    Node* head = NULL;
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+    Tuple t3 = {5, 6};
+
+    head = add_tuple_to_list(head, t1);
+    head = add_tuple_to_list(head, t2);
+    head = add_tuple_to_list(head, t3);
+
+    Node* temp = head;
+    while(temp != NULL) {
+        printf("(%d, %d)\n", temp->data.a, temp->data.b);
+        temp = temp->next;
+    }
+
+    return 0;
+}
+```
+
+This code defines a `Tuple` structure to hold two integers, and a `Node` structure to represent a node in a linked list. The `add_tuple_to_list` function creates a new node, assigns the given tuple to the node's data, and adds the node to the front of the list. The `main` function demonstrates how to use this function to add several tuples to a list and print them out.

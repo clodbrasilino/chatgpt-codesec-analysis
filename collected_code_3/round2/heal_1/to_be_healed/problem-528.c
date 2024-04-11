@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int length;
+    int *elements;
+} List;
+
+List** findMinLengthLists(List **lists, int size, int *resultSize) {
+    int min = lists[0]->length;
+    for(int i = 1; i < size; i++) {
+        if(lists[i]->length < min) {
+            min = lists[i]->length;
+        }
+    }
+
+    List **result = malloc(sizeof(List*) * size);
+    *resultSize = 0;
+    for(int i = 0; i < size; i++) {
+        if(lists[i]->length == min) {
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            result[(*resultSize)++] = lists[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int size = 3;
+    List **lists = malloc(sizeof(List*) * size);
+
+    for(int i = 0; i < size; i++) {
+        /* Possible weaknesses found:
+         *  dereference of possibly-NULL 'lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+         */
+        lists[i] = malloc(sizeof(List));
+        /* Possible weaknesses found:
+         *  dereference of possibly-NULL '*lists_45 + _8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+         */
+        lists[i]->length = i + 1;
+        lists[i]->elements = malloc(sizeof(int) * (i + 1));
+    }
+
+    int resultSize;
+    List **minLengthLists = findMinLengthLists(lists, size, &resultSize);
+
+    printf("Lists with minimum length:\n");
+    for(int i = 0; i < resultSize; i++) {
+        printf("List %d, length: %d\n", i + 1, minLengthLists[i]->length);
+    }
+
+    for(int i = 0; i < size; i++) {
+        free(lists[i]->elements);
+        free(lists[i]);
+    }
+    free(lists);
+    free(minLengthLists);
+
+    return 0;
+}

@@ -1,0 +1,308 @@
+collected_code_3/problem-175-2.c: In function 'createStack':
+collected_code_3/problem-175-2.c:13:21: warning: dereference of possibly-NULL 'stack' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     stack->capacity = capacity;
+      |     ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'isValid': events 1-2
+    |
+    |   39 | int isValid(char* s) {
+    |      |     ^~~~~~~
+    |      |     |
+    |      |     (1) entry to 'isValid'
+    |   40 |     int n = strlen(s);
+    |   41 |     Stack* stack = createStack(n);
+    |      |                    ~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'createStack' from 'isValid'
+    |
+    +--> 'createStack': events 3-5
+           |
+           |   11 | Stack* createStack(unsigned capacity) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'createStack'
+           |   12 |     Stack* stack = (Stack*) malloc(sizeof(Stack));
+           |      |                             ~~~~~~~~~~~~~~~~~~~~~
+           |      |                             |
+           |      |                             (4) this call could return NULL
+           |   13 |     stack->capacity = capacity;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                     |
+           |      |                     (5) 'stack' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-175-2.c: In function 'isValid':
+collected_code_3/problem-175-2.c:24:23: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   24 |     return stack->top == -1;
+      |            ~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   60 |     if (isValid(s)) {
+    |      |         ~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'isValid' from 'main'
+    |
+    +--> 'isValid': events 3-4
+           |
+           |   39 | int isValid(char* s) {
+           |      |     ^~~~~~~
+           |      |     |
+           |      |     (3) entry to 'isValid'
+           |   40 |     int n = strlen(s);
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'isValid'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   11 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   15 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) allocated here
+                  |
+           <------+
+           |
+         'isValid': event 7
+           |
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ^~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'isValid' from 'createStack'
+           |
+         'isEmpty': event 8
+           |
+           |   24 |     return stack->top == -1;
+           |      |            ~~~~~~~~~~~^~~~~
+           |      |                       |
+           |      |                       (8) '<unknown>' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-2.c:24:23: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   60 |     if (isValid(s)) {
+    |      |         ~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'isValid' from 'main'
+    |
+    +--> 'isValid': events 3-4
+           |
+           |   39 | int isValid(char* s) {
+           |      |     ^~~~~~~
+           |      |     |
+           |      |     (3) entry to 'isValid'
+           |   40 |     int n = strlen(s);
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'isValid'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   11 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   15 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) allocated here
+                  |
+           <------+
+           |
+         'isValid': events 7-10
+           |
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ^~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'isValid' from 'createStack'
+           |   42 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (8) following 'true' branch (when 'i < n')...
+           |   43 |         if (s[i] == '(') {
+           |      |              ~      
+           |      |              |
+           |      |              (9) ...to here
+           |   44 |             push(stack, s[i]);
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (10) calling 'push' from 'isValid'
+           |
+           +--> 'push': events 11-12
+                  |
+                  |   27 | void push(Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (11) entry to 'push'
+                  |......
+                  |   30 |     stack->array[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                |
+                  |      |                                (12) assuming '*stack.array + (sizetype)*stack.top' is non-NULL
+                  |
+           <------+
+           |
+         'isValid': event 13
+           |
+           |   44 |             push(stack, s[i]);
+           |      |             ^~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (13) returning to 'isValid' from 'push'
+           |
+         'isEmpty': event 14
+           |
+           |   24 |     return stack->top == -1;
+           |      |            ~~~~~~~~~~~^~~~~
+           |      |                       |
+           |      |                       (14) '<unknown>' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-2.c:24:23: warning: leak of 'stack' [CWE-401] [-Wanalyzer-malloc-leak]
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   60 |     if (isValid(s)) {
+    |      |         ~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'isValid' from 'main'
+    |
+    +--> 'isValid': events 3-4
+           |
+           |   39 | int isValid(char* s) {
+           |      |     ^~~~~~~
+           |      |     |
+           |      |     (3) entry to 'isValid'
+           |   40 |     int n = strlen(s);
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'isValid'
+           |
+           +--> 'createStack': events 5-7
+                  |
+                  |   11 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |   12 |     Stack* stack = (Stack*) malloc(sizeof(Stack));
+                  |      |                             ~~~~~~~~~~~~~~~~~~~~~
+                  |      |                             |
+                  |      |                             (6) allocated here
+                  |   13 |     stack->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (7) assuming 'stack' is non-NULL
+                  |
+           <------+
+           |
+         'isValid': event 8
+           |
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ^~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (8) returning to 'isValid' from 'createStack'
+           |
+         'isEmpty': event 9
+           |
+           |   24 |     return stack->top == -1;
+           |      |            ~~~~~~~~~~~^~~~~
+           |      |                       |
+           |      |                       (9) 'stack' leaks here; was allocated at (6)
+           |
+collected_code_3/problem-175-2.c: In function 'push':
+collected_code_3/problem-175-2.c:30:32: warning: dereference of possibly-NULL '*stack.array + (sizetype)*stack.top' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   30 |     stack->array[++stack->top] = item;
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   56 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   60 |     if (isValid(s)) {
+    |      |         ~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'isValid' from 'main'
+    |
+    +--> 'isValid': events 3-4
+           |
+           |   39 | int isValid(char* s) {
+           |      |     ^~~~~~~
+           |      |     |
+           |      |     (3) entry to 'isValid'
+           |   40 |     int n = strlen(s);
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'isValid'
+           |
+           +--> 'createStack': events 5-6
+                  |
+                  |   11 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |......
+                  |   15 |     stack->array = (char*) malloc(stack->capacity * sizeof(char));
+                  |      |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                            |
+                  |      |                            (6) this call could return NULL
+                  |
+           <------+
+           |
+         'isValid': events 7-12
+           |
+           |   41 |     Stack* stack = createStack(n);
+           |      |                    ^~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (7) returning to 'isValid' from 'createStack'
+           |   42 |     for (int i = 0; i < n; i++) {
+           |      |                     ~~~~~
+           |      |                       |
+           |      |                       (8) following 'true' branch (when 'i < n')...
+           |   43 |         if (s[i] == '(') {
+           |      |            ~ ~      
+           |      |            | |
+           |      |            | (9) ...to here
+           |      |            (10) following 'true' branch...
+           |   44 |             push(stack, s[i]);
+           |      |             ~~~~~~~~~~~~~~~~~
+           |      |             |            |
+           |      |             |            (11) ...to here
+           |      |             (12) calling 'push' from 'isValid'
+           |
+           +--> 'push': events 13-16
+                  |
+                  |   27 | void push(Stack* stack, char item) {
+                  |      |      ^~~~
+                  |      |      |
+                  |      |      (13) entry to 'push'
+                  |   28 |     if (isFull(stack))
+                  |      |        ~
+                  |      |        |
+                  |      |        (14) following 'false' branch...
+                  |   29 |         return;
+                  |   30 |     stack->array[++stack->top] = item;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |          |                     |
+                  |      |          (15) ...to here       (16) '*stack.array + (sizetype)*stack.top' could be NULL: unchecked value from (6)
+                  |

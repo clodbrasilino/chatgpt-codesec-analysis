@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int integer;
+    float floating;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    Tuple *tupleA = (Tuple *)a;
+    Tuple *tupleB = (Tuple *)b;
+    return (tupleA->floating > tupleB->floating) - (tupleA->floating < tupleB->floating);
+}
+
+void sortTuples(Tuple *tuples, size_t count) {
+    qsort(tuples, count, sizeof(Tuple), compare);
+}
+
+int main() {
+    Tuple tuples[] = {
+        {1, 2.2f},
+        {2, 1.1f},
+        {3, 3.3f}
+    };
+
+    size_t count = sizeof(tuples) / sizeof(Tuple);
+
+    sortTuples(tuples, count);
+
+    for(size_t i = 0; i < count; i++) {
+        printf("Tuple %zu: integer = %d, float = %.2f\n", i, tuples[i].integer, tuples[i].floating);
+    }
+
+    return 0;
+}

@@ -1,0 +1,91 @@
+collected_code_3/problem-635-1.c: In function 'createMinHeap':
+collected_code_3/problem-635-1.c:12:15: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     heap->arr = (int*) malloc(sizeof(int)*capacity);
+      |     ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   72 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   73 |     MinHeap* heap = createMinHeap(11);
+    |      |                     ~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'createMinHeap' from 'main'
+    |
+    +--> 'createMinHeap': events 3-5
+           |
+           |   10 | MinHeap* createMinHeap(int capacity) {
+           |      |          ^~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createMinHeap'
+           |   11 |     MinHeap* heap = (MinHeap*) malloc(sizeof(MinHeap));
+           |      |                                ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                |
+           |      |                                (4) this call could return NULL
+           |   12 |     heap->arr = (int*) malloc(sizeof(int)*capacity);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |               |
+           |      |               (5) 'heap' could be NULL: unchecked value from (4)
+           |
+collected_code_3/problem-635-1.c: In function 'insertKey':
+collected_code_3/problem-635-1.c:64:18: warning: dereference of possibly-NULL '*heap.arr + (long unsigned int)i * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   64 |     heap->arr[i] = key;
+      |     ~~~~~~~~~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   72 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   73 |     MinHeap* heap = createMinHeap(11);
+    |      |                     ~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'createMinHeap' from 'main'
+    |
+    +--> 'createMinHeap': events 3-4
+           |
+           |   10 | MinHeap* createMinHeap(int capacity) {
+           |      |          ^~~~~~~~~~~~~
+           |      |          |
+           |      |          (3) entry to 'createMinHeap'
+           |   11 |     MinHeap* heap = (MinHeap*) malloc(sizeof(MinHeap));
+           |   12 |     heap->arr = (int*) malloc(sizeof(int)*capacity);
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   73 |     MinHeap* heap = createMinHeap(11);
+    |      |                     ^~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (5) returning to 'main' from 'createMinHeap'
+    |   74 |     insertKey(heap, 3);
+    |      |     ~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'insertKey' from 'main'
+    |
+    +--> 'insertKey': events 7-10
+           |
+           |   58 | void insertKey(MinHeap* heap, int key) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (7) entry to 'insertKey'
+           |   59 |     if (heap->count == heap->capacity)
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   62 |     heap->count++;
+           |      |     ~~~~~~~~~~~
+           |      |         |
+           |      |         (9) ...to here
+           |   63 |     int i = heap->count - 1;
+           |   64 |     heap->arr[i] = key;
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (10) '*heap.arr + (long unsigned int)i * 4' could be NULL: unchecked value from (4)
+           |

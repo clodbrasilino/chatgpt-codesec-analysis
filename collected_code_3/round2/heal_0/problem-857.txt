@@ -1,0 +1,22 @@
+C language does not have a built-in map function like Python or JavaScript. However, we can achieve similar functionality using a loop to iterate over each element in the array. Here is a simple C program that prints out a list of given strings individually:
+
+```c
+#include <stdio.h>
+
+void printStrings(char *arr[], int size) {
+    for(int i = 0; i < size; i++) {
+        printf("%s\n", arr[i]);
+    }
+}
+
+int main() {
+    char *strings[] = {"Hello", "World", "This", "Is", "A", "Test"};
+    int size = sizeof(strings) / sizeof(strings[0]);
+
+    printStrings(strings, size);
+
+    return 0;
+}
+```
+
+In this code, `printStrings` function acts like a map function. It takes an array of strings and its size as arguments, and then it prints out each string in the array. The `main` function initializes an array of strings and calculates its size, then it calls `printStrings` function to print out each string.

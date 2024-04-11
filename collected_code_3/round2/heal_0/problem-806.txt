@@ -1,0 +1,28 @@
+```C
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int maxRunUppercase(char *str) {
+    int maxRun = 0;
+    int currentRun = 0;
+    for (int i = 0; i < strlen(str); i++) {
+        if (isupper(str[i])) {
+            currentRun++;
+            if (currentRun > maxRun) {
+                maxRun = currentRun;
+            }
+        } else {
+            currentRun = 0;
+        }
+    }
+    return maxRun;
+}
+
+int main() {
+    char str[] = "Hello WORLDDD, How ARE Youuuu";
+    int maxRun = maxRunUppercase(str);
+    printf("The maximum run of uppercase characters is: %d\n", maxRun);
+    return 0;
+}
+```

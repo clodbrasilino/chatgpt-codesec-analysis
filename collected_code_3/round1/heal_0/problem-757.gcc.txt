@@ -1,0 +1,15 @@
+collected_code_3/problem-757-1.c: In function 'strrev':
+collected_code_3/problem-757-1.c:5:13: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+    5 |     int i = strlen(str) - 1, j = 0;
+      |             ^~~~~~
+collected_code_3/problem-757-1.c:1:1: note: include '<string.h>' or provide a declaration of 'strlen'
+  +++ |+#include <string.h>
+    1 | char* strrev(char* str) {
+collected_code_3/problem-757-1.c:5:13: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+    5 |     int i = strlen(str) - 1, j = 0;
+      |             ^~~~~~
+collected_code_3/problem-757-1.c:5:13: note: include '<string.h>' or provide a declaration of 'strlen'
+ld: Undefined symbols:
+  _main, referenced from:
+      <initial-undefines>
+collect2: error: ld returned 1 exit status

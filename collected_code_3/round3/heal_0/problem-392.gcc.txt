@@ -1,0 +1,11 @@
+collected_code_3/problem-392-3.c: In function 'max_sum':
+collected_code_3/problem-392-3.c:13:16: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   13 |         return max(n, max_sum(n/2) + max_sum(n/3) + max_sum(n/4) + max_sum(n/5));
+      |                ^~~
+collected_code_3/problem-392-3.c: At top level:
+collected_code_3/problem-392-3.c:17:15: error: conflicting types for 'max'; have 'long long int(long long int,  long long int)'
+   17 | long long int max(long long int a, long long int b) {
+      |               ^~~
+collected_code_3/problem-392-3.c:13:16: note: previous implicit declaration of 'max' with type 'int()'
+   13 |         return max(n, max_sum(n/2) + max_sum(n/3) + max_sum(n/4) + max_sum(n/5));
+      |                ^~~

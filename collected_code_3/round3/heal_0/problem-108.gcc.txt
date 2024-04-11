@@ -1,0 +1,484 @@
+collected_code_3/problem-108-3.c: In function 'heapify':
+collected_code_3/problem-108-3.c:21:38: warning: use of uninitialized value '*heap_33(D) + _4.val' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+      |                            ~~~~~~~~~~^~~~
+  'merge': events 1-5
+    |
+    |   39 | void merge(int **arr, int *size, int arrCount, int *mergedArr) {
+    |      |      ^~~~~
+    |      |      |
+    |      |      (1) entry to 'merge'
+    |   40 |     int heapSize = arrCount;
+    |   41 |     Node *heap = (Node *)malloc(sizeof(Node) * heapSize);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) region created on heap here
+    |......
+    |   44 |     for (i = 0; i < heapSize; ++i) {
+    |      |                 ~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (3) following 'false' branch (when 'i >= heapSize')...
+    |......
+    |   50 |     buildHeap(heap, heapSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'buildHeap' from 'merge'
+    |
+    +--> 'buildHeap': events 6-9
+           |
+           |   33 | void buildHeap(Node *heap, int heapSize) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'buildHeap'
+           |   34 |     int i;
+           |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (7) following 'true' branch (when 'i >= 0')...
+           |   36 |         heapify(heap, i, heapSize);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (8) ...to here
+           |      |         (9) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 10-13
+                  |
+                  |   16 | void heapify(Node *heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (10) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                  |      |        ~                   ~~~~~~~~~~~~~~
+                  |      |        |                       |     |
+                  |      |        |                       |     (13) use of uninitialized value '*heap_33(D) + _4.val' here
+                  |      |        |                       (12) ...to here
+                  |      |        (11) following 'true' branch (when 'left < heapSize')...
+                  |
+collected_code_3/problem-108-3.c:21:59: warning: use of uninitialized value '*heap_33(D) + _8.val' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+      |                                             ~~~~~~~~~~~~~~^~~~
+  'merge': events 1-5
+    |
+    |   39 | void merge(int **arr, int *size, int arrCount, int *mergedArr) {
+    |      |      ^~~~~
+    |      |      |
+    |      |      (1) entry to 'merge'
+    |   40 |     int heapSize = arrCount;
+    |   41 |     Node *heap = (Node *)malloc(sizeof(Node) * heapSize);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) region created on heap here
+    |......
+    |   44 |     for (i = 0; i < heapSize; ++i) {
+    |      |                 ~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (3) following 'false' branch (when 'i >= heapSize')...
+    |......
+    |   50 |     buildHeap(heap, heapSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'buildHeap' from 'merge'
+    |
+    +--> 'buildHeap': events 6-9
+           |
+           |   33 | void buildHeap(Node *heap, int heapSize) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'buildHeap'
+           |   34 |     int i;
+           |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (7) following 'true' branch (when 'i >= 0')...
+           |   36 |         heapify(heap, i, heapSize);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (8) ...to here
+           |      |         (9) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 10-16
+                  |
+                  |   16 | void heapify(Node *heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (10) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                  |      |        ~
+                  |      |        |
+                  |      |        (11) following 'false' branch (when 'left >= heapSize')...
+                  |......
+                  |   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) ...to here
+                  |      |        (13) following 'false' branch (when 'right >= heapSize')...
+                  |......
+                  |   27 |     if (smallest != i) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (14) ...to here
+                  |      |        (15) following 'false' branch (when 'smallest == i')...
+                  |......
+                  |   31 | }
+                  |      | ~     
+                  |      | |
+                  |      | (16) ...to here
+                  |
+           <------+
+           |
+         'buildHeap': events 17-20
+           |
+           |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (18) following 'true' branch (when 'i >= 0')...
+           |   36 |         heapify(heap, i, heapSize);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (17) returning to 'buildHeap' from 'heapify'
+           |      |         (19) ...to here
+           |      |         (20) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 21-22
+                  |
+                  |   16 | void heapify(Node *heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (21) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                  |      |                                             ~~~~~~~~~~~~~~~~~~
+                  |      |                                                           |
+                  |      |                                                           (22) use of uninitialized value '*heap_33(D) + _8.val' here
+                  |
+collected_code_3/problem-108-3.c:24:40: warning: use of uninitialized value '*heap_33(D) + _12.val' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+      |                             ~~~~~~~~~~~^~~~
+  'merge': events 1-5
+    |
+    |   39 | void merge(int **arr, int *size, int arrCount, int *mergedArr) {
+    |      |      ^~~~~
+    |      |      |
+    |      |      (1) entry to 'merge'
+    |   40 |     int heapSize = arrCount;
+    |   41 |     Node *heap = (Node *)malloc(sizeof(Node) * heapSize);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) region created on heap here
+    |......
+    |   44 |     for (i = 0; i < heapSize; ++i) {
+    |      |                 ~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (3) following 'false' branch (when 'i >= heapSize')...
+    |......
+    |   50 |     buildHeap(heap, heapSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'buildHeap' from 'merge'
+    |
+    +--> 'buildHeap': events 6-9
+           |
+           |   33 | void buildHeap(Node *heap, int heapSize) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'buildHeap'
+           |   34 |     int i;
+           |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (7) following 'true' branch (when 'i >= 0')...
+           |   36 |         heapify(heap, i, heapSize);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (8) ...to here
+           |      |         (9) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 10-15
+                  |
+                  |   16 | void heapify(Node *heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (10) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                  |      |        ~
+                  |      |        |
+                  |      |        (11) following 'false' branch (when 'left >= heapSize')...
+                  |......
+                  |   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+                  |      |        ~                    ~~~~~~~~~~~~~~~
+                  |      |        |                        |      |
+                  |      |        |                        |      (15) use of uninitialized value '*heap_33(D) + _12.val' here
+                  |      |        (12) ...to here          (14) ...to here
+                  |      |        (13) following 'true' branch (when 'right < heapSize')...
+                  |
+collected_code_3/problem-108-3.c:24:40: warning: use of uninitialized value '*heap_33(D) + _12.val' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+      |                             ~~~~~~~~~~~^~~~
+  'main': events 1-2
+    |
+    |   69 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   86 |     merge(arr, size, arrCount, mergedArr);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'merge' from 'main'
+    |
+    +--> 'merge': events 3-11
+           |
+           |   39 | void merge(int **arr, int *size, int arrCount, int *mergedArr) {
+           |      |      ^~~~~
+           |      |      |
+           |      |      (3) entry to 'merge'
+           |   40 |     int heapSize = arrCount;
+           |   41 |     Node *heap = (Node *)malloc(sizeof(Node) * heapSize);
+           |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (4) region created on heap here
+           |......
+           |   44 |     for (i = 0; i < heapSize; ++i) {
+           |      |                 ~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (5) following 'true' branch (when 'i < heapSize')...
+           |      |                   (7) following 'true' branch (when 'i < heapSize')...
+           |      |                   (9) following 'false' branch (when 'i >= heapSize')...
+           |   45 |         heap[i].val = arr[i][0];
+           |      |                          ~
+           |      |                          |
+           |      |                          (6) ...to here
+           |      |                          (8) ...to here
+           |......
+           |   50 |     buildHeap(heap, heapSize);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (10) ...to here
+           |      |     (11) calling 'buildHeap' from 'merge'
+           |
+           +--> 'buildHeap': events 12-15
+                  |
+                  |   33 | void buildHeap(Node *heap, int heapSize) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (12) entry to 'buildHeap'
+                  |   34 |     int i;
+                  |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+                  |      |                                  ~~~~~~
+                  |      |                                    |
+                  |      |                                    (13) following 'true' branch (when 'i >= 0')...
+                  |   36 |         heapify(heap, i, heapSize);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (14) ...to here
+                  |      |         (15) calling 'heapify' from 'buildHeap'
+                  |
+                  +--> 'heapify': events 16-21
+                         |
+                         |   16 | void heapify(Node *heap, int i, int heapSize) {
+                         |      |      ^~~~~~~
+                         |      |      |
+                         |      |      (16) entry to 'heapify'
+                         |......
+                         |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                         |      |        ~                       ~
+                         |      |        |                       |
+                         |      |        |                       (18) ...to here
+                         |      |        (17) following 'true' branch (when 'left < heapSize')...
+                         |......
+                         |   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+                         |      |        ~                    ~~~~~~~~~~~~~~~
+                         |      |        |                        |      |
+                         |      |        |                        |      (21) use of uninitialized value '*heap_33(D) + _12.val' here
+                         |      |        |                        (20) ...to here
+                         |      |        (19) following 'true' branch (when 'right < heapSize')...
+                         |
+collected_code_3/problem-108-3.c:24:61: warning: use of uninitialized value '*heap_33(D) + _16.val' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+      |                                               ~~~~~~~~~~~~~~^~~~
+  'merge': events 1-5
+    |
+    |   39 | void merge(int **arr, int *size, int arrCount, int *mergedArr) {
+    |      |      ^~~~~
+    |      |      |
+    |      |      (1) entry to 'merge'
+    |   40 |     int heapSize = arrCount;
+    |   41 |     Node *heap = (Node *)malloc(sizeof(Node) * heapSize);
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) region created on heap here
+    |......
+    |   44 |     for (i = 0; i < heapSize; ++i) {
+    |      |                 ~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (3) following 'false' branch (when 'i >= heapSize')...
+    |......
+    |   50 |     buildHeap(heap, heapSize);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (4) ...to here
+    |      |     (5) calling 'buildHeap' from 'merge'
+    |
+    +--> 'buildHeap': events 6-9
+           |
+           |   33 | void buildHeap(Node *heap, int heapSize) {
+           |      |      ^~~~~~~~~
+           |      |      |
+           |      |      (6) entry to 'buildHeap'
+           |   34 |     int i;
+           |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (7) following 'true' branch (when 'i >= 0')...
+           |   36 |         heapify(heap, i, heapSize);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (8) ...to here
+           |      |         (9) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 10-16
+                  |
+                  |   16 | void heapify(Node *heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (10) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                  |      |        ~
+                  |      |        |
+                  |      |        (11) following 'false' branch (when 'left >= heapSize')...
+                  |......
+                  |   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+                  |      |        ~
+                  |      |        |
+                  |      |        (12) ...to here
+                  |      |        (13) following 'false' branch (when 'right >= heapSize')...
+                  |......
+                  |   27 |     if (smallest != i) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (14) ...to here
+                  |      |        (15) following 'false' branch (when 'smallest == i')...
+                  |......
+                  |   31 | }
+                  |      | ~     
+                  |      | |
+                  |      | (16) ...to here
+                  |
+           <------+
+           |
+         'buildHeap': events 17-20
+           |
+           |   35 |     for (i = (heapSize - 2) / 2; i >= 0; --i)
+           |      |                                  ~~~~~~
+           |      |                                    |
+           |      |                                    (18) following 'true' branch (when 'i >= 0')...
+           |   36 |         heapify(heap, i, heapSize);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (17) returning to 'buildHeap' from 'heapify'
+           |      |         (19) ...to here
+           |      |         (20) calling 'heapify' from 'buildHeap'
+           |
+           +--> 'heapify': events 21-24
+                  |
+                  |   16 | void heapify(Node *heap, int i, int heapSize) {
+                  |      |      ^~~~~~~
+                  |      |      |
+                  |      |      (21) entry to 'heapify'
+                  |......
+                  |   21 |     if (left < heapSize && heap[left].val < heap[smallest].val)
+                  |      |        ~
+                  |      |        |
+                  |      |        (22) following 'false' branch (when 'left >= heapSize')...
+                  |......
+                  |   24 |     if (right < heapSize && heap[right].val < heap[smallest].val)
+                  |      |        ~                                      ~~~~~~~~~~~~~~~~~~
+                  |      |        |                                                    |
+                  |      |        (23) ...to here                                      (24) use of uninitialized value '*heap_33(D) + _16.val' here
+                  |
+collected_code_3/problem-108-3.c: In function 'merge':
+collected_code_3/problem-108-3.c:45:21: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   45 |         heap[i].val = arr[i][0];
+      |         ~~~~~~~~~~~~^~~~~~~~~~~
+  'merge': events 1-4
+    |
+    |   41 |     Node *heap = (Node *)malloc(sizeof(Node) * heapSize);
+    |      |                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (1) this call could return NULL
+    |......
+    |   44 |     for (i = 0; i < heapSize; ++i) {
+    |      |                 ~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < heapSize')...
+    |   45 |         heap[i].val = arr[i][0];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |    |
+    |      |                     |    (3) ...to here
+    |      |                     (4) 'heap + (long unsigned int)i * 12' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-108-3.c: In function 'main':
+collected_code_3/problem-108-3.c:74:12: warning: dereference of possibly-NULL 'arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   74 |     arr[0] = (int *)malloc(sizeof(int) * size[0]);
+      |     ~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   72 |     int **arr = (int **)malloc(sizeof(int *) * arrCount);
+    |      |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   73 | 
+    |   74 |     arr[0] = (int *)malloc(sizeof(int) * size[0]);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (2) 'arr' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-108-3.c:75:15: warning: dereference of possibly-NULL '*arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   75 |     arr[0][0] = 1; arr[0][1] = 4; arr[0][2] = 7;
+      |     ~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   74 |     arr[0] = (int *)malloc(sizeof(int) * size[0]);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   75 |     arr[0][0] = 1; arr[0][1] = 4; arr[0][2] = 7;
+    |      |     ~~~~~~~~~~~~~    
+    |      |               |
+    |      |               (2) '*arr' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-108-3.c:78:15: warning: dereference of possibly-NULL '*arr_62 + 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   78 |     arr[1][0] = 2; arr[1][1] = 5; arr[1][2] = 8;
+      |     ~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   77 |     arr[1] = (int *)malloc(sizeof(int) * size[1]);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   78 |     arr[1][0] = 2; arr[1][1] = 5; arr[1][2] = 8;
+    |      |     ~~~~~~~~~~~~~    
+    |      |               |
+    |      |               (2) '*arr_62 + 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-108-3.c:81:15: warning: dereference of possibly-NULL '*arr_62 + 16' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   81 |     arr[2][0] = 3; arr[2][1] = 6; arr[2][2] = 9;
+      |     ~~~~~~~~~~^~~
+  'main': events 1-2
+    |
+    |   80 |     arr[2] = (int *)malloc(sizeof(int) * size[2]);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   81 |     arr[2][0] = 3; arr[2][1] = 6; arr[2][2] = 9;
+    |      |     ~~~~~~~~~~~~~    
+    |      |               |
+    |      |               (2) '*arr_62 + 16' could be NULL: unchecked value from (1)
+    |

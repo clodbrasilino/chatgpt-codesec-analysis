@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int findLargestK(int x, int y) {
+    if(y >= x) {
+        return -1;
+    }
+    return (x * (y + 1)) - 1;
+}
+
+int main() {
+    int x, y;
+    printf("Enter x: ");
+    scanf("%d", &x);
+    printf("Enter y: ");
+    scanf("%d", &y);
+    int result = findLargestK(x, y);
+    if(result == -1) {
+        printf("No possible value of k\n");
+    } else {
+        printf("The largest possible value of k is %d\n", result);
+    }
+    return 0;
+}

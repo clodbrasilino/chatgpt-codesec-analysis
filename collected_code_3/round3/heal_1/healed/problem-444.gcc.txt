@@ -1,0 +1,86 @@
+./collected_code_3/round3/heal_1/healed/problem-444.c: In function 'trimTuples':
+./collected_code_3/round3/heal_1/healed/problem-444.c:12:24: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   12 |         tuples[i].data = realloc(tuples[i].data, tuples[i].size * sizeof(int));
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-28
+    |
+    |   20 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   24 |     if (!tuples) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'tuples' is non-NULL)...
+    |......
+    |   28 |     for(int i = 0; i < tupleCount; i++) {
+    |      |             ~      ~~~~~~~~~~~~~~  ~~~
+    |      |             |        |              |
+    |      |             |        |              (25) ...to here
+    |      |             |        (4) following 'true' branch (when 'i < tupleCount')...
+    |      |             |        (12) following 'true' branch (when 'i < tupleCount')...
+    |      |             |        (18) following 'true' branch (when 'i < tupleCount')...
+    |      |             |        (26) following 'false' branch (when 'i >= tupleCount')...
+    |      |             (3) ...to here
+    |   29 |         tuples[i].size = 5;
+    |      |               ~
+    |      |               |
+    |      |               (5) ...to here
+    |      |               (13) ...to here
+    |      |               (19) ...to here
+    |   30 |         tuples[i].data = malloc(tuples[i].size * sizeof(int));
+    |      |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (6) allocated here
+    |   31 |         if (!tuples[i].data) {
+    |      |            ~
+    |      |            |
+    |      |            (7) assuming '<unknown>' is non-NULL
+    |      |            (8) following 'false' branch...
+    |      |            (14) following 'false' branch...
+    |      |            (20) following 'false' branch...
+    |......
+    |   38 |         for(int j = 0; j < tuples[i].size; j++) {
+    |      |                 ~      ~~~~~~~~~~~~~~~~~~
+    |      |                 |        |
+    |      |                 |        (10) following 'true' branch...
+    |      |                 |        (16) following 'true' branch...
+    |      |                 |        (22) following 'true' branch...
+    |      |                 |        (24) following 'false' branch...
+    |      |                 (9) ...to here
+    |      |                 (15) ...to here
+    |      |                 (21) ...to here
+    |   39 |             tuples[i].data[j] = j;
+    |      |                   ~
+    |      |                   |
+    |      |                   (11) ...to here
+    |      |                   (17) ...to here
+    |      |                   (23) ...to here
+    |......
+    |   43 |     tuples = trimTuples(tuples, tupleCount, k);
+    |      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (27) ...to here
+    |      |              (28) calling 'trimTuples' from 'main'
+    |
+    +--> 'trimTuples': events 29-33
+           |
+           |    9 | Tuple* trimTuples(Tuple* tuples, int tupleCount, int k) {
+           |      |        ^~~~~~~~~~
+           |      |        |
+           |      |        (29) entry to 'trimTuples'
+           |   10 |     for(int i = 0; i < tupleCount; i++) {
+           |      |                    ~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (30) following 'true' branch (when 'i < tupleCount')...
+           |   11 |         tuples[i].size -= k;
+           |      |         ~~~~~~~~~
+           |      |               |
+           |      |               (31) ...to here
+           |   12 |         tuples[i].data = realloc(tuples[i].data, tuples[i].size * sizeof(int));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        | |
+           |      |                        | (32) when 'realloc' fails
+           |      |                        (33) '<unknown>' leaks here; was allocated at (6)
+           |

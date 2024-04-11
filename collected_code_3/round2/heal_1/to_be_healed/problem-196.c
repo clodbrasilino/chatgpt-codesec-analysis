@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    int length;
+    char *data;
+} Tuple;
+
+Tuple* removeTuples(Tuple *tuples, int tupleCount, int k, int *newCount) {
+    int i, j = 0;
+    Tuple *newTuples = (Tuple*)malloc(sizeof(Tuple) * tupleCount);
+
+    for(i = 0; i < tupleCount; i++) {
+        if(tuples[i].length != k) {
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'newTuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            newTuples[j] = tuples[i];
+            j++;
+        }
+    }
+
+    *newCount = j;
+    return newTuples;
+}
+
+int main() {
+    int i, newCount;
+    Tuple tuples[5] = {
+        {5, "apple"},
+        {6, "banana"},
+        {4, "pear"},
+        {6, "grape"},
+        {5, "melon"}
+    };
+
+    Tuple *newTuples = removeTuples(tuples, 5, 6, &newCount);
+
+    for(i = 0; i < newCount; i++) {
+        printf("Length: %d, Data: %s\n", newTuples[i].length, newTuples[i].data);
+    }
+
+    free(newTuples);
+    return 0;
+}

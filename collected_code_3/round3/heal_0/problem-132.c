@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+char* tupleToString(Tuple t) {
+    char* str = (char*)malloc(50 * sizeof(char));
+    sprintf(str, "(%d, %d)", t.a, t.b);
+    return str;
+}
+
+int main() {
+    Tuple t;
+    t.a = 5;
+    t.b = 10;
+    char* str = tupleToString(t);
+    printf("%s\n", str);
+    free(str);
+    return 0;
+}

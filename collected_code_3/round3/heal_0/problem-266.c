@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+double lateralSurfaceArea(double side) {
+    return 4 * side * side;
+}
+
+int main() {
+    double side;
+    printf("Enter the side of the cube: ");
+    scanf("%lf", &side);
+    printf("The lateral surface area of the cube is: %.2lf\n", lateralSurfaceArea(side));
+    return 0;
+}

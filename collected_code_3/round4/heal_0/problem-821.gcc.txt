@@ -1,0 +1,86 @@
+collected_code_3/round4/heal_0/problem-821.c: In function 'createDictionary':
+collected_code_3/round4/heal_0/problem-821.c:18:17: warning: dereference of possibly-NULL 'dict' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |     dict->items = malloc(sizeof(Item) * 10);
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   52 |     Dictionary *dict1 = createDictionary();
+    |      |                         ~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-5
+           |
+           |   16 | Dictionary* createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   17 |     Dictionary *dict = malloc(sizeof(Dictionary));
+           |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                        |
+           |      |                        (4) this call could return NULL
+           |   18 |     dict->items = malloc(sizeof(Item) * 10);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (5) 'dict' could be NULL: unchecked value from (4)
+           |
+collected_code_3/round4/heal_0/problem-821.c: In function 'add':
+collected_code_3/round4/heal_0/problem-821.c:29:33: warning: dereference of possibly-NULL '*dict.items + (long unsigned int)*dict.size * 16' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   29 |     dict->items[dict->size].key = strdup(key);
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   51 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   52 |     Dictionary *dict1 = createDictionary();
+    |      |                         ~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-4
+           |
+           |   16 | Dictionary* createDictionary() {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   17 |     Dictionary *dict = malloc(sizeof(Dictionary));
+           |   18 |     dict->items = malloc(sizeof(Item) * 10);
+           |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (4) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 5-6
+    |
+    |   52 |     Dictionary *dict1 = createDictionary();
+    |      |                         ^~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (5) returning to 'main' from 'createDictionary'
+    |   53 |     add(dict1, "key1", "value1");
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) calling 'add' from 'main'
+    |
+    +--> 'add': events 7-10
+           |
+           |   24 | void add(Dictionary *dict, char *key, char *value) {
+           |      |      ^~~
+           |      |      |
+           |      |      (7) entry to 'add'
+           |   25 |     if (dict->size == dict->capacity) {
+           |      |        ~
+           |      |        |
+           |      |        (8) following 'false' branch...
+           |......
+           |   29 |     dict->items[dict->size].key = strdup(key);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                       |
+           |      |         (9) ...to here          (10) '*dict.items + (long unsigned int)*dict.size * 16' could be NULL: unchecked value from (4)
+           |

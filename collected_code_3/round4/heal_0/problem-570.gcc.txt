@@ -1,0 +1,25 @@
+collected_code_3/round4/heal_0/problem-570.c: In function 'removeWords':
+collected_code_3/round4/heal_0/problem-570.c:10:24: warning: dereference of possibly-NULL 'newList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |             newList[j] = (char *)malloc((strlen(list[i]) + 1) * sizeof(char));
+      |             ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'removeWords': events 1-6
+    |
+    |    7 |     char **newList = (char **)malloc(listSize * sizeof(char *));
+    |      |                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (1) this call could return NULL
+    |    8 |     for (i = 0; i < listSize; i++) {
+    |      |                 ~~~~~~~~~~~~   
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < listSize')...
+    |    9 |         if (strstr(list[i], str) == NULL) {
+    |      |            ~           ~       
+    |      |            |           |
+    |      |            |           (3) ...to here
+    |      |            (4) following 'true' branch...
+    |   10 |             newList[j] = (char *)malloc((strlen(list[i]) + 1) * sizeof(char));
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |                            |
+    |      |                        |                            (5) ...to here
+    |      |                        (6) 'newList + (long unsigned int)j * 8' could be NULL: unchecked value from (1)
+    |

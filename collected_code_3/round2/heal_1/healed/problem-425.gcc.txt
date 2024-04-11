@@ -1,0 +1,421 @@
+./collected_code_3/round2/heal_1/healed/problem-425.c: In function 'main':
+./collected_code_3/round2/heal_1/healed/problem-425.c:37:24: warning: dereference of NULL '*start.next' [CWE-476] [-Wanalyzer-null-dereference]
+   37 |         if (start->next->next != NULL) {
+      |             ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'true' branch (when 'newNode' is non-NULL)...
+           |   12 |         newNode->data = data;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ^~~~~~~~~~
+    |      |                          |
+    |      |                          (6) returning to 'main' from 'newNode'
+    |   32 |     if (start != NULL) {
+    |      |        ~                  
+    |      |        |
+    |      |        (7) following 'true' branch (when 'start' is non-NULL)...
+    |   33 |         start->next = newNode(2);
+    |      |                       ~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) ...to here
+    |      |                       (9) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 10-14
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (10) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (11) allocated here
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) assuming 'newNode' is NULL
+           |      |        (13) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   15 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (14) ...to here
+           |
+    <------+
+    |
+  'main': events 15-18
+    |
+    |   33 |         start->next = newNode(2);
+    |      |                       ^~~~~~~~~~
+    |      |                       |
+    |      |                       (15) returning to 'main' from 'newNode'
+    |   34 |         if (start->next != NULL) {
+    |      |            ~           
+    |      |            |
+    |      |            (16) following 'false' branch...
+    |......
+    |   37 |         if (start->next->next != NULL) {
+    |      |             ~~~~~~~~~~~~~~~~~
+    |      |                  |     |
+    |      |                  |     (18) dereference of NULL '*start.next'
+    |      |                  (17) ...to here
+    |
+./collected_code_3/round2/heal_1/healed/problem-425.c:37:24: warning: use of uninitialized value '*start_23->next.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   37 |         if (start->next->next != NULL) {
+      |             ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'true' branch (when 'newNode' is non-NULL)...
+           |   12 |         newNode->data = data;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ^~~~~~~~~~
+    |      |                          |
+    |      |                          (6) returning to 'main' from 'newNode'
+    |   32 |     if (start != NULL) {
+    |      |        ~                  
+    |      |        |
+    |      |        (7) following 'true' branch (when 'start' is non-NULL)...
+    |   33 |         start->next = newNode(2);
+    |      |                       ~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) ...to here
+    |      |                       (9) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 10-13
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (10) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (11) region created on heap here
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (12) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   15 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (13) ...to here
+           |
+    <------+
+    |
+  'main': events 14-17
+    |
+    |   33 |         start->next = newNode(2);
+    |      |                       ^~~~~~~~~~
+    |      |                       |
+    |      |                       (14) returning to 'main' from 'newNode'
+    |   34 |         if (start->next != NULL) {
+    |      |            ~           
+    |      |            |
+    |      |            (15) following 'false' branch...
+    |......
+    |   37 |         if (start->next->next != NULL) {
+    |      |             ~~~~~~~~~~~~~~~~~
+    |      |                  |     |
+    |      |                  |     (17) use of uninitialized value '*start_23->next.next' here
+    |      |                  (16) ...to here
+    |
+./collected_code_3/round2/heal_1/healed/problem-425.c:40:30: warning: dereference of NULL '*start_23->next.next' [CWE-476] [-Wanalyzer-null-dereference]
+   40 |         if (start->next->next->next != NULL) {
+      |             ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'true' branch (when 'newNode' is non-NULL)...
+           |   12 |         newNode->data = data;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ^~~~~~~~~~
+    |      |                          |
+    |      |                          (6) returning to 'main' from 'newNode'
+    |   32 |     if (start != NULL) {
+    |      |        ~                  
+    |      |        |
+    |      |        (7) following 'true' branch (when 'start' is non-NULL)...
+    |   33 |         start->next = newNode(2);
+    |      |                       ~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) ...to here
+    |      |                       (9) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 10-12
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (10) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (11) following 'true' branch (when 'newNode' is non-NULL)...
+           |   12 |         newNode->data = data;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   33 |         start->next = newNode(2);
+    |      |                       ^~~~~~~~~~
+    |      |                       |
+    |      |                       (13) returning to 'main' from 'newNode'
+    |   34 |         if (start->next != NULL) {
+    |      |            ~           
+    |      |            |
+    |      |            (14) following 'true' branch...
+    |   35 |             start->next->next = newNode(1);
+    |      |             ~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                  |              |
+    |      |                  |              (16) calling 'newNode' from 'main'
+    |      |                  (15) ...to here
+    |
+    +--> 'newNode': events 17-21
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (18) allocated here
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (19) assuming 'newNode' is NULL
+           |      |        (20) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   15 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (21) ...to here
+           |
+    <------+
+    |
+  'main': events 22-25
+    |
+    |   35 |             start->next->next = newNode(1);
+    |      |                                 ^~~~~~~~~~
+    |      |                                 |
+    |      |                                 (22) returning to 'main' from 'newNode'
+    |   36 |         }
+    |   37 |         if (start->next->next != NULL) {
+    |      |            ~                     
+    |      |            |
+    |      |            (23) following 'false' branch...
+    |......
+    |   40 |         if (start->next->next->next != NULL) {
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |           |
+    |      |                  |           (25) dereference of NULL '*start_23->next.next'
+    |      |                  (24) ...to here
+    |
+./collected_code_3/round2/heal_1/healed/problem-425.c:40:30: warning: use of uninitialized value '*_10->next.next' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   40 |         if (start->next->next->next != NULL) {
+      |             ~~~~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ~~~~~~~~~~
+    |      |                          |
+    |      |                          (2) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 3-5
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (3) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (4) following 'true' branch (when 'newNode' is non-NULL)...
+           |   12 |         newNode->data = data;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   31 |     struct Node* start = newNode(1);
+    |      |                          ^~~~~~~~~~
+    |      |                          |
+    |      |                          (6) returning to 'main' from 'newNode'
+    |   32 |     if (start != NULL) {
+    |      |        ~                  
+    |      |        |
+    |      |        (7) following 'true' branch (when 'start' is non-NULL)...
+    |   33 |         start->next = newNode(2);
+    |      |                       ~~~~~~~~~~
+    |      |                       |
+    |      |                       (8) ...to here
+    |      |                       (9) calling 'newNode' from 'main'
+    |
+    +--> 'newNode': events 10-12
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (10) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (11) following 'true' branch (when 'newNode' is non-NULL)...
+           |   12 |         newNode->data = data;
+           |      |         ~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (12) ...to here
+           |
+    <------+
+    |
+  'main': events 13-16
+    |
+    |   33 |         start->next = newNode(2);
+    |      |                       ^~~~~~~~~~
+    |      |                       |
+    |      |                       (13) returning to 'main' from 'newNode'
+    |   34 |         if (start->next != NULL) {
+    |      |            ~           
+    |      |            |
+    |      |            (14) following 'true' branch...
+    |   35 |             start->next->next = newNode(1);
+    |      |             ~~~~~~~~~~~         ~~~~~~~~~~
+    |      |                  |              |
+    |      |                  |              (16) calling 'newNode' from 'main'
+    |      |                  (15) ...to here
+    |
+    +--> 'newNode': events 17-20
+           |
+           |    9 | struct Node* newNode(int data) {
+           |      |              ^~~~~~~
+           |      |              |
+           |      |              (17) entry to 'newNode'
+           |   10 |     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (18) region created on heap here
+           |   11 |     if (newNode != NULL) {
+           |      |        ~      
+           |      |        |
+           |      |        (19) following 'false' branch (when 'newNode' is NULL)...
+           |......
+           |   15 |     return newNode;
+           |      |            ~~~~~~~
+           |      |            |
+           |      |            (20) ...to here
+           |
+    <------+
+    |
+  'main': events 21-24
+    |
+    |   35 |             start->next->next = newNode(1);
+    |      |                                 ^~~~~~~~~~
+    |      |                                 |
+    |      |                                 (21) returning to 'main' from 'newNode'
+    |   36 |         }
+    |   37 |         if (start->next->next != NULL) {
+    |      |            ~                     
+    |      |            |
+    |      |            (22) following 'false' branch...
+    |......
+    |   40 |         if (start->next->next->next != NULL) {
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |           |
+    |      |                  |           (24) use of uninitialized value '*_10->next.next' here
+    |      |                  (23) ...to here
+    |

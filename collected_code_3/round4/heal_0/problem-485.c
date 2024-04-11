@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isPalindrome(int num) {
+    int reversed = 0;
+    int original = num;
+    while (num != 0) {
+        int digit = num % 10;
+        reversed = reversed * 10 + digit;
+        num /= 10;
+    }
+    return original == reversed;
+}
+
+int findLargestPalindrome(int arr[], int n) {
+    int max = -1;
+    for (int i = 0; i < n; i++) {
+        if (isPalindrome(arr[i]) && arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+int main() {
+    int arr[] = {123, 121, 131, 132, 232, 233, 343, 353, 454, 464};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int largestPalindrome = findLargestPalindrome(arr, n);
+    if (largestPalindrome == -1) {
+        printf("No palindrome found\n");
+    } else {
+        printf("Largest Palindrome is: %d\n", largestPalindrome);
+    }
+    return 0;
+}

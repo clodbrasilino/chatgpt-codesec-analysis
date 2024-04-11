@@ -1,0 +1,83 @@
+collected_code_3/round4/heal_0/problem-231.c: In function 'maxSum':
+collected_code_3/round4/heal_0/problem-231.c:7:25: warning: stack-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+    7 |             if (tri[i+1][j] > tri[i+1][j+1])
+      |                 ~~~~~~~~^~~
+  'main': events 1-3
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   17 |     int tri[N][N] = { {1, 0, 0},
+    |      |         ~~~
+    |      |         |
+    |      |         (2) capacity: 36 bytes
+    |......
+    |   20 |     printf("%d\n", maxSum(tri));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'maxSum' from 'main'
+    |
+    +--> 'maxSum': events 4-9
+           |
+           |    4 | int maxSum(int tri[N][N]) {
+           |      |     ^~~~~~
+           |      |     |
+           |      |     (4) entry to 'maxSum'
+           |    5 |     for (int i=N-1; i>=0; i--) {
+           |      |                     ~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i >= 0')...
+           |    6 |         for (int j=0; j<=i; j++) {
+           |      |                  ~    ~~~~
+           |      |                  |     |
+           |      |                  |     (7) following 'true' branch (when 'j <= i')...
+           |      |                  (6) ...to here
+           |    7 |             if (tri[i+1][j] > tri[i+1][j+1])
+           |      |                 ~~~~~~~~~~~
+           |      |                    |    |
+           |      |                    |    (9) out-of-bounds read from byte 36 till byte 39 but 'tri' ends at byte 36
+           |      |                    (8) ...to here
+           |
+collected_code_3/round4/heal_0/problem-231.c:7:25: note: read of 4 bytes from after the end of 'tri'
+    7 |             if (tri[i+1][j] > tri[i+1][j+1])
+      |                 ~~~~~~~~^~~
+collected_code_3/round4/heal_0/problem-231.c:7:25: note: valid subscripts for 'tri' are '[0]' to '[2]'
+collected_code_3/round4/heal_0/problem-231.c:7:25: warning: use of uninitialized value '*tri_46(D) + _3[j]' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+  'main': events 1-3
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   17 |     int tri[N][N] = { {1, 0, 0},
+    |      |         ~~~
+    |      |         |
+    |      |         (2) region created on stack here
+    |......
+    |   20 |     printf("%d\n", maxSum(tri));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'maxSum' from 'main'
+    |
+    +--> 'maxSum': events 4-9
+           |
+           |    4 | int maxSum(int tri[N][N]) {
+           |      |     ^~~~~~
+           |      |     |
+           |      |     (4) entry to 'maxSum'
+           |    5 |     for (int i=N-1; i>=0; i--) {
+           |      |                     ~~~~
+           |      |                      |
+           |      |                      (5) following 'true' branch (when 'i >= 0')...
+           |    6 |         for (int j=0; j<=i; j++) {
+           |      |                  ~    ~~~~
+           |      |                  |     |
+           |      |                  |     (7) following 'true' branch (when 'j <= i')...
+           |      |                  (6) ...to here
+           |    7 |             if (tri[i+1][j] > tri[i+1][j+1])
+           |      |                 ~~~~~~~~~~~
+           |      |                    |    |
+           |      |                    |    (9) use of uninitialized value '*tri_46(D) + _3[j]' here
+           |      |                    (8) ...to here
+           |

@@ -1,0 +1,24 @@
+```C
+#include <stdio.h>
+
+#define SIZE 5
+
+void addK(int* tuple, int size, int k) {
+    for(int i = 0; i < size; i++) {
+        tuple[i] += k;
+    }
+}
+
+int main() {
+    int tuple[SIZE] = {1, 2, 3, 4, 5};
+    int k = 3;
+
+    addK(tuple, SIZE, k);
+
+    for(int i = 0; i < SIZE; i++) {
+        printf("%d ", tuple[i]);
+    }
+
+    return 0;
+}
+```

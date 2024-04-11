@@ -1,0 +1,30 @@
+Here is a C program that calculates the nth Newman-Shanks-Williams prime number.
+
+```c
+#include <stdio.h>
+
+long long newmanShanksWilliams(int n) {
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    long long prevPrev = 1;
+    long long prev = 1;
+    long long current;
+    for (int i = 2; i <= n; i++) {
+        current = 2 * prev + prevPrev;
+        prevPrev = prev;
+        prev = current;
+    }
+    return current;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("The %dth Newman-Shanks-Williams prime number is %lld\n", n, newmanShanksWilliams(n));
+    return 0;
+}
+```
+
+This program uses a simple iterative approach to calculate the nth Newman-Shanks-Williams prime number. The `newmanShanksWilliams` function calculates the nth number in the sequence by iterating from 2 to n, each time calculating the current number as 2 times the previous number plus the number before that. The result is then returned. The `main` function gets a number from the user, calculates the corresponding Newman-Shanks-Williams prime number, and prints it out.

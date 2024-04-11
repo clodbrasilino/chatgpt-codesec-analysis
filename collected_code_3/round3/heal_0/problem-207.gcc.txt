@@ -1,0 +1,4 @@
+collected_code_3/problem-207-3.c: In function 'longestRepeatedSubSeq':
+collected_code_3/problem-207-3.c:16:28: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   16 |                 dp[i][j] = max(dp[i][j-1], dp[i-1][j]);
+      |                            ^~~

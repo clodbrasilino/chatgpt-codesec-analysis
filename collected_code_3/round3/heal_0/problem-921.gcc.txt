@@ -1,0 +1,89 @@
+collected_code_3/problem-921-3.c: In function 'chunkTuples':
+collected_code_3/problem-921-3.c:17:24: warning: dereference of possibly-NULL 'output' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   17 |         output[i].size = n;
+      |         ~~~~~~~~~~~~~~~^~~
+  'chunkTuples': events 1-4
+    |
+    |   15 |     Tuple *output = (Tuple*)malloc(sizeof(Tuple) * (*outputSize));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   16 |     for (int i = 0; i < *outputSize; i++) {
+    |      |                     ~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |   17 |         output[i].size = n;
+    |      |         ~~~~~~~~~~~~~~~~~~   
+    |      |               |        |
+    |      |               |        (4) 'output + (long unsigned int)i * 16' could be NULL: unchecked value from (1)
+    |      |               (3) ...to here
+    |
+collected_code_3/problem-921-3.c:20:31: warning: dereference of possibly-NULL '*output_46 + _24.data + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |             output[i].data[j] = input[i * n + j].data[0];
+      |             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+  'chunkTuples': events 1-6
+    |
+    |   16 |     for (int i = 0; i < *outputSize; i++) {
+    |      |                     ~~^~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch...
+    |   17 |         output[i].size = n;
+    |      |               ~        
+    |      |               |
+    |      |               (2) ...to here
+    |   18 |         output[i].data = (int*)malloc(sizeof(int) * n);
+    |      |                                ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (3) this call could return NULL
+    |   19 |         for (int j = 0; j < n && i * n + j < size; j++) {
+    |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (4) following 'true' branch...
+    |   20 |             output[i].data[j] = input[i * n + j].data[0];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               |         |
+    |      |                               |         (5) ...to here
+    |      |                               (6) '*output_46 + _24.data + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |
+collected_code_3/problem-921-3.c: In function 'main':
+collected_code_3/problem-921-3.c:32:23: warning: dereference of possibly-NULL 'input' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |         input[i].size = 1;
+      |         ~~~~~~~~~~~~~~^~~
+  'main': events 1-4
+    |
+    |   30 |     Tuple *input = (Tuple*)malloc(sizeof(Tuple) * size);
+    |      |                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |   31 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < size')...
+    |   32 |         input[i].size = 1;
+    |      |         ~~~~~~~~~~~~~~~~~   
+    |      |              |        |
+    |      |              |        (4) 'input + (long unsigned int)i * 16' could be NULL: unchecked value from (1)
+    |      |              (3) ...to here
+    |
+collected_code_3/problem-921-3.c:34:26: warning: dereference of possibly-NULL '*input_51 + _11.data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   34 |         input[i].data[0] = i + 1;
+      |         ~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-4
+    |
+    |   31 |     for (int i = 0; i < size; i++) {
+    |      |                     ~~^~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i < size')...
+    |   32 |         input[i].size = 1;
+    |      |              ~         
+    |      |              |
+    |      |              (2) ...to here
+    |   33 |         input[i].data = (int*)malloc(sizeof(int));
+    |      |                               ~~~~~~~~~~~~~~~~~~~
+    |      |                               |
+    |      |                               (3) this call could return NULL
+    |   34 |         input[i].data[0] = i + 1;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (4) '*input_51 + _11.data' could be NULL: unchecked value from (3)
+    |

@@ -1,0 +1,27 @@
+Here is a C program that extracts the even elements from a 2D array (which is the closest equivalent to a nested tuple in C). Note that C doesn't have built-in support for tuples like some other languages (e.g., Python).
+
+```c
+#include <stdio.h>
+
+#define ROW 3
+#define COL 3
+
+void extractEven(int arr[ROW][COL], int row, int col) {
+    int i, j;
+    for(i = 0; i < row; i++) {
+        for(j = 0; j < col; j++) {
+            if(arr[i][j] % 2 == 0) {
+                printf("%d ", arr[i][j]);
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[ROW][COL] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    extractEven(arr, ROW, COL);
+    return 0;
+}
+```
+
+This program defines a 2D array `arr` in the `main` function, and then calls the `extractEven` function to print out the even numbers in the array. The `extractEven` function iterates over each element in the array, and if the element is even (i.e., `arr[i][j] % 2 == 0`), it prints the element.

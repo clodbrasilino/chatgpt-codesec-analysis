@@ -1,0 +1,250 @@
+collected_code_3/round1/heal_2/healed/problem-570.c: In function 'removeWords':
+collected_code_3/round1/heal_2/healed/problem-570.c:27:17: warning: dereference of NULL 'newWords' [CWE-476] [-Wanalyzer-null-dereference]
+   27 |     newWords[j] = NULL;
+      |                 ^
+  'main': events 1-24
+    |
+    |   31 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   35 |     if(words == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch (when 'words' is non-NULL)...
+    |......
+    |   38 |     for(i = 0; i < count; i++) {
+    |      |         ~~~~~  ~~~~~~~~~  ~~~
+    |      |           |      |         |
+    |      |           |      |         (7) ...to here
+    |      |           |      |         (11) ...to here
+    |      |           |      |         (15) ...to here
+    |      |           |      |         (19) ...to here
+    |      |           |      |         (23) ...to here
+    |      |           |      (4) following 'true' branch (when 'i < count')...
+    |      |           |      (8) following 'true' branch (when 'i < count')...
+    |      |           |      (12) following 'true' branch (when 'i < count')...
+    |      |           |      (16) following 'true' branch (when 'i < count')...
+    |      |           |      (20) following 'true' branch (when 'i < count')...
+    |      |           |      (24) following 'false' branch (when 'i >= count')...
+    |      |           (3) ...to here
+    |   39 |         words[i] = (char *)calloc(20, sizeof(char));
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |      |              (9) ...to here
+    |      |              (13) ...to here
+    |      |              (17) ...to here
+    |      |              (21) ...to here
+    |   40 |         if(words[i] == NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (6) following 'false' branch...
+    |      |           (10) following 'false' branch...
+    |      |           (14) following 'false' branch...
+    |      |           (18) following 'false' branch...
+    |      |           (22) following 'false' branch...
+    |
+  'main': event 25
+    |
+    |   46 |     strcpy(words[0], "abcd");
+    |      |     ^~~~~~
+    |      |     |
+    |      |     (25) ...to here
+    |
+  'main': event 26
+    |
+    |   52 |     char **newWords = removeWords(words, count, str);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (26) calling 'removeWords' from 'main'
+    |
+    +--> 'removeWords': events 27-33
+           |
+           |    5 | char **removeWords(char **words, int count, char *str) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (27) entry to 'removeWords'
+           |......
+           |    8 |     if(newWords == NULL) {
+           |      |       ~ 
+           |      |       |
+           |      |       (28) following 'false' branch (when 'newWords' is non-NULL)...
+           |......
+           |   11 |     for(i = 0; i < count; i++) {
+           |      |         ~~~~~  ~~~~~~~~~
+           |      |           |      |
+           |      |           |      (30) following 'true' branch (when 'i < count')...
+           |      |           (29) ...to here
+           |   12 |         if(words[i] != NULL && strstr(words[i], str) == NULL) {
+           |      |           ~     ~                          ~
+           |      |           |     |                          |
+           |      |           |     (31) ...to here            (33) ...to here
+           |      |           (32) following 'true' branch...
+           |
+         'removeWords': events 34-38
+           |
+           |   11 |     for(i = 0; i < count; i++) {
+           |      |                           ~~~
+           |      |                            |
+           |      |                            (35) ...to here
+           |   12 |         if(words[i] != NULL && strstr(words[i], str) == NULL) {
+           |      |                             ^
+           |      |                             |
+           |      |                             (34) following 'false' branch...
+           |......
+           |   26 |     newWords = (char **)realloc(newWords, (j+1) * sizeof(char *));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (36) when 'realloc' fails
+           |   27 |     newWords[j] = NULL;
+           |      |             ~                
+           |      |             |
+           |      |             (37) 'newWords' is NULL
+           |   28 |     return newWords;
+           |      |            ~~~~~~~~          
+           |      |            |
+           |      |            (38) 'newWords' is NULL
+           |
+         'removeWords': event 39
+           |
+           |   27 |     newWords[j] = NULL;
+           |      |                 ^
+           |      |                 |
+           |      |                 (39) dereference of NULL 'newWords + (long unsigned int)j * 8'
+           |
+collected_code_3/round1/heal_2/healed/problem-570.c:28:12: warning: leak of 'newWords' [CWE-401] [-Wanalyzer-malloc-leak]
+   28 |     return newWords;
+      |            ^~~~~~~~
+  'main': events 1-24
+    |
+    |   31 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   35 |     if(words == NULL) {
+    |      |       ~
+    |      |       |
+    |      |       (2) following 'false' branch (when 'words' is non-NULL)...
+    |......
+    |   38 |     for(i = 0; i < count; i++) {
+    |      |         ~~~~~  ~~~~~~~~~  ~~~
+    |      |           |      |         |
+    |      |           |      |         (7) ...to here
+    |      |           |      |         (11) ...to here
+    |      |           |      |         (15) ...to here
+    |      |           |      |         (19) ...to here
+    |      |           |      |         (23) ...to here
+    |      |           |      (4) following 'true' branch (when 'i < count')...
+    |      |           |      (8) following 'true' branch (when 'i < count')...
+    |      |           |      (12) following 'true' branch (when 'i < count')...
+    |      |           |      (16) following 'true' branch (when 'i < count')...
+    |      |           |      (20) following 'true' branch (when 'i < count')...
+    |      |           |      (24) following 'false' branch (when 'i >= count')...
+    |      |           (3) ...to here
+    |   39 |         words[i] = (char *)calloc(20, sizeof(char));
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |      |              (9) ...to here
+    |      |              (13) ...to here
+    |      |              (17) ...to here
+    |      |              (21) ...to here
+    |   40 |         if(words[i] == NULL) {
+    |      |           ~
+    |      |           |
+    |      |           (6) following 'false' branch...
+    |      |           (10) following 'false' branch...
+    |      |           (14) following 'false' branch...
+    |      |           (18) following 'false' branch...
+    |      |           (22) following 'false' branch...
+    |
+  'main': event 25
+    |
+    |   46 |     strcpy(words[0], "abcd");
+    |      |     ^~~~~~
+    |      |     |
+    |      |     (25) ...to here
+    |
+  'main': event 26
+    |
+    |   52 |     char **newWords = removeWords(words, count, str);
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (26) calling 'removeWords' from 'main'
+    |
+    +--> 'removeWords': events 27-36
+           |
+           |    5 | char **removeWords(char **words, int count, char *str) {
+           |      |        ^~~~~~~~~~~
+           |      |        |
+           |      |        (27) entry to 'removeWords'
+           |    6 |     int i, j = 0, wordLength;
+           |    7 |     char **newWords = (char **)calloc(count, sizeof(char *));
+           |      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                |
+           |      |                                (28) allocated here
+           |    8 |     if(newWords == NULL) {
+           |      |       ~ 
+           |      |       |
+           |      |       (29) assuming 'newWords' is non-NULL
+           |      |       (30) following 'false' branch (when 'newWords' is non-NULL)...
+           |......
+           |   11 |     for(i = 0; i < count; i++) {
+           |      |         ~~~~~  ~~~~~~~~~
+           |      |           |      |
+           |      |           |      (32) following 'true' branch (when 'i < count')...
+           |      |           (31) ...to here
+           |   12 |         if(words[i] != NULL && strstr(words[i], str) == NULL) {
+           |      |           ~     ~                          ~
+           |      |           |     |                          |
+           |      |           |     (33) ...to here            (35) ...to here
+           |      |           (34) following 'true' branch...
+           |......
+           |   15 |             if(newWords[j] == NULL) {
+           |      |               ~
+           |      |               |
+           |      |               (36) following 'false' branch...
+           |
+         'removeWords': event 37
+           |
+           |   22 |             memcpy(newWords[j], words[i], wordLength);
+           |      |                            ^
+           |      |                            |
+           |      |                            (37) ...to here
+           |
+         'removeWords': events 38-41
+           |
+           |   11 |     for(i = 0; i < count; i++) {
+           |      |                ~~^~~~~~~
+           |      |                  |
+           |      |                  (38) following 'true' branch (when 'i < count')...
+           |   12 |         if(words[i] != NULL && strstr(words[i], str) == NULL) {
+           |      |           ~     ~                          ~
+           |      |           |     |                          |
+           |      |           |     (39) ...to here            (41) ...to here
+           |      |           (40) following 'true' branch...
+           |
+         'removeWords': events 42-45
+           |
+           |   11 |     for(i = 0; i < count; i++) {
+           |      |                           ~~~
+           |      |                            |
+           |      |                            (43) ...to here
+           |   12 |         if(words[i] != NULL && strstr(words[i], str) == NULL) {
+           |      |                             ^
+           |      |                             |
+           |      |                             (42) following 'false' branch...
+           |......
+           |   26 |     newWords = (char **)realloc(newWords, (j+1) * sizeof(char *));
+           |      |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                         |
+           |      |                         (44) when 'realloc' fails
+           |   27 |     newWords[j] = NULL;
+           |   28 |     return newWords;
+           |      |            ~~~~~~~~          
+           |      |            |
+           |      |            (45) 'newWords' leaks here; was allocated at (28)
+           |

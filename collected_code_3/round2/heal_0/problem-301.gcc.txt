@@ -1,0 +1,48 @@
+collected_code_3/problem-301-2.c: In function 'main':
+collected_code_3/problem-301-2.c:19:23: warning: dereference of possibly-NULL 'dict1' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     dict1->nestedDict = dict2;
+      |     ~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   16 |     Dictionary *dict1 = (Dictionary*)malloc(sizeof(Dictionary));
+    |      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                      |
+    |      |                                      (1) this call could return NULL
+    |......
+    |   19 |     dict1->nestedDict = dict2;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~         
+    |      |                       |
+    |      |                       (2) 'dict1' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-301-2.c:20:23: warning: dereference of possibly-NULL 'dict2' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   20 |     dict2->nestedDict = dict3;
+      |     ~~~~~~~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   17 |     Dictionary *dict2 = (Dictionary*)malloc(sizeof(Dictionary));
+    |      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                      |
+    |      |                                      (1) this call could return NULL
+    |......
+    |   20 |     dict2->nestedDict = dict3;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~         
+    |      |                       |
+    |      |                       (2) 'dict2' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-301-2.c:21:23: warning: dereference of possibly-NULL 'dict3' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     dict3->nestedDict = NULL;
+      |                       ^
+  'main': event 1
+    |
+    |   18 |     Dictionary *dict3 = (Dictionary*)malloc(sizeof(Dictionary));
+    |      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                      |
+    |      |                                      (1) this call could return NULL
+    |
+  'main': event 2
+    |
+    |   21 |     dict3->nestedDict = NULL;
+    |      |                       ^
+    |      |                       |
+    |      |                       (2) 'dict3' could be NULL: unchecked value from (1)
+    |

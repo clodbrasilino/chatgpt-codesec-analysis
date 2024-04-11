@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <string.h>
+
+char* concatenate(char* result, char** tuple, int tuple_size, char* delimiter) {
+    int i;
+    strcpy(result, tuple[0]);
+    for(i = 1; i < tuple_size; i++) {
+        strcat(result, delimiter);
+        strcat(result, tuple[i]);
+    }
+    return result;
+}
+
+int main() {
+    char* tuple[] = {"Hello", "World", "This", "Is", "C"};
+    char result[100] = "";
+    printf("%s\n", concatenate(result, tuple, 5, " "));
+    return 0;
+}

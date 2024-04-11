@@ -1,0 +1,87 @@
+collected_code_3/round1/heal_1/healed/problem-805.c: In function 'main':
+collected_code_3/round1/heal_1/healed/problem-805.c:46:9: warning: dereference of NULL 'max_list' [CWE-476] [-Wanalyzer-null-dereference]
+   46 |         printf("%d ", max_list[i]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   24 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     int *max_list = find_highest_sum_list(lists, list_size, num_lists);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'find_highest_sum_list' from 'main'
+    |
+    +--> 'find_highest_sum_list': events 3-11
+           |
+           |    6 | int* find_highest_sum_list(int lists[MAX_LISTS][MAX_ELEMENTS], int list_size[MAX_LISTS], int num_lists) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'find_highest_sum_list'
+           |    7 |     int max_sum = -1;
+           |    8 |     int *max_list = NULL;
+           |      |          ~~~~~~~~
+           |      |          |
+           |      |          (4) 'max_list' is NULL
+           |    9 | 
+           |   10 |     for(int i = 0; i < num_lists; i++) {
+           |      |                    ~~~~~~~~~~~~~  ~~~
+           |      |                      |             |
+           |      |                      |             (10) ...to here
+           |      |                      (5) following 'true' branch (when 'i < num_lists')...
+           |   11 |         int current_sum = 0;
+           |      |             ~~~~~~~~~~~
+           |      |             |
+           |      |             (6) ...to here
+           |   12 |         for(int j = 0; j < list_size[i]; j++) {
+           |      |                        ~~~~~~~~~~~~~~~~
+           |      |                          |
+           |      |                          (7) following 'true' branch...
+           |   13 |             current_sum += lists[i][j];
+           |      |                                 ~
+           |      |                                 |
+           |      |                                 (8) ...to here
+           |   14 |         }
+           |   15 |         if(current_sum > max_sum) {
+           |      |           ~
+           |      |           |
+           |      |           (9) following 'false' branch (when 'current_sum <= max_sum')...
+           |......
+           |   21 |     return max_list;
+           |      |            ~~~~~~~~
+           |      |            |
+           |      |            (11) 'max_list' is NULL
+           |
+    <------+
+    |
+  'main': events 12-20
+    |
+    |   34 |     int *max_list = find_highest_sum_list(lists, list_size, num_lists);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (12) returning to 'main' from 'find_highest_sum_list'
+    |......
+    |   37 |     for (int i = 0; i < num_lists; i++) {
+    |      |                     ~~~~~~~~~~~~~  ~~~
+    |      |                       |             |
+    |      |                       |             (16) ...to here
+    |      |                       (13) following 'true' branch (when 'i < num_lists')...
+    |   38 |         if(lists[i] == max_list) {
+    |      |           ~~~~~~     
+    |      |           ||
+    |      |           |(14) ...to here
+    |      |           (15) following 'false' branch...
+    |......
+    |   45 |     for(int i = 0; i < list_size[max_list_index]; i++) {
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (17) following 'true' branch...
+    |   46 |         printf("%d ", max_list[i]);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |                     |
+    |      |         |                     (18) ...to here
+    |      |         |                     (19) 'max_list' is NULL
+    |      |         (20) dereference of NULL 'max_list + (long unsigned int)i * 4'
+    |

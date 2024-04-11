@@ -1,0 +1,184 @@
+collected_code_3/problem-674-3.c: In function 'createWord':
+collected_code_3/problem-674-3.c:16:19: warning: dereference of possibly-NULL 'newWord' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     newWord->next = NULL;
+      |                   ^
+  'removeDuplicates': event 1
+    |
+    |   30 | void removeDuplicates(char* str) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'removeDuplicates'
+    |
+  'removeDuplicates': events 2-4
+    |
+    |   33 |     while(token != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (2) following 'true' branch (when 'token' is non-NULL)...
+    |   34 |         if(!contains(root, token)) {
+    |      |             ~~~~~~~~~~~~~~~~~~~~~
+    |      |             |
+    |      |             (3) ...to here
+    |      |             (4) calling 'contains' from 'removeDuplicates'
+    |
+    +--> 'contains': event 5
+           |
+           |   20 | int contains(struct Word* root, char* str) {
+           |      |     ^~~~~~~~
+           |      |     |
+           |      |     (5) entry to 'contains'
+           |
+         'contains': events 6-7
+           |
+           |   22 |     while(temp != NULL) {
+           |      |                ^
+           |      |                |
+           |      |                (6) following 'false' branch (when 'temp' is NULL)...
+           |......
+           |   27 |     return 0;
+           |      |            ~    
+           |      |            |
+           |      |            (7) ...to here
+           |
+    <------+
+    |
+  'removeDuplicates': events 8-11
+    |
+    |   34 |         if(!contains(root, token)) {
+    |      |           ~ ^~~~~~~~~~~~~~~~~~~~~
+    |      |           | |
+    |      |           | (8) returning to 'removeDuplicates' from 'contains'
+    |      |           (9) following 'true' branch...
+    |   35 |             struct Word* newWord = createWord(token);
+    |      |                                    ~~~~~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (10) ...to here
+    |      |                                    (11) calling 'createWord' from 'removeDuplicates'
+    |
+    +--> 'createWord': events 12-13
+           |
+           |   13 | struct Word* createWord(char* str) {
+           |      |              ^~~~~~~~~~
+           |      |              |
+           |      |              (12) entry to 'createWord'
+           |   14 |     struct Word* newWord = (struct Word*) malloc(sizeof(struct Word));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (13) this call could return NULL
+           |
+         'createWord': event 14
+           |
+           |   16 |     newWord->next = NULL;
+           |      |                   ^
+           |      |                   |
+           |      |                   (14) 'newWord' could be NULL: unchecked value from (13)
+           |
+collected_code_3/problem-674-3.c: In function 'removeDuplicates':
+collected_code_3/problem-674-3.c:42:1: warning: leak of 'root' [CWE-401] [-Wanalyzer-malloc-leak]
+   42 | }
+      | ^
+  'main': events 1-2
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   49 |     removeDuplicates(str);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'removeDuplicates' from 'main'
+    |
+    +--> 'removeDuplicates': event 3
+           |
+           |   30 | void removeDuplicates(char* str) {
+           |      |      ^~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'removeDuplicates'
+           |
+         'removeDuplicates': events 4-6
+           |
+           |   33 |     while(token != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (4) following 'true' branch (when 'token' is non-NULL)...
+           |   34 |         if(!contains(root, token)) {
+           |      |             ~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (5) ...to here
+           |      |             (6) calling 'contains' from 'removeDuplicates'
+           |
+           +--> 'contains': event 7
+                  |
+                  |   20 | int contains(struct Word* root, char* str) {
+                  |      |     ^~~~~~~~
+                  |      |     |
+                  |      |     (7) entry to 'contains'
+                  |
+                'contains': events 8-9
+                  |
+                  |   22 |     while(temp != NULL) {
+                  |      |                ^
+                  |      |                |
+                  |      |                (8) following 'false' branch (when 'temp' is NULL)...
+                  |......
+                  |   27 |     return 0;
+                  |      |            ~    
+                  |      |            |
+                  |      |            (9) ...to here
+                  |
+           <------+
+           |
+         'removeDuplicates': events 10-13
+           |
+           |   34 |         if(!contains(root, token)) {
+           |      |           ~ ^~~~~~~~~~~~~~~~~~~~~
+           |      |           | |
+           |      |           | (10) returning to 'removeDuplicates' from 'contains'
+           |      |           (11) following 'true' branch...
+           |   35 |             struct Word* newWord = createWord(token);
+           |      |                                    ~~~~~~~~~~~~~~~~~
+           |      |                                    |
+           |      |                                    (12) ...to here
+           |      |                                    (13) calling 'createWord' from 'removeDuplicates'
+           |
+           +--> 'createWord': events 14-15
+                  |
+                  |   13 | struct Word* createWord(char* str) {
+                  |      |              ^~~~~~~~~~
+                  |      |              |
+                  |      |              (14) entry to 'createWord'
+                  |   14 |     struct Word* newWord = (struct Word*) malloc(sizeof(struct Word));
+                  |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                                           |
+                  |      |                                           (15) allocated here
+                  |
+                'createWord': event 16
+                  |
+                  |   16 |     newWord->next = NULL;
+                  |      |                   ^
+                  |      |                   |
+                  |      |                   (16) assuming 'newWord' is non-NULL
+                  |
+           <------+
+           |
+         'removeDuplicates': event 17
+           |
+           |   35 |             struct Word* newWord = createWord(token);
+           |      |                                    ^~~~~~~~~~~~~~~~~
+           |      |                                    |
+           |      |                                    (17) returning to 'removeDuplicates' from 'createWord'
+           |
+         'removeDuplicates': events 18-20
+           |
+           |   33 |     while(token != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (18) following 'false' branch (when 'token' is NULL)...
+           |......
+           |   42 | }
+           |      | ~                
+           |      | |
+           |      | (19) ...to here
+           |      | (20) 'root' leaks here; was allocated at (15)
+           |

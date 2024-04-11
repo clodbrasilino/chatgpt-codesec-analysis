@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int sumOfAP(int a, int d, int n) {
+    int sum = 0;
+    int i;
+
+    for (i = 0; i < n; i++) {
+        sum = sum + a;
+        a = a + d;
+    }
+
+    return sum;
+}
+
+int main() {
+    int a = 1, d = 2, n = 5;
+
+    printf("Sum of the AP series is: %d", sumOfAP(a, d, n));
+
+    return 0;
+}

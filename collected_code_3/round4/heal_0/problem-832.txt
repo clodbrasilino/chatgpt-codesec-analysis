@@ -1,0 +1,36 @@
+C language does not have built-in support for regular expressions (regex). However, you can use third-party libraries like PCRE (Perl Compatible Regular Expressions) or POSIX regex library. But in this case, we will use a simple approach without regex to find the maximum numeric value in a string.
+
+Here is a simple C program that finds the maximum numeric value in a string:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int extract_max(char *str) {
+    int num = 0, max = 0;
+    int len = strlen(str);
+
+    for(int i = 0; i < len; i++) {
+        if(isdigit(str[i])) {
+            num = num * 10 + (str[i] - '0');
+        } else {
+            if(num > max) {
+                max = num;
+            }
+            num = 0;
+        }
+    }
+
+    return (num > max) ? num : max;
+}
+
+int main() {
+    char str[] = "abc123def456ghi789";
+    printf("Max number in string is %d\n", extract_max(str));
+    return 0;
+}
+```
+
+This program works by iterating over each character in the string. If the character is a digit, it is added to the current number. If the character is not a digit, the current number is compared with the maximum number found so far, and the maximum is updated if necessary. The current number is then reset to zero. After all characters have been processed, the maximum number is returned.

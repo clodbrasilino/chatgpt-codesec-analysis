@@ -1,0 +1,38 @@
+Your request seems to be a bit confused as C programming language does not have built-in support for tuples or lists like Python or some other high-level languages. However, we can mimic this behavior using structures and arrays. Here is an example of how you might do it:
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int* list;
+    int size;
+} Tuple;
+
+int countLists(Tuple* tuples, int size) {
+    int count = 0;
+    for(int i = 0; i < size; i++) {
+        if(tuples[i].list != NULL) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int list1[] = {1, 2, 3};
+    int list2[] = {4, 5, 6, 7, 8};
+    int list3[] = {9, 10};
+
+    Tuple tuples[3] = {
+        {list1, sizeof(list1)/sizeof(int)},
+        {list2, sizeof(list2)/sizeof(int)},
+        {list3, sizeof(list3)/sizeof(int)}
+    };
+
+    printf("Number of lists in tuple: %d\n", countLists(tuples, 3));
+
+    return 0;
+}
+```
+
+In this code, we are defining a `Tuple` structure that contains a pointer to an integer array (which represents a list) and the size of that array. The `countLists` function iterates over an array of these `Tuple` structures and increments a counter each time it encounters a non-null list. The `main` function creates three integer arrays (representing lists), wraps them in `Tuple` structures, and then calls `countLists` to count the number of lists.

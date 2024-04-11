@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int convertToInt(int* arr, int size) {
+    int result = 0;
+    for(int i = 0; i < size; i++) {
+        int temp = arr[i];
+        while(temp > 0) {
+            result = result * 10 + temp % 10;
+            temp /= 10;
+        }
+    }
+    return result;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = convertToInt(arr, size);
+    printf("%d\n", result);
+    return 0;
+}

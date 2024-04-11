@@ -1,0 +1,93 @@
+collected_code_3/round4/heal_0/problem-727.c: In function 'remove_non_alnum':
+collected_code_3/round4/heal_0/problem-727.c:26:29: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   26 |             result[index++] = input[i];
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~
+  'remove_non_alnum': events 1-10
+    |
+    |   11 |     char* result = malloc(strlen(input) + 1);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |......
+    |   15 |     if (reti) {
+    |      |        ~            
+    |      |        |
+    |      |        (2) following 'false' branch (when 'reti == 0')...
+    |......
+    |   20 |     for (int i = 0; i < strlen(input); i++) {
+    |      |              ~      ~~~~~~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (4) following 'true' branch...
+    |      |              (3) ...to here
+    |   21 |         reti = regexec(&regex, &input[i], 0, NULL, 0);
+    |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                |
+    |      |                (5) ...to here
+    |   22 |         if (!reti) {
+    |      |            ~        
+    |      |            |
+    |      |            (6) following 'false' branch (when 'reti != 0')...
+    |......
+    |   25 |         else if (reti == REG_NOMATCH) {
+    |      |                 ~   
+    |      |                 |
+    |      |                 (7) ...to here
+    |      |                 (8) following 'true' branch (when 'reti == 1')...
+    |   26 |             result[index++] = input[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |      |
+    |      |                             |      (9) ...to here
+    |      |                             (10) 'result + (sizetype)index' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-727.c:35:19: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   35 |     result[index] = '\0';
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   40 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   41 |     char* input = "Hello, World! 123";
+    |   42 |     char* output = remove_non_alnum(input);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'remove_non_alnum' from 'main'
+    |
+    +--> 'remove_non_alnum': events 3-11
+           |
+           |    7 | char* remove_non_alnum(char* input) {
+           |      |       ^~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'remove_non_alnum'
+           |......
+           |   11 |     char* result = malloc(strlen(input) + 1);
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) this call could return NULL
+           |......
+           |   15 |     if (reti) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'reti == 0')...
+           |......
+           |   20 |     for (int i = 0; i < strlen(input); i++) {
+           |      |              ~      ~~~~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (7) following 'true' branch...
+           |      |              (6) ...to here
+           |   21 |         reti = regexec(&regex, &input[i], 0, NULL, 0);
+           |      |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (8) ...to here
+           |   22 |         if (!reti) {
+           |      |            ~
+           |      |            |
+           |      |            (9) following 'true' branch (when 'reti == 0')...
+           |      |            (10) ...to here
+           |......
+           |   35 |     result[index] = '\0';
+           |      |     ~~~~~~~~~~~~~~~~~~~~
+           |      |                   |
+           |      |                   (11) 'result + (sizetype)index' could be NULL: unchecked value from (4)
+           |

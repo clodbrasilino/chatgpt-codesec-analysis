@@ -1,0 +1,6 @@
+collected_code_3/problem-805-3.c: In function 'main':
+collected_code_3/problem-805-3.c:38:41: error: invalid operands to binary - (have 'int *' and 'int (*)[10]')
+   38 |     for(int i = 0; i < listSize[maxList - lists]; i++) {
+      |                                         ^
+      |                                         |
+      |                                         int (*)[10]

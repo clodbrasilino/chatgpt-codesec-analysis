@@ -1,0 +1,73 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+typedef struct Stack {
+    int top;
+    char arr[MAX];
+} Stack;
+
+Stack* createStack() {
+    Stack* stack = (Stack*)malloc(sizeof(Stack));
+    if(stack == NULL)
+        return NULL;
+    stack->top = -1;
+    return stack;
+}
+
+void push(Stack* stack, char c) {
+    stack->arr[++stack->top] = c;
+}
+
+char pop(Stack* stack) {
+    if (stack->top != -1) {
+        return stack->arr[stack->top--];
+    }
+    return '#';
+}
+
+int isMatchingPair(char character1, char character2) {
+    if (character1 == '(' && character2 == ')') return 1;
+    else if (character1 == '{' && character2 == '}') return 1;
+    else if (character1 == '[' && character2 == ']') return 1;
+    else return 0;
+}
+
+int areParenthesisBalanced(char exp[]) {
+    int i = 0;
+    Stack* stack = createStack();
+    if(stack == NULL)
+        return 0;
+    while (exp[i]) {
+        if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+            push(stack, exp[i]);
+        if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+            if (stack->top == -1)
+            {
+                free(stack);
+                return 0;
+            }
+            else if (!isMatchingPair(pop(stack), exp[i]))
+            {
+                free(stack);
+                return 0;
+            }
+        }
+        i++;
+    }
+    int balanced = (stack->top == -1);
+    free(stack);
+    return balanced;
+}
+
+int main() {
+    char exp[MAX] = "{()}[]";
+    if (areParenthesisBalanced(exp))
+        printf("Balanced \n");
+    else
+        printf("Not Balanced \n");
+    return 0;
+}
+```

@@ -1,0 +1,28 @@
+Here is a C program that removes everything except alphanumeric characters from a given string. However, C does not natively support regular expressions (regex). Therefore, we will use a simple loop to iterate over the string and check each character individually.
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void remove_non_alphanumeric(char* str) {
+    int i, j = 0, len;
+    len = strlen(str);
+
+    for(i = 0; i < len; i++) {
+        if (isalnum(str[i])) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, World! 123";
+    remove_non_alphanumeric(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+This program uses the `isalnum` function from the `ctype.h` library to check if a character is alphanumeric. If it is, it is copied to the new position in the string. If it is not, it is skipped. After all characters have been checked, the string is terminated with a null character (`'\0'`). The `main` function demonstrates the usage of this function with a sample string.

@@ -1,0 +1,48 @@
+In C, there is no built-in support for tuples or lists like in Python or other high-level languages. However, we can create a similar structure using struct and array. Here is an example:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    int *list;
+    int listSize;
+} Tuple;
+
+Tuple* createTuple(char *str, int *list, int listSize) {
+    Tuple *newTuple = (Tuple*)malloc(sizeof(Tuple));
+    newTuple->str = (char*)malloc(strlen(str) + 1);
+    strcpy(newTuple->str, str);
+    newTuple->list = (int*)malloc(listSize * sizeof(int));
+    memcpy(newTuple->list, list, listSize * sizeof(int));
+    newTuple->listSize = listSize;
+    return newTuple;
+}
+
+void printTuple(Tuple *tuple) {
+    printf("String: %s\n", tuple->str);
+    printf("List: ");
+    for(int i = 0; i < tuple->listSize; i++) {
+        printf("%d ", tuple->list[i]);
+    }
+    printf("\n");
+}
+
+void freeTuple(Tuple *tuple) {
+    free(tuple->str);
+    free(tuple->list);
+    free(tuple);
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5};
+    Tuple *tuple = createTuple("Hello", list, 5);
+    printTuple(tuple);
+    freeTuple(tuple);
+    return 0;
+}
+```
+
+This code defines a `Tuple` struct that contains a string and a dynamic array (list). The `createTuple` function allocates memory for a new `Tuple`, its string, and its list, and then copies the given string and list into the new `Tuple`. The `printTuple` function prints the contents of a `Tuple`, and the `freeTuple` function frees the memory allocated for a `Tuple`. The `main` function demonstrates how to use these functions.

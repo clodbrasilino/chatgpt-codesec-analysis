@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int countLowercase(char* str) {
+    int count = 0;
+    for(int i = 0; str[i]; i++) {
+        if(islower(str[i])) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    char str[] = "Hello World!";
+    printf("Number of lowercase letters: %d\n", countLowercase(str));
+    return 0;
+}

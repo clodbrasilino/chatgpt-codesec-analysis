@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+unsigned int setOddBits(unsigned int n) {
+    unsigned int mask = 0xAAAAAAAA;
+    return (n | mask);
+}
+
+int main() {
+    unsigned int num = 23;
+    printf("Result: %u\n", setOddBits(num));
+    return 0;
+}

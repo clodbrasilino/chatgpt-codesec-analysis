@@ -1,0 +1,50 @@
+./collected_code_3/round3/heal_1/healed/problem-969.c: In function 'joinTuples':
+./collected_code_3/round3/heal_1/healed/problem-969.c:21:26: warning: use of possibly-NULL 'temp' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   21 |             size_t len = strlen(temp) + strlen(tuples[i].value) + 1;
+      |                          ^~~~~~~~~~~~
+  'joinTuples': events 1-12
+    |
+    |   12 |     if(result == NULL) {
+    |      |       ^
+    |      |       |
+    |      |       (1) following 'false' branch (when 'result' is non-NULL)...
+    |......
+    |   16 |     int count = 0;
+    |      |         ~~~~~
+    |      |         |
+    |      |         (2) ...to here
+    |   17 | 
+    |   18 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (3) following 'true' branch (when 'i < size')...
+    |      |                      (8) following 'true' branch (when 'i < size')...
+    |   19 |         if(i > 0 && strcmp(tuples[i].initial, tuples[i-1].initial) == 0) {
+    |      |           ~
+    |      |           |
+    |      |           (4) ...to here
+    |      |           (5) following 'false' branch (when 'i <= 0')...
+    |      |           (9) ...to here
+    |      |           (10) following 'true' branch...
+    |   20 |             char *temp = result[count-1].value;
+    |      |                                ~
+    |      |                                |
+    |      |                                (11) ...to here
+    |   21 |             size_t len = strlen(temp) + strlen(tuples[i].value) + 1;
+    |      |                          ~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (12) argument 1 ('temp') from (7) could be NULL where non-null expected
+    |......
+    |   26 |             result[count].initial = strdup(tuples[i].initial);
+    |      |                                                  ~
+    |      |                                                  |
+    |      |                                                  (6) ...to here
+    |   27 |             result[count].value = strdup(tuples[i].value);
+    |      |                                   ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |
+    |      |                                   (7) this call could return NULL
+    |
+In file included from ./collected_code_3/round3/heal_1/healed/problem-969.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:82:10: note: argument 1 of 'strlen' must be non-null
+   82 | size_t   strlen(const char *__s);
+      |          ^~~~~~

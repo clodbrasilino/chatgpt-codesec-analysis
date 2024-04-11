@@ -1,0 +1,39 @@
+Here is a simple C program that demonstrates a function to remove a nested record from a tuple. However, it's important to note that C doesn't natively support tuples like Python or other high-level languages. In C, we can use a struct to represent a tuple. This example uses a struct within a struct to represent a nested record, and the function removes the nested record by resetting it.
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int x;
+    int y;
+} NestedRecord;
+
+typedef struct {
+    int a;
+    int b;
+    NestedRecord record;
+} Tuple;
+
+void removeNestedRecord(Tuple *tuple) {
+    tuple->record.x = 0;
+    tuple->record.y = 0;
+}
+
+int main() {
+    Tuple tuple;
+    tuple.a = 1;
+    tuple.b = 2;
+    tuple.record.x = 3;
+    tuple.record.y = 4;
+
+    printf("Before removal: a=%d, b=%d, x=%d, y=%d\n", tuple.a, tuple.b, tuple.record.x, tuple.record.y);
+
+    removeNestedRecord(&tuple);
+
+    printf("After removal: a=%d, b=%d, x=%d, y=%d\n", tuple.a, tuple.b, tuple.record.x, tuple.record.y);
+
+    return 0;
+}
+```
+
+In this program, `Tuple` is a struct that contains two integers and a `NestedRecord`, which is another struct containing two integers. The `removeNestedRecord` function takes a pointer to a `Tuple` and resets the `NestedRecord` within it. The `main` function demonstrates the usage of this function.

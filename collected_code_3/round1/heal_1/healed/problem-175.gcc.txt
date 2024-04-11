@@ -1,0 +1,99 @@
+collected_code_3/round1/heal_1/healed/problem-175.c: In function 'isEmpty':
+collected_code_3/round1/heal_1/healed/problem-175.c:34:17: warning: use after 'free' of 'stack' [CWE-416] [-Wanalyzer-use-after-free]
+   34 |     return stack->top == -1;
+      |            ~~~~~^~~~~
+  'main': events 1-2
+    |
+    |   79 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   83 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   56 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   57 |     int i = 0;
+           |   58 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-11
+                  |
+                  |   13 | Stack* createStack(unsigned capacity) {
+                  |      |        ^~~~~~~~~~~
+                  |      |        |
+                  |      |        (5) entry to 'createStack'
+                  |   14 |     Stack* stack = (Stack*) malloc(sizeof(Stack));
+                  |      |                             ~~~~~~~~~~~~~~~~~~~~~
+                  |      |                             |
+                  |      |                             (6) allocated here
+                  |   15 |     if(stack == NULL) return NULL;
+                  |      |       ~ 
+                  |      |       |
+                  |      |       (7) assuming 'stack' is non-NULL
+                  |      |       (8) following 'false' branch (when 'stack' is non-NULL)...
+                  |   16 | 
+                  |   17 |     stack->capacity = capacity;
+                  |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                     |
+                  |      |                     (9) ...to here
+                  |......
+                  |   21 |     if(stack->array == NULL){
+                  |      |       ~ 
+                  |      |       |
+                  |      |       (10) following 'false' branch...
+                  |......
+                  |   26 |     return stack;
+                  |      |            ~~~~~
+                  |      |            |
+                  |      |            (11) ...to here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 12-13
+           |
+           |   58 |     Stack* stack = createStack(strlen(exp));
+           |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (12) returning to 'areParenthesisBalanced' from 'createStack'
+           |   59 |     if(stack == NULL) return 0;
+           |      |       ~             
+           |      |       |
+           |      |       (13) following 'false' branch (when 'stack' is non-NULL)...
+           |
+         'areParenthesisBalanced': event 14
+           |
+           |cc1:
+           | (14): ...to here
+           |
+         'areParenthesisBalanced': events 15-16
+           |
+           |   75 |     free(stack);
+           |      |     ^~~~~~~~~~~
+           |      |     |
+           |      |     (15) freed here
+           |   76 |     return isEmpty(stack) ? 1 : 0;
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |
+           |      |            (16) calling 'isEmpty' from 'areParenthesisBalanced'
+           |
+           +--> 'isEmpty': events 17-18
+                  |
+                  |   33 | int isEmpty(Stack* stack) {
+                  |      |     ^~~~~~~
+                  |      |     |
+                  |      |     (17) entry to 'isEmpty'
+                  |   34 |     return stack->top == -1;
+                  |      |            ~~~~~~~~~~
+                  |      |                 |
+                  |      |                 (18) use after 'free' of 'stack'; freed at (15)
+                  |

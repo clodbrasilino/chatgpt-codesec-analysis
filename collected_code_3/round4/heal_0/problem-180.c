@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+#define EARTH_RADIUS 6371.0
+
+double degreesToRadians(double degrees) {
+    return degrees * PI / 180.0;
+}
+
+double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    double lat1Rad = degreesToRadians(lat1);
+    double lon1Rad = degreesToRadians(lon1);
+    double lat2Rad = degreesToRadians(lat2);
+    double lon2Rad = degreesToRadians(lon2);
+
+    double diffLat = lat2Rad - lat1Rad;
+    double diffLon = lon2Rad - lon1Rad;
+
+    double a = sin(diffLat / 2) * sin(diffLat / 2) +
+               cos(lat1Rad) * cos(lat2Rad) *
+               sin(diffLon / 2) * sin(diffLon / 2);
+    double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+
+    return EARTH_RADIUS * c;
+}
+
+int main() {
+    double lat1, lon1, lat2, lon2;
+
+    printf("Enter latitude and longitude for point 1: ");
+    scanf("%lf %lf", &lat1, &lon1);
+
+    printf("Enter latitude and longitude for point 2: ");
+    scanf("%lf %lf", &lat2, &lon2);
+
+    double distance = calculateDistance(lat1, lon1, lat2, lon2);
+
+    printf("The distance between the two points is: %.2lf km\n", distance);
+
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char **shortlist_words(char **words, int word_count, int n, int *shortlisted_count) {
+    char **shortlisted_words = (char **)malloc(sizeof(char *) * word_count);
+    
+    if(shortlisted_words == NULL)
+        return NULL;
+
+    *shortlisted_count = 0;
+
+    for (int i = 0; i < word_count; i++) {
+        if (strlen(words[i]) > n) {
+            shortlisted_words[*shortlisted_count] = words[i];
+            (*shortlisted_count)++;
+        }
+    }
+
+    return shortlisted_words;
+}
+
+int main() {
+    char *words[] = {"Hello", "World", "Programming", "C", "Language"};
+    int word_count = sizeof(words) / sizeof(words[0]);
+    int shortlisted_count;
+    int n = 5;
+
+    char **shortlisted_words = shortlist_words(words, word_count, n, &shortlisted_count);
+
+    if(shortlisted_words == NULL)
+        return -1;
+
+    for (int i = 0; i < shortlisted_count; i++) {
+        printf("%s\n", shortlisted_words[i]);
+    }
+
+    free(shortlisted_words);
+
+    return 0;
+}

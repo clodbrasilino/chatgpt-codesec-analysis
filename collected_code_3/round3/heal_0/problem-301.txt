@@ -1,0 +1,45 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char key;
+    struct Node* next;
+    struct Node* child;
+} Node;
+
+Node* createNode(char key) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = key;
+    newNode->next = NULL;
+    newNode->child = NULL;
+    return newNode;
+}
+
+int findDepth(Node* root) {
+    if (root == NULL)
+        return 0;
+
+    int maxDepth = 0;
+    Node* current = root->child;
+    while (current != NULL) {
+        int childDepth = findDepth(current);
+        if (childDepth > maxDepth)
+            maxDepth = childDepth;
+        current = current->next;
+    }
+
+    return maxDepth + 1;
+}
+
+int main() {
+    Node* root = createNode('a');
+    root->child = createNode('b');
+    root->child->next = createNode('c');
+    root->child->next->child = createNode('d');
+
+    printf("Depth: %d\n", findDepth(root));
+
+    return 0;
+}
+```

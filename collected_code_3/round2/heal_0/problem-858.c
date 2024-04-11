@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+typedef struct List {
+    struct List *next;
+} List;
+
+typedef struct ListOfLists {
+    struct List *list;
+    struct ListOfLists *next;
+} ListOfLists;
+
+int countLists(ListOfLists *lists) {
+    int count = 0;
+    while (lists != NULL) {
+        count++;
+        lists = lists->next;
+    }
+    return count * count;
+}
+
+int main() {
+    List list1, list2, list3;
+    ListOfLists lol1, lol2, lol3;
+
+    lol1.list = &list1;
+    lol1.next = &lol2;
+    lol2.list = &list2;
+    lol2.next = &lol3;
+    lol3.list = &list3;
+    lol3.next = NULL;
+
+    printf("%d\n", countLists(&lol1));
+
+    return 0;
+}

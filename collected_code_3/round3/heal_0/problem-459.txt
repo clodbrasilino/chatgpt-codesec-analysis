@@ -1,0 +1,28 @@
+C language does not natively support regular expressions (regex). However, you can achieve the desired functionality by using the C standard library functions without regex. Here is a simple program that removes uppercase substrings from a given string:
+
+```c
+#include <ctype.h>
+#include <stdio.h>
+#include <string.h>
+
+void remove_uppercase(char* str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (!isupper(str[i]) || str[i] == ' ') {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello World! This is a Test String.";
+    printf("Original string: %s\n", str);
+    remove_uppercase(str);
+    printf("Modified string: %s\n", str);
+    return 0;
+}
+```
+
+This program uses the `isupper()` function from `ctype.h` to check if a character is uppercase. If it is, the character is not copied to the output string. If it is not, the character is copied to the output string. The `main()` function demonstrates the usage of the `remove_uppercase()` function.

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSum(int **arr, int n, int m) {
+    int max_sum = 0;
+    for(int i = 0; i < n; i++) {
+        int sum = 0;
+        for(int j = 0; j < m; j++) {
+            sum += arr[i][j];
+        }
+        if(sum > max_sum) {
+            max_sum = sum;
+        }
+    }
+    return max_sum;
+}
+
+int main() {
+    int n = 3, m = 3;
+    int **arr = (int **)malloc(n * sizeof(int *));
+    if (arr == NULL) {
+        return 1;
+    }
+    for(int i = 0; i < n; i++) {
+        arr[i] = (int *)malloc(m * sizeof(int));
+        if (arr[i] == NULL) {
+            for(int j = 0; j < i; j++) {
+                free(arr[j]);
+            }
+            free(arr);
+            return 1;
+        }
+    }
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < m; j++) {
+            scanf("%d", &arr[i][j]);
+        }
+    }
+    printf("%d\n", maxSum(arr, n, m));
+    for(int i = 0; i < n; i++) {
+        free(arr[i]);
+    }
+    free(arr);
+    return 0;
+}

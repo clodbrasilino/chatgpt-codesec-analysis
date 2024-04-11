@@ -1,0 +1,21 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* startWithNumber(char* str, int num) {
+    int length = snprintf(NULL, 0, "%d", num);
+    char* result = malloc(length + 1 + strlen(str));
+    sprintf(result, "%d%s", num, str);
+    return result;
+}
+
+int main() {
+    char* str = "Hello World";
+    int num = 123;
+    char* result = startWithNumber(str, num);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}
+```

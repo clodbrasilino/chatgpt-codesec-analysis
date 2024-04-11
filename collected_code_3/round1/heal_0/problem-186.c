@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int search_literal_string(char *base, char *search) {
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, search, 0);
+    if (ret) {
+        printf("Could not compile regex\n");
+        return -1;
+    }
+
+    ret = regexec(&regex, base, 0, NULL, 0);
+    if (!ret) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        printf("Regex match failed\n");
+        return -1;
+    }
+
+    regfree(&regex);
+    return -1;
+}
+
+int main() {
+    char base[100];
+    char search[50];
+
+    printf("Enter a string: ");
+    fgets(base, 100, stdin);
+    base[strlen(base) - 1] = '\0';
+
+    printf("Enter a literal string to search: ");
+    fgets(search, 50, stdin);
+    search[strlen(search) - 1] = '\0';
+
+    int result = search_literal_string(base, search);
+
+    if (result == 1) {
+        printf("Literal string found\n");
+    } else if (result == 0) {
+        printf("Literal string not found\n");
+    } else {
+        printf("An error occurred\n");
+    }
+
+    return 0;
+}

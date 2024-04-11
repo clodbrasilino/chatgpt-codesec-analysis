@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int maxProduct(int* nums, int numsSize) {
+    int maxProduct = nums[0];
+    int minProduct = nums[0];
+    int result = nums[0];
+    int tempMax, tempMin;
+    for(int i = 1; i < numsSize; i++) {
+        if(nums[i] < 0) {
+            tempMax = maxProduct;
+            maxProduct = minProduct;
+            minProduct = tempMax;
+        }
+        maxProduct = (nums[i] > maxProduct * nums[i]) ? nums[i] : maxProduct * nums[i];
+        minProduct = (nums[i] < minProduct * nums[i]) ? nums[i] : minProduct * nums[i];
+        result = (result > maxProduct) ? result : maxProduct;
+    }
+    return result;
+}
+
+int main() {
+    int nums[] = {2,3,-2,4};
+    int numsSize = sizeof(nums)/sizeof(nums[0]);
+    int max_product = maxProduct(nums, numsSize);
+    printf("Maximum product subarray is: %d\n", max_product);
+    return 0;
+}
+```

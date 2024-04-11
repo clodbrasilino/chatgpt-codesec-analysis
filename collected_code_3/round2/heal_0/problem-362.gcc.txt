@@ -1,0 +1,75 @@
+collected_code_3/problem-362-2.c: In function 'maxOccurrence':
+collected_code_3/problem-362-2.c:5:18: warning: use of uninitialized value '*arr' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+    5 |     int max = 0, res = arr[0], count;
+      |                  ^~~
+  'main': events 1-5
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     int* arr = (int*)malloc(n * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) region created on heap here
+    |......
+    |   30 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch...
+    |......
+    |   34 |     int maxOccur = maxOccurrence(arr, n);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (4) ...to here
+    |      |                    (5) calling 'maxOccurrence' from 'main'
+    |
+    +--> 'maxOccurrence': events 6-7
+           |
+           |    4 | int maxOccurrence(int* arr, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (6) entry to 'maxOccurrence'
+           |    5 |     int max = 0, res = arr[0], count;
+           |      |                  ~~~
+           |      |                  |
+           |      |                  (7) use of uninitialized value '*arr' here
+           |
+collected_code_3/problem-362-2.c:5:18: warning: dereference of possibly-NULL 'arr' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    5 |     int max = 0, res = arr[0], count;
+      |                  ^~~
+  'main': events 1-5
+    |
+    |   22 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     int* arr = (int*)malloc(n * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) this call could return NULL
+    |......
+    |   30 |     for (int i = 0; i < n; i++) {
+    |      |                     ~~~~~
+    |      |                       |
+    |      |                       (3) following 'false' branch...
+    |......
+    |   34 |     int maxOccur = maxOccurrence(arr, n);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (4) ...to here
+    |      |                    (5) calling 'maxOccurrence' from 'main'
+    |
+    +--> 'maxOccurrence': events 6-7
+           |
+           |    4 | int maxOccurrence(int* arr, int n) {
+           |      |     ^~~~~~~~~~~~~
+           |      |     |
+           |      |     (6) entry to 'maxOccurrence'
+           |    5 |     int max = 0, res = arr[0], count;
+           |      |                  ~~~
+           |      |                  |
+           |      |                  (7) 'arr' could be NULL: unchecked value from (2)
+           |

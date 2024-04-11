@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char* key;
+    char* value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair* pairs;
+    size_t size;
+} Dictionary;
+
+KeyValuePair* get_element_by_index(Dictionary* dict, size_t index) {
+    if (index < dict->size) {
+        return &dict->pairs[index];
+    }
+    return NULL;
+}
+
+int main() {
+    Dictionary dict;
+    dict.size = 3;
+    dict.pairs = malloc(sizeof(KeyValuePair) * dict.size);
+
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'dict.pairs' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    dict.pairs[0].key = "First";
+    dict.pairs[0].value = "1";
+    dict.pairs[1].key = "Second";
+    dict.pairs[1].value = "2";
+    dict.pairs[2].key = "Third";
+    dict.pairs[2].value = "3";
+
+    KeyValuePair* pair = get_element_by_index(&dict, 1);
+    if (pair != NULL) {
+        printf("Key: %s, Value: %s\n", pair->key, pair->value);
+    }
+
+    free(dict.pairs);
+
+    return 0;
+}

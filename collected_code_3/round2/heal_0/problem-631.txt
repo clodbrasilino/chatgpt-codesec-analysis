@@ -1,0 +1,25 @@
+I'm sorry for the confusion, but C language does not support regex natively. You would need to use a library like PCRE (Perl Compatible Regular Expressions) to use regex in C. However, you can achieve the task without regex. Here is a simple C program that replaces whitespaces with underscores and vice versa in a given string:
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str) {
+    for(int i = 0; str[i]; i++){
+        if(str[i] == ' ')
+            str[i] = '_';
+        else if(str[i] == '_')
+            str[i] = ' ';
+    }
+}
+
+int main() {
+    char str[] = "Hello_World This_is_a_test";
+    printf("Before: %s\n", str);
+    replace_chars(str);
+    printf("After: %s\n", str);
+    return 0;
+}
+```
+
+This program defines a function `replace_chars` that iterates over each character in the string. If the character is a space, it replaces it with an underscore. If the character is an underscore, it replaces it with a space. The `main` function demonstrates how to use this function with a test string.

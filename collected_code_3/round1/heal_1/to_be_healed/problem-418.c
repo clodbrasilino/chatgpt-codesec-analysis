@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    /* Possible weaknesses found:
+     *  dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+     */
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+int maxSubList(struct Node* head) {
+    int max_count = 0, count = 0;
+    int data = 0;
+    if (head != NULL) {
+        data = head->data;
+        count = 1;
+        max_count = 1;
+    }
+    struct Node* current = head;
+    while (current != NULL) {
+        if (current->data == data) {
+            count++;
+        } else {
+            data = current->data;
+            count = 1;
+        }
+        if (count > max_count) {
+            max_count = count;
+        }
+        current = current->next;
+    }
+    return max_count;
+}
+
+int main() {
+    struct Node* head = NULL;
+    push(&head, 1);
+    push(&head, 2);
+    push(&head, 2);
+    push(&head, 3);
+    push(&head, 3);
+    push(&head, 3);
+    printf("Length of the maximum sublist is %d\n", maxSubList(head));
+    return 0;
+}

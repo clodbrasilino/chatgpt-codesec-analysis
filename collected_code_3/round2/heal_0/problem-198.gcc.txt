@@ -1,0 +1,49 @@
+collected_code_3/problem-198-2.c: In function 'findLargestTriangle':
+collected_code_3/problem-198-2.c:24:12: warning: use of uninitialized value 'triangle' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     return triangle;
+      |            ^~~~~~~~
+  'findLargestTriangle': events 1-3
+    |
+    |   21 |     struct Triangle triangle;
+    |      |                     ^~~~~~~~
+    |      |                     |
+    |      |                     (1) region created on stack here
+    |      |                     (2) capacity: 48 bytes
+    |......
+    |   24 |     return triangle;
+    |      |            ~~~~~~~~  
+    |      |            |
+    |      |            (3) use of uninitialized value 'triangle' here
+    |
+collected_code_3/problem-198-2.c:24:12: warning: use of uninitialized value 'triangle' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   24 |     return triangle;
+      |            ^~~~~~~~
+  'main': events 1-2
+    |
+    |   27 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   28 |     struct Ellipse ellipse = {{0, 0}, 5, 3};
+    |   29 |     struct Triangle triangle = findLargestTriangle(ellipse);
+    |      |                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (2) calling 'findLargestTriangle' from 'main'
+    |
+    +--> 'findLargestTriangle': events 3-6
+           |
+           |   20 | struct Triangle findLargestTriangle(struct Ellipse ellipse) {
+           |      |                 ^~~~~~~~~~~~~~~~~~~
+           |      |                 |
+           |      |                 (3) entry to 'findLargestTriangle'
+           |   21 |     struct Triangle triangle;
+           |      |                     ~~~~~~~~
+           |      |                     |
+           |      |                     (4) region created on stack here
+           |      |                     (5) capacity: 48 bytes
+           |......
+           |   24 |     return triangle;
+           |      |            ~~~~~~~~
+           |      |            |
+           |      |            (6) use of uninitialized value 'triangle' here
+           |

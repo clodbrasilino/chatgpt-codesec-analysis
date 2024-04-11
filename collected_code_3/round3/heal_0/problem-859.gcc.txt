@@ -1,0 +1,71 @@
+collected_code_3/problem-859-3.c: In function 'printSublists':
+collected_code_3/problem-859-3.c:13:13: warning: dereference of possibly-NULL 'data' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     data[i] = arr[idx];
+      |     ~~~~~~~~^~~~~~~~~~
+  'generateSublists': events 1-3
+    |
+    |   17 | void generateSublists(int *arr, int n) {
+    |      |      ^~~~~~~~~~~~~~~~
+    |      |      |
+    |      |      (1) entry to 'generateSublists'
+    |   18 |     int *data = (int *)malloc(sizeof(int) * n);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) this call could return NULL
+    |   19 |     printSublists(arr, n, 0, data, 0);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (3) calling 'printSublists' from 'generateSublists'
+    |
+    +--> 'printSublists': events 4-7
+           |
+           |    4 | void printSublists(int *arr, int n, int idx, int *data, int i) {
+           |      |      ^~~~~~~~~~~~~
+           |      |      |
+           |      |      (4) entry to 'printSublists'
+           |    5 |     if (idx == n) {
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'idx != n')...
+           |......
+           |   12 |     printSublists(arr, n, idx + 1, data, i);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (6) ...to here
+           |      |     (7) calling 'printSublists' from 'printSublists'
+           |
+           +--> 'printSublists': events 8-12
+                  |
+                  |    4 | void printSublists(int *arr, int n, int idx, int *data, int i) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (8) entry to 'printSublists'
+                  |    5 |     if (idx == n) {
+                  |      |        ~
+                  |      |        |
+                  |      |        (9) following 'true' branch (when 'idx == n')...
+                  |    6 |         int j;
+                  |    7 |         for (j = 0; j < i; ++j)
+                  |      |              ~~~~~  ~~~~~
+                  |      |                |      |
+                  |      |                |      (11) following 'false' branch (when 'j >= i')...
+                  |      |                (10) ...to here
+                  |    8 |             printf("%d ", data[j]);
+                  |    9 |         printf("\n");
+                  |      |         ~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (12) ...to here
+                  |
+           <------+
+           |
+         'printSublists': events 13-14
+           |
+           |   12 |     printSublists(arr, n, idx + 1, data, i);
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (13) returning to 'printSublists' from 'printSublists'
+           |   13 |     data[i] = arr[idx];
+           |      |     ~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (14) 'data + (long unsigned int)i * 4' could be NULL: unchecked value from (2)
+           |

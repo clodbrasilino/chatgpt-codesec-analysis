@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+
+int minSwaps(int arr[], int n) {
+    int noOfOnes = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 1) {
+            noOfOnes++;
+        }
+    }
+    int maxCount = 0;
+    for (int i = 0; i < noOfOnes; i++) {
+        if (arr[i] == 1) {
+            maxCount++;
+        }
+    }
+    int windowCount = maxCount;
+    for (int i = noOfOnes; i < n; i++) {
+        if (arr[i - noOfOnes] == 1) {
+            windowCount--;
+        }
+        if (arr[i] == 1) {
+            windowCount++;
+        }
+        if (windowCount > maxCount) {
+            maxCount = windowCount;
+        }
+    }
+    return (noOfOnes - maxCount);
+}
+
+int main() {
+    int arr[] = {1, 0, 1, 0, 1, 0, 0, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("%d", minSwaps(arr, n));
+    return 0;
+}
+```

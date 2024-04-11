@@ -1,0 +1,27 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkSameType(int arr[], int n) {
+    for(int i = 0; i < n; i++) {
+        if(sizeof(arr[i]) != sizeof(arr[0])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    if(checkSameType(arr, n)) {
+        printf("All elements are of the same type.\n");
+    } else {
+        printf("All elements are not of the same type.\n");
+    }
+
+    return 0;
+}
+```
+Please note that in C, an array can only contain elements of the same type. Therefore, the function `checkSameType` will always return true. This is a limitation of the C language. If you want to check if all elements in a collection have the same type, you might want to consider using a language that supports dynamic typing, such as Python.

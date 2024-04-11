@@ -1,0 +1,26 @@
+```C
+#include <stdio.h>
+#include <string.h>
+
+int checkEvenOddHex(char* hex) {
+    int len = strlen(hex);
+    int lastDigit = hex[len - 1];
+    if (lastDigit == '0' || lastDigit == '2' || lastDigit == '4' || lastDigit == '6' || lastDigit == '8' || lastDigit == 'A' || lastDigit == 'C' || lastDigit == 'E' || lastDigit == 'a' || lastDigit == 'c' || lastDigit == 'e') {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    char hex[100];
+    printf("Enter a hexadecimal number: ");
+    scanf("%s", hex);
+    if (checkEvenOddHex(hex)) {
+        printf("The hexadecimal number is even.\n");
+    } else {
+        printf("The hexadecimal number is odd.\n");
+    }
+    return 0;
+}
+```

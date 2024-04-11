@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+
+typedef struct {
+    int initial;
+    int last;
+} Tuple;
+
+void accessData(Tuple tuple) {
+    printf("Initial data: %d\n", tuple.initial);
+    printf("Last data: %d\n", tuple.last);
+}
+
+int main() {
+    Tuple tuple;
+    tuple.initial = 10;
+    tuple.last = 20;
+
+    accessData(tuple);
+
+    return 0;
+}
+```

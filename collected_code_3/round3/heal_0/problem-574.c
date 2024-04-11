@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159
+
+double calculateSurfaceArea(double radius, double height) {
+    double surfaceArea = 2 * PI * radius * (radius + height);
+    return surfaceArea;
+}
+
+int main() {
+    double radius, height, surfaceArea;
+
+    printf("Enter radius of the cylinder: ");
+    scanf("%lf", &radius);
+
+    printf("Enter height of the cylinder: ");
+    scanf("%lf", &height);
+
+    surfaceArea = calculateSurfaceArea(radius, height);
+
+    printf("Surface Area of the cylinder is: %.2lf\n", surfaceArea);
+
+    return 0;
+}

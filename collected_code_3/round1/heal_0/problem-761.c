@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265
+
+double calculateArcLength(double radius, double angle) {
+    return (PI * radius * angle) / 180;
+}
+
+int main() {
+    double radius, angle;
+
+    printf("Enter radius: ");
+    scanf("%lf", &radius);
+
+    printf("Enter angle: ");
+    scanf("%lf", &angle);
+
+    double arcLength = calculateArcLength(radius, angle);
+
+    printf("Arc Length = %.2lf\n", arcLength);
+
+    return 0;
+}

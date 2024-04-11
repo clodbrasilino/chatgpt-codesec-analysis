@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+typedef struct {
+    int x;
+    int y;
+} Coordinate;
+
+typedef struct {
+    Coordinate coordinates[8];
+    int count;
+} AdjacentCoordinates;
+
+AdjacentCoordinates get_adjacent_coordinates(Coordinate c) {
+    AdjacentCoordinates adj;
+    adj.count = 8;
+    adj.coordinates[0].x = c.x - 1; adj.coordinates[0].y = c.y - 1;
+    adj.coordinates[1].x = c.x - 1; adj.coordinates[1].y = c.y;
+    adj.coordinates[2].x = c.x - 1; adj.coordinates[2].y = c.y + 1;
+    adj.coordinates[3].x = c.x;     adj.coordinates[3].y = c.y - 1;
+    adj.coordinates[4].x = c.x;     adj.coordinates[4].y = c.y + 1;
+    adj.coordinates[5].x = c.x + 1; adj.coordinates[5].y = c.y - 1;
+    adj.coordinates[6].x = c.x + 1; adj.coordinates[6].y = c.y;
+    adj.coordinates[7].x = c.x + 1; adj.coordinates[7].y = c.y + 1;
+    return adj;
+}
+
+int main() {
+    Coordinate c = {2, 2};
+    AdjacentCoordinates adj = get_adjacent_coordinates(c);
+    for(int i = 0; i < adj.count; i++) {
+        printf("Adjacent coordinate %d: (%d, %d)\n", i+1, adj.coordinates[i].x, adj.coordinates[i].y);
+    }
+    return 0;
+}

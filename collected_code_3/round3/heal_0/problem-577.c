@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int lastDigitInFactorial(int num) {
+    if (num < 0)
+        return -1;
+    if (num <= 1)
+        return 1;
+
+    int last_digit[] = {1, 1, 2, 6, 4, 0, 0, 0, 0, 0};
+    if (num < 10)
+        return last_digit[num];
+
+    return 0;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    printf("Last digit in factorial of %d is %d\n", num, lastDigitInFactorial(num));
+    return 0;
+}

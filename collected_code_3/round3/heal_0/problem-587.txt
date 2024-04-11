@@ -1,0 +1,32 @@
+In C, there is no built-in support for list or tuple data structures like in Python or other high-level languages. However, you can achieve similar functionality using arrays or structures. Here is an example of how you might implement a function to convert an array (which is similar to a list) to a structure (which is similar to a tuple):
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple convertToTuple(int arr[], int n) {
+    Tuple t;
+    if(n > 0) {
+        t.first = arr[0];
+    }
+    if(n > 1) {
+        t.second = arr[1];
+    }
+    return t;
+}
+
+int main() {
+    int arr[] = {1, 2};
+    Tuple t = convertToTuple(arr, 2);
+    printf("Tuple: (%d, %d)\n", t.first, t.second);
+    return 0;
+}
+```
+
+In this code, the `convertToTuple` function takes an array and its size as input, and returns a `Tuple` structure. The `Tuple` structure is defined to hold two integers, `first` and `second`. The function assigns the first two elements of the array to these fields. If the array has less than two elements, only the available elements are assigned.
+
+The `main` function creates an array, converts it to a tuple using the `convertToTuple` function, and then prints the tuple.

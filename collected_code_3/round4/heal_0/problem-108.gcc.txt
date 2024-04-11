@@ -1,0 +1,165 @@
+collected_code_3/round4/heal_0/problem-108.c: In function 'mergeSortedLists':
+collected_code_3/round4/heal_0/problem-108.c:40:17: warning: dereference of possibly-NULL 'heap' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   40 |         heap[i] = malloc(sizeof(HeapNode));
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-10
+    |
+    |   74 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   78 |     for (int i = 0; i < listsSize; i++) {
+    |      |                     ~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < listsSize')...
+    |      |                       (4) following 'true' branch (when 'i < listsSize')...
+    |      |                       (6) following 'true' branch (when 'i < listsSize')...
+    |      |                       (8) following 'false' branch (when 'i >= listsSize')...
+    |   79 |         lists[i] = malloc(sizeof(Node));
+    |      |              ~
+    |      |              |
+    |      |              (3) ...to here
+    |      |              (5) ...to here
+    |      |              (7) ...to here
+    |......
+    |   86 |     Node* merged = mergeSortedLists(lists, listsSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (9) ...to here
+    |      |                    (10) calling 'mergeSortedLists' from 'main'
+    |
+    +--> 'mergeSortedLists': events 11-15
+           |
+           |   37 | Node* mergeSortedLists(Node** lists, int listsSize) {
+           |      |       ^~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (11) entry to 'mergeSortedLists'
+           |   38 |     HeapNode** heap = malloc(listsSize * sizeof(HeapNode*));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (12) this call could return NULL
+           |   39 |     for (int i = 0; i < listsSize; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (13) following 'true' branch (when 'i < listsSize')...
+           |   40 |         heap[i] = malloc(sizeof(HeapNode));
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |   |
+           |      |             |   (15) 'heap + (long unsigned int)i * 8' could be NULL: unchecked value from (12)
+           |      |             (14) ...to here
+           |
+collected_code_3/round4/heal_0/problem-108.c:41:23: warning: dereference of possibly-NULL '*heap_49 + _11' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   41 |         heap[i]->node = lists[i];
+      |         ~~~~~~~~~~~~~~^~~~~~~~~~
+  'main': events 1-10
+    |
+    |   74 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   78 |     for (int i = 0; i < listsSize; i++) {
+    |      |                     ~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < listsSize')...
+    |      |                       (4) following 'true' branch (when 'i < listsSize')...
+    |      |                       (6) following 'true' branch (when 'i < listsSize')...
+    |      |                       (8) following 'false' branch (when 'i >= listsSize')...
+    |   79 |         lists[i] = malloc(sizeof(Node));
+    |      |              ~
+    |      |              |
+    |      |              (3) ...to here
+    |      |              (5) ...to here
+    |      |              (7) ...to here
+    |......
+    |   86 |     Node* merged = mergeSortedLists(lists, listsSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (9) ...to here
+    |      |                    (10) calling 'mergeSortedLists' from 'main'
+    |
+    +--> 'mergeSortedLists': events 11-15
+           |
+           |   37 | Node* mergeSortedLists(Node** lists, int listsSize) {
+           |      |       ^~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (11) entry to 'mergeSortedLists'
+           |   38 |     HeapNode** heap = malloc(listsSize * sizeof(HeapNode*));
+           |   39 |     for (int i = 0; i < listsSize; i++) {
+           |      |                     ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (12) following 'true' branch (when 'i < listsSize')...
+           |   40 |         heap[i] = malloc(sizeof(HeapNode));
+           |      |             ~     ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |     |
+           |      |             |     (14) this call could return NULL
+           |      |             (13) ...to here
+           |   41 |         heap[i]->node = lists[i];
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (15) '*heap_49 + _11' could be NULL: unchecked value from (14)
+           |
+collected_code_3/round4/heal_0/problem-108.c: In function 'main':
+collected_code_3/round4/heal_0/problem-108.c:79:18: warning: dereference of possibly-NULL 'lists' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   79 |         lists[i] = malloc(sizeof(Node));
+      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   76 |     Node** lists = malloc(listsSize * sizeof(Node*));
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |   77 | 
+    |   78 |     for (int i = 0; i < listsSize; i++) {
+    |      |                     ~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < listsSize')...
+    |   79 |         lists[i] = malloc(sizeof(Node));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |              |   |
+    |      |              |   (4) 'lists + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |      |              (3) ...to here
+    |
+collected_code_3/round4/heal_0/problem-108.c:80:23: warning: dereference of possibly-NULL '*lists_46 + _8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   80 |         lists[i]->val = i;
+      |         ~~~~~~~~~~~~~~^~~
+  'main': events 1-4
+    |
+    |   78 |     for (int i = 0; i < listsSize; i++) {
+    |      |                     ~~^~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i < listsSize')...
+    |   79 |         lists[i] = malloc(sizeof(Node));
+    |      |              ~     ~~~~~~~~~~~~~~~~~~~~
+    |      |              |     |
+    |      |              |     (3) this call could return NULL
+    |      |              (2) ...to here
+    |   80 |         lists[i]->val = i;
+    |      |         ~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) '*lists_46 + _8' could be NULL: unchecked value from (3)
+    |
+collected_code_3/round4/heal_0/problem-108.c:82:29: warning: dereference of possibly-NULL '**_18.next' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   82 |         lists[i]->next->val = i + listsSize;
+      |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   78 |     for (int i = 0; i < listsSize; i++) {
+    |      |                     ~~^~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i < listsSize')...
+    |   79 |         lists[i] = malloc(sizeof(Node));
+    |      |              ~         
+    |      |              |
+    |      |              (2) ...to here
+    |   80 |         lists[i]->val = i;
+    |   81 |         lists[i]->next = malloc(sizeof(Node));
+    |      |                          ~~~~~~~~~~~~~~~~~~~~
+    |      |                          |
+    |      |                          (3) this call could return NULL
+    |   82 |         lists[i]->next->val = i + listsSize;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (4) '**_18.next' could be NULL: unchecked value from (3)
+    |

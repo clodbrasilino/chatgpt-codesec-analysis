@@ -1,0 +1,23 @@
+In C, there is no built-in support for tuples like in Python or other high-level languages. However, we can mimic a tuple using a struct. Here is a simple example:
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    float b;
+    char c;
+} Tuple;
+
+int getTupleSize(Tuple tuple) {
+    return sizeof(tuple);
+}
+
+int main() {
+    Tuple tuple = {1, 2.0, 'c'};
+    printf("Size of tuple: %d bytes\n", getTupleSize(tuple));
+    return 0;
+}
+```
+
+This code defines a `Tuple` struct that contains an integer, a float, and a character. The `getTupleSize` function returns the size of the `Tuple` in bytes. The `main` function creates a `Tuple`, prints its size, and returns 0.

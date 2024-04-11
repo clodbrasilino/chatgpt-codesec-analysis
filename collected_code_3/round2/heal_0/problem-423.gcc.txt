@@ -1,0 +1,12 @@
+collected_code_3/problem-423-2.c: In function 'goldMine':
+collected_code_3/problem-423-2.c:8:5: warning: implicit declaration of function 'memset' [-Wimplicit-function-declaration]
+    8 |     memset(goldTable, 0, sizeof(goldTable));
+      |     ^~~~~~
+collected_code_3/problem-423-2.c:3:1: note: include '<string.h>' or provide a declaration of 'memset'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code_3/problem-423-2.c:8:5: warning: incompatible implicit declaration of built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+    8 |     memset(goldTable, 0, sizeof(goldTable));
+      |     ^~~~~~
+collected_code_3/problem-423-2.c:8:5: note: include '<string.h>' or provide a declaration of 'memset'

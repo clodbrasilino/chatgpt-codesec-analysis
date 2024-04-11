@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+void removeDuplicates(char* str)
+{
+    char word[MAX][MAX];
+    int i, j = 0, k = 0, count;
+
+    for(i=0; str[i]!='\0'; i++){
+        if(str[i]!=' '){
+            word[j][k++] = str[i];
+        }
+        else{
+            word[j][k] = '\0';
+            j++;
+            k = 0;
+        }
+    }
+    word[j][k] = '\0';
+
+    for(i=0; i<=j; i++){
+        count = 1;
+        if(word[i][0] != '\0'){
+            for(k=i+1; k<=j; k++){
+                if(strcmp(word[i], word[k]) == 0){
+                    count++;
+                    word[k][0] = '\0';
+                }
+            }
+            printf("%s ", word[i]);
+        }
+    }
+}
+
+int main()
+{
+    char str[MAX];
+    printf("Enter a string: ");
+    fgets(str, MAX, stdin);
+    str[strlen(str) - 1] = '\0';
+    removeDuplicates(str);
+    return 0;
+}

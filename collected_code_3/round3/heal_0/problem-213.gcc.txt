@@ -1,0 +1,15 @@
+collected_code_3/problem-213-3.c: In function 'concatenate_tuples':
+collected_code_3/problem-213-3.c:12:19: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   12 |     result->first = malloc(strlen(tuple1->first) + strlen(tuple2->first) + 1);
+      |     ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'concatenate_tuples': events 1-2
+    |
+    |   11 |     Tuple *result = malloc(sizeof(Tuple));
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   12 |     result->first = malloc(strlen(tuple1->first) + strlen(tuple2->first) + 1);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) 'result' could be NULL: unchecked value from (1)
+    |

@@ -1,0 +1,30 @@
+collected_code_3/problem-361-2.c: In function 'createNode':
+collected_code_3/problem-361-2.c:16:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   16 |     newNode->data = data;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'createNode': events 1-2
+    |
+    |   15 |     Node* newNode = (Node*)malloc(sizeof(Node));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |   16 |     newNode->data = data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~    
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-361-2.c: In function 'createList':
+collected_code_3/problem-361-2.c:23:19: warning: dereference of possibly-NULL 'newList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |     newList->head = node;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'createList': events 1-2
+    |
+    |   22 |     List* newList = (List*)malloc(sizeof(List));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |   23 |     newList->head = node;
+    |      |     ~~~~~~~~~~~~~~~~~~~~    
+    |      |                   |
+    |      |                   (2) 'newList' could be NULL: unchecked value from (1)
+    |

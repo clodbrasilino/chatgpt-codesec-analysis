@@ -1,0 +1,31 @@
+In C, there is no built-in dictionary data type like in Python or other high-level languages. However, you can use a struct or an array of structs to simulate a dictionary. Here is a simple example of how you can check if all "dictionaries" in a list are empty or not. This example assumes that the "dictionary" is a struct with an integer field "count" that represents the number of elements in the "dictionary".
+
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int count;
+} Dictionary;
+
+bool areAllDictionariesEmpty(Dictionary* list, int size) {
+    for(int i = 0; i < size; i++) {
+        if(list[i].count != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    Dictionary list[3] = {{0}, {0}, {0}};
+    if(areAllDictionariesEmpty(list, 3)) {
+        printf("All dictionaries are empty.\n");
+    } else {
+        printf("Not all dictionaries are empty.\n");
+    }
+    return 0;
+}
+```
+
+In this code, the `areAllDictionariesEmpty` function iterates over each "dictionary" in the list and checks if its count is 0. If it finds a "dictionary" with a count that is not 0, it returns false. If it doesn't find any "dictionaries" with a count that is not 0, it returns true. The `main` function creates a list of "dictionaries" and checks if they are all empty.

@@ -1,0 +1,18 @@
+```C
+#include <stdio.h>
+
+int oddDays(int year) {
+    if(year % 400 == 0 || (year % 4 == 0 && year % 100 != 0))
+        return 366 % 7;
+    else
+        return 365 % 7;
+}
+
+int main() {
+    int year;
+    printf("Enter a year: ");
+    scanf("%d", &year);
+    printf("Number of odd days in year %d is %d\n", year, oddDays(year));
+    return 0;
+}
+```

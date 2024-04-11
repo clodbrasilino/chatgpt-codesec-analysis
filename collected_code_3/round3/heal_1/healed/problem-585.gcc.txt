@@ -1,0 +1,93 @@
+./collected_code_3/round3/heal_1/healed/problem-585.c: In function 'findNExpensiveItems':
+./collected_code_3/round3/heal_1/healed/problem-585.c:68:25: warning: dereference of NULL 'h' [CWE-476] [-Wanalyzer-null-dereference]
+   68 |         if(prices[i] > h->data[0]) {
+      |                        ~^~~~~~
+  'main': events 1-2
+    |
+    |   80 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   83 |     findNExpensiveItems(prices, n, sizeof(prices) / sizeof(prices[0]));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'findNExpensiveItems' from 'main'
+    |
+    +--> 'findNExpensiveItems': events 3-4
+           |
+           |   63 | void findNExpensiveItems(int *prices, int n, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'findNExpensiveItems'
+           |   64 |     Heap *h = createHeap(n);
+           |      |               ~~~~~~~~~~~~~
+           |      |               |
+           |      |               (4) calling 'createHeap' from 'findNExpensiveItems'
+           |
+           +--> 'createHeap': event 5
+                  |
+                  |   10 | Heap *createHeap(int size) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (5) entry to 'createHeap'
+                  |
+                'createHeap': event 6
+                  |
+                  |   13 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (6) '0' is NULL
+                  |
+           <------+
+           |
+         'findNExpensiveItems': events 7-10
+           |
+           |   64 |     Heap *h = createHeap(n);
+           |      |               ^~~~~~~~~~~~~
+           |      |               |
+           |      |               (7) return of NULL to 'findNExpensiveItems' from 'createHeap'
+           |   65 |     for(int i = 0; i < n; i++)
+           |      |                    ~~~~~
+           |      |                      |
+           |      |                      (8) following 'true' branch (when 'i < n')...
+           |   66 |         pushHeap(h, prices[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (9) ...to here
+           |      |         (10) calling 'pushHeap' from 'findNExpensiveItems'
+           |
+           +--> 'pushHeap': events 11-12
+                  |
+                  |   25 | void pushHeap(Heap *h, int value) {
+                  |      |      ^~~~~~~~
+                  |      |      |
+                  |      |      (11) entry to 'pushHeap'
+                  |   26 |     if(h != NULL){
+                  |      |       ~
+                  |      |       |
+                  |      |       (12) following 'false' branch (when 'h' is NULL)...
+                  |
+                'pushHeap': event 13
+                  |
+                  |cc1:
+                  | (13): ...to here
+                  |
+           <------+
+           |
+         'findNExpensiveItems': events 14-17
+           |
+           |   66 |         pushHeap(h, prices[i]);
+           |      |         ^~~~~~~~~~~~~~~~~~~~~~
+           |      |         |
+           |      |         (14) returning to 'findNExpensiveItems' from 'pushHeap'
+           |   67 |     for(int i = n; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (15) following 'true' branch (when 'i < size')...
+           |   68 |         if(prices[i] > h->data[0]) {
+           |      |                  ~     ~~~~~~~
+           |      |                  |      |
+           |      |                  |      (17) dereference of NULL 'h'
+           |      |                  (16) ...to here
+           |

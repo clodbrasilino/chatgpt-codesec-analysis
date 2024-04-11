@@ -1,0 +1,76 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if(newNode == NULL) {
+        printf("Error creating a new node.\n");
+        exit(0);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    return newNode;
+}
+
+Node* appendNode(Node* head, int data) {
+    if(head == NULL)
+        return createNode(data);
+
+    Node* cursor = head;
+    while(cursor->next != NULL)
+        cursor = cursor->next;
+
+    Node* newNode =  createNode(data);
+    cursor->next = newNode;
+
+    return head;
+}
+
+Node* mergeFirstLast(Node* head) {
+    if(head == NULL)
+        return NULL;
+
+    Node* cursor = head;
+    Node* tail = NULL;
+    while(cursor->next != NULL) {
+        tail = cursor;
+        cursor = cursor->next;
+    }
+
+    Node* newHead = createNode(head->data + cursor->data);
+    newHead->next = head->next;
+    tail->next = NULL;
+    free(head);
+    free(cursor);
+
+    return newHead;
+}
+
+void printList(Node* head) {
+    Node* cursor = head;
+    while(cursor != NULL) {
+        printf("%d ", cursor->data);
+        cursor = cursor->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = NULL;
+    for(int i = 1; i <= 5; i++)
+        head = appendNode(head, i);
+
+    printList(head);
+    head = mergeFirstLast(head);
+    printList(head);
+
+    return 0;
+}
+```

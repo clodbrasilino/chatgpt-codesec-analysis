@@ -1,0 +1,49 @@
+collected_code_3/problem-921-2.c: In function 'chunk_tuples':
+collected_code_3/problem-921-2.c:14:24: warning: dereference of possibly-NULL 'chunks' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |         chunks[i].size = (i == *chunk_count - 1 && arr_size % n != 0) ? arr_size % n : n;
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'chunk_tuples': events 1-4
+    |
+    |   11 |     Tuple *chunks = (Tuple*)malloc(*chunk_count * sizeof(Tuple));
+    |      |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                             |
+    |      |                             (1) this call could return NULL
+    |   12 | 
+    |   13 |     for (int i = 0; i < *chunk_count; i++) {
+    |      |                     ~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |   14 |         chunks[i].size = (i == *chunk_count - 1 && arr_size % n != 0) ? arr_size % n : n;
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |       |
+    |      |                        |       (3) ...to here
+    |      |                        (4) 'chunks + (long unsigned int)i * 16' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-921-2.c:18:35: warning: dereference of possibly-NULL '*chunks_52 + _29.elements + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   18 |             chunks[i].elements[j] = arr[i * n + j];
+      |             ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+  'chunk_tuples': events 1-6
+    |
+    |   13 |     for (int i = 0; i < *chunk_count; i++) {
+    |      |                     ~~^~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch...
+    |   14 |         chunks[i].size = (i == *chunk_count - 1 && arr_size % n != 0) ? arr_size % n : n;
+    |      |                                ~~~~~~~~~~~~
+    |      |                                |
+    |      |                                (2) ...to here
+    |   15 |         chunks[i].elements = (int*)malloc(chunks[i].size * sizeof(int));
+    |      |                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (3) this call could return NULL
+    |   16 | 
+    |   17 |         for (int j = 0; j < chunks[i].size; j++) {
+    |      |                         ~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (4) following 'true' branch...
+    |   18 |             chunks[i].elements[j] = arr[i * n + j];
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |       |
+    |      |                                   |       (5) ...to here
+    |      |                                   (6) '*chunks_52 + _29.elements + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |

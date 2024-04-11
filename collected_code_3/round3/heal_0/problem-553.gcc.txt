@@ -1,0 +1,12 @@
+collected_code_3/problem-553-3.c: In function 'main':
+collected_code_3/problem-553-3.c:13:14: warning: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   13 |     tupleNum[strlen(tupleNum) - 1] = '\0';
+      |              ^~~~~~
+collected_code_3/problem-553-3.c:3:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    2 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    3 | 
+collected_code_3/problem-553-3.c:13:14: warning: incompatible implicit declaration of built-in function 'strlen' [-Wbuiltin-declaration-mismatch]
+   13 |     tupleNum[strlen(tupleNum) - 1] = '\0';
+      |              ^~~~~~
+collected_code_3/problem-553-3.c:13:14: note: include '<string.h>' or provide a declaration of 'strlen'

@@ -1,0 +1,30 @@
+Here is a C program that calculates the nth Newman-Shanks-Williams prime number.
+
+```c
+#include <stdio.h>
+
+long long newmanShanksWilliams(int n) {
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    long long prevPrev = 1;
+    long long prev = 1;
+    long long current;
+    for (int i = 2; i <= n; i++) {
+        current = 2 * prev + prevPrev;
+        prevPrev = prev;
+        prev = current;
+    }
+    return current;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    printf("The %dth Newman-Shanks-Williams prime number is %lld\n", n, newmanShanksWilliams(n));
+    return 0;
+}
+```
+
+Please note that the Newman-Shanks-Williams numbers are not prime numbers. The term "Newman-Shanks-Williams prime" is not a recognized term in number theory. The Newman-Shanks-Williams numbers are a sequence of numbers related to the geometry of the projective plane. The code above calculates the nth Newman-Shanks-Williams number, not a prime number.

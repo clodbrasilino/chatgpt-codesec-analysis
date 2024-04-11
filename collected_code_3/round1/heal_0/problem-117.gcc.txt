@@ -1,0 +1,15 @@
+collected_code_3/problem-117-1.c: In function 'createNode':
+collected_code_3/problem-117-1.c:11:19: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     newNode->data = data;
+      |     ~~~~~~~~~~~~~~^~~~~~
+  'createNode': events 1-2
+    |
+    |   10 |     Node *newNode = (Node*)malloc(sizeof(Node));
+    |      |                            ^~~~~~~~~~~~~~~~~~~~
+    |      |                            |
+    |      |                            (1) this call could return NULL
+    |   11 |     newNode->data = data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~    
+    |      |                   |
+    |      |                   (2) 'newNode' could be NULL: unchecked value from (1)
+    |

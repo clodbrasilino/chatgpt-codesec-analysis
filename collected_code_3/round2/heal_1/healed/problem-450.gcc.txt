@@ -1,0 +1,826 @@
+./collected_code_3/round2/heal_1/healed/problem-450.c: In function 'extractStrings':
+./collected_code_3/round2/heal_1/healed/problem-450.c:14:27: warning: heap-based buffer overflow [CWE-122] [-Wanalyzer-out-of-bounds]
+   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     int index = 0;
+           |    7 |     char **result = (char **)calloc(numStrings, sizeof(char *));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 40 bytes
+           |    8 | 
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (7) following 'true' branch (when 'i < numStrings')...
+           |      |              (6) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (8) ...to here
+           |      |            (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-19
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (16) ...to here
+           |      |                       (13) following 'true' branch (when 'i < numStrings')...
+           |      |                       (17) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (14) ...to here
+           |      |            |              (18) ...to here
+           |      |            (15) following 'false' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (19) following 'false' branch...
+           |
+         'extractStrings': event 20
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (20) ...to here
+           |
+         'extractStrings': events 21-23
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (21) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (22) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (23) following 'false' branch...
+           |
+         'extractStrings': event 24
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (24) ...to here
+           |
+         'extractStrings': events 25-27
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (25) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (26) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (27) following 'false' branch...
+           |
+         'extractStrings': event 28
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (28) ...to here
+           |
+         'extractStrings': events 29-31
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (29) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (30) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (31) following 'false' branch...
+           |
+         'extractStrings': event 32
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (32) ...to here
+           |
+         'extractStrings': events 33-35
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (33) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (34) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (35) out-of-bounds write from byte 40 till byte 47 but region ends at byte 40
+           |
+./collected_code_3/round2/heal_1/healed/problem-450.c:14:27: note: write of 8 bytes to beyond the end of the region
+   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+      |             ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./collected_code_3/round2/heal_1/healed/problem-450.c:15:23: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   15 |             if (result[index] == NULL) {
+      |                 ~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     int index = 0;
+           |    7 |     char **result = (char **)calloc(numStrings, sizeof(char *));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 40 bytes
+           |    8 | 
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (7) following 'true' branch (when 'i < numStrings')...
+           |      |              (6) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (8) ...to here
+           |      |            (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-19
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (16) ...to here
+           |      |                       (13) following 'true' branch (when 'i < numStrings')...
+           |      |                       (17) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (14) ...to here
+           |      |            |              (18) ...to here
+           |      |            (15) following 'false' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (19) following 'false' branch...
+           |
+         'extractStrings': event 20
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (20) ...to here
+           |
+         'extractStrings': events 21-23
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (21) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (22) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (23) following 'false' branch...
+           |
+         'extractStrings': event 24
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (24) ...to here
+           |
+         'extractStrings': events 25-27
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (25) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (26) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (27) following 'false' branch...
+           |
+         'extractStrings': event 28
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (28) ...to here
+           |
+         'extractStrings': events 29-31
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (29) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (30) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~       
+           |      |                |
+           |      |                (31) following 'false' branch...
+           |
+         'extractStrings': event 32
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (32) ...to here
+           |
+         'extractStrings': events 33-35
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~
+           |      |                       |
+           |      |                       (33) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |                           ~
+           |      |                           |
+           |      |                           (34) ...to here
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |   15 |             if (result[index] == NULL) {
+           |      |                 ~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (35) out-of-bounds read from byte 40 till byte 47 but region ends at byte 40
+           |
+./collected_code_3/round2/heal_1/healed/problem-450.c:15:23: note: read of 8 bytes from after the end of the region
+   15 |             if (result[index] == NULL) {
+      |                 ~~~~~~^~~~~~~
+./collected_code_3/round2/heal_1/healed/problem-450.c:26:12: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-12
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |......
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (6) following 'true' branch (when 'i < numStrings')...
+           |      |              (5) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (7) ...to here
+           |      |            (8) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                     |            |
+           |      |                                     |            (9) ...to here
+           |      |                                     (10) allocated here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) assuming '<unknown>' is non-NULL
+           |      |                (12) following 'false' branch...
+           |
+         'extractStrings': event 13
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (13) ...to here
+           |
+         'extractStrings': events 14-19
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (17) ...to here
+           |      |                       (14) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (15) ...to here
+           |      |            (16) following 'false' branch...
+           |......
+           |   25 |     result = (char **)realloc(result, index * sizeof(char *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) when 'realloc' fails
+           |   26 |     return result;
+           |      |            ~~~~~~      
+           |      |            |
+           |      |            (19) '<unknown>' leaks here; was allocated at (10)
+           |
+./collected_code_3/round2/heal_1/healed/problem-450.c:26:12: warning: leak of 'result' [CWE-401] [-Wanalyzer-malloc-leak]
+   26 |     return result;
+      |            ^~~~~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-12
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     int index = 0;
+           |    7 |     char **result = (char **)calloc(numStrings, sizeof(char *));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) allocated here
+           |    8 | 
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (5) assuming 'result' is non-NULL
+           |      |        (6) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (8) following 'true' branch (when 'i < numStrings')...
+           |      |              (7) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (9) ...to here
+           |      |            (10) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (11) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (12) following 'false' branch...
+           |
+         'extractStrings': event 13
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (13) ...to here
+           |
+         'extractStrings': events 14-19
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (17) ...to here
+           |      |                       (14) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (15) ...to here
+           |      |            (16) following 'false' branch...
+           |......
+           |   25 |     result = (char **)realloc(result, index * sizeof(char *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (18) when 'realloc' fails
+           |   26 |     return result;
+           |      |            ~~~~~~      
+           |      |            |
+           |      |            (19) 'result' leaks here; was allocated at (4)
+           |
+./collected_code_3/round2/heal_1/healed/problem-450.c: In function 'main':
+./collected_code_3/round2/heal_1/healed/problem-450.c:42:19: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+   42 |         if (result[i] == NULL)
+      |             ~~~~~~^~~
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-11
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |    6 |     int index = 0;
+           |    7 |     char **result = (char **)calloc(numStrings, sizeof(char *));
+           |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                              |
+           |      |                              (4) capacity: 8 bytes
+           |    8 | 
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (5) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (7) following 'true' branch (when 'i < numStrings')...
+           |      |              (6) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (8) ...to here
+           |      |            (9) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (10) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (11) following 'false' branch...
+           |
+         'extractStrings': event 12
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (12) ...to here
+           |
+         'extractStrings': events 13-17
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (16) ...to here
+           |      |                       (13) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (14) ...to here
+           |      |            (15) following 'false' branch...
+           |......
+           |   25 |     result = (char **)realloc(result, index * sizeof(char *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (17) when 'realloc' succeeds, without moving buffer
+           |
+    <------+
+    |
+  'main': events 18-27
+    |
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (18) returning to 'main' from 'extractStrings'
+    |   35 | 
+    |   36 |     if (result == NULL) {
+    |      |        ~             
+    |      |        |
+    |      |        (19) following 'false' branch (when 'result' is non-NULL)...
+    |......
+    |   41 |     for (int i = 0; i < numStrings; i++) {
+    |      |              ~      ~~~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (21) following 'true' branch (when 'i < numStrings')...
+    |      |              |        (25) following 'true' branch (when 'i < numStrings')...
+    |      |              (20) ...to here
+    |   42 |         if (result[i] == NULL)
+    |      |            ~~~~~~~~~~
+    |      |            |      |
+    |      |            |      (22) ...to here
+    |      |            |      (26) ...to here
+    |      |            |      (27) out-of-bounds read from byte 8 till byte 15 but region ends at byte 8
+    |      |            (23) following 'false' branch...
+    |   43 |             break;
+    |   44 |         printf("%s\n", result[i]);
+    |      |                              ~
+    |      |                              |
+    |      |                              (24) ...to here
+    |
+./collected_code_3/round2/heal_1/healed/problem-450.c:42:19: note: read of 8 bytes from after the end of the region
+   42 |         if (result[i] == NULL)
+      |             ~~~~~~^~~
+./collected_code_3/round2/heal_1/healed/problem-450.c:42:19: warning: heap-based buffer over-read [CWE-126] [-Wanalyzer-out-of-bounds]
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-10
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |......
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (6) following 'true' branch (when 'i < numStrings')...
+           |      |              (5) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (7) ...to here
+           |      |            (8) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (9) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (10) following 'false' branch...
+           |
+         'extractStrings': event 11
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (11) ...to here
+           |
+         'extractStrings': events 12-17
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (15) ...to here
+           |      |                       (12) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (13) ...to here
+           |      |            (14) following 'false' branch...
+           |......
+           |   25 |     result = (char **)realloc(result, index * sizeof(char *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (16) when 'realloc' succeeds, moving buffer
+           |      |                       (17) capacity: 8 bytes
+           |
+    <------+
+    |
+  'main': events 18-27
+    |
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (18) returning to 'main' from 'extractStrings'
+    |   35 | 
+    |   36 |     if (result == NULL) {
+    |      |        ~             
+    |      |        |
+    |      |        (19) following 'false' branch (when 'result' is non-NULL)...
+    |......
+    |   41 |     for (int i = 0; i < numStrings; i++) {
+    |      |              ~      ~~~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (21) following 'true' branch (when 'i < numStrings')...
+    |      |              |        (25) following 'true' branch (when 'i < numStrings')...
+    |      |              (20) ...to here
+    |   42 |         if (result[i] == NULL)
+    |      |            ~~~~~~~~~~
+    |      |            |      |
+    |      |            |      (22) ...to here
+    |      |            |      (26) ...to here
+    |      |            |      (27) out-of-bounds read from byte 8 till byte 15 but region ends at byte 8
+    |      |            (23) following 'false' branch...
+    |   43 |             break;
+    |   44 |         printf("%s\n", result[i]);
+    |      |                              ~
+    |      |                              |
+    |      |                              (24) ...to here
+    |
+./collected_code_3/round2/heal_1/healed/problem-450.c:42:19: note: read of 8 bytes from after the end of the region
+   42 |         if (result[i] == NULL)
+      |             ~~~~~~^~~
+./collected_code_3/round2/heal_1/healed/problem-450.c:42:19: warning: use of uninitialized value '*result_26 + _2' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+  'main': events 1-2
+    |
+    |   29 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (2) calling 'extractStrings' from 'main'
+    |
+    +--> 'extractStrings': events 3-10
+           |
+           |    5 | char **extractStrings(char **strings, int numStrings, int size) {
+           |      |        ^~~~~~~~~~~~~~
+           |      |        |
+           |      |        (3) entry to 'extractStrings'
+           |......
+           |    9 |     if (result == NULL)
+           |      |        ~
+           |      |        |
+           |      |        (4) following 'false' branch (when 'result' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (6) following 'true' branch (when 'i < numStrings')...
+           |      |              (5) ...to here
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (7) ...to here
+           |      |            (8) following 'true' branch...
+           |   14 |             result[index] = (char *)malloc((size + 1) * sizeof(char));
+           |      |                                            ~~~~~~~~~~
+           |      |                                                  |
+           |      |                                                  (9) ...to here
+           |   15 |             if (result[index] == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (10) following 'false' branch...
+           |
+         'extractStrings': event 11
+           |
+           |   20 |             strcpy(result[index], strings[i]);
+           |      |                          ^
+           |      |                          |
+           |      |                          (11) ...to here
+           |
+         'extractStrings': events 12-17
+           |
+           |   12 |     for (int i = 0; i < numStrings; i++) {
+           |      |                     ~~^~~~~~~~~~~~  ~~~
+           |      |                       |              |
+           |      |                       |              (15) ...to here
+           |      |                       (12) following 'true' branch (when 'i < numStrings')...
+           |   13 |         if (strlen(strings[i]) == size) {
+           |      |            ~              ~
+           |      |            |              |
+           |      |            |              (13) ...to here
+           |      |            (14) following 'false' branch...
+           |......
+           |   25 |     result = (char **)realloc(result, index * sizeof(char *));
+           |      |                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (16) when 'realloc' succeeds, moving buffer
+           |      |                       (17) region created on heap here
+           |
+    <------+
+    |
+  'main': events 18-27
+    |
+    |   34 |     char **result = extractStrings(strings, numStrings, size);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (18) returning to 'main' from 'extractStrings'
+    |   35 | 
+    |   36 |     if (result == NULL) {
+    |      |        ~             
+    |      |        |
+    |      |        (19) following 'false' branch (when 'result' is non-NULL)...
+    |......
+    |   41 |     for (int i = 0; i < numStrings; i++) {
+    |      |              ~      ~~~~~~~~~~~~~~
+    |      |              |        |
+    |      |              |        (21) following 'true' branch (when 'i < numStrings')...
+    |      |              |        (25) following 'true' branch (when 'i < numStrings')...
+    |      |              (20) ...to here
+    |   42 |         if (result[i] == NULL)
+    |      |            ~~~~~~~~~~
+    |      |            |      |
+    |      |            |      (22) ...to here
+    |      |            |      (26) ...to here
+    |      |            |      (27) use of uninitialized value '*result_26 + _2' here
+    |      |            (23) following 'false' branch...
+    |   43 |             break;
+    |   44 |         printf("%s\n", result[i]);
+    |      |                              ~
+    |      |                              |
+    |      |                              (24) ...to here
+    |

@@ -1,0 +1,36 @@
+C language does not natively support regular expressions (regex). However, you can use libraries such as PCRE (Perl Compatible Regular Expressions) or POSIX regex library to use regex in C. Here is an example using POSIX regex library:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void addSpaces(char *str) {
+    regex_t regex;
+    char *newStr = malloc(strlen(str) * 2);
+    int i, j = 0;
+
+    regcomp(&regex, "[A-Z]", 0);
+
+    for(i = 0; i < strlen(str); i++) {
+        if(regexec(&regex, &str[i], 0, NULL, 0) == 0 && i != 0) {
+            newStr[j++] = ' ';
+        }
+        newStr[j++] = str[i];
+    }
+
+    newStr[j] = '\0';
+    strcpy(str, newStr);
+    free(newStr);
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "HelloWorldThisIsATest";
+    addSpaces(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+In this code, the function `addSpaces` is defined which takes a string as input. It then compiles a regex to match any uppercase letter. It then iterates over the string and whenever it finds a match (an uppercase letter), it adds a space before it in the new string. Finally, it copies the new string back into the original string. The `main` function is also defined which tests this function with a sample string.

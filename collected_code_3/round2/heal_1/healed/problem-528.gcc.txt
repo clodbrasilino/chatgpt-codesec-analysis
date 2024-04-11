@@ -1,0 +1,107 @@
+./collected_code_3/round2/heal_1/healed/problem-528.c: In function 'main':
+./collected_code_3/round2/heal_1/healed/problem-528.c:43:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   43 |                 free(lists[j]);
+      |                 ^~~~~~~~~~~~~~
+  'main': events 1-17
+    |
+    |   35 |     if (lists == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'lists' is non-NULL)...
+    |......
+    |   39 |     for(int i = 0; i < size; i++) {
+    |      |             ~      ~~~~~~~~  ~~~
+    |      |             |        |        |
+    |      |             |        |        (10) ...to here
+    |      |             |        (3) following 'true' branch (when 'i < size')...
+    |      |             |        (11) following 'true' branch (when 'i < size')...
+    |      |             (2) ...to here
+    |   40 |         lists[i] = malloc(sizeof(List));
+    |      |              ~
+    |      |              |
+    |      |              (4) ...to here
+    |      |              (12) ...to here
+    |   41 |         if (lists[i] == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (5) following 'false' branch...
+    |      |            (13) following 'true' branch...
+    |   42 |             for(int j = 0; j < i; j++){
+    |      |                     ~      ~~~~~
+    |      |                     |        |
+    |      |                     |        (15) following 'true' branch (when 'j < i')...
+    |      |                     (14) ...to here
+    |   43 |                 free(lists[j]);
+    |      |                 ~~~~~~~~~~~~~~
+    |      |                 |         |
+    |      |                 |         (16) ...to here
+    |      |                 (17) '<unknown>' leaks here; was allocated at (7)
+    |......
+    |   49 |         lists[i]->length = i + 1;
+    |      |              ~
+    |      |              |
+    |      |              (6) ...to here
+    |   50 |         lists[i]->elements = malloc(sizeof(int) * (i + 1));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (7) allocated here
+    |   51 |         if (lists[i]->elements == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (8) assuming '<unknown>' is non-NULL
+    |      |            (9) following 'false' branch...
+    |
+./collected_code_3/round2/heal_1/healed/problem-528.c:53:17: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   53 |                 free(lists[j]);
+      |                 ^~~~~~~~~~~~~~
+  'main': events 1-19
+    |
+    |   35 |     if (lists == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'lists' is non-NULL)...
+    |......
+    |   39 |     for(int i = 0; i < size; i++) {
+    |      |             ~      ~~~~~~~~  ~~~
+    |      |             |        |        |
+    |      |             |        |        (10) ...to here
+    |      |             |        (3) following 'true' branch (when 'i < size')...
+    |      |             |        (11) following 'true' branch (when 'i < size')...
+    |      |             (2) ...to here
+    |   40 |         lists[i] = malloc(sizeof(List));
+    |      |              ~
+    |      |              |
+    |      |              (4) ...to here
+    |      |              (12) ...to here
+    |   41 |         if (lists[i] == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (5) following 'false' branch...
+    |      |            (13) following 'false' branch...
+    |......
+    |   49 |         lists[i]->length = i + 1;
+    |      |              ~
+    |      |              |
+    |      |              (6) ...to here
+    |      |              (14) ...to here
+    |   50 |         lists[i]->elements = malloc(sizeof(int) * (i + 1));
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (7) allocated here
+    |   51 |         if (lists[i]->elements == NULL) {
+    |      |            ~
+    |      |            |
+    |      |            (8) assuming '<unknown>' is non-NULL
+    |      |            (9) following 'false' branch...
+    |      |            (15) following 'true' branch...
+    |   52 |             for(int j = 0; j <= i; j++){
+    |      |                     ~      ~~~~~~
+    |      |                     |        |
+    |      |                     |        (17) following 'true' branch (when 'j <= i')...
+    |      |                     (16) ...to here
+    |   53 |                 free(lists[j]);
+    |      |                 ~~~~~~~~~~~~~~
+    |      |                 |         |
+    |      |                 |         (18) ...to here
+    |      |                 (19) '<unknown>' leaks here; was allocated at (7)
+    |

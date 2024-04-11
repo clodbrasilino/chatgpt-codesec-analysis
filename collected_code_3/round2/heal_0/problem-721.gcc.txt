@@ -1,0 +1,4 @@
+collected_code_3/problem-721-2.c: In function 'findMaxAverage':
+collected_code_3/problem-721-2.c:19:24: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+   19 |             dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + mat[i][j];
+      |                        ^~~

@@ -1,0 +1,80 @@
+collected_code_3/round4/heal_0/problem-674.c: In function 'removeDuplicates':
+collected_code_3/round4/heal_0/problem-674.c:9:14: warning: use of possibly-NULL 'result' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+    9 |         if (!strstr(result, word)) {
+      |              ^~~~~~~~~~~~~~~~~~~~
+  'removeDuplicates': event 1
+    |
+    |    6 |     char* result = malloc(strlen(str) + 1);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (1) this call could return NULL
+    |
+  'removeDuplicates': events 2-4
+    |
+    |    8 |     while (word != NULL) {
+    |      |                 ^
+    |      |                 |
+    |      |                 (2) following 'true' branch (when 'word' is non-NULL)...
+    |    9 |         if (!strstr(result, word)) {
+    |      |              ~~~~~~~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (3) ...to here
+    |      |              (4) argument 1 ('result') from (1) could be NULL where non-null expected
+    |
+In file included from collected_code_3/round4/heal_0/problem-674.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include/string.h:89:10: note: argument 1 of 'strstr' must be non-null
+   89 | char    *strstr(const char *__big, const char *__little);
+      |          ^~~~~~
+collected_code_3/round4/heal_0/problem-674.c: In function 'main':
+collected_code_3/round4/heal_0/problem-674.c:21:5: warning: use of possibly-NULL 'result' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   21 |     printf("%s\n", result);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   18 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   19 |     char str[] = "This is a test. This is only a test.";
+    |   20 |     char* result = removeDuplicates(str);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) calling 'removeDuplicates' from 'main'
+    |
+    +--> 'removeDuplicates': events 3-4
+           |
+           |    5 | char* removeDuplicates(char* str) {
+           |      |       ^~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'removeDuplicates'
+           |    6 |     char* result = malloc(strlen(str) + 1);
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (4) this call could return NULL
+           |
+         'removeDuplicates': events 5-6
+           |
+           |    8 |     while (word != NULL) {
+           |      |                 ^
+           |      |                 |
+           |      |                 (5) following 'false' branch (when 'word' is NULL)...
+           |......
+           |   15 |     return result;
+           |      |            ~~~~~~
+           |      |            |
+           |      |            (6) ...to here
+           |
+    <------+
+    |
+  'main': events 7-8
+    |
+    |   20 |     char* result = removeDuplicates(str);
+    |      |                    ^~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (7) possible return of NULL to 'main' from 'removeDuplicates'
+    |   21 |     printf("%s\n", result);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (8) argument 1 ('result') from (4) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

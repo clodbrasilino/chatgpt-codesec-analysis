@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+
+long long int binomialCoeff(int n, int k) {
+    long long int res = 1;
+    if (k > n - k)
+        k = n - k;
+    for (int i = 0; i < k; ++i) {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+    return res;
+}
+
+long long int countBinarySequences(int n) {
+    long long int count = 0;
+    for (int i = 0; i <= n; ++i)
+        count += binomialCoeff(n, i) * binomialCoeff(n, i);
+    return count;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+    printf("Count of binary sequences: %lld\n", countBinarySequences(n));
+    return 0;
+}
+```

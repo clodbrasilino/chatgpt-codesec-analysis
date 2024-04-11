@@ -1,0 +1,152 @@
+./collected_code_3/round3/heal_1/healed/problem-679.c: In function 'main':
+./collected_code_3/round3/heal_1/healed/problem-679.c:39:5: warning: use of possibly-NULL 'get_value_by_index(&d, 1)' where non-null expected [CWE-690] [-Wanalyzer-possible-null-argument]
+   39 |     printf("%s\n", get_value_by_index(d, 1));
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   30 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   31 |     dict* d[3];
+    |   32 |     d[0] = create_dict("key1", "value1");
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (2) calling 'create_dict' from 'main'
+    |
+    +--> 'create_dict': events 3-5
+           |
+           |   10 | dict* create_dict(char* key, char* value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'create_dict'
+           |   11 |     dict* d = (dict*)malloc(sizeof(dict));
+           |   12 |     if(d == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (4) following 'false' branch (when 'd' is non-NULL)...
+           |......
+           |   16 |     d->key = strdup(key);
+           |      |              ~~~~~~~~~~~
+           |      |              |
+           |      |              (5) ...to here
+           |
+    <------+
+    |
+  'main': events 6-9
+    |
+    |   32 |     d[0] = create_dict("key1", "value1");
+    |      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (6) returning to 'main' from 'create_dict'
+    |   33 |     if(d[0] == NULL) return 1;
+    |      |       ~     
+    |      |       |
+    |      |       (7) following 'false' branch...
+    |   34 |     d[1] = create_dict("key2", "value2");
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (8) ...to here
+    |      |            (9) calling 'create_dict' from 'main'
+    |
+    +--> 'create_dict': events 10-13
+           |
+           |   10 | dict* create_dict(char* key, char* value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (10) entry to 'create_dict'
+           |   11 |     dict* d = (dict*)malloc(sizeof(dict));
+           |   12 |     if(d == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (11) following 'false' branch (when 'd' is non-NULL)...
+           |......
+           |   16 |     d->key = strdup(key);
+           |      |              ~~~~~~~~~~~
+           |      |              |
+           |      |              (12) ...to here
+           |   17 |     d->value = strdup(value);
+           |      |                ~~~~~~~~~~~~~
+           |      |                |
+           |      |                (13) this call could return NULL
+           |
+    <------+
+    |
+  'main': events 14-17
+    |
+    |   34 |     d[1] = create_dict("key2", "value2");
+    |      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (14) returning to 'main' from 'create_dict'
+    |   35 |     if(d[1] == NULL) return 1;
+    |      |       ~     
+    |      |       |
+    |      |       (15) following 'false' branch...
+    |   36 |     d[2] = create_dict("key3", "value3");
+    |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (16) ...to here
+    |      |            (17) calling 'create_dict' from 'main'
+    |
+    +--> 'create_dict': events 18-20
+           |
+           |   10 | dict* create_dict(char* key, char* value) {
+           |      |       ^~~~~~~~~~~
+           |      |       |
+           |      |       (18) entry to 'create_dict'
+           |   11 |     dict* d = (dict*)malloc(sizeof(dict));
+           |   12 |     if(d == NULL) {
+           |      |       ~
+           |      |       |
+           |      |       (19) following 'false' branch (when 'd' is non-NULL)...
+           |......
+           |   16 |     d->key = strdup(key);
+           |      |              ~~~~~~~~~~~
+           |      |              |
+           |      |              (20) ...to here
+           |
+    <------+
+    |
+  'main': events 21-24
+    |
+    |   36 |     d[2] = create_dict("key3", "value3");
+    |      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |            |
+    |      |            (21) returning to 'main' from 'create_dict'
+    |   37 |     if(d[2] == NULL) return 1;
+    |      |       ~     
+    |      |       |
+    |      |       (22) following 'false' branch...
+    |   38 | 
+    |   39 |     printf("%s\n", get_value_by_index(d, 1));
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (23) ...to here
+    |      |     (24) calling 'get_value_by_index' from 'main'
+    |
+    +--> 'get_value_by_index': events 25-27
+           |
+           |   22 | char* get_value_by_index(dict* d[], int index) {
+           |      |       ^~~~~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (25) entry to 'get_value_by_index'
+           |   23 |     if(d[index]) {
+           |      |       ~
+           |      |       |
+           |      |       (26) following 'true' branch...
+           |   24 |         return d[index]->value;
+           |      |                 ~
+           |      |                 |
+           |      |                 (27) ...to here
+           |
+    <------+
+    |
+  'main': events 28-29
+    |
+    |   39 |     printf("%s\n", get_value_by_index(d, 1));
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (28) returning to 'main' from 'get_value_by_index'
+    |      |     (29) argument 1 ('get_value_by_index(&d, 1)') from (13) could be NULL where non-null expected
+    |
+<built-in>: note: argument 1 of '__builtin_puts' must be non-null

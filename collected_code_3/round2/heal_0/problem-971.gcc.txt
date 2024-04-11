@@ -1,0 +1,4 @@
+collected_code_3/problem-971-2.c: In function 'maxSegments':
+collected_code_3/problem-971-2.c:8:15: warning: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+    8 |     int res = max(maxSegments(n-a, a, b, c), maxSegments(n-b, a, b, c), maxSegments(n-c, a, b, c));
+      |               ^~~

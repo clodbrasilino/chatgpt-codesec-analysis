@@ -1,0 +1,29 @@
+```C
+#include <stdio.h>
+#include <stdbool.h>
+
+#define TUPLE_SIZE 3
+
+bool checkTupleValidity(int tuple[TUPLE_SIZE]) {
+    for(int i = 0; i < TUPLE_SIZE; i++) {
+        if(tuple[i] < 0 || tuple[i] > 100) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int tuple[TUPLE_SIZE] = {10, 20, 30};
+    bool isValid = checkTupleValidity(tuple);
+
+    if(isValid) {
+        printf("The tuple is valid.\n");
+    } else {
+        printf("The tuple is not valid.\n");
+    }
+
+    return 0;
+}
+```
+In this code, the function `checkTupleValidity` checks if all values in the tuple are between 0 and 100. If all values are within this range, the function returns `true`, otherwise it returns `false`. The `main` function tests this with a sample tuple and prints the result.

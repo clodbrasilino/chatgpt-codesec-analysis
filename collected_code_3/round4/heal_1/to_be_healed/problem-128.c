@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char **shortlist_words(char **words, int word_count, int n, int *result_count) {
+    char **result = (char **)malloc(sizeof(char *) * word_count);
+    int count = 0;
+    for(int i = 0; i < word_count; i++) {
+        if(strlen(words[i]) > n) {
+            /* Possible weaknesses found:
+             *  dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+             */
+            result[count] = words[i];
+            count++;
+        }
+    }
+    *result_count = count;
+    return result;
+}
+
+int main() {
+    char *words[] = {"apple", "banana", "cherry", "date", "elderberry"};
+    int word_count = sizeof(words) / sizeof(words[0]);
+    int n = 5;
+    int result_count;
+    char **result = shortlist_words(words, word_count, n, &result_count);
+    for(int i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+    }
+    free(result);
+    return 0;
+}

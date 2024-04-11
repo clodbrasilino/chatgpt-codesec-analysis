@@ -1,0 +1,15 @@
+```C
+#include <stdio.h>
+
+int findAsciiValue(char character) {
+    return (int) character;
+}
+
+int main() {
+    char character;
+    printf("Enter a character: ");
+    scanf("%c", &character);
+    printf("ASCII value of %c = %d", character, findAsciiValue(character));
+    return 0;
+}
+```

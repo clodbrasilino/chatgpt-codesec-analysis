@@ -1,0 +1,16 @@
+collected_code_3/problem-352-2.c: In function 'main':
+collected_code_3/problem-352-2.c:20:9: warning: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   20 |         printf("All characters are unique.\n");
+      |         ^~~~~~
+collected_code_3/problem-352-2.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <string.h>
+  +++ |+#include <stdio.h>
+    3 | 
+collected_code_3/problem-352-2.c:20:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   20 |         printf("All characters are unique.\n");
+      |         ^~~~~~
+collected_code_3/problem-352-2.c:20:9: note: include '<stdio.h>' or provide a declaration of 'printf'
+collected_code_3/problem-352-2.c:22:9: warning: incompatible implicit declaration of built-in function 'printf' [-Wbuiltin-declaration-mismatch]
+   22 |         printf("All characters are not unique.\n");
+      |         ^~~~~~
+collected_code_3/problem-352-2.c:22:9: note: include '<stdio.h>' or provide a declaration of 'printf'

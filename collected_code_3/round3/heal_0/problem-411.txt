@@ -1,0 +1,29 @@
+I'm sorry for the confusion, but C language does not support regex natively. However, we can achieve the snake case to camel case conversion without using regex. Here is the C code for the same:
+
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void snakeToCamel(char str[]) {
+    int resInd = 0;
+    for (int i = 0; str[i]; i++) {
+        if (str[i] == '_') {
+            str[i] = toupper(str[i + 1]);
+            str[i + 1] = '\0';
+        }
+        else
+            str[resInd++] = str[i];
+    }
+    str[resInd] = '\0';
+}
+
+int main() {
+    char str[] = "this_is_a_snake_case_string";
+    snakeToCamel(str);
+    printf("%s", str);
+    return 0;
+}
+```
+
+This code works by iterating over the input string and checking for underscores. When it finds an underscore, it converts the next character to uppercase and then removes the underscore from the string.

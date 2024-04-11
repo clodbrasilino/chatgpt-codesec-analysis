@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#define ASCII_SIZE 256
+
+void findMostCommonElements(char* str) {
+    int count[ASCII_SIZE] = {0};
+    int len = strlen(str);
+    int max = 0;
+    char result;
+
+    for (int i = 0; i < len; i++) {
+        count[str[i]]++;
+        if (max < count[str[i]]) {
+            max = count[str[i]];
+            result = str[i];
+        }
+    }
+
+    /* Possible weaknesses found:
+     *  use of uninitialized value 'result' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+     */
+    printf("Most common element: %c, count: %d\n", result, max);
+}
+
+int main() {
+    char str[] = "sample text";
+    findMostCommonElements(str);
+    return 0;
+}

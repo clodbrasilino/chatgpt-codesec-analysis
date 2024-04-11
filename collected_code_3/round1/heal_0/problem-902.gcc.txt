@@ -1,0 +1,99 @@
+collected_code_3/problem-902-1.c: In function 'create_table':
+collected_code_3/problem-902-1.c:19:20: warning: dereference of possibly-NULL 'table' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   19 |     table->entries = malloc(sizeof(Entry*) * HASH_SIZE);
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'create_table': events 1-2
+    |
+    |   18 |     HashTable *table = malloc(sizeof(HashTable));
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |   19 |     table->entries = malloc(sizeof(Entry*) * HASH_SIZE);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (2) 'table' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-902-1.c:21:27: warning: dereference of possibly-NULL '*table.entries + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |         table->entries[i] = NULL;
+      |                           ^
+  'create_table': event 1
+    |
+    |   19 |     table->entries = malloc(sizeof(Entry*) * HASH_SIZE);
+    |      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (1) this call could return NULL
+    |
+  'create_table': events 2-3
+    |
+    |   20 |     for(int i=0; i<HASH_SIZE; i++)
+    |      |                   ^
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i <= 99')...
+    |   21 |         table->entries[i] = NULL;
+    |      |         ~~~~~~~~~~~~~~
+    |      |              |
+    |      |              (3) ...to here
+    |
+  'create_table': event 4
+    |
+    |   21 |         table->entries[i] = NULL;
+    |      |                           ^
+    |      |                           |
+    |      |                           (4) '*table.entries + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-902-1.c: In function 'insert':
+collected_code_3/problem-902-1.c:37:20: warning: dereference of possibly-NULL 'entry' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   37 |         entry->key = strdup(key);
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~
+  'insert': events 1-4
+    |
+    |   35 |     if (entry == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'true' branch (when 'entry' is NULL)...
+    |   36 |         entry = malloc(sizeof(Entry));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) ...to here
+    |      |                 (3) this call could return NULL
+    |   37 |         entry->key = strdup(key);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (4) 'entry' could be NULL: unchecked value from (3)
+    |
+collected_code_3/problem-902-1.c:50:20: warning: dereference of possibly-NULL 'entry' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   50 |         entry->key = strdup(key);
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~
+  'insert': event 1
+    |
+    |   35 |     if (entry == NULL) {
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'entry' is non-NULL)...
+    |
+  'insert': event 2
+    |
+    |cc1:
+    | (2): ...to here
+    |
+  'insert': events 3-6
+    |
+    |   43 |             if (strcmp(entry->key, key) == 0) {
+    |      |                ^
+    |      |                |
+    |      |                (3) following 'false' branch (when the strings are non-equal)...
+    |......
+    |   47 |             entry = entry->next;
+    |      |             ~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (4) ...to here
+    |   48 |         }
+    |   49 |         entry = malloc(sizeof(Entry));
+    |      |                 ~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (5) this call could return NULL
+    |   50 |         entry->key = strdup(key);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (6) 'entry' could be NULL: unchecked value from (5)
+    |

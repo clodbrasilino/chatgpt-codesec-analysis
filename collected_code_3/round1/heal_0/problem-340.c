@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <limits.h>
+
+void three_smallest_sum(int arr[], int n) {
+    int first, second, third;
+    first = second = third = INT_MAX;
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < first) {
+            third = second;
+            second = first;
+            first = arr[i];
+        } else if (arr[i] < second) {
+            third = second;
+            second = arr[i];
+        } else if (arr[i] < third) {
+            third = arr[i];
+        }
+    }
+
+    printf("The sum of the three smallest numbers is: %d\n", first + second + third);
+}
+
+int main() {
+    int arr[] = {12, 13, 1, 10, 34, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    three_smallest_sum(arr, n);
+    return 0;
+}

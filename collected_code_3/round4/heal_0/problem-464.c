@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int key;
+    int value;
+};
+
+int checkValues(struct node* dict, int size) {
+    int firstValue = dict[0].value;
+    for (int i = 1; i < size; i++) {
+        if (dict[i].value != firstValue) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    struct node dict[5] = {{1, 10}, {2, 10}, {3, 10}, {4, 10}, {5, 10}};
+    int size = sizeof(dict) / sizeof(dict[0]);
+
+    if (checkValues(dict, size)) {
+        printf("All values are same.\n");
+    } else {
+        printf("All values are not same.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,31 @@
+collected_code_3/round4/heal_0/problem-391.c: In function 'createNode':
+collected_code_3/round4/heal_0/problem-391.c:13:18: warning: dereference of possibly-NULL 'newNode' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     newNode->key = strdup(key);
+      |     ~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   48 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   51 |         createNode("value1", NULL),
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'createNode' from 'main'
+    |
+    +--> 'createNode': events 3-5
+           |
+           |   11 | Node* createNode(char *key, Node *value) {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createNode'
+           |   12 |     Node *newNode = (Node*)malloc(sizeof(Node));
+           |      |                            ~~~~~~~~~~~~~~~~~~~~
+           |      |                            |
+           |      |                            (4) this call could return NULL
+           |   13 |     newNode->key = strdup(key);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (5) 'newNode' could be NULL: unchecked value from (4)
+           |

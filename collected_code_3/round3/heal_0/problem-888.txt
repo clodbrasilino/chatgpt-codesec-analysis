@@ -1,0 +1,28 @@
+Unfortunately, C does not support tuples or nested tuples like Python or some other high-level languages. However, you can achieve similar functionality using structures or multi-dimensional arrays. Here is an example using a 2D array:
+
+```c
+#include <stdio.h>
+
+#define SIZE 2
+
+void subtract_elements(int arr[SIZE][SIZE], int result[SIZE]) {
+    for (int i = 0; i < SIZE; i++) {
+        result[i] = arr[i][0] - arr[i][1];
+    }
+}
+
+int main() {
+    int arr[SIZE][SIZE] = {{10, 5}, {20, 15}};
+    int result[SIZE];
+
+    subtract_elements(arr, result);
+
+    for (int i = 0; i < SIZE; i++) {
+        printf("%d ", result[i]);
+    }
+
+    return 0;
+}
+```
+
+In this code, `subtract_elements` function takes a 2D array and a 1D array. It subtracts the elements of the nested arrays (2nd element from the 1st element) and stores the result in the `result` array. The `main` function initializes the arrays, calls the `subtract_elements` function, and then prints the result.

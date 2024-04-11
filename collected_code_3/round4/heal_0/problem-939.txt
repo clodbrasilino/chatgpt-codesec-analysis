@@ -1,0 +1,40 @@
+In C, there are no built-in data structures like dictionaries or lists. We usually use arrays, linked lists, structures, etc. to implement such data structures. Here's an example of sorting an array of structures (which is somewhat similar to a list of dictionaries) based on one of the structure's fields.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 3
+
+typedef struct {
+    char key[50];
+    int value;
+} Dictionary;
+
+int compare(const void *a, const void *b) {
+    return strcmp(((Dictionary *)a)->key, ((Dictionary *)b)->key);
+}
+
+void sortDictionary(Dictionary *dict, int size) {
+    qsort(dict, size, sizeof(Dictionary), compare);
+}
+
+int main() {
+    Dictionary dict[SIZE] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"cherry", 3}
+    };
+
+    sortDictionary(dict, SIZE);
+
+    for(int i = 0; i < SIZE; i++) {
+        printf("%s: %d\n", dict[i].key, dict[i].value);
+    }
+
+    return 0;
+}
+```
+
+In this code, we define a `Dictionary` structure that has a string `key` and an integer `value`. We then create an array of such structures and sort them based on the `key` field using the `qsort` function. The `compare` function is used by `qsort` to determine the order of elements. It's important to note that this code sorts the dictionaries by their keys in ascending order. If you want to sort them in a different way, you'll need to modify the `compare` function.

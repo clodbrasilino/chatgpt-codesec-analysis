@@ -1,0 +1,27 @@
+In C, it's not possible to create a truly heterogeneous list like in Python or JavaScript. C is a statically typed language, which means that the type of a variable is known at compile time. For this reason, you can't have a list (or an array, in C terms) that contains, for example, both integers and strings.
+
+However, if you want to find the minimum value in an array of integers, you can do it like this:
+
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int findMin(int arr[], int n) {
+    int min = INT_MAX;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+    return min;
+}
+
+int main() {
+    int arr[] = {10, 20, 30, 1, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Minimum value in the array is %d\n", findMin(arr, n));
+    return 0;
+}
+```
+
+This program will print `Minimum value in the array is 1`, which is the smallest number in the array.

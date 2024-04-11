@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkSequence(int arr[], int n, int pattern[], int m) {
+    int i = 0, j = 0;
+    while (i < n && j < m) {
+        if (arr[i] == pattern[j]) {
+            i++;
+            j++;
+        } else {
+            i++;
+        }
+    }
+    return (j == m);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int pattern[] = {1, 2, 3};
+    int m = sizeof(pattern) / sizeof(pattern[0]);
+    if (checkSequence(arr, n, pattern, m)) {
+        printf("Pattern found in the array.\n");
+    } else {
+        printf("Pattern not found in the array.\n");
+    }
+    return 0;
+}

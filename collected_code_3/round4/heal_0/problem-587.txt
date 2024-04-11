@@ -1,0 +1,29 @@
+In C, there is no built-in concept of a list or a tuple like in Python or other high-level languages. However, you can create a similar functionality using arrays or structures. Here is an example of how you might do it using arrays:
+
+```c
+#include <stdio.h>
+
+#define SIZE 5
+
+void convertListToTuple(int list[], int tuple[][2], int size) {
+    for(int i = 0; i < size; i++) {
+        tuple[i][0] = i;
+        tuple[i][1] = list[i];
+    }
+}
+
+int main() {
+    int list[SIZE] = {1, 2, 3, 4, 5};
+    int tuple[SIZE][2];
+
+    convertListToTuple(list, tuple, SIZE);
+
+    for(int i = 0; i < SIZE; i++) {
+        printf("(%d, %d)\n", tuple[i][0], tuple[i][1]);
+    }
+
+    return 0;
+}
+```
+
+In this code, the `convertListToTuple` function takes an array (list) and a 2D array (tuple) as arguments. It fills the tuple with pairs of indices and values from the list. The `main` function initializes a list and a tuple, calls `convertListToTuple`, and then prints the resulting tuple. Each tuple is represented as a pair of integers in a 2D array.

@@ -1,0 +1,44 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int dp[MAX];
+
+struct pair
+{
+    int a;
+    int b;
+};
+
+int maxChainLength(struct pair arr[], int n);
+
+int max(int a, int b) {
+    return (a > b)? a : b;
+}
+
+int compare(const void* a, const void* b) {
+    return ((*(struct pair *)a).a - (*(struct pair *)b).a);
+}
+
+int main() {
+    struct pair arr[] = { {5, 24}, {15, 25}, {27, 40}, {50, 60} };
+    int n = sizeof(arr)/sizeof(arr[0]);
+    qsort(arr, n, sizeof(arr[0]), compare);
+    printf("Length of maximum size chain is %d\n", maxChainLength( arr, n ));
+    return 0;
+}
+
+int maxChainLength(struct pair arr[], int n) {
+    int i, j, max = 0;
+    for (i = 0; i < n; i++ ) dp[i] = 1;
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[i].a > arr[j].b && dp[i] < dp[j] + 1) dp[i] = dp[j] + 1;
+        }
+    }
+    for (i = 0; i < n; i++ ) if ( max < dp[i] ) max = dp[i];
+    return max;
+}
+```

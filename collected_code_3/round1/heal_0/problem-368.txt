@@ -1,0 +1,22 @@
+```C
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+void repeatTuple(Tuple t, int n) {
+    for(int i = 0; i < n; i++) {
+        printf("(%d, %d)\n", t.a, t.b);
+    }
+}
+
+int main() {
+    Tuple t;
+    t.a = 1;
+    t.b = 2;
+    repeatTuple(t, 5);
+    return 0;
+}
+```

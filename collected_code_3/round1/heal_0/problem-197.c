@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Tuple;
+
+Tuple exponentiate(Tuple a, Tuple b) {
+    Tuple result;
+    result.x = pow(a.x, b.x);
+    result.y = pow(a.y, b.y);
+    return result;
+}
+
+int main() {
+    Tuple a, b, result;
+    a.x = 2.0;
+    a.y = 3.0;
+    b.x = 4.0;
+    b.y = 5.0;
+    result = exponentiate(a, b);
+    printf("Result: (%.2f, %.2f)\n", result.x, result.y);
+    return 0;
+}

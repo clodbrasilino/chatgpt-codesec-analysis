@@ -1,0 +1,49 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct List {
+    struct Node* head;
+    struct List* next;
+};
+
+int compareLists(struct Node* list1, struct Node* list2) {
+    while (list1 && list2) {
+        if (list1->data != list2->data)
+            return 0;
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    return !list1 && !list2;
+}
+
+int countUniqueLists(struct List* list) {
+    int count = 0;
+    struct List* ptr1 = list;
+    struct List* ptr2;
+    while (ptr1) {
+        ptr2 = ptr1->next;
+        while (ptr2) {
+            if (compareLists(ptr1->head, ptr2->head))
+                break;
+            ptr2 = ptr2->next;
+        }
+        if (!ptr2)
+            count++;
+        ptr1 = ptr1->next;
+    }
+    return count;
+}
+
+int main() {
+    struct List* list = NULL;
+    // Add code here to populate the list
+    printf("Number of unique lists: %d\n", countUniqueLists(list));
+    return 0;
+}
+```

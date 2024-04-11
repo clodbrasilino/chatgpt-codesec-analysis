@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int startWithNumber(char *str, int num) {
+    char numStr[12];
+    sprintf(numStr, "%d", num);
+    return strncmp(str, numStr, strlen(numStr)) == 0;
+}
+
+int main() {
+    char str[] = "123Hello";
+    int num = 123;
+    if(startWithNumber(str, num)) {
+        printf("The string starts with the number.\n");
+    } else {
+        printf("The string does not start with the number.\n");
+    }
+    return 0;
+}

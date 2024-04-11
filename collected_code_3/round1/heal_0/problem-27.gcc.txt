@@ -1,0 +1,614 @@
+collected_code_3/problem-27-1.c: In function 'remove_digits':
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-12
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~
+                  |      |                  |
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           (10) following 'true' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      (12) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-16
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~
+                  |      |                  |
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      |    (15) ...to here
+                  |      |                      (16) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-20
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~
+                  |      |                  |
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      |    (15) ...to here
+                  |      |                      |    (19) ...to here
+                  |      |                      (20) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-24
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~
+                  |      |                  |
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |      |                  (20) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           |            (21) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |      |           (22) following 'true' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      |    (15) ...to here
+                  |      |                      |    (19) ...to here
+                  |      |                      |    (23) ...to here
+                  |      |                      (24) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-28
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~
+                  |      |                  |
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |      |                  (20) following 'true' branch (when 'i < len')...
+                  |      |                  (24) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           |            (21) ...to here
+                  |      |           |            (25) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |      |           (22) following 'true' branch...
+                  |      |           (26) following 'true' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      |    (15) ...to here
+                  |      |                      |    (19) ...to here
+                  |      |                      |    (23) ...to here
+                  |      |                      |    (27) ...to here
+                  |      |                      (28) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-34
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~  ~~~
+                  |      |                  |       |
+                  |      |                  |       (31) ...to here
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |      |                  (20) following 'true' branch (when 'i < len')...
+                  |      |                  (24) following 'true' branch (when 'i < len')...
+                  |      |                  (28) following 'true' branch (when 'i < len')...
+                  |      |                  (32) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           |            (21) ...to here
+                  |      |           |            (25) ...to here
+                  |      |           |            (29) ...to here
+                  |      |           |            (33) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |      |           (22) following 'true' branch...
+                  |      |           (26) following 'true' branch...
+                  |      |           (30) following 'false' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      |    (15) ...to here
+                  |      |                      |    (19) ...to here
+                  |      |                      |    (23) ...to here
+                  |      |                      |    (27) ...to here
+                  |      |                      (34) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:11:22: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   11 |             str[j++] = str[i];
+      |             ~~~~~~~~~^~~~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-36
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~  ~~~
+                  |      |                  |       |
+                  |      |                  |       (31) ...to here
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |      |                  (20) following 'true' branch (when 'i < len')...
+                  |      |                  (24) following 'true' branch (when 'i < len')...
+                  |      |                  (28) following 'true' branch (when 'i < len')...
+                  |      |                  (32) following 'true' branch (when 'i < len')...
+                  |      |                  (34) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           |            (21) ...to here
+                  |      |           |            (25) ...to here
+                  |      |           |            (29) ...to here
+                  |      |           |            (33) ...to here
+                  |      |           |            (35) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |      |           (22) following 'true' branch...
+                  |      |           (26) following 'true' branch...
+                  |      |           (30) following 'false' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |             ~~~~~~~~~~~~~~~~~
+                  |      |                      |    |
+                  |      |                      |    (11) ...to here
+                  |      |                      |    (15) ...to here
+                  |      |                      |    (19) ...to here
+                  |      |                      |    (23) ...to here
+                  |      |                      |    (27) ...to here
+                  |      |                      (36) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:14:12: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   14 |     str[j] = '\0';
+      |     ~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-32
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~  ~~~
+                  |      |                  |       |
+                  |      |                  |       (31) ...to here
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |      |                  (20) following 'true' branch (when 'i < len')...
+                  |      |                  (24) following 'true' branch (when 'i < len')...
+                  |      |                  (28) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           |            (21) ...to here
+                  |      |           |            (25) ...to here
+                  |      |           |            (29) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |      |           (22) following 'true' branch...
+                  |      |           (26) following 'true' branch...
+                  |      |           (30) following 'false' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |                           ~
+                  |      |                           |
+                  |      |                           (11) ...to here
+                  |      |                           (15) ...to here
+                  |      |                           (19) ...to here
+                  |      |                           (23) ...to here
+                  |      |                           (27) ...to here
+                  |......
+                  |   14 |     str[j] = '\0';
+                  |      |     ~~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (32) write to string literal here
+                  |
+collected_code_3/problem-27-1.c:14:12: warning: write to string literal [-Wanalyzer-write-to-string-literal]
+   14 |     str[j] = '\0';
+      |     ~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   23 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   27 |     remove_digits_from_list(list, size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'remove_digits_from_list' from 'main'
+    |
+    +--> 'remove_digits_from_list': events 3-6
+           |
+           |   17 | void remove_digits_from_list(char **list, int size) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'remove_digits_from_list'
+           |   18 |     for(int i = 0; i < size; i++) {
+           |      |                    ~~~~~~~~
+           |      |                      |
+           |      |                      (4) following 'true' branch (when 'i < size')...
+           |   19 |         remove_digits(list[i]);
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~
+           |      |         |                 |
+           |      |         |                 (5) ...to here
+           |      |         (6) calling 'remove_digits' from 'remove_digits_from_list'
+           |
+           +--> 'remove_digits': events 7-34
+                  |
+                  |    5 | void remove_digits(char *str) {
+                  |      |      ^~~~~~~~~~~~~
+                  |      |      |
+                  |      |      (7) entry to 'remove_digits'
+                  |......
+                  |    9 |     for(i = 0; i < len; i++) {
+                  |      |                ~~~~~~~  ~~~
+                  |      |                  |       |
+                  |      |                  |       (31) ...to here
+                  |      |                  (8) following 'true' branch (when 'i < len')...
+                  |      |                  (12) following 'true' branch (when 'i < len')...
+                  |      |                  (16) following 'true' branch (when 'i < len')...
+                  |      |                  (20) following 'true' branch (when 'i < len')...
+                  |      |                  (24) following 'true' branch (when 'i < len')...
+                  |      |                  (28) following 'true' branch (when 'i < len')...
+                  |      |                  (32) following 'true' branch (when 'i < len')...
+                  |   10 |         if(!isdigit(str[i])) {
+                  |      |           ~            ~
+                  |      |           |            |
+                  |      |           |            (9) ...to here
+                  |      |           |            (13) ...to here
+                  |      |           |            (17) ...to here
+                  |      |           |            (21) ...to here
+                  |      |           |            (25) ...to here
+                  |      |           |            (29) ...to here
+                  |      |           |            (33) ...to here
+                  |      |           (10) following 'true' branch...
+                  |      |           (14) following 'true' branch...
+                  |      |           (18) following 'true' branch...
+                  |      |           (22) following 'true' branch...
+                  |      |           (26) following 'true' branch...
+                  |      |           (30) following 'false' branch...
+                  |   11 |             str[j++] = str[i];
+                  |      |                           ~
+                  |      |                           |
+                  |      |                           (11) ...to here
+                  |      |                           (15) ...to here
+                  |      |                           (19) ...to here
+                  |      |                           (23) ...to here
+                  |      |                           (27) ...to here
+                  |......
+                  |   14 |     str[j] = '\0';
+                  |      |     ~~~~~~~~~~~~~
+                  |      |            |
+                  |      |            (34) write to string literal here
+                  |

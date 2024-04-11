@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int size;
+} TupleList;
+
+int isNoneTuple(Tuple tuple) {
+    for (int i = 0; i < tuple.size; i++) {
+        if (tuple.values[i] != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+TupleList removeNoneTuples(TupleList list) {
+    int noneTuplesCount = 0;
+    for (int i = 0; i < list.size; i++) {
+        if (isNoneTuple(list.tuples[i])) {
+            noneTuplesCount++;
+        }
+    }
+
+    TupleList newList;
+    newList.size = list.size - noneTuplesCount;
+    newList.tuples = (Tuple *)calloc(newList.size, sizeof(Tuple));
+
+    if (newList.tuples == NULL) {
+        newList.size = 0;
+        return newList;
+    }
+
+    int j = 0;
+    for (int i = 0; i < list.size; i++) {
+        if (!isNoneTuple(list.tuples[i])) {
+            newList.tuples[j++] = list.tuples[i];
+        }
+    }
+
+    return newList;
+}
+
+int main() {
+    int values1[] = {0, 0, 0};
+    int values2[] = {1, 2, 3};
+    int values3[] = {0, 0, 0};
+    int values4[] = {4, 5, 6};
+
+    Tuple tuple1 = {values1, 3};
+    Tuple tuple2 = {values2, 3};
+    Tuple tuple3 = {values3, 3};
+    Tuple tuple4 = {values4, 3};
+
+    Tuple tuples[] = {tuple1, tuple2, tuple3, tuple4};
+    TupleList list = {tuples, 4};
+
+    TupleList newList = removeNoneTuples(list);
+
+    for (int i = 0; i < newList.size; i++) {
+        for (int j = 0; j < newList.tuples[i].size; j++) {
+            printf("%d ", newList.tuples[i].values[j]);
+        }
+        printf("\n");
+    }
+
+    free(newList.tuples);
+
+    return 0;
+}
+```

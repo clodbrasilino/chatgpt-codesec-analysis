@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+#define SIZE 1000
+
+int count_repeated(int arr[], int n) {
+    int count[SIZE] = {0};
+    int repeated = 0;
+
+    for(int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+    for(int i = 0; i < SIZE; i++) {
+        if(count[i] > 1) {
+            repeated++;
+        }
+    }
+
+    return repeated;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 1, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Number of repeated items: %d\n", count_repeated(arr, n));
+
+    return 0;
+}

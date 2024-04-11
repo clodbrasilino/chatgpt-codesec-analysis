@@ -1,0 +1,77 @@
+collected_code_3/problem-380-3.c: In function 'generate2DArray':
+collected_code_3/problem-380-3.c:7:18: warning: dereference of possibly-NULL 'array' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |         array[i] = (int *)malloc(cols * sizeof(int));
+      |         ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'generate2DArray': events 1-4
+    |
+    |    5 |     int **array = (int **)malloc(rows * sizeof(int *));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    6 |     for(int i=0; i<rows; i++)
+    |      |                  ~~~~~~    
+    |      |                   |
+    |      |                   (2) following 'true' branch (when 'i < rows')...
+    |    7 |         array[i] = (int *)malloc(cols * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                  |        |
+    |      |                  |        (3) ...to here
+    |      |                  (4) 'array + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-380-3.c:11:25: warning: dereference of possibly-NULL '*array_26 + _10 + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |             array[i][j] = i * j;
+      |             ~~~~~~~~~~~~^~~~~~~
+  'main': events 1-2
+    |
+    |   16 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   17 |     int rows = 5, cols = 5;
+    |   18 |     int **array = generate2DArray(rows, cols);
+    |      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |
+    |      |                   (2) calling 'generate2DArray' from 'main'
+    |
+    +--> 'generate2DArray': events 3-21
+           |
+           |    4 | int** generate2DArray(int rows, int cols) {
+           |      |       ^~~~~~~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'generate2DArray'
+           |    5 |     int **array = (int **)malloc(rows * sizeof(int *));
+           |    6 |     for(int i=0; i<rows; i++)
+           |      |                  ~~~~~~
+           |      |                   |
+           |      |                   (4) following 'true' branch (when 'i < rows')...
+           |      |                   (7) following 'true' branch (when 'i < rows')...
+           |      |                   (9) following 'true' branch (when 'i < rows')...
+           |      |                   (11) following 'true' branch (when 'i < rows')...
+           |      |                   (13) following 'true' branch (when 'i < rows')...
+           |      |                   (15) following 'false' branch (when 'i >= rows')...
+           |    7 |         array[i] = (int *)malloc(cols * sizeof(int));
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (5) ...to here
+           |      |                           (6) this call could return NULL
+           |      |                           (8) ...to here
+           |      |                           (10) ...to here
+           |      |                           (12) ...to here
+           |      |                           (14) ...to here
+           |    8 | 
+           |    9 |     for(int i=0; i<rows; i++)
+           |      |             ~    ~~~~~~
+           |      |             |     |
+           |      |             |     (17) following 'true' branch (when 'i < rows')...
+           |      |             (16) ...to here
+           |   10 |         for(int j=0; j<cols; j++)
+           |      |                 ~    ~~~~~~
+           |      |                 |     |
+           |      |                 |     (19) following 'true' branch (when 'j < cols')...
+           |      |                 (18) ...to here
+           |   11 |             array[i][j] = i * j;
+           |      |             ~~~~~~~~~~~~~~~~~~~
+           |      |                  |      |
+           |      |                  |      (21) '*array_26 + _10 + (long unsigned int)j * 4' could be NULL: unchecked value from (6)
+           |      |                  (20) ...to here
+           |

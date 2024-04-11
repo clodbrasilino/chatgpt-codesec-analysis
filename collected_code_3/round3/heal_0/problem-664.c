@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+double averageEvenNumbers(int n) {
+    int sum = 0;
+    int count = 0;
+    for(int i = 2; i <= n; i += 2) {
+        sum += i;
+        count++;
+    }
+    return (double)sum / count;
+}
+
+int main() {
+    int num;
+    printf("Enter an even number: ");
+    scanf("%d", &num);
+    if(num % 2 != 0) {
+        printf("The number is not even.\n");
+        return 1;
+    }
+    double average = averageEvenNumbers(num);
+    printf("The average of even numbers till %d is %.2f\n", num, average);
+    return 0;
+}

@@ -1,0 +1,580 @@
+collected_code_3/problem-140-1.c: In function 'push':
+collected_code_3/problem-140-1.c:11:20: warning: dereference of possibly-NULL 'new_node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |     new_node->data = new_data;
+      |     ~~~~~~~~~~~~~~~^~~~~~~~~~
+  'push': events 1-2
+    |
+    |   10 |     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    |      |                                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                           |
+    |      |                                           (1) this call could return NULL
+    |   11 |     new_node->data = new_data;
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~              
+    |      |                    |
+    |      |                    (2) 'new_node' could be NULL: unchecked value from (1)
+    |
+collected_code_3/problem-140-1.c: In function 'findSingleOccurrence':
+collected_code_3/problem-140-1.c:29:25: warning: leak of 'current' [CWE-401] [-Wanalyzer-malloc-leak]
+   29 |                 current = current->next;
+      |                 ~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   49 |     push(&head, 3);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'push' from 'main'
+    |
+    +--> 'push': events 3-5
+           |
+           |    9 | void push(struct Node** head_ref, int new_data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (3) entry to 'push'
+           |   10 |     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) allocated here
+           |   11 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) assuming 'new_node' is non-NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   49 |     push(&head, 3);
+    |      |     ^~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'push'
+    |......
+    |   53 |     findSingleOccurrence(head);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'findSingleOccurrence' from 'main'
+    |
+    +--> 'findSingleOccurrence': event 8
+           |
+           |   23 | void findSingleOccurrence(struct Node* head) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'findSingleOccurrence'
+           |
+         'findSingleOccurrence': events 9-14
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (9) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (12) ...to here
+           |      |            |       |              (13) following 'false' branch...
+           |      |            |       (10) ...to here
+           |      |            (11) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (14) ...to here
+           |
+         'findSingleOccurrence': events 15-20
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (15) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (18) ...to here
+           |      |            |       |              (19) following 'false' branch...
+           |      |            |       (16) ...to here
+           |      |            (17) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (20) ...to here
+           |
+         'findSingleOccurrence': events 21-23
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (21) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |       |
+           |      |            |       (22) ...to here
+           |      |            (23) following 'true' branch...
+           |
+         'findSingleOccurrence': event 24
+           |
+           |cc1:
+           | (24): ...to here
+           |
+         'findSingleOccurrence': events 25-30
+           |
+           |   28 |             while (current->next != NULL && current->data == current->next->data) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |         |
+           |      |                                          |         (26) ...to here
+           |      |                                          (25) following 'true' branch...
+           |      |                                          (27) following 'false' branch...
+           |......
+           |   31 |             if (prev != NULL) {
+           |      |                ~                          
+           |      |                |
+           |      |                (28) ...to here
+           |      |                (29) following 'true' branch (when 'prev' is non-NULL)...
+           |   32 |                 prev->next = current->next;
+           |      |                              ~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (30) ...to here
+           |
+         'findSingleOccurrence': events 31-36
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (31) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (34) ...to here
+           |      |            |       |              (35) following 'false' branch...
+           |      |            |       (32) ...to here
+           |      |            (33) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (36) ...to here
+           |
+         'findSingleOccurrence': events 37-39
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (37) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |       |
+           |      |            |       (38) ...to here
+           |      |            (39) following 'true' branch...
+           |
+         'findSingleOccurrence': event 40
+           |
+           |cc1:
+           | (40): ...to here
+           |
+         'findSingleOccurrence': events 41-43
+           |
+           |   28 |             while (current->next != NULL && current->data == current->next->data) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (41) following 'true' branch...
+           |   29 |                 current = current->next;
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~   
+           |      |                         |
+           |      |                         (42) ...to here
+           |      |                         (43) 'current' leaks here; was allocated at (4)
+           |
+collected_code_3/problem-140-1.c:39:17: warning: leak of 'current' [CWE-401] [-Wanalyzer-malloc-leak]
+   39 |         current = current->next;
+      |         ~~~~~~~~^~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   50 |     push(&head, 3);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'push' from 'main'
+    |
+    +--> 'push': events 3-5
+           |
+           |    9 | void push(struct Node** head_ref, int new_data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (3) entry to 'push'
+           |   10 |     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) allocated here
+           |   11 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) assuming 'new_node' is non-NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   50 |     push(&head, 3);
+    |      |     ^~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'push'
+    |......
+    |   53 |     findSingleOccurrence(head);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'findSingleOccurrence' from 'main'
+    |
+    +--> 'findSingleOccurrence': event 8
+           |
+           |   23 | void findSingleOccurrence(struct Node* head) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'findSingleOccurrence'
+           |
+         'findSingleOccurrence': events 9-14
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (9) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (12) ...to here
+           |      |            |       |              (13) following 'false' branch...
+           |      |            |       (10) ...to here
+           |      |            (11) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (14) ...to here
+           |
+         'findSingleOccurrence': events 15-20
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (15) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (18) ...to here
+           |      |            |       |              (19) following 'false' branch...
+           |      |            |       (16) ...to here
+           |      |            (17) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (20) ...to here
+           |
+         'findSingleOccurrence': events 21-23
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (21) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |       |
+           |      |            |       (22) ...to here
+           |      |            (23) following 'true' branch...
+           |
+         'findSingleOccurrence': event 24
+           |
+           |cc1:
+           | (24): ...to here
+           |
+         'findSingleOccurrence': events 25-31
+           |
+           |   28 |             while (current->next != NULL && current->data == current->next->data) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |         |
+           |      |                                          |         (26) ...to here
+           |      |                                          (25) following 'true' branch...
+           |      |                                          (27) following 'false' branch...
+           |......
+           |   31 |             if (prev != NULL) {
+           |      |                ~                          
+           |      |                |
+           |      |                (28) ...to here
+           |      |                (29) following 'true' branch (when 'prev' is non-NULL)...
+           |   32 |                 prev->next = current->next;
+           |      |                              ~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (30) ...to here
+           |......
+           |   39 |         current = current->next;
+           |      |         ~~~~~~~~~~~~~~~~~~~~~~~           
+           |      |                 |
+           |      |                 (31) 'current' leaks here; was allocated at (4)
+           |
+collected_code_3/problem-140-1.c:42:1: warning: leak of 'current' [CWE-401] [-Wanalyzer-malloc-leak]
+   42 | }
+      | ^
+  'main': events 1-2
+    |
+    |   44 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   45 |     struct Node* head = NULL;
+    |   46 |     push(&head, 5);
+    |      |     ~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'push' from 'main'
+    |
+    +--> 'push': events 3-5
+           |
+           |    9 | void push(struct Node** head_ref, int new_data) {
+           |      |      ^~~~
+           |      |      |
+           |      |      (3) entry to 'push'
+           |   10 |     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+           |      |                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                           |
+           |      |                                           (4) allocated here
+           |   11 |     new_node->data = new_data;
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                    |
+           |      |                    (5) assuming 'new_node' is non-NULL
+           |
+    <------+
+    |
+  'main': events 6-7
+    |
+    |   46 |     push(&head, 5);
+    |      |     ^~~~~~~~~~~~~~
+    |      |     |
+    |      |     (6) returning to 'main' from 'push'
+    |......
+    |   53 |     findSingleOccurrence(head);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (7) calling 'findSingleOccurrence' from 'main'
+    |
+    +--> 'findSingleOccurrence': event 8
+           |
+           |   23 | void findSingleOccurrence(struct Node* head) {
+           |      |      ^~~~~~~~~~~~~~~~~~~~
+           |      |      |
+           |      |      (8) entry to 'findSingleOccurrence'
+           |
+         'findSingleOccurrence': events 9-14
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (9) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (12) ...to here
+           |      |            |       |              (13) following 'false' branch...
+           |      |            |       (10) ...to here
+           |      |            (11) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (14) ...to here
+           |
+         'findSingleOccurrence': events 15-20
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (15) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (18) ...to here
+           |      |            |       |              (19) following 'false' branch...
+           |      |            |       (16) ...to here
+           |      |            (17) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (20) ...to here
+           |
+         'findSingleOccurrence': events 21-23
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (21) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |       |
+           |      |            |       (22) ...to here
+           |      |            (23) following 'true' branch...
+           |
+         'findSingleOccurrence': event 24
+           |
+           |cc1:
+           | (24): ...to here
+           |
+         'findSingleOccurrence': events 25-30
+           |
+           |   28 |             while (current->next != NULL && current->data == current->next->data) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |         |
+           |      |                                          |         (26) ...to here
+           |      |                                          (25) following 'true' branch...
+           |      |                                          (27) following 'false' branch...
+           |......
+           |   31 |             if (prev != NULL) {
+           |      |                ~                          
+           |      |                |
+           |      |                (28) ...to here
+           |      |                (29) following 'true' branch (when 'prev' is non-NULL)...
+           |   32 |                 prev->next = current->next;
+           |      |                              ~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (30) ...to here
+           |
+         'findSingleOccurrence': events 31-36
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (31) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |            |       |              |         |
+           |      |            |       |              |         (34) ...to here
+           |      |            |       |              (35) following 'false' branch...
+           |      |            |       (32) ...to here
+           |      |            (33) following 'true' branch...
+           |......
+           |   37 |             prev = current;
+           |      |             ~~~~~~~~~~~~~~
+           |      |                  |
+           |      |                  (36) ...to here
+           |
+         'findSingleOccurrence': events 37-39
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (37) following 'true' branch (when 'current' is non-NULL)...
+           |   27 |         if (current->next != NULL && current->data == current->next->data) {
+           |      |            ~~~~~~~~~~~~~~
+           |      |            |       |
+           |      |            |       (38) ...to here
+           |      |            (39) following 'true' branch...
+           |
+         'findSingleOccurrence': event 40
+           |
+           |cc1:
+           | (40): ...to here
+           |
+         'findSingleOccurrence': events 41-46
+           |
+           |   28 |             while (current->next != NULL && current->data == current->next->data) {
+           |      |                    ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                          |
+           |      |                                          (41) following 'true' branch...
+           |      |                                          (43) following 'false' branch...
+           |   29 |                 current = current->next;
+           |      |                 ~~~~~~~~~~~~~~~~~~~~~~~   
+           |      |                         |
+           |      |                         (42) ...to here
+           |   30 |             }
+           |   31 |             if (prev != NULL) {
+           |      |                ~                          
+           |      |                |
+           |      |                (44) ...to here
+           |      |                (45) following 'true' branch (when 'prev' is non-NULL)...
+           |   32 |                 prev->next = current->next;
+           |      |                              ~~~~~~~~~~~~~
+           |      |                                     |
+           |      |                                     (46) ...to here
+           |
+         'findSingleOccurrence': events 47-49
+           |
+           |   26 |     while (current != NULL) {
+           |      |                    ^
+           |      |                    |
+           |      |                    (47) following 'false' branch (when 'current' is NULL)...
+           |......
+           |   41 |     printList(head);
+           |      |     ~~~~~~~~~~~~~~~ 
+           |      |     |
+           |      |     (48) ...to here
+           |      |     (49) calling 'printList' from 'findSingleOccurrence'
+           |
+           +--> 'printList': event 50
+                  |
+                  |   16 | void printList(struct Node *node) {
+                  |      |      ^~~~~~~~~
+                  |      |      |
+                  |      |      (50) entry to 'printList'
+                  |
+                'printList': events 51-52
+                  |
+                  |   17 |     while (node != NULL) {
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (51) following 'true' branch (when 'node' is non-NULL)...
+                  |   18 |         printf("%d ", node->data);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (52) ...to here
+                  |
+                'printList': events 53-54
+                  |
+                  |   17 |     while (node != NULL) {
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (53) following 'true' branch (when 'node' is non-NULL)...
+                  |   18 |         printf("%d ", node->data);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (54) ...to here
+                  |
+                'printList': events 55-56
+                  |
+                  |   17 |     while (node != NULL) {
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (55) following 'true' branch (when 'node' is non-NULL)...
+                  |   18 |         printf("%d ", node->data);
+                  |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |         |
+                  |      |         (56) ...to here
+                  |
+                'printList': events 57-58
+                  |
+                  |   17 |     while (node != NULL) {
+                  |      |                 ^
+                  |      |                 |
+                  |      |                 (57) following 'false' branch (when 'node' is NULL)...
+                  |......
+                  |   21 | }
+                  |      | ~                
+                  |      | |
+                  |      | (58) ...to here
+                  |
+           <------+
+           |
+         'findSingleOccurrence': events 59-60
+           |
+           |   41 |     printList(head);
+           |      |     ^~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (59) returning to 'findSingleOccurrence' from 'printList'
+           |   42 | }
+           |      | ~    
+           |      | |
+           |      | (60) 'current' leaks here; was allocated at (4)
+           |

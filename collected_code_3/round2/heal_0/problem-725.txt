@@ -1,0 +1,30 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void extract_values(char *str) {
+    regex_t regex;
+    regmatch_t pmatch[2];
+    char *pattern = "\"([^\"]*)\"";
+    regcomp(&regex, pattern, REG_EXTENDED);
+
+    while (regexec(&regex, str, 2, pmatch, 0) == 0) {
+        int length = pmatch[1].rm_eo - pmatch[1].rm_so;
+        char match[length + 1];
+        strncpy(match, &str[pmatch[1].rm_so], length);
+        match[length] = '\0';
+        printf("%s\n", match);
+        str += pmatch[0].rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "This is a \"test\" string with \"multiple\" quoted \"values\".";
+    extract_values(str);
+    return 0;
+}
+```
+Please note that this code uses POSIX regular expressions which are not part of the C standard library. Depending on your compiler and platform, you may need to link against the POSIX regex library (`-lregex` or similar).

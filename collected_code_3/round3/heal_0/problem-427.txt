@@ -1,0 +1,26 @@
+I'm sorry for the confusion, but C language does not support regex (Regular Expressions) natively. However, we can achieve the date format conversion using string manipulation functions in C. Here is a simple C program that converts a date from "yyyy-mm-dd" format to "dd-mm-yyyy" format.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+void convertDateFormat(char* date, char* newDate) {
+    strncpy(newDate, &date[8], 2);
+    strncpy(&newDate[2], "-", 1);
+    strncpy(&newDate[3], &date[5], 2);
+    strncpy(&newDate[5], "-", 1);
+    strncpy(&newDate[6], &date[0], 4);
+    newDate[10] = '\0';
+}
+
+int main() {
+    char date[11] = "2022-12-31";
+    char newDate[11];
+    convertDateFormat(date, newDate);
+    printf("Original date: %s\n", date);
+    printf("Converted date: %s\n", newDate);
+    return 0;
+}
+```
+
+This program uses the `strncpy` function to copy parts of the original date string into the new date string in the desired order. Please note that this code does not perform any validation on the input date. If the input date is not in the correct "yyyy-mm-dd" format, the output will be incorrect.

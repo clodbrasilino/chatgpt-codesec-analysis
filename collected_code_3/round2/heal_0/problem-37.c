@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int type; // 0 for int, 1 for string
+    union {
+        int i;
+        char *s;
+    } data;
+} Mixed;
+
+int compare(const void *a, const void *b) {
+    Mixed *m1 = (Mixed *)a;
+    Mixed *m2 = (Mixed *)b;
+
+    if (m1->type != m2->type) {
+        return m1->type - m2->type;
+    } else if (m1->type == 0) {
+        return m1->data.i - m2->data.i;
+    } else {
+        return strcmp(m1->data.s, m2->data.s);
+    }
+}
+
+void sortMixed(Mixed *array, size_t size) {
+    qsort(array, size, sizeof(Mixed), compare);
+}
+
+int main() {
+    Mixed array[] = {
+        {0, .data.i = 5},
+        {1, .data.s = "hello"},
+        {0, .data.i = 2},
+        {1, .data.s = "world"},
+        {0, .data.i = 8},
+        {1, .data.s = "c"},
+    };
+
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    sortMixed(array, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        if (array[i].type == 0) {
+            printf("%d\n", array[i].data.i);
+        } else {
+            printf("%s\n", array[i].data.s);
+        }
+    }
+
+    return 0;
+}

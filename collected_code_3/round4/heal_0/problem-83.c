@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <string.h>
+
+char findCharByAddingAllChars(char* str) {
+    int sum = 0;
+    for(int i = 0; i < strlen(str); i++) {
+        sum += str[i];
+    }
+    return (char)(sum % 128);
+}
+
+int main() {
+    char str[] = "Hello World";
+    char result = findCharByAddingAllChars(str);
+    printf("The character made by adding all the characters of the string is: %c\n", result);
+    return 0;
+}

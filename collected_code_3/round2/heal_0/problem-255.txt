@@ -1,0 +1,31 @@
+```C
+#include <stdio.h>
+
+void printCombinations(char *data, int start, int end, int index, int r, char *colours) {
+    int i;
+    if (index == r) {
+        for (i = 0; i < r; i++)
+            printf("%c ", data[i]);
+        printf("\n");
+        return;
+    }
+
+    for (i = start; i <= end && end - i + 1 >= r - index; i++) {
+        data[index] = colours[i];
+        printCombinations(data, i, end, index + 1, r, colours);
+    }
+}
+
+void generateCombinations(char *colours, int n, int r) {
+    char data[r];
+    printCombinations(data, 0, n - 1, 0, r, colours);
+}
+
+int main() {
+    char colours[] = {'R', 'G', 'B'};
+    int r = 2;
+    int n = sizeof(colours) / sizeof(colours[0]);
+    generateCombinations(colours, n, r);
+    return 0;
+}
+```

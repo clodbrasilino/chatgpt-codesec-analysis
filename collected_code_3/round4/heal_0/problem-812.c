@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+char* abbreviateRoad(char* str) {
+    char* result = malloc(strlen(str) + 1);
+    char* token = strtok(str, " ");
+    while (token != NULL) {
+        if (strcmp(token, "road") == 0) {
+            strcat(result, "rd. ");
+        } else {
+            strcat(result, token);
+            strcat(result, " ");
+        }
+        token = strtok(NULL, " ");
+    }
+    return result;
+}
+
+int main() {
+    char str[] = "I live on a long road";
+    char* result = abbreviateRoad(str);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

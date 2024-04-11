@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define ROW 5
+#define COL 3
+
+void removeSimilarRows(int matrix[ROW][COL], int row, int col) {
+    int i, j, k, isSame;
+
+    for (i = 0; i < row; i++) {
+        for (j = i + 1; j < row;) {
+            isSame = 1;
+            for (k = 0; k < col; k++) {
+                if (matrix[i][k] != matrix[j][k]) {
+                    isSame = 0;
+                    break;
+                }
+            }
+            if (isSame == 1) {
+                for (k = j; k < row; k++) {
+                    memcpy(matrix[k], matrix[k + 1], col * sizeof(int));
+                }
+                row--;
+            } else {
+                j++;
+            }
+        }
+    }
+
+    for (i = 0; i < row; i++) {
+        for (j = 0; j < col; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int matrix[ROW][COL] = {{1, 2, 3}, {4, 5, 6}, {1, 2, 3}, {7, 8, 9}, {4, 5, 6}};
+    removeSimilarRows(matrix, ROW, COL);
+    return 0;
+}

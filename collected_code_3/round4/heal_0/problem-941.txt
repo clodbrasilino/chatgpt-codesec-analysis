@@ -1,0 +1,43 @@
+In C, there is no built-in concept of tuples or lists as in Python or other high-level languages. However, we can use structures to represent a tuple and an array to represent a list. Here is a simple implementation:
+
+```c
+#include <stdio.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int countUntilTuple(Tuple* list, int size) {
+    int count = 0;
+    for(int i = 0; i < size; i++) {
+        if(list[i].first != 0 && list[i].second != 0) {
+            break;
+        }
+        count++;
+    }
+    return count;
+}
+
+int main() {
+    Tuple list[10] = {
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {1, 2},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0},
+        {0, 0}
+    };
+
+    int count = countUntilTuple(list, 10);
+    printf("Count until tuple: %d\n", count);
+
+    return 0;
+}
+```
+
+In this code, a tuple is represented as a structure with two integer fields. A list of tuples is represented as an array of these structures. The function `countUntilTuple` counts the number of elements in the list until it encounters a tuple (a structure with both fields non-zero). The `main` function creates a list of tuples and calls `countUntilTuple` to count the elements until a tuple.

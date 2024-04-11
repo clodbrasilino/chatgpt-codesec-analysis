@@ -1,0 +1,209 @@
+./collected_code_3/round4/heal_1/healed/problem-771.c: In function 'areParenthesisBalanced':
+./collected_code_3/round4/heal_1/healed/problem-771.c:74:15: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   74 |               free(stack);
+      |               ^~~~~~~~~~~
+  'areParenthesisBalanced': events 1-2
+    |
+    |   61 | int areParenthesisBalanced(char exp[]) {
+    |      |     ^~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'areParenthesisBalanced'
+    |   62 |     int i = 0;
+    |   63 |     struct Stack* stack = createStack(strlen(exp));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (2) calling 'createStack' from 'areParenthesisBalanced'
+    |
+    +--> 'createStack': events 3-9
+           |
+           |   11 | struct Stack* createStack(unsigned capacity) {
+           |      |               ^~~~~~~~~~~
+           |      |               |
+           |      |               (3) entry to 'createStack'
+           |......
+           |   14 |     if (!stack) {
+           |      |        ~       
+           |      |        |
+           |      |        (4) following 'false' branch (when 'stack' is non-NULL)...
+           |......
+           |   18 |     stack->top = -1;
+           |      |     ~~~~~~~~~~~~~~~
+           |      |                |
+           |      |                (5) ...to here
+           |   19 |     stack->capacity = capacity;
+           |   20 |     stack->array = (int*) malloc(stack->capacity * sizeof(int));
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (6) allocated here
+           |   21 | 
+           |   22 |     if (!stack->array) {
+           |      |        ~       
+           |      |        |
+           |      |        (7) assuming '<unknown>' is non-NULL
+           |      |        (8) following 'false' branch...
+           |......
+           |   27 |     return stack;
+           |      |            ~~~~~
+           |      |            |
+           |      |            (9) ...to here
+           |
+    <------+
+    |
+  'areParenthesisBalanced': events 10-11
+    |
+    |   63 |     struct Stack* stack = createStack(strlen(exp));
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (10) returning to 'areParenthesisBalanced' from 'createStack'
+    |   64 | 
+    |   65 |     if(!stack)
+    |      |       ~                    
+    |      |       |
+    |      |       (11) following 'false' branch (when 'stack' is non-NULL)...
+    |
+  'areParenthesisBalanced': event 12
+    |
+    |cc1:
+    | (12): ...to here
+    |
+  'areParenthesisBalanced': events 13-17
+    |
+    |   68 |     while (exp[i]) {
+    |      |            ^~~
+    |      |            |
+    |      |            (13) following 'true' branch...
+    |   69 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+    |      |                ~
+    |      |                |
+    |      |                (14) ...to here
+    |......
+    |   73 |             if (isEmpty(stack)) {
+    |      |                ~
+    |      |                |
+    |      |                (15) following 'true' branch...
+    |   74 |               free(stack);
+    |      |               ~~~~~~~~~~~
+    |      |               |
+    |      |               (16) ...to here
+    |      |               (17) '<unknown>' leaks here; was allocated at (6)
+    |
+./collected_code_3/round4/heal_1/healed/problem-771.c:77:15: warning: leak of '<unknown>' [CWE-401] [-Wanalyzer-malloc-leak]
+   77 |               free(stack);
+      |               ^~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   95 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   96 |     char exp[100] = "{()}[]";
+    |   97 |     if (areParenthesisBalanced(exp))
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (2) calling 'areParenthesisBalanced' from 'main'
+    |
+    +--> 'areParenthesisBalanced': events 3-4
+           |
+           |   61 | int areParenthesisBalanced(char exp[]) {
+           |      |     ^~~~~~~~~~~~~~~~~~~~~~
+           |      |     |
+           |      |     (3) entry to 'areParenthesisBalanced'
+           |   62 |     int i = 0;
+           |   63 |     struct Stack* stack = createStack(strlen(exp));
+           |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (4) calling 'createStack' from 'areParenthesisBalanced'
+           |
+           +--> 'createStack': events 5-11
+                  |
+                  |   11 | struct Stack* createStack(unsigned capacity) {
+                  |      |               ^~~~~~~~~~~
+                  |      |               |
+                  |      |               (5) entry to 'createStack'
+                  |......
+                  |   14 |     if (!stack) {
+                  |      |        ~       
+                  |      |        |
+                  |      |        (6) following 'false' branch (when 'stack' is non-NULL)...
+                  |......
+                  |   18 |     stack->top = -1;
+                  |      |     ~~~~~~~~~~~~~~~
+                  |      |                |
+                  |      |                (7) ...to here
+                  |   19 |     stack->capacity = capacity;
+                  |   20 |     stack->array = (int*) malloc(stack->capacity * sizeof(int));
+                  |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |                           |
+                  |      |                           (8) allocated here
+                  |   21 | 
+                  |   22 |     if (!stack->array) {
+                  |      |        ~       
+                  |      |        |
+                  |      |        (9) assuming '<unknown>' is non-NULL
+                  |      |        (10) following 'false' branch...
+                  |......
+                  |   27 |     return stack;
+                  |      |            ~~~~~
+                  |      |            |
+                  |      |            (11) ...to here
+                  |
+           <------+
+           |
+         'areParenthesisBalanced': events 12-13
+           |
+           |   63 |     struct Stack* stack = createStack(strlen(exp));
+           |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (12) returning to 'areParenthesisBalanced' from 'createStack'
+           |   64 | 
+           |   65 |     if(!stack)
+           |      |       ~                    
+           |      |       |
+           |      |       (13) following 'false' branch (when 'stack' is non-NULL)...
+           |
+         'areParenthesisBalanced': event 14
+           |
+           |cc1:
+           | (14): ...to here
+           |
+         'areParenthesisBalanced': events 15-25
+           |
+           |   68 |     while (exp[i]) {
+           |      |            ^~~
+           |      |            |
+           |      |            (15) following 'true' branch...
+           |      |            (21) following 'true' branch...
+           |   69 |         if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[')
+           |      |            ~   ~
+           |      |            |   |
+           |      |            |   (16) ...to here
+           |      |            |   (22) ...to here
+           |      |            (17) following 'true' branch...
+           |   70 |             push(stack, exp[i]);
+           |      |                            ~
+           |      |                            |
+           |      |                            (18) ...to here
+           |   71 | 
+           |   72 |         if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') {
+           |      |            ~
+           |      |            |
+           |      |            (19) following 'false' branch...
+           |   73 |             if (isEmpty(stack)) {
+           |      |                ~
+           |      |                |
+           |      |                (23) following 'false' branch...
+           |......
+           |   76 |             } else if ( !isMatchingPair(pop(stack), exp[i]) ) {
+           |      |                                                        ~
+           |      |                                                        |
+           |      |                                                        (24) ...to here
+           |   77 |               free(stack);
+           |      |               ~~~~~~~~~~~
+           |      |               |
+           |      |               (25) '<unknown>' leaks here; was allocated at (8)
+           |......
+           |   81 |         i++;
+           |      |         ~~~ 
+           |      |          |
+           |      |          (20) ...to here
+           |

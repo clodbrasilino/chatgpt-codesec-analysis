@@ -1,0 +1,21 @@
+collected_code_3/problem-26-3.c: In function 'main':
+collected_code_3/problem-26-3.c:25:31: warning: dereference of possibly-NULL 'tupleList' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   25 |         tupleList[i].elements = malloc(sizeof(int) * k);
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-4
+    |
+    |   22 |     Tuple *tupleList = malloc(sizeof(Tuple) * tupleCount);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (1) this call could return NULL
+    |   23 | 
+    |   24 |     for(int i = 0; i < tupleCount; i++) {
+    |      |                    ~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < tupleCount')...
+    |   25 |         tupleList[i].elements = malloc(sizeof(int) * k);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                               | |
+    |      |                               | (3) ...to here
+    |      |                               (4) 'tupleList + (long unsigned int)i * 16' could be NULL: unchecked value from (1)
+    |

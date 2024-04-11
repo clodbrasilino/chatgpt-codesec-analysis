@@ -1,0 +1,56 @@
+./collected_code_3/round4/heal_1/healed/problem-715.c: In function 'string_to_tuple':
+./collected_code_3/round4/heal_1/healed/problem-715.c:17:20: warning: leak of 'tuple.data' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'string_to_tuple': events 1-4
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (1) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |                          |
+    |      |                      (3) allocated here         (2) ...to here
+    |      |                      (4) when 'realloc' succeeds, moving buffer
+    |
+  'string_to_tuple': events 5-8
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (5) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    | |                          |
+    |      |                    | (7) when 'realloc' fails   (6) ...to here
+    |      |                    (8) 'tuple.data' leaks here; was allocated at (3)
+    |
+./collected_code_3/round4/heal_1/healed/problem-715.c:18:29: warning: dereference of NULL '0' [CWE-476] [-Wanalyzer-null-dereference]
+   18 |         tuple.data[count++] = atoi(token);
+      |         ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+  'string_to_tuple': event 1
+    |
+    |   11 |     Tuple tuple = {NULL, 0};
+    |      |           ^~~~~
+    |      |           |
+    |      |           (1) 'tuple.data' is NULL
+    |
+  'string_to_tuple': events 2-7
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (2) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |            |             |
+    |      |                      |            |             (3) ...to here
+    |      |                      |            (4) 'tuple.data' is NULL
+    |      |                      (5) when 'realloc' fails
+    |   18 |         tuple.data[count++] = atoi(token);
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                   |         |
+    |      |                   |         (7) dereference of NULL 'tuple.data + (long unsigned int)count * 4'
+    |      |                   (6) '0' is NULL
+    |

@@ -1,0 +1,39 @@
+In C, there are no built-in data types such as list or tuple as in Python or other high-level languages. However, we can use structures to mimic the behavior of tuples. Here is an example of how you can do it:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+Tuple* listToTuple(int* list, int size) {
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    tuple->elements = (int*)malloc(sizeof(int) * size);
+    for(int i = 0; i < size; i++) {
+        tuple->elements[i] = list[i];
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5};
+    int size = sizeof(list) / sizeof(list[0]);
+    Tuple* tuple = listToTuple(list, size);
+    for(int i = 0; i < tuple->size; i++) {
+        printf("%d ", tuple->elements[i]);
+    }
+    free(tuple->elements);
+    free(tuple);
+    return 0;
+}
+```
+
+In this code, we first define a structure `Tuple` that will act as our tuple. It contains an array of integers `elements` and an integer `size` to store the size of the tuple.
+
+Then we define a function `listToTuple` that takes a list (an array of integers) and its size, and returns a pointer to a `Tuple`. It first allocates memory for the `Tuple` and its `elements`, then copies the elements from the list to the `elements` of the `Tuple`, and finally returns the `Tuple`.
+
+In the `main` function, we create a list, convert it to a `Tuple` using `listToTuple`, and then print the elements of the `Tuple`. Finally, we free the memory allocated for the `Tuple` and its `elements`.

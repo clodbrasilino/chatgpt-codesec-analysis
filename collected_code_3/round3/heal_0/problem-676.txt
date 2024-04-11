@@ -1,0 +1,23 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void removeNonAlphanumeric(char* str) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (isalnum(str[i]))
+            str[j++] = str[i];
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "Hello, World! 123";
+    removeNonAlphanumeric(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+Please note that C language does not support regex natively. We can use external libraries like PCRE (Perl Compatible Regular Expressions) to use regex in C, but it's not included in the standard library. The function above removes non-alphanumeric characters from a string without using regex, instead it uses the `isalnum` function from `ctype.h` which checks if a character is alphanumeric.

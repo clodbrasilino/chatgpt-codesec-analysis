@@ -1,0 +1,114 @@
+collected_code_3/problem-31-2.c: In function 'insert':
+collected_code_3/problem-31-2.c:44:16: warning: dereference of possibly-NULL '*h.heap + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   44 |     h->heap[i] = node;
+      |     ~~~~~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-11
+           |
+           |   59 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   60 |     int freq[100] = {0};
+           |   61 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numsSize')...
+           |   62 |         ++freq[nums[i]];
+           |      |                    ~
+           |      |                    |
+           |      |                    (5) ...to here
+           |......
+           |   65 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+           |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) this call could return NULL
+           |   66 |     h->size = 0;
+           |   67 |     for (int i = 0; i < 100; ++i) {
+           |      |                     ~~~~~~~
+           |      |                       |
+           |      |                       (7) following 'true' branch (when 'i <= 99')...
+           |   68 |         Node node = {i, freq[i]};
+           |      |              ~~~~
+           |      |              |
+           |      |              (8) ...to here
+           |   69 |         if (h->size < k) {
+           |      |            ~
+           |      |            |
+           |      |            (9) following 'true' branch...
+           |   70 |             insert(h, node);
+           |      |             ~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (10) ...to here
+           |      |             (11) calling 'insert' from 'topKFrequent'
+           |
+           +--> 'insert': events 12-15
+                  |
+                  |   37 | void insert(Heap* h, Node node) {
+                  |      |      ^~~~~~
+                  |      |      |
+                  |      |      (12) entry to 'insert'
+                  |......
+                  |   40 |     while (i && node.freq < h->heap[(i - 1) / 2].freq) {
+                  |      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                  |      |              |
+                  |      |              (13) following 'false' branch (when 'i == 0')...
+                  |......
+                  |   44 |     h->heap[i] = node;
+                  |      |     ~~~~~~~~~~~~~~~~~
+                  |      |      |         |
+                  |      |      |         (15) '*h.heap + (long unsigned int)i * 8' could be NULL: unchecked value from (6)
+                  |      |      (14) ...to here
+                  |
+collected_code_3/problem-31-2.c: In function 'topKFrequent':
+collected_code_3/problem-31-2.c:65:13: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   65 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+      |     ~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'main': events 1-2
+    |
+    |   85 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   89 |     topKFrequent(nums, numsSize, k);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (2) calling 'topKFrequent' from 'main'
+    |
+    +--> 'topKFrequent': events 3-7
+           |
+           |   59 | void topKFrequent(int* nums, int numsSize, int k) {
+           |      |      ^~~~~~~~~~~~
+           |      |      |
+           |      |      (3) entry to 'topKFrequent'
+           |   60 |     int freq[100] = {0};
+           |   61 |     for (int i = 0; i < numsSize; ++i)
+           |      |                     ~~~~~~~~~~~~
+           |      |                       |
+           |      |                       (4) following 'true' branch (when 'i < numsSize')...
+           |   62 |         ++freq[nums[i]];
+           |      |                    ~
+           |      |                    |
+           |      |                    (5) ...to here
+           |   63 | 
+           |   64 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (6) this call could return NULL
+           |   65 |     h->heap = (Node*)malloc(sizeof(Node) * k);
+           |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (7) 'h' could be NULL: unchecked value from (6)
+           |

@@ -1,0 +1,37 @@
+C language does not have built-in support for dictionaries. However, you can implement a dictionary using a struct and an array or a linked list. For the purpose of this task, I will use a struct and an array. Here is a simple C program that sums all the values in a dictionary.
+
+```c
+#include <stdio.h>
+
+#define SIZE 5
+
+typedef struct {
+    int key;
+    int value;
+} dict;
+
+int sumDictionaryValues(dict dictionary[], int size) {
+    int sum = 0;
+    for(int i = 0; i < size; i++) {
+        sum += dictionary[i].value;
+    }
+    return sum;
+}
+
+int main() {
+    dict dictionary[SIZE] = {
+        {1, 10},
+        {2, 20},
+        {3, 30},
+        {4, 40},
+        {5, 50}
+    };
+
+    int sum = sumDictionaryValues(dictionary, SIZE);
+    printf("Sum of all values in the dictionary: %d\n", sum);
+
+    return 0;
+}
+```
+
+This program first defines a struct `dict` that represents a dictionary item with a key and a value. The `sumDictionaryValues` function iterates over the dictionary array and sums all the values. The `main` function creates a dictionary and prints the sum of its values.

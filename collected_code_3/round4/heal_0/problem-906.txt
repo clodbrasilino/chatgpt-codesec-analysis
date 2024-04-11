@@ -1,0 +1,43 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void extract_date(char *url, char *year, char *month, char *day) {
+    regex_t regex;
+    regmatch_t matches[4];
+    regcomp(&regex, "\\b(19|20)\\d\\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])\\b", REG_EXTENDED);
+
+    if (regexec(&regex, url, 4, matches, 0) == 0) {
+        int year_len = matches[1].rm_eo - matches[1].rm_so;
+        int month_len = matches[2].rm_eo - matches[2].rm_so;
+        int day_len = matches[3].rm_eo - matches[3].rm_so;
+
+        strncpy(year, url + matches[1].rm_so, year_len);
+        year[year_len] = '\0';
+
+        strncpy(month, url + matches[2].rm_so, month_len);
+        month[month_len] = '\0';
+
+        strncpy(day, url + matches[3].rm_so, day_len);
+        day[day_len] = '\0';
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char url[] = "https://www.example.com/2022/09/30/post-title";
+    char year[5], month[3], day[3];
+
+    extract_date(url, year, month, day);
+
+    printf("Year: %s\n", year);
+    printf("Month: %s\n", month);
+    printf("Day: %s\n", day);
+
+    return 0;
+}
+```
+Please note that this code assumes that the date in the URL is in the format "YYYY/MM/DD". If the date is in a different format, you will need to adjust the regular expression accordingly. Also, this code does not perform any error checking to ensure that the date is valid. For example, it does not check that the month is between 1 and 12 or that the day is valid for the given month. If you need to perform this kind of validation, you will need to add additional code.

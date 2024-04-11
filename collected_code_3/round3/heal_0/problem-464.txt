@@ -1,0 +1,51 @@
+```C
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int key;
+    int value;
+    struct Node* next;
+};
+
+struct Node* newNode(int key, int value) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->key = key;
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+int checkValues(struct Node* head) {
+    if (head == NULL) {
+        return 1;
+    }
+
+    int value = head->value;
+    struct Node* temp = head->next;
+
+    while (temp != NULL) {
+        if (temp->value != value) {
+            return 0;
+        }
+        temp = temp->next;
+    }
+
+    return 1;
+}
+
+int main() {
+    struct Node* head = newNode(1, 10);
+    head->next = newNode(2, 10);
+    head->next->next = newNode(3, 10);
+    head->next->next->next = newNode(4, 10);
+
+    if (checkValues(head)) {
+        printf("All values are same.\n");
+    } else {
+        printf("Values are not same.\n");
+    }
+
+    return 0;
+}
+```

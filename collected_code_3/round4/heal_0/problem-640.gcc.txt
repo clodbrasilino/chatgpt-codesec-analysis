@@ -1,0 +1,57 @@
+collected_code_3/round4/heal_0/problem-640.c: In function 'removeParenthesis':
+collected_code_3/round4/heal_0/problem-640.c:6:27: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    6 |     char* result = (char*)malloc(strlen(str) + 1);
+      |                           ^~~~~~
+collected_code_3/round4/heal_0/problem-640.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+collected_code_3/round4/heal_0/problem-640.c:6:27: warning: incompatible implicit declaration of built-in function 'malloc' [-Wbuiltin-declaration-mismatch]
+    6 |     char* result = (char*)malloc(strlen(str) + 1);
+      |                           ^~~~~~
+collected_code_3/round4/heal_0/problem-640.c:6:27: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+collected_code_3/round4/heal_0/problem-640.c: In function 'main':
+collected_code_3/round4/heal_0/problem-640.c:25:5: warning: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   25 |     free(result);
+      |     ^~~~
+collected_code_3/round4/heal_0/problem-640.c:25:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/round4/heal_0/problem-640.c:25:5: warning: incompatible implicit declaration of built-in function 'free' [-Wbuiltin-declaration-mismatch]
+collected_code_3/round4/heal_0/problem-640.c:25:5: note: include '<stdlib.h>' or provide a declaration of 'free'
+collected_code_3/round4/heal_0/problem-640.c: In function 'removeParenthesis':
+collected_code_3/round4/heal_0/problem-640.c:14:25: warning: dereference of possibly-NULL 'result' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   14 |             result[j++] = str[i];
+      |             ~~~~~~~~~~~~^~~~~~~~
+  'removeParenthesis': events 1-10
+    |
+    |    6 |     char* result = (char*)malloc(strlen(str) + 1);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |    7 | 
+    |    8 |     for(i = 0; str[i] != '\0'; i++) {
+    |      |                ~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch...
+    |    9 |         if(str[i] == '(') {
+    |      |           ~   ~            
+    |      |           |   |
+    |      |           |   (3) ...to here
+    |      |           (4) following 'false' branch...
+    |   10 |             count++;
+    |   11 |         } else if(str[i] == ')') {
+    |      |                  ~   ~     
+    |      |                  |   |
+    |      |                  |   (5) ...to here
+    |      |                  (6) following 'false' branch...
+    |   12 |             count--;
+    |   13 |         } else if(count == 0) {
+    |      |                  ~         
+    |      |                  |
+    |      |                  (7) ...to here
+    |      |                  (8) following 'true' branch (when 'count == 0')...
+    |   14 |             result[j++] = str[i];
+    |      |             ~~~~~~~~~~~~~~~~~~~~
+    |      |                         |    |
+    |      |                         |    (9) ...to here
+    |      |                         (10) 'result + (sizetype)j' could be NULL: unchecked value from (1)
+    |

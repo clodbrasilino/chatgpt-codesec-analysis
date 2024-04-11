@@ -1,0 +1,55 @@
+collected_code_3/round4/heal_0/problem-691.c: In function 'createHashTable':
+collected_code_3/round4/heal_0/problem-691.c:21:17: warning: dereference of possibly-NULL 'table' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   21 |     table->list = (Node**)malloc(sizeof(Node*) * size);
+      |     ~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'createHashTable': events 1-2
+    |
+    |   20 |     HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+    |      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                    |
+    |      |                                    (1) this call could return NULL
+    |   21 |     table->list = (Node**)malloc(sizeof(Node*) * size);
+    |      |     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |
+    |      |                 (2) 'table' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-691.c:23:24: warning: dereference of possibly-NULL '*table.list + (long unsigned int)i * 8' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   23 |         table->list[i] = NULL;
+      |                        ^
+  'createHashTable': events 1-3
+    |
+    |   21 |     table->list = (Node**)malloc(sizeof(Node*) * size);
+    |      |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (1) this call could return NULL
+    |   22 |     for(int i = 0; i < size; i++) {
+    |      |                    ~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch (when 'i < size')...
+    |   23 |         table->list[i] = NULL;
+    |      |         ~~~~~~~~~~~        
+    |      |              |
+    |      |              (3) ...to here
+    |
+  'createHashTable': event 4
+    |
+    |   23 |         table->list[i] = NULL;
+    |      |                        ^
+    |      |                        |
+    |      |                        (4) '*table.list + (long unsigned int)i * 8' could be NULL: unchecked value from (1)
+    |
+collected_code_3/round4/heal_0/problem-691.c: In function 'insert':
+collected_code_3/round4/heal_0/problem-691.c:32:15: warning: dereference of possibly-NULL 'node' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   32 |     node->val = val;
+      |     ~~~~~~~~~~^~~~~
+  'insert': events 1-2
+    |
+    |   31 |     Node* node = (Node*)malloc(sizeof(Node));
+    |      |                         ^~~~~~~~~~~~~~~~~~~~
+    |      |                         |
+    |      |                         (1) this call could return NULL
+    |   32 |     node->val = val;
+    |      |     ~~~~~~~~~~~~~~~      
+    |      |               |
+    |      |               (2) 'node' could be NULL: unchecked value from (1)
+    |

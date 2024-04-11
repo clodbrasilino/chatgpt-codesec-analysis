@@ -1,0 +1,43 @@
+Here is a simple C program that filters students based on their height and width. Please note that in C, we don't have a built-in dictionary data structure like Python or other high-level languages. So, we use structures to store the student data. Also, the concept of filtering is implemented using simple if conditions.
+
+```c
+#include <stdio.h>
+
+#define MAX_STUDENTS 100
+
+typedef struct {
+    int height;
+    int width;
+} Student;
+
+void filter_students(Student students[], int n, int minHeight, int minWidth) {
+    for(int i = 0; i < n; i++) {
+        if(students[i].height >= minHeight && students[i].width >= minWidth) {
+            printf("Student %d passes the filter\n", i+1);
+        }
+    }
+}
+
+int main() {
+    Student students[MAX_STUDENTS];
+    int n;
+
+    printf("Enter the number of students: ");
+    scanf("%d", &n);
+
+    for(int i = 0; i < n; i++) {
+        printf("Enter height and width for student %d: ", i+1);
+        scanf("%d%d", &students[i].height, &students[i].width);
+    }
+
+    int minHeight, minWidth;
+    printf("Enter minimum height and width to filter: ");
+    scanf("%d%d", &minHeight, &minWidth);
+
+    filter_students(students, n, minHeight, minWidth);
+
+    return 0;
+}
+```
+
+This program first reads the number of students and their height and width. Then it reads the minimum height and width to filter the students. Finally, it filters the students based on the given minimum height and width.

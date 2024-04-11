@@ -1,0 +1,29 @@
+C language does not natively support regular expressions. However, you can use the POSIX regex library in C to work with regular expressions. Here's how you can do it:
+
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+void remove_uppercase_substrings(char *str) {
+    regex_t regex;
+    regcomp(&regex, "[A-Z]+", 0);
+    regmatch_t pmatch[1];
+    const size_t nmatch = 1;
+    while (regexec(&regex, str, nmatch, pmatch, 0) == 0) {
+        for(int i = pmatch[0].rm_so; i < pmatch[0].rm_eo; i++)
+            str[i] = ' ';
+    }
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "HelloWorld";
+    remove_uppercase_substrings(str);
+    printf("%s\n", str);
+    return 0;
+}
+```
+
+This program will replace all uppercase substrings in the input string with spaces. If you want to completely remove the uppercase substrings (without leaving spaces), you would need to shift the remaining characters to the left, which is a bit more complex and cannot be done with regex alone.

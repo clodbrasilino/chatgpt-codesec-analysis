@@ -1,0 +1,207 @@
+collected_code_3/round4/heal_0/problem-620.c: In function 'largestDivisibleSubset':
+collected_code_3/round4/heal_0/problem-620.c:10:18: warning: dereference of possibly-NULL 'count' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   10 |         count[i] = 1;
+      |         ~~~~~~~~~^~~
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) this call could return NULL
+    |......
+    |    9 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < numsSize')...
+    |   10 |         count[i] = 1;
+    |      |         ~~~~~~~~~~~~
+    |      |              |   |
+    |      |              |   (6) 'count + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |      |              (5) ...to here
+    |
+collected_code_3/round4/heal_0/problem-620.c:11:16: warning: dereference of possibly-NULL 'pre' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   11 |         pre[i] = -1;
+      |         ~~~~~~~^~~~
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |    7 |     int *pre = (int*)malloc(sizeof(int)*numsSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) this call could return NULL
+    |    8 |     int max = 0, index = -1;
+    |    9 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < numsSize')...
+    |   10 |         count[i] = 1;
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |   11 |         pre[i] = -1;
+    |      |         ~~~~~~~~~~~
+    |      |                |
+    |      |                (6) 'pre + (long unsigned int)i * 4' could be NULL: unchecked value from (3)
+    |
+collected_code_3/round4/heal_0/problem-620.c:25:12: warning: leak of 'count' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |     return max;
+      |            ^~~
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) allocated here
+    |......
+    |    9 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i >= numsSize')...
+    |......
+    |   25 |     return max;
+    |      |            ~~~
+    |      |            |
+    |      |            (5) ...to here
+    |      |            (6) 'count' leaks here; was allocated at (3)
+    |
+collected_code_3/round4/heal_0/problem-620.c:25:12: warning: leak of 'pre' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |     return max;
+      |            ^~~
+  'largestDivisibleSubset': events 1-6
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |    7 |     int *pre = (int*)malloc(sizeof(int)*numsSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) allocated here
+    |    8 |     int max = 0, index = -1;
+    |    9 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'false' branch (when 'i >= numsSize')...
+    |......
+    |   25 |     return max;
+    |      |            ~~~
+    |      |            |
+    |      |            (5) ...to here
+    |      |            (6) 'pre' leaks here; was allocated at (3)
+    |
+collected_code_3/round4/heal_0/problem-620.c:25:12: warning: leak of 'count' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |     return max;
+      |            ^~~
+  'largestDivisibleSubset': events 1-11
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |      |                        (3) allocated here
+    |......
+    |    9 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < numsSize')...
+    |   10 |         count[i] = 1;
+    |      |         ~~~~~~~~~~~~
+    |      |              |   |
+    |      |              |   (6) assuming 'count' is non-NULL
+    |      |              (5) ...to here
+    |   11 |         pre[i] = -1;
+    |   12 |         for (int j = i - 1; j >= 0; j--) {
+    |      |                             ~~~~~~
+    |      |                               |
+    |      |                               (7) following 'false' branch (when 'j < 0')...
+    |......
+    |   20 |         if (count[i] > max) {
+    |      |            ~     ~
+    |      |            |     |
+    |      |            |     (8) ...to here
+    |      |            (9) following 'true' branch...
+    |   21 |             max = count[i];
+    |      |                        ~
+    |      |                        |
+    |      |                        (10) ...to here
+    |......
+    |   25 |     return max;
+    |      |            ~~~
+    |      |            |
+    |      |            (11) 'count' leaks here; was allocated at (3)
+    |
+collected_code_3/round4/heal_0/problem-620.c:25:12: warning: leak of 'pre' [CWE-401] [-Wanalyzer-malloc-leak]
+   25 |     return max;
+      |            ^~~
+  'largestDivisibleSubset': events 1-11
+    |
+    |    5 |     if (numsSize == 0) return 0;
+    |      |        ^
+    |      |        |
+    |      |        (1) following 'false' branch (when 'numsSize != 0')...
+    |    6 |     int *count = (int*)malloc(sizeof(int)*numsSize);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) ...to here
+    |    7 |     int *pre = (int*)malloc(sizeof(int)*numsSize);
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (3) allocated here
+    |    8 |     int max = 0, index = -1;
+    |    9 |     for (int i = 0; i < numsSize; i++) {
+    |      |                     ~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (4) following 'true' branch (when 'i < numsSize')...
+    |   10 |         count[i] = 1;
+    |      |              ~
+    |      |              |
+    |      |              (5) ...to here
+    |   11 |         pre[i] = -1;
+    |      |         ~~~~~~~~~~~
+    |      |                |
+    |      |                (6) assuming 'pre' is non-NULL
+    |   12 |         for (int j = i - 1; j >= 0; j--) {
+    |      |                             ~~~~~~
+    |      |                               |
+    |      |                               (7) following 'false' branch (when 'j < 0')...
+    |......
+    |   20 |         if (count[i] > max) {
+    |      |            ~     ~
+    |      |            |     |
+    |      |            |     (8) ...to here
+    |      |            (9) following 'true' branch...
+    |   21 |             max = count[i];
+    |      |                        ~
+    |      |                        |
+    |      |                        (10) ...to here
+    |......
+    |   25 |     return max;
+    |      |            ~~~
+    |      |            |
+    |      |            (11) 'pre' leaks here; was allocated at (3)
+    |

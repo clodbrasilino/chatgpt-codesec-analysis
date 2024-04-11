@@ -1,0 +1,48 @@
+collected_code_3/problem-75-1.c: In function 'main':
+collected_code_3/problem-75-1.c:31:24: warning: dereference of possibly-NULL 'tuples' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   31 |         tuples[i].size = 3;
+      |         ~~~~~~~~~~~~~~~^~~
+  'main': events 1-4
+    |
+    |   28 |     Tuple *tuples = malloc(sizeof(Tuple) * tupleCount);
+    |      |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                     |
+    |      |                     (1) this call could return NULL
+    |   29 | 
+    |   30 |     for (int i = 0; i < tupleCount; i++) {
+    |      |                     ~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (2) following 'true' branch (when 'i < tupleCount')...
+    |   31 |         tuples[i].size = 3;
+    |      |         ~~~~~~~~~~~~~~~~~~
+    |      |               |        |
+    |      |               |        (4) 'tuples + (long unsigned int)i * 16' could be NULL: unchecked value from (1)
+    |      |               (3) ...to here
+    |
+collected_code_3/problem-75-1.c:34:35: warning: dereference of possibly-NULL '*tuples_43 + _19.elements + (long unsigned int)j * 4' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   34 |             tuples[i].elements[j] = (i + 1) * (j + 1);
+      |             ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'main': events 1-6
+    |
+    |   30 |     for (int i = 0; i < tupleCount; i++) {
+    |      |                     ~~^~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) following 'true' branch (when 'i < tupleCount')...
+    |   31 |         tuples[i].size = 3;
+    |      |               ~        
+    |      |               |
+    |      |               (2) ...to here
+    |   32 |         tuples[i].elements = malloc(sizeof(int) * tuples[i].size);
+    |      |                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (3) this call could return NULL
+    |   33 |         for (int j = 0; j < tuples[i].size; j++) {
+    |      |                         ~~~~~~~~~~~~~~~~~~
+    |      |                           |
+    |      |                           (4) following 'true' branch...
+    |   34 |             tuples[i].elements[j] = (i + 1) * (j + 1);
+    |      |             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                                   |    |
+    |      |                                   |    (5) ...to here
+    |      |                                   (6) '*tuples_43 + _19.elements + (long unsigned int)j * 4' could be NULL: unchecked value from (3)
+    |

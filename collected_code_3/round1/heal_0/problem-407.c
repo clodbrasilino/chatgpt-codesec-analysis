@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return *(char *)a - *(char *)b;
+}
+
+void swap(char *a, char *b) {
+    char temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int findNextBiggerNumber(int num) {
+    char str[10];
+    sprintf(str, "%d", num);
+    int i, len = strlen(str);
+
+    for (i = len - 1; i > 0; i--) {
+        if (str[i] > str[i - 1]) {
+            break;
+        }
+    }
+
+    if (i == 0) {
+        return -1;
+    }
+
+    int x = str[i - 1], min = i;
+    for (int j = i + 1; j < len; j++) {
+        if (str[j] > x && str[j] < str[min]) {
+            min = j;
+        }
+    }
+
+    swap(&str[i - 1], &str[min]);
+    qsort(str + i, len - i, sizeof(int), compare);
+    return atoi(str);
+}
+
+int main() {
+    int num = 1234;
+    int nextBiggerNumber = findNextBiggerNumber(num);
+    if (nextBiggerNumber == -1) {
+        printf("No bigger number can be formed\n");
+    } else {
+        printf("Next bigger number is %d\n", nextBiggerNumber);
+    }
+    return 0;
+}

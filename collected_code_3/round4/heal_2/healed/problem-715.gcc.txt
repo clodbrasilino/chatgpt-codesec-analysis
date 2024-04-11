@@ -1,0 +1,38 @@
+./collected_code_3/round4/heal_2/healed/problem-715.c: In function 'string_to_tuple':
+./collected_code_3/round4/heal_2/healed/problem-715.c:17:20: warning: leak of 'tuple.data' [CWE-401] [-Wanalyzer-malloc-leak]
+   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+      |         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  'string_to_tuple': events 1-6
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (1) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+    |      |                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                      |                          |
+    |      |                      (3) allocated here         (2) ...to here
+    |      |                      (4) when 'realloc' succeeds, moving buffer
+    |   18 | 
+    |   19 |         if(tuple.data == NULL) return tuple;
+    |      |           ~       
+    |      |           |
+    |      |           (5) following 'false' branch...
+    |   20 | 
+    |   21 |         tuple.data[count++] = atoi(token);
+    |      |         ~~~~~~~~~~
+    |      |              |
+    |      |              (6) ...to here
+    |
+  'string_to_tuple': events 7-10
+    |
+    |   16 |     while (token != NULL) {
+    |      |                  ^
+    |      |                  |
+    |      |                  (7) following 'true' branch (when 'token' is non-NULL)...
+    |   17 |         tuple.data = realloc(tuple.data, (count + 1) * sizeof(int));
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    | |                          |
+    |      |                    | (9) when 'realloc' fails   (8) ...to here
+    |      |                    (10) 'tuple.data' leaks here; was allocated at (3)
+    |

@@ -1,0 +1,20 @@
+collected_code_3/problem-345-3.c: In function 'find_difference':
+collected_code_3/problem-345-3.c:7:17: warning: dereference of possibly-NULL 'diff' [CWE-690] [-Wanalyzer-possible-null-dereference]
+    7 |         diff[i] = arr[i+1] - arr[i];
+      |         ~~~~~~~~^~~~~~~~~~~~~~~~~~~
+  'find_difference': events 1-4
+    |
+    |    5 |     int* diff = (int*)malloc((size - 1) * sizeof(int));
+    |      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                       |
+    |      |                       (1) this call could return NULL
+    |    6 |     for(int i = 0; i < size - 1; i++) {
+    |      |                    ~~~~~~~~~~~~
+    |      |                      |
+    |      |                      (2) following 'true' branch...
+    |    7 |         diff[i] = arr[i+1] - arr[i];
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                 |    |
+    |      |                 |    (3) ...to here
+    |      |                 (4) 'diff + (long unsigned int)i * 4' could be NULL: unchecked value from (1)
+    |

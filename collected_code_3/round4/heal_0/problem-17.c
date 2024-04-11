@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+int perimeter_of_square(int side_length) {
+    return 4 * side_length;
+}
+
+int main() {
+    int side_length;
+    printf("Enter the side length of the square: ");
+    scanf("%d", &side_length);
+    printf("The perimeter of the square is: %d\n", perimeter_of_square(side_length));
+    return 0;
+}

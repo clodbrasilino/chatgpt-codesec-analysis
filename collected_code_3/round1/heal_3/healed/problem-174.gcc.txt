@@ -1,0 +1,191 @@
+./collected_code_3/round1/heal_3/healed/problem-174.c: In function 'addValue':
+./collected_code_3/round1/heal_3/healed/problem-174.c:71:27: warning: dereference of NULL 'current' [CWE-476] [-Wanalyzer-null-dereference]
+   71 |             while (current->next != NULL) {
+      |                    ~~~~~~~^~~~~~
+  'main': events 1-2
+    |
+    |   97 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |   98 |     int size = 5;
+    |   99 |     Dictionary *dict = createDictionary(size);
+    |      |                        ~~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (2) calling 'createDictionary' from 'main'
+    |
+    +--> 'createDictionary': events 3-9
+           |
+           |   15 | Dictionary *createDictionary(int size) {
+           |      |             ^~~~~~~~~~~~~~~~
+           |      |             |
+           |      |             (3) entry to 'createDictionary'
+           |   16 |     if (size <= 0) {
+           |      |        ~     
+           |      |        |
+           |      |        (4) following 'false' branch (when 'size > 0')...
+           |......
+           |   20 |     Dictionary *dict = (Dictionary *) malloc(sizeof(Dictionary) * size);
+           |      |                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           |      |                                       |
+           |      |                                       (5) ...to here
+           |   21 |     if (!dict) {
+           |      |        ~     
+           |      |        |
+           |      |        (6) following 'false' branch (when 'dict' is non-NULL)...
+           |......
+           |   25 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (8) following 'true' branch (when 'i < size')...
+           |      |              (7) ...to here
+           |   26 |         dict[i].key = NULL;
+           |      |             ~
+           |      |             |
+           |      |             (9) ...to here
+           |
+         'createDictionary': event 10
+           |
+           |   27 |         dict[i].values = NULL;
+           |      |                        ^
+           |      |                        |
+           |      |                        (10) '0' is NULL
+           |
+    <------+
+    |
+  'main': events 11-14
+    |
+    |   99 |     Dictionary *dict = createDictionary(size);
+    |      |                        ^~~~~~~~~~~~~~~~~~~~~~
+    |      |                        |
+    |      |                        (11) returning to 'main' from 'createDictionary'
+    |  100 | 
+    |  101 |     if (dict) {
+    |      |        ~                
+    |      |        |
+    |      |        (12) following 'true' branch (when 'dict' is non-NULL)...
+    |  102 |         addValue(dict, size, "key1", "value1");
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (13) ...to here
+    |      |         (14) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 15-24
+           |
+           |   50 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (15) entry to 'addValue'
+           |   51 |     if (!dict || !key || !value) {
+           |      |        ~
+           |      |        |
+           |      |        (16) following 'false' branch...
+           |......
+           |   55 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (18) following 'true' branch (when 'i < size')...
+           |      |              (17) ...to here
+           |   56 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (19) ...to here
+           |      |            (20) following 'true' branch...
+           |   57 |             dict[i].key = strdup(key);
+           |      |                 ~
+           |      |                 |
+           |      |                 (21) ...to here
+           |   58 |             if (dict[i].key == NULL) {
+           |      |                ~
+           |      |                |
+           |      |                (22) following 'false' branch...
+           |......
+           |   61 |             dict[i].values = createNode(value);
+           |      |                 ~            ~~~~~~~~~~~~~~~~~
+           |      |                 |            |
+           |      |                 |            (24) calling 'createNode' from 'addValue'
+           |      |                 (23) ...to here
+           |
+           +--> 'createNode': event 25
+                  |
+                  |   33 | Node *createNode(char *value) {
+                  |      |       ^~~~~~~~~~
+                  |      |       |
+                  |      |       (25) entry to 'createNode'
+                  |
+                'createNode': event 26
+                  |
+                  |   36 |         return NULL;
+                  |      |                ^~~~
+                  |      |                |
+                  |      |                (26) '0' is NULL
+                  |
+           <------+
+           |
+         'addValue': events 27-31
+           |
+           |   61 |             dict[i].values = createNode(value);
+           |      |             ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+           |      |                            | |
+           |      |                            | (27) returning to 'addValue' from 'createNode'
+           |      |                            (28) '0' is NULL
+           |   62 |             if (dict[i].values == NULL) {
+           |      |                ~~~~~~~~~~~~~~~
+           |      |                |       |
+           |      |                |       (29) '0' is NULL
+           |      |                (30) following 'true' branch...
+           |   63 |                 free(dict[i].key);
+           |      |                          ~    
+           |      |                          |
+           |      |                          (31) ...to here
+           |
+    <------+
+    |
+  'main': events 32-33
+    |
+    |  102 |         addValue(dict, size, "key1", "value1");
+    |      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (32) returning to 'main' from 'addValue'
+    |  103 |         addValue(dict, size, "key1", "value2");
+    |      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |         |
+    |      |         (33) calling 'addValue' from 'main'
+    |
+    +--> 'addValue': events 34-44
+           |
+           |   50 | void addValue(Dictionary *dict, int size, char *key, char *value) {
+           |      |      ^~~~~~~~
+           |      |      |
+           |      |      (34) entry to 'addValue'
+           |   51 |     if (!dict || !key || !value) {
+           |      |        ~
+           |      |        |
+           |      |        (35) following 'false' branch...
+           |......
+           |   55 |     for (int i = 0; i < size; i++) {
+           |      |              ~      ~~~~~~~~
+           |      |              |        |
+           |      |              |        (37) following 'true' branch (when 'i < size')...
+           |      |              (36) ...to here
+           |   56 |         if (dict[i].key == NULL) {
+           |      |            ~    ~
+           |      |            |    |
+           |      |            |    (38) ...to here
+           |      |            (39) following 'false' branch...
+           |......
+           |   69 |         if (strcmp(dict[i].key, key) == 0) {
+           |      |            ~           ~
+           |      |            |           |
+           |      |            |           (40) ...to here
+           |      |            (41) following 'true' branch (when the strings are equal)...
+           |   70 |             Node *current = dict[i].values;
+           |      |                   ~~~~~~~       ~
+           |      |                   |             |
+           |      |                   |             (42) ...to here
+           |      |                   (43) 'current' is NULL
+           |   71 |             while (current->next != NULL) {
+           |      |                    ~~~~~~~~~~~~~
+           |      |                           |
+           |      |                           (44) dereference of NULL 'current'
+           |

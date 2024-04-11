@@ -1,0 +1,114 @@
+./collected_code_3/round4/heal_4/healed/problem-551.c: In function 'extractColumn':
+./collected_code_3/round4/heal_4/healed/problem-551.c:31:31: warning: use of uninitialized value '*_29 + _31' [CWE-457] [-Wanalyzer-use-of-uninitialized-value]
+   31 |         *column[i] = matrix[i][col];
+      |                      ~~~~~~~~~^~~~~
+  'main': events 1-27
+    |
+    |   36 | int main() {
+    |      |     ^~~~
+    |      |     |
+    |      |     (1) entry to 'main'
+    |......
+    |   42 |     if (!matrix) {
+    |      |        ~
+    |      |        |
+    |      |        (2) following 'false' branch (when 'matrix' is non-NULL)...
+    |......
+    |   46 |     for (int i = 0; i < matrixSize; i++) {
+    |      |              ~      ~~~~~~~~~~~~~~  ~~~
+    |      |              |        |              |
+    |      |              |        |              (24) ...to here
+    |      |              |        (4) following 'true' branch (when 'i < matrixSize')...
+    |      |              |        (10) following 'true' branch (when 'i < matrixSize')...
+    |      |              |        (16) following 'true' branch (when 'i < matrixSize')...
+    |      |              |        (25) following 'false' branch (when 'i >= matrixSize')...
+    |      |              (3) ...to here
+    |   47 |         matrix[i] = (int*)malloc(matrixColSize[i] * sizeof(int));
+    |      |                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                           |                   |
+    |      |                           |                   (5) ...to here
+    |      |                           |                   (11) ...to here
+    |      |                           |                   (17) ...to here
+    |      |                           (18) region created on heap here
+    |   48 | 
+    |   49 |         if (!matrix[i]) {
+    |      |            ~
+    |      |            |
+    |      |            (6) following 'false' branch...
+    |      |            (12) following 'false' branch...
+    |      |            (19) following 'false' branch...
+    |......
+    |   57 |         for (int j = 0; j < matrixColSize[i]; j++) {
+    |      |                  ~      ~~~~~~~~~~~~~~~~~~~~
+    |      |                  |        |
+    |      |                  |        (8) following 'true' branch...
+    |      |                  |        (14) following 'true' branch...
+    |      |                  |        (21) following 'true' branch...
+    |      |                  |        (23) following 'false' branch...
+    |      |                  (7) ...to here
+    |      |                  (13) ...to here
+    |      |                  (20) ...to here
+    |   58 |             matrix[i][j] = i * matrixSize + j;
+    |      |                            ~~~~~~~~~~~~~~
+    |      |                              |
+    |      |                              (9) ...to here
+    |      |                              (15) ...to here
+    |      |                              (22) ...to here
+    |......
+    |   64 |     int** column = extractColumn(matrix, matrixSize, matrixColSize, 1, &returnSize);
+    |      |                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    |      |                    |
+    |      |                    (26) ...to here
+    |      |                    (27) calling 'extractColumn' from 'main'
+    |
+    +--> 'extractColumn': events 28-49
+           |
+           |    4 | int** extractColumn(int** matrix, int matrixSize, int* matrixColSize, int col, int* returnSize) {
+           |      |       ^~~~~~~~~~~~~
+           |      |       |
+           |      |       (28) entry to 'extractColumn'
+           |......
+           |    8 |     if (!column) {
+           |      |        ~
+           |      |        |
+           |      |        (29) following 'false' branch (when 'column' is non-NULL)...
+           |......
+           |   12 |     for (int i = 0; i < matrixSize; i++) {
+           |      |              ~      ~~~~~~~~~~~~~~
+           |      |              |        |
+           |      |              |        (31) following 'true' branch (when 'i < matrixSize')...
+           |      |              |        (37) following 'true' branch (when 'i < matrixSize')...
+           |      |              |        (43) following 'true' branch (when 'i < matrixSize')...
+           |      |              (30) ...to here
+           |   13 |         if (col >= matrixColSize[i]){
+           |      |            ~                    ~
+           |      |            |                    |
+           |      |            |                    (32) ...to here
+           |      |            |                    (38) ...to here
+           |      |            |                    (44) ...to here
+           |      |            (33) following 'false' branch...
+           |      |            (39) following 'false' branch...
+           |      |            (45) following 'false' branch...
+           |......
+           |   21 |         column[i] = (int*)malloc(sizeof(int));
+           |      |               ~
+           |      |               |
+           |      |               (34) ...to here
+           |      |               (40) ...to here
+           |      |               (46) ...to here
+           |   22 | 
+           |   23 |         if (!column[i]) {
+           |      |            ~
+           |      |            |
+           |      |            (35) following 'false' branch...
+           |      |            (41) following 'false' branch...
+           |      |            (47) following 'false' branch...
+           |......
+           |   31 |         *column[i] = matrix[i][col];
+           |      |                      ~~~~~~~~~~~~~~
+           |      |                            |  |
+           |      |                            |  (49) use of uninitialized value '*_29 + _31' here
+           |      |                            (36) ...to here
+           |      |                            (42) ...to here
+           |      |                            (48) ...to here
+           |

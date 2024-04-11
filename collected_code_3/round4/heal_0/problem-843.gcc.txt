@@ -1,0 +1,30 @@
+collected_code_3/round4/heal_0/problem-843.c: In function 'createHeap':
+collected_code_3/round4/heal_0/problem-843.c:13:13: warning: dereference of possibly-NULL 'h' [CWE-690] [-Wanalyzer-possible-null-dereference]
+   13 |     h->size = 0;
+      |     ~~~~~~~~^~~
+  'nthSuperUglyNumber': events 1-2
+    |
+    |   62 | int nthSuperUglyNumber(int n, int primes[], int k) {
+    |      |     ^~~~~~~~~~~~~~~~~~
+    |      |     |
+    |      |     (1) entry to 'nthSuperUglyNumber'
+    |   63 |     Heap* h = createHeap();
+    |      |               ~~~~~~~~~~~~
+    |      |               |
+    |      |               (2) calling 'createHeap' from 'nthSuperUglyNumber'
+    |
+    +--> 'createHeap': events 3-5
+           |
+           |   11 | Heap* createHeap() {
+           |      |       ^~~~~~~~~~
+           |      |       |
+           |      |       (3) entry to 'createHeap'
+           |   12 |     Heap* h = (Heap*)malloc(sizeof(Heap));
+           |      |                      ~~~~~~~~~~~~~~~~~~~~
+           |      |                      |
+           |      |                      (4) this call could return NULL
+           |   13 |     h->size = 0;
+           |      |     ~~~~~~~~~~~
+           |      |             |
+           |      |             (5) 'h' could be NULL: unchecked value from (4)
+           |

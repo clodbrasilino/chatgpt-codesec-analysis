@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+float trianglePerimeter(float side1, float side2, float side3) {
+    return side1 + side2 + side3;
+}
+
+int main() {
+    float side1, side2, side3;
+    printf("Enter the lengths of the three sides of the triangle: ");
+    scanf("%f %f %f", &side1, &side2, &side3);
+    printf("The perimeter of the triangle is: %.2f\n", trianglePerimeter(side1, side2, side3));
+    return 0;
+}

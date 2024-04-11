@@ -1,0 +1,38 @@
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* extractQuotedString(const char* str) {
+    const char* start = strchr(str, '\"');
+    if(start == NULL) {
+        return NULL;
+    }
+    start++;
+
+    const char* end = strchr(start, '\"');
+    if(end == NULL) {
+        return NULL;
+    }
+
+    size_t len = end - start;
+    char* result = (char*)malloc(len + 1);
+    strncpy(result, start, len);
+    result[len] = '\0';
+
+    return result;
+}
+
+int main() {
+    const char* str = "Hello \"World\"!";
+    char* extracted = extractQuotedString(str);
+    if(extracted != NULL) {
+        printf("Extracted string: %s\n", extracted);
+        free(extracted);
+    } else {
+        printf("No quoted string found.\n");
+    }
+
+    return 0;
+}
+```

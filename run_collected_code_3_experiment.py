@@ -1,3 +1,4 @@
+from collect_code_2 import collect_generated_code
 from collect_healed_code import collect_generated_healed_code
 from sanitize_llm_outputs_into_sources import sanitize_llm_outputs_into_sources
 from generate_commented_weak_code import generate_commented_weak_code
@@ -5,9 +6,11 @@ from diagnose_code import diagnose_code
 from os import listdir
 
 
-def run_collected_code_3_experiment():
-    current_round = 4
-    current_healing_round = 1
+def run_collected_code_3_experiment(sample_round: int):
+    current_round = sample_round
+    current_healing_round = 0
+    collect_generated_code(get_unhealed_path(current_round, current_healing_round))
+    current_healing_round += 1
     unhealed_path = get_unhealed_path(current_round, current_healing_round)
     unhealed_files_list = listdir(unhealed_path)
     if len(unhealed_files_list) == 0:
@@ -34,12 +37,14 @@ def run_collected_code_3_experiment():
 
 
 def get_unhealed_path(round: int, healing_round: int) -> str:
-    return f"./collected_code_3/round{round}/heal_{healing_round}/to_be_healed"
+    if healing_round == 0:
+        return f"./collected_code_3/round{round}/heal_{healing_round}/"
+    return f"./collected_code_3/round{round}/heal_{healing_round}/to_be_healed/"
 
 
 def get_healed_path(round: int, healing_round: int) -> str:
-    return f"./collected_code_3/round{round}/heal_{healing_round}/healed"
+    return f"./collected_code_3/round{round}/heal_{healing_round}/healed/"
 
 
 if __name__ == "__main__":
-    run_collected_code_3_experiment()
+    run_collected_code_3_experiment(4)

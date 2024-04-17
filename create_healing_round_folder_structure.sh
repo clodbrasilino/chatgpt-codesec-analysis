@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 ROUND_FOLDER=collected_code/heal_round_$1
 

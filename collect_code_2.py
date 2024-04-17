@@ -10,7 +10,7 @@ from multiprocessing.pool import ThreadPool
 openai.api_key = getenv("OPENAI_API_KEY_P")
 
 
-def collect_generated_code_v2(collected_code_path: str) -> None:
+def collect_generated_code(collected_code_path: str) -> None:
     create_output_folders(collected_code_path)
     progress = tqdm(total=len(problems))
     with ThreadPool(processes=20) as threadpool:
@@ -86,4 +86,4 @@ def call_llm(problem, progress: tqdm, collected_code_path: str, temperature: int
 
 
 if __name__ == "__main__":
-    collect_generated_code_v2(sys.argv[1])
+    collect_generated_code(sys.argv[1])

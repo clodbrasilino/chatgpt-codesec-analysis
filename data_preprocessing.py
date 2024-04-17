@@ -1,56 +1,10 @@
-from os import listdir
+from os import listdir, mkdir
 import re
 import pandas
 import sys
 from cwe2.database import Database
 from cwe2.weakness import Weakness
 
-
-dataset_dir = sys.argv[1]
-
-
-def extract_tokens() -> list[str]:
-    code_files = listdir(dataset_dir)
-    all_tokens = []
-    for code_file in code_files:
-        if (
-            code_file.endswith(".cppcheck.txt")
-            or code_file.endswith(".flawfinder.txt")
-            or code_file.endswith(".gcc.txt")
-        ):
-            with open(f"{dataset_dir}{code_file}", "r") as open_file:
-                wholefile = open_file.read()
-                lines = wholefile.split("\n")
-                for line in lines:
-                    tokens = line.split(" ")
-                    all_tokens.extend(tokens)
-    return all_tokens
-
-
-def calculate_frequency_distribution(list: list) -> list[dict]:
-    distribution = dict()
-    for word in list:
-        if word in distribution.keys():
-            distribution[word] += 1
-        else:
-            distribution[word] = 1
-    fd = []
-    for key in distribution.keys():
-        fd.append(
-            {
-                "word": key,
-                "frequency": distribution[key],
-            }
-        )
-    return fd
-
-
-tokens = extract_tokens()
-words_fd = calculate_frequency_distribution(tokens)
-
-words_fd_df = pandas.DataFrame(words_fd)
-words_fd_df.to_csv(f"{dataset_dir}word_fd_healed.csv", index=False)
-words_fd_df.head()
 
 interesting_words = [
     # cppcheck
@@ -136,6 +90,7 @@ cwe_mapping = {
         "[uninitStructMember]",
         "[-Wanalyzer-use-of-uninitialized-value]",
         "[uninitdata]",
+        "undeclared (first use in this function)",
     ],
     467: [  # https://cwe.mitre.org/data/definitions/467.html
         "[-Wsizeof-array-argument]",
@@ -162,6 +117,11 @@ cwe_mapping = {
     758: [  # https://cwe.mitre.org/data/definitions/758.html
         "[-Wimplicit-function-declaration]",
         "[-Wbuiltin-declaration-mismatch]",
+        "conflicting types for",
+        "unknown type name",
+    ],
+    787: [  # https://cwe.mitre.org/data/definitions/787.html
+        "excess elements in array initializer",
     ],
     843: [  # https://cwe.mitre.org/data/definitions/843.html
         "[-Wincompatible-pointer-types]",
@@ -172,11 +132,16 @@ cwe_mapping = {
 }
 
 
-values = []
-[values.extend(x) for x in cwe_mapping.values()]
-for i in interesting_words:
-    if i not in values:
-        print(i)
+def create_output_folder(path: str) -> None:
+    path_elements = path.split("/")
+    path = ""
+    for i in range(len(path_elements)):
+        path += path_elements[i] + "/"
+        try:
+            if i != 1:
+                mkdir(path)
+        except FileExistsError:
+            pass
 
 
 def extract_flawfinder_ocurrences(input: str, filename: str) -> list[dict[str, str | int]]:
@@ -234,12 +199,6 @@ def count_ocurrences() -> list[dict]:
     return ocurrences
 
 
-ocurrences = count_ocurrences()
-ocurrences_df = pandas.DataFrame(ocurrences)
-ocurrences_df.to_csv(f"{dataset_dir}word_ocurrences_healed.csv", index=False)
-ocurrences_df.head()
-
-
 def fd_cwes_by_problem(ocurrences: list[dict]) -> list[dict]:
     fd_dict = {}
     for ocurrence in ocurrences:
@@ -263,12 +222,6 @@ def fd_cwes_by_problem(ocurrences: list[dict]) -> list[dict]:
             }
         )
     return fd
-
-
-fd = fd_cwes_by_problem(ocurrences)
-fd_df = pandas.DataFrame(fd)
-fd_df.to_csv(f"{dataset_dir}cwes_by_problem_healed.csv", index=False)
-fd_df.head()
 
 
 def fd_pillars_by_problem(ocurrences: list[dict]) -> list[dict]:
@@ -317,24 +270,40 @@ def find_father(cwe: Weakness):
     return None
 
 
-pillar_fd = fd_pillars_by_problem(ocurrences)
-pillar_fd_df = pandas.DataFrame(pillar_fd)
-pillar_fd_df.to_csv(f"{dataset_dir}cwes_by_pillar_healed.csv", index=False)
-pillar_fd_df.head()
-
-exploded_fd = list[dict]()
-fields_set = set()
-for item in pillar_fd:
-    new_item = {}
-    new_item["problem"] = item["problem"]
-    for field in item.keys():
-        if field not in ("problem", "frequency"):
-            fields_set.add(f"{field}_{item[field]}")
-            new_item[f"{field}_{item[field]}"] = item["frequency"]
-    exploded_fd.append(new_item)
-for item in exploded_fd:
-    for field in fields_set:
-        if field not in item.keys():
-            item[field] = 0
-exploded_fd_df = pandas.DataFrame(exploded_fd)
-exploded_fd_df.to_csv(f"{dataset_dir}exploded_cwes_tools_healed.csv", index=False)
+if __name__ == "__main__":
+    dataset_dir = sys.argv[1]
+    create_output_folder(dataset_dir + "/stats/")
+    values = []
+    [values.extend(x) for x in cwe_mapping.values()]
+    for i in interesting_words:
+        if i not in values:
+            print(i)
+    ocurrences = count_ocurrences()
+    ocurrences_df = pandas.DataFrame(ocurrences)
+    ocurrences_df.to_csv(f"{dataset_dir}stats/word_ocurrences.csv", index=False)
+    ocurrences_df.head()
+    fd = fd_cwes_by_problem(ocurrences)
+    fd_df = pandas.DataFrame(fd)
+    fd_df.to_csv(f"{dataset_dir}stats/cwes_by_problem.csv", index=False)
+    fd_df.head()
+    pillar_fd = fd_pillars_by_problem(ocurrences)
+    pillar_fd_df = pandas.DataFrame(pillar_fd)
+    pillar_fd_df.to_csv(f"{dataset_dir}stats/cwes_by_pillar.csv", index=False)
+    pillar_fd_df.head()
+    exploded_fd = list[dict]()
+    fields_set = set()
+    for item in pillar_fd:
+        new_item = {}
+        new_item["problem"] = item["problem"]
+        for field in item.keys():
+            if field not in ("problem", "frequency"):
+                fields_set.add(f"{field}_{item[field]}")
+                new_item[f"{field}_{item[field]}"] = item["frequency"]
+        exploded_fd.append(new_item)
+    for item in exploded_fd:
+        for field in fields_set:
+            if field not in item.keys():
+                item[field] = 0
+    exploded_fd_df = pandas.DataFrame(exploded_fd)
+    exploded_fd_df.to_csv(f"{dataset_dir}stats/exploded_cwes_tools.csv", index=False)
+    print(f"data preprocessing for {dataset_dir} finished.")

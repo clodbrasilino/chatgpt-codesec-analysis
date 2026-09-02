@@ -1,0 +1,44 @@
+{
+  "task_id": 605,
+  "text": "Write a C function to check if the given integer is a prime number.",
+  "fn_candidates": [
+    "prime_num",
+    "PrimeNum",
+    "primeNum",
+    "primenum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "prime_num",
+      "args": [
+        13
+      ],
+      "expected": true,
+      "assert_src": "assert prime_num(13)==True"
+    },
+    {
+      "fn_name": "prime_num",
+      "args": [
+        7
+      ],
+      "expected": true,
+      "assert_src": "assert prime_num(7)==True"
+    },
+    {
+      "fn_name": "prime_num",
+      "args": [
+        -1010
+      ],
+      "expected": false,
+      "assert_src": "assert prime_num(-1010)==False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

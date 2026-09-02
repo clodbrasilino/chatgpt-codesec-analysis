@@ -1,0 +1,47 @@
+{
+  "task_id": 876,
+  "text": "Write a C function to find lcm of two positive integers.",
+  "fn_candidates": [
+    "lcm",
+    "Lcm",
+    "lcm",
+    "lcm"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lcm",
+      "args": [
+        4,
+        6
+      ],
+      "expected": 12,
+      "assert_src": "assert lcm(4,6) == 12"
+    },
+    {
+      "fn_name": "lcm",
+      "args": [
+        15,
+        17
+      ],
+      "expected": 255,
+      "assert_src": "assert lcm(15,17) == 255"
+    },
+    {
+      "fn_name": "lcm",
+      "args": [
+        2,
+        6
+      ],
+      "expected": 6,
+      "assert_src": "assert lcm(2,6) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

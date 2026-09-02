@@ -1,0 +1,44 @@
+{
+  "task_id": 271,
+  "text": "Write a C function to find the sum of fifth power of first n even natural numbers.",
+  "fn_candidates": [
+    "even_Power_Sum",
+    "EvenPowerSum",
+    "evenPowerSum",
+    "evenPowerSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_Power_Sum",
+      "args": [
+        2
+      ],
+      "expected": 1056,
+      "assert_src": "assert even_Power_Sum(2) == 1056"
+    },
+    {
+      "fn_name": "even_Power_Sum",
+      "args": [
+        3
+      ],
+      "expected": 8832,
+      "assert_src": "assert even_Power_Sum(3) == 8832"
+    },
+    {
+      "fn_name": "even_Power_Sum",
+      "args": [
+        1
+      ],
+      "expected": 32,
+      "assert_src": "assert even_Power_Sum(1) == 32"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

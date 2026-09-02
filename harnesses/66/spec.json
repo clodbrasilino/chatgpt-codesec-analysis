@@ -1,0 +1,59 @@
+{
+  "task_id": 66,
+  "text": "Write a C function to count positive numbers in a list.",
+  "fn_candidates": [
+    "pos_count",
+    "PosCount",
+    "posCount",
+    "poscount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "pos_count",
+      "args": [
+        [
+          1,
+          -2,
+          3,
+          -4
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert pos_count([1,-2,3,-4]) == 2"
+    },
+    {
+      "fn_name": "pos_count",
+      "args": [
+        [
+          3,
+          4,
+          5,
+          -1
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert pos_count([3,4,5,-1]) == 3"
+    },
+    {
+      "fn_name": "pos_count",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert pos_count([1,2,3,4]) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

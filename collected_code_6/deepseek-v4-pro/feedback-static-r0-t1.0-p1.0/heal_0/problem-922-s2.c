@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
+void findHighestProductPair(int arr[], int n, int *first, int *second) {
+    if (n < 2 || arr == NULL || first == NULL || second == NULL) {
+        *first = 0;
+        *second = 0;
+        return;
+    }
+
+    int max1 = INT_MIN, max2 = INT_MIN;
+    int min1 = INT_MAX, min2 = INT_MAX;
+    
+    int max1_idx = -1, min1_idx = -1;
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > max1) {
+            max2 = max1;
+            max1 = arr[i];
+            max1_idx = i;
+        } else if (arr[i] > max2) {
+            max2 = arr[i];
+        }
+
+        if (arr[i] < min1) {
+            min2 = min1;
+            min1 = arr[i];
+            min1_idx = i;
+        } else if (arr[i] < min2) {
+            min2 = arr[i];
+        }
+    }
+
+    long long product_max = (long long)max1 * max2;
+    long long product_min = (long long)min1 * min2;
+
+    if (product_max >= product_min) {
+        if (max1_idx == -1) {
+            *first = max1;
+            *second = max2;
+        } else {
+            int first_found = 0, second_found = 0;
+            for (int i = 0; i < n && (!first_found || !second_found); i++) {
+                if (!first_found && arr[i] == max1) {
+                    *first = arr[i];
+                    first_found = 1;
+                } else if (!second_found && arr[i] == max2) {
+                    *second = arr[i];
+                    second_found = 1;
+                }
+            }
+            if (!first_found) *first = max1;
+            if (!second_found) *second = max2;
+        }
+    } else {
+        if (min1_idx == -1) {
+            *first = min1;
+            *second = min2;
+        } else {
+            int first_found = 0, second_found = 0;
+            for (int i = 0; i < n && (!first_found || !second_found); i++) {
+                if (!first_found && arr[i] == min1) {
+                    *first = arr[i];
+                    first_found = 1;
+                } else if (!second_found && arr[i] == min2) {
+                    *second = arr[i];
+                    second_found = 1;
+                }
+            }
+            if (!first_found) *first = min1;
+            if (!second_found) *second = min2;
+        }
+    }
+}
+
+int main(void) {
+    int arr[] = {1, -4, 3, -6, 7, 0};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int first = 0, second = 0;
+
+    findHighestProductPair(arr, n, &first, &second);
+
+    printf("%d %d\n", first, second);
+
+    return 0;
+}

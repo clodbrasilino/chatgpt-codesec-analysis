@@ -1,0 +1,50 @@
+{
+  "task_id": 663,
+  "text": "Write a C function to find the largest possible value of k such that k modulo x is y.",
+  "fn_candidates": [
+    "find_max_val",
+    "FindMaxVal",
+    "findMaxVal",
+    "findmaxval"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_max_val",
+      "args": [
+        15,
+        10,
+        5
+      ],
+      "expected": 15,
+      "assert_src": "assert find_max_val(15, 10, 5) == 15"
+    },
+    {
+      "fn_name": "find_max_val",
+      "args": [
+        187,
+        10,
+        5
+      ],
+      "expected": 185,
+      "assert_src": "assert find_max_val(187, 10, 5) == 185"
+    },
+    {
+      "fn_name": "find_max_val",
+      "args": [
+        16,
+        11,
+        1
+      ],
+      "expected": 12,
+      "assert_src": "assert find_max_val(16, 11, 1) == 12"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

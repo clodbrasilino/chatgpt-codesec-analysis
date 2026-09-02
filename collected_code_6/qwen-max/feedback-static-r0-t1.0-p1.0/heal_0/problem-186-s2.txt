@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int search_regex_in_string(const char *input, const char *pattern) {
+    int reti;
+    regex_t regex;
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED|REG_NEWLINE);
+    if (reti) return 1; // Return non-zero on compilation error
+
+    reti = regexec(&regex, input, 0, NULL, 0);
+    regfree(&regex);
+
+    if (!reti)
+        return 0; // Pattern found
+    else if (reti == REG_NOMATCH)
+        return 1; // No match
+    else
+        return 2; // Error occurred
+}
+
+int main() {
+    const char *test_string = "This is a test string with some literals.";
+    const char *patterns[] = {"literals", "nonexistent", "test", "with"};
+    int num_patterns = sizeof(patterns) / sizeof(patterns[0]);
+    int i;
+
+    for (i = 0; i < num_patterns; i++) {
+        int result = search_regex_in_string(test_string, patterns[i]);
+        if (result == 0) {
+            printf("Pattern '%s' found.\n", patterns[i]);
+        } else if (result == 1) {
+            printf("Pattern '%s' not found.\n", patterns[i]);
+        } else {
+            printf("Error while searching for pattern '%s'.\n", patterns[i]);
+        }
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,59 @@
+{
+  "task_id": 925,
+  "text": "Write a C function to calculate the product of all the numbers of a given tuple.",
+  "fn_candidates": [
+    "mutiple_tuple",
+    "MutipleTuple",
+    "mutipleTuple",
+    "mutipletuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "mutiple_tuple",
+      "args": [
+        [
+          4,
+          3,
+          2,
+          2,
+          -1,
+          18
+        ]
+      ],
+      "expected": -864,
+      "assert_src": "assert mutiple_tuple((4, 3, 2, 2, -1, 18)) == -864"
+    },
+    {
+      "fn_name": "mutiple_tuple",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert mutiple_tuple((1,2,3)) == 6"
+    },
+    {
+      "fn_name": "mutiple_tuple",
+      "args": [
+        [
+          -2,
+          -4,
+          -6
+        ]
+      ],
+      "expected": -48,
+      "assert_src": "assert mutiple_tuple((-2,-4,-6)) == -48"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,64 @@
+{
+  "task_id": 500,
+  "text": "Write a C function to concatenate all elements of the given list into a string.",
+  "fn_candidates": [
+    "concatenate_elements",
+    "ConcatenateElements",
+    "concatenateElements",
+    "concatenateelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "concatenate_elements",
+      "args": [
+        [
+          "hello",
+          "there",
+          "have",
+          "a",
+          "rocky",
+          "day"
+        ]
+      ],
+      "expected": "  hello there have a rocky day",
+      "assert_src": "assert concatenate_elements(['hello','there','have','a','rocky','day'] ) == '  hello there have a rocky day'"
+    },
+    {
+      "fn_name": "concatenate_elements",
+      "args": [
+        [
+          "Hi",
+          "there",
+          "How",
+          "are",
+          "you"
+        ]
+      ],
+      "expected": "  Hi there How are you",
+      "assert_src": "assert concatenate_elements([ 'Hi', 'there', 'How','are', 'you'] ) == '  Hi there How are you'"
+    },
+    {
+      "fn_name": "concatenate_elements",
+      "args": [
+        [
+          "Part",
+          "of",
+          "the",
+          "journey",
+          "is",
+          "end"
+        ]
+      ],
+      "expected": "  Part of the journey is end",
+      "assert_src": "assert concatenate_elements([ 'Part', 'of', 'the','journey', 'is', 'end'] ) == '  Part of the journey is end'"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

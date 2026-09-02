@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t sum_of_squares(uint64_t n) {
+    return (n * (n + 1) * (2 * n + 1)) / 6;
+}
+
+uint64_t square_of_sum(uint64_t n) {
+    uint64_t sum = (n * (n + 1)) / 2;
+    return sum * sum;
+}
+
+uint64_t difference(uint64_t n) {
+    return square_of_sum(n) - sum_of_squares(n);
+}
+
+int main() {
+    uint64_t n;
+    printf("Enter a positive integer: ");
+    if (scanf("%lu", &n) == 1 && n > 0) {
+        printf("Difference: %lu\n", difference(n));
+    } else {
+        printf("Invalid input. Please enter a positive integer.\n");
+    }
+    return 0;
+}

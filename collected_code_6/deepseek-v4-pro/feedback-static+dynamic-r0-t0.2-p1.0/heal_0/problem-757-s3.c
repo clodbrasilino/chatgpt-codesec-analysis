@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *reverse_string(const char *str) {
+    size_t len = strlen(str);
+    char *reversed = malloc(len + 1);
+    if (reversed == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        reversed[i] = str[len - 1 - i];
+    }
+    reversed[len] = '\0';
+    return reversed;
+}
+
+int count_reverse_pairs(char **strs, int count) {
+    if (strs == NULL || count <= 0) {
+        return 0;
+    }
+
+    int pairs = 0;
+    char **reversed_strs = malloc((size_t)count * sizeof(char *));
+    if (reversed_strs == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < count; i++) {
+        reversed_strs[i] = reverse_string(strs[i]);
+        if (reversed_strs[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(reversed_strs[j]);
+            }
+            free(reversed_strs);
+            return 0;
+        }
+    }
+
+    for (int i = 0; i < count; i++) {
+        for (int j = i + 1; j < count; j++) {
+            if (strcmp(strs[i], reversed_strs[j]) == 0) {
+                pairs++;
+            }
+        }
+    }
+
+    for (int i = 0; i < count; i++) {
+        free(reversed_strs[i]);
+    }
+    free(reversed_strs);
+
+    return pairs;
+}
+
+int main(void) {
+    char *strs[] = {"abc", "cba", "def", "fed", "xyz", "abc"};
+    int count = sizeof(strs) / sizeof(strs[0]);
+    int result = count_reverse_pairs(strs, count);
+    printf("%d\n", result);
+    return 0;
+}

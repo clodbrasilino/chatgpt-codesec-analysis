@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_decreasing_trend(const int *sequence, size_t length) {
+    if (sequence == NULL || length < 2) {
+        return false;
+    }
+
+    for (size_t i = 1; i < length; ++i) {
+        if (sequence[i] >= sequence[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'numbers1' can be declared as const array [constVariable]
+     */
+    int numbers1[] = {5, 4, 3, 2, 1};
+    /* Possible weaknesses found:
+     *  Variable 'numbers2' can be declared as const array [constVariable]
+     */
+    int numbers2[] = {1, 2, 3, 4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'numbers3' can be declared as const array [constVariable]
+     */
+    int numbers3[] = {7, 6, 5, 5, 4};
+    /* Possible weaknesses found:
+     *  Variable 'numbers4' can be declared as const array [constVariable]
+     */
+    int numbers4[] = {10};
+    /* Possible weaknesses found:
+     *  Variable 'numbers5' can be declared as const array [constVariable]
+     */
+    int numbers5[] = {9, 8};
+
+    printf("Sequence 1 decreasing: %s\n", has_decreasing_trend(numbers1, 5) ? "true" : "false");
+    printf("Sequence 2 decreasing: %s\n", has_decreasing_trend(numbers2, 5) ? "true" : "false");
+    printf("Sequence 3 decreasing: %s\n", has_decreasing_trend(numbers3, 5) ? "true" : "false");
+    printf("Sequence 4 decreasing: %s\n", has_decreasing_trend(numbers4, 1) ? "true" : "false");
+    printf("Sequence 5 decreasing: %s\n", has_decreasing_trend(numbers5, 2) ? "true" : "false");
+
+    return 0;
+}

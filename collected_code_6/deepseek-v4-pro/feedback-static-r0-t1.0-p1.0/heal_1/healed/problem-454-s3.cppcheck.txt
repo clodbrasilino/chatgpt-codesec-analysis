@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-454-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-454-s3.c:46:42: style: Condition 'contains_z_word(test5)' is always false [knownConditionTrueFalse]
+    printf("Test5: %s\n", contains_z_word(test5) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-454-s3.c:46:42: note: Calling function 'contains_z_word' returns 0
+    printf("Test5: %s\n", contains_z_word(test5) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-454-s3.c:46:42: note: Condition 'contains_z_word(test5)' is always false
+    printf("Test5: %s\n", contains_z_word(test5) ? "true" : "false");
+                                         ^

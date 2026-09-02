@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct NestedList {
+    int value;
+    bool is_integer;
+    struct NestedList **children;
+    int child_count;
+} NestedList;
+
+NestedList *create_integer(int value) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->is_integer = true;
+    node->children = NULL;
+    node->child_count = 0;
+    return node;
+}
+
+NestedList *create_list(int child_count) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = 0;
+    node->is_integer = false;
+    node->children = (NestedList **)calloc(child_count, sizeof(NestedList *));
+    if (node->children == NULL && child_count > 0) {
+        free(node);
+        return NULL;
+    }
+    node->child_count = child_count;
+    return node;
+}
+
+void free_nested_list(NestedList *node) {
+    if (node == NULL) {
+        return;
+    }
+    if (!node->is_integer) {
+        for (int i = 0; i < node->child_count; i++) {
+            free_nested_list(node->children[i]);
+        }
+        free(node->children);
+    }
+    free(node);
+}
+
+bool is_subset(NestedList *a, NestedList *b) {
+    if (b == NULL) {
+        return a == NULL;
+    }
+    if (a == NULL) {
+        return false;
+    }
+    if (a->is_integer && b->is_integer) {
+        return a->value == b->value;
+    }
+    if (a->is_integer != b->is_integer) {
+        return false;
+    }
+    if (a->child_count > b->child_count) {
+        return false;
+    }
+    for (int i = 0; i < a->child_count; i++) {
+        if (!is_subset(a->children[i], b->children[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    NestedList *subset_list = create_list(2);
+    if (subset_list == NULL) {
+        return 1;
+    }
+    subset_list->children[0] = create_integer(1);
+    subset_list->children[1] = create_integer(2);
+
+    NestedList *superset_list = create_list(3);
+    if (superset_list == NULL) {
+        free_nested_list(subset_list);
+        return 1;
+    }
+    superset_list->children[0] = create_integer(1);
+    superset_list->children[1] = create_integer(2);
+    superset_list->children[2] = create_integer(3);
+
+    if (is_subset(subset_list, superset_list)) {
+        printf("Subset relation holds\n");
+    } else {
+        printf("Subset relation does not hold\n");
+    }
+
+    free_nested_list(subset_list);
+    free_nested_list(superset_list);
+
+    return 0;
+}

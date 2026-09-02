@@ -1,0 +1,44 @@
+{
+  "task_id": 628,
+  "text": "Write a C function to replace all spaces in the given string with character * list item * list item * list item * list item '%20'.",
+  "fn_candidates": [
+    "replace_spaces",
+    "ReplaceSpaces",
+    "replaceSpaces",
+    "replacespaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "replace_spaces",
+      "args": [
+        "My Name is Dawood"
+      ],
+      "expected": "My%20Name%20is%20Dawood",
+      "assert_src": "assert replace_spaces(\"My Name is Dawood\") == 'My%20Name%20is%20Dawood'"
+    },
+    {
+      "fn_name": "replace_spaces",
+      "args": [
+        "I am a Programmer"
+      ],
+      "expected": "I%20am%20a%20Programmer",
+      "assert_src": "assert replace_spaces(\"I am a Programmer\") == 'I%20am%20a%20Programmer'"
+    },
+    {
+      "fn_name": "replace_spaces",
+      "args": [
+        "I love Coding"
+      ],
+      "expected": "I%20love%20Coding",
+      "assert_src": "assert replace_spaces(\"I love Coding\") == 'I%20love%20Coding'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

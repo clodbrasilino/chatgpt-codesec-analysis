@@ -1,0 +1,44 @@
+{
+  "task_id": 131,
+  "text": "Write a C function to reverse only the vowels of a given string.",
+  "fn_candidates": [
+    "reverse_vowels",
+    "ReverseVowels",
+    "reverseVowels",
+    "reversevowels"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "reverse_vowels",
+      "args": [
+        "Python"
+      ],
+      "expected": "Python",
+      "assert_src": "assert reverse_vowels(\"Python\") == \"Python\""
+    },
+    {
+      "fn_name": "reverse_vowels",
+      "args": [
+        "USA"
+      ],
+      "expected": "ASU",
+      "assert_src": "assert reverse_vowels(\"USA\") == \"ASU\""
+    },
+    {
+      "fn_name": "reverse_vowels",
+      "args": [
+        "ab"
+      ],
+      "expected": "ab",
+      "assert_src": "assert reverse_vowels(\"ab\") == \"ab\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

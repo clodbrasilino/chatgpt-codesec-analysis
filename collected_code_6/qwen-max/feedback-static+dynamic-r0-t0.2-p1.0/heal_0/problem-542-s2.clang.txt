@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-542-s2.c:16:9: error: call to undeclared library function 'memmove' with type 'void *(void *, const void *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   16 |         memmove(ptr + 1, ptr + match[0].rm_eo, strlen(ptr + match[0].rm_eo) + 1);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-542-s2.c:16:9: note: include the header <string.h> or explicitly provide a declaration for 'memmove'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-542-s2.c:16:48: error: call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   16 |         memmove(ptr + 1, ptr + match[0].rm_eo, strlen(ptr + match[0].rm_eo) + 1);
+      |                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-542-s2.c:16:48: note: include the header <string.h> or explicitly provide a declaration for 'strlen'
+2 errors generated.
+clang: error: unable to remove file: Operation not permitted

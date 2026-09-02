@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+bool all_tuples_equal_length(const Tuple *tuples, size_t tuple_count) {
+    if (tuples == NULL || tuple_count == 0) {
+        return true;
+    }
+    
+    size_t first_length = tuples[0].length;
+    
+    for (size_t i = 1; i < tuple_count; i++) {
+        if (tuples[i].length != first_length) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int tuple1_elements[] = {1, 2, 3};
+    int tuple2_elements[] = {4, 5, 6};
+    int tuple3_elements[] = {7, 8, 9};
+    int tuple4_elements[] = {10, 11};
+    
+    Tuple tuple1 = {tuple1_elements, 3};
+    Tuple tuple2 = {tuple2_elements, 3};
+    Tuple tuple3 = {tuple3_elements, 3};
+    
+    const Tuple tuples[] = {tuple1, tuple2, tuple3};
+    
+    bool result1 = all_tuples_equal_length(tuples, 3);
+    
+    printf("All tuples equal length (test 1): %s\n", result1 ? "true" : "false");
+    
+    const Tuple tuples2[] = {
+        {tuple1_elements, 3},
+        {tuple2_elements, 3},
+        {tuple4_elements, 2}
+    };
+    
+    bool result2 = all_tuples_equal_length(tuples2, 3);
+    
+    printf("All tuples equal length (test 2): %s\n", result2 ? "true" : "false");
+    
+    bool result3 = all_tuples_equal_length(NULL, 0);
+    printf("All tuples equal length (empty): %s\n", result3 ? "true" : "false");
+    
+    bool result4 = all_tuples_equal_length(tuples, 0);
+    printf("All tuples equal length (zero count): %s\n", result4 ? "true" : "false");
+    
+    printf("Elements of tuple1: %d, %d, %d\n", tuple1.elements[0], tuple1.elements[1], tuple1.elements[2]);
+    printf("Elements of tuple2: %d, %d, %d\n", tuple2.elements[0], tuple2.elements[1], tuple2.elements[2]);
+    printf("Elements of tuple3: %d, %d, %d\n", tuple3.elements[0], tuple3.elements[1], tuple3.elements[2]);
+    printf("Elements of tuple4: %d, %d\n", tuple4_elements[0], tuple4_elements[1]);
+    
+    return 0;
+}

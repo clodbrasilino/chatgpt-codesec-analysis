@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int findMaxElement(const Tuple *tuples, size_t count) {
+    if (count == 0) {
+        return -1; // Return an error code for empty array
+    }
+    int max = tuples[0].a > tuples[0].b ? tuples[0].a : tuples[0].b;
+    for (size_t i = 1; i < count; ++i) {
+        int tempMax = tuples[i].a > tuples[i].b ? tuples[i].a : tuples[i].b;
+        if (tempMax > max) {
+            max = tempMax;
+        }
+    }
+    return max;
+}
+
+int main() {
+    Tuple records[] = {{3, 5}, {8, 4}, {2, 9}, {7, 1}};
+    size_t num_records = sizeof(records) / sizeof(records[0]);
+    int maxElement = findMaxElement(records, num_records);
+    printf("The maximum element is: %d\n", maxElement);
+    return 0;
+}

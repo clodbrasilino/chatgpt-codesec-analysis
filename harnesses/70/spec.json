@@ -1,0 +1,80 @@
+{
+  "task_id": 70,
+  "text": "Write a C function to find whether all the given tuples have equal length or not.",
+  "fn_candidates": [
+    "get_equal",
+    "GetEqual",
+    "getEqual",
+    "getequal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_equal",
+      "args": [
+        [
+          [
+            11,
+            22,
+            33
+          ],
+          [
+            44,
+            55,
+            66
+          ]
+        ],
+        3
+      ],
+      "expected": "All tuples have same length",
+      "assert_src": "assert get_equal([(11, 22, 33), (44, 55, 66)], 3) == 'All tuples have same length'"
+    },
+    {
+      "fn_name": "get_equal",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6,
+            7
+          ]
+        ],
+        3
+      ],
+      "expected": "All tuples do not have same length",
+      "assert_src": "assert get_equal([(1, 2, 3), (4, 5, 6, 7)], 3) == 'All tuples do not have same length'"
+    },
+    {
+      "fn_name": "get_equal",
+      "args": [
+        [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            4
+          ]
+        ],
+        2
+      ],
+      "expected": "All tuples have same length",
+      "assert_src": "assert get_equal([(1, 2), (3, 4)], 2) == 'All tuples have same length'"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

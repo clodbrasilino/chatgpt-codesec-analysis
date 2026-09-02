@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* interleave(int** lists, int num_lists, int list_len) {
+    if (lists == NULL || num_lists <= 0 || list_len <= 0) {
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(sizeof(int) * num_lists * list_len);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    int index = 0;
+    for (int i = 0; i < list_len; i++) {
+        for (int j = 0; j < num_lists; j++) {
+            if (lists[j] == NULL) {
+                free(result);
+                return NULL;
+            }
+            result[index++] = lists[j][i];
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3};
+    int list2[] = {4, 5, 6};
+    int list3[] = {7, 8, 9};
+    
+    int* lists[] = {list1, list2, list3};
+    int num_lists = 3;
+    int list_len = 3;
+    
+    int* result = interleave(lists, num_lists, list_len);
+    if (result == NULL) {
+        fprintf(stderr, "Interleave failed\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < num_lists * list_len; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    return 0;
+}

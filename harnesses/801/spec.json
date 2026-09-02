@@ -1,0 +1,50 @@
+{
+  "task_id": 801,
+  "text": "Write a C function to count the number of equal numbers from three given integers.",
+  "fn_candidates": [
+    "test_three_equal",
+    "TestThreeEqual",
+    "testThreeEqual",
+    "testthreeequal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "test_three_equal",
+      "args": [
+        1,
+        1,
+        1
+      ],
+      "expected": 3,
+      "assert_src": "assert test_three_equal(1,1,1) == 3"
+    },
+    {
+      "fn_name": "test_three_equal",
+      "args": [
+        -1,
+        -2,
+        -3
+      ],
+      "expected": 0,
+      "assert_src": "assert test_three_equal(-1,-2,-3) == 0"
+    },
+    {
+      "fn_name": "test_three_equal",
+      "args": [
+        1,
+        2,
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert test_three_equal(1,2,2) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

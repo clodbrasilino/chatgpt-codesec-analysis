@@ -1,0 +1,47 @@
+{
+  "task_id": 581,
+  "text": "Write a C function to find the surface area of the square pyramid.",
+  "fn_candidates": [
+    "surface_Area",
+    "SurfaceArea",
+    "surfaceArea",
+    "surfaceArea"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "surface_Area",
+      "args": [
+        3,
+        4
+      ],
+      "expected": 33,
+      "assert_src": "assert surface_Area(3,4) == 33"
+    },
+    {
+      "fn_name": "surface_Area",
+      "args": [
+        4,
+        5
+      ],
+      "expected": 56,
+      "assert_src": "assert surface_Area(4,5) == 56"
+    },
+    {
+      "fn_name": "surface_Area",
+      "args": [
+        1,
+        2
+      ],
+      "expected": 5,
+      "assert_src": "assert surface_Area(1,2) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

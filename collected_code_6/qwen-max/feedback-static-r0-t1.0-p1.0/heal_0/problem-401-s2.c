@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} Tuple;
+
+Tuple* create_tuple(size_t len) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (!t) return NULL;
+    t->data = (int *)calloc(len, sizeof(int));
+    if (!t->data) {
+        free(t);
+        return NULL;
+    }
+    t->len = len;
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t) {
+        free(t->data);
+        free(t);
+    }
+}
+
+Tuple* add_tuples(const Tuple *a, const Tuple *b) {
+    if (a == NULL || b == NULL || a->len != b->len) return NULL;
+    Tuple *result = create_tuple(a->len);
+    if (result == NULL) return NULL;
+    for (size_t i = 0; i < a->len; ++i) {
+        result->data[i] = a->data[i] + b->data[i];
+    }
+    return result;
+}
+
+int main() {
+    Tuple *t1 = create_tuple(3);
+    if (t1 == NULL) return -1;
+    t1->data[0] = 1;
+    t1->data[1] = 2;
+    t1->data[2] = 3;
+
+    Tuple *t2 = create_tuple(3);
+    if (t2 == NULL) {
+        free_tuple(t1);
+        return -1;
+    }
+    t2->data[0] = 4;
+    t2->data[1] = 5;
+    t2->data[2] = 6;
+
+    Tuple *sum = add_tuples(t1, t2);
+    if (sum == NULL) {
+        free_tuple(t1);
+        free_tuple(t2);
+        return -1;
+    }
+
+    for (size_t i = 0; i < sum->len; ++i) {
+        printf("%d ", sum->data[i]);
+    }
+    printf("\n");
+
+    free_tuple(t1);
+    free_tuple(t2);
+    free_tuple(sum);
+    return 0;
+}

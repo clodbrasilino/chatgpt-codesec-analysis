@@ -1,0 +1,88 @@
+{
+  "task_id": 54,
+  "text": "Write a C function to sort the given array by using counting sort.",
+  "fn_candidates": [
+    "counting_sort",
+    "CountingSort",
+    "countingSort",
+    "countingsort"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "counting_sort",
+      "args": [
+        [
+          1,
+          23,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      ],
+      "expected": [
+        1,
+        4,
+        5,
+        6,
+        7,
+        8,
+        23
+      ],
+      "assert_src": "assert counting_sort([1,23,4,5,6,7,8]) == [1, 4, 5, 6, 7, 8, 23]"
+    },
+    {
+      "fn_name": "counting_sort",
+      "args": [
+        [
+          12,
+          9,
+          28,
+          33,
+          69,
+          45
+        ]
+      ],
+      "expected": [
+        9,
+        12,
+        28,
+        33,
+        45,
+        69
+      ],
+      "assert_src": "assert counting_sort([12, 9, 28, 33, 69, 45]) == [9, 12, 28, 33, 45, 69]"
+    },
+    {
+      "fn_name": "counting_sort",
+      "args": [
+        [
+          8,
+          4,
+          14,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        8,
+        14
+      ],
+      "assert_src": "assert counting_sort([8, 4, 14, 3, 2, 1]) == [1, 2, 3, 4, 8, 14]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

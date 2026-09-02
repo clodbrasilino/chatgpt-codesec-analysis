@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'dep' can be declared as const array [constParameter]
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int findPlatform(int arr[], int dep[], int n) {
+    /* Possible weaknesses found:
+     *  Variable 'platforms' can be declared as pointer to const [constVariablePointer]
+     *  Variable 'platforms' is assigned a value that is never used. [unreadVariable]
+     */
+    int *platforms = NULL;
+    int max_platforms = 0;
+    int current_platforms = 0;
+    int i = 0, j = 0;
+    
+    if (n <= 0) {
+        return 0;
+    }
+    
+    int *sorted_arr = (int*)malloc(n * sizeof(int));
+    int *sorted_dep = (int*)malloc(n * sizeof(int));
+    
+    if (sorted_arr == NULL || sorted_dep == NULL) {
+        free(sorted_arr);
+        free(sorted_dep);
+        return -1;
+    }
+    
+    for (i = 0; i < n; i++) {
+        sorted_arr[i] = arr[i];
+        sorted_dep[i] = dep[i];
+    }
+    
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (sorted_arr[j] > sorted_arr[j + 1]) {
+                int temp = sorted_arr[j];
+                sorted_arr[j] = sorted_arr[j + 1];
+                sorted_arr[j + 1] = temp;
+            }
+            if (sorted_dep[j] > sorted_dep[j + 1]) {
+                int temp = sorted_dep[j];
+                sorted_dep[j] = sorted_dep[j + 1];
+                sorted_dep[j + 1] = temp;
+            }
+        }
+    }
+    
+    i = 0;
+    j = 0;
+    
+    while (i < n && j < n) {
+        if (sorted_arr[i] <= sorted_dep[j]) {
+            current_platforms++;
+            if (current_platforms > max_platforms) {
+                max_platforms = current_platforms;
+            }
+            i++;
+        } else {
+            current_platforms--;
+            j++;
+        }
+    }
+    
+    free(sorted_arr);
+    free(sorted_dep);
+    
+    return max_platforms;
+}
+
+int main() {
+    int arr[] = {900, 940, 950, 1100, 1500, 1800};
+    int dep[] = {910, 1200, 1120, 1130, 1900, 2000};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = findPlatform(arr, dep, n);
+    
+    if (result >= 0) {
+        printf("Minimum platforms required: %d\n", result);
+    } else {
+        printf("Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

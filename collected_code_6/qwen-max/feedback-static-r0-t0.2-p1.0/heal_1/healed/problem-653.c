@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    char *key;
+    Node *head;
+} MapEntry;
+
+typedef struct {
+    MapEntry **entries;
+    int capacity;
+    int size;
+} Map;
+
+Map* createMap(int capacity) {
+    Map *map = (Map*)malloc(sizeof(Map));
+    map->capacity = capacity;
+    map->size = 0;
+    map->entries = (MapEntry**)calloc(capacity, sizeof(MapEntry*));
+    return map;
+}
+
+unsigned long hash(const char *key, int capacity) {
+    unsigned long hash = 0;
+    for (int i = 0; key[i] != '\0'; i++) {
+        hash = (hash * 31 + key[i]) % capacity;
+    }
+    return hash;
+}
+
+void insert(Map *map, const char *key, const char *value) {
+    unsigned long index = hash(key, map->capacity);
+    if (map->entries[index] == NULL) {
+        map->entries[index] = (MapEntry*)malloc(sizeof(MapEntry));
+        map->entries[index]->key = strdup(key);
+        map->entries[index]->head = NULL;
+        map->size++;
+    }
+
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->key = strdup(key);
+    newNode->value = strdup(value);
+    newNode->next = map->entries[index]->head;
+    map->entries[index]->head = newNode;
+}
+
+void printMap(Map *map) {
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i] != NULL) {
+            printf("%s: ", map->entries[i]->key);
+            Node *current = map->entries[i]->head;
+            while (current != NULL) {
+                printf("(%s, %s) -> ", current->key, current->value);
+                current = current->next;
+            }
+            printf("NULL\n");
+        }
+    }
+}
+
+void freeMap(Map *map) {
+    for (int i = 0; i < map->capacity; i++) {
+        if (map->entries[i] != NULL) {
+            Node *current = map->entries[i]->head;
+            while (current != NULL) {
+                Node *temp = current;
+                current = current->next;
+                free(temp->key);
+                free(temp->value);
+                free(temp);
+            }
+            free(map->entries[i]->key);
+            free(map->entries[i]);
+        }
+    }
+    free(map->entries);
+    free(map);
+}
+
+int main() {
+    Map *map = createMap(10);
+
+    insert(map, "key1", "value1");
+    insert(map, "key1", "value2");
+    insert(map, "key2", "value3");
+    insert(map, "key2", "value4");
+
+    printMap(map);
+
+    freeMap(map);
+    return 0;
+}

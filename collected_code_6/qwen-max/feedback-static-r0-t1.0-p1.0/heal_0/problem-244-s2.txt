@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool isPerfectSquare(int n) {
+    int root = sqrt(n);
+    return n == root * root;
+}
+
+int nextPerfectSquare(int n) {
+    if (n <= 0) {
+        return 1;
+    }
+    int next = n + 1;
+    while (!isPerfectSquare(next)) {
+        next++;
+    }
+    return next;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    int result = nextPerfectSquare(n);
+    printf("The next perfect square is: %d\n", result);
+    return 0;
+}
+```

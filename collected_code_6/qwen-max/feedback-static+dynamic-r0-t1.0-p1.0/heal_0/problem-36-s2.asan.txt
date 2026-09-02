@@ -1,0 +1,3 @@
+problem-36-s2.c:11:16:medium:UBSan: signed integer overflow: -5349829096719403773 + -3890459611768029184 cannot be represented in type 'long long'
+problem-36-s2.c:11:25:medium:UBSan: signed integer overflow: 3 * -8446744073709551616 cannot be represented in type 'long long'
+problem-36-s2.c:12:20:medium:UBSan: signed integer overflow: 1000000000000000000 * 10 cannot be represented in type 'long long'

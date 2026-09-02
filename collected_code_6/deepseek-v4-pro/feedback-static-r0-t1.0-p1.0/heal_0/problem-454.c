@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int contains_z_word(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    const char *p = str;
+    while (*p) {
+        if (!isspace((unsigned char)*p) && !ispunct((unsigned char)*p)) {
+            const char *start = p;
+            while (*p && !isspace((unsigned char)*p) && !ispunct((unsigned char)*p)) {
+                if (*p == 'z' || *p == 'Z') {
+                    return 1;
+                }
+                p++;
+            }
+            p = start;
+        }
+        p++;
+    }
+    return 0;
+}
+
+int main(void) {
+    const char *test1 = "The quick brown fox jumps over the lazy dog";
+    const char *test2 = "Hello world";
+    const char *test3 = "Amazing";
+    const char *test4 = "";
+    
+    printf("Test 1: %s -> %d\n", test1, contains_z_word(test1));
+    printf("Test 2: %s -> %d\n", test2, contains_z_word(test2));
+    printf("Test 3: %s -> %d\n", test3, contains_z_word(test3));
+    printf("Test 4: %s -> %d\n", test4, contains_z_word(test4));
+    
+    return 0;
+}

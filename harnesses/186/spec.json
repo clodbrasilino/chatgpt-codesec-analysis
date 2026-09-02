@@ -1,0 +1,54 @@
+{
+  "task_id": 186,
+  "text": "Write a C function to search some literals strings in a string by using regex.",
+  "fn_candidates": [
+    "check_literals",
+    "CheckLiterals",
+    "checkLiterals",
+    "checkliterals"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_literals",
+      "args": [
+        "The quick brown fox jumps over the lazy dog.",
+        [
+          "fox"
+        ]
+      ],
+      "expected": "Matched!",
+      "assert_src": "assert check_literals('The quick brown fox jumps over the lazy dog.',['fox']) == 'Matched!'"
+    },
+    {
+      "fn_name": "check_literals",
+      "args": [
+        "The quick brown fox jumps over the lazy dog.",
+        [
+          "horse"
+        ]
+      ],
+      "expected": "Not Matched!",
+      "assert_src": "assert check_literals('The quick brown fox jumps over the lazy dog.',['horse']) == 'Not Matched!'"
+    },
+    {
+      "fn_name": "check_literals",
+      "args": [
+        "The quick brown fox jumps over the lazy dog.",
+        [
+          "lazy"
+        ]
+      ],
+      "expected": "Matched!",
+      "assert_src": "assert check_literals('The quick brown fox jumps over the lazy dog.',['lazy']) == 'Matched!'"
+    }
+  ],
+  "arg_kinds": [
+    "str",
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

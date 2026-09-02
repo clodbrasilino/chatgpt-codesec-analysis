@@ -1,0 +1,77 @@
+{
+  "task_id": 745,
+  "text": "Write a C function to find numbers within a given range where every number is divisible by every digit it contains.",
+  "fn_candidates": [
+    "divisible_by_digits",
+    "DivisibleByDigits",
+    "divisibleByDigits",
+    "divisiblebydigits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "divisible_by_digits",
+      "args": [
+        1,
+        22
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        15,
+        22
+      ],
+      "assert_src": "assert divisible_by_digits(1,22)==[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15, 22]"
+    },
+    {
+      "fn_name": "divisible_by_digits",
+      "args": [
+        1,
+        15
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        11,
+        12,
+        15
+      ],
+      "assert_src": "assert divisible_by_digits(1,15)==[1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 15]"
+    },
+    {
+      "fn_name": "divisible_by_digits",
+      "args": [
+        20,
+        25
+      ],
+      "expected": [
+        22,
+        24
+      ],
+      "assert_src": "assert divisible_by_digits(20,25)==[22, 24]"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

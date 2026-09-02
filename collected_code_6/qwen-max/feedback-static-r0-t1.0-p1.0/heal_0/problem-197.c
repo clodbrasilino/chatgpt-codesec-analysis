@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int base;
+    int exp;
+} Tuple;
+
+void tuple_power(Tuple a, Tuple b, Tuple *result) {
+    result->base = a.base;
+    result->exp = a.exp * b.base;
+}
+
+int main() {
+    Tuple a = {2, 3};
+    Tuple b = {4, 1};
+    Tuple result;
+
+    tuple_power(a, b, &result);
+
+    printf("Result: Base = %d, Exp = %d\n", result.base, result.exp);
+
+    return 0;
+}

@@ -1,0 +1,115 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+List* create_list() {
+    List *list = (List *)malloc(sizeof(List));
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+void add_node(List *list, int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->data = value;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+List** create_list_of_lists(int num_lists) {
+    List **lists = (List **)malloc(num_lists * sizeof(List *));
+    for (int i = 0; i < num_lists; i++) {
+        lists[i] = create_list();
+    }
+    return lists;
+}
+
+void free_list_of_lists(List **lists, int num_lists) {
+    for (int i = 0; i < num_lists; i++) {
+        free_list(lists[i]);
+    }
+    free(lists);
+}
+
+void remove_outside_range(List **lists, int num_lists, int lower_bound, int upper_bound) {
+    for (int i = 0; i < num_lists; i++) {
+        Node *current = lists[i]->head;
+        Node *prev = NULL;
+        while (current != NULL) {
+            if (current->data < lower_bound || current->data > upper_bound) {
+                if (prev == NULL) {
+                    lists[i]->head = current->next;
+                } else {
+                    prev->next = current->next;
+                }
+                Node *temp = current;
+                current = current->next;
+                free(temp);
+                continue;
+            }
+            prev = current;
+            current = current->next;
+        }
+        if (lists[i]->head == NULL) {
+            lists[i]->tail = NULL;
+        }
+    }
+}
+
+int main() {
+    int num_lists = 3;
+    const int values[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int lower_bound = 3;
+    int upper_bound = 7;
+
+    List **lists = create_list_of_lists(num_lists);
+
+    for (int i = 0; i < num_lists; i++) {
+        for (int j = 0; j < 10; j++) {
+            add_node(lists[i], values[j]);
+        }
+    }
+
+    remove_outside_range(lists, num_lists, lower_bound, upper_bound);
+
+    for (int i = 0; i < num_lists; i++) {
+        Node *current = lists[i]->head;
+        while (current != NULL) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+
+    free_list_of_lists(lists, num_lists);
+
+    return 0;
+}
+```

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+#define SAMPLES 10000
+
+double periodic_function(double x) {
+    return 3.0 * sin(2.0 * x) + 2.0 * cos(5.0 * x) + 0.5 * sin(10.0 * x) + 1.8;
+}
+
+double find_minimum_periodic(double (*func)(double), double period_start, double period_end, size_t samples) {
+    if (func == NULL || samples == 0 || period_end <= period_start) {
+        return NAN;
+    }
+
+    double min_value = func(period_start);
+    double step = (period_end - period_start) / samples;
+    size_t i;
+
+    for (i = 1; i <= samples; ++i) {
+        double x = period_start + i * step;
+        double y = func(x);
+        if (y < min_value) {
+            min_value = y;
+        }
+    }
+
+    return min_value;
+}
+
+int main(void) {
+    double min_val = find_minimum_periodic(periodic_function, 0.0, 2.0 * PI, SAMPLES);
+    if (isnan(min_val)) {
+        fprintf(stderr, "Error: invalid parameters for minimum search\n");
+        return EXIT_FAILURE;
+    }
+    printf("Minimum value: %.6f\n", min_val);
+    return EXIT_SUCCESS;
+}
+```

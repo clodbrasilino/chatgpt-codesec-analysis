@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void swapFirstLast(Node** head) {
+    if (*head == NULL || (*head)->next == NULL) {
+        return;
+    }
+
+    Node* current = *head;
+    Node* prev = NULL;
+    Node* tail = *head;
+    while (current->next != NULL) {
+        if (prev == NULL) {
+            prev = *head;
+        } else {
+            prev = prev->next;
+        }
+        current = current->next;
+    }
+
+    int temp = (*head)->data;
+    (*head)->data = current->data;
+    current->data = temp;
+
+    if (prev != NULL && current != *head) {
+        prev->next = *head;
+        *head = current;
+        Node* newTail = (*head)->next;
+        *head->next = tail->next;
+        tail->next = newTail;
+    }
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+
+    printf("Original list: ");
+    printList(head);
+
+    swapFirstLast(&head);
+
+    printf("List after swapping first and last elements: ");
+    printList(head);
+
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}

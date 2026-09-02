@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void splitList(struct Node* source, struct Node** frontRef, struct Node** backRef, int splitIndex) {
+    struct Node* current = source;
+    int count = 0;
+
+    if (source == NULL) {
+        *frontRef = NULL;
+        *backRef = NULL;
+        return;
+    }
+
+    if (splitIndex <= 0) {
+        *frontRef = NULL;
+        *backRef = source;
+        return;
+    }
+
+    while (current != NULL && count < splitIndex - 1) {
+        current = current->next;
+        count++;
+    }
+
+    if (current == NULL) {
+        *frontRef = source;
+        *backRef = NULL;
+        return;
+    }
+
+    *frontRef = source;
+    *backRef = current->next;
+    current->next = NULL;
+}
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** headRef, int data) {
+    struct Node* newNode = createNode(data);
+    if (*headRef == NULL) {
+        *headRef = newNode;
+        return;
+    }
+    struct Node* current = *headRef;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void printList(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        struct Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node* list = NULL;
+    struct Node* front = NULL;
+    struct Node* back = NULL;
+
+    appendNode(&list, 1);
+    appendNode(&list, 2);
+    appendNode(&list, 3);
+    appendNode(&list, 4);
+    appendNode(&list, 5);
+
+    printf("Original list: ");
+    printList(list);
+
+    splitList(list, &front, &back, 3);
+
+    printf("Front part: ");
+    printList(front);
+
+    printf("Back part: ");
+    printList(back);
+
+    freeList(front);
+    freeList(back);
+
+    return 0;
+}

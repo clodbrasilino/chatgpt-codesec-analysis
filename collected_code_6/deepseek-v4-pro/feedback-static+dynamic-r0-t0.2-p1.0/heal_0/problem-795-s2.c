@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+typedef struct {
+    Item *data;
+    int size;
+    int capacity;
+} MaxHeap;
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+MaxHeap *heap_create(int capacity) {
+    MaxHeap *heap = (MaxHeap *)malloc(sizeof(MaxHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->data = (Item *)malloc(sizeof(Item) * capacity);
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void heap_destroy(MaxHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void heapify_up(MaxHeap *heap, int index) {
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[parent].price < heap->data[index].price) {
+            swap(&heap->data[parent], &heap->data[index]);
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+void heapify_down(MaxHeap *heap, int index) {
+    while (1) {
+        int largest = index;
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+        
+        if (left < heap->size && heap->data[left].price > heap->data[largest].price) {
+            largest = left;
+        }
+        if (right < heap->size && heap->data[right].price > heap->data[largest].price) {
+            largest = right;
+        }
+        if (largest != index) {
+            swap(&heap->data[index], &heap->data[largest]);
+            index = largest;
+        } else {
+            break;
+        }
+    }
+}
+
+int heap_push(MaxHeap *heap, Item item) {
+    if (heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->data[heap->size] = item;
+    heapify_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+Item heap_pop(MaxHeap *heap) {
+    Item top = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapify_down(heap, 0);
+    return top;
+}
+
+Item heap_peek(MaxHeap *heap) {
+    return heap->data[0];
+}
+
+int heap_is_full(MaxHeap *heap) {
+    return heap->size >= heap->capacity;
+}
+
+int heap_is_empty(MaxHeap *heap) {
+    return heap->size == 0;
+}
+
+Item *find_n_cheapest(Item *items, int total_items, int n, int *result_count) {
+    if (items == NULL || total_items <= 0 || n <= 0 || result_count == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    if (n > total_items) {
+        n = total_items;
+    }
+    
+    MaxHeap *heap = heap_create(n);
+    if (heap == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    for (int i = 0; i < total_items; i++) {
+        if (!heap_is_full(heap)) {
+            heap_push(heap, items[i]);
+        } else if (items[i].price < heap_peek(heap).price) {
+            heap_pop(heap);
+            heap_push(heap, items[i]);
+        }
+    }
+    
+    Item *result = (Item *)malloc(sizeof(Item) * n);
+    if (result == NULL) {
+        heap_destroy(heap);
+        *result_count = 0;
+        return NULL;
+    }
+    
+    int count = heap->size;
+    for (int i = count - 1; i >= 0; i--) {
+        result[i] = heap_pop(heap);
+    }
+    
+    heap_destroy(heap);
+    *result_count = count;
+    return result;
+}
+
+int main(void) {
+    Item items[] = {
+        {1, 45.99},
+        {2, 12.50},
+        {3, 78.30},
+        {4, 5.75},
+        {5, 33.20},
+        {6, 99.99},
+        {7, 15.60},
+        {8, 50.00}
+    };
+    
+    int total_items = sizeof(items) / sizeof(items[0]);
+    int n = 3;
+    int result_count = 0;
+    
+    Item *cheapest = find_n_cheapest(items, total_items, n, &result_count);
+    
+    if (cheapest != NULL) {
+        printf("The %d cheapest items:\n", result_count);
+        for (int i = 0; i < result_count; i++) {
+            printf("ID: %d, Price: %.2f\n", cheapest[i].id, cheapest[i].price);
+        }
+        free(cheapest);
+    } else {
+        printf("Failed to find cheapest items.\n");
+    }
+    
+    return 0;
+}

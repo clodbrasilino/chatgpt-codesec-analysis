@@ -1,0 +1,53 @@
+{
+  "task_id": 343,
+  "text": "Write a C function to calculate the number of digits and letters in a string.",
+  "fn_candidates": [
+    "dig_let",
+    "DigLet",
+    "digLet",
+    "diglet"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "dig_let",
+      "args": [
+        "python"
+      ],
+      "expected": [
+        6,
+        0
+      ],
+      "assert_src": "assert dig_let(\"python\")==(6,0)"
+    },
+    {
+      "fn_name": "dig_let",
+      "args": [
+        "program"
+      ],
+      "expected": [
+        7,
+        0
+      ],
+      "assert_src": "assert dig_let(\"program\")==(7,0)"
+    },
+    {
+      "fn_name": "dig_let",
+      "args": [
+        "python3.0"
+      ],
+      "expected": [
+        6,
+        2
+      ],
+      "assert_src": "assert dig_let(\"python3.0\")==(6,2)"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

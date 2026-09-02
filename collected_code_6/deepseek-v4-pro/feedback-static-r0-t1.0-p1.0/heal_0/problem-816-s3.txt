@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char *name;
+    double *values;
+    size_t value_count;
+} Tuple;
+
+void clear_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    if (tuple->name != NULL) {
+        free(tuple->name);
+        tuple->name = NULL;
+    }
+    
+    if (tuple->values != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+    }
+    
+    tuple->id = 0;
+    tuple->value_count = 0;
+}
+
+void clear_tuples(Tuple *tuples, size_t tuple_count) {
+    size_t i;
+    
+    if (tuples == NULL) {
+        return;
+    }
+    
+    for (i = 0; i < tuple_count; i++) {
+        clear_tuple(&tuples[i]);
+    }
+}
+
+Tuple *create_tuple(int id, const char *name, double *values, size_t value_count) {
+    Tuple *tuple;
+    
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->id = id;
+    tuple->name = NULL;
+    tuple->values = NULL;
+    tuple->value_count = 0;
+    
+    if (name != NULL) {
+        tuple->name = (char *)malloc(strlen(name) + 1);
+        if (tuple->name == NULL) {
+            free(tuple);
+            return NULL;
+        }
+        strcpy(tuple->name, name);
+    }
+    
+    if (values != NULL && value_count > 0) {
+        tuple->values = (double *)malloc(value_count * sizeof(double));
+        if (tuple->values == NULL) {
+            free(tuple->name);
+            free(tuple);
+            return NULL;
+        }
+        memcpy(tuple->values, values, value_count * sizeof(double));
+        tuple->value_count = value_count;
+    }
+    
+    return tuple;
+}
+
+int main(void) {
+    Tuple *tuples[3];
+    double values1[] = {1.5, 2.5, 3.5};
+    double values2[] = {4.5, 5.5};
+    size_t i;
+    
+    tuples[0] = create_tuple(1, "First", values1, 3);
+    tuples[1] = create_tuple(2, "Second", values2, 2);
+    tuples[2] = create_tuple(3, NULL, NULL, 0);
+    
+    if (tuples[0] == NULL || tuples[1] == NULL || tuples[2] == NULL) {
+        for (i = 0; i < 3; i++) {
+            if (tuples[i] != NULL) {
+                clear_tuple(tuples[i]);
+                free(tuples[i]);
+            }
+        }
+        return 1;
+    }
+    
+    printf("Before clear:\n");
+    for (i = 0; i < 3; i++) {
+        printf("Tuple %zu: id=%d, name=%s, value_count=%zu\n",
+               i, tuples[i]->id,
+               tuples[i]->name != NULL ? tuples[i]->name : "NULL",
+               tuples[i]->value_count);
+    }
+    
+    clear_tuples(tuples[0], 3);
+    
+    printf("\nAfter clear:\n");
+    for (i = 0; i < 3; i++) {
+        printf("Tuple %zu: id=%d, name=%s, value_count=%zu\n",
+               i, tuples[i]->id,
+               tuples[i]->name != NULL ? tuples[i]->name : "NULL",
+               tuples[i]->value_count);
+    }
+    
+    for (i = 0; i < 3; i++) {
+        free(tuples[i]);
+    }
+    
+    return 0;
+}
+```

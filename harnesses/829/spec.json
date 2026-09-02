@@ -1,0 +1,65 @@
+{
+  "task_id": 829,
+  "text": "Write a C function to find out the second most repeated (or frequent) string in the given sequence.",
+  "fn_candidates": [
+    "second_frequent",
+    "SecondFrequent",
+    "secondFrequent",
+    "secondfrequent"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "second_frequent",
+      "args": [
+        [
+          "aaa",
+          "bbb",
+          "ccc",
+          "bbb",
+          "aaa",
+          "aaa"
+        ]
+      ],
+      "expected": "bbb",
+      "assert_src": "assert second_frequent(['aaa','bbb','ccc','bbb','aaa','aaa']) == 'bbb'"
+    },
+    {
+      "fn_name": "second_frequent",
+      "args": [
+        [
+          "abc",
+          "bcd",
+          "abc",
+          "bcd",
+          "bcd",
+          "bcd"
+        ]
+      ],
+      "expected": "abc",
+      "assert_src": "assert second_frequent(['abc','bcd','abc','bcd','bcd','bcd']) == 'abc'"
+    },
+    {
+      "fn_name": "second_frequent",
+      "args": [
+        [
+          "cdma",
+          "gsm",
+          "hspa",
+          "gsm",
+          "cdma",
+          "cdma"
+        ]
+      ],
+      "expected": "gsm",
+      "assert_src": "assert second_frequent(['cdma','gsm','hspa','gsm','cdma','cdma']) == 'gsm'"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

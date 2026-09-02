@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    char b;
+} Tuple;
+
+Tuple* repeat_tuple(Tuple t, int n) {
+    if (n <= 0) return NULL;
+    Tuple* result = (Tuple*) malloc(n * sizeof(Tuple));
+    if (result == NULL) return NULL;
+    for (int i = 0; i < n; ++i) {
+        result[i] = t;
+    }
+    return result;
+}
+
+void free_tuples(Tuple* t, int n) {
+    if (t != NULL) {
+        free(t);
+    }
+}
+
+int main() {
+    Tuple t = {1, 'A'};
+    int n = 5;
+    Tuple* repeated_tuples = repeat_tuple(t, n);
+    if (repeated_tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    for (int i = 0; i < n; ++i) {
+        printf("%d %c\n", repeated_tuples[i].a, repeated_tuples[i].b);
+    }
+    free_tuples(repeated_tuples, n);
+    return 0;
+}
+```

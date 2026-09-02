@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+Tuple* create_tuple(size_t length) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+    tuple->data = (int *)malloc(length * sizeof(int));
+    if (tuple->data == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->length = length;
+    for (size_t i = 0; i < length; ++i) {
+        tuple->data[i] = (int)i;
+    }
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->data);
+        free(tuple);
+    }
+}
+
+void remove_tuples_of_length_k(Tuple **tuples, size_t *count, size_t k) {
+    for (size_t i = 0; i < *count; ) {
+        if (tuples[i]->length == k) {
+            free_tuple(tuples[i]);
+            for (size_t j = i; j < *count - 1; ++j) {
+                tuples[j] = tuples[j + 1];
+            }
+            --(*count);
+        } else {
+            ++i;
+        }
+    }
+}
+
+int main() {
+    size_t num_tuples = 6;
+    Tuple *tuples[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+
+    tuples[0] = create_tuple(3);
+    tuples[1] = create_tuple(5);
+    tuples[2] = create_tuple(2);
+    tuples[3] = create_tuple(1);
+    tuples[4] = create_tuple(3);
+    tuples[5] = create_tuple(4);
+
+    remove_tuples_of_length_k(tuples, &num_tuples, 3);
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        for (size_t j = 0; j < tuples[i]->length; ++j) {
+            printf("%d ", tuples[i]->data[j]);
+        }
+        printf("\n");
+        free_tuple(tuples[i]);
+    }
+
+    return 0;
+}
+```

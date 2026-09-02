@@ -1,0 +1,62 @@
+{
+  "task_id": 443,
+  "text": "Write a C function to find the largest negative number from the given list.",
+  "fn_candidates": [
+    "largest_neg",
+    "LargestNeg",
+    "largestNeg",
+    "largestneg"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "largest_neg",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          -4,
+          -6
+        ]
+      ],
+      "expected": -6,
+      "assert_src": "assert largest_neg([1,2,3,-4,-6]) == -6"
+    },
+    {
+      "fn_name": "largest_neg",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          -8,
+          -9
+        ]
+      ],
+      "expected": -9,
+      "assert_src": "assert largest_neg([1,2,3,-8,-9]) == -9"
+    },
+    {
+      "fn_name": "largest_neg",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          -1
+        ]
+      ],
+      "expected": -1,
+      "assert_src": "assert largest_neg([1,2,3,4,-1]) == -1"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

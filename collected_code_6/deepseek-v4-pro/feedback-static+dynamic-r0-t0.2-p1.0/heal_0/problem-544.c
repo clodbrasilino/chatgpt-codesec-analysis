@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct TupleList {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+char *flatten_tuple_list(const TupleList *list) {
+    if (list == NULL || list->tuples == NULL || list->count == 0) {
+        char *empty = (char *)malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    size_t total_length = 0;
+    size_t *tuple_lengths = (size_t *)malloc(list->count * sizeof(size_t));
+    if (tuple_lengths == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < list->count; i++) {
+        int first = list->tuples[i].first;
+        int second = list->tuples[i].second;
+        int len = snprintf(NULL, 0, "(%d,%d)", first, second);
+        if (len < 0) {
+            free(tuple_lengths);
+            return NULL;
+        }
+        tuple_lengths[i] = (size_t)len;
+        total_length += tuple_lengths[i];
+    }
+
+    char *result = (char *)malloc(total_length + 1);
+    if (result == NULL) {
+        free(tuple_lengths);
+        return NULL;
+    }
+
+    size_t offset = 0;
+    for (size_t i = 0; i < list->count; i++) {
+        int first = list->tuples[i].first;
+        int second = list->tuples[i].second;
+        int written = snprintf(result + offset, tuple_lengths[i] + 1, "(%d,%d)", first, second);
+        if (written < 0 || (size_t)written != tuple_lengths[i]) {
+            free(tuple_lengths);
+            free(result);
+            return NULL;
+        }
+        offset += tuple_lengths[i];
+    }
+
+    result[total_length] = '\0';
+    free(tuple_lengths);
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    TupleList list = {tuples, 3};
+
+    char *flattened = flatten_tuple_list(&list);
+    if (flattened != NULL) {
+        printf("%s\n", flattened);
+        free(flattened);
+    }
+
+    TupleList empty_list = {NULL, 0};
+    char *empty_result = flatten_tuple_list(&empty_list);
+    if (empty_result != NULL) {
+        printf("[%s]\n", empty_result);
+        free(empty_result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int first_digit(int n) {
+    n = abs(n);
+    while (n >= 10) {
+        n /= 10;
+    }
+    return n;
+}
+
+int main(void) {
+    int num;
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("First digit: %d\n", first_digit(num));
+    return EXIT_SUCCESS;
+}

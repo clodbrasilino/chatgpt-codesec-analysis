@@ -1,0 +1,67 @@
+{
+  "task_id": 158,
+  "text": "Write a C function to find k number of operations required to make all elements equal.",
+  "fn_candidates": [
+    "min_Ops",
+    "MinOps",
+    "minOps",
+    "minOps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_Ops",
+      "args": [
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        4,
+        3
+      ],
+      "expected": 0,
+      "assert_src": "assert min_Ops([2,2,2,2],4,3) == 0"
+    },
+    {
+      "fn_name": "min_Ops",
+      "args": [
+        [
+          4,
+          2,
+          6,
+          8
+        ],
+        4,
+        3
+      ],
+      "expected": -1,
+      "assert_src": "assert min_Ops([4,2,6,8],4,3) == -1"
+    },
+    {
+      "fn_name": "min_Ops",
+      "args": [
+        [
+          21,
+          33,
+          9,
+          45,
+          63
+        ],
+        5,
+        6
+      ],
+      "expected": 24,
+      "assert_src": "assert min_Ops([21,33,9,45,63],5,6) == 24"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

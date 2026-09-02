@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-760-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-760-s2.c:41:12: style: Condition 'result3' is always true [knownConditionTrueFalse]
+           result3 ? "Yes" : "No");
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-760-s2.c:32:44: note: Calling function 'hasOnlyOneDistinctElement' returns 1
+    int result3 = hasOnlyOneDistinctElement(arr3, size3);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-760-s2.c:32:44: note: Assignment 'result3=hasOnlyOneDistinctElement(arr3,size3)', assigned value is 1
+    int result3 = hasOnlyOneDistinctElement(arr3, size3);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-760-s2.c:41:12: note: Condition 'result3' is always true
+           result3 ? "Yes" : "No");
+           ^

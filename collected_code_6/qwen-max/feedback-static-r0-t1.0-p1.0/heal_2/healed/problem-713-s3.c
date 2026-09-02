@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_TUPLE_SIZE 10
+
+bool areValuesValid(const int *tuple, int size) {
+    for (int i = 0; i < size; i++) {
+        if (tuple[i] < 0 || tuple[i] > 99) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    const int tuple[MAX_TUPLE_SIZE] = {23, 45, 67, 89, 10, 34, 56, 78, 89, 100};
+    int size = 10;
+
+    if (areValuesValid(tuple, size)) {
+        printf("All values in the tuple are valid.\n");
+    } else {
+        printf("Some values in the tuple are invalid.\n");
+    }
+
+    return 0;
+}

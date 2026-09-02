@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <regex.h>
+
+int validateDecimal(const char *input) {
+    int result;
+    regex_t regex;
+    const char *pattern = "^[0-9]+(\\.[0-9]{1,2})?$";
+
+    result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        return -1;
+    }
+
+    result = regexec(&regex, input, 0, NULL, 0);
+    regfree(&regex);
+
+    return (result == 0) ? 1 : 0;
+}
+
+int main() {
+    const char *test1 = "123.45";
+    const char *test2 = "123.456";
+    const char *test3 = "123";
+    const char *test4 = "abc.12";
+
+    if (validateDecimal(test1) == 1) printf("%s is valid\n", test1);
+    else printf("%s is invalid\n", test1);
+
+    if (validateDecimal(test2) == 1) printf("%s is valid\n", test2);
+    else printf("%s is invalid\n", test2);
+
+    if (validateDecimal(test3) == 1) printf("%s is valid\n", test3);
+    else printf("%s is invalid\n", test3);
+
+    if (validateDecimal(test4) == 1) printf("%s is valid\n", test4);
+    else printf("%s is invalid\n", test4);
+
+    return 0;
+}

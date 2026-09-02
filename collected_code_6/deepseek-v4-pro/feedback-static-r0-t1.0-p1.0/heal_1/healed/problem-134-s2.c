@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkLastElement(const int *arr, int n, int p) {
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        temp[i] = arr[i];
+    }
+
+    for (int operation = 0; operation < p; operation++) {
+        int sum = 0;
+        for (int i = 0; i < n - 1; i++) {
+            sum += temp[i];
+        }
+        temp[n - 1] += sum;
+    }
+
+    int result = temp[n - 1] % 2;
+    free(temp);
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int p = 3;
+
+    int result = checkLastElement(arr, n, p);
+
+    if (result == -1) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    if (result == 0) {
+        printf("The last element is even\n");
+    } else {
+        printf("The last element is odd\n");
+    }
+
+    return 0;
+}

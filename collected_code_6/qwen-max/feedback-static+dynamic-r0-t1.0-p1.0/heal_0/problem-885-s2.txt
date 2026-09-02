@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool areIsomorphic(char *s, char *t) {
+    if (strlen(s) != strlen(t)) return false;
+    
+    int m1[256] = {0}, m2[256] = {0};
+    
+    for (int i = 0; s[i] && t[i]; i++) {
+        if (!m1[(unsigned char)s[i]]) m1[(unsigned char)s[i]] = t[i];
+        if (!m2[(unsigned char)t[i]]) m2[(unsigned char)t[i]] = s[i];
+        if (m1[(unsigned char)s[i]] != t[i]) return false;
+        if (m2[(unsigned char)t[i]] != s[i]) return false;
+    }
+    
+    return true;
+}
+
+int main() {
+    char *str1 = "egg";
+    char *str2 = "add";
+    
+    if (areIsomorphic(str1, str2)) {
+        printf("The strings are isomorphic.\n");
+    } else {
+        printf("The strings are not isomorphic.\n");
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void split_string_to_chars(const char *input, char ***output, int *len) {
+    if (input == NULL || output == NULL || len == NULL) return;
+
+    *len = 0;
+    *output = NULL;
+
+    *len = strlen(input);
+    *output = (char **)malloc(*len * sizeof(char *));
+    if (*output == NULL) return;
+
+    for (int i = 0; i < *len; ++i) {
+        (*output)[i] = (char *)malloc(2 * sizeof(char));
+        if ((*output)[i] == NULL) {
+            for (int j = 0; j < i; ++j) {
+                free((*output)[j]);
+            }
+            free(*output);
+            *output = NULL;
+            *len = 0;
+            return;
+        }
+        (*output)[i][0] = input[i];
+        (*output)[i][1] = '\0';
+    }
+}
+
+int main() {
+    const char *str = "Hello, World!";
+    char **result;
+    int length;
+
+    split_string_to_chars(str, &result, &length);
+
+    for (int i = 0; i < length; ++i) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

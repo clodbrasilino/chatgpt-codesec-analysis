@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int countPairsWithDifference(int arr[], int n, int k) {
+    if (n < 2) {
+        return 0;
+    }
+    
+    qsort(arr, n, sizeof(int), compare);
+    
+    int i = 0, j = 0;
+    int count = 0;
+    
+    while (j < n) {
+        if (arr[j] - arr[i] == k) {
+            count++;
+            i++;
+            j++;
+            while (j < n && arr[j] == arr[j - 1]) {
+                j++;
+            }
+            while (i < j && i > 0 && arr[i] == arr[i - 1]) {
+                i++;
+            }
+        }
+        else if (arr[j] - arr[i] < k) {
+            j++;
+        }
+        else {
+            i++;
+            if (i > j) {
+                j = i;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 5, 3, 4, 2, 2, 5, 8, 6, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    
+    int result = countPairsWithDifference(arr, n, k);
+    printf("Number of distinct pairs with difference %d: %d\n", k, result);
+    
+    int arr2[] = {1, 1, 1, 1};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 0;
+    
+    int result2 = countPairsWithDifference(arr2, n2, k2);
+    printf("Number of distinct pairs with difference %d: %d\n", k2, result2);
+    
+    return 0;
+}

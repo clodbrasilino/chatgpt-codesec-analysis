@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int diff_even_odd_digits(int num) {
+    int sum_even = 0, sum_odd = 0;
+    while (num > 0) {
+        int digit = num % 10;
+        if (digit % 2 == 0) {
+            sum_even += digit;
+        } else {
+            sum_odd += digit;
+        }
+        num /= 10;
+    }
+    return sum_even - sum_odd;
+}
+
+int main() {
+    int number = 123456;
+    int result = diff_even_odd_digits(number);
+    printf("The difference between the sum of even and odd digits is: %d\n", result);
+    return 0;
+}

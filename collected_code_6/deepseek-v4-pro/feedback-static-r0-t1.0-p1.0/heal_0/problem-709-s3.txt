@@ -1,0 +1,160 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} Tuple;
+
+typedef struct {
+    char *key;
+    int count;
+} KeyCount;
+
+typedef struct {
+    char *value;
+    KeyCount *keys;
+    int key_count;
+    int key_capacity;
+} ValueEntry;
+
+typedef struct {
+    ValueEntry *entries;
+    int size;
+    int capacity;
+} ValueMap;
+
+int find_value_index(ValueMap *map, const char *value) {
+    for (int i = 0; i < map->size; i++) {
+        if (strcmp(map->entries[i].value, value) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int find_key_index(ValueEntry *entry, const char *key) {
+    for (int i = 0; i < entry->key_count; i++) {
+        if (strcmp(entry->keys[i].key, key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int add_unique_key(ValueEntry *entry, const char *key) {
+    int idx = find_key_index(entry, key);
+    if (idx != -1) {
+        entry->keys[idx].count++;
+        return 0;
+    }
+    
+    if (entry->key_count >= entry->key_capacity) {
+        int new_capacity = entry->key_capacity == 0 ? 4 : entry->key_capacity * 2;
+        KeyCount *new_keys = realloc(entry->keys, new_capacity * sizeof(KeyCount));
+        if (new_keys == NULL) {
+            return -1;
+        }
+        entry->keys = new_keys;
+        entry->key_capacity = new_capacity;
+    }
+    
+    entry->keys[entry->key_count].key = strdup(key);
+    if (entry->keys[entry->key_count].key == NULL) {
+        return -1;
+    }
+    entry->keys[entry->key_count].count = 1;
+    entry->key_count++;
+    return 0;
+}
+
+void init_value_map(ValueMap *map) {
+    map->entries = NULL;
+    map->size = 0;
+    map->capacity = 0;
+}
+
+void free_value_map(ValueMap *map) {
+    for (int i = 0; i < map->size; i++) {
+        free(map->entries[i].value);
+        for (int j = 0; j < map->entries[i].key_count; j++) {
+            free(map->entries[i].keys[j].key);
+        }
+        free(map->entries[i].keys);
+    }
+    free(map->entries);
+    map->entries = NULL;
+    map->size = 0;
+    map->capacity = 0;
+}
+
+int add_tuple(ValueMap *map, const Tuple *tuple) {
+    int value_idx = find_value_index(map, tuple->value);
+    
+    if (value_idx == -1) {
+        if (map->size >= map->capacity) {
+            int new_capacity = map->capacity == 0 ? 4 : map->capacity * 2;
+            ValueEntry *new_entries = realloc(map->entries, new_capacity * sizeof(ValueEntry));
+            if (new_entries == NULL) {
+                return -1;
+            }
+            map->entries = new_entries;
+            map->capacity = new_capacity;
+        }
+        
+        value_idx = map->size;
+        map->entries[value_idx].value = strdup(tuple->value);
+        if (map->entries[value_idx].value == NULL) {
+            return -1;
+        }
+        map->entries[value_idx].keys = NULL;
+        map->entries[value_idx].key_count = 0;
+        map->entries[value_idx].key_capacity = 0;
+        map->size++;
+    }
+    
+    return add_unique_key(&map->entries[value_idx], tuple->key);
+}
+
+void print_unique_key_counts(ValueMap *map) {
+    for (int i = 0; i < map->size; i++) {
+        printf("Value: %s\n", map->entries[i].value);
+        for (int j = 0; j < map->entries[i].key_count; j++) {
+            printf("  Key: %s, Count: %d\n", map->entries[i].keys[j].key, map->entries[i].keys[j].count);
+        }
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {"key1", "value1"},
+        {"key2", "value1"},
+        {"key1", "value1"},
+        {"key3", "value2"},
+        {"key1", "value2"},
+        {"key2", "value2"},
+        {"key3", "value2"},
+        {"key4", "value3"},
+        {"key4", "value3"}
+    };
+    
+    int tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    ValueMap map;
+    init_value_map(&map);
+    
+    for (int i = 0; i < tuple_count; i++) {
+        if (add_tuple(&map, &tuples[i]) != 0) {
+            fprintf(stderr, "Error processing tuple %d\n", i);
+            free_value_map(&map);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    print_unique_key_counts(&map);
+    free_value_map(&map);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_ab_pattern(const char* str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    size_t len = strlen(str);
+    
+    if (len < 1) {
+        return false;
+    }
+    
+    if (str[0] != 'a') {
+        return false;
+    }
+    
+    for (size_t i = 1; i < len; i++) {
+        if (str[i] != 'b') {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    const char* test1 = "a";
+    const char* test2 = "ab";
+    const char* test3 = "abb";
+    const char* test4 = "abbb";
+    const char* test5 = "ac";
+    const char* test6 = "b";
+    const char* test7 = "";
+    const char* test8 = "abbbbb";
+    
+    printf("%s: %s\n", test1, match_ab_pattern(test1) ? "match" : "no match");
+    printf("%s: %s\n", test2, match_ab_pattern(test2) ? "match" : "no match");
+    printf("%s: %s\n", test3, match_ab_pattern(test3) ? "match" : "no match");
+    printf("%s: %s\n", test4, match_ab_pattern(test4) ? "match" : "no match");
+    printf("%s: %s\n", test5, match_ab_pattern(test5) ? "match" : "no match");
+    printf("%s: %s\n", test6, match_ab_pattern(test6) ? "match" : "no match");
+    printf("%s: %s\n", test7, match_ab_pattern(test7) ? "match" : "no match");
+    printf("%s: %s\n", test8, match_ab_pattern(test8) ? "match" : "no match");
+    
+    return 0;
+}
+```

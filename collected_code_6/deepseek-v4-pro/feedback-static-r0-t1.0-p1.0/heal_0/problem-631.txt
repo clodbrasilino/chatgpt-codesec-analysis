@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *replace_whitespace_underscore(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t space_regex, underscore_regex;
+    int ret;
+    const char *space_pattern = "[[:space:]]";
+    const char *underscore_pattern = "_";
+
+    ret = regcomp(&space_regex, space_pattern, REG_EXTENDED);
+    if (ret) {
+        return NULL;
+    }
+
+    ret = regcomp(&underscore_regex, underscore_pattern, REG_EXTENDED);
+    if (ret) {
+        regfree(&space_regex);
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&space_regex);
+        regfree(&underscore_regex);
+        return NULL;
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+
+    while (i < input_len) {
+        regmatch_t match;
+        int match_result;
+
+        match_result = regexec(&space_regex, input + i, 1, &match, 0);
+        if (match_result == 0 && match.rm_so == 0) {
+            result[j++] = '_';
+            i += match.rm_eo;
+            continue;
+        }
+
+        match_result = regexec(&underscore_regex, input + i, 1, &match, 0);
+        if (match_result == 0 && match.rm_so == 0) {
+            result[j++] = ' ';
+            i += match.rm_eo;
+            continue;
+        }
+
+        result[j++] = input[i++];
+    }
+
+    result[j] = '\0';
+
+    regfree(&space_regex);
+    regfree(&underscore_regex);
+
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "hello_world this is_a test";
+    char *result = replace_whitespace_underscore(test_string);
+
+    if (result != NULL) {
+        printf("Original: %s\n", test_string);
+        printf("Modified: %s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

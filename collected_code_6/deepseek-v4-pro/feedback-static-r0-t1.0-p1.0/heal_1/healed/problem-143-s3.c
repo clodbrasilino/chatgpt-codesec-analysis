@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST,
+    TYPE_TUPLE
+} ObjectType;
+
+typedef struct Object {
+    ObjectType type;
+    struct Object **items;
+    int count;
+} Object;
+
+Object* create_object(ObjectType type) {
+    Object *obj = (Object*)malloc(sizeof(Object));
+    if (obj == NULL) {
+        return NULL;
+    }
+    obj->type = type;
+    obj->items = NULL;
+    obj->count = 0;
+    return obj;
+}
+
+void free_object(Object *obj) {
+    if (obj == NULL) {
+        return;
+    }
+    if (obj->items != NULL) {
+        for (int i = 0; i < obj->count; i++) {
+            free_object(obj->items[i]);
+        }
+        free(obj->items);
+    }
+    free(obj);
+}
+
+int count_lists_in_tuple(Object *tuple) {
+    if (tuple == NULL || tuple->type != TYPE_TUPLE) {
+        return 0;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < tuple->count; i++) {
+        Object *item = tuple->items[i];
+        if (item == NULL) {
+            continue;
+        }
+        if (item->type == TYPE_LIST) {
+            count++;
+        }
+        else if (item->type == TYPE_TUPLE) {
+            count += count_lists_in_tuple(item);
+        }
+    }
+    return count;
+}
+
+int main() {
+    Object *tuple = create_object(TYPE_TUPLE);
+    Object *list1 = create_object(TYPE_LIST);
+    Object *list2 = create_object(TYPE_LIST);
+    Object *int_obj = create_object(TYPE_INT);
+    Object *nested_tuple = create_object(TYPE_TUPLE);
+    Object *nested_list = create_object(TYPE_LIST);
+    Object *nested_int = create_object(TYPE_INT);
+    
+    if (!tuple || !list1 || !list2 || !int_obj || !nested_tuple || !nested_list || !nested_int) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_object(tuple);
+        free_object(list1);
+        free_object(list2);
+        free_object(int_obj);
+        free_object(nested_tuple);
+        free_object(nested_list);
+        free_object(nested_int);
+        return 1;
+    }
+    
+    list1->count = 1;
+    list1->items = (Object**)malloc(sizeof(Object*));
+    if (!list1->items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_object(tuple);
+        return 1;
+    }
+    list1->items[0] = create_object(TYPE_INT);
+    
+    list2->count = 1;
+    list2->items = (Object**)malloc(sizeof(Object*));
+    if (!list2->items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_object(tuple);
+        return 1;
+    }
+    list2->items[0] = create_object(TYPE_INT);
+    
+    nested_list->count = 1;
+    nested_list->items = (Object**)malloc(sizeof(Object*));
+    if (!nested_list->items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_object(tuple);
+        return 1;
+    }
+    nested_list->items[0] = create_object(TYPE_INT);
+    
+    nested_tuple->count = 2;
+    nested_tuple->items = (Object**)malloc(2 * sizeof(Object*));
+    if (!nested_tuple->items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_object(tuple);
+        return 1;
+    }
+    nested_tuple->items[0] = nested_list;
+    nested_tuple->items[1] = nested_int;
+    
+    tuple->count = 4;
+    tuple->items = (Object**)malloc(4 * sizeof(Object*));
+    if (!tuple->items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_object(tuple);
+        return 1;
+    }
+    tuple->items[0] = list1;
+    tuple->items[1] = int_obj;
+    tuple->items[2] = list2;
+    tuple->items[3] = nested_tuple;
+    
+    int result = count_lists_in_tuple(tuple);
+    printf("%d\n", result);
+    
+    free_object(tuple);
+    return 0;
+}

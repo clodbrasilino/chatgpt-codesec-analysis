@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double calculate_perimeter(int sides, double side_length) {
+    if (sides < 3) {
+        return -1.0;
+    }
+    if (side_length <= 0.0) {
+        return -1.0;
+    }
+    return (double)sides * side_length;
+}
+
+int main(void) {
+    int sides;
+    double side_length;
+    double perimeter;
+    int result;
+
+    printf("Enter number of sides (>=3): ");
+    result = scanf("%d", &sides);
+
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter side length: ");
+    result = scanf("%lf", &side_length);
+
+    if (result != 1) {
+        fprintf(stderr, "Invalid input for side length.\n");
+        return EXIT_FAILURE;
+    }
+
+    perimeter = calculate_perimeter(sides, side_length);
+
+    if (perimeter < 0.0) {
+        fprintf(stderr, "Invalid polygon parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter: %.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int min_squares(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc((n + 1) * sizeof(int));
+    if (dp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    dp[0] = 0;
+    for (int i = 1; i <= n; i++) {
+        dp[i] = INT_MAX;
+        for (int j = 1; j * j <= i; j++) {
+            int square = j * j;
+            if (dp[i - square] != INT_MAX && dp[i - square] + 1 < dp[i]) {
+                dp[i] = dp[i - square] + 1;
+            }
+        }
+    }
+
+    int result = dp[n];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int numbers[] = {12, 13, 25, 1, 0, 100};
+    int count = sizeof(numbers) / sizeof(numbers[0]);
+
+    for (int i = 0; i < count; i++) {
+        printf("Minimum squares for %d: %d\n", numbers[i], min_squares(numbers[i]));
+    }
+
+    return 0;
+}
+```

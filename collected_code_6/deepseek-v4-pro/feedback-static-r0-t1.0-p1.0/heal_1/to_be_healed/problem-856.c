@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int min_adjacent_swaps_to_sort_binary(int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    int zero_count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        } else if (arr[i] != 1) {
+            return -1;
+        }
+    }
+
+    int swaps_for_zeros_left = 0;
+    int zero_seen = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            swaps_for_zeros_left += i - zero_seen;
+            zero_seen++;
+        }
+    }
+
+    int swaps_for_ones_left = 0;
+    int one_seen = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 1) {
+            swaps_for_ones_left += i - one_seen;
+            one_seen++;
+        }
+    }
+
+    return swaps_for_zeros_left < swaps_for_ones_left ? swaps_for_zeros_left : swaps_for_ones_left;
+}
+
+int main(void) {
+    int arr1[] = {0, 0, 1, 0, 1, 0, 1, 1};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = min_adjacent_swaps_to_sort_binary(arr1, n1);
+    printf("Test 1: %d\n", result1);
+
+    int arr2[] = {1, 0, 1, 0, 1};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = min_adjacent_swaps_to_sort_binary(arr2, n2);
+    printf("Test 2: %d\n", result2);
+
+    int arr3[] = {0, 1, 0, 1};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = min_adjacent_swaps_to_sort_binary(arr3, n3);
+    printf("Test 3: %d\n", result3);
+
+    int arr4[] = {1, 1, 1, 0, 0};
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
+    int result4 = min_adjacent_swaps_to_sort_binary(arr4, n4);
+    printf("Test 4: %d\n", result4);
+
+    int *null_arr = NULL;
+    int result5 = min_adjacent_swaps_to_sort_binary(null_arr, 5);
+    printf("Test 5: %d\n", result5);
+
+    int invalid_arr[] = {0, 2, 1};
+    int n6 = sizeof(invalid_arr) / sizeof(invalid_arr[0]);
+    int result6 = min_adjacent_swaps_to_sort_binary(invalid_arr, n6);
+    printf("Test 6: %d\n", result6);
+
+    return 0;
+}

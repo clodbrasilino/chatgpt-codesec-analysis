@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <math.h>
+
+double findThirdSide(double a, double b) {
+    if (a <= 0 || b <= 0) {
+        return -1;
+    }
+    return sqrt(a * a + b * b);
+}
+
+int main() {
+    double side1 = 3.0;
+    double side2 = 4.0;
+    
+    double thirdSide = findThirdSide(side1, side2);
+    
+    if (thirdSide > 0) {
+        printf("The third side of the right-angled triangle is: %.2f\n", thirdSide);
+    } else {
+        printf("Invalid input.\n");
+    }
+    
+    return 0;
+}

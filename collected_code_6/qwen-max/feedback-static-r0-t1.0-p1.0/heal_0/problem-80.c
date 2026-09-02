@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+long long nth_tetrahedral_number(long n) {
+    return (n * (n + 1) * (n + 2)) / 6;
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if (scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    printf("The %ldth tetrahedral number is: %lld\n", n, nth_tetrahedral_number(n));
+    return 0;
+}

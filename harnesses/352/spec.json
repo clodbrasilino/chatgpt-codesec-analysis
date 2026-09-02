@@ -1,0 +1,44 @@
+{
+  "task_id": 352,
+  "text": "Write a C function to check whether all the characters in a given string are unique.",
+  "fn_candidates": [
+    "unique_Characters",
+    "UniqueCharacters",
+    "uniqueCharacters",
+    "uniqueCharacters"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "unique_Characters",
+      "args": [
+        "aba"
+      ],
+      "expected": false,
+      "assert_src": "assert unique_Characters('aba') == False"
+    },
+    {
+      "fn_name": "unique_Characters",
+      "args": [
+        "abc"
+      ],
+      "expected": true,
+      "assert_src": "assert unique_Characters('abc') == True"
+    },
+    {
+      "fn_name": "unique_Characters",
+      "args": [
+        "abab"
+      ],
+      "expected": false,
+      "assert_src": "assert unique_Characters('abab') == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

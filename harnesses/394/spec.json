@@ -1,0 +1,62 @@
+{
+  "task_id": 394,
+  "text": "Write a C function to check if given tuple is distinct or not.",
+  "fn_candidates": [
+    "check_distinct",
+    "CheckDistinct",
+    "checkDistinct",
+    "checkdistinct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_distinct",
+      "args": [
+        [
+          1,
+          4,
+          5,
+          6,
+          1,
+          4
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_distinct((1, 4, 5, 6, 1, 4)) == False"
+    },
+    {
+      "fn_name": "check_distinct",
+      "args": [
+        [
+          1,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_distinct((1, 4, 5, 6)) == True"
+    },
+    {
+      "fn_name": "check_distinct",
+      "args": [
+        [
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_distinct((2, 3, 4, 5, 6)) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

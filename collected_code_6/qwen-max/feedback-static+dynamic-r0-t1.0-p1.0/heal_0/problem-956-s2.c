@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void split_string_at_uppercase(const char *input) {
+    int num_substrings = 0;
+    regex_t regex;
+    regmatch_t matches[20];
+    char *str_copy;
+    int i, j;
+
+    if (regcomp(&regex, "([A-Z][^A-Z]*)", REG_EXTENDED) != 0) return;
+
+    str_copy = strdup(input);
+    if (str_copy == NULL) return;
+
+    while (regexec(&regex, str_copy + num_substrings, 1, matches, 0) == 0) {
+        for (i = matches[0].rm_so + num_substrings, j = 0; 
+             i <= matches[0].rm_eo + num_substrings - 1; 
+             i++, j++) {
+            printf("%c", str_copy[i]);
+        }
+        printf("\n");
+        num_substrings += matches[0].rm_eo;
+    }
+
+    free(str_copy);
+    regfree(&regex);
+}
+
+int main() {
+    const char *test_string = "HelloWorldOfC";
+    split_string_at_uppercase(test_string);
+    return 0;
+}

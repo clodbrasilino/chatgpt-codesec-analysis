@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_discriminant(double a, double b, double c) {
+    return (b * b) - (4 * a * c);
+}
+
+int main() {
+    double a = 1.0;
+    double b = -3.0;
+    double c = 2.0;
+
+    double discriminant = calculate_discriminant(a, b, c);
+
+    printf("Discriminant: %.2f\n", discriminant);
+
+    return 0;
+}

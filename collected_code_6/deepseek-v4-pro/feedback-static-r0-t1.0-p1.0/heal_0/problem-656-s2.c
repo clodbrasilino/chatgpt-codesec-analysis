@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    return (arg1 > arg2) - (arg1 < arg2);
+}
+
+long long min_sum_absolute_differences(int *a, int *b, int n) {
+    if (a == NULL || b == NULL || n <= 0) {
+        return -1;
+    }
+
+    int *sorted_a = (int *)malloc((size_t)n * sizeof(int));
+    int *sorted_b = (int *)malloc((size_t)n * sizeof(int));
+    if (sorted_a == NULL || sorted_b == NULL) {
+        free(sorted_a);
+        free(sorted_b);
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        sorted_a[i] = a[i];
+        sorted_b[i] = b[i];
+    }
+
+    qsort(sorted_a, (size_t)n, sizeof(int), compare_ints);
+    qsort(sorted_b, (size_t)n, sizeof(int), compare_ints);
+
+    long long sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += llabs((long long)sorted_a[i] - sorted_b[i]);
+    }
+
+    free(sorted_a);
+    free(sorted_b);
+    return sum;
+}
+
+int main(void) {
+    int a[] = {4, 1, 8, 7};
+    int b[] = {2, 3, 6, 5};
+    int n = 4;
+
+    long long result = min_sum_absolute_differences(a, b, n);
+    if (result >= 0) {
+        printf("%lld\n", result);
+    } else {
+        printf("Error\n");
+    }
+
+    return 0;
+}

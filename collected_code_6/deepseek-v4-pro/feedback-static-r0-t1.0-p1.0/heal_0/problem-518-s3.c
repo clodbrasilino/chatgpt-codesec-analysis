@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_perfect_number(int num) {
+    if (num <= 1) return 0;
+    
+    int sum = 1;
+    for (int i = 2; i * i <= num; i++) {
+        if (num % i == 0) {
+            sum += i;
+            if (i != num / i) {
+                sum += num / i;
+            }
+        }
+    }
+    
+    return sum == num;
+}
+
+int find_square_root(int num) {
+    if (num < 0) {
+        return -1;
+    }
+    
+    if (is_perfect_number(num)) {
+        for (int i = 0; i * i <= num; i++) {
+            if (i * i == num) {
+                return i;
+            }
+        }
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int test_numbers[] = {6, 28, 496, 8128, 33550336, 12, 25, -5, 0};
+    int num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        int num = test_numbers[i];
+        int result = find_square_root(num);
+        
+        if (result != -1) {
+            printf("Number %d is perfect, square root = %d\n", num, result);
+        } else {
+            printf("Number %d is not a perfect number with integer square root\n", num);
+        }
+    }
+    
+    return 0;
+}

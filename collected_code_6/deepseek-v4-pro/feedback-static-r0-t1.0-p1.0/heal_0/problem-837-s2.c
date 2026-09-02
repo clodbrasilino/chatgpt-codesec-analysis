@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long cube_sum_first_n_odd(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    long long sum = 0;
+    long long odd = 1;
+    
+    for (int i = 0; i < n; ++i) {
+        long long cube = odd * odd * odd;
+        if (cube < 0 || sum > __LONG_LONG_MAX__ - cube) {
+            return -1;
+        }
+        sum += cube;
+        odd += 2;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "Error: n must be positive\n");
+        return 1;
+    }
+    
+    long long result = cube_sum_first_n_odd(n);
+    
+    if (result == -1) {
+        fprintf(stderr, "Error: overflow occurred\n");
+        return 1;
+    }
+    
+    printf("Cube sum of first %d odd natural numbers: %lld\n", n, result);
+    
+    return 0;
+}

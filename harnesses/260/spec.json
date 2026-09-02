@@ -1,0 +1,44 @@
+{
+  "task_id": 260,
+  "text": "Write a C function to find the nth newman\u2013shanks\u2013williams prime number.",
+  "fn_candidates": [
+    "newman_prime",
+    "NewmanPrime",
+    "newmanPrime",
+    "newmanprime"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "newman_prime",
+      "args": [
+        3
+      ],
+      "expected": 7,
+      "assert_src": "assert newman_prime(3) == 7 "
+    },
+    {
+      "fn_name": "newman_prime",
+      "args": [
+        4
+      ],
+      "expected": 17,
+      "assert_src": "assert newman_prime(4) == 17"
+    },
+    {
+      "fn_name": "newman_prime",
+      "args": [
+        5
+      ],
+      "expected": 41,
+      "assert_src": "assert newman_prime(5) == 41"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_sublists_with_element(int *arr, int size, int element) {
+    int count = 0;
+    int last_occurrence = -1;
+    
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == element) {
+            last_occurrence = i;
+        }
+        if (last_occurrence != -1) {
+            count += last_occurrence + 1;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 2, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int element = 2;
+    
+    int result = count_sublists_with_element(arr, size, element);
+    printf("Number of sublists containing %d: %d\n", element, result);
+    
+    return 0;
+}

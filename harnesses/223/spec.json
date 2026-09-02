@@ -1,0 +1,74 @@
+{
+  "task_id": 223,
+  "text": "Write a C function to check for majority element in the given sorted array.",
+  "fn_candidates": [
+    "is_majority",
+    "IsMajority",
+    "isMajority",
+    "ismajority"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_majority",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          3,
+          3,
+          3,
+          10
+        ],
+        7,
+        3
+      ],
+      "expected": true,
+      "assert_src": "assert is_majority([1, 2, 3, 3, 3, 3, 10], 7, 3) == True"
+    },
+    {
+      "fn_name": "is_majority",
+      "args": [
+        [
+          1,
+          1,
+          2,
+          4,
+          4,
+          4,
+          6,
+          6
+        ],
+        8,
+        4
+      ],
+      "expected": false,
+      "assert_src": "assert is_majority([1, 1, 2, 4, 4, 4, 6, 6], 8, 4) == False"
+    },
+    {
+      "fn_name": "is_majority",
+      "args": [
+        [
+          1,
+          1,
+          1,
+          2,
+          2
+        ],
+        5,
+        1
+      ],
+      "expected": true,
+      "assert_src": "assert is_majority([1, 1, 1, 2, 2], 5, 1) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

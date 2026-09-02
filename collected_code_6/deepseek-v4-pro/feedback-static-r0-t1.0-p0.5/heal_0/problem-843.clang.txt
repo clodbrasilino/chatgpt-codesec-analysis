@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-843.c:49:35: error: passing 'HeapNode' to parameter of incompatible type 'HeapNode *'; take the address with &
+   49 |         swap(&heap->data[parent], heap->data[idx]);
+      |                                   ^~~~~~~~~~~~~~~
+      |                                   &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-843.c:24:34: note: passing argument to parameter 'b' here
+   24 | void swap(HeapNode *a, HeapNode *b) {
+      |                                  ^
+1 error generated.

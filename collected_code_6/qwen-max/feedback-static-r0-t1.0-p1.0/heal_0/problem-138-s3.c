@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool canBeSumOfPowers(int n) {
+    if (n <= 0) return false;
+    while (n > 0) {
+        int bit = n & 1;
+        if (bit == 0)
+            return false;
+        n >>= 1;
+    }
+    return true;
+}
+
+int main() {
+    int num;
+    scanf("%d", &num);
+    if (canBeSumOfPowers(num)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+    return 0;
+}

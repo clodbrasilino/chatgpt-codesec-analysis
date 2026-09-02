@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* createNode(int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtEnd(Node **head, int data) {
+    Node *newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node *temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void printList(Node *head) {
+    Node *temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+int isInList(Node *list, int data) {
+    Node *current = list;
+    while (current != NULL) {
+        if (current->data == data) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+void removeElementsFromList(Node **list, Node *toRemove) {
+    Node *current = *list;
+    Node *prev = NULL;
+    while (current != NULL) {
+        if (isInList(toRemove, current->data)) {
+            Node *temp = current;
+            if (prev == NULL) {
+                *list = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            free(temp);
+            current = prev ? prev->next : *list;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    insertAtEnd(&list1, 1);
+    insertAtEnd(&list1, 2);
+    insertAtEnd(&list1, 3);
+    insertAtEnd(&list1, 4);
+
+    insertAtEnd(&list2, 2);
+    insertAtEnd(&list2, 4);
+
+    printf("Original List 1: ");
+    printList(list1);
+
+    printf("List 2: ");
+    printList(list2);
+
+    removeElementsFromList(&list1, list2);
+
+    printf("Modified List 1: ");
+    printList(list1);
+
+    // Free remaining nodes in list1
+    while (list1 != NULL) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+
+    // Free remaining nodes in list2
+    while (list2 != NULL) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

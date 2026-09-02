@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+
+int main(void) {
+    int num1, num2;
+    
+    printf("Enter two integers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (num1 == 0 && num2 == 0) {
+        fprintf(stderr, "GCD of 0 and 0 is undefined\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("GCD: %d\n", gcd(num1, num2));
+    
+    return EXIT_SUCCESS;
+}
+```

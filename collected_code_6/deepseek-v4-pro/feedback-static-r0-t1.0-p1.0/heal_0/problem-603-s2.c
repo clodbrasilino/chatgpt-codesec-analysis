@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_lucid(unsigned long long num) {
+    if (num == 0) return 0;
+    int count = 0;
+    unsigned long long temp = num;
+    
+    while (temp > 0) {
+        count++;
+        temp >>= 1;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        unsigned long long mask = (1ULL << i) - 1;
+        if ((num & mask) == (num >> i) && i > 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+unsigned long long get_lucid_number(unsigned long long n) {
+    for (unsigned long long i = n; i > 0; i--) {
+        if (is_lucid(i)) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    unsigned long long n = 100;
+    unsigned long long result = get_lucid_number(n);
+    printf("%llu\n", result);
+    return 0;
+}

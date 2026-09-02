@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *arr;
+    int capacity;
+    int size;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) {
+        return NULL;
+    }
+    heap->arr = (int*)malloc(capacity * sizeof(int));
+    if (!heap->arr) {
+        free(heap);
+        return NULL;
+    }
+    heap->capacity = capacity;
+    heap->size = 0;
+    return heap;
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyDown(MinHeap* heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->arr[left] < heap->arr[smallest]) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->arr[right] < heap->arr[smallest]) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        swap(&heap->arr[index], &heap->arr[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+void heapifyUp(MinHeap* heap, int index) {
+    int parent = (index - 1) / 2;
+    if (index > 0 && heap->arr[index] < heap->arr[parent]) {
+        swap(&heap->arr[index], &heap->arr[parent]);
+        heapifyUp(heap, parent);
+    }
+}
+
+int deleteMin(MinHeap* heap) {
+    if (heap->size <= 0) {
+        return INT_MIN;
+    }
+    if (heap->size == 1) {
+        int root = heap->arr[0];
+        heap->size--;
+        return root;
+    }
+    int root = heap->arr[0];
+    heap->arr[0] = heap->arr[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+    return root;
+}
+
+int insert(MinHeap* heap, int value) {
+    if (heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->arr[heap->size] = value;
+    heap->size++;
+    heapifyUp(heap, heap->size - 1);
+    return 0;
+}
+
+int deleteMinAndInsert(MinHeap* heap, int newItem) {
+    if (!heap || heap->size <= 0) {
+        return -1;
+    }
+    int min = deleteMin(heap);
+    if (min == INT_MIN) {
+        return -1;
+    }
+    if (insert(heap, newItem) != 0) {
+        return -2;
+    }
+    return min;
+}
+
+void freeMinHeap(MinHeap* heap) {
+    if (heap) {
+        free(heap->arr);
+        free(heap);
+    }
+}
+
+int main(void) {
+    MinHeap* heap = createMinHeap(10);
+    if (!heap) {
+        fprintf(stderr, "Failed to create heap\n");
+        return EXIT_FAILURE;
+    }
+    
+    int initialValues[] = {5, 3, 8, 1, 9, 6, 7, 2, 4, 0};
+    for (int i = 0; i < 10; i++) {
+        if (insert(heap, initialValues[i]) != 0) {
+            fprintf(stderr, "Failed to insert initial value\n");
+            freeMinHeap(heap);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    int deletedMin = deleteMinAndInsert(heap, 15);
+    if (deletedMin < 0) {
+        fprintf(stderr, "deleteMinAndInsert failed\n");
+        freeMinHeap(heap);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Deleted minimum: %d\n", deletedMin);
+    printf("Heap after operation (size=%d):\n", heap->size);
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->arr[i]);
+    }
+    printf("\n");
+    
+    freeMinHeap(heap);
+    return EXIT_SUCCESS;
+}
+```

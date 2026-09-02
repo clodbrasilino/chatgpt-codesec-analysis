@@ -1,0 +1,49 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:39:33: style: Condition 'pattern_len>0' is always true [knownConditionTrueFalse]
+                if (pattern_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:38:33: note: Assuming that condition 'pattern_len+1>=sizeof(pattern)' is not redundant
+            if (pattern_len + 1 >= sizeof(pattern)) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:39:33: note: Condition 'pattern_len>0' is always true
+                if (pattern_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:50:29: style: Condition 'pattern_len>0' is always true [knownConditionTrueFalse]
+            if (pattern_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:49:25: note: Assuming that condition 'pattern_len>=sizeof(pattern)' is not redundant
+        if (pattern_len >= sizeof(pattern)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:50:29: note: Condition 'pattern_len>0' is always true
+            if (pattern_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:60:37: style: Condition 'pattern_len>0' is always true [knownConditionTrueFalse]
+                    if (pattern_len > 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:59:37: note: Assuming that condition 'pattern_len+1>=sizeof(pattern)' is not redundant
+                if (pattern_len + 1 >= sizeof(pattern)) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:60:37: note: Condition 'pattern_len>0' is always true
+                    if (pattern_len > 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:70:33: style: Condition 'pattern_len>0' is always true [knownConditionTrueFalse]
+                if (pattern_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:69:33: note: Assuming that condition 'pattern_len+1>=sizeof(pattern)' is not redundant
+            if (pattern_len + 1 >= sizeof(pattern)) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:70:33: note: Condition 'pattern_len>0' is always true
+                if (pattern_len > 0) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:80:29: style: Condition 'pattern_len>0' is always true [knownConditionTrueFalse]
+            if (pattern_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:79:29: note: Assuming that condition 'pattern_len+1>=sizeof(pattern)' is not redundant
+        if (pattern_len + 1 >= sizeof(pattern)) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:80:29: note: Condition 'pattern_len>0' is always true
+            if (pattern_len > 0) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-186.c:128:23: style: Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+            match_len = 1;
+                      ^

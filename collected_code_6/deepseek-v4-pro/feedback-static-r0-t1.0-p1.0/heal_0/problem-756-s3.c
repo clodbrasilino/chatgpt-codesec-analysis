@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool match(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    if (str[0] != 'a') {
+        return false;
+    }
+    
+    if (str[1] == '\0') {
+        return true;
+    }
+    
+    if (str[1] == 'b' && str[2] == '\0') {
+        return true;
+    }
+    
+    return false;
+}
+
+int main(void) {
+    const char *test1 = "a";
+    const char *test2 = "ab";
+    const char *test3 = "abb";
+    const char *test4 = "b";
+    const char *test5 = "";
+    const char *test6 = "ac";
+    
+    printf("%d\n", match(test1));
+    printf("%d\n", match(test2));
+    printf("%d\n", match(test3));
+    printf("%d\n", match(test4));
+    printf("%d\n", match(test5));
+    printf("%d\n", match(test6));
+    
+    return 0;
+}

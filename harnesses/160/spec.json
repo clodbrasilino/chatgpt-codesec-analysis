@@ -1,0 +1,30 @@
+{
+  "task_id": 160,
+  "text": "Write a C function to find x and y that satisfies ax + by = n.",
+  "fn_candidates": [
+    "solution",
+    "Solution",
+    "solution",
+    "solution"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "solution",
+      "args": [
+        4,
+        2,
+        7
+      ],
+      "expected": "No solution",
+      "assert_src": "assert solution(4, 2, 7) == 'No solution'"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

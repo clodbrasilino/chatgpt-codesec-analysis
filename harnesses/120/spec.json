@@ -1,0 +1,91 @@
+{
+  "task_id": 120,
+  "text": "Write a C function to find the maximum product from the pairs of tuples within a given list.",
+  "fn_candidates": [
+    "max_product_tuple",
+    "MaxProductTuple",
+    "maxProductTuple",
+    "maxproducttuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_product_tuple",
+      "args": [
+        [
+          [
+            2,
+            7
+          ],
+          [
+            2,
+            6
+          ],
+          [
+            1,
+            8
+          ],
+          [
+            4,
+            9
+          ]
+        ]
+      ],
+      "expected": 36,
+      "assert_src": "assert max_product_tuple([(2, 7), (2, 6), (1, 8), (4, 9)] )==36"
+    },
+    {
+      "fn_name": "max_product_tuple",
+      "args": [
+        [
+          [
+            10,
+            20
+          ],
+          [
+            15,
+            2
+          ],
+          [
+            5,
+            10
+          ]
+        ]
+      ],
+      "expected": 200,
+      "assert_src": "assert max_product_tuple([(10,20), (15,2), (5,10)] )==200"
+    },
+    {
+      "fn_name": "max_product_tuple",
+      "args": [
+        [
+          [
+            11,
+            44
+          ],
+          [
+            10,
+            15
+          ],
+          [
+            20,
+            5
+          ],
+          [
+            12,
+            9
+          ]
+        ]
+      ],
+      "expected": 484,
+      "assert_src": "assert max_product_tuple([(11,44), (10,15), (20,5), (12, 9)] )==484"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

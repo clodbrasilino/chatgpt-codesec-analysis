@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+long sum_arithmetic_progression(long a, long d, long n) {
+    if (n <= 0) return 0;
+    return (n * (2 * a + (n - 1) * d)) / 2;
+}
+
+int main() {
+    long a = 1, d = 1, n = 5;
+    long result = sum_arithmetic_progression(a, d, n);
+    printf("Sum of arithmetic progression: %ld\n", result);
+    return 0;
+}

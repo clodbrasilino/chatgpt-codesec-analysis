@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(char *snake_str) {
+    char *p = snake_str, *q = snake_str;
+    int capitalize_next = 1;
+
+    while (*p) {
+        if (*p == '_') {
+            capitalize_next = 1;
+            p++;
+        } else if (capitalize_next) {
+            *q = toupper(*p);
+            capitalize_next = 0;
+            q++;
+            p++;
+        } else {
+            *q = *p;
+            q++;
+            p++;
+        }
+    }
+    *q = '\0';
+    return snake_str;
+}
+
+int main() {
+    char snake_case_string[] = "this_is_a_snake_case_string";
+    char *camel_case_string = snake_to_camel(snake_case_string);
+    printf("%s\n", camel_case_string);
+    return 0;
+}
+```

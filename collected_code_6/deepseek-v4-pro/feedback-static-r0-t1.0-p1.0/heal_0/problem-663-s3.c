@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long largest_k_modulo_x_equals_y(long long x, long long y) {
+    if (x <= 0 || y < 0 || y >= x) {
+        return -1;
+    }
+    
+    long long max_k = y;
+    long long max_limit = x * 1000;
+    
+    for (long long k = 0; k <= max_limit; k++) {
+        if (k % x == y) {
+            if (k > max_k) {
+                max_k = k;
+            }
+        }
+    }
+    
+    return max_k;
+}
+
+int main(void) {
+    long long x, y;
+    
+    printf("Enter x: ");
+    if (scanf("%lld", &x) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter y: ");
+    if (scanf("%lld", &y) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    long long result = largest_k_modulo_x_equals_y(x, y);
+    
+    if (result == -1) {
+        printf("Invalid parameters: x must be > 0 and 0 <= y < x\n");
+    } else {
+        printf("Largest possible k: %lld\n", result);
+    }
+    
+    return 0;
+}

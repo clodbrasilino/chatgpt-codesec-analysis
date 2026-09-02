@@ -1,0 +1,56 @@
+{
+  "task_id": 785,
+  "text": "Write a C function to convert tuple string to integer tuple.",
+  "fn_candidates": [
+    "tuple_str_int",
+    "TupleStrInt",
+    "tupleStrInt",
+    "tuplestrint"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tuple_str_int",
+      "args": [
+        "(7, 8, 9)"
+      ],
+      "expected": [
+        7,
+        8,
+        9
+      ],
+      "assert_src": "assert tuple_str_int(\"(7, 8, 9)\") == (7, 8, 9)"
+    },
+    {
+      "fn_name": "tuple_str_int",
+      "args": [
+        "(1, 2, 3)"
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ],
+      "assert_src": "assert tuple_str_int(\"(1, 2, 3)\") == (1, 2, 3)"
+    },
+    {
+      "fn_name": "tuple_str_int",
+      "args": [
+        "(4, 5, 6)"
+      ],
+      "expected": [
+        4,
+        5,
+        6
+      ],
+      "assert_src": "assert tuple_str_int(\"(4, 5, 6)\") == (4, 5, 6)"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

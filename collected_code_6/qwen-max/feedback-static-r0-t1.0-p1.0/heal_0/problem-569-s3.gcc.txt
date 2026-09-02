@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:22:26: error: initialization of 'char *' from incompatible pointer type 'char **' [-Wincompatible-pointer-types]
+   22 |     char *lists[3][5] = {strings1, strings2, strings3};
+      |                          ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:22:26: note: (near initialization for 'lists[0][0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:22:36: error: initialization of 'char *' from incompatible pointer type 'char **' [-Wincompatible-pointer-types]
+   22 |     char *lists[3][5] = {strings1, strings2, strings3};
+      |                                    ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:22:36: note: (near initialization for 'lists[0][1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:22:46: error: initialization of 'char *' from incompatible pointer type 'char **' [-Wincompatible-pointer-types]
+   22 |     char *lists[3][5] = {strings1, strings2, strings3};
+      |                                              ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:22:46: note: (near initialization for 'lists[0][2]')

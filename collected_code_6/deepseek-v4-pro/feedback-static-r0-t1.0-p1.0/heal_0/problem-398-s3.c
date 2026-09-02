@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_digits(int n) {
+    int sum = 0;
+    n = abs(n);
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+void compute_digit_sums(const int *arr, size_t size, int *results) {
+    for (size_t i = 0; i < size; i++) {
+        results[i] = sum_of_digits(arr[i]);
+    }
+}
+
+int main(void) {
+    int numbers[] = {123, -456, 7890, 5, -100};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int *digit_sums = (int *)malloc(count * sizeof(int));
+    
+    if (digit_sums == NULL) {
+        return 1;
+    }
+    
+    compute_digit_sums(numbers, count, digit_sums);
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("Number: %d, Sum of digits: %d\n", numbers[i], digit_sums[i]);
+    }
+    
+    free(digit_sums);
+    return 0;
+}

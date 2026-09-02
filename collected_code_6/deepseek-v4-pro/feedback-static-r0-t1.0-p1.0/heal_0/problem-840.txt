@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int check_roots_equal_opposite_sign(double a, double b, double c) {
+    if (fabs(a) < 1e-10) {
+        return 0;
+    }
+    
+    double discriminant = b * b - 4 * a * c;
+    
+    if (discriminant < 0) {
+        return 0;
+    }
+    
+    double sqrt_disc = sqrt(discriminant);
+    double root1 = (-b + sqrt_disc) / (2 * a);
+    double root2 = (-b - sqrt_disc) / (2 * a);
+    
+    if (fabs(root1 + root2) < 1e-10 && fabs(root1 - root2) > 1e-10) {
+        if (fabs(root1) > 1e-10 && fabs(root2) > 1e-10) {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    double a, b, c;
+    
+    printf("Enter coefficients a, b, c: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (check_roots_equal_opposite_sign(a, b, c)) {
+        printf("Roots are numerically equal but opposite in sign\n");
+    } else {
+        printf("Roots are not numerically equal and opposite in sign\n");
+    }
+    
+    return 0;
+}
+```

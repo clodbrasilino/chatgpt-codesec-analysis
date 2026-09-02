@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <math.h>
+
+double round_to_digits(double value, int digits) {
+    double factor = pow(10.0, digits);
+    return round(value * factor) / factor;
+}
+
+int main(void) {
+    printf("%f\n", round_to_digits(3.14159, 2));
+    printf("%f\n", round_to_digits(1234.5678, 0));
+    printf("%f\n", round_to_digits(1234.5678, -2));
+    return 0;
+}

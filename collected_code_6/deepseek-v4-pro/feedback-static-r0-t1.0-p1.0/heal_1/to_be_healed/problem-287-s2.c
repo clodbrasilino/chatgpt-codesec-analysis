@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+long long sum_of_squares_even(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: Input must be non-negative\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        int even_num = 2 * i;
+        long long square = (long long)even_num * even_num;
+        /* Possible weaknesses found:
+         *  'LLONG_MAX' undeclared (first use in this function)
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  use of undeclared identifier 'LLONG_MAX'
+         */
+        if (square < 0 || sum > LLONG_MAX - square) {
+            fprintf(stderr, "Error: Integer overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        sum += square;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_of_squares_even(n);
+    printf("Sum of squares of first %d even natural numbers: %lld\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

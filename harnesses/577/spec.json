@@ -1,0 +1,44 @@
+{
+  "task_id": 577,
+  "text": "Write a C function to find the last digit in factorial of a given number.",
+  "fn_candidates": [
+    "last_Digit_Factorial",
+    "LastDigitFactorial",
+    "lastDigitFactorial",
+    "lastDigitFactorial"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "last_Digit_Factorial",
+      "args": [
+        4
+      ],
+      "expected": 4,
+      "assert_src": "assert last_Digit_Factorial(4) == 4"
+    },
+    {
+      "fn_name": "last_Digit_Factorial",
+      "args": [
+        21
+      ],
+      "expected": 0,
+      "assert_src": "assert last_Digit_Factorial(21) == 0"
+    },
+    {
+      "fn_name": "last_Digit_Factorial",
+      "args": [
+        30
+      ],
+      "expected": 0,
+      "assert_src": "assert last_Digit_Factorial(30) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

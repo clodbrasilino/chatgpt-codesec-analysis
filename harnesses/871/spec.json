@@ -1,0 +1,47 @@
+{
+  "task_id": 871,
+  "text": "Write a C function to check whether the given strings are rotations of each other or not.",
+  "fn_candidates": [
+    "are_Rotations",
+    "AreRotations",
+    "areRotations",
+    "areRotations"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "are_Rotations",
+      "args": [
+        "abc",
+        "cba"
+      ],
+      "expected": false,
+      "assert_src": "assert are_Rotations(\"abc\",\"cba\") == False"
+    },
+    {
+      "fn_name": "are_Rotations",
+      "args": [
+        "abcd",
+        "cdba"
+      ],
+      "expected": false,
+      "assert_src": "assert are_Rotations(\"abcd\",\"cdba\") == False"
+    },
+    {
+      "fn_name": "are_Rotations",
+      "args": [
+        "abacd",
+        "cdaba"
+      ],
+      "expected": true,
+      "assert_src": "assert are_Rotations(\"abacd\",\"cdaba\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

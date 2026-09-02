@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int sum_of_repeated_elements(int *arr, int size) {
+    int sum = 0;
+    int *visited = (int *)calloc(size, sizeof(int));
+    if (visited == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (visited[i] == 1) {
+            continue;
+        }
+        
+        int count = 1;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+                visited[j] = 1;
+            }
+        }
+        
+        if (count > 1) {
+            sum += arr[i];
+        }
+        visited[i] = 1;
+    }
+
+    free(visited);
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 5, 1, 6, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = sum_of_repeated_elements(arr, size);
+    printf("Sum of repeated elements: %d\n", result);
+    
+    return 0;
+}

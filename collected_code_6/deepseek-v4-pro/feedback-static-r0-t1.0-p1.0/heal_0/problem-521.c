@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int is_scalene(double side1, double side2, double side3) {
+    if (side1 <= 0 || side2 <= 0 || side3 <= 0) {
+        return 0;
+    }
+    if (side1 + side2 <= side3 || side1 + side3 <= side2 || side2 + side3 <= side1) {
+        return 0;
+    }
+    if (side1 != side2 && side2 != side3 && side1 != side3) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void) {
+    double a, b, c;
+    
+    printf("Enter three sides of a triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (is_scalene(a, b, c)) {
+        printf("The triangle is scalene\n");
+    } else {
+        printf("The triangle is not scalene\n");
+    }
+    
+    return 0;
+}

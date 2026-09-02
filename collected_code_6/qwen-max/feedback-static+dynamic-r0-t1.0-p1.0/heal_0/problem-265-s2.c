@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) return NULL;
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node* head) {
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node** splitList(Node* head, int n, int* count) {
+    *count = 0;
+    if (n <= 0 || head == NULL) return NULL;
+
+    Node** result = (Node**)malloc(sizeof(Node*));
+    if (result == NULL) return NULL;
+    *count = 1;
+    int i = 0;
+    
+    Node* current = head;
+    Node* prev = NULL;
+    while (current != NULL) {
+        if (i % n == 0 && i != 0) {
+            Node** temp = (Node**)realloc(result, (*count + 1) * sizeof(Node*));
+            if (temp == NULL) {
+                freeList(head);
+                free(result);
+                return NULL;
+            }
+            result = temp;
+            *count += 1;
+            prev->next = NULL;
+            prev = NULL;
+        }
+        if (prev == NULL) {
+            result[*count - 1] = current;
+        }
+        prev = current;
+        current = current->next;
+        i++;
+    }
+
+    return result;
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    int n = 2;
+    int count;
+    Node** lists = splitList(head, n, &count);
+
+    for (int i = 0; i < count; i++) {
+        Node* current = lists[i];
+        while (current != NULL) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < count; i++) {
+        freeList(lists[i]);
+    }
+    free(lists);
+
+    return 0;
+}

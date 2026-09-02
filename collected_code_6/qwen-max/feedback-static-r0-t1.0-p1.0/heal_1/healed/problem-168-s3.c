@@ -1,0 +1,20 @@
+#include <stdio.h>
+
+int findFrequency(const int arr[], int n, int x) {
+    int frequency = 0;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] == x) {
+            ++frequency;
+        }
+    }
+    return frequency;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 2, 2, 3, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 2;
+    int result = findFrequency(arr, n, x);
+    printf("Frequency of %d is: %d\n", x, result);
+    return 0;
+}

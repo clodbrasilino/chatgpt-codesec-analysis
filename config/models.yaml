@@ -1,0 +1,154 @@
+# Model registry for the FSE 2027 extension.
+# NOTE: exact model IDs must be re-verified and pinned at run time (record
+# retrieval dates for the paper's artifact). These are sensible initial pins.
+# api_key_env references an environment variable; keys never live in this file.
+models:
+  # ---- OpenAI (lineup verified 2026-08-31 via platform.openai.com/docs/models;
+  #      current flagships are GPT-5.6 Sol/Terra/Luna; gpt-4o and o3-mini are
+  #      deprecated. Reasoning is controlled by reasoning_effort: none..max.
+  #      NOTE: endpoint is region-blocked from mainland China — needs proxy.) ----
+  - id: openai-gpt56-sol
+    provider: openai
+    model_id: gpt-5.6-sol
+    api_key_env: OPENAI_API_KEY
+    reasoning: false
+    extra_body:
+      reasoning_effort: "none"
+  - id: openai-gpt56-sol-thinking
+    provider: openai
+    model_id: gpt-5.6-sol
+    api_key_env: OPENAI_API_KEY
+    reasoning: true
+    extra_body:
+      reasoning_effort: high
+    max_tokens: 16384
+
+  # ---- Anthropic (lineup verified 2026-08-31: current models are Fable 5 /
+  #      Opus 5 / Sonnet 5 / Opus 4.6-4.8 / Sonnet 4.5-4.6; the old
+  #      claude-sonnet-4-20250514 pin is outdated. Claude 4.6+ uses ADAPTIVE
+  #      thinking with effort levels instead of manual budget_tokens —
+  #      claude_adapter.py must be updated for the thinking variant when the
+  #      key arrives; verify exact params against the SDK of that date.) ----
+  - id: claude-sonnet-5
+    provider: anthropic
+    model_id: claude-sonnet-5
+    api_key_env: ANTHROPIC_API_KEY
+    reasoning: false
+  - id: claude-sonnet-5-thinking
+    provider: anthropic
+    model_id: claude-sonnet-5
+    api_key_env: ANTHROPIC_API_KEY
+    reasoning: true
+    max_tokens: 16384
+
+  # ---- Google Gemini (lineup verified 2026-08-31 via Firebase model docs.
+  #      Gemini 2.5 Pro shuts down 2026-10-16. The 3.x Pro line is only
+  #      available as preview: gemini-3.1-pro-preview (2026-02-19); stable
+  #      3.x exists only for Flash/Flash-Lite. Fallback alias to try if the
+  #      preview 404s: gemini-3-pro-latest. Verify via models.list at key
+  #      time.) ----
+  - id: gemini-3-pro
+    provider: gemini
+    model_id: gemini-3.1-pro-preview
+    api_key_env: GEMINI_API_KEY
+    reasoning: false
+  - id: gemini-3-pro-thinking
+    provider: gemini
+    model_id: gemini-3.1-pro-preview
+    api_key_env: GEMINI_API_KEY
+    reasoning: true
+    max_tokens: 16384
+
+  # ---- DeepSeek (V4 lineup; verified via GET /v1/models on 2026-08-31.
+  #      Legacy aliases deepseek-chat/deepseek-reasoner now resolve to
+  #      v4-flash; the flagship is deepseek-v4-pro, a hybrid reasoning model
+  #      whose thinking is disabled via the "thinking" extra body.) ----
+  - id: deepseek-v4-flash
+    provider: deepseek
+    model_id: deepseek-v4-flash
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com
+    reasoning: false
+  - id: deepseek-v4-pro
+    provider: deepseek
+    model_id: deepseek-v4-pro
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com
+    reasoning: false
+    extra_body:
+      thinking:
+        type: disabled
+  - id: deepseek-v4-pro-thinking
+    provider: deepseek
+    model_id: deepseek-v4-pro
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com
+    reasoning: true
+    # 16k so long reasoning chains don't exhaust the budget before content
+    # is emitted (empty-content responses raise + retry client-side).
+    max_tokens: 16384
+
+  # ---- Qwen (DashScope compatible-mode) ----
+  - id: qwen-max
+    provider: dashscope
+    model_id: qwen-max
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    reasoning: false
+  - id: qwq-plus
+    provider: dashscope
+    model_id: qwq-plus
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    reasoning: true
+    max_tokens: 8192
+
+  # ---- Kimi (Moonshot) (lineup verified 2026-08-31 via platform.moonshot.cn:
+  #      the ENTIRE kimi-k2 series incl. kimi-k2-0711-preview and
+  #      kimi-k2-thinking was retired 2026-05-25. Current flagship is kimi-k3
+  #      (1M ctx); kimi-k2.6 is the general K2-family model (thinking
+  #      toggleable), kimi-k2.7-code always thinks. Thinking-toggle mechanism
+  #      for k3 (extra_body thinking.type) needs verification at key time.) ----
+  - id: kimi-k3
+    provider: moonshot
+    model_id: kimi-k3
+    api_key_env: MOONSHOT_API_KEY
+    base_url: https://api.moonshot.cn/v1
+    reasoning: false
+    extra_body:
+      thinking:
+        type: disabled
+  - id: kimi-k3-thinking
+    provider: moonshot
+    model_id: kimi-k3
+    api_key_env: MOONSHOT_API_KEY
+    base_url: https://api.moonshot.cn/v1
+    reasoning: true
+    extra_body:
+      thinking:
+        type: enabled
+    max_tokens: 16384
+
+  # ---- GLM (Zhipu) (lineup verified 2026-08-31: current flagships are
+  #      glm-5.1 (2026-04-07, 203K ctx, 128K out) and glm-5 (2026-02-11);
+  #      glm-4.6 is mid-tier now. GLM-4.5+ used the thinking.type toggle,
+  #      expected to carry over to GLM-5.x — verify at key time.) ----
+  - id: glm-5.1
+    provider: zhipu
+    model_id: glm-5.1
+    api_key_env: ZHIPU_API_KEY
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    reasoning: false
+    extra_body:
+      thinking:
+        type: disabled
+  - id: glm-5.1-thinking
+    provider: zhipu
+    model_id: glm-5.1
+    api_key_env: ZHIPU_API_KEY
+    base_url: https://open.bigmodel.cn/api/paas/v4
+    reasoning: true
+    extra_body:
+      thinking:
+        type: enabled
+    max_tokens: 16384

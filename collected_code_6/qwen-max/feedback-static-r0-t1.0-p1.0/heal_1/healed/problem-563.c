@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char* extract_quoted_value(const char *input, size_t *output_len) {
+    if (input == NULL || output_len == NULL) return NULL;
+    const char *start = strchr(input, '\"');
+    if (start == NULL) return NULL;
+    start++;
+    const char *end = strchr(start, '\"');
+    if (end == NULL) return NULL;
+    *output_len = end - start;
+    char *result = (char *)malloc(*output_len + 1);
+    if (result == NULL) return NULL;
+    memcpy(result, start, *output_len);
+    result[*output_len] = '\0';
+    return result;
+}
+
+int main() {
+    const char input[] = "This is a \"test string\" with some values";
+    size_t len;
+    char *result = extract_quoted_value(input, &len);
+    if (result != NULL) {
+        printf("%.*s\n", (int)len, result);
+        free(result);
+    }
+    return 0;
+}

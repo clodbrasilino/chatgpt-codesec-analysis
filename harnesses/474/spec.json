@@ -1,0 +1,50 @@
+{
+  "task_id": 474,
+  "text": "Write a C function to replace characters in a string.",
+  "fn_candidates": [
+    "replace_char",
+    "ReplaceChar",
+    "replaceChar",
+    "replacechar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "replace_char",
+      "args": [
+        "polygon",
+        "y",
+        "l"
+      ],
+      "expected": "pollgon",
+      "assert_src": "assert replace_char(\"polygon\",'y','l')==(\"pollgon\")"
+    },
+    {
+      "fn_name": "replace_char",
+      "args": [
+        "character",
+        "c",
+        "a"
+      ],
+      "expected": "aharaater",
+      "assert_src": "assert replace_char(\"character\",'c','a')==(\"aharaater\")"
+    },
+    {
+      "fn_name": "replace_char",
+      "args": [
+        "python",
+        "l",
+        "a"
+      ],
+      "expected": "python",
+      "assert_src": "assert replace_char(\"python\",'l','a')==(\"python\")"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

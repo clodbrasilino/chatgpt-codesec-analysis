@@ -1,0 +1,44 @@
+{
+  "task_id": 762,
+  "text": "Write a C function to check whether the given month number contains 30 days or not.",
+  "fn_candidates": [
+    "check_monthnumber_number",
+    "CheckMonthnumberNumber",
+    "checkMonthnumberNumber",
+    "checkmonthnumbernumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_monthnumber_number",
+      "args": [
+        6
+      ],
+      "expected": true,
+      "assert_src": "assert check_monthnumber_number(6)==True"
+    },
+    {
+      "fn_name": "check_monthnumber_number",
+      "args": [
+        2
+      ],
+      "expected": false,
+      "assert_src": "assert check_monthnumber_number(2)==False"
+    },
+    {
+      "fn_name": "check_monthnumber_number",
+      "args": [
+        12
+      ],
+      "expected": false,
+      "assert_src": "assert check_monthnumber_number(12)==False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

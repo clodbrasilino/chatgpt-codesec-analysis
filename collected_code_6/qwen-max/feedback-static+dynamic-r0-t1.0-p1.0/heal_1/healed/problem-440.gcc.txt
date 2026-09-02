@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-440.c: In function 'find_adverbs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-440.c:28:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   28 |     free(temp_sentence);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-440.c:5:1: note: include '<stdlib.h>' or provide a declaration of 'free'
+    4 | #include <ctype.h>
+  +++ |+#include <stdlib.h>
+    5 | 

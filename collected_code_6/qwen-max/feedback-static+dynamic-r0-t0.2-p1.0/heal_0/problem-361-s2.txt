@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    size_t size;
+    struct List *next;
+} List;
+
+List* create_list(size_t size) {
+    List *new_list = (List *)malloc(sizeof(List));
+    if (!new_list) return NULL;
+    new_list->data = (int *)malloc(size * sizeof(int));
+    if (!new_list->data) {
+        free(new_list);
+        return NULL;
+    }
+    new_list->size = size;
+    new_list->next = NULL;
+    return new_list;
+}
+
+void append_to_list(List **head, List *new_list) {
+    if (*head == NULL) {
+        *head = new_list;
+    } else {
+        List *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_list;
+    }
+}
+
+List* remove_empty_lists(List *head) {
+    List *current = head;
+    List *prev = NULL;
+    while (current != NULL) {
+        if (current->size == 0) {
+            if (prev == NULL) {
+                head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            free(current->data);
+            free(current);
+            current = prev ? prev->next : head;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+void print_list_of_lists(List *head) {
+    while (head != NULL) {
+        printf("[");
+        for (size_t i = 0; i < head->size; ++i) {
+            printf("%d", head->data[i]);
+            if (i < head->size - 1) printf(", ");
+        }
+        printf("]");
+        if (head->next) printf(" -> ");
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    List *list1 = create_list(0);
+    List *list2 = create_list(3);
+    list2->data[0] = 1;
+    list2->data[1] = 2;
+    list2->data[2] = 3;
+    List *list3 = create_list(0);
+    List *list4 = create_list(2);
+    list4->data[0] = 4;
+    list4->data[1] = 5;
+
+    List *head = NULL;
+    append_to_list(&head, list1);
+    append_to_list(&head, list2);
+    append_to_list(&head, list3);
+    append_to_list(&head, list4);
+
+    printf("Original list of lists: ");
+    print_list_of_lists(head);
+
+    head = remove_empty_lists(head);
+
+    printf("List of lists after removing empty lists: ");
+    print_list_of_lists(head);
+
+    while (head != NULL) {
+        List *temp = head;
+        head = head->next;
+        free(temp->data);
+        free(temp);
+    }
+
+    return 0;
+}
+```

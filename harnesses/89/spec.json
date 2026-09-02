@@ -1,0 +1,44 @@
+{
+  "task_id": 89,
+  "text": "Write a C function to find the closest smaller number than n.",
+  "fn_candidates": [
+    "closest_num",
+    "ClosestNum",
+    "closestNum",
+    "closestnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "closest_num",
+      "args": [
+        11
+      ],
+      "expected": 10,
+      "assert_src": "assert closest_num(11) == 10"
+    },
+    {
+      "fn_name": "closest_num",
+      "args": [
+        7
+      ],
+      "expected": 6,
+      "assert_src": "assert closest_num(7) == 6"
+    },
+    {
+      "fn_name": "closest_num",
+      "args": [
+        12
+      ],
+      "expected": 11,
+      "assert_src": "assert closest_num(12) == 11"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+bool are_elements_unique(Node *head) {
+    if (head == NULL) {
+        return true;
+    }
+    
+    Node *current = head;
+    while (current != NULL && current->next != NULL) {
+        Node *runner = current->next;
+        while (runner != NULL) {
+            if (current->data == runner->data) {
+                return false;
+            }
+            runner = runner->next;
+        }
+        current = current->next;
+    }
+    return true;
+}
+
+Node *create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (new_node == NULL) {
+        return;
+    }
+    
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    
+    Node *temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = new_node;
+}
+
+void free_list(Node *head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *list1 = NULL;
+    append_node(&list1, 1);
+    append_node(&list1, 2);
+    append_node(&list1, 3);
+    append_node(&list1, 4);
+    append_node(&list1, 5);
+    
+    Node *list2 = NULL;
+    append_node(&list2, 1);
+    append_node(&list2, 2);
+    append_node(&list2, 3);
+    append_node(&list2, 2);
+    append_node(&list2, 5);
+    
+    Node *list3 = NULL;
+    
+    printf("List 1 unique: %s\n", are_elements_unique(list1) ? "true" : "false");
+    printf("List 2 unique: %s\n", are_elements_unique(list2) ? "true" : "false");
+    /* Possible weaknesses found:
+     *  Calling function 'are_elements_unique' returns 1
+     *  Condition 'are_elements_unique(list3)' is always true
+     *  Condition 'are_elements_unique(list3)' is always true [knownConditionTrueFalse]
+     */
+    printf("List 3 unique: %s\n", are_elements_unique(list3) ? "true" : "false");
+    
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+    
+    return 0;
+}

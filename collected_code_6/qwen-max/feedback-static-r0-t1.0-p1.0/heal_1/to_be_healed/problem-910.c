@@ -1,0 +1,41 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool isLeapYear(int year) {
+    return (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+}
+
+bool isValidDate(int day, int month, int year) {
+    if (year < 1582) {
+        return false;
+    }
+    if (month < 1 || month > 12) {
+        return false;
+    }
+    if (day < 1) {
+        return false;
+    }
+    /* Possible weaknesses found:
+     *  Variable 'daysInMonth' can be declared as const array [constVariable]
+     */
+    int daysInMonth[] = {31, 28 + isLeapYear(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    return day <= daysInMonth[month - 1];
+}
+
+int main() {
+    int day, month, year;
+    printf("Enter day: ");
+    if (scanf("%d", &day) != 1) return 1;
+    printf("Enter month: ");
+    if (scanf("%d", &month) != 1) return 1;
+    printf("Enter year: ");
+    if (scanf("%d", &year) != 1) return 1;
+
+    if (isValidDate(day, month, year)) {
+        printf("Valid date\n");
+    } else {
+        printf("Invalid date\n");
+    }
+
+    return 0;
+}

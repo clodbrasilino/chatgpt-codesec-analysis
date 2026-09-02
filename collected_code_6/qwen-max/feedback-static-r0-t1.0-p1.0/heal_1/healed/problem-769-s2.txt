@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node **list, int value) {
+    Node *new_node = create_node(value);
+    if (*list == NULL) {
+        *list = new_node;
+    } else {
+        Node *current = *list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+Node* list_difference(Node *list1, Node *list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *current1 = list1;
+
+    while (current1 != NULL) {
+        int found = 0;
+        Node *current2 = list2;
+        for (; current2 != NULL; current2 = current2->next) {
+            if (current1->value == current2->value) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            append(&head, current1->value);
+        }
+        current1 = current1->next;
+    }
+
+    return head;
+}
+
+void print_list(Node *list) {
+    Node *current = list;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void free_list(Node *list) {
+    Node *current = list;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
+
+    append(&list2, 3);
+    append(&list2, 4);
+    append(&list2, 5);
+    append(&list2, 6);
+
+    Node *diff = list_difference(list1, list2);
+
+    print_list(diff);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(diff);
+
+    return 0;
+}
+```

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+char findFirstNonRepeatedChar(const char *str) {
+    int count[CHAR_MAX + 1] = {0};
+    int index[CHAR_MAX + 1] = {0};
+    int minIdx = INT_MAX;
+
+    for (int i = 0; str[i]; ++i) {
+        if (count[(unsigned char)str[i]] == 0) {
+            index[(unsigned char)str[i]] = i;
+        }
+        count[(unsigned char)str[i]]++;
+    }
+
+    for (int i = 0; i <= CHAR_MAX; ++i) {
+        if (count[i] == 1 && index[i] != 0 && index[i] < minIdx) {
+            minIdx = index[i];
+        }
+    }
+
+    return minIdx == INT_MAX ? '\0' : str[minIdx];
+}
+
+int main() {
+    const char *str = "programming";
+    char result = findFirstNonRepeatedChar(str);
+    if (result != '\0') {
+        printf("First non-repeated character: %c\n", result);
+    } else {
+        printf("No non-repeated character found.\n");
+    }
+    return 0;
+}
+```

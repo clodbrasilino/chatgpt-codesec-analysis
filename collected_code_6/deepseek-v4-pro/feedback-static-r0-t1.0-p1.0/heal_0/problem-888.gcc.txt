@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-888.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-888.c:64:29: error: initialization of 'Tuple *' from incompatible pointer type 'Tuple **' [-Wincompatible-pointer-types]
+   64 |     Tuple *empty_children = (Tuple **)malloc(1 * sizeof(Tuple *));
+      |                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-888.c:65:25: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   65 |     empty_children[0] = leaf3;
+      |                         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-888.c:66:38: error: passing argument 2 of 'create_tuple' from incompatible pointer type [-Wincompatible-pointer-types]
+   66 |     Tuple *single = create_tuple(50, empty_children, 1);
+      |                                      ^~~~~~~~~~~~~~
+      |                                      |
+      |                                      Tuple *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-888.c:10:40: note: expected 'Tuple **' but argument is of type 'Tuple *'
+   10 | Tuple *create_tuple(int value, Tuple **children, int child_count) {
+      |                                ~~~~~~~~^~~~~~~~

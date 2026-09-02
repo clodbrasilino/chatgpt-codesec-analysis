@@ -1,0 +1,85 @@
+{
+  "task_id": 825,
+  "text": "Write a C function to access multiple elements of specified index from a given list.",
+  "fn_candidates": [
+    "access_elements",
+    "AccessElements",
+    "accessElements",
+    "accesselements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "access_elements",
+      "args": [
+        [
+          2,
+          3,
+          8,
+          4,
+          7,
+          9
+        ],
+        [
+          0,
+          3,
+          5
+        ]
+      ],
+      "expected": [
+        2,
+        4,
+        9
+      ],
+      "assert_src": "assert access_elements([2,3,8,4,7,9],[0,3,5]) == [2, 4, 9]"
+    },
+    {
+      "fn_name": "access_elements",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        [
+          1,
+          2
+        ]
+      ],
+      "expected": [
+        2,
+        3
+      ],
+      "assert_src": "assert access_elements([1, 2, 3, 4, 5],[1,2]) == [2,3]"
+    },
+    {
+      "fn_name": "access_elements",
+      "args": [
+        [
+          1,
+          0,
+          2,
+          3
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        1,
+        0
+      ],
+      "assert_src": "assert access_elements([1,0,2,3],[0,1]) == [1,0]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

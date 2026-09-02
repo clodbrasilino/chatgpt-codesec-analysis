@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int remove_two_duplicates(int *arr, int size, int target) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            count++;
+            if (count > 2) {
+                for (int j = i; j < size - 1; j++) {
+                    arr[j] = arr[j + 1];
+                }
+                size--;
+                i--;
+            }
+        }
+    }
+    return size;
+}
+
+int main() {
+    int num_lists = 0;
+    printf("Enter the number of lists: ");
+    scanf("%d", &num_lists);
+
+    for (int i = 0; i < num_lists; i++) {
+        int n = 0;
+        printf("Enter the number of elements in list %d: ", i + 1);
+        scanf("%d", &n);
+
+        int *list = (int *)malloc(n * sizeof(int));
+        if (list == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(1);
+        }
+
+        printf("Enter the elements of list %d: ", i + 1);
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &list[j]);
+        }
+
+        qsort(list, n, sizeof(int), compare_ints);
+
+        int new_size = n;
+        for (int j = 0; j < n; j++) {
+            if (j == 0 || (j > 0 && list[j] != list[j - 1])) {
+                new_size = remove_two_duplicates(&list[j], n - j, list[j]);
+            }
+        }
+
+        printf("List after removing duplicates: ");
+        for (int j = 0; j < new_size; j++) {
+            printf("%d ", list[j]);
+        }
+        printf("\n");
+
+        free(list);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-272-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-272-s3.c:192:10: style: Variable 'rear1' can be declared as pointer to const [constVariablePointer]
+    int *rear1 = (int *)extract_rear_element(list, 0);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-272-s3.c:193:10: style: Variable 'rear2' can be declared as pointer to const [constVariablePointer]
+    int *rear2 = (int *)extract_rear_element(list, 1);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-272-s3.c:194:10: style: Variable 'rear3' can be declared as pointer to const [constVariablePointer]
+    int *rear3 = (int *)extract_rear_element(list, 2);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-272-s3.c:195:10: style: Variable 'rear_invalid' can be declared as pointer to const [constVariablePointer]
+    int *rear_invalid = (int *)extract_rear_element(list, 3);
+         ^

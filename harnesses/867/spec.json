@@ -1,0 +1,71 @@
+{
+  "task_id": 867,
+  "text": "Write a C function to add a minimum number such that the sum of array becomes even.",
+  "fn_candidates": [
+    "min_Num",
+    "MinNum",
+    "minNum",
+    "minNum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_Num",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        9
+      ],
+      "expected": 1,
+      "assert_src": "assert min_Num([1,2,3,4,5,6,7,8,9],9) == 1"
+    },
+    {
+      "fn_name": "min_Num",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        8
+      ],
+      "expected": 2,
+      "assert_src": "assert min_Num([1,2,3,4,5,6,7,8],8) == 2"
+    },
+    {
+      "fn_name": "min_Num",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        3
+      ],
+      "expected": 2,
+      "assert_src": "assert min_Num([1,2,3],3) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

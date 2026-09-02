@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:41:10: error: Deallocation of a pointer pointing to a string literal ("python_program") results in undefined behaviour. [autovarInvalidDeallocation]
+    free(snake_case1);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:33:25: note: Assignment 'snake_case1="python_program"', assigned value is "python_program"
+    char *snake_case1 = "python_program";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:41:10: note: Deallocating memory that was not dynamically allocated
+    free(snake_case1);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:42:10: error: Deallocation of a pointer pointing to a string literal ("python_language") results in undefined behaviour. [autovarInvalidDeallocation]
+    free(snake_case2);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:34:25: note: Assignment 'snake_case2="python_language"', assigned value is "python_language"
+    char *snake_case2 = "python_language";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:42:10: note: Deallocating memory that was not dynamically allocated
+    free(snake_case2);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:43:10: error: Deallocation of a pointer pointing to a string literal ("programming_language") results in undefined behaviour. [autovarInvalidDeallocation]
+    free(snake_case3);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:35:25: note: Assignment 'snake_case3="programming_language"', assigned value is "programming_language"
+    char *snake_case3 = "programming_language";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-102-s3.c:43:10: note: Deallocating memory that was not dynamically allocated
+    free(snake_case3);
+         ^

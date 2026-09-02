@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double geometric_sum(int n) {
+    if (n < 1) {
+        return 0.0;
+    }
+    if (n == 1) {
+        return 1.0;
+    }
+    return 1.0 + geometric_sum(n - 1) / 2.0;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 1) {
+        fprintf(stderr, "n must be at least 1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Geometric sum: %.10f\n", geometric_sum(n));
+    return EXIT_SUCCESS;
+}

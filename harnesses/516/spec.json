@@ -1,0 +1,82 @@
+{
+  "task_id": 516,
+  "text": "Write a C function to sort a list of elements using radix sort.",
+  "fn_candidates": [
+    "radix_sort",
+    "RadixSort",
+    "radixSort",
+    "radixsort"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "radix_sort",
+      "args": [
+        [
+          15,
+          79,
+          25,
+          68,
+          37
+        ]
+      ],
+      "expected": [
+        15,
+        25,
+        37,
+        68,
+        79
+      ],
+      "assert_src": "assert radix_sort([15, 79, 25, 68, 37]) == [15, 25, 37, 68, 79]"
+    },
+    {
+      "fn_name": "radix_sort",
+      "args": [
+        [
+          9,
+          11,
+          8,
+          7,
+          3,
+          2
+        ]
+      ],
+      "expected": [
+        2,
+        3,
+        7,
+        8,
+        9,
+        11
+      ],
+      "assert_src": "assert radix_sort([9, 11, 8, 7, 3, 2]) == [2, 3, 7, 8, 9, 11]"
+    },
+    {
+      "fn_name": "radix_sort",
+      "args": [
+        [
+          36,
+          12,
+          24,
+          26,
+          29
+        ]
+      ],
+      "expected": [
+        12,
+        24,
+        26,
+        29,
+        36
+      ],
+      "assert_src": "assert radix_sort([36, 12, 24, 26, 29]) == [12, 24, 26, 29, 36]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

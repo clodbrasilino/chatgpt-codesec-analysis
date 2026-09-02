@@ -1,0 +1,64 @@
+{
+  "task_id": 514,
+  "text": "Write a C function to find the summation of tuple elements in the given tuple list.",
+  "fn_candidates": [
+    "sum_elements",
+    "SumElements",
+    "sumElements",
+    "sumelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_elements",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          1,
+          10,
+          7
+        ]
+      ],
+      "expected": 42,
+      "assert_src": "assert sum_elements((7, 8, 9, 1, 10, 7)) == 42"
+    },
+    {
+      "fn_name": "sum_elements",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": 21,
+      "assert_src": "assert sum_elements((1, 2, 3, 4, 5, 6)) == 21"
+    },
+    {
+      "fn_name": "sum_elements",
+      "args": [
+        [
+          11,
+          12,
+          13,
+          45,
+          14
+        ]
+      ],
+      "expected": 95,
+      "assert_src": "assert sum_elements((11, 12 ,13 ,45, 14)) == 95"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

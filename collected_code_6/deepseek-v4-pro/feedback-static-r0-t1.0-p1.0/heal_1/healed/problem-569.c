@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void sort_strings(char **arr, int n) {
+    int i, j;
+    char *temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = 0; j < n - i - 1; j++) {
+            if (strcmp(arr[j], arr[j + 1]) > 0) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void sort_sublists(char ***list, const int *sizes, int num_lists) {
+    int i;
+    if (list == NULL || sizes == NULL) {
+        fprintf(stderr, "Invalid input\n");
+        return;
+    }
+    for (i = 0; i < num_lists; i++) {
+        if (list[i] == NULL) {
+            fprintf(stderr, "Sublist %d is NULL\n", i);
+            continue;
+        }
+        if (sizes[i] < 0) {
+            fprintf(stderr, "Invalid size at index %d\n", i);
+            continue;
+        }
+        sort_strings(list[i], sizes[i]);
+    }
+}
+
+int main(void) {
+    char *list1[] = {"banana", "apple", "cherry"};
+    char *list2[] = {"dog", "cat", "elephant", "ant"};
+    char *list3[] = {"zebra", "monkey", "lion"};
+    
+    char **lists[] = {list1, list2, list3};
+    int sizes[] = {3, 4, 3};
+    int num_lists = 3;
+    int i, j;
+    
+    sort_sublists(lists, sizes, num_lists);
+    
+    for (i = 0; i < num_lists; i++) {
+        printf("List %d: ", i + 1);
+        for (j = 0; j < sizes[i]; j++) {
+            printf("%s", lists[i][j]);
+            if (j < sizes[i] - 1) {
+                printf(", ");
+            }
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

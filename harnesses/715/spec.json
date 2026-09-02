@@ -1,0 +1,63 @@
+{
+  "task_id": 715,
+  "text": "Write a C function to convert the given string of integers into a tuple.",
+  "fn_candidates": [
+    "str_to_tuple",
+    "StrToTuple",
+    "strToTuple",
+    "strtotuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "str_to_tuple",
+      "args": [
+        "1, -5, 4, 6, 7"
+      ],
+      "expected": [
+        1,
+        -5,
+        4,
+        6,
+        7
+      ],
+      "assert_src": "assert str_to_tuple(\"1, -5, 4, 6, 7\") == (1, -5, 4, 6, 7)"
+    },
+    {
+      "fn_name": "str_to_tuple",
+      "args": [
+        "1, 2, 3, 4, 5"
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "assert_src": "assert str_to_tuple(\"1, 2, 3, 4, 5\") == (1, 2, 3, 4, 5)"
+    },
+    {
+      "fn_name": "str_to_tuple",
+      "args": [
+        "4, 6, 9, 11, 13, 14"
+      ],
+      "expected": [
+        4,
+        6,
+        9,
+        11,
+        13,
+        14
+      ],
+      "assert_src": "assert str_to_tuple(\"4, 6, 9, 11, 13, 14\") == (4, 6, 9, 11, 13, 14)"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

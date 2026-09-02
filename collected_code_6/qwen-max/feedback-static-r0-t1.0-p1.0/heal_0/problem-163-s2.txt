@@ -1,0 +1,16 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_area(int n, double side) {
+    return (n * pow(side, 2)) / (4.0 * tan(M_PI / n));
+}
+
+int main() {
+    int n_sides = 5;
+    double side_length = 5.0;
+    double area = calculate_area(n_sides, side_length);
+    printf("The area of the regular polygon is: %f\n", area);
+    return 0;
+}
+```

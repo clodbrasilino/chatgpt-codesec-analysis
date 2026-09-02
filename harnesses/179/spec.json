@@ -1,0 +1,44 @@
+{
+  "task_id": 179,
+  "text": "Write a C function to find if the given number is a keith number or not.",
+  "fn_candidates": [
+    "is_num_keith",
+    "IsNumKeith",
+    "isNumKeith",
+    "isnumkeith"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_num_keith",
+      "args": [
+        14
+      ],
+      "expected": true,
+      "assert_src": "assert is_num_keith(14) == True"
+    },
+    {
+      "fn_name": "is_num_keith",
+      "args": [
+        12
+      ],
+      "expected": false,
+      "assert_src": "assert is_num_keith(12) == False"
+    },
+    {
+      "fn_name": "is_num_keith",
+      "args": [
+        197
+      ],
+      "expected": true,
+      "assert_src": "assert is_num_keith(197) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

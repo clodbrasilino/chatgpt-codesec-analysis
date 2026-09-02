@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'digits' can be declared as pointer to const [constParameterPointer]
+ */
+int countSubstringsWithSum(int *digits, int len) {
+    int count = 0;
+    for (int i = 0; i < len; i++) {
+        int sum = 0;
+        for (int j = i; j < len; j++) {
+            sum += digits[j];
+            if (sum == (j - i + 1)) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    char input[1024];
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = 0;
+
+    int len = strlen(input);
+    int *digits = (int *)malloc(len * sizeof(int));
+    if (digits == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < len; i++) {
+        digits[i] = input[i] - '0';
+    }
+
+    int result = countSubstringsWithSum(digits, len);
+    printf("%d\n", result);
+
+    free(digits);
+    return 0;
+}

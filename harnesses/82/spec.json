@@ -1,0 +1,44 @@
+{
+  "task_id": 82,
+  "text": "Write a C function to find the volume of a sphere.",
+  "fn_candidates": [
+    "volume_sphere",
+    "VolumeSphere",
+    "volumeSphere",
+    "volumesphere"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "volume_sphere",
+      "args": [
+        10
+      ],
+      "expected": 4188.790204786391,
+      "assert_src": "assert volume_sphere(10)==4188.790204786391"
+    },
+    {
+      "fn_name": "volume_sphere",
+      "args": [
+        25
+      ],
+      "expected": 65449.84694978735,
+      "assert_src": "assert volume_sphere(25)==65449.84694978735"
+    },
+    {
+      "fn_name": "volume_sphere",
+      "args": [
+        20
+      ],
+      "expected": 33510.32163829113,
+      "assert_src": "assert volume_sphere(20)==33510.32163829113"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

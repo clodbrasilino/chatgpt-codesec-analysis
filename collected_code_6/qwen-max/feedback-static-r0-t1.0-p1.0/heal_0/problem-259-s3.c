@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stddef.h>
+
+void maximize_tuples(int *a, int *b, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        if (*a < *b) {
+            *a = *b;
+        }
+        a++;
+        b++;
+    }
+}
+
+int main() {
+    int tuple1[3] = {1, 2, 3};
+    int tuple2[3] = {4, 5, 6};
+
+    maximize_tuples(tuple1, tuple2, 3);
+
+    for (size_t i = 0; i < 3; ++i) {
+        printf("%d ", tuple1[i]);
+    }
+
+    return 0;
+}

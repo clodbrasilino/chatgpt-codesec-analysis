@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+void insertNode(List *list, int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = newNode;
+        list->tail = newNode;
+    } else {
+        list->tail->next = newNode;
+        list->tail = newNode;
+    }
+}
+
+void reverseList(List *list) {
+    Node *prev = NULL;
+    Node *current = list->head;
+    Node *next = NULL;
+
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+
+    list->tail = list->head;
+    list->head = prev;
+}
+
+void printList(const List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    Node *temp;
+
+    while (current != NULL) {
+        temp = current->next;
+        free(current);
+        current = temp;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+}
+
+void reverseEachListInList(List *listOfLists) {
+    Node *current = listOfLists->head;
+    while (current != NULL) {
+        List *subList = (List *)current->data;
+        reverseList(subList);
+        current = current->next;
+    }
+}
+
+int main() {
+    List list1 = {NULL, NULL};
+    List list2 = {NULL, NULL};
+
+    insertNode(&list1, 1); insertNode(&list1, 2); insertNode(&list1, 3);
+    insertNode(&list2, 4); insertNode(&list2, 5); insertNode(&list2, 6);
+
+    List listOfLists = {NULL, NULL};
+    insertNode(&listOfLists, (int)&list1);
+    insertNode(&listOfLists, (int)&list2);
+
+    printf("Before reversing:\n");
+    printList(&list1);
+    printList(&list2);
+
+    reverseEachListInList(&listOfLists);
+
+    printf("After reversing:\n");
+    printList(&list1);
+    printList(&list2);
+
+    freeList(&list1);
+    freeList(&list2);
+    freeList(&listOfLists);
+
+    return 0;
+}
+```

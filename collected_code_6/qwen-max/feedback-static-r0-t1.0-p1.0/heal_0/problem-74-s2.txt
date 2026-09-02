@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkSequence(const int *arr, const int *pattern, size_t arrLen, size_t patternLen) {
+    for (size_t i = 0; i <= arrLen - patternLen; ++i) {
+        bool match = true;
+        for (size_t j = 0; j < patternLen; ++j) {
+            if (arr[i + j] != pattern[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 3, 2, 4};
+    int pattern[] = {3, 2, 4};
+    size_t arrLen = sizeof(arr) / sizeof(arr[0]);
+    size_t patternLen = sizeof(pattern) / sizeof(pattern[0]);
+
+    if (checkSequence(arr, pattern, arrLen, patternLen)) {
+        printf("Pattern found\n");
+    } else {
+        printf("Pattern not found\n");
+    }
+
+    return 0;
+}
+```

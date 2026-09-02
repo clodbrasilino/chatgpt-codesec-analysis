@@ -1,0 +1,75 @@
+{
+  "task_id": 858,
+  "text": "Write a C function to count number of lists in a given list of lists and square the count.",
+  "fn_candidates": [
+    "count_list",
+    "CountList",
+    "countList",
+    "countlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_list",
+      "args": [
+        [
+          [
+            0
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            13,
+            15,
+            17
+          ]
+        ]
+      ],
+      "expected": 25,
+      "assert_src": "assert count_list([[0], [1, 3], [5, 7], [9, 11], [13, 15, 17]])==25"
+    },
+    {
+      "fn_name": "count_list",
+      "args": [
+        [
+          [
+            1,
+            3
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            9,
+            11
+          ],
+          [
+            13,
+            15,
+            17
+          ]
+        ]
+      ],
+      "expected": 16,
+      "assert_src": "assert count_list([[1, 3], [5, 7], [9, 11], [13, 15, 17]] )==16"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int match_pattern(const char *str) {
+    size_t len;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    len = strlen(str);
+    
+    if (len < 2) {
+        return 0;
+    }
+    
+    if (str[0] != 'a') {
+        return 0;
+    }
+    
+    if (str[len - 1] != 'b') {
+        return 0;
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    const char *test1 = "acb";
+    const char *test2 = "ab";
+    const char *test3 = "a12345b";
+    const char *test4 = "axxx";
+    const char *test5 = "cb";
+    const char *test6 = "a";
+    const char *test7 = "b";
+    const char *test8 = NULL;
+    
+    printf("%d\n", match_pattern(test1));
+    printf("%d\n", match_pattern(test2));
+    printf("%d\n", match_pattern(test3));
+    printf("%d\n", match_pattern(test4));
+    printf("%d\n", match_pattern(test5));
+    printf("%d\n", match_pattern(test6));
+    printf("%d\n", match_pattern(test7));
+    printf("%d\n", match_pattern(test8));
+    
+    return 0;
+}
+```

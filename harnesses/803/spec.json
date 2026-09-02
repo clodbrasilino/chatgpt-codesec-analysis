@@ -1,0 +1,44 @@
+{
+  "task_id": 803,
+  "text": "Write a C function to check whether the given number is a perfect square or not.",
+  "fn_candidates": [
+    "is_Perfect_Square",
+    "IsPerfectSquare",
+    "isPerfectSquare",
+    "isPerfectSquare"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Perfect_Square",
+      "args": [
+        10
+      ],
+      "expected": false,
+      "assert_src": "assert is_Perfect_Square(10) == False"
+    },
+    {
+      "fn_name": "is_Perfect_Square",
+      "args": [
+        36
+      ],
+      "expected": true,
+      "assert_src": "assert is_Perfect_Square(36) == True"
+    },
+    {
+      "fn_name": "is_Perfect_Square",
+      "args": [
+        14
+      ],
+      "expected": false,
+      "assert_src": "assert is_Perfect_Square(14) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

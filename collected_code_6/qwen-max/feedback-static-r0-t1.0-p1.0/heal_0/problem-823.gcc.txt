@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-823.c: In function 'starts_with':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-823.c:9:30: error: expected ')' before 'prefix'
+    9 |     ret = regcomp(&regex, "^" prefix, REG_EXTENDED);
+      |                  ~           ^~~~~~~
+      |                              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-823.c:9:11: error: too few arguments to function 'regcomp'; expected 3, have 2
+    9 |     ret = regcomp(&regex, "^" prefix, REG_EXTENDED);
+      |           ^~~~~~~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/regex.h:89,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-823.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:212:9: note: declared here
+  212 | int     regcomp(regex_t * __restrict, const char * __restrict, int) __DARWIN_ALIAS(regcomp);
+      |         ^~~~~~~

@@ -2,19 +2,22 @@ import re
 import sys
 from tqdm import tqdm
 from os import listdir
-from os.path import isfile, join
+from os.path import isfile, join, exists
 
 
 def sanitize_llm_outputs_into_sources(path: str):
     filenames = get_files_from_folder(path)
-    progress = tqdm(filenames)
+    sanitizable_filenames = []
     for filename in filenames:
+        if filename.endswith(".txt") and not filename.endswith(".gcc.txt"):
+            sanitizable_filenames.append(filename)
+    for filename in tqdm(sanitizable_filenames, "Sanitizing outputs: "):
         file_content = ""
-        with open(path + "/" + filename, "r") as txt_file:
-            file_content = txt_file.read()
-        with open(path + "/" + filename[:-4] + ".c", "w") as source_file:
-            source_file.write(sanitize_llm_output(file_content))
-        progress.update()
+        if not exists(filename[:-3] + ".c"):
+            with open(path + "/" + filename, "r") as txt_file:
+                file_content = txt_file.read()
+            with open(path + "/" + filename[:-4] + ".c", "w") as source_file:
+                source_file.write(sanitize_llm_output(file_content))
 
 
 def get_files_from_folder(search_path) -> list:
@@ -23,7 +26,7 @@ def get_files_from_folder(search_path) -> list:
 
 def sanitize_llm_output(input: str) -> str:
     output = input
-    output = re.sub("[\\s\\S]*```[cC]\\n", "", output)
+    output = re.sub("[\\s\\S]*```[cC].*\\n", "", output)
     output = re.sub("\\n```[\\s\\S]*", "", output)
     return output
 

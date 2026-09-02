@@ -1,0 +1,34 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:58:22: style: Condition 'out_size!=NULL' is always true [knownConditionTrueFalse]
+        if (out_size != NULL) *out_size = 0;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:48:51: note: Assuming condition 'out_size==NULL' is false
+    if (records == NULL || count <= 0 || out_size == NULL) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:58:22: note: Condition 'out_size!=NULL' is always true
+        if (out_size != NULL) *out_size = 0;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:78:22: style: Condition 'out_size!=NULL' is always true [knownConditionTrueFalse]
+        if (out_size != NULL) *out_size = 0;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:48:51: note: Assuming condition 'out_size==NULL' is false
+    if (records == NULL || count <= 0 || out_size == NULL) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:55:32: note: Assuming condition is false
+    if (unique_records == NULL || freq == NULL) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:78:22: note: Condition 'out_size!=NULL' is always true
+        if (out_size != NULL) *out_size = 0;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:12:13: style: struct member 'RecordGroup::records' is never used. [unusedStructMember]
+    Record *records;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:13:9: style: struct member 'RecordGroup::count' is never used. [unusedStructMember]
+    int count;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:17:10: style: struct member 'OccurrenceList::occurrences' is never used. [unusedStructMember]
+    int *occurrences;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-237-s3.c:18:9: style: struct member 'OccurrenceList::size' is never used. [unusedStructMember]
+    int size;
+        ^

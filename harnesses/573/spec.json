@@ -1,0 +1,65 @@
+{
+  "task_id": 573,
+  "text": "Write a C function to calculate the product of the unique numbers of a given list.",
+  "fn_candidates": [
+    "unique_product",
+    "UniqueProduct",
+    "uniqueProduct",
+    "uniqueproduct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "unique_product",
+      "args": [
+        [
+          10,
+          20,
+          30,
+          40,
+          20,
+          50,
+          60,
+          40
+        ]
+      ],
+      "expected": 720000000,
+      "assert_src": "assert unique_product([10, 20, 30, 40, 20, 50, 60, 40]) ==  720000000"
+    },
+    {
+      "fn_name": "unique_product",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert unique_product([1, 2, 3, 1,]) == 6"
+    },
+    {
+      "fn_name": "unique_product",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          0,
+          1,
+          1
+        ]
+      ],
+      "expected": 0,
+      "assert_src": "assert unique_product([7, 8, 9, 0, 1, 1]) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

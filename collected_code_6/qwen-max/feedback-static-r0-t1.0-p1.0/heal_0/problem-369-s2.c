@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+double lateral_surface_area_cuboid(double length, double width, double height) {
+    return 2 * (length + width) * height;
+}
+
+int main() {
+    double length = 5.0;
+    double width = 3.0;
+    double height = 4.0;
+
+    double area = lateral_surface_area_cuboid(length, width, height);
+    printf("Lateral Surface Area: %.2f\n", area);
+
+    return 0;
+}

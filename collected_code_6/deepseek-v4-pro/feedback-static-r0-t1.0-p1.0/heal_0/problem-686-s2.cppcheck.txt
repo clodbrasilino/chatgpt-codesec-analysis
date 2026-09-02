@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-686-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-686-s2.c:24:9: style: The scope of the variable 'found' can be reduced. [variableScope]
+    int found;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-686-s2.c:13:28: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+void find_frequencies(int *arr, int size, Frequency **freq, int *freq_size) {
+                           ^

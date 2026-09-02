@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char *key;
+    void *value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node **buckets;
+    int size;
+} Dictionary;
+
+Dictionary *create_dictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->size = size;
+    dict->buckets = (Node **)calloc(size, sizeof(Node *));
+    return dict;
+}
+
+void free_node(Node *node) {
+    if (node == NULL) return;
+    free(node->key);
+    free_node(node->next);
+    free(node);
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) return;
+    for (int i = 0; i < dict->size; ++i) {
+        free_node(dict->buckets[i]);
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int dictionary_depth(Dictionary *dict, Node *node) {
+    if (node == NULL) return 0;
+    int max_depth = 0;
+    while (node != NULL) {
+        int current_depth = 1 + dictionary_depth(dict, node->next);
+        if (current_depth > max_depth) {
+            max_depth = current_depth;
+        }
+        node = node->next;
+    }
+    return max_depth;
+}
+
+int get_dictionary_depth(Dictionary *dict) {
+    if (dict == NULL) return 0;
+    int max_depth = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        int current_depth = dictionary_depth(dict, dict->buckets[i]);
+        if (current_depth > max_depth) {
+            max_depth = current_depth;
+        }
+    }
+    return max_depth;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(10);
+    Node *node1 = (Node *)malloc(sizeof(Node));
+    node1->key = strdup("key1");
+    node1->value = NULL;
+    node1->next = NULL;
+    
+    Node *node2 = (Node *)malloc(sizeof(Node));
+    node2->key = strdup("key2");
+    node2->value = NULL;
+    node2->next = node1;
+    
+    Node *node3 = (Node *)malloc(sizeof(Node));
+    node3->key = strdup("key3");
+    node3->value = NULL;
+    node3->next = node2;
+    
+    dict->buckets[0] = node3;
+    
+    int depth = get_dictionary_depth(dict);
+    printf("Depth: %d\n", depth);
+
+    free_dictionary(dict);
+    return 0;
+}

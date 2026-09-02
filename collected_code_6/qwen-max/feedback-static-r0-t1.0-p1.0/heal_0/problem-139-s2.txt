@@ -1,0 +1,15 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_circumference(double radius) {
+    return 2 * M_PI * radius;
+}
+
+int main() {
+    double radius = 5.0;
+    double circumference = calculate_circumference(radius);
+    printf("Circumference: %.2f\n", circumference);
+    return 0;
+}
+```

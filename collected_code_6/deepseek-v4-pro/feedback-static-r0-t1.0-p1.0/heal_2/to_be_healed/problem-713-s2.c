@@ -1,0 +1,256 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_TUPLE_SIZE 100
+#define MAX_STRING_LENGTH 50
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} ValueType;
+
+typedef union {
+    int int_val;
+    float float_val;
+    char string_val[MAX_STRING_LENGTH];
+} ValueData;
+
+typedef struct {
+    ValueType type;
+    ValueData data;
+} TupleValue;
+
+typedef struct {
+    TupleValue values[MAX_TUPLE_SIZE];
+    int size;
+} Tuple;
+
+bool is_valid_int(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+    
+    char *endptr;
+    long val = strtol(str, &endptr, 10);
+    
+    if (endptr == str || *endptr != '\0') return false;
+    if (val > 2147483647 || val < -2147483648) return false;
+    
+    return true;
+}
+
+bool is_valid_float(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+    
+    char *endptr;
+    strtod(str, &endptr);
+    
+    if (endptr == str || *endptr != '\0') return false;
+    
+    return true;
+}
+
+bool is_valid_string(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+    
+    size_t len = strlen(str);
+    if (len >= MAX_STRING_LENGTH) return false;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (!isprint((unsigned char)str[i])) return false;
+    }
+    
+    return true;
+}
+
+Tuple *create_tuple(int size) {
+    if (size <= 0 || size > MAX_TUPLE_SIZE) return NULL;
+    
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+    
+    tuple->size = size;
+    for (int i = 0; i < size; i++) {
+        tuple->values[i].type = TYPE_INT;
+        tuple->values[i].data.int_val = 0;
+    }
+    
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple);
+    }
+}
+
+bool set_tuple_value(Tuple *tuple, int index, ValueType type, const char *value) {
+    if (tuple == NULL || index < 0 || index >= tuple->size || value == NULL) return false;
+    
+    switch (type) {
+        case TYPE_INT:
+            if (!is_valid_int(value)) return false;
+            tuple->values[index].type = TYPE_INT;
+            tuple->values[index].data.int_val = atoi(value);
+            return true;
+            
+        case TYPE_FLOAT:
+            if (!is_valid_float(value)) return false;
+            tuple->values[index].type = TYPE_FLOAT;
+            tuple->values[index].data.float_val = atof(value);
+            return true;
+            
+        case TYPE_STRING:
+            if (!is_valid_string(value)) return false;
+            tuple->values[index].type = TYPE_STRING;
+            strncpy(tuple->values[index].data.string_val, value, MAX_STRING_LENGTH - 1);
+            tuple->values[index].data.string_val[MAX_STRING_LENGTH - 1] = '\0';
+            return true;
+            
+        default:
+            return false;
+    }
+}
+
+bool check_tuple_validity(const Tuple *tuple) {
+    if (tuple == NULL || tuple->size <= 0) return false;
+    
+    for (int i = 0; i < tuple->size; i++) {
+        switch (tuple->values[i].type) {
+            case TYPE_INT:
+                break;
+                
+            case TYPE_FLOAT:
+                break;
+                
+            case TYPE_STRING:
+                if (tuple->values[i].data.string_val[0] == '\0') {
+                    return false;
+                }
+                break;
+                
+            default:
+                return false;
+        }
+    }
+    
+    return true;
+}
+
+void print_tuple(const Tuple *tuple) {
+    if (tuple == NULL) {
+        printf("Invalid tuple\n");
+        return;
+    }
+    
+    printf("Tuple values: ");
+    for (int i = 0; i < tuple->size; i++) {
+        switch (tuple->values[i].type) {
+            case TYPE_INT:
+                printf("%d", tuple->values[i].data.int_val);
+                break;
+            case TYPE_FLOAT:
+                printf("%.2f", tuple->values[i].data.float_val);
+                break;
+            case TYPE_STRING:
+                printf("%s", tuple->values[i].data.string_val);
+                break;
+            default:
+                printf("unknown");
+                break;
+        }
+        
+        if (i < tuple->size - 1) printf(", ");
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Tuple *tuple1 = create_tuple(3);
+    if (tuple1 == NULL) {
+        printf("Failed to create tuple\n");
+        return 1;
+    }
+    
+    if (!set_tuple_value(tuple1, 0, TYPE_INT, "42")) {
+        printf("Failed to set value\n");
+        destroy_tuple(tuple1);
+        return 1;
+    }
+    
+    if (!set_tuple_value(tuple1, 1, TYPE_FLOAT, "3.14")) {
+        printf("Failed to set value\n");
+        destroy_tuple(tuple1);
+        return 1;
+    }
+    
+    if (!set_tuple_value(tuple1, 2, TYPE_STRING, "hello")) {
+        printf("Failed to set value\n");
+        destroy_tuple(tuple1);
+        return 1;
+    }
+    
+    print_tuple(tuple1);
+    
+    if (check_tuple_validity(tuple1)) {
+        printf("Tuple is valid\n");
+    } else {
+        printf("Tuple is invalid\n");
+    }
+    
+    destroy_tuple(tuple1);
+    
+    Tuple *tuple2 = create_tuple(2);
+    if (tuple2 == NULL) {
+        printf("Failed to create tuple\n");
+        return 1;
+    }
+    
+    if (!set_tuple_value(tuple2, 0, TYPE_INT, "invalid")) {
+        printf("Failed to set invalid int value\n");
+    }
+    
+    if (!set_tuple_value(tuple2, 1, TYPE_STRING, "")) {
+        printf("Failed to set empty string value\n");
+    }
+    
+    if (check_tuple_validity(tuple2)) {
+        printf("Tuple2 is valid\n");
+    } else {
+        printf("Tuple2 is invalid\n");
+    }
+    
+    destroy_tuple(tuple2);
+    
+    Tuple *tuple3 = create_tuple(1);
+    if (tuple3 == NULL) {
+        printf("Failed to create tuple\n");
+        return 1;
+    }
+    
+    if (!set_tuple_value(tuple3, 0, TYPE_FLOAT, "2.718")) {
+        printf("Failed to set float value\n");
+    }
+    
+    if (check_tuple_validity(tuple3)) {
+        printf("Tuple3 is valid\n");
+    } else {
+        printf("Tuple3 is invalid\n");
+    }
+    
+    destroy_tuple(tuple3);
+    
+    const Tuple *null_tuple = NULL;
+    /* Possible weaknesses found:
+     *  Condition '!check_tuple_validity(null_tuple)' is always true
+     *  Condition '!check_tuple_validity(null_tuple)' is always true [knownConditionTrueFalse]
+     *  Calling function 'check_tuple_validity' returns 0
+     */
+    if (!check_tuple_validity(null_tuple)) {
+        printf("NULL tuple is invalid as expected\n");
+    }
+    
+    return 0;
+}

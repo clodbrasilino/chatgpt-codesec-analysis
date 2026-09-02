@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+int64_t sum_xor_pairs(const int *arr, size_t n) {
+    int64_t sum = 0;
+    for (int bit = 0; bit < 32; bit++) {
+        int64_t count_ones = 0;
+        int64_t count_zeros = 0;
+        for (size_t i = 0; i < n; i++) {
+            if (arr[i] & (1 << bit)) {
+                count_ones++;
+            } else {
+                count_zeros++;
+            }
+        }
+        sum += (count_ones * count_zeros) * (1LL << bit);
+    }
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    printf("%lld\n", (long long)sum_xor_pairs(arr, n));
+    return 0;
+}
+```

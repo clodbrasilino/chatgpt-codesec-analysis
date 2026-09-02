@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_cubes(int *arr, int n, int *result) {
+    for (int i = 0; i < n; i++) {
+        result[i] = arr[i] * arr[i] * arr[i];
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int *result = (int *)malloc(n * sizeof(int));
+    if (result == NULL) {
+        return 1;
+    }
+
+    find_cubes(arr, n, result);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

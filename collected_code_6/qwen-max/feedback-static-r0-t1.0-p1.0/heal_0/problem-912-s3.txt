@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int find_lobb_number(int n) {
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+
+    long long int a = 1, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        long long int next = 2 * a + b;
+        a = b;
+        b = next;
+    }
+    return a;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    long long int result = find_lobb_number(n);
+    printf("The %d-th Lobb number is: %lld\n", n, result);
+
+    return 0;
+}
+```

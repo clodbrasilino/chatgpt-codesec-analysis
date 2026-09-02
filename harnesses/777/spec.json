@@ -1,0 +1,77 @@
+{
+  "task_id": 777,
+  "text": "Write a C function to find the sum of non-repeated elements in a given array.",
+  "fn_candidates": [
+    "find_Sum",
+    "FindSum",
+    "findSum",
+    "findSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Sum",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          1,
+          4,
+          5,
+          6
+        ],
+        8
+      ],
+      "expected": 21,
+      "assert_src": "assert find_Sum([1,2,3,1,1,4,5,6],8) == 21"
+    },
+    {
+      "fn_name": "find_Sum",
+      "args": [
+        [
+          1,
+          10,
+          9,
+          4,
+          2,
+          10,
+          10,
+          45,
+          4
+        ],
+        9
+      ],
+      "expected": 71,
+      "assert_src": "assert find_Sum([1,10,9,4,2,10,10,45,4],9) == 71"
+    },
+    {
+      "fn_name": "find_Sum",
+      "args": [
+        [
+          12,
+          10,
+          9,
+          45,
+          2,
+          10,
+          10,
+          45,
+          10
+        ],
+        9
+      ],
+      "expected": 78,
+      "assert_src": "assert find_Sum([12,10,9,45,2,10,10,45,10],9) == 78"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

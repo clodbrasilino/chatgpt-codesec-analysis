@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int maxSegments(int n, int a, int b, int c) {
+    int dp[n + 1];
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = INT_MIN;
+    }
+    
+    dp[0] = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        if (i >= a && dp[i - a] != INT_MIN) {
+            dp[i] = dp[i - a] + 1;
+        }
+        if (i >= b && dp[i - b] != INT_MIN && dp[i - b] + 1 > dp[i]) {
+            dp[i] = dp[i - b] + 1;
+        }
+        if (i >= c && dp[i - c] != INT_MIN && dp[i - c] + 1 > dp[i]) {
+            dp[i] = dp[i - c] + 1;
+        }
+    }
+    
+    return dp[n] == INT_MIN ? -1 : dp[n];
+}
+
+int main(void) {
+    int n, a, b, c;
+    
+    printf("Enter n: ");
+    scanf("%d", &n);
+    printf("Enter a, b, c: ");
+    scanf("%d %d %d", &a, &b, &c);
+    
+    int result = maxSegments(n, a, b, c);
+    
+    if (result == -1) {
+        printf("Cannot form segments\n");
+    } else {
+        printf("Maximum segments: %d\n", result);
+    }
+    
+    return 0;
+}
+```

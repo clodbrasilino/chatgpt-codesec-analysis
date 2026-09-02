@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c:67:20: style: Variable 'h->elements[0]' is reassigned a value before the old one has been used. [redundantAssignment]
+    h->elements[0] = h->elements[--(h->count)];
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c:66:20: note: h->elements[0] is assigned
+    h->elements[0] = item;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c:67:20: note: h->elements[0] is overwritten
+    h->elements[0] = h->elements[--(h->count)];
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c:24:9: style: The scope of the variable 'left' can be reduced. [variableScope]
+    int left, right, smallest = idx;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c:24:15: style: The scope of the variable 'right' can be reduced. [variableScope]
+    int left, right, smallest = idx;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-209-s3.c:49:9: style: The scope of the variable 'parent' can be reduced. [variableScope]
+    int parent;
+        ^

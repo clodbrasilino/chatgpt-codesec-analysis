@@ -1,0 +1,53 @@
+{
+  "task_id": 708,
+  "text": "Write a C function to convert a string to a list.",
+  "fn_candidates": [
+    "Convert",
+    "Convert",
+    "Convert",
+    "Convert"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Convert",
+      "args": [
+        "python program"
+      ],
+      "expected": [
+        "python",
+        "program"
+      ],
+      "assert_src": "assert Convert('python program') == ['python','program']"
+    },
+    {
+      "fn_name": "Convert",
+      "args": [
+        "Data Analysis"
+      ],
+      "expected": [
+        "Data",
+        "Analysis"
+      ],
+      "assert_src": "assert Convert('Data Analysis') ==['Data','Analysis']"
+    },
+    {
+      "fn_name": "Convert",
+      "args": [
+        "Hadoop Training"
+      ],
+      "expected": [
+        "Hadoop",
+        "Training"
+      ],
+      "assert_src": "assert Convert('Hadoop Training') == ['Hadoop','Training']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

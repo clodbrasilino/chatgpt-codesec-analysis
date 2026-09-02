@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List* createList() {
+    List *list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    list->head = NULL;
+    return list;
+}
+
+void addNode(List *list, int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->value = value;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+List* getDifference(List *list1, List *list2) {
+    List *result = createList();
+    Node *current1 = list1->head;
+    while (current1 != NULL) {
+        int found = 0;
+        Node *current2 = list2->head;
+        while (current2 != NULL) {
+            if (current1->value == current2->value) {
+                found = 1;
+                break;
+            }
+            current2 = current2->next;
+        }
+        if (!found) {
+            addNode(result, current1->value);
+        }
+        current1 = current1->next;
+    }
+    return result;
+}
+
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *list1 = createList();
+    List *list2 = createList();
+
+    addNode(list1, 5);
+    addNode(list1, 3);
+    addNode(list1, 1);
+    addNode(list1, 4);
+
+    addNode(list2, 3);
+    addNode(list2, 1);
+    addNode(list2, 2);
+
+    printList(list1);
+    printList(list2);
+
+    List *difference = getDifference(list1, list2);
+    printList(difference);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(difference);
+
+    return 0;
+}
+```

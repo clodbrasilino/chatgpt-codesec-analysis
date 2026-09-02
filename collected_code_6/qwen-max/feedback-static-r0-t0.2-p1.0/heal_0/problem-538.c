@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **strings;
+    size_t count;
+} StringTuple;
+
+StringTuple *create_string_tuple(char *str_list[], size_t count) {
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
+    if (!tuple) return NULL;
+
+    tuple->strings = (char **)malloc(count * sizeof(char *));
+    if (!tuple->strings) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        tuple->strings[i] = strdup(str_list[i]);
+        if (!tuple->strings[i]) {
+            for (size_t j = 0; j < i; ++j) {
+                free(tuple->strings[j]);
+            }
+            free(tuple->strings);
+            free(tuple);
+            return NULL;
+        }
+    }
+
+    tuple->count = count;
+    return tuple;
+}
+
+void free_string_tuple(StringTuple *tuple) {
+    if (tuple) {
+        for (size_t i = 0; i < tuple->count; ++i) {
+            free(tuple->strings[i]);
+        }
+        free(tuple->strings);
+        free(tuple);
+    }
+}
+
+int main() {
+    char *str_list[] = {"apple", "banana", "cherry"};
+    size_t count = sizeof(str_list) / sizeof(str_list[0]);
+
+    StringTuple *tuple = create_string_tuple(str_list, count);
+    if (tuple) {
+        for (size_t i = 0; i < tuple->count; ++i) {
+            printf("%s\n", tuple->strings[i]);
+        }
+        free_string_tuple(tuple);
+    } else {
+        fprintf(stderr, "Failed to create string tuple\n");
+    }
+
+    return 0;
+}

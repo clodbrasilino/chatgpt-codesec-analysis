@@ -1,0 +1,102 @@
+{
+  "task_id": 249,
+  "text": "Write a C function to find the intersection of two arrays.",
+  "fn_candidates": [
+    "intersection_array",
+    "IntersectionArray",
+    "intersectionArray",
+    "intersectionarray"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "intersection_array",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          9,
+          10
+        ],
+        [
+          1,
+          2,
+          4,
+          8,
+          9
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        8,
+        9
+      ],
+      "assert_src": "assert intersection_array([1, 2, 3, 5, 7, 8, 9, 10],[1, 2, 4, 8, 9])==[1, 2, 8, 9]"
+    },
+    {
+      "fn_name": "intersection_array",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          9,
+          10
+        ],
+        [
+          3,
+          5,
+          7,
+          9
+        ]
+      ],
+      "expected": [
+        3,
+        5,
+        7,
+        9
+      ],
+      "assert_src": "assert intersection_array([1, 2, 3, 5, 7, 8, 9, 10],[3,5,7,9])==[3,5,7,9]"
+    },
+    {
+      "fn_name": "intersection_array",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          9,
+          10
+        ],
+        [
+          10,
+          20,
+          30,
+          40
+        ]
+      ],
+      "expected": [
+        10
+      ],
+      "assert_src": "assert intersection_array([1, 2, 3, 5, 7, 8, 9, 10],[10,20,30,40])==[10]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

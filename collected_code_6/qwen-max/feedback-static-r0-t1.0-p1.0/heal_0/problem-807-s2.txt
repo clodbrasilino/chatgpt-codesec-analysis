@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_odd(int n) {
+    return n % 2 != 0;
+}
+
+int find_first_odd(int *arr, int len) {
+    for (int i = 0; i < len; ++i) {
+        if (is_odd(arr[i])) {
+            return arr[i];
+        }
+    }
+    return -1; // Assuming -1 is used to indicate no odd number was found
+}
+
+int main() {
+    int numbers[] = {2, 4, 6, 8, 3, 5};
+    int length = sizeof(numbers) / sizeof(numbers[0]);
+    int first_odd = find_first_odd(numbers, length);
+    if (first_odd != -1) {
+        printf("The first odd number is: %d\n", first_odd);
+    } else {
+        printf("No odd number found.\n");
+    }
+    return 0;
+}
+```

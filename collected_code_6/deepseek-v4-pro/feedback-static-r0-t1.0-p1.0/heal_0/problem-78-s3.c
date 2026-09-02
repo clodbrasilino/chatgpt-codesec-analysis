@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_odd_set_bits(int *arr, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        int num = arr[i];
+        int set_bits = 0;
+        while (num) {
+            set_bits ^= 1;
+            num &= (num - 1);
+        }
+        if (set_bits) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int size;
+    if (scanf("%d", &size) != 1 || size <= 0) {
+        return 1;
+    }
+    
+    int *arr = malloc((size_t)size * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return 1;
+        }
+    }
+    
+    int result = count_odd_set_bits(arr, size);
+    printf("%d\n", result);
+    
+    free(arr);
+    return 0;
+}

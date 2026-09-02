@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool is_divisor_count_even(int n) {
+    if (n <= 0) {
+        return true;
+    }
+    
+    int root = (int)sqrt((double)n);
+    if (root * root == n) {
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 25, 36, 100};
+    int count = sizeof(numbers) / sizeof(numbers[0]);
+    
+    for (int i = 0; i < count; i++) {
+        int n = numbers[i];
+        if (is_divisor_count_even(n)) {
+            printf("%d: even\n", n);
+        } else {
+            printf("%d: odd\n", n);
+        }
+    }
+    
+    return 0;
+}

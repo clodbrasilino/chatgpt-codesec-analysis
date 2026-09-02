@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t count;
+} Dictionary;
+
+int sumDictionaryValues(Dictionary dict) {
+    int sum = 0;
+    for (size_t i = 0; i < dict.count; i++) {
+        sum += dict.items[i].value;
+    }
+    return sum;
+}
+
+int main() {
+    // Define a dictionary with 4 items
+    DictItem items[] = {{1, 10}, {2, 20}, {3, 30}, {4, 40}};
+    Dictionary dict = {items, 4};
+
+    // Calculate the sum of all values in the dictionary
+    int totalSum = sumDictionaryValues(dict);
+
+    // Print the result
+    printf("Sum of all values: %d\n", totalSum);
+    return 0;
+}
+```

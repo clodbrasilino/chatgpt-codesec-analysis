@@ -1,0 +1,70 @@
+{
+  "task_id": 907,
+  "text": "Write a C function to print the first n lucky numbers.",
+  "fn_candidates": [
+    "lucky_num",
+    "LuckyNum",
+    "luckyNum",
+    "luckynum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lucky_num",
+      "args": [
+        10
+      ],
+      "expected": [
+        1,
+        3,
+        7,
+        9,
+        13,
+        15,
+        21,
+        25,
+        31,
+        33
+      ],
+      "assert_src": "assert lucky_num(10)==[1, 3, 7, 9, 13, 15, 21, 25, 31, 33] "
+    },
+    {
+      "fn_name": "lucky_num",
+      "args": [
+        5
+      ],
+      "expected": [
+        1,
+        3,
+        7,
+        9,
+        13
+      ],
+      "assert_src": "assert lucky_num(5)==[1, 3, 7, 9, 13]"
+    },
+    {
+      "fn_name": "lucky_num",
+      "args": [
+        8
+      ],
+      "expected": [
+        1,
+        3,
+        7,
+        9,
+        13,
+        15,
+        21,
+        25
+      ],
+      "assert_src": "assert lucky_num(8)==[1, 3, 7, 9, 13, 15, 21, 25]"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

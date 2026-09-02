@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findMaxSum(int arr[], int n, int i, int k) {
+    if (k <= i || i < 0 || k >= n) return -1;
+
+    int inc_sum = arr[i];
+    for (int j = i - 1; j >= 0; --j) {
+        if (arr[j] < arr[i]) {
+            inc_sum += arr[j];
+        }
+    }
+
+    inc_sum += arr[k];
+
+    for (int j = i + 1; j < k; ++j) {
+        if (arr[j] < arr[k] && arr[j] > arr[i]) {
+            inc_sum += arr[j];
+        }
+    }
+
+    return inc_sum;
+}
+
+int main() {
+    int arr[] = {1, 101, 2, 3, 100, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int i = 0;
+    int k = 4;
+    int result = findMaxSum(arr, n, i, k);
+    printf("The maximum sum of increasing subsequence from prefix till %dth index and including %dth index is: %d\n", i, k, result);
+    return 0;
+}

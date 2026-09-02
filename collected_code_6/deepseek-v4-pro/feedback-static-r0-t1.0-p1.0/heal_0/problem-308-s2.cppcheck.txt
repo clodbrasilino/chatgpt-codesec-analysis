@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-308-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-308-s2.c:22:33: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+void find_largest_products(int *list1, int size1, int *list2, int size2, int k, ProductPair *results) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-308-s2.c:22:56: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+void find_largest_products(int *list1, int size1, int *list2, int size2, int k, ProductPair *results) {
+                                                       ^

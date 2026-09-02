@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-108.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-108.c:125:32: warning: Identical inner 'if' condition is always true. [identicalInnerCondition]
+                if (indices[i] < sizes[i]) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-108.c:124:28: note: outer condition: indices[i]<sizes[i]
+            if (indices[i] < sizes[i] && arrays[i][indices[i] - 1] == min_value) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-108.c:125:32: note: identical inner condition: indices[i]<sizes[i]
+                if (indices[i] < sizes[i]) {
+                               ^

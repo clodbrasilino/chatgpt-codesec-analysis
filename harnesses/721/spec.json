@@ -1,0 +1,96 @@
+{
+  "task_id": 721,
+  "text": "Write a C function to find a path with the maximum average over all existing paths for the given square matrix of size n*n.",
+  "fn_candidates": [
+    "maxAverageOfPath",
+    "Maxaverageofpath",
+    "maxAverageOfPath",
+    "maxAverageOfPath"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "maxAverageOfPath",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            6,
+            5,
+            4
+          ],
+          [
+            7,
+            3,
+            9
+          ]
+        ],
+        3
+      ],
+      "expected": 5.2,
+      "assert_src": "assert maxAverageOfPath([[1, 2, 3], [6, 5, 4], [7, 3, 9]], 3) == 5.2"
+    },
+    {
+      "fn_name": "maxAverageOfPath",
+      "args": [
+        [
+          [
+            2,
+            3,
+            4
+          ],
+          [
+            7,
+            6,
+            5
+          ],
+          [
+            8,
+            4,
+            10
+          ]
+        ],
+        3
+      ],
+      "expected": 6.2,
+      "assert_src": "assert maxAverageOfPath([[2, 3, 4], [7, 6, 5], [8, 4, 10]], 3) == 6.2"
+    },
+    {
+      "fn_name": "maxAverageOfPath",
+      "args": [
+        [
+          [
+            3,
+            4,
+            5
+          ],
+          [
+            8,
+            7,
+            6
+          ],
+          [
+            9,
+            5,
+            11
+          ]
+        ],
+        3
+      ],
+      "expected": 7.2,
+      "assert_src": "assert maxAverageOfPath([[3, 4, 5], [8, 7, 6], [9, 5, 11]], 3) == 7.2 "
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

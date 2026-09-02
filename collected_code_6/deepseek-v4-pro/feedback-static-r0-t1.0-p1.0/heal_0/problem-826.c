@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef enum {
+    INVALID = 0,
+    SCALENE = 1,
+    ISOSCELES = 2,
+    EQUILATERAL = 3,
+    RIGHT_SCALENE = 4,
+    RIGHT_ISOSCELES = 5
+} TriangleType;
+
+int is_valid_triangle(double a, double b, double c, double epsilon) {
+    if (a <= 0 || b <= 0 || c <= 0) return 0;
+    if (isnan(a) || isnan(b) || isnan(c)) return 0;
+    if (isinf(a) || isinf(b) || isinf(c)) return 0;
+    if (a > b + c + epsilon) return 0;
+    if (b > a + c + epsilon) return 0;
+    if (c > a + b + epsilon) return 0;
+    return 1;
+}
+
+int is_right_triangle(double a, double b, double c, double epsilon) {
+    double sides[3] = {a, b, c};
+    double temp;
+    int i, j;
+    
+    for (i = 0; i < 2; i++) {
+        for (j = i + 1; j < 3; j++) {
+            if (sides[i] > sides[j]) {
+                temp = sides[i];
+                sides[i] = sides[j];
+                sides[j] = temp;
+            }
+        }
+    }
+    
+    double legs_sum = sides[0] * sides[0] + sides[1] * sides[1];
+    double hyp_sq = sides[2] * sides[2];
+    
+    return fabs(legs_sum - hyp_sq) < epsilon;
+}
+
+TriangleType classify_triangle(double a, double b, double c) {
+    double epsilon = 1e-9;
+    
+    if (!is_valid_triangle(a, b, c, epsilon)) {
+        return INVALID;
+    }
+    
+    int ab_equal = fabs(a - b) < epsilon;
+    int bc_equal = fabs(b - c) < epsilon;
+    int ac_equal = fabs(a - c) < epsilon;
+    int right = is_right_triangle(a, b, c, epsilon);
+    
+    if (ab_equal && bc_equal && ac_equal) {
+        return EQUILATERAL;
+    }
+    
+    if (ab_equal || bc_equal || ac_equal) {
+        if (right) return RIGHT_ISOSCELES;
+        return ISOSCELES;
+    }
+    
+    if (right) return RIGHT_SCALENE;
+    
+    return SCALENE;
+}
+
+const char* triangle_type_to_string(TriangleType type) {
+    switch (type) {
+        case INVALID: return "Invalid";
+        case SCALENE: return "Scalene";
+        case ISOSCELES: return "Isosceles";
+        case EQUILATERAL: return "Equilateral";
+        case RIGHT_SCALENE: return "Right Scalene";
+        case RIGHT_ISOSCELES: return "Right Isosceles";
+        default: return "Unknown";
+    }
+}
+
+int main(void) {
+    double a, b, c;
+    TriangleType result;
+    
+    printf("Enter three sides of a triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    result = classify_triangle(a, b, c);
+    printf("Triangle type: %s\n", triangle_type_to_string(result));
+    
+    return 0;
+}

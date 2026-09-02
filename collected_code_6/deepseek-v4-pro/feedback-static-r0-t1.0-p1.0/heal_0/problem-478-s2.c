@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *remove_lowercase_substrings(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    while (i < len) {
+        if (islower((unsigned char)input[i])) {
+            while (i < len && islower((unsigned char)input[i])) {
+                i++;
+            }
+        } else {
+            result[j++] = input[i++];
+        }
+    }
+    result[j] = '\0';
+
+    char *shrunk = (char *)realloc(result, j + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "HelloWorld",
+        "HELLOworld",
+        "abcDEFghiJKL",
+        "NoLowercase",
+        "ALLlowercase",
+        "",
+        "UPPERlower123MIXED"
+    };
+
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char *cleaned = remove_lowercase_substrings(test_cases[i]);
+        if (cleaned != NULL) {
+            printf("Input: \"%s\" -> Output: \"%s\"\n", test_cases[i], cleaned);
+            free(cleaned);
+        } else {
+            printf("Input: \"%s\" -> Memory allocation failed\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryItem;
+
+typedef struct {
+    DictionaryItem *items;
+    int count;
+} Dictionary;
+
+int sumDictionaryItems(Dictionary *dict) {
+    int sum = 0;
+    for (int i = 0; i < dict->count; i++) {
+        sum += dict->items[i].value;
+    }
+    return sum;
+}
+
+int main() {
+    Dictionary dict;
+    dict.count = 3;
+    dict.items = (DictionaryItem *)malloc(dict.count * sizeof(DictionaryItem));
+
+    if (dict.items == NULL) {
+        return 1; // Memory allocation failed
+    }
+
+    dict.items[0].key = "one";
+    dict.items[0].value = 1;
+    dict.items[1].key = "two";
+    dict.items[1].value = 2;
+    dict.items[2].key = "three";
+    dict.items[2].value = 3;
+
+    int totalSum = sumDictionaryItems(&dict);
+    printf("Total sum: %d\n", totalSum);
+
+    for (int i = 0; i < dict.count; i++) {
+        free(dict.items[i].key);
+    }
+    free(dict.items);
+
+    return 0;
+}
+```

@@ -1,0 +1,66 @@
+{
+  "task_id": 959,
+  "text": "Write a C function to find the average of a list.",
+  "fn_candidates": [
+    "Average",
+    "Average",
+    "Average",
+    "Average"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Average",
+      "args": [
+        [
+          15,
+          9,
+          55,
+          41,
+          35,
+          20,
+          62,
+          49
+        ]
+      ],
+      "expected": 35.75,
+      "assert_src": "assert Average([15, 9, 55, 41, 35, 20, 62, 49]) == 35.75"
+    },
+    {
+      "fn_name": "Average",
+      "args": [
+        [
+          4,
+          5,
+          1,
+          2,
+          9,
+          7,
+          10,
+          8
+        ]
+      ],
+      "expected": 5.75,
+      "assert_src": "assert Average([4, 5, 1, 2, 9, 7, 10, 8]) == 5.75"
+    },
+    {
+      "fn_name": "Average",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert Average([1,2,3]) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

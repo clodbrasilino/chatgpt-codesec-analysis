@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long catalan_number(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+    
+    unsigned long long *catalan = (unsigned long long *)malloc((n + 1) * sizeof(unsigned long long));
+    if (catalan == NULL) {
+        return 0;
+    }
+    
+    catalan[0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        catalan[i] = 0;
+        for (int j = 0; j < i; j++) {
+            catalan[i] += catalan[j] * catalan[i - 1 - j];
+        }
+    }
+    
+    unsigned long long result = catalan[n];
+    free(catalan);
+    return result;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Catalan number C%d = %llu\n", n, catalan_number(n));
+    
+    return 0;
+}

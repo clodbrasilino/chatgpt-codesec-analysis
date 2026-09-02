@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double cube_volume(double side) {
+    if (side <= 0.0) {
+        fprintf(stderr, "Error: side length must be positive\n");
+        exit(EXIT_FAILURE);
+    }
+    return side * side * side;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    double side;
+    double volume;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <side_length>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    side = strtod(argv[1], &endptr);
+    if (*endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Error: invalid side length\n");
+        return EXIT_FAILURE;
+    }
+
+    volume = cube_volume(side);
+
+    printf("%.6f\n", volume);
+
+    return EXIT_SUCCESS;
+}

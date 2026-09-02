@@ -1,0 +1,63 @@
+{
+  "task_id": 305,
+  "text": "Write a C function to match two words from a list of words starting with letter 'p'.",
+  "fn_candidates": [
+    "start_withp",
+    "StartWithp",
+    "startWithp",
+    "startwithp"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "start_withp",
+      "args": [
+        [
+          "Python PHP",
+          "Java JavaScript",
+          "c c++"
+        ]
+      ],
+      "expected": [
+        "Python",
+        "PHP"
+      ],
+      "assert_src": "assert start_withp([\"Python PHP\", \"Java JavaScript\", \"c c++\"])==('Python', 'PHP')"
+    },
+    {
+      "fn_name": "start_withp",
+      "args": [
+        [
+          "Python Programming",
+          "Java Programming"
+        ]
+      ],
+      "expected": [
+        "Python",
+        "Programming"
+      ],
+      "assert_src": "assert start_withp([\"Python Programming\",\"Java Programming\"])==('Python','Programming')"
+    },
+    {
+      "fn_name": "start_withp",
+      "args": [
+        [
+          "Pqrst Pqr",
+          "qrstuv"
+        ]
+      ],
+      "expected": [
+        "Pqrst",
+        "Pqr"
+      ],
+      "assert_src": "assert start_withp([\"Pqrst Pqr\",\"qrstuv\"])==('Pqrst','Pqr')"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

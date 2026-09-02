@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int cmpfunc(const void *a, const void *b) {
+    return (*(int*)b - *(int*)a);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int max_sum_disjoint_pairs(int arr[], int n, int k) {
+    if (n <= 0 || k <= 0) {
+        return 0;
+    }
+
+    int *neg = (int*)malloc(n * sizeof(int));
+    int *pos = (int*)malloc(n * sizeof(int));
+    if (neg == NULL || pos == NULL) {
+        free(neg);
+        free(pos);
+        return 0;
+    }
+
+    int neg_count = 0, pos_count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < 0) {
+            neg[neg_count++] = arr[i];
+        } else {
+            pos[pos_count++] = arr[i];
+        }
+    }
+
+    qsort(neg, neg_count, sizeof(int), cmpfunc);
+    qsort(pos, pos_count, sizeof(int), cmpfunc);
+
+    int sum = 0;
+    int i = 0;
+
+    while (i < pos_count && k > 0) {
+        if (i + 1 < pos_count && pos[i] >= 0 && pos[i+1] >= 0) {
+            long long product = (long long)pos[i] * pos[i+1];
+            if (product > 0) {
+                sum += (int)product;
+                k--;
+                i += 2;
+            } else {
+                i++;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    i = 0;
+    while (i < neg_count && k > 0) {
+        if (i + 1 < neg_count) {
+            long long product = (long long)neg[i] * neg[i+1];
+            if (product > 0) {
+                sum += (int)product;
+                k--;
+                i += 2;
+            } else {
+                i++;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    free(neg);
+    free(pos);
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, -1, -2, -3, -4, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+    int result = max_sum_disjoint_pairs(arr, n, k);
+    printf("Maximum possible sum: %d\n", result);
+    return 0;
+}

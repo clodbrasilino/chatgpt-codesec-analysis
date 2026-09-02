@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:21:16: style: Condition 'status!=0' is always false [knownConditionTrueFalse]
+    if (status != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:20:24: note: Calling function 'divide' returns 0
+    int status = divide(a, b, &quotient);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:20:24: note: Assignment 'status=divide(a,b,&quotient)', assigned value is 0
+    int status = divide(a, b, &quotient);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:21:16: note: Condition 'status!=0' is always false
+    if (status != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:31:16: style: Condition 'status!=0' is always true [knownConditionTrueFalse]
+    if (status != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:30:20: note: Calling function 'divide' returns -1
+    status = divide(c, d, &quotient2);
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:30:20: note: Assignment 'status=divide(c,d,&quotient2)', assigned value is -1
+    status = divide(c, d, &quotient2);
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-292-s2.c:31:16: note: Condition 'status!=0' is always true
+    if (status != 0) {
+               ^

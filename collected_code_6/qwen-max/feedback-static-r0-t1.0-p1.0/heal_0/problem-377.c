@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_char(char *str, char ch) {
+    char *src, *dst;
+    for (src = dst = str; *src != '\0'; src++) {
+        if (*src != ch) {
+            *dst++ = *src;
+        }
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char str[] = "example string with some characters";
+    char ch = 'e';
+    remove_char(str, ch);
+    printf("%s\n", str);
+    return 0;
+}

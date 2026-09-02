@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-342-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-342-s3.c:102:9: style: The scope of the variable 'minValue' can be reduced. [variableScope]
+    int minValue;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-342-s3.c:79:43: style: Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+void findSmallestRange(int **arrays, int *sizes, int numArrays, int *resultStart, int *resultEnd) {
+                                          ^

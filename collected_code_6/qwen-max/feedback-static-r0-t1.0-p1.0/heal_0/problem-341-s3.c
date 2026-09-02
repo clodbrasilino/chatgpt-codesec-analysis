@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int* data;
+    size_t used;
+    size_t size;
+} IntSet;
+
+IntSet* createIntSet(size_t initialSize) {
+    IntSet* set = (IntSet*)malloc(sizeof(IntSet));
+    if (!set) return NULL;
+    set->data = (int*)malloc(initialSize * sizeof(int));
+    if (!set->data) {
+        free(set);
+        return NULL;
+    }
+    set->used = 0;
+    set->size = initialSize;
+    return set;
+}
+
+void insertIntSet(IntSet* set, int value) {
+    for (size_t i = 0; i < set->used; i++) {
+        if (set->data[i] == value) return;
+    }
+    if (set->used >= set->size) {
+        size_t newSize = set->size * 2;
+        int* newData = (int*)realloc(set->data, newSize * sizeof(int));
+        if (!newData) return;
+        set->data = newData;
+        set->size = newSize;
+    }
+    set->data[set->used++] = value;
+}
+
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+typedef struct {
+    int first;
+    int second;
+} OrderedTuple;
+
+OrderedTuple* convertSetToTuples(IntSet* set, size_t* tupleCount) {
+    qsort(set->data, set->used, sizeof(int), compare);
+    OrderedTuple* tuples = (OrderedTuple*)malloc(set->used * (set->used - 1) / 2 * sizeof(OrderedTuple));
+    if (!tuples) return NULL;
+    *tupleCount = 0;
+    for (size_t i = 0; i < set->used; i++) {
+        for (size_t j = i + 1; j < set->used; j++) {
+            tuples[*tupleCount].first = set->data[i];
+            tuples[*tupleCount].second = set->data[j];
+            (*tupleCount)++;
+        }
+    }
+    return tuples;
+}
+
+void printTuples(OrderedTuple* tuples, size_t tupleCount) {
+    for (size_t i = 0; i < tupleCount; i++) {
+        printf("(%d, %d)\n", tuples[i].first, tuples[i].second);
+    }
+}
+
+void freeIntSet(IntSet* set) {
+    free(set->data);
+    free(set);
+}
+
+int main() {
+    IntSet* set = createIntSet(5);
+    if (!set) return 1;
+    
+    insertIntSet(set, 3);
+    insertIntSet(set, 1);
+    insertIntSet(set, 4);
+    insertIntSet(set, 1);
+    insertIntSet(set, 2);
+    
+    size_t tupleCount;
+    OrderedTuple* tuples = convertSetToTuples(set, &tupleCount);
+    if (tuples) {
+        printTuples(tuples, tupleCount);
+        free(tuples);
+    }
+    
+    freeIntSet(set);
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 794,
+  "text": "Write a C function that matches a string that has an 'a' followed by anything, ending in 'b'.",
+  "fn_candidates": [
+    "text_starta_endb",
+    "TextStartaEndb",
+    "textStartaEndb",
+    "textstartaendb"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_starta_endb",
+      "args": [
+        "aabbbb"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_starta_endb(\"aabbbb\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_starta_endb",
+      "args": [
+        "aabAbbbc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_starta_endb(\"aabAbbbc\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_starta_endb",
+      "args": [
+        "accddbbjjj"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_starta_endb(\"accddbbjjj\")==('Not matched!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

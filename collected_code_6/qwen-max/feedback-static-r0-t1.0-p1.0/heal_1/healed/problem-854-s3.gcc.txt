@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-854-s3.c: In function 'heapify':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-854-s3.c:17:11: error: 'const_cast' undeclared (first use in this function)
+   17 |         *(const_cast<int*>(arr + i)) = arr[largest];
+      |           ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-854-s3.c:17:11: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-854-s3.c:17:22: error: expected expression before 'int'
+   17 |         *(const_cast<int*>(arr + i)) = arr[largest];
+      |                      ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-854-s3.c:18:22: error: expected expression before 'int'
+   18 |         *(const_cast<int*>(arr + largest)) = temp;
+      |                      ^~~

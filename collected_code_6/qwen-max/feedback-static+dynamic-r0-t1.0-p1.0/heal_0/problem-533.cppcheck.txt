@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:46:21: style: union member 'Anonymous1::i' is never used. [unusedStructMember]
+                int i;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:47:23: style: union member 'Anonymous1::f' is never used. [unusedStructMember]
+                float f;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:48:22: style: union member 'Anonymous1::c' is never used. [unusedStructMember]
+                char c;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:63:59: style: Variable 'i' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 0, (union {int i; float f; char c; }){.i = 1});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:64:59: style: Variable 'f' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 1, (union {int i; float f; char c; }){.f = 2.5});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:65:59: style: Variable 'c' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 2, (union {int i; float f; char c; }){.c = 'a'});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:66:59: style: Variable 'i' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 0, (union {int i; float f; char c; }){.i = 3});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:67:59: style: Variable 'f' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 1, (union {int i; float f; char c; }){.f = 4.5});
+                                                          ^

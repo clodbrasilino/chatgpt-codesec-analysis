@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *str;
+} ListElement;
+
+typedef struct {
+    ListElement *elements;
+    int size;
+} List;
+
+float str_to_float(const char *str) {
+    char *endptr;
+    float value = strtod(str, &endptr);
+    if (endptr == str || *endptr != '\0') {
+        return -1.0f; // Indicate conversion failure
+    }
+    return value;
+}
+
+void convert_list_elements(List *list) {
+    for (int i = 0; i < list->size; ++i) {
+        float value = str_to_float(list->elements[i].str);
+        if (value != -1.0f) {
+            free(list->elements[i].str);
+            list->elements[i].str = malloc(sizeof(char) * 20); // Allocate space for float string
+            if (list->elements[i].str == NULL) {
+                fprintf(stderr, "Memory allocation failed\n");
+                exit(EXIT_FAILURE);
+            }
+            sprintf(list->elements[i].str, "%f", value);
+        }
+    }
+}
+
+int main() {
+    List list;
+    list.size = 3;
+    list.elements = malloc(list.size * sizeof(ListElement));
+    if (list.elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    list.elements[0].str = strdup("123.45");
+    list.elements[1].str = strdup("abc");
+    list.elements[2].str = strdup("678.90");
+
+    convert_list_elements(&list);
+
+    for (int i = 0; i < list.size; ++i) {
+        printf("%s\n", list.elements[i].str);
+        free(list.elements[i].str);
+    }
+    free(list.elements);
+
+    return 0;
+}

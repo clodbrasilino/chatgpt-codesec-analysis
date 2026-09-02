@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(const char *str) {
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+
+    char *token;
+    char *str_copy = strdup(str);
+    if (str_copy == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    token = strtok(str_copy, ",");
+    tuple->size = 0;
+    tuple->data = (int*)malloc(MAX_SIZE * sizeof(int));
+
+    while (token != NULL) {
+        if (tuple->size >= MAX_SIZE) {
+            free(str_copy);
+            free(tuple->data);
+            free(tuple);
+            return NULL;
+        }
+        tuple->data[tuple->size++] = atoi(token);
+        token = strtok(NULL, ",");
+    }
+
+    free(str_copy);
+    return tuple;
+}
+
+void print_tuple(Tuple *tuple) {
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->data[i]);
+        if (i < tuple->size - 1) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->data);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *str = "1,2,3,4,5,6";
+    Tuple *tuple = create_tuple(str);
+    if (tuple) {
+        print_tuple(tuple);
+        destroy_tuple(tuple);
+    } else {
+        fprintf(stderr, "Failed to create tuple\n");
+    }
+    return 0;
+}

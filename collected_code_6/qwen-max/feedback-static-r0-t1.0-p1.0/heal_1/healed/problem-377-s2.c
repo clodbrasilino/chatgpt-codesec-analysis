@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_char(char *str, char ch) {
+    int i, j;
+    if (str == NULL) return;
+    for (i = j = 0; str[i] != '\0'; ++i) {
+        if (str[i] != ch) {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char input[] = "hello world";
+    char ch = 'o';
+    remove_char(input, ch);
+    printf("%s\n", input);
+    return 0;
+}

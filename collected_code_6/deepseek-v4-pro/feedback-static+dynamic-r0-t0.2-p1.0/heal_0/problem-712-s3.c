@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+Node *create_node(int *data, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = (int *)malloc(sizeof(int) * size);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+    memcpy(node->data, data, sizeof(int) * size);
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_node(Node *node) {
+    if (node != NULL) {
+        free(node->data);
+        free(node);
+    }
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free_node(current);
+        current = next;
+    }
+    list->head = NULL;
+}
+
+int lists_equal(Node *a, Node *b) {
+    if (a->size != b->size) {
+        return 0;
+    }
+    for (int i = 0; i < a->size; i++) {
+        if (a->data[i] != b->data[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void remove_duplicates(List *list) {
+    if (list == NULL || list->head == NULL) {
+        return;
+    }
+    
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *runner = current;
+        while (runner->next != NULL) {
+            if (lists_equal(current, runner->next)) {
+                Node *duplicate = runner->next;
+                runner->next = duplicate->next;
+                free_node(duplicate);
+            } else {
+                runner = runner->next;
+            }
+        }
+        current = current->next;
+    }
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("[");
+        for (int i = 0; i < current->size; i++) {
+            printf("%d", current->data[i]);
+            if (i < current->size - 1) {
+                printf(", ");
+            }
+        }
+        printf("] ");
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    List list = {0};
+    
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+    int arr3[] = {1, 2, 3};
+    int arr4[] = {6};
+    int arr5[] = {4, 5};
+    
+    Node *n1 = create_node(arr1, 3);
+    Node *n2 = create_node(arr2, 2);
+    Node *n3 = create_node(arr3, 3);
+    Node *n4 = create_node(arr4, 1);
+    Node *n5 = create_node(arr5, 2);
+    
+    if (n1 == NULL || n2 == NULL || n3 == NULL || n4 == NULL || n5 == NULL) {
+        free_node(n1);
+        free_node(n2);
+        free_node(n3);
+        free_node(n4);
+        free_node(n5);
+        return 1;
+    }
+    
+    list.head = n1;
+    n1->next = n2;
+    n2->next = n3;
+    n3->next = n4;
+    n4->next = n5;
+    
+    printf("Original list: ");
+    print_list(&list);
+    
+    remove_duplicates(&list);
+    
+    printf("After removing duplicates: ");
+    print_list(&list);
+    
+    free_list(&list);
+    
+    return 0;
+}

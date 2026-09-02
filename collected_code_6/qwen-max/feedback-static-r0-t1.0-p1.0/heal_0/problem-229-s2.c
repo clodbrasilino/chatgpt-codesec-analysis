@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+void rearrange(int *arr, int n) {
+    int left = 0;
+    int right = n - 1;
+    while (left < right) {
+        if (arr[left] >= 0 && arr[right] < 0) {
+            int temp = arr[left];
+            arr[left] = arr[right];
+            arr[right] = temp;
+        }
+        if (arr[left] < 0) {
+            left++;
+        }
+        if (arr[right] >= 0) {
+            right--;
+        }
+    }
+}
+
+int main() {
+    int arr[] = {1, -2, 3, -4, -5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    rearrange(arr, n);
+    
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    
+    return 0;
+}

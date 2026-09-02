@@ -1,0 +1,25 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool is_in_sequence(long long num) {
+    long long current = 1;
+    while (current <= num) {
+        if (current == num) {
+            return true;
+        }
+        current = current * 2 + 1;
+    }
+    return false;
+}
+
+int main() {
+    long long number;
+    printf("Enter a number: ");
+    scanf("%lld", &number);
+    if (is_in_sequence(number)) {
+        printf("The number is in the sequence.\n");
+    } else {
+        printf("The number is not in the sequence.\n");
+    }
+    return 0;
+}

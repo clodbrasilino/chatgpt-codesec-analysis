@@ -1,0 +1,44 @@
+{
+  "task_id": 478,
+  "text": "Write a C function to remove lowercase substrings from a given string.",
+  "fn_candidates": [
+    "remove_lowercase",
+    "RemoveLowercase",
+    "removeLowercase",
+    "removelowercase"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_lowercase",
+      "args": [
+        "PYTHon"
+      ],
+      "expected": "PYTH",
+      "assert_src": "assert remove_lowercase(\"PYTHon\")==('PYTH')"
+    },
+    {
+      "fn_name": "remove_lowercase",
+      "args": [
+        "FInD"
+      ],
+      "expected": "FID",
+      "assert_src": "assert remove_lowercase(\"FInD\")==('FID')"
+    },
+    {
+      "fn_name": "remove_lowercase",
+      "args": [
+        "STRinG"
+      ],
+      "expected": "STRG",
+      "assert_src": "assert remove_lowercase(\"STRinG\")==('STRG')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

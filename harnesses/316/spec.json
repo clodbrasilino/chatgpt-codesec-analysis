@@ -1,0 +1,81 @@
+{
+  "task_id": 316,
+  "text": "Write a C function to find the index of the last occurrence of a given number in a sorted array.",
+  "fn_candidates": [
+    "find_last_occurrence",
+    "FindLastOccurrence",
+    "findLastOccurrence",
+    "findlastoccurrence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_last_occurrence",
+      "args": [
+        [
+          2,
+          5,
+          5,
+          5,
+          6,
+          6,
+          8,
+          9,
+          9,
+          9
+        ],
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert find_last_occurrence([2, 5, 5, 5, 6, 6, 8, 9, 9, 9], 5) == 3"
+    },
+    {
+      "fn_name": "find_last_occurrence",
+      "args": [
+        [
+          2,
+          3,
+          5,
+          8,
+          6,
+          6,
+          8,
+          9,
+          9,
+          9
+        ],
+        9
+      ],
+      "expected": 9,
+      "assert_src": "assert find_last_occurrence([2, 3, 5, 8, 6, 6, 8, 9, 9, 9], 9) == 9"
+    },
+    {
+      "fn_name": "find_last_occurrence",
+      "args": [
+        [
+          2,
+          2,
+          1,
+          5,
+          6,
+          6,
+          6,
+          9,
+          9,
+          9
+        ],
+        6
+      ],
+      "expected": 6,
+      "assert_src": "assert find_last_occurrence([2, 2, 1, 5, 6, 6, 6, 9, 9, 9], 6) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int isProductEven(const int numbers[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (numbers[i] % 2 == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    int numbers1[] = {1, 3, 5, 7};
+    int size1 = sizeof(numbers1) / sizeof(numbers1[0]);
+    
+    int numbers2[] = {1, 3, 4, 7};
+    int size2 = sizeof(numbers2) / sizeof(numbers2[0]);
+    
+    if (isProductEven(numbers1, size1)) {
+        printf("Product is even\n");
+    } else {
+        printf("Product is odd\n");
+    }
+    
+    if (isProductEven(numbers2, size2)) {
+        printf("Product is even\n");
+    } else {
+        printf("Product is odd\n");
+    }
+    
+    return 0;
+}

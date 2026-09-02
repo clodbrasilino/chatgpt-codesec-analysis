@@ -1,0 +1,56 @@
+{
+  "task_id": 534,
+  "text": "Write a C function to search a literals string in a string and also find the location within the original string where the pattern occurs.",
+  "fn_candidates": [
+    "search_literal",
+    "SearchLiteral",
+    "searchLiteral",
+    "searchliteral"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "search_literal",
+      "args": [
+        "python",
+        "python programming language"
+      ],
+      "expected": [
+        0,
+        6
+      ],
+      "assert_src": "assert search_literal('python','python programming language')==(0,6)"
+    },
+    {
+      "fn_name": "search_literal",
+      "args": [
+        "programming",
+        "python programming language"
+      ],
+      "expected": [
+        7,
+        18
+      ],
+      "assert_src": "assert search_literal('programming','python programming language')==(7,18)"
+    },
+    {
+      "fn_name": "search_literal",
+      "args": [
+        "language",
+        "python programming language"
+      ],
+      "expected": [
+        19,
+        27
+      ],
+      "assert_src": "assert search_literal('language','python programming language')==(19,27)"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_inversions(const int *arr, int n, int type) {
+    int count = 0;
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if ((type == 1 && arr[i] > arr[j]) || (type == 2 && arr[i] < arr[j])) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int are_inversion_counts_same(const int *arr, int n, int type1, int type2) {
+    int count1 = count_inversions(arr, n, type1);
+    int count2 = count_inversions(arr, n, type2);
+    return count1 == count2;
+}
+
+int main() {
+    int arr[] = {3, 1, 4, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    if (are_inversion_counts_same(arr, n, 1, 2)) {
+        printf("Counts are the same.\n");
+    } else {
+        printf("Counts are different.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,37 @@
+# Tool paths and invocation flags for the multi-analyzer gate.
+# Verify with: ls /usr/local/bin/gcc-15 /usr/bin/clang cppcheckpremium/cppcheck /usr/local/bin/flawfinder
+tools:
+  gcc:
+    path: /usr/local/bin/gcc-15          # Homebrew gcc (real GCC, needed for -fanalyzer)
+    compile_flags: ["-c", "-w"]          # compile gate -> .o
+    analyzer_flags: ["-fanalyzer", "-w"]
+    report_suffix: ".gcc.txt"
+  clang:
+    path: /usr/bin/clang
+    analyzer_flags: ["--analyze", "-Xclang", "-analyzer-config", "-Xclang", "crosscheck-with-z3=true", "-w"]
+    report_suffix: ".clang.txt"
+  cppcheck:
+    path: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cppcheckpremium/cppcheck  # Cppcheck Premium 23.6.0 (supports --premium=bughunting)
+    analyzer_flags: ["--premium=bughunting", "--enable=warning,style,performance,portability"]
+    report_suffix: ".cppcheck.txt"
+  flawfinder:
+    path: /usr/local/bin/flawfinder
+    analyzer_flags: []
+    report_suffix: ".flawfinder.txt"
+
+# Dynamic analysis
+dynamic:
+  sanitizers: ["address", "undefined"]
+  timeout_s: 5
+  mem_limit_mb: 512
+  fuzzer: afl++                    # user decision; libFuzzer fallback available
+  afl_bin: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/build/afl/bin/afl-fuzz
+  afl_cc: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/build/afl/bin/afl-clang-fast
+  afl_lib: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/build/afl/lib/afl   # AFL_PATH (compiler-rt + passes)
+  fuzz_budget_s: 60
+  seed_corpus_from_tests: true
+
+# Report file suffixes consumed by comment injection, grouped by channel.
+feedback_channels:
+  static: [".gcc.txt", ".clang.txt", ".cppcheck.txt", ".flawfinder.txt"]
+  dynamic: [".asan.txt", ".fuzz.txt", ".test.txt"]

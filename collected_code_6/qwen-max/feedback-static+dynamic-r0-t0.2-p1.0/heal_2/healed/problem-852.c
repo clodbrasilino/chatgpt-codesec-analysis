@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* remove_negatives(const int *arr, int n, int *new_size) {
+    int count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] >= 0) {
+            count++;
+        }
+    }
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] >= 0) {
+            result[count++] = arr[i];
+        }
+    }
+    *new_size = count;
+    return result;
+}
+
+int main() {
+    int arr[] = {-2, 3, -5, 8, 9, -1, 0};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int new_size;
+
+    int *result = remove_negatives(arr, n, &new_size);
+
+    if (result != NULL) {
+        for (int i = 0; i < new_size; ++i) {
+            printf("%d ", result[i]);
+        }
+        free(result);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

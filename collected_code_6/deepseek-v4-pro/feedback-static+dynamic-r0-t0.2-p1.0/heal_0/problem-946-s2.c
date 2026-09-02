@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 100
+#define INITIAL_CAPACITY 100
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+typedef struct {
+    WordCount *items;
+    int size;
+    int capacity;
+} WordCountArray;
+
+void initArray(WordCountArray *arr) {
+    arr->capacity = INITIAL_CAPACITY;
+    arr->size = 0;
+    arr->items = malloc(sizeof(WordCount) * arr->capacity);
+    if (arr->items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void freeArray(WordCountArray *arr) {
+    for (int i = 0; i < arr->size; i++) {
+        free(arr->items[i].word);
+    }
+    free(arr->items);
+    arr->items = NULL;
+    arr->size = 0;
+    arr->capacity = 0;
+}
+
+void resizeArray(WordCountArray *arr) {
+    arr->capacity *= 2;
+    WordCount *new_items = realloc(arr->items, sizeof(WordCount) * arr->capacity);
+    if (new_items == NULL) {
+        fprintf(stderr, "Memory reallocation failed\n");
+        freeArray(arr);
+        exit(EXIT_FAILURE);
+    }
+    arr->items = new_items;
+}
+
+int findWord(WordCountArray *arr, const char *word) {
+    for (int i = 0; i < arr->size; i++) {
+        if (strcmp(arr->items[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void addWord(WordCountArray *arr, const char *word) {
+    int index = findWord(arr, word);
+    if (index != -1) {
+        arr->items[index].count++;
+        return;
+    }
+    
+    if (arr->size >= arr->capacity) {
+        resizeArray(arr);
+    }
+    
+    arr->items[arr->size].word = malloc(strlen(word) + 1);
+    if (arr->items[arr->size].word == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        freeArray(arr);
+        exit(EXIT_FAILURE);
+    }
+    strcpy(arr->items[arr->size].word, word);
+    arr->items[arr->size].count = 1;
+    arr->size++;
+}
+
+void toLowerCase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char)str[i]);
+    }
+}
+
+void findMostCommonElements(const char *text) {
+    if (text == NULL) {
+        fprintf(stderr, "Invalid input: text is NULL\n");
+        return;
+    }
+    
+    WordCountArray arr;
+    initArray(&arr);
+    
+    char word[MAX_WORD_LEN];
+    int word_len = 0;
+    int i = 0;
+    
+    while (text[i] != '\0') {
+        if (isalpha((unsigned char)text[i])) {
+            if (word_len < MAX_WORD_LEN - 1) {
+                word[word_len++] = text[i];
+            }
+        } else {
+            if (word_len > 0) {
+                word[word_len] = '\0';
+                toLowerCase(word);
+                addWord(&arr, word);
+                word_len = 0;
+            }
+        }
+        i++;
+    }
+    
+    if (word_len > 0) {
+        word[word_len] = '\0';
+        toLowerCase(word);
+        addWord(&arr, word);
+    }
+    
+    if (arr.size == 0) {
+        printf("No words found in the text.\n");
+        freeArray(&arr);
+        return;
+    }
+    
+    int max_count = 0;
+    for (int j = 0; j < arr.size; j++) {
+        if (arr.items[j].count > max_count) {
+            max_count = arr.items[j].count;
+        }
+    }
+    
+    printf("Most common elements (count: %d):\n", max_count);
+    for (int j = 0; j < arr.size; j++) {
+        if (arr.items[j].count == max_count) {
+            printf("%s\n", arr.items[j].word);
+        }
+    }
+    
+    freeArray(&arr);
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog barks, and the fox runs away. Fox and dog are friends.";
+    
+    printf("Text: %s\n\n", text);
+    findMostCommonElements(text);
+    
+    return 0;
+}

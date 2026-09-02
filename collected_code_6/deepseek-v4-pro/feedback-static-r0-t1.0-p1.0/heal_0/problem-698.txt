@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key1;
+    int key2;
+    int value;
+} DictItem;
+
+int compare_items(const void *a, const void *b) {
+    const DictItem *item_a = (const DictItem *)a;
+    const DictItem *item_b = (const DictItem *)b;
+    long int product_a = (long int)item_a->key1 * item_a->key2;
+    long int product_b = (long int)item_b->key1 * item_b->key2;
+    
+    if (product_a < product_b) return -1;
+    if (product_a > product_b) return 1;
+    return 0;
+}
+
+void sort_dictionary_by_product(DictItem *dict, size_t size) {
+    if (dict == NULL || size == 0) {
+        return;
+    }
+    qsort(dict, size, sizeof(DictItem), compare_items);
+}
+
+int main(void) {
+    DictItem dict[] = {
+        {2, 3, 100},
+        {1, 5, 200},
+        {4, 1, 300},
+        {3, 2, 400},
+        {5, 5, 500}
+    };
+    size_t size = sizeof(dict) / sizeof(dict[0]);
+    
+    printf("Before sorting:\n");
+    for (size_t i = 0; i < size; i++) {
+        printf("Key: (%d, %d), Value: %d, Product: %ld\n", 
+               dict[i].key1, dict[i].key2, dict[i].value,
+               (long int)dict[i].key1 * dict[i].key2);
+    }
+    
+    sort_dictionary_by_product(dict, size);
+    
+    printf("\nAfter sorting by product:\n");
+    for (size_t i = 0; i < size; i++) {
+        printf("Key: (%d, %d), Value: %d, Product: %ld\n", 
+               dict[i].key1, dict[i].key2, dict[i].value,
+               (long int)dict[i].key1 * dict[i].key2);
+    }
+    
+    return 0;
+}
+```

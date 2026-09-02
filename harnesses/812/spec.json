@@ -1,0 +1,44 @@
+{
+  "task_id": 812,
+  "text": "Write a C function to abbreviate 'road' as 'rd.' in a given string.",
+  "fn_candidates": [
+    "road_rd",
+    "RoadRd",
+    "roadRd",
+    "roadrd"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "road_rd",
+      "args": [
+        "ravipadu Road"
+      ],
+      "expected": "ravipadu Rd.",
+      "assert_src": "assert road_rd(\"ravipadu Road\")==('ravipadu Rd.')"
+    },
+    {
+      "fn_name": "road_rd",
+      "args": [
+        "palnadu Road"
+      ],
+      "expected": "palnadu Rd.",
+      "assert_src": "assert road_rd(\"palnadu Road\")==('palnadu Rd.')"
+    },
+    {
+      "fn_name": "road_rd",
+      "args": [
+        "eshwar enclave Road"
+      ],
+      "expected": "eshwar enclave Rd.",
+      "assert_src": "assert road_rd(\"eshwar enclave Road\")==('eshwar enclave Rd.')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

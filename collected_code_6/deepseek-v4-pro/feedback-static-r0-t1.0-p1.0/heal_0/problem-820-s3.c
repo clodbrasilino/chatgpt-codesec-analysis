@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int has_28_days(int month) {
+    if (month < 1 || month > 12) {
+        return -1;
+    }
+    return month == 2;
+}
+
+int main(void) {
+    int month;
+    int result;
+
+    printf("Enter month number (1-12): ");
+    if (scanf("%d", &month) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = has_28_days(month);
+    if (result == -1) {
+        fprintf(stderr, "Month number must be between 1 and 12\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result) {
+        printf("Month %d has 28 days\n", month);
+    } else {
+        printf("Month %d does not have 28 days\n", month);
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,47 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int is_all_none(Tuple t) {
+    return (t.a == -1 && t.b == -1);
+}
+
+void remove_none_tuples(Tuple **list, int *size) {
+    int i, k = 0;
+    for (i = 0; i < *size; ++i) {
+        if (!is_all_none((*list)[i])) {
+            (*list)[k++] = (*list)[i];
+        }
+    }
+    *size = k;
+}
+
+int main() {
+    Tuple *list = NULL;
+    int size, i;
+
+    size = 5;
+    list = malloc(size * sizeof(Tuple));
+    if (list == NULL) {
+        return 1;
+    }
+
+    list[0] = (Tuple){1, 2};
+    list[1] = (Tuple){-1, -1};
+    list[2] = (Tuple){3, 4};
+    list[3] = (Tuple){-1, -1};
+    list[4] = (Tuple){5, 6};
+
+    remove_none_tuples(&list, &size);
+
+    for (i = 0; i < size; ++i) {
+        printf("(%d, %d)\n", list[i].a, list[i].b);
+    }
+
+    free(list);
+    return 0;
+}

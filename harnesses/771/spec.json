@@ -1,0 +1,44 @@
+{
+  "task_id": 771,
+  "text": "Write a C function to check if the given expression is balanced or not.",
+  "fn_candidates": [
+    "check_expression",
+    "CheckExpression",
+    "checkExpression",
+    "checkexpression"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_expression",
+      "args": [
+        "{()}[{}]"
+      ],
+      "expected": true,
+      "assert_src": "assert check_expression(\"{()}[{}]\") == True"
+    },
+    {
+      "fn_name": "check_expression",
+      "args": [
+        "{()}[{]"
+      ],
+      "expected": false,
+      "assert_src": "assert check_expression(\"{()}[{]\") == False"
+    },
+    {
+      "fn_name": "check_expression",
+      "args": [
+        "{()}[{}][]({})"
+      ],
+      "expected": true,
+      "assert_src": "assert check_expression(\"{()}[{}][]({})\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

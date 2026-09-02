@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} tuple;
+
+int summation_tuple_elements(const tuple *tuple_list, size_t size) {
+    int sum = 0;
+    for (size_t i = 0; i < size; i++) {
+        sum += tuple_list[i].first + tuple_list[i].second;
+    }
+    return sum;
+}
+
+int main(void) {
+    tuple list[] = {
+        {1, 2},
+        {3, 4},
+        {5, 6}
+    };
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    int total = summation_tuple_elements(list, list_size);
+    printf("Sum: %d\n", total);
+    return 0;
+}
+```

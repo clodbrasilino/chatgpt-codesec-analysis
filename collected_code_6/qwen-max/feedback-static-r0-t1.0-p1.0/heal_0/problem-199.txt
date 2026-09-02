@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int highestPowerOf2(int n) {
+    int res = 1;
+    while (res <= n/2) {
+        res *= 2;
+    }
+    return res;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    if (number > 0 && number <= 1000000) {  // Assume a reasonable constraint
+        int result = highestPowerOf2(number);
+        printf("Highest power of 2 less than or equal to %d is %d\n", number, result);
+    } else {
+        printf("Number out of valid range.\n");
+    }
+    return 0;
+}
+```

@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 8.123, got 8
+  *  test case 0 failed: expected 4.56, got 4
+  *  test case 1 failed: expected 7.256, got 7
+  */
+
+double tuple_to_float(const int *tuple, size_t len) {
+    if (len == 0) return 0.0;
+    double result = 0.0;
+    for (size_t i = 0; i < len; ++i) {
+        result += tuple[i] * pow(10, len - 1 - i);
+    }
+    return result / pow(10, len - 1);
+}
+
+int main() {
+    int tuple[] = {3, 1, 4, 1, 5};
+    size_t len = sizeof(tuple) / sizeof(tuple[0]);
+    double float_value = tuple_to_float(tuple, len);
+    printf("%.2f\n", float_value);
+    return 0;
+}

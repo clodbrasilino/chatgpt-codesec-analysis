@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t used;
+    size_t size;
+} PriorityQueue;
+
+void pq_init(PriorityQueue *pq, size_t initial_size) {
+    pq->array = (int *)malloc(initial_size * sizeof(int));
+    pq->used = 0;
+    pq->size = initial_size;
+}
+
+void pq_push(PriorityQueue *pq, int value) {
+    if (pq->used == pq->size) {
+        pq->size *= 2;
+        pq->array = (int *)realloc(pq->array, pq->size * sizeof(int));
+    }
+    size_t i = pq->used++;
+    while (i > 0 && pq->array[(i - 1) / 2] > value) {
+        pq->array[i] = pq->array[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+    pq->array[i] = value;
+}
+
+int pq_pop(PriorityQueue *pq) {
+    int result = pq->array[0];
+    pq->array[0] = pq->array[--pq->used];
+    size_t i = 0;
+    while (1) {
+        size_t left = 2 * i + 1;
+        size_t right = 2 * i + 2;
+        size_t smallest = i;
+        if (left < pq->used && pq->array[left] < pq->array[smallest]) {
+            smallest = left;
+        }
+        if (right < pq->used && pq->array[right] < pq->array[smallest]) {
+            smallest = right;
+        }
+        if (smallest == i) break;
+        int temp = pq->array[i];
+        pq->array[i] = pq->array[smallest];
+        pq->array[smallest] = temp;
+        i = smallest;
+    }
+    return result;
+}
+
+int pq_is_empty(const PriorityQueue *pq) {
+    return pq->used == 0;
+}
+
+void merge_sorted_arrays(const int **arrays, const size_t *sizes, size_t count, int *result, size_t *result_size) {
+    PriorityQueue pq;
+    pq_init(&pq, count);
+
+    size_t *indices = (size_t *)calloc(count, sizeof(size_t));
+
+    for (size_t i = 0; i < count; ++i) {
+        if (sizes[i] > 0) {
+            pq_push(&pq, arrays[i][0]);
+            indices[i]++;
+        }
+    }
+
+    *result_size = 0;
+    while (!pq_is_empty(&pq)) {
+        int min_val = pq_pop(&pq);
+        result[(*result_size)++] = min_val;
+
+        for (size_t i = 0; i < count; ++i) {
+            if (indices[i] < sizes[i]) {
+                pq_push(&pq, arrays[i][indices[i]]);
+                indices[i]++;
+                break;
+            }
+        }
+    }
+
+    free(indices);
+    free(pq.array);
+}
+
+int main() {
+    int arr1[] = {1, 3, 5};
+    int arr2[] = {2, 4, 6};
+    int arr3[] = {0, 7, 8, 9};
+
+    const int *arrays[] = {arr1, arr2, arr3};
+    const size_t sizes[] = {3, 3, 4};
+    size_t count = 3;
+
+    int *result = (int *)malloc(10 * sizeof(int));
+    size_t result_size = 0;
+
+    merge_sorted_arrays(arrays, sizes, count, result, &result_size);
+
+    for (size_t i = 0; i < result_size; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

@@ -1,0 +1,38 @@
+{
+  "task_id": 746,
+  "text": "Write a C function to find area of a sector.",
+  "fn_candidates": [
+    "sector_area",
+    "SectorArea",
+    "sectorArea",
+    "sectorarea"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sector_area",
+      "args": [
+        4,
+        45
+      ],
+      "expected": 6.285714285714286,
+      "assert_src": "assert sector_area(4,45)==6.285714285714286"
+    },
+    {
+      "fn_name": "sector_area",
+      "args": [
+        9,
+        45
+      ],
+      "expected": 31.82142857142857,
+      "assert_src": "assert sector_area(9,45)==31.82142857142857"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

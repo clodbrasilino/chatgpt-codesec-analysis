@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+double ellipse_area(double a, double b) {
+    return M_PI * a * b;
+}
+
+double triangle_area_in_ellipse(double a, double b) {
+    return 0.5 * a * b * 3.0 / sqrt(2.0);
+}
+
+int main() {
+    double a = 5.0;
+    double b = 3.0;
+
+    double ellipseArea = ellipse_area(a, b);
+    double triangleArea = triangle_area_in_ellipse(a, b);
+
+    printf("Ellipse Area: %f\n", ellipseArea);
+    printf("Largest Inscribed Triangle Area: %f\n", triangleArea);
+
+    return 0;
+}

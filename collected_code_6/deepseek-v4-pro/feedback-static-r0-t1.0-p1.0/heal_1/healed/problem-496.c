@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEAP_SIZE 1024
+
+typedef struct {
+    int *data;
+    int size;
+    int capacity;
+} MaxHeap;
+
+MaxHeap* create_max_heap(int capacity) {
+    MaxHeap *heap = (MaxHeap*)malloc(sizeof(MaxHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->data = (int*)malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroy_max_heap(MaxHeap *heap) {
+    if (heap == NULL) {
+        return;
+    }
+    free(heap->data);
+    free(heap);
+}
+
+int parent(int i) {
+    return (i - 1) / 2;
+}
+
+int left_child(int i) {
+    return 2 * i + 1;
+}
+
+int right_child(int i) {
+    return 2 * i + 2;
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int heap_push(MaxHeap *heap, int value) {
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return -1;
+    }
+    
+    int i = heap->size;
+    heap->data[i] = value;
+    heap->size++;
+    
+    while (i > 0 && heap->data[parent(i)] < heap->data[i]) {
+        swap(&heap->data[parent(i)], &heap->data[i]);
+        i = parent(i);
+    }
+    return 0;
+}
+
+int heap_pop(MaxHeap *heap, int *value) {
+    if (heap == NULL || heap->size <= 0 || value == NULL) {
+        return -1;
+    }
+    
+    *value = heap->data[0];
+    heap->size--;
+    
+    if (heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        int i = 0;
+        
+        while (1) {
+            int largest = i;
+            int left = left_child(i);
+            int right = right_child(i);
+            
+            if (left < heap->size && heap->data[left] > heap->data[largest]) {
+                largest = left;
+            }
+            if (right < heap->size && heap->data[right] > heap->data[largest]) {
+                largest = right;
+            }
+            
+            if (largest == i) {
+                break;
+            }
+            
+            swap(&heap->data[i], &heap->data[largest]);
+            i = largest;
+        }
+    }
+    
+    return 0;
+}
+
+int heap_peek(MaxHeap *heap, int *value) {
+    if (heap == NULL || heap->size <= 0 || value == NULL) {
+        return -1;
+    }
+    *value = heap->data[0];
+    return 0;
+}
+
+int* find_smallest_k(const int *numbers, int n, int k, int *result_size) {
+    if (numbers == NULL || n <= 0 || k <= 0 || result_size == NULL || k > MAX_HEAP_SIZE) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+    
+    if (k > n) {
+        k = n;
+    }
+    
+    MaxHeap *heap = create_max_heap(k);
+    if (heap == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (heap->size < k) {
+            if (heap_push(heap, numbers[i]) != 0) {
+                destroy_max_heap(heap);
+                *result_size = 0;
+                return NULL;
+            }
+        } else {
+            int max_val;
+            if (heap_peek(heap, &max_val) == 0 && numbers[i] < max_val) {
+                if (heap_pop(heap, &max_val) != 0) {
+                    destroy_max_heap(heap);
+                    *result_size = 0;
+                    return NULL;
+                }
+                if (heap_push(heap, numbers[i]) != 0) {
+                    destroy_max_heap(heap);
+                    *result_size = 0;
+                    return NULL;
+                }
+            }
+        }
+    }
+    
+    int *result = (int*)malloc(heap->size * sizeof(int));
+    if (result == NULL) {
+        destroy_max_heap(heap);
+        *result_size = 0;
+        return NULL;
+    }
+    
+    *result_size = heap->size;
+    for (int i = heap->size - 1; i >= 0; i--) {
+        if (heap_pop(heap, &result[i]) != 0) {
+            free(result);
+            destroy_max_heap(heap);
+            *result_size = 0;
+            return NULL;
+        }
+    }
+    
+    destroy_max_heap(heap);
+    return result;
+}
+
+int main(void) {
+    int numbers[] = {5, 3, 8, 1, 9, 2, 7, 4, 6};
+    int n = sizeof(numbers) / sizeof(numbers[0]);
+    int k = 4;
+    int result_size = 0;
+    
+    int *result = find_smallest_k(numbers, n, k, &result_size);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to find smallest integers\n");
+        return 1;
+    }
+    
+    printf("The %d smallest integers are: ", result_size);
+    for (int i = 0; i < result_size; i++) {
+        printf("%d", result[i]);
+        if (i < result_size - 1) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+    
+    free(result);
+    return 0;
+}

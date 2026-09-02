@@ -1,0 +1,76 @@
+{
+  "task_id": 567,
+  "text": "Write a C function to check whether a specified list is sorted or not.",
+  "fn_candidates": [
+    "issort_list",
+    "IssortList",
+    "issortList",
+    "issortlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "issort_list",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          17
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert issort_list([1,2,4,6,8,10,12,14,16,17])==True"
+    },
+    {
+      "fn_name": "issort_list",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          20,
+          17
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert issort_list([1, 2, 4, 6, 8, 10, 12, 14, 20, 17])==False"
+    },
+    {
+      "fn_name": "issort_list",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          15,
+          14,
+          20
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert issort_list([1, 2, 4, 6, 8, 10,15,14,20])==False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

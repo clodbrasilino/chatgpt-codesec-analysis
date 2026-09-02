@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Tuple {
+    int a;
+    int b;
+    struct Tuple *next;
+} Tuple;
+
+bool tuples_equal(const Tuple *t1, const Tuple *t2) {
+    if (t1 == NULL && t2 == NULL) {
+        return true;
+    }
+    if (t1 == NULL || t2 == NULL) {
+        return false;
+    }
+    return (t1->a == t2->a) && (t1->b == t2->b);
+}
+
+bool lists_identical(const Tuple *list1, const Tuple *list2) {
+    while (list1 != NULL && list2 != NULL) {
+        if (!tuples_equal(list1, list2)) {
+            return false;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    return list1 == NULL && list2 == NULL;
+}
+
+Tuple *create_tuple(int a, int b) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    t->a = a;
+    t->b = b;
+    t->next = NULL;
+    return t;
+}
+
+Tuple *append_tuple(Tuple *head, int a, int b) {
+    Tuple *new_tuple = create_tuple(a, b);
+    if (head == NULL) {
+        return new_tuple;
+    }
+    Tuple *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_tuple;
+    return head;
+}
+
+void free_list(Tuple *head) {
+    while (head != NULL) {
+        Tuple *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Tuple *list1 = NULL;
+    Tuple *list2 = NULL;
+    Tuple *list3 = NULL;
+
+    list1 = append_tuple(list1, 1, 2);
+    list1 = append_tuple(list1, 3, 4);
+    list1 = append_tuple(list1, 5, 6);
+
+    list2 = append_tuple(list2, 1, 2);
+    list2 = append_tuple(list2, 3, 4);
+    list2 = append_tuple(list2, 5, 6);
+
+    list3 = append_tuple(list3, 1, 2);
+    list3 = append_tuple(list3, 3, 4);
+    list3 = append_tuple(list3, 7, 8);
+
+    printf("list1 and list2 identical: %s\n",
+           lists_identical(list1, list2) ? "true" : "false");
+    printf("list1 and list3 identical: %s\n",
+           lists_identical(list1, list3) ? "true" : "false");
+
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+
+    return 0;
+}
+```

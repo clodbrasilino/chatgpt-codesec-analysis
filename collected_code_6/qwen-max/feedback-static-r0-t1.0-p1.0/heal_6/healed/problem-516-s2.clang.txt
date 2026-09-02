@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-516-s2.c:23:6: error: conflicting types for 'radixsort'
+   23 | void radixsort(int arr[], int n) {
+      |      ^
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:373:6: note: previous declaration is here
+  373 | int      radixsort(const unsigned char *_LIBC_UNSAFE_INDEXABLE *_LIBC_COUNT(__nel) __base, int __nel, const unsigned char *_LIBC_COUNT_OR_NULL(256) __table,
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-516-s2.c:37:23: error: incompatible integer to pointer conversion passing 'int' to parameter of type 'const unsigned char *' [-Wint-conversion]
+   37 |     radixsort(arr, n, 10, 0); // Added two more arguments to fix warning
+      |                       ^~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:373:145: note: passing argument to parameter '__table' here
+  373 | int      radixsort(const unsigned char *_LIBC_UNSAFE_INDEXABLE *_LIBC_COUNT(__nel) __base, int __nel, const unsigned char *_LIBC_COUNT_OR_NULL(256) __table,
+      |                                                                                                                                                     ^
+2 errors generated.

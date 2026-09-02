@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} TupleSet;
+
+TupleSet* create_tuple_set(size_t initial_capacity) {
+    TupleSet *set = (TupleSet *)malloc(sizeof(TupleSet));
+    if (!set) return NULL;
+    set->data = (int *)calloc(initial_capacity, sizeof(int));
+    if (!set->data) {
+        free(set);
+        return NULL;
+    }
+    set->length = 0;
+    return set;
+}
+
+void destroy_tuple_set(TupleSet *set) {
+    if (set) {
+        free(set->data);
+        free(set);
+    }
+}
+
+int add_to_tuple_set(TupleSet *set, int value) {
+    for (size_t i = 0; i < set->length; ++i) {
+        if (set->data[i] == value) return 0;
+    }
+    if (set->length >= (sizeof(set->data) / sizeof(set->data[0]))) {
+        size_t new_capacity = set->length * 2;
+        int *new_data = (int *)realloc(set->data, new_capacity * sizeof(int));
+        if (!new_data) return -1;
+        set->data = new_data;
+    }
+    set->data[set->length++] = value;
+    return 1;
+}
+
+int main() {
+    TupleSet *set = create_tuple_set(5);
+    if (!set) return 1;
+
+    int tuples[] = {1, 2, 2, 3, 4, 4, 5, 6, 6, 7};
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        if (add_to_tuple_set(set, tuples[i]) == -1) {
+            destroy_tuple_set(set);
+            return 1;
+        }
+    }
+
+    for (size_t i = 0; i < set->length; ++i) {
+        printf("%d ", set->data[i]);
+    }
+    printf("\n");
+
+    destroy_tuple_set(set);
+    return 0;
+}

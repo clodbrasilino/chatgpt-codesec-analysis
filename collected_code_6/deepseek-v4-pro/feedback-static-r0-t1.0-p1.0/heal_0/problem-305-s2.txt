@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_words(const char *word1, const char *word2) {
+    if (word1 == NULL || word2 == NULL) {
+        return false;
+    }
+    return strcmp(word1, word2) == 0;
+}
+
+int find_matching_pairs(char words[][50], int count, int result[][2]) {
+    int match_count = 0;
+    for (int i = 0; i < count; i++) {
+        if (words[i][0] != 'p' && words[i][0] != 'P') {
+            continue;
+        }
+        for (int j = i + 1; j < count; j++) {
+            if (words[j][0] != 'p' && words[j][0] != 'P') {
+                continue;
+            }
+            if (match_words(words[i], words[j])) {
+                result[match_count][0] = i;
+                result[match_count][1] = j;
+                match_count++;
+            }
+        }
+    }
+    return match_count;
+}
+
+int main() {
+    char words[][50] = {
+        "apple", "pear", "plum", "peach", "pear", "plum", "pineapple", "Peach"
+    };
+    int count = sizeof(words) / sizeof(words[0]);
+    int result[20][2];
+    
+    int matches = find_matching_pairs(words, count, result);
+    
+    printf("Matching pairs: %d\n", matches);
+    for (int i = 0; i < matches; i++) {
+        printf("Match %d: Index %d (%s) and Index %d (%s)\n",
+               i + 1,
+               result[i][0], words[result[i][0]],
+               result[i][1], words[result[i][1]]);
+    }
+    
+    return 0;
+}
+```

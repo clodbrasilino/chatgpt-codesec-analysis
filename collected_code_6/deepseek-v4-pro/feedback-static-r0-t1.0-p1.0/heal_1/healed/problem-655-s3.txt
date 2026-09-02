@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_fifth_power(int n) {
+    unsigned long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        unsigned long long term = (unsigned long long)i * i * i * i * i;
+        sum += term;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    char input[64];
+    char *endptr;
+
+    printf("Enter a positive integer: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)strtol(input, &endptr, 10);
+    if (endptr == input || *endptr != '\n') {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "Number must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fifth powers: %llu\n", sum_fifth_power(n));
+    return EXIT_SUCCESS;
+}
+```

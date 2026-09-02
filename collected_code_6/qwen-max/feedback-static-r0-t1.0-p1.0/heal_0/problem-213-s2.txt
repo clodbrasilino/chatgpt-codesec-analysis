@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **concat_tuples(char **tuple1, char **tuple2, size_t len1, size_t len2) {
+    if (tuple1 == NULL || tuple2 == NULL) return NULL;
+    
+    char **result = malloc((len1 + len2) * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    for (size_t i = 0; i < len1; ++i) {
+        result[i] = strdup(tuple1[i]);
+        if (result[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < len2; ++i) {
+        result[len1 + i] = strdup(tuple2[i]);
+        if (result[len1 + i] == NULL) {
+            for (size_t j = 0; j < len1 + i; ++j) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+    }
+
+    return result;
+}
+
+void free_tuple(char **tuple, size_t len) {
+    if (tuple == NULL) return;
+    for (size_t i = 0; i < len; ++i) {
+        free(tuple[i]);
+    }
+    free(tuple);
+}
+
+int main() {
+    char *tuple1[] = {"abc", "def"};
+    char *tuple2[] = {"ghi", "jkl"};
+    size_t len1 = 2;
+    size_t len2 = 2;
+
+    char **result = concat_tuples(tuple1, tuple2, len1, len2);
+    if (result != NULL) {
+        for (size_t i = 0; i < len1 + len2; ++i) {
+            printf("%s\n", result[i]);
+        }
+        free_tuple(result, len1 + len2);
+    }
+
+    return 0;
+}
+```

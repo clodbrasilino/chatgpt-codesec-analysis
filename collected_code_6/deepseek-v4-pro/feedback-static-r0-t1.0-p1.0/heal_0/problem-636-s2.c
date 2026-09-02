@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool are_reciprocal(double a, double b, double c) {
+    if (fabs(a) < 1e-10) {
+        return false;
+    }
+    
+    double discriminant = b * b - 4 * a * c;
+    
+    if (discriminant < 0) {
+        return false;
+    }
+    
+    if (fabs(c) < 1e-10) {
+        return false;
+    }
+    
+    double root1 = (-b + sqrt(discriminant)) / (2 * a);
+    double root2 = (-b - sqrt(discriminant)) / (2 * a);
+    
+    return fabs(root1 * root2 - 1.0) < 1e-10;
+}
+
+int main(void) {
+    double a = 1.0, b = -2.5, c = 1.0;
+    
+    if (are_reciprocal(a, b, c)) {
+        printf("The roots are reciprocal of each other.\n");
+    } else {
+        printf("The roots are not reciprocal of each other.\n");
+    }
+    
+    a = 1.0;
+    b = -3.0;
+    c = 2.0;
+    
+    if (are_reciprocal(a, b, c)) {
+        printf("The roots are reciprocal of each other.\n");
+    } else {
+        printf("The roots are not reciprocal of each other.\n");
+    }
+    
+    return 0;
+}

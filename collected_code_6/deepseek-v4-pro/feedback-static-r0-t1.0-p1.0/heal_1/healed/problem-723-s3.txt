@@ -1,0 +1,188 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct Pair {
+    int a;
+    int b;
+    struct Pair *next;
+} Pair;
+
+typedef struct MapEntry {
+    Pair *key;
+    int value;
+    struct MapEntry *next;
+} MapEntry;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (!node) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Pair *create_pair(int a, int b) {
+    Pair *pair = (Pair *)malloc(sizeof(Pair));
+    if (!pair) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    pair->a = a;
+    pair->b = b;
+    pair->next = NULL;
+    return pair;
+}
+
+MapEntry *create_map_entry(Pair *key, int value) {
+    MapEntry *entry = (MapEntry *)malloc(sizeof(MapEntry));
+    if (!entry) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    entry->key = key;
+    entry->value = value;
+    entry->next = NULL;
+    return entry;
+}
+
+unsigned long hash_pair(const Pair *pair) {
+    unsigned long hash = 5381;
+    hash = ((hash << 5) + hash) + pair->a;
+    hash = ((hash << 5) + hash) + pair->b;
+    return hash;
+}
+
+int pair_equals(const Pair *p1, const Pair *p2) {
+    return p1->a == p2->a && p1->b == p2->b;
+}
+
+MapEntry **create_map(int capacity) {
+    MapEntry **map = (MapEntry **)calloc(capacity, sizeof(MapEntry *));
+    if (!map) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    return map;
+}
+
+void map_put(MapEntry **map, int capacity, Pair *key, int value) {
+    unsigned long index = hash_pair(key) % capacity;
+    MapEntry *current = map[index];
+    while (current) {
+        if (pair_equals(current->key, key)) {
+            current->value += value;
+            return;
+        }
+        current = current->next;
+    }
+    MapEntry *entry = create_map_entry(key, value);
+    entry->next = map[index];
+    map[index] = entry;
+}
+
+int map_get(MapEntry **map, int capacity, const Pair *key) {
+    unsigned long index = hash_pair(key) % capacity;
+    MapEntry *current = map[index];
+    while (current) {
+        if (pair_equals(current->key, key)) {
+            return current->value;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_map(MapEntry **map, int capacity) {
+    for (int i = 0; i < capacity; i++) {
+        MapEntry *current = map[i];
+        while (current) {
+            MapEntry *next = current->next;
+            free(current->key);
+            free(current);
+            current = next;
+        }
+    }
+    free(map);
+}
+
+int count_same_pairs(Node *list1, Node *list2) {
+    if (!list1 || !list2) return 0;
+
+    int len1 = 0, len2 = 0;
+    Node *temp = list1;
+    while (temp) {
+        len1++;
+        temp = temp->next;
+    }
+    temp = list2;
+    while (temp) {
+        len2++;
+        temp = temp->next;
+    }
+
+    int pair_count = len1 * len2;
+    int capacity = pair_count * 2 + 1;
+    MapEntry **map = create_map(capacity);
+
+    Node *iter1 = list1;
+    while (iter1) {
+        Node *iter2 = list2;
+        while (iter2) {
+            Pair *pair = create_pair(iter1->data, iter2->data);
+            map_put(map, capacity, pair, 1);
+            iter2 = iter2->next;
+        }
+        iter1 = iter1->next;
+    }
+
+    int count = 0;
+    for (int i = 0; i < capacity; i++) {
+        MapEntry *current = map[i];
+        while (current) {
+            if (current->value > 1) {
+                count += current->value - 1;
+            }
+            current = current->next;
+        }
+    }
+
+    free_map(map, capacity);
+    return count;
+}
+
+int main(void) {
+    Node *list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+
+    Node *list2 = create_node(3);
+    list2->next = create_node(2);
+    list2->next->next = create_node(1);
+
+    int result = count_same_pairs(list1, list2);
+    printf("%d\n", result);
+
+    free_list(list1);
+    free_list(list2);
+
+    return 0;
+}
+```

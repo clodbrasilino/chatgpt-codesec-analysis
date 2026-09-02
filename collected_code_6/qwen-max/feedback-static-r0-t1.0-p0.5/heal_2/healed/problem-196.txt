@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+void free_tuple(Tuple *t) {
+    if (t->data) {
+        free(t->data);
+        t->data = NULL;
+    }
+}
+
+Tuple* create_tuple(size_t length, const int *values) {
+    Tuple *t = malloc(sizeof(Tuple));
+    if (!t) return NULL;
+    t->data = malloc(length * sizeof(int));
+    if (!t->data) {
+        free(t);
+        return NULL;
+    }
+    for (size_t i = 0; i < length; ++i) {
+        t->data[i] = values[i];
+    }
+    t->length = length;
+    return t;
+}
+
+Tuple** remove_tuples_with_length_k(Tuple **tuples, size_t count, size_t k, size_t *new_count) {
+    *new_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (tuples[i]->length != k) {
+            (*new_count)++;
+        } else {
+            free_tuple(tuples[i]);
+        }
+    }
+
+    Tuple **result = malloc(*new_count * sizeof(Tuple *));
+    if (!result) return NULL;
+
+    size_t index = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (tuples[i]->length != k) {
+            result[index++] = tuples[i];
+        }
+    }
+
+    free(tuples);
+    return result;
+}
+
+int main() {
+    const int values1[] = {1, 2, 3};
+    const int values2[] = {4, 5};
+    const int values3[] = {6, 7, 8, 9};
+
+    Tuple *t1 = create_tuple(3, values1);
+    Tuple *t2 = create_tuple(2, values2);
+    Tuple *t3 = create_tuple(4, values3);
+
+    Tuple *tuples[] = {t1, t2, t3};
+    size_t count = 3;
+    size_t new_count;
+
+    size_t k = 3;
+    Tuple **filtered_tuples = remove_tuples_with_length_k(tuples, count, k, &new_count);
+
+    for (size_t i = 0; i < new_count; ++i) {
+        for (size_t j = 0; j < filtered_tuples[i]->length; ++j) {
+            printf("%d ", filtered_tuples[i]->data[j]);
+        }
+        printf("\n");
+        free_tuple(filtered_tuples[i]);
+    }
+
+    free(filtered_tuples);
+    return 0;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 355,
+  "text": "Write a C function to count the number of rectangles in a circle of radius r.",
+  "fn_candidates": [
+    "count_Rectangles",
+    "CountRectangles",
+    "countRectangles",
+    "countRectangles"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Rectangles",
+      "args": [
+        2
+      ],
+      "expected": 8,
+      "assert_src": "assert count_Rectangles(2) == 8"
+    },
+    {
+      "fn_name": "count_Rectangles",
+      "args": [
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert count_Rectangles(1) == 1"
+    },
+    {
+      "fn_name": "count_Rectangles",
+      "args": [
+        0
+      ],
+      "expected": 0,
+      "assert_src": "assert count_Rectangles(0) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

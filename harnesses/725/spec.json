@@ -1,0 +1,54 @@
+{
+  "task_id": 725,
+  "text": "Write a C function to extract values between quotation marks of the given string by using regex.",
+  "fn_candidates": [
+    "extract_quotation",
+    "ExtractQuotation",
+    "extractQuotation",
+    "extractquotation"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "extract_quotation",
+      "args": [
+        "Cortex \"A53\" Based \"multi\" tasking \"Processor\""
+      ],
+      "expected": [
+        "A53",
+        "multi",
+        "Processor"
+      ],
+      "assert_src": "assert extract_quotation('Cortex \"A53\" Based \"multi\" tasking \"Processor\"') == ['A53', 'multi', 'Processor']"
+    },
+    {
+      "fn_name": "extract_quotation",
+      "args": [
+        "Cast your \"favorite\" entertainment \"apps\""
+      ],
+      "expected": [
+        "favorite",
+        "apps"
+      ],
+      "assert_src": "assert extract_quotation('Cast your \"favorite\" entertainment \"apps\"') == ['favorite', 'apps']"
+    },
+    {
+      "fn_name": "extract_quotation",
+      "args": [
+        "Watch content \"4k Ultra HD\" resolution with \"HDR 10\" Support"
+      ],
+      "expected": [
+        "4k Ultra HD",
+        "HDR 10"
+      ],
+      "assert_src": "assert extract_quotation('Watch content \"4k Ultra HD\" resolution with \"HDR 10\" Support') == ['4k Ultra HD', 'HDR 10']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

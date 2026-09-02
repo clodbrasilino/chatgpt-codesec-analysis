@@ -1,0 +1,44 @@
+{
+  "task_id": 311,
+  "text": "Write a C function to set the left most unset bit.",
+  "fn_candidates": [
+    "set_left_most_unset_bit",
+    "SetLeftMostUnsetBit",
+    "setLeftMostUnsetBit",
+    "setleftmostunsetbit"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "set_left_most_unset_bit",
+      "args": [
+        10
+      ],
+      "expected": 14,
+      "assert_src": "assert set_left_most_unset_bit(10) == 14"
+    },
+    {
+      "fn_name": "set_left_most_unset_bit",
+      "args": [
+        12
+      ],
+      "expected": 14,
+      "assert_src": "assert set_left_most_unset_bit(12) == 14"
+    },
+    {
+      "fn_name": "set_left_most_unset_bit",
+      "args": [
+        15
+      ],
+      "expected": 15,
+      "assert_src": "assert set_left_most_unset_bit(15) == 15"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

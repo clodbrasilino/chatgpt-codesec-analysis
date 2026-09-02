@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int longestSubsequenceWithDiffOne(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp[i] = 1;
+    }
+
+    int maxLength = 1;
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (abs(arr[i] - arr[j]) == 1) {
+                if (dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
+                }
+            }
+        }
+        if (dp[i] > maxLength) {
+            maxLength = dp[i];
+        }
+    }
+
+    free(dp);
+    return maxLength;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%d\n", longestSubsequenceWithDiffOne(arr1, n1));
+
+    int arr2[] = {1, 2, 3, 2, 3, 7, 2, 1};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%d\n", longestSubsequenceWithDiffOne(arr2, n2));
+
+    int arr3[] = {10, 9, 4, 5, 4, 8, 6};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%d\n", longestSubsequenceWithDiffOne(arr3, n3));
+
+    int arr4[] = {1, 2, 3, 4, 5, 3, 2};
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("%d\n", longestSubsequenceWithDiffOne(arr4, n4));
+
+    return 0;
+}

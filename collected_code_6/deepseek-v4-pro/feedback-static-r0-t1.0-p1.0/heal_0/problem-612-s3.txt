@@ -1,0 +1,149 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+Node *create_node(int *data, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+Node *merge_first_last(Node *head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    Node *last = head;
+    Node *prev_last = NULL;
+    while (last->next != NULL) {
+        prev_last = last;
+        last = last->next;
+    }
+
+    if (head == last) {
+        return head;
+    }
+
+    int new_size = head->size + last->size;
+    int *merged_data = (int *)malloc(sizeof(int) * new_size);
+    if (merged_data == NULL) {
+        return head;
+    }
+
+    for (int i = 0; i < head->size; i++) {
+        merged_data[i] = head->data[i];
+    }
+    for (int i = 0; i < last->size; i++) {
+        merged_data[head->size + i] = last->data[i];
+    }
+
+    free(head->data);
+    head->data = merged_data;
+    head->size = new_size;
+
+    if (prev_last != NULL) {
+        prev_last->next = NULL;
+    }
+    free(last->data);
+    free(last);
+
+    return head;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("[");
+        for (int i = 0; i < current->size; i++) {
+            printf("%d", current->data[i]);
+            if (i < current->size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    int *data1 = (int *)malloc(sizeof(int) * 2);
+    if (data1 == NULL) {
+        return 1;
+    }
+    data1[0] = 1;
+    data1[1] = 2;
+    Node *node1 = create_node(data1, 2);
+    if (node1 == NULL) {
+        free(data1);
+        return 1;
+    }
+
+    int *data2 = (int *)malloc(sizeof(int) * 3);
+    if (data2 == NULL) {
+        free_list(node1);
+        return 1;
+    }
+    data2[0] = 3;
+    data2[1] = 4;
+    data2[2] = 5;
+    Node *node2 = create_node(data2, 3);
+    if (node2 == NULL) {
+        free(data2);
+        free_list(node1);
+        return 1;
+    }
+    node1->next = node2;
+
+    int *data3 = (int *)malloc(sizeof(int) * 2);
+    if (data3 == NULL) {
+        free_list(node1);
+        return 1;
+    }
+    data3[0] = 6;
+    data3[1] = 7;
+    Node *node3 = create_node(data3, 2);
+    if (node3 == NULL) {
+        free(data3);
+        free_list(node1);
+        return 1;
+    }
+    node2->next = node3;
+
+    printf("Original list:\n");
+    print_list(node1);
+
+    node1 = merge_first_last(node1);
+
+    printf("After merging first and last:\n");
+    print_list(node1);
+
+    free_list(node1);
+
+    return 0;
+}
+```

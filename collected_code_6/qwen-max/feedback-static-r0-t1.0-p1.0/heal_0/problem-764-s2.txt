@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int countNumericValues(const char *str) {
+    int count = 0;
+    while (*str) {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+            // Skip continuous digits
+            while (isdigit((unsigned char)*(++str)));
+        } else {
+            str++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char *testString = "123abc456def789";
+    int result = countNumericValues(testString);
+    printf("Number of numeric values: %d\n", result);
+    return 0;
+}
+```

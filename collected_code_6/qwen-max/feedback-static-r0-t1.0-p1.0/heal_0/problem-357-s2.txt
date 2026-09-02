@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int data;
+} Tuple;
+
+int findMax(Tuple *tuples, int count) {
+    if (count <= 0) return INT_MIN;
+    int max = tuples[0].data;
+    for (int i = 1; i < count; ++i) {
+        if (tuples[i].data > max) {
+            max = tuples[i].data;
+        }
+    }
+    return max;
+}
+
+int main() {
+    int n;
+    printf("Enter the number of tuples: ");
+    scanf("%d", &n);
+
+    Tuple *tuples = (Tuple *)malloc(n * sizeof(Tuple));
+    if (tuples == NULL) {
+        perror("Failed to allocate memory");
+        return 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        printf("Enter data for tuple %d: ", i + 1);
+        scanf("%d", &tuples[i].data);
+    }
+
+    int max_value = findMax(tuples, n);
+    printf("Maximum value: %d\n", max_value);
+
+    free(tuples);
+    return 0;
+}
+```

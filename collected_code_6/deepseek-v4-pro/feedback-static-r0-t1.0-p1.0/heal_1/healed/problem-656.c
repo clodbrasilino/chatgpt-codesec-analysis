@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int minSumOfAbsoluteDifferences(const int arr1[], const int arr2[], int n) {
+    int sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += abs(arr1[i] - arr2[i]);
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return 1;
+    }
+    
+    int *arr1 = (int *)malloc(n * sizeof(int));
+    int *arr2 = (int *)malloc(n * sizeof(int));
+    
+    if (arr1 == NULL || arr2 == NULL) {
+        free(arr1);
+        free(arr2);
+        return 1;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr1[i]) != 1) {
+            free(arr1);
+            free(arr2);
+            return 1;
+        }
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr2[i]) != 1) {
+            free(arr1);
+            free(arr2);
+            return 1;
+        }
+    }
+    
+    qsort(arr1, n, sizeof(int), compare);
+    qsort(arr2, n, sizeof(int), compare);
+    
+    int result = minSumOfAbsoluteDifferences(arr1, arr2, n);
+    printf("%d\n", result);
+    
+    free(arr1);
+    free(arr2);
+    
+    return 0;
+}

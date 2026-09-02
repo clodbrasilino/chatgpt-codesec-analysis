@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-763-s2.c: In function 'findMinDifference':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-763-s2.c:8:24: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+    8 |             int diff = abs(arr[i] - arr[j]);
+      |                        ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-763-s2.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    2 | #include <limits.h>
+  +++ |+#include <stdlib.h>
+    3 | 

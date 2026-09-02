@@ -1,0 +1,70 @@
+{
+  "task_id": 384,
+  "text": "Write a C function to find the frequency of the smallest value in a given array.",
+  "fn_candidates": [
+    "frequency_Of_Smallest",
+    "FrequencyOfSmallest",
+    "frequencyOfSmallest",
+    "frequencyOfSmallest"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "frequency_Of_Smallest",
+      "args": [
+        5,
+        [
+          1,
+          2,
+          3,
+          4,
+          3
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert frequency_Of_Smallest(5,[1,2,3,4,3]) == 1"
+    },
+    {
+      "fn_name": "frequency_Of_Smallest",
+      "args": [
+        7,
+        [
+          3,
+          1,
+          2,
+          5,
+          6,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert frequency_Of_Smallest(7,[3,1,2,5,6,2,3]) == 1"
+    },
+    {
+      "fn_name": "frequency_Of_Smallest",
+      "args": [
+        7,
+        [
+          3,
+          3,
+          6,
+          3,
+          7,
+          4,
+          9
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert frequency_Of_Smallest(7,[3,3,6,3,7,4,9]) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

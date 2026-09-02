@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+char find_first_repeated(const char *str) {
+    int chars[256] = {0};
+    for (int i = 0; str[i] != '\0'; ++i) {
+        if (chars[(unsigned char)str[i]] == 0) {
+            chars[(unsigned char)str[i]] = 1;
+        } else {
+            return str[i];
+        }
+    }
+    return '\0';
+}
+
+int main() {
+    const char *input = "programming";
+    char result = find_first_repeated(input);
+    if (result != '\0') {
+        printf("First repeated character: %c\n", result);
+    } else {
+        printf("No repeated characters found.\n");
+    }
+    return 0;
+}
+```

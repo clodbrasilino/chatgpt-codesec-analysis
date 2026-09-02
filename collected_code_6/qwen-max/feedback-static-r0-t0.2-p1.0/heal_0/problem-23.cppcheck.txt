@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-23.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-23.c:6:22: style: The scope of the variable 'current_sum' can be reduced. [variableScope]
+    int max_sum = 0, current_sum;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-23.c:4:36: style: Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+int max_sum_list(int **lists, int *sizes, int n) {
+                                   ^

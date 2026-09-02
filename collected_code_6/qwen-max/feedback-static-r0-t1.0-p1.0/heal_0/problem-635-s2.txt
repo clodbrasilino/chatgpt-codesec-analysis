@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t size;
+    size_t capacity;
+} Heap;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify_up(Heap *h, size_t index) {
+    while (index > 0 && h->array[(index - 1) / 2] > h->array[index]) {
+        swap(&h->array[(index - 1) / 2], &h->array[index]);
+        index = (index - 1) / 2;
+    }
+}
+
+void heapify_down(Heap *h, size_t index) {
+    size_t smallest = index;
+    size_t left = 2 * index + 1;
+    size_t right = 2 * index + 2;
+
+    if (left < h->size && h->array[left] < h->array[smallest])
+        smallest = left;
+    if (right < h->size && h->array[right] < h->array[smallest])
+        smallest = right;
+
+    if (smallest != index) {
+        swap(&h->array[index], &h->array[smallest]);
+        heapify_down(h, smallest);
+    }
+}
+
+void push(Heap *h, int value) {
+    if (h->size == h->capacity) {
+        h->capacity *= 2;
+        h->array = realloc(h->array, h->capacity * sizeof(int));
+    }
+    h->array[h->size++] = value;
+    heapify_up(h, h->size - 1);
+}
+
+int pop(Heap *h) {
+    if (h->size == 0) {
+        return -1; // Error case
+    }
+    int ret = h->array[0];
+    h->array[0] = h->array[--h->size];
+    heapify_down(h, 0);
+    return ret;
+}
+
+void init_heap(Heap *h) {
+    h->size = 0;
+    h->capacity = 16;
+    h->array = malloc(h->capacity * sizeof(int));
+}
+
+void free_heap(Heap *h) {
+    free(h->array);
+}
+
+int main() {
+    int values[] = {20, 15, 10, 5, 25, 30, 35};
+    Heap h;
+    init_heap(&h);
+
+    for (size_t i = 0; i < sizeof(values) / sizeof(values[0]); ++i) {
+        push(&h, values[i]);
+    }
+
+    while (h.size > 0) {
+        printf("%d ", pop(&h));
+    }
+    printf("\n");
+
+    free_heap(&h);
+    return 0;
+}
+```

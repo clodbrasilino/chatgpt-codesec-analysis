@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void insert_spaces(char **str) {
+    regex_t reg;
+    regmatch_t match[1];
+    char pattern[] = "([A-Z][^A-Z]*)";
+
+    if (regcomp(&reg, pattern, REG_EXTENDED|REG_NEWLINE) != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    size_t len = strlen(*str);
+    char *new_str = malloc(len * 2 + 1);
+    if (new_str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    new_str[0] = '\0';
+
+    char *pos = *str;
+    while (regexec(&reg, pos, 1, match, 0) == 0) {
+        strncat(new_str, pos, match[0].rm_eo - (pos - *str));
+        strncat(new_str, " ", 1);
+        pos += match[0].rm_eo;
+    }
+    strcat(new_str, pos);
+
+    free(*str);
+    *str = new_str;
+
+    regfree(&reg);
+}
+
+int main() {
+    char *str = strdup("HelloWorldThisIsATest");
+    insert_spaces(&str);
+    printf("%s\n", str);
+    free(str);
+    return 0;
+}

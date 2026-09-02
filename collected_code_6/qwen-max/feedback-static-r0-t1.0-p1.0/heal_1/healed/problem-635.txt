@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+void minHeapInit(MinHeap *heap, size_t capacity) {
+    heap->array = (int *)malloc(capacity * sizeof(int));
+    if (heap->array == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    heap->capacity = capacity;
+    heap->size = 0;
+}
+
+void minHeapFree(MinHeap *heap) {
+    free(heap->array);
+    heap->array = NULL;
+    heap->size = 0;
+    heap->capacity = 0;
+}
+
+void minHeapInsert(MinHeap *heap, int value) {
+    if (heap->size + 1 > heap->capacity) {
+        heap->capacity *= 2;
+        heap->array = (int *)realloc(heap->array, heap->capacity * sizeof(int));
+        if (heap->array == NULL) {
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    size_t i = heap->size;
+    while (i > 0 && heap->array[(i - 1) / 2] > value) {
+        heap->array[i] = heap->array[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+    heap->array[i] = value;
+    heap->size++;
+}
+
+int minHeapExtractMin(MinHeap *heap) {
+    if (heap->size == 0) {
+        exit(EXIT_FAILURE);
+    }
+    int root = heap->array[0];
+    heap->array[0] = heap->array[--heap->size];
+    size_t i = 0;
+    while (1) {
+        size_t left = 2 * i + 1;
+        size_t right = 2 * i + 2;
+        size_t minIdx = i;
+        if (left < heap->size && heap->array[left] < heap->array[minIdx]) {
+            minIdx = left;
+        }
+        if (right < heap->size && heap->array[right] < heap->array[minIdx]) {
+            minIdx = right;
+        }
+        if (minIdx != i) {
+            int temp = heap->array[i];
+            heap->array[i] = heap->array[minIdx];
+            heap->array[minIdx] = temp;
+            i = minIdx;
+        } else {
+            break;
+        }
+    }
+    return root;
+}
+
+int main() {
+    MinHeap heap;
+    minHeapInit(&heap, 10);
+
+    const int values[] = {34, 23, 1, 56, 78, 22, 9, 7, 11, 4};
+    for (int i = 0; i < 10; ++i) {
+        minHeapInsert(&heap, values[i]);
+    }
+
+    while (heap.size > 0) {
+        printf("%d\n", minHeapExtractMin(&heap));
+    }
+
+    minHeapFree(&heap);
+    return 0;
+}
+```

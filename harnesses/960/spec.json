@@ -1,0 +1,44 @@
+{
+  "task_id": 960,
+  "text": "Write a C function to solve tiling problem.",
+  "fn_candidates": [
+    "get_noOfways",
+    "GetNoofways",
+    "getNoofways",
+    "getnoOfways"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_noOfways",
+      "args": [
+        4
+      ],
+      "expected": 3,
+      "assert_src": "assert get_noOfways(4)==3"
+    },
+    {
+      "fn_name": "get_noOfways",
+      "args": [
+        3
+      ],
+      "expected": 2,
+      "assert_src": "assert get_noOfways(3)==2"
+    },
+    {
+      "fn_name": "get_noOfways",
+      "args": [
+        5
+      ],
+      "expected": 5,
+      "assert_src": "assert get_noOfways(5)==5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

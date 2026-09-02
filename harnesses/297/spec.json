@@ -1,0 +1,104 @@
+{
+  "task_id": 297,
+  "text": "Write a C function to flatten a given nested list structure.",
+  "fn_candidates": [
+    "flatten_list",
+    "FlattenList",
+    "flattenList",
+    "flattenlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "flatten_list",
+      "args": [
+        [
+          [
+            10,
+            20
+          ],
+          [
+            40
+          ],
+          [
+            30,
+            56,
+            25
+          ],
+          [
+            10,
+            20
+          ],
+          [
+            33
+          ],
+          [
+            40
+          ]
+        ]
+      ],
+      "expected": [
+        10,
+        20,
+        40,
+        30,
+        56,
+        25,
+        10,
+        20,
+        33,
+        40
+      ],
+      "assert_src": "assert flatten_list([[10, 20], [40], [30, 56, 25], [10, 20], [33], [40]])==[10, 20, 40, 30, 56, 25, 10, 20, 33, 40]"
+    },
+    {
+      "fn_name": "flatten_list",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            10,
+            11,
+            12
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        10,
+        11,
+        12,
+        7,
+        8,
+        9
+      ],
+      "assert_src": "assert flatten_list([[1,2,3], [4,5,6], [10,11,12], [7,8,9]])==[1, 2, 3, 4, 5, 6, 10, 11, 12, 7, 8, 9]"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

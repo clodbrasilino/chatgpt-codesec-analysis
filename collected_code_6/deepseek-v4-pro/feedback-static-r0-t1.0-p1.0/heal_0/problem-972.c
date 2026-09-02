@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    void **elements;
+    size_t size;
+} Tuple;
+
+typedef struct NestedTuple {
+    Tuple **tuples;
+    size_t size;
+} NestedTuple;
+
+Tuple *create_tuple(void **elements, size_t size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    
+    tuple->elements = (void **)malloc(sizeof(void *) * size);
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    
+    memcpy(tuple->elements, elements, sizeof(void *) * size);
+    tuple->size = size;
+    
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+NestedTuple *concatenate_tuples(Tuple *tuple1, Tuple *tuple2) {
+    if (!tuple1 || !tuple2) {
+        return NULL;
+    }
+    
+    NestedTuple *nested = (NestedTuple *)malloc(sizeof(NestedTuple));
+    if (!nested) {
+        return NULL;
+    }
+    
+    nested->tuples = (Tuple **)malloc(sizeof(Tuple *) * 2);
+    if (!nested->tuples) {
+        free(nested);
+        return NULL;
+    }
+    
+    nested->tuples[0] = tuple1;
+    nested->tuples[1] = tuple2;
+    nested->size = 2;
+    
+    return nested;
+}
+
+void free_nested_tuple(NestedTuple *nested) {
+    if (nested) {
+        free(nested->tuples);
+        free(nested);
+    }
+}
+
+int main(void) {
+    int a = 1, b = 2, c = 3, d = 4, e = 5, f = 6;
+    
+    void *elements1[] = {&a, &b, &c};
+    void *elements2[] = {&d, &e, &f};
+    
+    Tuple *tuple1 = create_tuple(elements1, 3);
+    Tuple *tuple2 = create_tuple(elements2, 3);
+    
+    if (!tuple1 || !tuple2) {
+        fprintf(stderr, "Failed to create tuples\n");
+        free_tuple(tuple1);
+        free_tuple(tuple2);
+        return 1;
+    }
+    
+    NestedTuple *nested = concatenate_tuples(tuple1, tuple2);
+    if (!nested) {
+        fprintf(stderr, "Failed to concatenate tuples\n");
+        free_tuple(tuple1);
+        free_tuple(tuple2);
+        return 1;
+    }
+    
+    printf("Nested tuple size: %zu\n", nested->size);
+    for (size_t i = 0; i < nested->size; i++) {
+        printf("Tuple %zu size: %zu\n", i, nested->tuples[i]->size);
+        for (size_t j = 0; j < nested->tuples[i]->size; j++) {
+            printf("  Element %zu: %d\n", j, *(int *)nested->tuples[i]->elements[j]);
+        }
+    }
+    
+    free_nested_tuple(nested);
+    free_tuple(tuple1);
+    free_tuple(tuple2);
+    
+    return 0;
+}

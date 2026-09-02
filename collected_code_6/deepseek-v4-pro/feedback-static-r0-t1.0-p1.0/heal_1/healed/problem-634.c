@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint64_t sum_fourth_power_even(unsigned int n) {
+    uint64_t sum = 0;
+    unsigned int i;
+
+    for (i = 1; i <= n; ++i) {
+        uint64_t term;
+        unsigned long long even = 2ULL * i;
+        term = even * even * even * even;
+        if (UINT64_MAX - sum < term) {
+            fprintf(stderr, "Error: overflow detected\n");
+            exit(EXIT_FAILURE);
+        }
+        sum += term;
+    }
+
+    return sum;
+}
+
+int main(int argc, char **argv) {
+    unsigned int n;
+    char *endptr;
+    unsigned long val;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    val = strtoul(argv[1], &endptr, 10);
+    if (*endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (val > 4294967295UL) {
+        fprintf(stderr, "Error: input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)val;
+
+    printf("%llu\n", (unsigned long long)sum_fourth_power_even(n));
+
+    return 0;
+}

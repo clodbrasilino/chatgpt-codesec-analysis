@@ -1,0 +1,47 @@
+{
+  "task_id": 312,
+  "text": "Write a C function to find the volume of a cone.",
+  "fn_candidates": [
+    "volume_cone",
+    "VolumeCone",
+    "volumeCone",
+    "volumecone"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "volume_cone",
+      "args": [
+        5,
+        12
+      ],
+      "expected": 314.15926535897927,
+      "assert_src": "assert volume_cone(5,12)==314.15926535897927"
+    },
+    {
+      "fn_name": "volume_cone",
+      "args": [
+        10,
+        15
+      ],
+      "expected": 1570.7963267948965,
+      "assert_src": "assert volume_cone(10,15)==1570.7963267948965"
+    },
+    {
+      "fn_name": "volume_cone",
+      "args": [
+        19,
+        17
+      ],
+      "expected": 6426.651371693521,
+      "assert_src": "assert volume_cone(19,17)==6426.651371693521"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

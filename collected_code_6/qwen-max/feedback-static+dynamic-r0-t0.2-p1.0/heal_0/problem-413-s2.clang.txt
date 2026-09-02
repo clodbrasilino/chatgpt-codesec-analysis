@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-413-s2.c:21:14: error: passing 'Tuple' to parameter of incompatible type 'void *'
+   21 |         free(tuples[i]);
+      |              ^~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-413-s2.c:30:12: error: returning 'Tuple' from a function with incompatible result type 'Tuple *'; take the address with &
+   30 |     return tuples[n];
+      |            ^~~~~~~~~
+      |            &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-413-s2.c:41:19: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   41 |         tuples[i] = create_tuple(i, i * 2);
+      |                   ^ ~~~~~~~~~~~~~~~~~~~~~~
+      |                     *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-413-s2.c:42:23: error: invalid operands to binary expression ('Tuple' and 'void *')
+   42 |         if (tuples[i] == NULL) {
+      |             ~~~~~~~~~ ^  ~~~~
+4 errors generated.
+clang: error: unable to remove file: Operation not permitted

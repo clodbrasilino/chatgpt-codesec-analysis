@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 3
+#define COLS 3
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef Tuple TupleMatrix[ROWS][COLS];
+
+Tuple* flatten_columns(TupleMatrix matrix, int rows, int cols, int* output_count) {
+    if (matrix == NULL || rows <= 0 || cols <= 0 || output_count == NULL) {
+        return NULL;
+    }
+
+    Tuple* result = (Tuple*)malloc((size_t)rows * (size_t)cols * sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int index = 0;
+    for (int col = 0; col < cols; col++) {
+        for (int row = 0; row < rows; row++) {
+            result[index++] = matrix[row][col];
+        }
+    }
+
+    *output_count = rows * cols;
+    return result;
+}
+
+int main(void) {
+    TupleMatrix matrix = {
+        {{1, 10}, {2, 20}, {3, 30}},
+        {{4, 40}, {5, 50}, {6, 60}},
+        {{7, 70}, {8, 80}, {9, 90}}
+    };
+
+    int count = 0;
+    Tuple* flattened = flatten_columns(matrix, ROWS, COLS, &count);
+    if (flattened == NULL) {
+        fprintf(stderr, "Failed to flatten matrix\n");
+        return 1;
+    }
+
+    printf("Flattened columns (%d tuples):\n", count);
+    for (int i = 0; i < count; i++) {
+        printf("(%d, %d)\n", flattened[i].first, flattened[i].second);
+    }
+
+    free(flattened);
+    return 0;
+}
+```

@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_coprime(int a, int b) {
+    while (b != 0) {
+        int t = b;
+        b = a % b;
+        a = t;
+    }
+    return a == 1;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter two numbers: ");
+    scanf("%d %d", &num1, &num2);
+    
+    if (is_coprime(num1, num2)) {
+        printf("The numbers are co-prime.\n");
+    } else {
+        printf("The numbers are not co-prime.\n");
+    }
+
+    return 0;
+}
+```

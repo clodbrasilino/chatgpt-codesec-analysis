@@ -1,0 +1,63 @@
+{
+  "task_id": 843,
+  "text": "Write a C function to find the nth super ugly number from a given prime list of size k using heap queue algorithm.",
+  "fn_candidates": [
+    "nth_super_ugly_number",
+    "NthSuperUglyNumber",
+    "nthSuperUglyNumber",
+    "nthsuperuglynumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "nth_super_ugly_number",
+      "args": [
+        12,
+        [
+          2,
+          7,
+          13,
+          19
+        ]
+      ],
+      "expected": 32,
+      "assert_src": "assert nth_super_ugly_number(12,[2,7,13,19])==32"
+    },
+    {
+      "fn_name": "nth_super_ugly_number",
+      "args": [
+        10,
+        [
+          2,
+          7,
+          13,
+          19
+        ]
+      ],
+      "expected": 26,
+      "assert_src": "assert nth_super_ugly_number(10,[2,7,13,19])==26"
+    },
+    {
+      "fn_name": "nth_super_ugly_number",
+      "args": [
+        100,
+        [
+          2,
+          7,
+          13,
+          19
+        ]
+      ],
+      "expected": 5408,
+      "assert_src": "assert nth_super_ugly_number(100,[2,7,13,19])==5408"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

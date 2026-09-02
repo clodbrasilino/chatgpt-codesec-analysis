@@ -1,0 +1,44 @@
+{
+  "task_id": 448,
+  "text": "Write a C function to calculate the sum of perrin numbers.",
+  "fn_candidates": [
+    "cal_sum",
+    "CalSum",
+    "calSum",
+    "calsum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "cal_sum",
+      "args": [
+        9
+      ],
+      "expected": 49,
+      "assert_src": "assert cal_sum(9) == 49"
+    },
+    {
+      "fn_name": "cal_sum",
+      "args": [
+        10
+      ],
+      "expected": 66,
+      "assert_src": "assert cal_sum(10) == 66"
+    },
+    {
+      "fn_name": "cal_sum",
+      "args": [
+        11
+      ],
+      "expected": 88,
+      "assert_src": "assert cal_sum(11) == 88"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

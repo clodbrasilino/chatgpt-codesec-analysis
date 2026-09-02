@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** createTriangle(int n);
+void freeTriangle(int** triangle, int n);
+
+int findMaxPathSum(int** triangle, int n) {
+    for (int row = n - 2; row >= 0; --row) {
+        for (int col = 0; col <= row; ++col) {
+            triangle[row][col] += (triangle[row+1][col] > triangle[row+1][col+1]) ? triangle[row+1][col] : triangle[row+1][col+1];
+        }
+    }
+    return triangle[0][0];
+}
+
+int main() {
+    int n;
+    printf("Enter the number of rows: ");
+    scanf("%d", &n);
+
+    int** triangle = createTriangle(n);
+    if (!triangle) {
+        return 1;
+    }
+
+    printf("Enter the triangle elements:\n");
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            scanf("%d", &triangle[i][j]);
+        }
+    }
+
+    int maxSum = findMaxPathSum(triangle, n);
+    printf("Maximum path sum: %d\n", maxSum);
+
+    freeTriangle(triangle, n);
+    return 0;
+}
+
+int** createTriangle(int n) {
+    int** triangle = (int**)malloc(n * sizeof(int*));
+    if (!triangle) {
+        return NULL;
+    }
+    for (int i = 0; i < n; ++i) {
+        triangle[i] = (int*)malloc((i + 1) * sizeof(int));
+        if (!triangle[i]) {
+            freeTriangle(triangle, i);
+            return NULL;
+        }
+    }
+    return triangle;
+}
+
+void freeTriangle(int** triangle, int n) {
+    for (int i = 0; i < n; ++i) {
+        free(triangle[i]);
+    }
+    free(triangle);
+}

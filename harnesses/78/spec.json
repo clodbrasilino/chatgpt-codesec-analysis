@@ -1,0 +1,44 @@
+{
+  "task_id": 78,
+  "text": "Write a C function to find number of integers with odd number of set bits.",
+  "fn_candidates": [
+    "count_With_Odd_SetBits",
+    "CountWithOddSetbits",
+    "countWithOddSetbits",
+    "countWithOddSetBits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_With_Odd_SetBits",
+      "args": [
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert count_With_Odd_SetBits(5) == 3"
+    },
+    {
+      "fn_name": "count_With_Odd_SetBits",
+      "args": [
+        10
+      ],
+      "expected": 5,
+      "assert_src": "assert count_With_Odd_SetBits(10) == 5"
+    },
+    {
+      "fn_name": "count_With_Odd_SetBits",
+      "args": [
+        15
+      ],
+      "expected": 8,
+      "assert_src": "assert count_With_Odd_SetBits(15) == 8"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

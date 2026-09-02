@@ -1,0 +1,61 @@
+{
+  "task_id": 184,
+  "text": "Write a C function to find all the values in a list that are greater than a specified number.",
+  "fn_candidates": [
+    "greater_specificnum",
+    "GreaterSpecificnum",
+    "greaterSpecificnum",
+    "greaterspecificnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "greater_specificnum",
+      "args": [
+        [
+          220,
+          330,
+          500
+        ],
+        200
+      ],
+      "expected": true,
+      "assert_src": "assert greater_specificnum([220, 330, 500],200)==True"
+    },
+    {
+      "fn_name": "greater_specificnum",
+      "args": [
+        [
+          12,
+          17,
+          21
+        ],
+        20
+      ],
+      "expected": false,
+      "assert_src": "assert greater_specificnum([12, 17, 21],20)==False"
+    },
+    {
+      "fn_name": "greater_specificnum",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        10
+      ],
+      "expected": false,
+      "assert_src": "assert greater_specificnum([1,2,3,4],10)==False"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

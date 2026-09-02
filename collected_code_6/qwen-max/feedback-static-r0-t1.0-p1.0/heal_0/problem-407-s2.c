@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int* toDigitsArray(int n, int *size) {
+    int temp = n, digits = 0;
+    while (temp != 0) {
+        temp /= 10;
+        digits++;
+    }
+    int *arr = (int *)malloc(digits * sizeof(int));
+    if (arr == NULL) {
+        *size = 0;
+        return NULL;
+    }
+    *size = digits;
+    for (int i = 0; i < digits; i++, n /= 10) {
+        arr[digits - i - 1] = n % 10;
+    }
+    return arr;
+}
+
+int findNextBiggerNumber(int num) {
+    int size;
+    int *digits = toDigitsArray(num, &size);
+    if (digits == NULL || size <= 1) return -1;
+
+    int x, y;
+    for (x = size - 2; x >= 0; x--) {
+        if (digits[x] < digits[x + 1]) break;
+    }
+
+    if (x < 0) {
+        free(digits);
+        return -1;
+    }
+
+    for (y = size - 1; y > x; y--) {
+        if (digits[y] > digits[x]) break;
+    }
+
+    int temp = digits[x];
+    digits[x] = digits[y];
+    digits[y] = temp;
+
+    qsort(digits + x + 1, size - x - 1, sizeof(int), (int(*)(const void*, const void*))strcmp);
+
+    int result = 0;
+    for (int i = 0; i < size; i++) {
+        result = result * 10 + digits[i];
+    }
+
+    free(digits);
+    return result;
+}
+
+int main() {
+    int number = 12345;
+    int nextBigger = findNextBiggerNumber(number);
+    if (nextBigger == -1) {
+        printf("No bigger number can be formed\n");
+    } else {
+        printf("The next bigger number is: %d\n", nextBigger);
+    }
+    return 0;
+}

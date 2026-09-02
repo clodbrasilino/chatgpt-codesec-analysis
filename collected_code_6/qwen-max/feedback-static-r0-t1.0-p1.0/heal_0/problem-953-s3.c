@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int minSubsetsWithDistinctElements(int *arr, int n) {
+    qsort(arr, n, sizeof(int), compare);
+    int *counts = (int *)calloc(n, sizeof(int));
+    if (!counts) return -1;
+
+    counts[0] = 1;
+    for (int i = 1; i < n; ++i) {
+        counts[i] = (arr[i] == arr[i-1]) ? counts[i-1] : counts[i-1] + 1;
+    }
+
+    int max_count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (max_count < counts[i]) {
+            max_count = counts[i];
+        }
+    }
+
+    free(counts);
+    return max_count;
+}
+
+int main() {
+    int arr[] = {4, 5, 6, 7, 8, 4, 5, 6, 7, 8, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = minSubsetsWithDistinctElements(arr, n);
+    printf("%d\n", result);
+    return 0;
+}

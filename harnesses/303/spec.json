@@ -1,0 +1,60 @@
+{
+  "task_id": 303,
+  "text": "Write a C function to check whether the count of inversion of two types are same or not.",
+  "fn_candidates": [
+    "solve",
+    "Solve",
+    "solve",
+    "solve"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "solve",
+      "args": [
+        [
+          1,
+          0,
+          2
+        ],
+        3
+      ],
+      "expected": true,
+      "assert_src": "assert solve([1,0,2],3) == True"
+    },
+    {
+      "fn_name": "solve",
+      "args": [
+        [
+          1,
+          2,
+          0
+        ],
+        3
+      ],
+      "expected": false,
+      "assert_src": "assert solve([1,2,0],3) == False"
+    },
+    {
+      "fn_name": "solve",
+      "args": [
+        [
+          1,
+          2,
+          1
+        ],
+        3
+      ],
+      "expected": true,
+      "assert_src": "assert solve([1,2,1],3) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

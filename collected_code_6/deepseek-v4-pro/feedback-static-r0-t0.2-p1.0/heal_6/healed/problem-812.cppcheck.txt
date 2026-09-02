@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-812.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-812.c:59:30: error: Null pointer dereference: result7 [nullPointer]
+    printf("(null) -> %s\n", result7);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-812.c:51:36: note: Calling function 'abbreviate_road' returns 0
+    char *result7 = abbreviate_road(test7);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-812.c:51:36: note: Assignment 'result7=abbreviate_road(test7)', assigned value is 0
+    char *result7 = abbreviate_road(test7);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-812.c:59:30: note: Null pointer dereference
+    printf("(null) -> %s\n", result7);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_6/healed/problem-812.c:59:30: error: Null pointer dereference [nullPointer]
+    printf("(null) -> %s\n", result7);
+                             ^

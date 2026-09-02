@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **find_words(const char *str, int *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    int capacity = 10;
+    char **words = malloc(capacity * sizeof(char *));
+    if (words == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    const char *p = str;
+    char word[256];
+    int word_len = 0;
+
+    while (*p) {
+        if (isalpha((unsigned char)*p)) {
+            word[word_len++] = *p;
+            if (word_len >= 255) {
+                for (int i = 0; i < *count; i++) {
+                    free(words[i]);
+                }
+                free(words);
+                return NULL;
+            }
+        } else {
+            if (word_len > 0 && (word[0] == 'a' || word[0] == 'e' ||
+                                  word[0] == 'A' || word[0] == 'E')) {
+                if (*count >= capacity) {
+                    capacity *= 2;
+                    char **temp = realloc(words, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (int i = 0; i < *count; i++) {
+                            free(words[i]);
+                        }
+                        free(words);
+                        return NULL;
+                    }
+                    words = temp;
+                }
+                word[word_len] = '\0';
+                words[*count] = malloc((word_len + 1) * sizeof(char));
+                if (words[*count] == NULL) {
+                    for (int i = 0; i < *count; i++) {
+                        free(words[i]);
+                    }
+                    free(words);
+                    return NULL;
+                }
+                strcpy(words[*count], word);
+                (*count)++;
+            }
+            word_len = 0;
+        }
+        p++;
+    }
+
+    if (word_len > 0 && (word[0] == 'a' || word[0] == 'e' ||
+                          word[0] == 'A' || word[0] == 'E')) {
+        if (*count >= capacity) {
+            capacity *= 2;
+            char **temp = realloc(words, capacity * sizeof(char *));
+            if (temp == NULL) {
+                for (int i = 0; i < *count; i++) {
+                    free(words[i]);
+                }
+                free(words);
+                return NULL;
+            }
+            words = temp;
+        }
+        word[word_len] = '\0';
+        words[*count] = malloc((word_len + 1) * sizeof(char));
+        if (words[*count] == NULL) {
+            for (int i = 0; i < *count; i++) {
+                free(words[i]);
+            }
+            free(words);
+            return NULL;
+        }
+        strcpy(words[*count], word);
+        (*count)++;
+    }
+
+    if (*count == 0) {
+        free(words);
+        return NULL;
+    }
+
+    return words;
+}
+
+void free_words(char **words, int count) {
+    if (words == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void) {
+    const char *text = "An apple and an eagle are eating eggs";
+    int count = 0;
+    char **result = find_words(text, &count);
+
+    if (result == NULL && count == 0) {
+        printf("No words found or error occurred\n");
+        return 0;
+    }
+
+    if (result == NULL) {
+        printf("Memory allocation error\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_words(result, count);
+    return 0;
+}

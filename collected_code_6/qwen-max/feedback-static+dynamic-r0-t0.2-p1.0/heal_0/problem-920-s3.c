@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+    int c;
+} Tuple;
+
+Tuple* create_tuple(int a, int b, int c) {
+    Tuple* t = (Tuple*)malloc(sizeof(Tuple));
+    t->a = a;
+    t->b = b;
+    t->c = c;
+    return t;
+}
+
+void free_tuples(Tuple** tuples, int count) {
+    for (int i = 0; i < count; ++i) {
+        if (tuples[i] != NULL) {
+            free(tuples[i]);
+        }
+    }
+    free(tuples);
+}
+
+int is_all_none(Tuple* t) {
+    return t->a == -1 && t->b == -1 && t->c == -1;
+}
+
+int remove_all_none_tuples(Tuple** tuples, int* count) {
+    int new_count = 0;
+    for (int i = 0; i < *count; ++i) {
+        if (!is_all_none(tuples[i])) {
+            tuples[new_count++] = tuples[i];
+        } else {
+            free(tuples[i]);
+        }
+    }
+    *count = new_count;
+    return new_count;
+}
+
+int main() {
+    int n = 5;
+    Tuple** tuples = (Tuple**)malloc(n * sizeof(Tuple*));
+    tuples[0] = create_tuple(1, 2, 3);
+    tuples[1] = create_tuple(-1, -1, -1);
+    tuples[2] = create_tuple(4, 5, 6);
+    tuples[3] = create_tuple(-1, -1, -1);
+    tuples[4] = create_tuple(7, 8, 9);
+
+    int count = n;
+    count = remove_all_none_tuples(tuples, &count);
+
+    for (int i = 0; i < count; ++i) {
+        printf("(%d, %d, %d)\n", tuples[i]->a, tuples[i]->b, tuples[i]->c);
+    }
+
+    free_tuples(tuples, n);
+    return 0;
+}

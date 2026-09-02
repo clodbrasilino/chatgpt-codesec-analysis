@@ -1,0 +1,76 @@
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point points[6];
+} Hexagon;
+
+typedef struct {
+    Hexagon *hexagons;
+    int count;
+} HexGrid;
+
+HexGrid calculate_hex_grid(int rows, int cols, double radius) {
+    HexGrid grid;
+    grid.count = rows * cols;
+    grid.hexagons = (Hexagon *)malloc(grid.count * sizeof(Hexagon));
+    
+    if (grid.hexagons == NULL) {
+        grid.count = 0;
+        return grid;
+    }
+    
+    double hex_height = radius * sqrt(3.0);
+    double hex_width = radius * 2.0;
+    double vert_spacing = hex_height;
+    double horiz_spacing = hex_width * 0.75;
+    
+    for (int row = 0; row < rows; row++) {
+        for (int col = 0; col < cols; col++) {
+            int index = row * cols + col;
+            double center_x = col * horiz_spacing;
+            double center_y = row * vert_spacing;
+            
+            if (col % 2 == 1) {
+                center_y += vert_spacing * 0.5;
+            }
+            
+            for (int i = 0; i < 6; i++) {
+                double angle = M_PI / 3.0 * i + M_PI / 6.0;
+                grid.hexagons[index].points[i].x = center_x + radius * cos(angle);
+                grid.hexagons[index].points[i].y = center_y + radius * sin(angle);
+            }
+        }
+    }
+    
+    return grid;
+}
+
+void free_hex_grid(HexGrid *grid) {
+    if (grid->hexagons != NULL) {
+        free(grid->hexagons);
+        grid->hexagons = NULL;
+        grid->count = 0;
+    }
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    double radius = 1.0;
+    
+    HexGrid grid = calculate_hex_grid(rows, cols, radius);
+    
+    if (grid.hexagons == NULL) {
+        return 1;
+    }
+    
+    free_hex_grid(&grid);
+    
+    return 0;
+}

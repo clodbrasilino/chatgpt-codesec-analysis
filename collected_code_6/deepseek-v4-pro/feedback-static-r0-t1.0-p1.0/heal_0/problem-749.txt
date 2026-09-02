@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_numeric(const void *a, const void *b) {
+    const char *str_a = *(const char **)a;
+    const char *str_b = *(const char **)b;
+    
+    char *end_a;
+    char *end_b;
+    
+    double num_a = strtod(str_a, &end_a);
+    double num_b = strtod(str_b, &end_b);
+    
+    if (end_a == str_a && end_b == str_b) return 0;
+    if (end_a == str_a) return 1;
+    if (end_b == str_b) return -1;
+    
+    if (num_a < num_b) return -1;
+    if (num_a > num_b) return 1;
+    
+    while (*end_a == ' ' || *end_a == '\t') end_a++;
+    while (*end_b == ' ' || *end_b == '\t') end_b++;
+    
+    if (*end_a == '\0' && *end_b == '\0') return 0;
+    if (*end_a == '\0') return -1;
+    if (*end_b == '\0') return 1;
+    
+    return strcmp(end_a, end_b);
+}
+
+void sort_numeric_strings(char **strings, size_t count) {
+    if (strings == NULL || count == 0) return;
+    qsort(strings, count, sizeof(char *), compare_numeric);
+}
+
+int main(void) {
+    char *strings[] = {
+        "10.5",
+        "2.3",
+        "10.5abc",
+        "2.3xyz",
+        "100",
+        "1e2",
+        "0.001",
+        "10.5def",
+        "2.3abc"
+    };
+    
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    
+    sort_numeric_strings(strings, count);
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+    
+    return 0;
+}
+```

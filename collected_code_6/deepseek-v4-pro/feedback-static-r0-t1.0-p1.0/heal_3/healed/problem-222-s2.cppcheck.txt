@@ -1,0 +1,43 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:92:47: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("empty tuple all same type: %s\n", result ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:91:27: note: Calling function 'all_same_type' returns 0
+    result = all_same_type(NULL, 0);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:91:27: note: Assignment 'result=all_same_type(NULL,0)', assigned value is 0
+    result = all_same_type(NULL, 0);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:92:47: note: Condition 'result' is always false
+    printf("empty tuple all same type: %s\n", result ? "true" : "false");
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:95:46: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("NULL tuple all same type: %s\n", result ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:94:27: note: Calling function 'all_same_type' returns 0
+    result = all_same_type(NULL, 5);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:94:27: note: Assignment 'result=all_same_type(NULL,5)', assigned value is 0
+    result = all_same_type(NULL, 5);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:95:46: note: Condition 'result' is always false
+    printf("NULL tuple all same type: %s\n", result ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:45:18: style: Variable 'tuple1' can be declared as const array [constVariable]
+    TupleElement tuple1[] = {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:51:18: style: Variable 'tuple2' can be declared as const array [constVariable]
+    TupleElement tuple2[] = {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:57:18: style: Variable 'tuple3' can be declared as const array [constVariable]
+    TupleElement tuple3[] = {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:62:18: style: Variable 'tuple4' can be declared as const array [constVariable]
+    TupleElement tuple4[] = {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:69:18: style: Variable 'tuple5' can be declared as const array [constVariable]
+    TupleElement tuple5[] = {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-222-s2.c:22:7: style: struct member 'TupleElement::value' is never used. [unusedStructMember]
+    } value;
+      ^

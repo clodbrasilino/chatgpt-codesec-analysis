@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+Tuple list_to_tuple(Node *head) {
+    size_t count = 0;
+    Node *current = head;
+    
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    
+    Tuple tuple;
+    tuple.length = count;
+    
+    if (count == 0) {
+        tuple.elements = NULL;
+        return tuple;
+    }
+    
+    tuple.elements = (int *)malloc(count * sizeof(int));
+    if (tuple.elements == NULL) {
+        tuple.length = 0;
+        return tuple;
+    }
+    
+    current = head;
+    for (size_t i = 0; i < count; i++) {
+        tuple.elements[i] = current->data;
+        current = current->next;
+    }
+    
+    return tuple;
+}
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_tuple(Tuple *tuple) {
+    free(tuple->elements);
+    tuple->elements = NULL;
+    tuple->length = 0;
+}
+
+int main(void) {
+    Node *head = create_node(1);
+    if (head == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    head->next = create_node(2);
+    if (head->next == NULL) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+    
+    head->next->next = create_node(3);
+    if (head->next->next == NULL) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+    
+    Tuple tuple = list_to_tuple(head);
+    
+    printf("Tuple elements: ");
+    for (size_t i = 0; i < tuple.length; i++) {
+        printf("%d ", tuple.elements[i]);
+    }
+    printf("\n");
+    
+    free_tuple(&tuple);
+    free_list(head);
+    
+    return EXIT_SUCCESS;
+}

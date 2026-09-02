@@ -1,0 +1,47 @@
+{
+  "task_id": 637,
+  "text": "Write a C function to check whether the given amount has no profit and no loss",
+  "fn_candidates": [
+    "noprofit_noloss",
+    "NoprofitNoloss",
+    "noprofitNoloss",
+    "noprofitnoloss"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "noprofit_noloss",
+      "args": [
+        1500,
+        1200
+      ],
+      "expected": false,
+      "assert_src": "assert noprofit_noloss(1500,1200)==False"
+    },
+    {
+      "fn_name": "noprofit_noloss",
+      "args": [
+        100,
+        100
+      ],
+      "expected": true,
+      "assert_src": "assert noprofit_noloss(100,100)==True"
+    },
+    {
+      "fn_name": "noprofit_noloss",
+      "args": [
+        2000,
+        5000
+      ],
+      "expected": false,
+      "assert_src": "assert noprofit_noloss(2000,5000)==False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

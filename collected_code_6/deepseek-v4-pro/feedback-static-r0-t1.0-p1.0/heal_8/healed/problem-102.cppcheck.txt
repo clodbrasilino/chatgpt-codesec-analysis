@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:85:26: style: Condition 'test8' is always false [knownConditionTrueFalse]
+    printf("%s -> %s\n", test8 ? test8 : "NULL", result ? result : "(null)");
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:52:25: note: Assignment 'test8=NULL', assigned value is 0
+    const char *test8 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:85:26: note: Condition 'test8' is always false
+    printf("%s -> %s\n", test8 ? test8 : "NULL", result ? result : "(null)");
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:85:50: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("%s -> %s\n", test8 ? test8 : "NULL", result ? result : "(null)");
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:84:28: note: Calling function 'snake_to_camel' returns 0
+    result = snake_to_camel(test8);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:84:28: note: Assignment 'result=snake_to_camel(test8)', assigned value is 0
+    result = snake_to_camel(test8);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-102.c:85:50: note: Condition 'result' is always false
+    printf("%s -> %s\n", test8 ? test8 : "NULL", result ? result : "(null)");
+                                                 ^

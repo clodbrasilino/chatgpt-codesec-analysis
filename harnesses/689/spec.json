@@ -1,0 +1,79 @@
+{
+  "task_id": 689,
+  "text": "Write a C function to find the minimum number of jumps to reach the end of the array for the given array of integers where each element represents the max number of steps that can be made forward from that element. > indented block > indented block",
+  "fn_candidates": [
+    "min_jumps",
+    "MinJumps",
+    "minJumps",
+    "minjumps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_jumps",
+      "args": [
+        [
+          1,
+          3,
+          6,
+          1,
+          0,
+          9
+        ],
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert min_jumps([1, 3, 6, 1, 0, 9], 6) == 3"
+    },
+    {
+      "fn_name": "min_jumps",
+      "args": [
+        [
+          1,
+          3,
+          5,
+          8,
+          9,
+          2,
+          6,
+          7,
+          6,
+          8,
+          9
+        ],
+        11
+      ],
+      "expected": 3,
+      "assert_src": "assert min_jumps([1, 3, 5, 8, 9, 2, 6, 7, 6, 8, 9], 11) == 3"
+    },
+    {
+      "fn_name": "min_jumps",
+      "args": [
+        [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        11
+      ],
+      "expected": 10,
+      "assert_src": "assert min_jumps([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 11) == 10"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

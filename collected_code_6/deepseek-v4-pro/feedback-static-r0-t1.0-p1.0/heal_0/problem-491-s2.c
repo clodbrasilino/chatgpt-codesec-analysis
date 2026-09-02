@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double geometric_series_sum(double first_term, double common_ratio, int num_terms) {
+    if (num_terms <= 0) {
+        return 0.0;
+    }
+    
+    if (fabs(common_ratio - 1.0) < 1e-10) {
+        return first_term * num_terms;
+    }
+    
+    return first_term * (1.0 - pow(common_ratio, num_terms)) / (1.0 - common_ratio);
+}
+
+int main(void) {
+    double first_term, common_ratio;
+    int num_terms;
+    double sum;
+    
+    printf("Enter first term: ");
+    if (scanf("%lf", &first_term) != 1) {
+        fprintf(stderr, "Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter common ratio: ");
+    if (scanf("%lf", &common_ratio) != 1) {
+        fprintf(stderr, "Invalid input for common ratio\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter number of terms: ");
+    if (scanf("%d", &num_terms) != 1) {
+        fprintf(stderr, "Invalid input for number of terms\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (num_terms < 0) {
+        fprintf(stderr, "Number of terms must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    sum = geometric_series_sum(first_term, common_ratio, num_terms);
+    printf("Sum of geometric series: %.10f\n", sum);
+    
+    return EXIT_SUCCESS;
+}

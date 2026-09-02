@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-695-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-695-s3.c:5:36: style: Parameter 'tuple1' can be declared as pointer to const [constParameterPointer]
+bool check_greater_than_index(int *tuple1, int *tuple2, size_t size) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-695-s3.c:5:49: style: Parameter 'tuple2' can be declared as pointer to const [constParameterPointer]
+bool check_greater_than_index(int *tuple1, int *tuple2, size_t size) {
+                                                ^

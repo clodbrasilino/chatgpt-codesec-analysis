@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int height;
+    int width;
+} Student;
+
+typedef struct {
+    Student *students;
+    size_t count;
+} StudentDictionary;
+
+StudentDictionary create_student_dictionary(size_t initial_capacity) {
+    StudentDictionary dict = { .students = (Student *)malloc(initial_capacity * sizeof(Student)), .count = 0 };
+    return dict;
+}
+
+void add_student(StudentDictionary *dict, int height, int width) {
+    if (dict->count > 0 && (dict->count % 10) == 0) {
+        dict->students = (Student *)realloc(dict->students, (dict->count + 10) * sizeof(Student));
+    }
+    dict->students[dict->count++] = (Student){.height = height, .width = width};
+}
+
+void filter_students_by_height_width(StudentDictionary *dict, int min_height, int max_height, int min_width, int max_width) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (!(dict->students[i].height >= min_height && dict->students[i].height <= max_height && 
+              dict->students[i].width >= min_width && dict->students[i].width <= max_width)) {
+            for (size_t j = i; j < dict->count - 1; ++j) {
+                dict->students[j] = dict->students[j + 1];
+            }
+            --dict->count;
+            --i;
+        }
+    }
+}
+
+void free_student_dictionary(StudentDictionary *dict) {
+    free(dict->students);
+    dict->students = NULL;
+    dict->count = 0;
+}
+
+int main() {
+    StudentDictionary students = create_student_dictionary(10);
+    add_student(&students, 170, 50);
+    add_student(&students, 180, 60);
+    add_student(&students, 160, 45);
+    add_student(&students, 190, 70);
+
+    int min_height = 170;
+    int max_height = 180;
+    int min_width = 55;
+    int max_width = 65;
+
+    filter_students_by_height_width(&students, min_height, max_height, min_width, max_width);
+
+    for (size_t i = 0; i < students.count; ++i) {
+        printf("Height: %d, Width: %d\n", students.students[i].height, students.students[i].width);
+    }
+
+    free_student_dictionary(&students);
+    return 0;
+}

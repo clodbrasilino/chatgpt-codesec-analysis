@@ -1,0 +1,99 @@
+{
+  "task_id": 560,
+  "text": "Write a C function to find the union of elements of the given tuples.",
+  "fn_candidates": [
+    "union_elements",
+    "UnionElements",
+    "unionElements",
+    "unionelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "union_elements",
+      "args": [
+        [
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          5,
+          7,
+          4,
+          10
+        ]
+      ],
+      "expected": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        10
+      ],
+      "assert_src": "assert union_elements((3, 4, 5, 6),(5, 7, 4, 10) ) == (3, 4, 5, 6, 7, 10)"
+    },
+    {
+      "fn_name": "union_elements",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          3,
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "assert_src": "assert union_elements((1, 2, 3, 4),(3, 4, 5, 6) ) == (1, 2, 3, 4, 5, 6)"
+    },
+    {
+      "fn_name": "union_elements",
+      "args": [
+        [
+          11,
+          12,
+          13,
+          14
+        ],
+        [
+          13,
+          15,
+          16,
+          17
+        ]
+      ],
+      "expected": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "assert_src": "assert union_elements((11, 12, 13, 14),(13, 15, 16, 17) ) == (11, 12, 13, 14, 15, 16, 17)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

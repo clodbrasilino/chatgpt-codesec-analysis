@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int item1;
+    int item2;
+} Tuple;
+
+int get_tuple_item(Tuple *t, int index) {
+    if (index == 0) {
+        return t->item1;
+    } else if (index == 1) {
+        return t->item2;
+    } else {
+        return -1; // Invalid index
+    }
+}
+
+int main() {
+    Tuple t = {10, 20};
+    int index = 1;
+    int result = get_tuple_item(&t, index);
+    printf("Tuple item: %d\n", result);
+    return 0;
+}
+```

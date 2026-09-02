@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findClosestSmaller(int n) {
+    if (n == INT_MIN) return INT_MIN;
+    return n - 1;
+}
+
+int main() {
+    int n = 10;
+    printf("The closest smaller number than %d is %d\n", n, findClosestSmaller(n));
+    return 0;
+}

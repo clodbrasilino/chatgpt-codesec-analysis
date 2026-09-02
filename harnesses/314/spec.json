@@ -1,0 +1,89 @@
+{
+  "task_id": 314,
+  "text": "Write a C function to find out the maximum sum such that no two chosen numbers are adjacent for the given rectangular grid of dimension 2 x n.",
+  "fn_candidates": [
+    "max_sum_rectangular_grid",
+    "MaxSumRectangularGrid",
+    "maxSumRectangularGrid",
+    "maxsumrectangulargrid"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sum_rectangular_grid",
+      "args": [
+        [
+          [
+            1,
+            4,
+            5
+          ],
+          [
+            2,
+            0,
+            0
+          ]
+        ],
+        3
+      ],
+      "expected": 7,
+      "assert_src": "assert max_sum_rectangular_grid([ [1, 4, 5], [2, 0, 0 ] ], 3) == 7"
+    },
+    {
+      "fn_name": "max_sum_rectangular_grid",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          [
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        ],
+        5
+      ],
+      "expected": 24,
+      "assert_src": "assert max_sum_rectangular_grid([ [ 1, 2, 3, 4, 5], [ 6, 7, 8, 9, 10] ], 5) == 24"
+    },
+    {
+      "fn_name": "max_sum_rectangular_grid",
+      "args": [
+        [
+          [
+            7,
+            9,
+            11,
+            15,
+            19
+          ],
+          [
+            21,
+            25,
+            28,
+            31,
+            32
+          ]
+        ],
+        5
+      ],
+      "expected": 81,
+      "assert_src": "assert max_sum_rectangular_grid([ [7, 9, 11, 15, 19], [21, 25, 28, 31, 32] ], 5) == 81"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

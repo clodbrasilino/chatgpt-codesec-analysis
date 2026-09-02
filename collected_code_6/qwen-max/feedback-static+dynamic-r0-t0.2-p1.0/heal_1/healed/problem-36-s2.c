@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int nth_digit_proper_fraction(int numerator, int denominator, int n) {
+    if (denominator == 0 || n <= 0) {
+        return -1;
+    }
+    long long remainder = numerator % denominator;
+    for (int i = 0; i < n; ++i) {
+        remainder *= 10;
+        remainder %= denominator;
+    }
+    return (int)(remainder * 10 / denominator) % 10;
+}
+
+int main() {
+    int numerator = 1;
+    int denominator = 3;
+    int n = 5;
+    int result = nth_digit_proper_fraction(numerator, denominator, n);
+    if (result != -1) {
+        printf("The %dth digit is: %d\n", n, result);
+    } else {
+        printf("Invalid input or operation.\n");
+    }
+    return 0;
+}

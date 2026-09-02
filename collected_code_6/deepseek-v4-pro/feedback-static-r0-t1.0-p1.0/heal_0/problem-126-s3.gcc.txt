@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-126-s3.c: In function 'sum_common_divisors':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-126-s3.c:14:17: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   14 |     int g = gcd(abs(a), abs(b));
+      |                 ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-126-s3.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    2 | #include <math.h>
+  +++ |+#include <stdlib.h>
+    3 | 

@@ -1,0 +1,92 @@
+{
+  "task_id": 616,
+  "text": "Write a C function to perfom the modulo of tuple elements in the given two tuples.",
+  "fn_candidates": [
+    "tuple_modulo",
+    "TupleModulo",
+    "tupleModulo",
+    "tuplemodulo"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tuple_modulo",
+      "args": [
+        [
+          10,
+          4,
+          5,
+          6
+        ],
+        [
+          5,
+          6,
+          7,
+          5
+        ]
+      ],
+      "expected": [
+        0,
+        4,
+        5,
+        1
+      ],
+      "assert_src": "assert tuple_modulo((10, 4, 5, 6), (5, 6, 7, 5)) == (0, 4, 5, 1)"
+    },
+    {
+      "fn_name": "tuple_modulo",
+      "args": [
+        [
+          11,
+          5,
+          6,
+          7
+        ],
+        [
+          6,
+          7,
+          8,
+          6
+        ]
+      ],
+      "expected": [
+        5,
+        5,
+        6,
+        1
+      ],
+      "assert_src": "assert tuple_modulo((11, 5, 6, 7), (6, 7, 8, 6)) == (5, 5, 6, 1)"
+    },
+    {
+      "fn_name": "tuple_modulo",
+      "args": [
+        [
+          12,
+          6,
+          7,
+          8
+        ],
+        [
+          7,
+          8,
+          9,
+          7
+        ]
+      ],
+      "expected": [
+        5,
+        6,
+        7,
+        1
+      ],
+      "assert_src": "assert tuple_modulo((12, 6, 7, 8), (7, 8, 9, 7)) == (5, 6, 7, 1)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

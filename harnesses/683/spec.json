@@ -1,0 +1,44 @@
+{
+  "task_id": 683,
+  "text": "Write a C function to check whether the given number can be represented by sum of two squares or not.",
+  "fn_candidates": [
+    "sum_Square",
+    "SumSquare",
+    "sumSquare",
+    "sumSquare"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Square",
+      "args": [
+        25
+      ],
+      "expected": true,
+      "assert_src": "assert sum_Square(25) == True"
+    },
+    {
+      "fn_name": "sum_Square",
+      "args": [
+        24
+      ],
+      "expected": false,
+      "assert_src": "assert sum_Square(24) == False"
+    },
+    {
+      "fn_name": "sum_Square",
+      "args": [
+        17
+      ],
+      "expected": true,
+      "assert_src": "assert sum_Square(17) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

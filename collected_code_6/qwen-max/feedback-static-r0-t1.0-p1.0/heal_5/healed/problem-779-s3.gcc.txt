@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:52:11: error: field name not in record or union initializer
+   52 |         {{.item = "a"}, .count = 1},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:52:11: note: (near initialization for 'lists[0].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:53:11: error: field name not in record or union initializer
+   53 |         {{.item = "a", .item = "c"}, .count = 2},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:53:11: note: (near initialization for 'lists[1].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:53:24: error: field name not in record or union initializer
+   53 |         {{.item = "a", .item = "c"}, .count = 2},
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:53:24: note: (near initialization for 'lists[1].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:54:11: error: field name not in record or union initializer
+   54 |         {{.item = "b", .item = "a", .item = "c"}, .count = 3}
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:54:11: note: (near initialization for 'lists[2].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:54:24: error: field name not in record or union initializer
+   54 |         {{.item = "b", .item = "a", .item = "c"}, .count = 3}
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:54:24: note: (near initialization for 'lists[2].items')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:54:37: error: field name not in record or union initializer
+   54 |         {{.item = "b", .item = "a", .item = "c"}, .count = 3}
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-779-s3.c:54:37: note: (near initialization for 'lists[2].items')

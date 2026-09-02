@@ -1,0 +1,77 @@
+{
+  "task_id": 470,
+  "text": "Write a C function to find the pairwise addition of the elements of the given tuples.",
+  "fn_candidates": [
+    "add_pairwise",
+    "AddPairwise",
+    "addPairwise",
+    "addpairwise"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "add_pairwise",
+      "args": [
+        [
+          1,
+          5,
+          7,
+          8,
+          10
+        ]
+      ],
+      "expected": [
+        6,
+        12,
+        15,
+        18
+      ],
+      "assert_src": "assert add_pairwise((1, 5, 7, 8, 10)) == (6, 12, 15, 18)"
+    },
+    {
+      "fn_name": "add_pairwise",
+      "args": [
+        [
+          2,
+          6,
+          8,
+          9,
+          11
+        ]
+      ],
+      "expected": [
+        8,
+        14,
+        17,
+        20
+      ],
+      "assert_src": "assert add_pairwise((2, 6, 8, 9, 11)) == (8, 14, 17, 20)"
+    },
+    {
+      "fn_name": "add_pairwise",
+      "args": [
+        [
+          3,
+          7,
+          9,
+          10,
+          12
+        ]
+      ],
+      "expected": [
+        10,
+        16,
+        19,
+        22
+      ],
+      "assert_src": "assert add_pairwise((3, 7, 9, 10, 12)) == (10, 16, 19, 22)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

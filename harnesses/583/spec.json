@@ -1,0 +1,44 @@
+{
+  "task_id": 583,
+  "text": "Write a C function for nth catalan number.",
+  "fn_candidates": [
+    "catalan_number",
+    "CatalanNumber",
+    "catalanNumber",
+    "catalannumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "catalan_number",
+      "args": [
+        10
+      ],
+      "expected": 16796,
+      "assert_src": "assert catalan_number(10)==16796"
+    },
+    {
+      "fn_name": "catalan_number",
+      "args": [
+        9
+      ],
+      "expected": 4862,
+      "assert_src": "assert catalan_number(9)==4862"
+    },
+    {
+      "fn_name": "catalan_number",
+      "args": [
+        7
+      ],
+      "expected": 429,
+      "assert_src": "assert catalan_number(7)==429"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

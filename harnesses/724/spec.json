@@ -1,0 +1,47 @@
+{
+  "task_id": 724,
+  "text": "Write a C function to calculate the sum of all digits of the base to the specified power.",
+  "fn_candidates": [
+    "power_base_sum",
+    "PowerBaseSum",
+    "powerBaseSum",
+    "powerbasesum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "power_base_sum",
+      "args": [
+        2,
+        100
+      ],
+      "expected": 115,
+      "assert_src": "assert power_base_sum(2,100)==115"
+    },
+    {
+      "fn_name": "power_base_sum",
+      "args": [
+        8,
+        10
+      ],
+      "expected": 37,
+      "assert_src": "assert power_base_sum(8,10)==37"
+    },
+    {
+      "fn_name": "power_base_sum",
+      "args": [
+        8,
+        15
+      ],
+      "expected": 62,
+      "assert_src": "assert power_base_sum(8,15)==62"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* createNode(int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int findMaxLengthSublist(Node *head, Node **maxHead, int *maxLen) {
+    if (head == NULL) return 0;
+
+    Node *current = head;
+    Node *sublistStart = head;
+    int currentLen = 1;
+    int maxLength = 1;
+
+    while (current->next != NULL) {
+        if (current->value < current->next->value) {
+            currentLen++;
+        } else {
+            if (currentLen > maxLength) {
+                maxLength = currentLen;
+                *maxHead = sublistStart;
+                *maxLen = maxLength;
+            }
+            sublistStart = current->next;
+            currentLen = 1;
+        }
+        current = current->next;
+    }
+
+    if (currentLen > maxLength) {
+        maxLength = currentLen;
+        *maxHead = sublistStart;
+        *maxLen = maxLength;
+    }
+
+    return maxLength;
+}
+
+int main() {
+    Node *head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(1);
+    head->next->next->next->next->next = createNode(2);
+    head->next->next->next->next->next->next = createNode(3);
+
+    Node *maxHead = NULL;
+    int maxLen = 0;
+
+    findMaxLengthSublist(head, &maxHead, &maxLen);
+
+    printf("Maximum length sublist: ");
+    for (int i = 0; i < maxLen; i++) {
+        printf("%d ", maxHead->value);
+        maxHead = maxHead->next;
+    }
+    printf("\n");
+
+    freeList(head);
+    return 0;
+}

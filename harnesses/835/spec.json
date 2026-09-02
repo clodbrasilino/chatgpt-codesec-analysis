@@ -1,0 +1,53 @@
+{
+  "task_id": 835,
+  "text": "Write a C function to find the slope of a line.",
+  "fn_candidates": [
+    "slope",
+    "Slope",
+    "slope",
+    "slope"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "slope",
+      "args": [
+        4,
+        2,
+        2,
+        5
+      ],
+      "expected": -1.5,
+      "assert_src": "assert slope(4,2,2,5) == -1.5"
+    },
+    {
+      "fn_name": "slope",
+      "args": [
+        2,
+        4,
+        4,
+        6
+      ],
+      "expected": 1,
+      "assert_src": "assert slope(2,4,4,6) == 1"
+    },
+    {
+      "fn_name": "slope",
+      "args": [
+        1,
+        2,
+        4,
+        2
+      ],
+      "expected": 0,
+      "assert_src": "assert slope(1,2,4,2) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

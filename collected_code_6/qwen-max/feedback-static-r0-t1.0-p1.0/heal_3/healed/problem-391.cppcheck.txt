@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c:57:20: warning: Either the condition 'current_dict' is redundant or there is possible null pointer dereference: current_dict. [nullPointerRedundantCheck]
+            while (current_dict->first_child && current_dict->first_child->first_child) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c:55:16: note: Assuming that condition 'current_dict' is not redundant
+        while (current_dict && current_dict->parent) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c:57:20: note: Null pointer dereference
+            while (current_dict->first_child && current_dict->first_child->first_child) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c:60:17: warning: Either the condition 'current_dict' is redundant or there is possible null pointer dereference: current_dict. [nullPointerRedundantCheck]
+            if (current_dict->first_child && !current_dict->first_child->first_child) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c:55:16: note: Assuming that condition 'current_dict' is not redundant
+        while (current_dict && current_dict->parent) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-391.c:60:17: note: Null pointer dereference
+            if (current_dict->first_child && !current_dict->first_child->first_child) {
+                ^

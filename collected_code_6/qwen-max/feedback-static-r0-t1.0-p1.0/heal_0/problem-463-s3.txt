@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int findMaxProductSubarray(int *arr, int n) {
+    int max_ending_here = arr[0];
+    int min_ending_here = arr[0];
+    int max_so_far = arr[0];
+
+    for (int i = 1; i < n; ++i) {
+        int temp = max_ending_here;
+        max_ending_here = (arr[i] > arr[i] * max_ending_here) ? arr[i] : (arr[i] * max_ending_here > arr[i] * min_ending_here) ? arr[i] * max_ending_here : arr[i] * min_ending_here;
+        min_ending_here = (arr[i] < arr[i] * temp) ? arr[i] : (arr[i] * temp < arr[i] * min_ending_here) ? arr[i] * temp : arr[i] * min_ending_here;
+
+        if (max_ending_here > max_so_far)
+            max_so_far = max_ending_here;
+    }
+    return max_so_far;
+}
+
+int main() {
+    int arr[] = {2, 3, -2, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findMaxProductSubarray(arr, n);
+    printf("Maximum product subarray is %d\n", result);
+    return 0;
+}
+```

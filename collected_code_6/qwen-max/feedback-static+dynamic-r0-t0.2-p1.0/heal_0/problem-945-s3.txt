@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t used;
+    size_t size;
+} Set;
+
+Set* create_set(size_t initial_size) {
+    Set *set = (Set *)malloc(sizeof(Set));
+    if (!set) return NULL;
+    set->data = (int *)malloc(initial_size * sizeof(int));
+    if (!set->data) {
+        free(set);
+        return NULL;
+    }
+    set->used = 0;
+    set->size = initial_size;
+    return set;
+}
+
+void destroy_set(Set *set) {
+    if (set) {
+        free(set->data);
+        free(set);
+    }
+}
+
+int add_to_set(Set *set, int value) {
+    for (size_t i = 0; i < set->used; ++i) {
+        if (set->data[i] == value) return 0;
+    }
+    if (set->used == set->size) {
+        set->size *= 2;
+        set->data = (int *)realloc(set->data, set->size * sizeof(int));
+        if (!set->data) return -1;
+    }
+    set->data[set->used++] = value;
+    return 1;
+}
+
+Set* convert_tuples_to_set(int *tuples, size_t length) {
+    Set *set = create_set(length);
+    if (!set) return NULL;
+    for (size_t i = 0; i < length; ++i) {
+        if (add_to_set(set, tuples[i]) == -1) {
+            destroy_set(set);
+            return NULL;
+        }
+    }
+    return set;
+}
+
+int main() {
+    int tuples[] = {1, 2, 3, 4, 5, 1, 2, 3};
+    size_t length = sizeof(tuples) / sizeof(tuples[0]);
+    Set *set = convert_tuples_to_set(tuples, length);
+    if (set) {
+        for (size_t i = 0; i < set->used; ++i) {
+            printf("%d ", set->data[i]);
+        }
+        printf("\n");
+        destroy_set(set);
+    }
+    return 0;
+}
+```

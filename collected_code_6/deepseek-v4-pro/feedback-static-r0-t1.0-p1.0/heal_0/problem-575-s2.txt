@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_non_multiple(int n, int m) {
+    if (m == 0) {
+        fprintf(stderr, "Error: modulus cannot be zero\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n <= 0) {
+        fprintf(stderr, "Error: n must be positive\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    int count = 0;
+    int candidate = 0;
+    
+    while (count < n) {
+        candidate++;
+        if (candidate % m != 0) {
+            count++;
+        }
+    }
+    
+    return candidate;
+}
+
+int main(void) {
+    int n, m;
+    
+    printf("Enter n (position): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter m (modulus): ");
+    if (scanf("%d", &m) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = find_nth_non_multiple(n, m);
+    printf("The %dth number not divisible by %d is: %d\n", n, m, result);
+    
+    return EXIT_SUCCESS;
+}
+```

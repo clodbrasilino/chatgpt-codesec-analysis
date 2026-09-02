@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+Tuple create_tuple(int *elements, int size) {
+    Tuple t;
+    t.elements = (int *)malloc(size * sizeof(int));
+    if (t.elements == NULL) {
+        t.size = 0;
+        return t;
+    }
+    memcpy(t.elements, elements, size * sizeof(int));
+    t.size = size;
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL && t->elements != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+        t->size = 0;
+    }
+}
+
+int is_subset(Tuple tuple1, Tuple tuple2) {
+    if (tuple1.elements == NULL || tuple2.elements == NULL) {
+        return 0;
+    }
+    
+    int *count1 = (int *)calloc(tuple1.size, sizeof(int));
+    int *count2 = (int *)calloc(tuple2.size, sizeof(int));
+    
+    if (count1 == NULL || count2 == NULL) {
+        free(count1);
+        free(count2);
+        return 0;
+    }
+    
+    for (int i = 0; i < tuple1.size; i++) {
+        int found = 0;
+        for (int j = 0; j < tuple1.size; j++) {
+            if (tuple1.elements[i] == tuple1.elements[j]) {
+                count1[i]++;
+            }
+        }
+    }
+    
+    for (int i = 0; i < tuple2.size; i++) {
+        int found = 0;
+        for (int j = 0; j < tuple2.size; j++) {
+            if (tuple2.elements[i] == tuple2.elements[j]) {
+                count2[i]++;
+            }
+        }
+    }
+    
+    for (int i = 0; i < tuple1.size; i++) {
+        int found = 0;
+        for (int j = 0; j < tuple2.size; j++) {
+            if (tuple1.elements[i] == tuple2.elements[j]) {
+                if (count1[i] <= count2[j]) {
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        if (!found) {
+            free(count1);
+            free(count2);
+            return 0;
+        }
+    }
+    
+    free(count1);
+    free(count2);
+    return 1;
+}
+
+int main() {
+    int elements1[] = {1, 2, 3};
+    int elements2[] = {1, 2, 3, 4, 5};
+    int elements3[] = {1, 2, 2};
+    int elements4[] = {1, 2, 2, 3};
+    int elements5[] = {4, 5, 6};
+    
+    Tuple t1 = create_tuple(elements1, 3);
+    Tuple t2 = create_tuple(elements2, 5);
+    Tuple t3 = create_tuple(elements3, 3);
+    Tuple t4 = create_tuple(elements4, 4);
+    Tuple t5 = create_tuple(elements5, 3);
+    
+    if (t1.elements == NULL || t2.elements == NULL || t3.elements == NULL || 
+        t4.elements == NULL || t5.elements == NULL) {
+        printf("Memory allocation failed\n");
+        free_tuple(&t1);
+        free_tuple(&t2);
+        free_tuple(&t3);
+        free_tuple(&t4);
+        free_tuple(&t5);
+        return 1;
+    }
+    
+    printf("t1 is subset of t2: %d\n", is_subset(t1, t2));
+    printf("t2 is subset of t1: %d\n", is_subset(t2, t1));
+    printf("t3 is subset of t4: %d\n", is_subset(t3, t4));
+    printf("t4 is subset of t3: %d\n", is_subset(t4, t3));
+    printf("t1 is subset of t5: %d\n", is_subset(t1, t5));
+    
+    free_tuple(&t1);
+    free_tuple(&t2);
+    free_tuple(&t3);
+    free_tuple(&t4);
+    free_tuple(&t5);
+    
+    return 0;
+}

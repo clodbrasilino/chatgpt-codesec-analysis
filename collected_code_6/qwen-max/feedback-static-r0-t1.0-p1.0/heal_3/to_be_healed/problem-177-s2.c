@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+int lcm(int a, int b) {
+    return a / gcd(a, b) * b;
+}
+
+int* find_numbers_in_lcm_range(int start, int end) {
+    static int result[2];
+    for (int i = 1; i <= end; ++i) {
+        for (int j = i + 1; j <= end; ++j) {
+            if (lcm(i, j) >= start && lcm(i, j) <= end) {
+                result[0] = i;
+                result[1] = j;
+                return result;
+            }
+        }
+    }
+    return NULL;
+}
+
+int main() {
+    int start, end;
+    printf("Enter the range: ");
+    scanf("%d%d", &start, &end);
+    
+    /* Possible weaknesses found:
+     *  Variable 'result' can be declared as pointer to const [constVariablePointer]
+     */
+    int* result = find_numbers_in_lcm_range(start, end);
+    if (result) {
+        printf("The numbers are: %d and %d\n", result[0], result[1]);
+    } else {
+        printf("No two distinct numbers found with LCM in the given range.\n");
+    }
+
+    return 0;
+}

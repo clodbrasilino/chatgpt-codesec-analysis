@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:7:5: error: unknown type name 'UT_hash_handle'
+    7 |     UT_hash_handle hh;
+      |     ^~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c: In function 'add_value':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:12:5: error: implicit declaration of function 'HASH_FIND_INT' [-Wimplicit-function-declaration]
+   12 |     HASH_FIND_INT(*table, &value, s);
+      |     ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:17:9: error: implicit declaration of function 'HASH_ADD_INT' [-Wimplicit-function-declaration]
+   17 |         HASH_ADD_INT(*table, value, s);
+      |         ^~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c: In function 'free_table':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:5: error: implicit declaration of function 'HASH_ITER' [-Wimplicit-function-declaration]
+   25 |     HASH_ITER(hh, *table, current, tmp) {
+      |     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:15: error: 'hh' undeclared (first use in this function)
+   25 |     HASH_ITER(hh, *table, current, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:15: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:40: error: expected ';' before '{' token
+   25 |     HASH_ITER(hh, *table, current, tmp) {
+      |                                        ^~
+      |                                        ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c: In function 'extract_unique_values':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:39:19: error: implicit declaration of function 'HASH_COUNT' [-Wimplicit-function-declaration]
+   39 |     *returnSize = HASH_COUNT(table);
+      |                   ^~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:45:15: error: 'hh' undeclared (first use in this function)
+   45 |     HASH_ITER(hh, table, s, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:45:33: error: expected ';' before '{' token
+   45 |     HASH_ITER(hh, table, s, tmp) {
+      |                                 ^~
+      |                                 ;

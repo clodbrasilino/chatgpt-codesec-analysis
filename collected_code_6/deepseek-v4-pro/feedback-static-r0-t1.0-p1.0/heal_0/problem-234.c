@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+double cube_volume(double side) {
+    if (side < 0) {
+        return -1.0;
+    }
+    return side * side * side;
+}
+
+int main(void) {
+    double side;
+    double volume;
+
+    printf("Enter the side length of the cube: ");
+    if (scanf("%lf", &side) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    volume = cube_volume(side);
+
+    if (volume < 0) {
+        fprintf(stderr, "Error: Side length cannot be negative.\n");
+        return 1;
+    }
+
+    printf("Volume of the cube: %.2f\n", volume);
+
+    return 0;
+}

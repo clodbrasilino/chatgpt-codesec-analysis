@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  include '<math.h>' or provide a declaration of 'fmax'
+  */
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'C' can be declared as const array [constParameter]
+ *  Parameter 'A' can be declared as const array [constParameter]
+ *  Parameter 'B' can be declared as const array [constParameter]
+ */
+int findClosest(int A[], int B[], int C[], int p, int q, int r, int *min_diff, int *result) {
+    if (p >= 0 && q >= 0 && r >= 0) {
+        /* Possible weaknesses found:
+         *  include '<math.h>' or provide a declaration of 'fmin'
+         *  implicit declaration of function 'fmax' [-Wimplicit-function-declaration]
+         *  include the header <math.h> or explicitly provide a declaration for 'fmax'
+         *  call to undeclared library function 'fmax' with type 'double (double, double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  implicit declaration of function 'fmin' [-Wimplicit-function-declaration]
+         *  call to undeclared library function 'fmin' with type 'double (double, double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <math.h> or explicitly provide a declaration for 'fmin'
+         */
+        int diff = fmax(A[p], fmax(B[q], C[r])) - fmin(A[p], fmin(B[q], C[r]));
+        if (diff < *min_diff) {
+            *min_diff = diff;
+            result[0] = A[p];
+            result[1] = B[q];
+            result[2] = C[r];
+        }
+    }
+    return 0;
+}
+
+void findThreeClosest(int A[], int m, int B[], int n, int C[], int o) {
+    int i, j, k;
+    int min_diff = INT_MAX;
+    int result[3];
+
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    for (i = 0; i < m; ++i) {
+        for (j = 0; j < n; ++j) {
+            for (k = 0; k < o; ++k) {
+                findClosest(A, B, C, i, j, k, &min_diff, result);
+            }
+        }
+    }
+
+    /* Possible weaknesses found:
+     *  Uninitialized variable: result
+     *  Uninitialized variable: result [uninitvar]
+     */
+    printf("%d %d %d\n", result[0], result[1], result[2]);
+}
+
+int main() {
+    int A[] = {1, 4, 10};
+    int B[] = {2, 15, 20};
+    int C[] = {10, 12};
+
+    int m = sizeof(A) / sizeof(A[0]);
+    int n = sizeof(B) / sizeof(B[0]);
+    int o = sizeof(C) / sizeof(C[0]);
+
+    findThreeClosest(A, m, B, n, C, o);
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ElementCount;
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+void frequency(int *arr, int size) {
+    if (size <= 0) return;
+
+    qsort(arr, size, sizeof(int), compare);
+
+    ElementCount *result = NULL;
+    int capacity = 0;
+    int resultSize = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (i == 0 || arr[i] != arr[i-1]) {
+            if (resultSize >= capacity) {
+                capacity = (capacity == 0) ? 1 : capacity * 2;
+                result = realloc(result, capacity * sizeof(ElementCount));
+                if (result == NULL) {
+                    exit(EXIT_FAILURE);
+                }
+            }
+            result[resultSize].value = arr[i];
+            result[resultSize].count = 1;
+            resultSize++;
+        } else {
+            result[resultSize - 1].count++;
+        }
+    }
+
+    for (int i = 0; i < resultSize; i++) {
+        printf("%d: %d\n", result[i].value, result[i].count);
+    }
+
+    free(result);
+}
+
+int main() {
+    int arr[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    frequency(arr, size);
+    return 0;
+}

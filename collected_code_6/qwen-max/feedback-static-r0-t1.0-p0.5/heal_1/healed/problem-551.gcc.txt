@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c:7:5: error: unknown type name 'List'
+    7 |     List *sublist;
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c: In function 'add_sublist':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c:40:19: error: assignment to 'int *' from incompatible pointer type 'List *' [-Wincompatible-pointer-types]
+   40 |     node->sublist = sublist;
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c: In function 'extract_column':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c:54:54: error: passing argument 1 of 'extract_column' from incompatible pointer type [-Wincompatible-pointer-types]
+   54 |             List *sub_result = extract_column(current->sublist, column_index - 1);
+      |                                               ~~~~~~~^~~~~~~~~
+      |                                                      |
+      |                                                      int *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c:43:28: note: expected 'List *' but argument is of type 'int *'
+   43 | List* extract_column(List *nested_list, int column_index) {
+      |                      ~~~~~~^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c: In function 'free_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c:81:27: error: passing argument 1 of 'free_list' from incompatible pointer type [-Wincompatible-pointer-types]
+   81 |             free_list(temp->sublist);
+      |                       ~~~~^~~~~~~~~
+      |                           |
+      |                           int *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_1/healed/problem-551.c:75:22: note: expected 'List *' but argument is of type 'int *'
+   75 | void free_list(List *list) {
+      |                ~~~~~~^~~~

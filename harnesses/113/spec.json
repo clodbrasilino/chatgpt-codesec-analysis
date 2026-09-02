@@ -1,0 +1,44 @@
+{
+  "task_id": 113,
+  "text": "Write a C function to check if a string represents an integer or not.",
+  "fn_candidates": [
+    "check_integer",
+    "CheckInteger",
+    "checkInteger",
+    "checkinteger"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_integer",
+      "args": [
+        "python"
+      ],
+      "expected": false,
+      "assert_src": "assert check_integer(\"python\")==False"
+    },
+    {
+      "fn_name": "check_integer",
+      "args": [
+        "1"
+      ],
+      "expected": true,
+      "assert_src": "assert check_integer(\"1\")==True"
+    },
+    {
+      "fn_name": "check_integer",
+      "args": [
+        "12345"
+      ],
+      "expected": true,
+      "assert_src": "assert check_integer(\"12345\")==True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

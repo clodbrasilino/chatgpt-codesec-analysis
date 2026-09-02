@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_cubes(const int *input, int *output, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        output[i] = input[i] * input[i] * input[i];
+    }
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int *cubes = (int *)malloc(size * sizeof(int));
+
+    if (cubes == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    find_cubes(list, cubes, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        printf("%d ", cubes[i]);
+    }
+    printf("\n");
+
+    free(cubes);
+    return EXIT_SUCCESS;
+}

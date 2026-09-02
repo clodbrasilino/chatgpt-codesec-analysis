@@ -1,0 +1,44 @@
+{
+  "task_id": 122,
+  "text": "Write a C function to find n\u2019th smart number.",
+  "fn_candidates": [
+    "smartNumber",
+    "Smartnumber",
+    "smartNumber",
+    "smartNumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "smartNumber",
+      "args": [
+        1
+      ],
+      "expected": 30,
+      "assert_src": "assert smartNumber(1) == 30"
+    },
+    {
+      "fn_name": "smartNumber",
+      "args": [
+        50
+      ],
+      "expected": 273,
+      "assert_src": "assert smartNumber(50) == 273"
+    },
+    {
+      "fn_name": "smartNumber",
+      "args": [
+        1000
+      ],
+      "expected": 2664,
+      "assert_src": "assert smartNumber(1000) == 2664"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

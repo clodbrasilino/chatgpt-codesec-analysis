@@ -1,0 +1,47 @@
+{
+  "task_id": 151,
+  "text": "Write a C function to check whether the given number is co-prime or not.",
+  "fn_candidates": [
+    "is_coprime",
+    "IsCoprime",
+    "isCoprime",
+    "iscoprime"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_coprime",
+      "args": [
+        17,
+        13
+      ],
+      "expected": true,
+      "assert_src": "assert is_coprime(17,13) == True"
+    },
+    {
+      "fn_name": "is_coprime",
+      "args": [
+        15,
+        21
+      ],
+      "expected": false,
+      "assert_src": "assert is_coprime(15,21) == False"
+    },
+    {
+      "fn_name": "is_coprime",
+      "args": [
+        25,
+        45
+      ],
+      "expected": false,
+      "assert_src": "assert is_coprime(25,45) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

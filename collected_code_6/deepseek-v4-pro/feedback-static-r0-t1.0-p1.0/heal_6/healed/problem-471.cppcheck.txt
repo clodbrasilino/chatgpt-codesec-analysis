@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-471.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-471.c:56:17: style: Condition 'result4!=-1' is always false [knownConditionTrueFalse]
+    if (result4 != -1) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-471.c:55:32: note: Calling function 'findRemainder' returns -1
+    int result4 = findRemainder(arr4, size4, n4);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-471.c:55:32: note: Assignment 'result4=findRemainder(arr4,size4,n4)', assigned value is -1
+    int result4 = findRemainder(arr4, size4, n4);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-471.c:56:17: note: Condition 'result4!=-1' is always false
+    if (result4 != -1) {
+                ^

@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-620.c: In function 'largestDivisibleSubset':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-620.c:10:74: error: 'compare' undeclared (first use in this function)
+   10 |     qsort(nums, numsSize, sizeof(int), (int(*)(const void*, const void*))compare);
+      |                                                                          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-620.c:10:74: note: each undeclared identifier is reported only once for each function it appears in

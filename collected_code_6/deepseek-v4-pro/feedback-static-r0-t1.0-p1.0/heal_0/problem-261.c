@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double dividend;
+    double divisor;
+    char isValid;
+} DivisionTuple;
+
+typedef struct {
+    double result;
+    char isValid;
+} DivisionResult;
+
+DivisionResult divideTuple(DivisionTuple tuple) {
+    DivisionResult result;
+    
+    result.isValid = 0;
+    result.result = 0.0;
+    
+    if (!tuple.isValid) {
+        return result;
+    }
+    
+    if (tuple.divisor == 0.0) {
+        return result;
+    }
+    
+    result.result = tuple.dividend / tuple.divisor;
+    result.isValid = 1;
+    
+    return result;
+}
+
+int main(void) {
+    DivisionTuple tuples[] = {
+        {10.0, 2.0, 1},
+        {5.5, 0.0, 1},
+        {15.0, 3.0, 1},
+        {0.0, 5.0, 1},
+        {7.5, 2.5, 1},
+        {12.0, 4.0, 0}
+    };
+
+    size_t tupleCount = sizeof(tuples) / sizeof(tuples[0]);
+    
+    for (size_t i = 0; i < tupleCount; i++) {
+        DivisionResult result = divideTuple(tuples[i]);
+        
+        if (result.isValid) {
+            printf("%.2f / %.2f = %.2f\n", 
+                   tuples[i].dividend, 
+                   tuples[i].divisor, 
+                   result.result);
+        } else {
+            printf("%.2f / %.2f = Invalid operation\n", 
+                   tuples[i].dividend, 
+                   tuples[i].divisor);
+        }
+    }
+    
+    return 0;
+}

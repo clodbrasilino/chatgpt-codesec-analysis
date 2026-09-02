@@ -1,0 +1,102 @@
+{
+  "task_id": 323,
+  "text": "Write a C function to re-arrange the given array in alternating positive and negative items.",
+  "fn_candidates": [
+    "re_arrange",
+    "ReArrange",
+    "reArrange",
+    "rearrange"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "re_arrange",
+      "args": [
+        [
+          -5,
+          -2,
+          5,
+          2,
+          4,
+          7,
+          1,
+          8,
+          0,
+          -8
+        ],
+        10
+      ],
+      "expected": [
+        -5,
+        5,
+        -2,
+        2,
+        -8,
+        4,
+        7,
+        1,
+        8,
+        0
+      ],
+      "assert_src": "assert re_arrange([-5, -2, 5, 2, 4,\t7, 1, 8, 0, -8], 10) == [-5, 5, -2, 2, -8, 4, 7, 1, 8, 0]"
+    },
+    {
+      "fn_name": "re_arrange",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          -4,
+          -1,
+          4
+        ],
+        6
+      ],
+      "expected": [
+        -4,
+        1,
+        -1,
+        2,
+        3,
+        4
+      ],
+      "assert_src": "assert re_arrange([1, 2, 3, -4, -1, 4], 6) == [-4, 1, -1, 2, 3, 4]"
+    },
+    {
+      "fn_name": "re_arrange",
+      "args": [
+        [
+          4,
+          7,
+          9,
+          77,
+          -4,
+          5,
+          -3,
+          -9
+        ],
+        8
+      ],
+      "expected": [
+        -4,
+        4,
+        -3,
+        7,
+        -9,
+        9,
+        77,
+        5
+      ],
+      "assert_src": "assert re_arrange([4, 7, 9, 77, -4, 5, -3, -9], 8) == [-4, 4, -3, 7, -9, 9, 77, 5]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

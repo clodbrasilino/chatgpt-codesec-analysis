@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:69:26: style: Condition 'invalid_result_1==-1' is always true [knownConditionTrueFalse]
+    if (invalid_result_1 == -1) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:68:47: note: Calling function 'check_bits_in_range' returns -1
+    int invalid_result_1 = check_bits_in_range(0x00000000, 8, 3);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:68:47: note: Assignment 'invalid_result_1=check_bits_in_range(0x00000000,8,3)', assigned value is -1
+    int invalid_result_1 = check_bits_in_range(0x00000000, 8, 3);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:69:26: note: Condition 'invalid_result_1==-1' is always true
+    if (invalid_result_1 == -1) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:76:26: style: Condition 'invalid_result_2==-1' is always true [knownConditionTrueFalse]
+    if (invalid_result_2 == -1) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:75:47: note: Calling function 'check_bits_in_range' returns -1
+    int invalid_result_2 = check_bits_in_range(0x00000000, 0, 32);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:75:47: note: Assignment 'invalid_result_2=check_bits_in_range(0x00000000,0,32)', assigned value is -1
+    int invalid_result_2 = check_bits_in_range(0x00000000, 0, 32);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-884-s3.c:76:26: note: Condition 'invalid_result_2==-1' is always true
+    if (invalid_result_2 == -1) {
+                         ^

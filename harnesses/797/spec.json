@@ -1,0 +1,47 @@
+{
+  "task_id": 797,
+  "text": "Write a C function to find the sum of all odd natural numbers within the range l and r.",
+  "fn_candidates": [
+    "sum_in_Range",
+    "SumInRange",
+    "sumInRange",
+    "suminRange"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_in_Range",
+      "args": [
+        2,
+        5
+      ],
+      "expected": 8,
+      "assert_src": "assert sum_in_Range(2,5) == 8"
+    },
+    {
+      "fn_name": "sum_in_Range",
+      "args": [
+        5,
+        7
+      ],
+      "expected": 12,
+      "assert_src": "assert sum_in_Range(5,7) == 12"
+    },
+    {
+      "fn_name": "sum_in_Range",
+      "args": [
+        7,
+        13
+      ],
+      "expected": 40,
+      "assert_src": "assert sum_in_Range(7,13) == 40"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

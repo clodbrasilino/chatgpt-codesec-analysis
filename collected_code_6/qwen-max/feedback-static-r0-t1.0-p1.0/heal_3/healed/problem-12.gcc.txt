@@ -1,0 +1,24 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c: In function 'sort_matrix':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:17:40: error: passing argument 4 of 'qsort' from incompatible pointer type [-Wincompatible-pointer-types]
+   17 |     qsort(*matrix, rows, sizeof(int*), (int(*)(const void*, const void*, void*))compare, &cols);
+      |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                                        |
+      |                                        int (*)(const void *, const void *, void *)
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:176:29: note: expected 'int (*)(const void *, const void *)' but argument is of type 'int (*)(const void *, const void *, void *)'
+  176 |             int (* _Nonnull __compar)(const void *, const void *));
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:4:5: note: 'compare' declared here
+    4 | int compare(const void *a, const void *b, void *cols_ptr) {
+      |     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:17:5: error: too many arguments to function 'qsort'; expected 4, have 5
+   17 |     qsort(*matrix, rows, sizeof(int*), (int(*)(const void*, const void*, void*))compare, &cols);
+      |     ^~~~~                                                                                ~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:175:10: note: declared here
+  175 | void     qsort(void *_LIBC_SIZE(__nel * __width) __base, size_t __nel, size_t __width,
+      |          ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-12.c:27:28: error: variable-sized object may not be initialized except with an empty initializer
+   27 |     int data[rows][cols] = {
+      |                            ^

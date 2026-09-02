@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-12-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-12-s2.c:4:46: style: Parameter 'data' can be declared as pointer to const [constParameterPointer]
+int** create_matrix(int rows, int cols, int* data) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-12-s2.c:22:18: style: Parameter 'row' can be declared as pointer to const [constParameterPointer]
+int sum_row(int* row, int cols) {
+                 ^

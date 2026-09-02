@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_balanced_sequences(int n) {
+    if (n < 0) return 0;
+    
+    unsigned long long *dp = (unsigned long long *)calloc(n + 1, sizeof(unsigned long long));
+    if (dp == NULL) return 0;
+    
+    dp[0] = 1;
+    for (int i = 1; i <= n; i++) {
+        dp[i] = 0;
+        for (int j = 0; j < i; j++) {
+            dp[i] += dp[j] * dp[i - 1 - j];
+        }
+    }
+    
+    unsigned long long result = 0;
+    for (int k = 0; k <= n; k++) {
+        unsigned long long term = dp[k] * dp[k];
+        if (k > 0 && k < n) {
+            term *= 2;
+        }
+        result += term;
+    }
+    
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    unsigned long long result = count_balanced_sequences(n);
+    printf("Count: %llu\n", result);
+    
+    return 0;
+}

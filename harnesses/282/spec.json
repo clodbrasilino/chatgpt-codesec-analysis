@@ -1,0 +1,77 @@
+{
+  "task_id": 282,
+  "text": "Write a C function to substract two lists.",
+  "fn_candidates": [
+    "sub_list",
+    "SubList",
+    "subList",
+    "sublist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sub_list",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        -3,
+        -3,
+        -3
+      ],
+      "assert_src": "assert sub_list([1, 2, 3],[4,5,6])==[-3,-3,-3]"
+    },
+    {
+      "fn_name": "sub_list",
+      "args": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        -2,
+        -2
+      ],
+      "assert_src": "assert sub_list([1,2],[3,4])==[-2,-2]"
+    },
+    {
+      "fn_name": "sub_list",
+      "args": [
+        [
+          90,
+          120
+        ],
+        [
+          50,
+          70
+        ]
+      ],
+      "expected": [
+        40,
+        50
+      ],
+      "assert_src": "assert sub_list([90,120],[50,70])==[40,50]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

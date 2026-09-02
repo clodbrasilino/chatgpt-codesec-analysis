@@ -1,0 +1,201 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int freq;
+} Pair;
+
+typedef struct {
+    Pair *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createHeap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (Pair*)malloc(sizeof(Pair) * capacity);
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swap(Pair *a, Pair *b) {
+    Pair temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyDown(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].freq < heap->data[smallest].freq)
+        smallest = left;
+    if (right < heap->size && heap->data[right].freq < heap->data[smallest].freq)
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+void heapifyUp(MinHeap *heap, int idx) {
+    int parent = (idx - 1) / 2;
+    while (idx > 0 && heap->data[idx].freq < heap->data[parent].freq) {
+        swap(&heap->data[idx], &heap->data[parent]);
+        idx = parent;
+        parent = (idx - 1) / 2;
+    }
+}
+
+void push(MinHeap *heap, int value, int freq) {
+    if (heap->size < heap->capacity) {
+        heap->data[heap->size].value = value;
+        heap->data[heap->size].freq = freq;
+        heap->size++;
+        heapifyUp(heap, heap->size - 1);
+    } else if (freq > heap->data[0].freq) {
+        heap->data[0].value = value;
+        heap->data[0].freq = freq;
+        heapifyDown(heap, 0);
+    }
+}
+
+Pair pop(MinHeap *heap) {
+    Pair top = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+    return top;
+}
+
+void freeHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+int* topKFrequent(int** lists, int listCount, const int* listSizes, int k, int* returnSize) {
+    if (listCount == 0 || k <= 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int *indices = (int*)calloc(listCount, sizeof(int));
+    if (!indices) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    MinHeap *heap = createHeap(k);
+    if (!heap) {
+        free(indices);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int currentVal = -1;
+    int currentFreq = 0;
+    int hasCurrent = 0;
+
+    while (1) {
+        int minVal = -1;
+        int minIdx = -1;
+        int found = 0;
+
+        for (int i = 0; i < listCount; i++) {
+            if (indices[i] < listSizes[i]) {
+                if (!found || lists[i][indices[i]] < minVal) {
+                    minVal = lists[i][indices[i]];
+                    minIdx = i;
+                    found = 1;
+                }
+            }
+        }
+
+        if (!found) break;
+
+        if (!hasCurrent) {
+            currentVal = minVal;
+            currentFreq = 1;
+            hasCurrent = 1;
+        } else if (minVal == currentVal) {
+            currentFreq++;
+        } else {
+            push(heap, currentVal, currentFreq);
+            currentVal = minVal;
+            currentFreq = 1;
+        }
+
+        indices[minIdx]++;
+    }
+
+    if (hasCurrent) {
+        push(heap, currentVal, currentFreq);
+    }
+
+    int resultSize = heap->size < k ? heap->size : k;
+    int *result = (int*)malloc(sizeof(int) * resultSize);
+    if (!result) {
+        freeHeap(heap);
+        free(indices);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    Pair *temp = (Pair*)malloc(sizeof(Pair) * heap->size);
+    if (!temp) {
+        free(result);
+        freeHeap(heap);
+        free(indices);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int tempSize = heap->size;
+    for (int i = 0; i < tempSize; i++) {
+        temp[i] = pop(heap);
+    }
+
+    for (int i = 0; i < resultSize; i++) {
+        result[i] = temp[tempSize - 1 - i].value;
+    }
+
+    free(temp);
+    freeHeap(heap);
+    free(indices);
+    *returnSize = resultSize;
+    return result;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 3, 5, 7};
+    int list3[] = {1, 3, 5, 8};
+
+    int *lists[] = {list1, list2, list3};
+    const int listSizes[] = {5, 4, 4};
+    int k = 3;
+    int returnSize;
+
+    int *result = topKFrequent(lists, 3, listSizes, k, &returnSize);
+
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}
+```

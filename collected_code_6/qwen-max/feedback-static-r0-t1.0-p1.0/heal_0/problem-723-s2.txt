@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int count;
+} PairCount;
+
+unsigned int hash(int key, int size) {
+    return (key % size + size) % size;
+}
+
+void addPair(PairCount *map, int size, int key) {
+    unsigned int idx = hash(key, size);
+    while (map[idx].count != 0 && map[idx].key != key) {
+        idx = (idx + 1) % size;
+    }
+    if (map[idx].key == key) {
+        map[idx].count++;
+    } else {
+        map[idx].key = key;
+        map[idx].count = 1;
+    }
+}
+
+int getPairCount(PairCount *map, int size, int key) {
+    unsigned int idx = hash(key, size);
+    while (map[idx].count != 0 && map[idx].key != key) {
+        idx = (idx + 1) % size;
+    }
+    return (map[idx].key == key) ? map[idx].count : 0;
+}
+
+int countSamePairs(int *arr1, int *arr2, int n, int m) {
+    int max = arr1[0], i;
+    for (i = 1; i < n; i++) {
+        if (max < arr1[i]) {
+            max = arr1[i];
+        }
+    }
+    for (i = 0; i < m; i++) {
+        if (max < arr2[i]) {
+            max = arr2[i];
+        }
+    }
+    int size = max + 1;
+    PairCount *map = (PairCount *)calloc(size, sizeof(PairCount));
+    for (i = 0; i < n; i++) {
+        addPair(map, size, arr1[i]);
+    }
+    int count = 0;
+    for (i = 0; i < m; i++) {
+        int c = getPairCount(map, size, arr2[i]);
+        if (c) {
+            count += c;
+            map[hash(arr2[i], size)].count = 0; // reset to avoid counting again
+        }
+    }
+    free(map);
+    return count;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 2, 3, 2};
+    int arr2[] = {2, 2, 1, 3, 5, 6, 4, 7, 9, 8};
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+    int m = sizeof(arr2) / sizeof(arr2[0]);
+    printf("The count of same pairs: %d\n", countSamePairs(arr1, arr2, n, m));
+    return 0;
+}
+```

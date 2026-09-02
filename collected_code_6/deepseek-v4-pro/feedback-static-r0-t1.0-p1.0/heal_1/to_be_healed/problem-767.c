@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int count_pairs(int *arr, int n, int sum) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] + arr[j] == sum) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int n;
+    int sum;
+
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    int *arr = malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (scanf("%d", &sum) != 1) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", count_pairs(arr, n, sum));
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

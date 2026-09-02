@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(char *str) {
+    int i, len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if (str[i] == '_') {
+            str[i] = toupper(str[i + 1]);
+            memmove(&str[i], &str[i + 1], strlen(&str[i]));
+            len--;
+        }
+    }
+    return str;
+}
+
+int main() {
+    char input[] = "example_snake_case_string";
+    char *result = snake_to_camel(input);
+    printf("%s\n", result);
+    return 0;
+}
+```

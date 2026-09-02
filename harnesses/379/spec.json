@@ -1,0 +1,50 @@
+{
+  "task_id": 379,
+  "text": "Write a C function to find the surface area of a cuboid.",
+  "fn_candidates": [
+    "surfacearea_cuboid",
+    "SurfaceareaCuboid",
+    "surfaceareaCuboid",
+    "surfaceareacuboid"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "surfacearea_cuboid",
+      "args": [
+        1,
+        2,
+        3
+      ],
+      "expected": 22,
+      "assert_src": "assert surfacearea_cuboid(1,2,3)==22"
+    },
+    {
+      "fn_name": "surfacearea_cuboid",
+      "args": [
+        5,
+        7,
+        9
+      ],
+      "expected": 286,
+      "assert_src": "assert surfacearea_cuboid(5,7,9)==286"
+    },
+    {
+      "fn_name": "surfacearea_cuboid",
+      "args": [
+        10,
+        15,
+        21
+      ],
+      "expected": 1350,
+      "assert_src": "assert surfacearea_cuboid(10,15,21)==1350"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

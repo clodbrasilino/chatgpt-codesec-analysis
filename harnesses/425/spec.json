@@ -1,0 +1,48 @@
+{
+  "task_id": 425,
+  "text": "Write a C function to count the number of sublists containing a particular element.",
+  "fn_candidates": [
+    "count_element_in_list",
+    "CountElementInList",
+    "countElementInList",
+    "countelementinlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_element_in_list",
+      "args": [
+        [
+          [
+            1,
+            3
+          ],
+          [
+            5,
+            7
+          ],
+          [
+            1,
+            11
+          ],
+          [
+            1,
+            15,
+            7
+          ]
+        ],
+        1
+      ],
+      "expected": 3,
+      "assert_src": "assert count_element_in_list([[1, 3], [5, 7], [1, 11], [1, 15, 7]],1)==3"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

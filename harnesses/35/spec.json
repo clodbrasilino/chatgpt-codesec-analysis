@@ -1,0 +1,44 @@
+{
+  "task_id": 35,
+  "text": "Write a C function to find the n-th rectangular number.",
+  "fn_candidates": [
+    "find_rect_num",
+    "FindRectNum",
+    "findRectNum",
+    "findrectnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_rect_num",
+      "args": [
+        4
+      ],
+      "expected": 20,
+      "assert_src": "assert find_rect_num(4) == 20"
+    },
+    {
+      "fn_name": "find_rect_num",
+      "args": [
+        5
+      ],
+      "expected": 30,
+      "assert_src": "assert find_rect_num(5) == 30"
+    },
+    {
+      "fn_name": "find_rect_num",
+      "args": [
+        6
+      ],
+      "expected": 42,
+      "assert_src": "assert find_rect_num(6) == 42"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

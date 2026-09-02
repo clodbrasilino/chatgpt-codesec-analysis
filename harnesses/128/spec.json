@@ -1,0 +1,57 @@
+{
+  "task_id": 128,
+  "text": "Write a C function to shortlist words that are longer than n from a given list of words.",
+  "fn_candidates": [
+    "long_words",
+    "LongWords",
+    "longWords",
+    "longwords"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "long_words",
+      "args": [
+        3,
+        "python is a programming language"
+      ],
+      "expected": [
+        "python",
+        "programming",
+        "language"
+      ],
+      "assert_src": "assert long_words(3,\"python is a programming language\")==['python','programming','language']"
+    },
+    {
+      "fn_name": "long_words",
+      "args": [
+        2,
+        "writing a program"
+      ],
+      "expected": [
+        "writing",
+        "program"
+      ],
+      "assert_src": "assert long_words(2,\"writing a program\")==['writing','program']"
+    },
+    {
+      "fn_name": "long_words",
+      "args": [
+        5,
+        "sorting list"
+      ],
+      "expected": [
+        "sorting"
+      ],
+      "assert_src": "assert long_words(5,\"sorting list\")==['sorting']"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

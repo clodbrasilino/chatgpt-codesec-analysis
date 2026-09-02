@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} CountItem;
+
+int compare(const void *a, const void *b) {
+    return (*(CountItem*)b).count - (*(CountItem*)a).count;
+}
+
+CountItem* findMaxOccurrence(int *list, int n) {
+    CountItem *counts = (CountItem*)calloc(n, sizeof(CountItem));
+    if (counts == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+        for (int j = 0; j < n && !found; j++) {
+            if (counts[j].value == list[i]) {
+                counts[j].count++;
+                found = 1;
+            }
+        }
+        if (!found) {
+            int idx = 0;
+            while (idx < n && counts[idx].value != 0) {
+                idx++;
+            }
+            if (idx < n) {
+                counts[idx].value = list[i];
+                counts[idx].count = 1;
+            }
+        }
+    }
+    
+    qsort(counts, n, sizeof(CountItem), compare);
+    
+    CountItem *result = (CountItem*)malloc(sizeof(CountItem));
+    if (result == NULL) {
+        free(counts);
+        return NULL;
+    }
+    *result = counts[0];
+    free(counts);
+    return result;
+}
+
+int main() {
+    int list[] = {5, 3, 5, 2, 3, 3, 1};
+    int n = sizeof(list) / sizeof(list[0]);
+    
+    CountItem *maxCount = findMaxOccurrence(list, n);
+    if (maxCount != NULL) {
+        printf("Value: %d, Occurrences: %d\n", maxCount->value, maxCount->count);
+        free(maxCount);
+    } else {
+        printf("Error occurred.\n");
+    }
+    
+    return 0;
+}

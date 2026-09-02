@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int is_substring_in_list(const char *substring, const char **list, int list_size) {
+    for (int i = 0; i < list_size; ++i) {
+        if (strstr(list[i], substring) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    const char *list[] = {"apple", "banana", "cherry"};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    const char *substring = "nan";
+
+    if (is_substring_in_list(substring, list, list_size)) {
+        printf("Substring found in the list.\n");
+    } else {
+        printf("Substring not found in the list.\n");
+    }
+
+    return 0;
+}
+```

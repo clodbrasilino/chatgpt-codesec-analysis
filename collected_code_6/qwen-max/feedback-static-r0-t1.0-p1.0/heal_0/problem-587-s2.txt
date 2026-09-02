@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct Tuple {
+    int* values;
+    size_t length;
+} Tuple;
+
+Node* createNode(int value) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (node == NULL) return NULL;
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    Node* next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+Tuple* listToTuple(Node* head) {
+    if (head == NULL) return NULL;
+
+    Node* current = head;
+    size_t count = 0;
+
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    int* values = (int*)malloc(count * sizeof(int));
+    if (values == NULL) return NULL;
+
+    size_t index = 0;
+    current = head;
+
+    while (current != NULL) {
+        values[index++] = current->value;
+        current = current->next;
+    }
+
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        free(values);
+        return NULL;
+    }
+
+    tuple->values = values;
+    tuple->length = count;
+
+    return tuple;
+}
+
+void freeTuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        free(tuple->values);
+        free(tuple);
+    }
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+
+    Tuple* tuple = listToTuple(head);
+    if (tuple != NULL) {
+        for (size_t i = 0; i < tuple->length; i++) {
+            printf("%d ", tuple->values[i]);
+        }
+        printf("\n");
+        freeTuple(tuple);
+    }
+
+    freeList(head);
+    return 0;
+}
+```

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c:15:9: style: The scope of the variable 'max1_idx' can be reduced. [variableScope]
+    int max1_idx = -1, min1_idx = -1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c:15:24: style: The scope of the variable 'min1_idx' can be reduced. [variableScope]
+    int max1_idx = -1, min1_idx = -1;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c:15:18: style: Variable 'max1_idx' is assigned a value that is never used. [unreadVariable]
+    int max1_idx = -1, min1_idx = -1;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c:15:33: style: Variable 'min1_idx' is assigned a value that is never used. [unreadVariable]
+    int max1_idx = -1, min1_idx = -1;
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c:21:22: style: Variable 'max1_idx' is assigned a value that is never used. [unreadVariable]
+            max1_idx = i;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-922-s2.c:29:22: style: Variable 'min1_idx' is assigned a value that is never used. [unreadVariable]
+            min1_idx = i;
+                     ^

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double triangular_prism_volume(double base_triangle_base, double base_triangle_height, double prism_length) {
+    if (base_triangle_base <= 0.0 || base_triangle_height <= 0.0 || prism_length <= 0.0) {
+        return -1.0;
+    }
+    double base_area = 0.5 * base_triangle_base * base_triangle_height;
+    return base_area * prism_length;
+}
+
+int main(void) {
+    double base, height, length;
+    char input_buffer[256];
+
+    printf("Enter base of triangular face: ");
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+    if (sscanf(input_buffer, "%lf", &base) != 1) {
+        fprintf(stderr, "Invalid input for base.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter height of triangular face: ");
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+    if (sscanf(input_buffer, "%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter length of prism: ");
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return EXIT_FAILURE;
+    }
+    if (sscanf(input_buffer, "%lf", &length) != 1) {
+        fprintf(stderr, "Invalid input for length.\n");
+        return EXIT_FAILURE;
+    }
+
+    double volume = triangular_prism_volume(base, height, length);
+    if (volume < 0.0) {
+        fprintf(stderr, "Dimensions must be positive numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Volume of triangular prism: %.6f\n", volume);
+    return EXIT_SUCCESS;
+}

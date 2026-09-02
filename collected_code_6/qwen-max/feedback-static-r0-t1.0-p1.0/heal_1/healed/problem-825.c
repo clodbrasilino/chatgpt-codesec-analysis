@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} ListNode;
+
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(ListNode **root, int value) {
+    ListNode *temp = *root;
+    if (temp == NULL) {
+        *root = createNode(value);
+        return;
+    }
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = createNode(value);
+}
+
+int* getElementsAtIndices(ListNode *root, const int indices[], int n, int *outputSize) {
+    int *result = (int *)malloc(n * sizeof(int));
+    if (result == NULL) {
+        *outputSize = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    int count = 0;
+    while (root && count < n) {
+        if (index == indices[count]) {
+            result[count] = root->value;
+            count++;
+        }
+        root = root->next;
+        index++;
+    }
+
+    *outputSize = count;
+    if (count != n) {
+        free(result);
+        *outputSize = 0;
+        return NULL;
+    }
+
+    return result;
+}
+
+int main() {
+    ListNode *root = NULL;
+    insertNode(&root, 1);
+    insertNode(&root, 2);
+    insertNode(&root, 3);
+    insertNode(&root, 4);
+    insertNode(&root, 5);
+
+    const int indices[] = {1, 3};
+    int n = 2;
+    int outputSize;
+
+    int *result = getElementsAtIndices(root, indices, n, &outputSize);
+    if (result) {
+        for (int i = 0; i < outputSize; i++) {
+            printf("%d ", result[i]);
+        }
+        free(result);
+    } else {
+        printf("Failed to retrieve elements.");
+    }
+
+    while (root != NULL) {
+        ListNode *temp = root;
+        root = root->next;
+        free(temp);
+    }
+
+    return 0;
+}

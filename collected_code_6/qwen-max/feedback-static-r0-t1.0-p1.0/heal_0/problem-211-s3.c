@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isNthBitSet(int number, int n) {
+    return (number & (1 << n)) != 0;
+}
+
+int countNumbersWithOthAndNthBitsSet(int *arr, int size, int o, int n) {
+    int count = 0;
+    for (int i = 0; i < size; ++i) {
+        if (isNthBitSet(arr[i], o) && isNthBitSet(arr[i], n)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int numbers[] = {240, 178, 164, 130, 84, 128, 56, 96};
+    int size = 8;
+    int o = 7;
+    int n = 3;
+    int result = countNumbersWithOthAndNthBitsSet(numbers, size, o, n);
+    printf("Count: %d\n", result);
+    return 0;
+}

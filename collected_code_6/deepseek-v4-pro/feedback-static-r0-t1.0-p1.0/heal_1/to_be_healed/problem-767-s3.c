@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int count_pairs_with_sum(int arr[], int n, int sum) {
+    int count = 0;
+    int *freq = (int *)calloc(100000, sizeof(int));
+    if (freq == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        int complement = sum - arr[i];
+        if (complement >= 0 && complement < 100000) {
+            count += freq[complement];
+        }
+        if (arr[i] >= 0 && arr[i] < 100000) {
+            freq[arr[i]]++;
+        }
+    }
+    
+    free(freq);
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 5, 7, -1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int sum = 6;
+    
+    int result = count_pairs_with_sum(arr, n, sum);
+    if (result == -1) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Count of pairs with sum %d: %d\n", sum, result);
+    return 0;
+}

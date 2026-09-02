@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) exit(EXIT_FAILURE);
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void swapFirstLast(Node** head) {
+    if (*head == NULL || (*head)->next == NULL) return;
+    
+    Node *first = *head, *prev = NULL, *last = *head;
+    while (last->next != NULL) {
+        prev = last;
+        last = last->next;
+    }
+    if (prev != NULL) {  // Ensure list has more than one element
+        int temp = first->data;
+        first->data = last->data;
+        last->data = temp;
+    }
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+
+    printf("Original List: ");
+    printList(head);
+
+    swapFirstLast(&head);
+
+    printf("Modified List: ");
+    printList(head);
+
+    // Free allocated memory
+    Node* current = head;
+    Node* next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    return 0;
+}

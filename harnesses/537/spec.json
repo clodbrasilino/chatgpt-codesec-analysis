@@ -1,0 +1,44 @@
+{
+  "task_id": 537,
+  "text": "Write a C function to find the first repeated word in a given string.",
+  "fn_candidates": [
+    "first_repeated_word",
+    "FirstRepeatedWord",
+    "firstRepeatedWord",
+    "firstrepeatedword"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "first_repeated_word",
+      "args": [
+        "ab ca bc ab"
+      ],
+      "expected": "ab",
+      "assert_src": "assert first_repeated_word(\"ab ca bc ab\") == \"ab\""
+    },
+    {
+      "fn_name": "first_repeated_word",
+      "args": [
+        "ab ca bc"
+      ],
+      "expected": "None",
+      "assert_src": "assert first_repeated_word(\"ab ca bc\") == 'None'"
+    },
+    {
+      "fn_name": "first_repeated_word",
+      "args": [
+        "ab ca bc ca ab bc"
+      ],
+      "expected": "ca",
+      "assert_src": "assert first_repeated_word(\"ab ca bc ca ab bc\") == \"ca\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

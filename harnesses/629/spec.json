@@ -1,0 +1,74 @@
+{
+  "task_id": 629,
+  "text": "Write a C function to find even numbers from a mixed list.",
+  "fn_candidates": [
+    "Split",
+    "Split",
+    "Split",
+    "Split"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Split",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": [
+        2,
+        4
+      ],
+      "assert_src": "assert Split([1,2,3,4,5]) == [2,4]"
+    },
+    {
+      "fn_name": "Split",
+      "args": [
+        [
+          4,
+          5,
+          6,
+          7,
+          8,
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        4,
+        6,
+        8,
+        0
+      ],
+      "assert_src": "assert Split([4,5,6,7,8,0,1]) == [4,6,8,0]"
+    },
+    {
+      "fn_name": "Split",
+      "args": [
+        [
+          8,
+          12,
+          15,
+          19
+        ]
+      ],
+      "expected": [
+        8,
+        12
+      ],
+      "assert_src": "assert Split ([8,12,15,19]) == [8,12]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+char* replace_multiple_with_single(char *str, char ch) {
+    if (str == NULL) return NULL;
+    char *src = str;
+    char *dst = str;
+
+    while (*src != '\0') {
+        *dst = *src;
+        if (*dst == ch && (dst > str && dst[-1] == ch)) {
+            src++;
+        } else {
+            dst++;
+            src++;
+        }
+    }
+    *dst = '\0';
+    return str;
+}
+
+int main() {
+    char input[] = "helloo  woorld:: hii";
+    printf("Original: %s\n", input);
+    printf("Modified: %s\n", replace_multiple_with_single(input, 'o'));
+    return 0;
+}

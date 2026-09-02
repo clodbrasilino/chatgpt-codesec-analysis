@@ -1,0 +1,47 @@
+{
+  "task_id": 558,
+  "text": "Write a C function to find the digit distance between two integers.",
+  "fn_candidates": [
+    "digit_distance_nums",
+    "DigitDistanceNums",
+    "digitDistanceNums",
+    "digitdistancenums"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "digit_distance_nums",
+      "args": [
+        1,
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert digit_distance_nums(1,2) == 1"
+    },
+    {
+      "fn_name": "digit_distance_nums",
+      "args": [
+        23,
+        56
+      ],
+      "expected": 6,
+      "assert_src": "assert digit_distance_nums(23,56) == 6"
+    },
+    {
+      "fn_name": "digit_distance_nums",
+      "args": [
+        123,
+        256
+      ],
+      "expected": 7,
+      "assert_src": "assert digit_distance_nums(123,256) == 7"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

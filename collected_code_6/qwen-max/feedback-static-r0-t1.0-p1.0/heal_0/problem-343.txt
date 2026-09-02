@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void countDigitsAndLetters(const char *str, int *digits, int *letters) {
+    *digits = 0;
+    *letters = 0;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isdigit(str[i])) {
+            (*digits)++;
+        } else if (isalpha(str[i])) {
+            (*letters)++;
+        }
+    }
+}
+
+int main() {
+    const char *input = "Hello123";
+    int digits = 0;
+    int letters = 0;
+    countDigitsAndLetters(input, &digits, &letters);
+    printf("Digits: %d, Letters: %d\n", digits, letters);
+    return 0;
+}
+```

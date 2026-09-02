@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
+
+bool areCharactersUnique(const char *str) {
+    if (str == NULL) return false;
+    
+    int charSet[CHAR_MAX] = {0};
+    
+    for (int i = 0; str[i] != '\0'; ++i) {
+        int val = (int) str[i];
+        if (charSet[val]) {
+            return false;
+        }
+        charSet[val] = 1;
+    }
+    
+    return true;
+}
+
+int main() {
+    const char *testStr = "unique";
+    if (areCharactersUnique(testStr)) {
+        printf("All characters in the string are unique.\n");
+    } else {
+        printf("The string has duplicate characters.\n");
+    }
+    
+    return 0;
+}

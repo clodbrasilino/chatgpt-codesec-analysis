@@ -1,0 +1,17 @@
+{
+  "task_id": 367,
+  "text": "Write a C function to check if a binary tree is balanced or not.",
+  "fn_candidates": [
+    "is_tree_balanced",
+    "IsTreeBalanced",
+    "isTreeBalanced",
+    "istreebalanced"
+  ],
+  "test_cases": [],
+  "arg_kinds": [],
+  "return_kind": "unknown",
+  "mode_hint": "none",
+  "test_setup_code": "root = Node(1) \r\nroot.left = Node(2) \r\nroot.right = Node(3) \r\nroot.left.left = Node(4) \r\nroot.left.right = Node(5) \r\nroot.left.left.left = Node(8) \r\nroot1 = Node(1) \r\nroot1.left = Node(2) \r\nroot1.right = Node(3) \r\nroot1.left.left = Node(4) \r\nroot1.left.right = Node(5) \r\nroot1.right.left = Node(6) \r\nroot1.left.left.left = Node(7)\r\nroot2 = Node(1) \r\nroot2.left = Node(2) \r\nroot2.right = Node(3) \r\nroot2.left.left = Node(4) \r\nroot2.left.right = Node(5)\r\nroot2.left.left.left = Node(7)",
+  "parseable": false,
+  "parse_note": "no C-translatable test case (list/2d/mixed/dict kinds only)"
+}

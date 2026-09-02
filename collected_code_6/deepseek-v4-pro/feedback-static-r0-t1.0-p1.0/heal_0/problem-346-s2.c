@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long entringer(int n, int k) {
+    if (n < 0 || k < 0 || k > n) return 0;
+    if (n == 0 && k == 0) return 1;
+    
+    unsigned long long **dp = (unsigned long long **)malloc((n + 1) * sizeof(unsigned long long *));
+    if (dp == NULL) return 0;
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (unsigned long long *)calloc((n + 1), sizeof(unsigned long long));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    dp[0][0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        dp[i][0] = 0;
+        for (int j = 1; j <= i; j++) {
+            dp[i][j] = dp[i][j - 1] + dp[i - 1][i - j];
+        }
+    }
+    
+    unsigned long long result = dp[n][k];
+    
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int n = 10;
+    int k = 5;
+    
+    printf("Entringer number E(%d, %d) = %llu\n", n, k, entringer(n, k));
+    
+    printf("Entringer triangle (n=0 to 7):\n");
+    for (int i = 0; i <= 7; i++) {
+        for (int j = 0; j <= i; j++) {
+            printf("%llu ", entringer(i, j));
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

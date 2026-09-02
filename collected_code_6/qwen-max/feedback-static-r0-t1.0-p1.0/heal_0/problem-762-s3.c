@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int has_thirty_days(int month) {
+    return (month == 4 || month == 6 || month == 9 || month == 11);
+}
+
+int main() {
+    int month;
+    printf("Enter month number: ");
+    if (scanf("%d", &month) != 1 || month < 1 || month > 12) {
+        printf("Invalid input. Please enter a number between 1 and 12.\n");
+        return 1;
+    }
+
+    if (has_thirty_days(month)) {
+        printf("The given month has 30 days.\n");
+    } else {
+        printf("The given month does not have 30 days.\n");
+    }
+
+    return 0;
+}

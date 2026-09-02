@@ -1,0 +1,62 @@
+{
+  "task_id": 517,
+  "text": "Write a C function to find the largest postive number from the given list.",
+  "fn_candidates": [
+    "largest_pos",
+    "LargestPos",
+    "largestPos",
+    "largestpos"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "largest_pos",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          -1
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert largest_pos([1,2,3,4,-1]) == 4"
+    },
+    {
+      "fn_name": "largest_pos",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          -5,
+          -1,
+          6
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert largest_pos([0,1,2,-5,-1,6]) == 6"
+    },
+    {
+      "fn_name": "largest_pos",
+      "args": [
+        [
+          0,
+          0,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert largest_pos([0,0,1,0]) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

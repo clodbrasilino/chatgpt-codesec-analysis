@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-332.c: In function 'countCharacterFrequency':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-332.c:8:23: error: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+    8 |             frequency[tolower(str[i]) - 'a']++;
+      |                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-332.c:4:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    3 | #include <stdlib.h>
+  +++ |+#include <ctype.h>
+    4 | 

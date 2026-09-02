@@ -1,0 +1,44 @@
+{
+  "task_id": 519,
+  "text": "Write a C function to calculate volume of a tetrahedron.",
+  "fn_candidates": [
+    "volume_tetrahedron",
+    "VolumeTetrahedron",
+    "volumeTetrahedron",
+    "volumetetrahedron"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "volume_tetrahedron",
+      "args": [
+        10
+      ],
+      "expected": 117.85,
+      "assert_src": "assert volume_tetrahedron(10)==117.85"
+    },
+    {
+      "fn_name": "volume_tetrahedron",
+      "args": [
+        15
+      ],
+      "expected": 397.75,
+      "assert_src": "assert volume_tetrahedron(15)==397.75"
+    },
+    {
+      "fn_name": "volume_tetrahedron",
+      "args": [
+        20
+      ],
+      "expected": 942.81,
+      "assert_src": "assert volume_tetrahedron(20)==942.81"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

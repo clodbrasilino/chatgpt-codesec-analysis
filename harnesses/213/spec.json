@@ -1,0 +1,83 @@
+{
+  "task_id": 213,
+  "text": "Write a C function to perform the concatenation of two string tuples.",
+  "fn_candidates": [
+    "concatenate_strings",
+    "ConcatenateStrings",
+    "concatenateStrings",
+    "concatenatestrings"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "concatenate_strings",
+      "args": [
+        [
+          "Manjeet",
+          "Nikhil",
+          "Akshat"
+        ],
+        [
+          " Singh",
+          " Meherwal",
+          " Garg"
+        ]
+      ],
+      "expected": [
+        "Manjeet Singh",
+        "Nikhil Meherwal",
+        "Akshat Garg"
+      ],
+      "assert_src": "assert concatenate_strings((\"Manjeet\", \"Nikhil\", \"Akshat\"), (\" Singh\", \" Meherwal\", \" Garg\")) == ('Manjeet Singh', 'Nikhil Meherwal', 'Akshat Garg')"
+    },
+    {
+      "fn_name": "concatenate_strings",
+      "args": [
+        [
+          "Shaik",
+          "Ayesha",
+          "Sanya"
+        ],
+        [
+          " Dawood",
+          " Begum",
+          " Singh"
+        ]
+      ],
+      "expected": [
+        "Shaik Dawood",
+        "Ayesha Begum",
+        "Sanya Singh"
+      ],
+      "assert_src": "assert concatenate_strings((\"Shaik\", \"Ayesha\", \"Sanya\"), (\" Dawood\", \" Begum\", \" Singh\")) == ('Shaik Dawood', 'Ayesha Begum', 'Sanya Singh')"
+    },
+    {
+      "fn_name": "concatenate_strings",
+      "args": [
+        [
+          "Harpreet",
+          "Priyanka",
+          "Muskan"
+        ],
+        [
+          "Kour",
+          " Agarwal",
+          "Sethi"
+        ]
+      ],
+      "expected": [
+        "HarpreetKour",
+        "Priyanka Agarwal",
+        "MuskanSethi"
+      ],
+      "assert_src": "assert concatenate_strings((\"Harpreet\", \"Priyanka\", \"Muskan\"), (\"Kour\", \" Agarwal\", \"Sethi\")) == ('HarpreetKour', 'Priyanka Agarwal', 'MuskanSethi')"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

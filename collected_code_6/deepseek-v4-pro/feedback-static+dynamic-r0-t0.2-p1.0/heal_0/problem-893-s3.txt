@@ -1,0 +1,144 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+} List;
+
+int get_last_element(List* list, int* result) {
+    if (list == NULL || list->head == NULL) {
+        return 0;
+    }
+    
+    Node* current = list->head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    
+    *result = current->data;
+    return 1;
+}
+
+int* get_last_elements(List** lists, int num_lists, int* num_results) {
+    if (lists == NULL || num_lists <= 0 || num_results == NULL) {
+        return NULL;
+    }
+    
+    int* results = (int*)malloc(num_lists * sizeof(int));
+    if (results == NULL) {
+        return NULL;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < num_lists; i++) {
+        int last_element;
+        if (get_last_element(lists[i], &last_element)) {
+            results[count++] = last_element;
+        }
+    }
+    
+    *num_results = count;
+    return results;
+}
+
+Node* create_node(int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+List* create_list() {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    return list;
+}
+
+void append_node(List* list, int data) {
+    if (list == NULL) {
+        return;
+    }
+    
+    Node* node = create_node(data);
+    if (node == NULL) {
+        return;
+    }
+    
+    if (list->head == NULL) {
+        list->head = node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = node;
+    }
+}
+
+void free_list(List* list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List* list1 = create_list();
+    List* list2 = create_list();
+    List* list3 = create_list();
+    
+    if (list1 == NULL || list2 == NULL || list3 == NULL) {
+        free_list(list1);
+        free_list(list2);
+        free_list(list3);
+        return 1;
+    }
+    
+    append_node(list1, 1);
+    append_node(list1, 2);
+    append_node(list1, 3);
+    
+    append_node(list2, 10);
+    append_node(list2, 20);
+    
+    append_node(list3, 100);
+    
+    List* lists[] = {list1, list2, list3};
+    int num_results = 0;
+    
+    int* last_elements = get_last_elements(lists, 3, &num_results);
+    
+    if (last_elements != NULL) {
+        for (int i = 0; i < num_results; i++) {
+            printf("%d ", last_elements[i]);
+        }
+        printf("\n");
+        free(last_elements);
+    }
+    
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+    
+    return 0;
+}
+```

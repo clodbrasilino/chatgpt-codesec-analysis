@@ -1,0 +1,33 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:26:17: error: call to undeclared function 'free_sequences'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |                 free_sequences(sequences, *count);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:26:17: note: did you mean 'find_sequences'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:12:11: note: 'find_sequences' declared here
+   12 | Sequence *find_sequences(const char *str, int *count) {
+      |           ^
+   13 |     int len = strlen(str);
+   14 |     Sequence *sequences = NULL;
+   15 |     *count = 0;
+   16 | 
+   17 |     for (int i = 0; i < len - 1; i++) {
+   18 |         if (isupper((unsigned char)str[i]) && islower((unsigned char)str[i + 1])) {
+   19 |             int j = i + 1;
+   20 |             while (j < len && islower((unsigned char)str[j])) {
+   21 |                 j++;
+   22 |             }
+   23 | 
+   24 |             Sequence *temp = (Sequence *)realloc(sequences, (*count + 1) * sizeof(Sequence));
+   25 |             if (temp == NULL) {
+   26 |                 free_sequences(sequences, *count);
+      |                 ~~~~~~~~~~~~~~
+      |                 find_sequences
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:35:17: error: call to undeclared function 'free_sequences'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   35 |                 free_sequences(sequences, *count);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:52:6: error: conflicting types for 'free_sequences'
+   52 | void free_sequences(Sequence *sequences, int count) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-917-s2.c:26:17: note: previous implicit declaration is here
+   26 |                 free_sequences(sequences, *count);
+      |                 ^
+3 errors generated.

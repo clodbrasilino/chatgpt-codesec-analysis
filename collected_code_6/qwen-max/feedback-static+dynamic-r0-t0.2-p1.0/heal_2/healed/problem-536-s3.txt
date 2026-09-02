@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void* select_nth_item(const void* list, size_t n, size_t item_size) {
+    if (list == NULL || n >= 5) {
+        return NULL;
+    }
+    return (void*)((const char*)list + n * item_size);
+}
+
+int main() {
+    const int numbers[] = {10, 20, 30, 40, 50};
+    int* number_list = (int*)malloc(5 * sizeof(int));
+    if (number_list == NULL) {
+        return 1;
+    }
+    for (size_t i = 0; i < 5; ++i) {
+        number_list[i] = numbers[i];
+    }
+
+    const int* nth_number = (const int*)select_nth_item(number_list, 2, sizeof(int));
+    if (nth_number != NULL) {
+        printf("%d\n", *nth_number);
+    } else {
+        printf("Invalid index\n");
+    }
+
+    free(number_list);
+    return 0;
+}
+```

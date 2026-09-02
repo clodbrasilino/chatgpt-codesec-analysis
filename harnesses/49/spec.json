@@ -1,0 +1,117 @@
+{
+  "task_id": 49,
+  "text": "Write a C function to extract every first or specified element from a given two-dimensional list.",
+  "fn_candidates": [
+    "specified_element",
+    "SpecifiedElement",
+    "specifiedElement",
+    "specifiedelement"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "specified_element",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            2
+          ],
+          [
+            4,
+            5,
+            6,
+            2
+          ],
+          [
+            7,
+            1,
+            9,
+            5
+          ]
+        ],
+        0
+      ],
+      "expected": [
+        1,
+        4,
+        7
+      ],
+      "assert_src": "assert specified_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]],0)==[1, 4, 7]"
+    },
+    {
+      "fn_name": "specified_element",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            2
+          ],
+          [
+            4,
+            5,
+            6,
+            2
+          ],
+          [
+            7,
+            1,
+            9,
+            5
+          ]
+        ],
+        2
+      ],
+      "expected": [
+        3,
+        6,
+        9
+      ],
+      "assert_src": "assert specified_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]],2)==[3, 6, 9]"
+    },
+    {
+      "fn_name": "specified_element",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            2
+          ],
+          [
+            4,
+            5,
+            6,
+            2
+          ],
+          [
+            7,
+            1,
+            9,
+            5
+          ]
+        ],
+        1
+      ],
+      "expected": [
+        2,
+        5,
+        1
+      ],
+      "assert_src": "assert specified_element([[1, 2, 3, 2], [4, 5, 6, 2], [7, 1, 9, 5]],1)==[2,5,1]"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,67 @@
+{
+  "task_id": 168,
+  "text": "Write a C function to find the frequency of a number in a given array.",
+  "fn_candidates": [
+    "frequency",
+    "Frequency",
+    "frequency",
+    "frequency"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "frequency",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        4
+      ],
+      "expected": 0,
+      "assert_src": "assert frequency([1,2,3],4) == 0"
+    },
+    {
+      "fn_name": "frequency",
+      "args": [
+        [
+          1,
+          2,
+          2,
+          3,
+          3,
+          3,
+          4
+        ],
+        3
+      ],
+      "expected": 3,
+      "assert_src": "assert frequency([1,2,2,3,3,3,4],3) == 3"
+    },
+    {
+      "fn_name": "frequency",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3,
+          1,
+          2
+        ],
+        1
+      ],
+      "expected": 2,
+      "assert_src": "assert frequency([0,1,2,3,1,2],1) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

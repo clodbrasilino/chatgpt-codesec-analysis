@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* createNode(int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int lengthOfList(Node *head) {
+    int count = 0;
+    Node *current = head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+Node* findMaxSublist(Node *head1, Node *head2) {
+    int len1 = lengthOfList(head1);
+    int len2 = lengthOfList(head2);
+
+    if (len1 >= len2) {
+        return head1;
+    } else {
+        return head2;
+    }
+}
+
+int main() {
+    Node *head1 = createNode(1);
+    head1->next = createNode(2);
+    head1->next->next = createNode(3);
+
+    Node *head2 = createNode(4);
+    head2->next = createNode(5);
+
+    Node *maxSublist = findMaxSublist(head1, head2);
+
+    Node *current = maxSublist;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+
+    freeList(head1);
+    freeList(head2);
+
+    return 0;
+}

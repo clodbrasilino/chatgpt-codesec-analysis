@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1024
+#define MAX_WORD_LENGTH 64
+
+int is_word_in_array(const char *word, const char *words[], int num_words) {
+    for (int i = 0; i < num_words; ++i) {
+        if (strcmp(word, words[i]) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char *remove_duplicate_words(const char *input) {
+    char *result = (char *)malloc(strlen(input) + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *words[MAX_WORDS];
+    int num_words = 0;
+
+    const char *p = input;
+    while (*p) {
+        while (*p && !isalnum((unsigned char)*p)) p++;
+        const char *word_start = p;
+        while (*p && isalnum((unsigned char)*p)) p++;
+
+        if (word_start != p && !is_word_in_array(word_start, words, num_words)) {
+            if (num_words >= MAX_WORDS) {
+                free(result);
+                return NULL;
+            }
+            words[num_words++] = word_start;
+            strncpy(result, word_start, p - word_start);
+            result += p - word_start;
+            *(result++) = ' ';
+        }
+
+        while (*p && !isalnum((unsigned char)*p)) p++;
+    }
+    *--result = '\0';
+
+    return result - (strlen(input) - 1);
+}
+
+int main() {
+    const char *input = "this this is a test test of a duplicate remover";
+    char *output = remove_duplicate_words(input);
+
+    if (output == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed or too many unique words.\n");
+        return 1;
+    }
+
+    printf("Original: %s\n", input);
+    printf("Processed: %s\n", output);
+
+    free(output);
+    return 0;
+}

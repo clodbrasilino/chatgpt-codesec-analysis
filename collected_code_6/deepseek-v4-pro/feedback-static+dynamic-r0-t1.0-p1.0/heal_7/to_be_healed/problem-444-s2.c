@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected '[(2,), (9,), (2,), (2,)]', got <no output>
+  *  test case 1 failed: expected '[(3, 2, 1), (4, 9, 2), (1, 2, 3), (8, 2, 1)]', got <no output>
+  *  test case 2 failed: expected '[(8, 4), (8, 12), (1, 7), (6, 9)]', got <no output>
+  */
+
+TupleList* trim_tuples(TupleList *list, int k) {
+    if (list == NULL || k < 0) {
+        return NULL;
+    }
+
+    TupleList *result = (TupleList*)malloc(sizeof(TupleList));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->count = list->count;
+    result->tuples = (Tuple*)calloc(result->count, sizeof(Tuple));
+    if (result->tuples == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements == NULL) {
+            result->tuples[i].elements = NULL;
+            result->tuples[i].size = 0;
+            continue;
+        }
+
+        if (k >= list->tuples[i].size) {
+            result->tuples[i].elements = NULL;
+            result->tuples[i].size = 0;
+            continue;
+        }
+
+        int new_size = list->tuples[i].size - k;
+        result->tuples[i].elements = (int*)malloc(sizeof(int) * new_size);
+        if (result->tuples[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result->tuples[j].elements);
+            }
+            free(result->tuples);
+            free(result);
+            return NULL;
+        }
+
+        result->tuples[i].size = new_size;
+        memcpy(result->tuples[i].elements, list->tuples[i].elements, sizeof(int) * new_size);
+    }
+
+    return result;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return 1;
+    }
+
+    list->count = 4;
+    list->tuples = (Tuple*)calloc(list->count, sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return 1;
+    }
+
+    int tuple1[] = {3, 2, 1};
+    int tuple2[] = {4, 9, 2};
+    int tuple3[] = {1, 2, 3};
+    int tuple4[] = {8, 2, 1};
+
+    list->tuples[0].elements = (int*)malloc(sizeof(int) * 3);
+    memcpy(list->tuples[0].elements, tuple1, sizeof(int) * 3);
+    list->tuples[0].size = 3;
+
+    list->tuples[1].elements = (int*)malloc(sizeof(int) * 3);
+    memcpy(list->tuples[1].elements, tuple2, sizeof(int) * 3);
+    list->tuples[1].size = 3;
+
+    list->tuples[2].elements = (int*)malloc(sizeof(int) * 3);
+    memcpy(list->tuples[2].elements, tuple3, sizeof(int) * 3);
+    list->tuples[2].size = 3;
+
+    list->tuples[3].elements = (int*)malloc(sizeof(int) * 3);
+    memcpy(list->tuples[3].elements, tuple4, sizeof(int) * 3);
+    list->tuples[3].size = 3;
+
+    TupleList *trimmed = trim_tuples(list, 1);
+    if (trimmed != NULL) {
+        printf("[");
+        for (int i = 0; i < trimmed->count; i++) {
+            printf("(");
+            if (trimmed->tuples[i].size > 0) {
+                for (int j = 0; j < trimmed->tuples[i].size; j++) {
+                    printf("%d", trimmed->tuples[i].elements[j]);
+                    if (j < trimmed->tuples[i].size - 1) {
+                        printf(", ");
+                    }
+                }
+            }
+            printf(")");
+            if (i < trimmed->count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free_tuple_list(trimmed);
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    free(list);
+
+    return 0;
+}

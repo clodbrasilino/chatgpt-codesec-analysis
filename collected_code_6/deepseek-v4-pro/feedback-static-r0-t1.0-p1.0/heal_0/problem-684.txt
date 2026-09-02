@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+long count_character_in_repeated_string(const char *str, char target, unsigned long repetitions) {
+    if (str == NULL || repetitions == 0) {
+        return 0;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+    
+    unsigned long count_in_single = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == target) {
+            count_in_single++;
+        }
+    }
+    
+    unsigned long full_repetitions = repetitions / len;
+    unsigned long remaining_chars = repetitions % len;
+    
+    unsigned long total_count = count_in_single * full_repetitions;
+    
+    for (size_t i = 0; i < remaining_chars; i++) {
+        if (str[i] == target) {
+            total_count++;
+        }
+    }
+    
+    return (long)total_count;
+}
+
+int main(void) {
+    const char *test_string = "abcabc";
+    char target_char = 'a';
+    unsigned long total_length = 10;
+    
+    long result = count_character_in_repeated_string(test_string, target_char, total_length);
+    
+    printf("String: %s\n", test_string);
+    printf("Target character: %c\n", target_char);
+    printf("Total length of repeated string: %lu\n", total_length);
+    printf("Number of occurrences: %ld\n", result);
+    
+    return 0;
+}
+```

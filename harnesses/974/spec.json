@@ -1,0 +1,83 @@
+{
+  "task_id": 974,
+  "text": "Write a C function to find the minimum total path sum in the given triangle.",
+  "fn_candidates": [
+    "min_sum_path",
+    "MinSumPath",
+    "minSumPath",
+    "minsumpath"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_sum_path",
+      "args": [
+        [
+          [
+            2
+          ],
+          [
+            3,
+            9
+          ],
+          [
+            1,
+            6,
+            7
+          ]
+        ]
+      ],
+      "expected": 6,
+      "assert_src": "assert min_sum_path([[ 2 ], [3, 9 ], [1, 6, 7 ]]) == 6"
+    },
+    {
+      "fn_name": "min_sum_path",
+      "args": [
+        [
+          [
+            2
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            8,
+            5,
+            6
+          ]
+        ]
+      ],
+      "expected": 10,
+      "assert_src": "assert min_sum_path([[ 2 ], [3, 7 ], [8, 5, 6 ]]) == 10 "
+    },
+    {
+      "fn_name": "min_sum_path",
+      "args": [
+        [
+          [
+            3
+          ],
+          [
+            6,
+            4
+          ],
+          [
+            5,
+            2,
+            7
+          ]
+        ]
+      ],
+      "expected": 9,
+      "assert_src": "assert min_sum_path([[ 3 ], [6, 4 ], [5, 2, 7 ]]) == 9"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

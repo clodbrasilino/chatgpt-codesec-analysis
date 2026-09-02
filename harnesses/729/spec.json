@@ -1,0 +1,77 @@
+{
+  "task_id": 729,
+  "text": "Write a C function to add two lists.",
+  "fn_candidates": [
+    "add_list",
+    "AddList",
+    "addList",
+    "addlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "add_list",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        5,
+        7,
+        9
+      ],
+      "assert_src": "assert add_list([1, 2, 3],[4,5,6])==[5, 7, 9]"
+    },
+    {
+      "fn_name": "add_list",
+      "args": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        4,
+        6
+      ],
+      "assert_src": "assert add_list([1,2],[3,4])==[4,6]"
+    },
+    {
+      "fn_name": "add_list",
+      "args": [
+        [
+          10,
+          20
+        ],
+        [
+          50,
+          70
+        ]
+      ],
+      "expected": [
+        60,
+        90
+      ],
+      "assert_src": "assert add_list([10,20],[50,70])==[60,90]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

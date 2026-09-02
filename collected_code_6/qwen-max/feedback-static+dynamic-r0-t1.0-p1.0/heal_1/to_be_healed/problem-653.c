@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValue {
+    char *key;
+    char *value;
+} KeyValue;
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+typedef struct Map {
+    int size;
+    char **keys;
+    List *lists;
+} Map;
+
+Node *create_node(char *value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->value = strdup(value);
+    node->next = NULL;
+    return node;
+}
+
+/* Possible weaknesses found:
+ *  expected 'List *' but argument is of type 'List'
+ *  passing argument to parameter 'list' here
+ */
+void free_list(List *list) {
+    while (list->head) {
+        Node *temp = list->head;
+        list->head = list->head->next;
+        free(temp->value);
+        free(temp);
+    }
+}
+
+List *create_list() {
+    List *list = (List *)malloc(sizeof(List));
+    if (!list) return NULL;
+    list->head = NULL;
+    return list;
+}
+
+/* Possible weaknesses found:
+ *  expected 'List *' but argument is of type 'List'
+ *  passing argument to parameter 'list' here
+ */
+void add_to_list(List *list, char *value) {
+    Node *new_node = create_node(value);
+    if (new_node) {
+        new_node->next = list->head;
+        list->head = new_node;
+    }
+}
+ /* Possible weaknesses found:
+  *  expected 'void *' but argument is of type 'List'
+  *  passing argument to parameter here
+  */
+
+Map *create_map(int size) {
+    Map *map = (Map *)malloc(sizeof(Map));
+    if (!map) return NULL;
+    map->size = 0;
+    map->keys = (char **)calloc(size, sizeof(char *));
+    /* Possible weaknesses found:
+     *  assignment to 'List *' from incompatible pointer type 'List **' [-Wincompatible-pointer-types]
+     *  Size of pointer 'lists' used instead of size of its data. [pointerSize]
+     */
+    map->lists = (List **)calloc(size, sizeof(List *));
+    if (!map->keys || !map->lists) {
+        free(map->keys);
+        free(map->lists);
+        free(map);
+        return NULL;
+    }
+    for (int i = 0; i < size; ++i) {
+        /* Possible weaknesses found:
+         *  assigning to 'List' (aka 'struct List') from incompatible type 'List *' (aka 'struct List *'); dereference with *
+         *  incompatible types when assigning to type 'List' from type 'List *'
+         */
+        map->lists[i] = create_list();
+    }
+    return map;
+}
+
+void free_map(Map *map) {
+    if (!map) return;
+    for (int i = 0; i < map->size; ++i) {
+        /* Possible weaknesses found:
+         *  incompatible type for argument 1 of 'free_list'
+         *  passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+         */
+        free_list(map->lists[i]);
+        /* Possible weaknesses found:
+         *  incompatible type for argument 1 of 'free'
+         *  passing 'List' (aka 'struct List') to parameter of incompatible type 'void *'
+         */
+        free(map->lists[i]);
+        free(map->keys[i]);
+    }
+    free(map->keys);
+    free(map->lists);
+    free(map);
+}
+
+int get_key_index(Map *map, char *key) {
+    for (int i = 0; i < map->size; ++i) {
+        if (strcmp(map->keys[i], key) == 0) return i;
+    }
+    return -1;
+}
+
+void group_kv_pairs(KeyValue *pairs, int count, Map *map) {
+    for (int i = 0; i < count; ++i) {
+        int index = get_key_index(map, pairs[i].key);
+        if (index != -1) {
+            /* Possible weaknesses found:
+             *  passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+             *  incompatible type for argument 1 of 'add_to_list'
+             */
+            add_to_list(map->lists[index], pairs[i].value);
+        } else {
+            map->keys[map->size] = strdup(pairs[i].key);
+            /* Possible weaknesses found:
+             *  passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+             *  incompatible type for argument 1 of 'add_to_list'
+             */
+            add_to_list(map->lists[map->size], pairs[i].value);
+            map->size++;
+        }
+    }
+}
+
+/* Possible weaknesses found:
+ *  expected 'List *' but argument is of type 'List'
+ *  passing argument to parameter 'list' here
+ */
+void print_list(List *list) {
+    for (Node *current = list->head; current != NULL; current = current->next) {
+        printf("%s ", current->value);
+    }
+    printf("\n");
+}
+
+void print_map(Map *map) {
+    for (int i = 0; i < map->size; ++i) {
+        printf("%s: ", map->keys[i]);
+        /* Possible weaknesses found:
+         *  passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+         *  incompatible type for argument 1 of 'print_list'
+         */
+        print_list(map->lists[i]);
+    }
+}
+
+int main() {
+    KeyValue pairs[] = {{"a", "1"}, {"b", "2"}, {"a", "3"}, {"c", "4"}, {"b", "5"}};
+    int count = sizeof(pairs) / sizeof(pairs[0]);
+
+    Map *map = create_map(count);
+    if (!map) return 1;
+
+    group_kv_pairs(pairs, count, map);
+
+    print_map(map);
+
+    free_map(map);
+    return 0;
+}

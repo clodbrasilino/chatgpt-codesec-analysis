@@ -1,0 +1,52 @@
+{
+  "task_id": 254,
+  "text": "Write a C function to find all words starting with 'a' or 'e' in a given string.",
+  "fn_candidates": [
+    "words_ae",
+    "WordsAe",
+    "wordsAe",
+    "wordsae"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "words_ae",
+      "args": [
+        "python programe"
+      ],
+      "expected": [
+        "ame"
+      ],
+      "assert_src": "assert words_ae(\"python programe\")==['ame']"
+    },
+    {
+      "fn_name": "words_ae",
+      "args": [
+        "python programe language"
+      ],
+      "expected": [
+        "ame",
+        "anguage"
+      ],
+      "assert_src": "assert words_ae(\"python programe language\")==['ame','anguage']"
+    },
+    {
+      "fn_name": "words_ae",
+      "args": [
+        "assert statement"
+      ],
+      "expected": [
+        "assert",
+        "atement"
+      ],
+      "assert_src": "assert words_ae(\"assert statement\")==['assert', 'atement']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

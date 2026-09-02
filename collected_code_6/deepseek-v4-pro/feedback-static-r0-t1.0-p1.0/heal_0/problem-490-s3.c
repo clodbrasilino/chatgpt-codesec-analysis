@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int find_symmetric_pairs(Pair *pairs, int n, Pair *result) {
+    int count = 0;
+    int found;
+
+    for (int i = 0; i < n; i++) {
+        found = 0;
+        for (int j = i + 1; j < n; j++) {
+            if (pairs[i].first == pairs[j].second && pairs[i].second == pairs[j].first) {
+                found = 1;
+                break;
+            }
+        }
+        if (found) {
+            int duplicate = 0;
+            for (int k = 0; k < count; k++) {
+                if (result[k].first == pairs[i].second && result[k].second == pairs[i].first) {
+                    duplicate = 1;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                result[count].first = pairs[i].first;
+                result[count].second = pairs[i].second;
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    Pair pairs[] = {{1, 2}, {3, 4}, {5, 6}, {2, 1}, {4, 3}, {7, 8}};
+    int n = sizeof(pairs) / sizeof(pairs[0]);
+    Pair result[10];
+    int result_count;
+
+    result_count = find_symmetric_pairs(pairs, n, result);
+
+    for (int i = 0; i < result_count; i++) {
+        printf("(%d, %d)\n", result[i].first, result[i].second);
+    }
+
+    return 0;
+}

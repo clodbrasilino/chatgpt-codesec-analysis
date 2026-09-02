@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:21:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   21 |         {{2, 4, 6, 8}, 4},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:21:11: note: (near initialization for 'tuples[0].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:22:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   22 |         {{9, 15, 21}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:22:11: note: (near initialization for 'tuples[1].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:23:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   23 |         {{3, 7, 10}, 3},
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:23:11: note: (near initialization for 'tuples[2].elements')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:24:11: error: initialization of 'int *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   24 |         {{12, 18, 24, 30}, 6}
+      |           ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-75-s2.c:24:11: note: (near initialization for 'tuples[3].elements')

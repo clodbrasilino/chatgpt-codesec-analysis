@@ -1,0 +1,44 @@
+{
+  "task_id": 593,
+  "text": "Write a C function to remove leading zeroes from an ip address.",
+  "fn_candidates": [
+    "removezero_ip",
+    "RemovezeroIp",
+    "removezeroIp",
+    "removezeroip"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "removezero_ip",
+      "args": [
+        "216.08.094.196"
+      ],
+      "expected": "216.8.94.196",
+      "assert_src": "assert removezero_ip(\"216.08.094.196\")==('216.8.94.196') "
+    },
+    {
+      "fn_name": "removezero_ip",
+      "args": [
+        "12.01.024"
+      ],
+      "expected": "12.1.24",
+      "assert_src": "assert removezero_ip(\"12.01.024\")==('12.1.24') "
+    },
+    {
+      "fn_name": "removezero_ip",
+      "args": [
+        "216.08.094.0196"
+      ],
+      "expected": "216.8.94.196",
+      "assert_src": "assert removezero_ip(\"216.08.094.0196\")==('216.8.94.196') "
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

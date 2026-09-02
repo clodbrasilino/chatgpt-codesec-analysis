@@ -1,0 +1,44 @@
+{
+  "task_id": 818,
+  "text": "Write a C function to count lower case letters in a given string.",
+  "fn_candidates": [
+    "lower_ctr",
+    "LowerCtr",
+    "lowerCtr",
+    "lowerctr"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lower_ctr",
+      "args": [
+        "abc"
+      ],
+      "expected": 3,
+      "assert_src": "assert lower_ctr('abc') == 3"
+    },
+    {
+      "fn_name": "lower_ctr",
+      "args": [
+        "string"
+      ],
+      "expected": 6,
+      "assert_src": "assert lower_ctr('string') == 6"
+    },
+    {
+      "fn_name": "lower_ctr",
+      "args": [
+        "Python"
+      ],
+      "expected": 5,
+      "assert_src": "assert lower_ctr('Python') == 5"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 406,
+  "text": "Write a C function to find the parity of a given number.",
+  "fn_candidates": [
+    "find_Parity",
+    "FindParity",
+    "findParity",
+    "findParity"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Parity",
+      "args": [
+        12
+      ],
+      "expected": "Even Parity",
+      "assert_src": "assert find_Parity(12) == \"Even Parity\""
+    },
+    {
+      "fn_name": "find_Parity",
+      "args": [
+        7
+      ],
+      "expected": "Odd Parity",
+      "assert_src": "assert find_Parity(7) == \"Odd Parity\""
+    },
+    {
+      "fn_name": "find_Parity",
+      "args": [
+        10
+      ],
+      "expected": "Even Parity",
+      "assert_src": "assert find_Parity(10) == \"Even Parity\""
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

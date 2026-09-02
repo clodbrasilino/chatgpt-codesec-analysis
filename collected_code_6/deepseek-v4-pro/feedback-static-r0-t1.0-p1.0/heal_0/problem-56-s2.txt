@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int reverse_number(int n) {
+    int rev = 0;
+    int sign = (n < 0) ? -1 : 1;
+    n *= sign;
+    
+    while (n > 0) {
+        int digit = n % 10;
+        rev = rev * 10 + digit;
+        n /= 10;
+    }
+    
+    return rev * sign;
+}
+
+bool check_condition(int n) {
+    int rev = reverse_number(n);
+    long long expected = (long long)2 * rev - 1;
+    
+    if (expected < -2147483648LL || expected > 2147483647LL) {
+        return false;
+    }
+    
+    return n == (int)expected;
+}
+
+int main(void) {
+    int test_cases[] = {73, 37, 12, 21, -12, 0, 1, 123};
+    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        if (check_condition(test_cases[i])) {
+            printf("%d: true\n", test_cases[i]);
+        } else {
+            printf("%d: false\n", test_cases[i]);
+        }
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,66 @@
+{
+  "task_id": 258,
+  "text": "Write a C function to find number of odd elements in the given list.",
+  "fn_candidates": [
+    "count_odd",
+    "CountOdd",
+    "countOdd",
+    "countodd"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_odd",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          10
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert count_odd([1, 2, 3, 5, 7, 8, 10])==4"
+    },
+    {
+      "fn_name": "count_odd",
+      "args": [
+        [
+          10,
+          15,
+          14,
+          13,
+          -18,
+          12,
+          -20
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert count_odd([10,15,14,13,-18,12,-20])==2"
+    },
+    {
+      "fn_name": "count_odd",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          8,
+          9
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert count_odd([1, 2, 4, 8, 9])==2"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

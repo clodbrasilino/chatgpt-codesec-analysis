@@ -1,0 +1,59 @@
+{
+  "task_id": 713,
+  "text": "Write a C function to check if the given tuple contains all valid values or not.",
+  "fn_candidates": [
+    "check_valid",
+    "CheckValid",
+    "checkValid",
+    "checkvalid"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_valid",
+      "args": [
+        [
+          true,
+          true,
+          true,
+          true
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_valid((True, True, True, True) ) == True"
+    },
+    {
+      "fn_name": "check_valid",
+      "args": [
+        [
+          true,
+          false,
+          true,
+          true
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_valid((True, False, True, True) ) == False"
+    },
+    {
+      "fn_name": "check_valid",
+      "args": [
+        [
+          true,
+          true,
+          true,
+          true
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_valid((True, True, True, True) ) == True"
+    }
+  ],
+  "arg_kinds": [
+    "bool-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

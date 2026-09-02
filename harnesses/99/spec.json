@@ -1,0 +1,44 @@
+{
+  "task_id": 99,
+  "text": "Write a C function to convert the given decimal number to its binary equivalent.",
+  "fn_candidates": [
+    "decimal_to_binary",
+    "DecimalToBinary",
+    "decimalToBinary",
+    "decimaltobinary"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "decimal_to_binary",
+      "args": [
+        8
+      ],
+      "expected": "1000",
+      "assert_src": "assert decimal_to_binary(8) == '1000'"
+    },
+    {
+      "fn_name": "decimal_to_binary",
+      "args": [
+        18
+      ],
+      "expected": "10010",
+      "assert_src": "assert decimal_to_binary(18) == '10010'"
+    },
+    {
+      "fn_name": "decimal_to_binary",
+      "args": [
+        7
+      ],
+      "expected": "111",
+      "assert_src": "assert decimal_to_binary(7) == '111' "
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

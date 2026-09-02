@@ -1,0 +1,44 @@
+{
+  "task_id": 84,
+  "text": "Write a C function to find the n-th number in newman conway sequence.",
+  "fn_candidates": [
+    "sequence",
+    "Sequence",
+    "sequence",
+    "sequence"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sequence",
+      "args": [
+        10
+      ],
+      "expected": 6,
+      "assert_src": "assert sequence(10) == 6"
+    },
+    {
+      "fn_name": "sequence",
+      "args": [
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert sequence(2) == 1"
+    },
+    {
+      "fn_name": "sequence",
+      "args": [
+        3
+      ],
+      "expected": 2,
+      "assert_src": "assert sequence(3) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

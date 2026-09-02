@@ -1,0 +1,68 @@
+{
+  "task_id": 494,
+  "text": "Write a C function to convert the given binary tuple to integer.",
+  "fn_candidates": [
+    "binary_to_integer",
+    "BinaryToInteger",
+    "binaryToInteger",
+    "binarytointeger"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "binary_to_integer",
+      "args": [
+        [
+          1,
+          1,
+          0,
+          1,
+          0,
+          0,
+          1
+        ]
+      ],
+      "expected": "105",
+      "assert_src": "assert binary_to_integer((1, 1, 0, 1, 0, 0, 1)) == '105'"
+    },
+    {
+      "fn_name": "binary_to_integer",
+      "args": [
+        [
+          0,
+          1,
+          1,
+          0,
+          0,
+          1,
+          0,
+          1
+        ]
+      ],
+      "expected": "101",
+      "assert_src": "assert binary_to_integer((0, 1, 1, 0, 0, 1, 0, 1)) == '101'"
+    },
+    {
+      "fn_name": "binary_to_integer",
+      "args": [
+        [
+          1,
+          1,
+          0,
+          1,
+          0,
+          1
+        ]
+      ],
+      "expected": "53",
+      "assert_src": "assert binary_to_integer((1, 1, 0, 1, 0, 1)) == '53'"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

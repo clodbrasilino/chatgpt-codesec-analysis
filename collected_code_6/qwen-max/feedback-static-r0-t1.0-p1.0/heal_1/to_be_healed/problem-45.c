@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    if (b == 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int array_gcd(int *arr, size_t len) {
+    if (len == 0) {
+        return 0;
+    }
+    int result = arr[0];
+    for (size_t i = 1; i < len; ++i) {
+        result = gcd(result, arr[i]);
+        if (result == 1) {
+            break;
+        }
+    }
+    return result;
+}
+
+int main() {
+    int arr[] = {24, 36, 48, 60};
+    size_t len = sizeof(arr) / sizeof(arr[0]);
+    int result = array_gcd(arr, len);
+    printf("GCD: %d\n", result);
+    return 0;
+}

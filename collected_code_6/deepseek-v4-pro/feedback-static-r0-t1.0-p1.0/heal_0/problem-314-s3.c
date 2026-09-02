@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum_2xn(int** grid, int n) {
+    if (n <= 0 || grid == NULL) return 0;
+    
+    int include = 0, exclude = 0;
+    int col1, col2;
+    
+    for (int i = 0; i < n; i++) {
+        col1 = (i > 0) ? grid[0][i-1] + grid[1][i-1] : 0;
+        col2 = grid[0][i] + grid[1][i];
+        
+        int new_exclude = (include > exclude) ? include : exclude;
+        int new_include = exclude + col2;
+        exclude = new_exclude;
+        include = new_include;
+    }
+    
+    return (include > exclude) ? include : exclude;
+}
+
+int main(void) {
+    int n;
+    printf("Enter number of columns: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    int** grid = (int**)malloc(2 * sizeof(int*));
+    if (grid == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < 2; i++) {
+        grid[i] = (int*)malloc(n * sizeof(int));
+        if (grid[i] == NULL) {
+            for (int j = 0; j < i; j++) free(grid[j]);
+            free(grid);
+            fprintf(stderr, "Memory allocation failed\n");
+            return 1;
+        }
+    }
+    
+    printf("Enter grid values:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < n; j++) {
+            if (scanf("%d", &grid[i][j]) != 1) {
+                fprintf(stderr, "Invalid input\n");
+                for (int k = 0; k < 2; k++) free(grid[k]);
+                free(grid);
+                return 1;
+            }
+        }
+    }
+    
+    int result = max_sum_2xn(grid, n);
+    printf("Maximum sum: %d\n", result);
+    
+    for (int i = 0; i < 2; i++) free(grid[i]);
+    free(grid);
+    
+    return 0;
+}

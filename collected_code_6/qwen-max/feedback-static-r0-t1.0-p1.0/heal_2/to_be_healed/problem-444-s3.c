@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TUPLES 100
+#define TUPLE_SIZE 2
+
+typedef struct {
+    int values[TUPLE_SIZE];
+} Tuple;
+
+void trim_tuples(Tuple *tuples, int n, int k) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < TUPLE_SIZE; ++j) {
+            tuples[i].values[j] -= k;
+        }
+    }
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  (near initialization for 'tuples[0]')
+     *  extra brace group at end of initializer
+     */
+    Tuple tuples[MAX_TUPLES] = {{{5, 10}, {15, 20}, {25, 30}}};
+    int n = 3;
+    int k = 5;
+
+    trim_tuples(tuples, n, k);
+
+    for (int i = 0; i < n; ++i) {
+        printf("(%d, %d)\n", tuples[i].values[0], tuples[i].values[1]);
+    }
+
+    return 0;
+}

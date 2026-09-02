@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c:39:31: error: initialization of 'char ***' from incompatible pointer type 'char * (*)[4]' [-Wincompatible-pointer-types]
+   39 |     char*** tuple_list[4] = { &tuple1, &tuple2, &tuple3, NULL };
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c:39:31: note: (near initialization for 'tuple_list[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c:39:40: error: initialization of 'char ***' from incompatible pointer type 'char * (*)[3]' [-Wincompatible-pointer-types]
+   39 |     char*** tuple_list[4] = { &tuple1, &tuple2, &tuple3, NULL };
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c:39:40: note: (near initialization for 'tuple_list[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c:39:49: error: initialization of 'char ***' from incompatible pointer type 'char * (*)[5]' [-Wincompatible-pointer-types]
+   39 |     char*** tuple_list[4] = { &tuple1, &tuple2, &tuple3, NULL };
+      |                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-544-s3.c:39:49: note: (near initialization for 'tuple_list[2]')

@@ -1,0 +1,44 @@
+{
+  "task_id": 461,
+  "text": "Write a C function to count the upper case characters in a given string.",
+  "fn_candidates": [
+    "upper_ctr",
+    "UpperCtr",
+    "upperCtr",
+    "upperctr"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "upper_ctr",
+      "args": [
+        "PYthon"
+      ],
+      "expected": 1,
+      "assert_src": "assert upper_ctr('PYthon') == 1"
+    },
+    {
+      "fn_name": "upper_ctr",
+      "args": [
+        "BigData"
+      ],
+      "expected": 1,
+      "assert_src": "assert upper_ctr('BigData') == 1"
+    },
+    {
+      "fn_name": "upper_ctr",
+      "args": [
+        "program"
+      ],
+      "expected": 0,
+      "assert_src": "assert upper_ctr('program') == 0"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,65 @@
+{
+  "task_id": 284,
+  "text": "Write a C function to check whether all items of a list are equal to a given string.",
+  "fn_candidates": [
+    "check_element",
+    "CheckElement",
+    "checkElement",
+    "checkelement"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_element",
+      "args": [
+        [
+          "green",
+          "orange",
+          "black",
+          "white"
+        ],
+        "blue"
+      ],
+      "expected": false,
+      "assert_src": "assert check_element([\"green\", \"orange\", \"black\", \"white\"],'blue')==False"
+    },
+    {
+      "fn_name": "check_element",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        7
+      ],
+      "expected": false,
+      "assert_src": "assert check_element([1,2,3,4],7)==False"
+    },
+    {
+      "fn_name": "check_element",
+      "args": [
+        [
+          "green",
+          "green",
+          "green",
+          "green"
+        ],
+        "green"
+      ],
+      "expected": true,
+      "assert_src": "assert check_element([\"green\", \"green\", \"green\", \"green\"],'green')==True"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list",
+    "str",
+    "str-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

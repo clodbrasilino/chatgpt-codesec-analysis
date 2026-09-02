@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->first - ((Tuple *)b)->first;
+}
+
+void extractSingles(Tuple *tuples, int n, Tuple *result, int *resultSize) {
+    qsort(tuples, n, sizeof(Tuple), compare);
+    for (int i = 0; i < n; ) {
+        int count = 1;
+        while (i + count < n && tuples[i].first == tuples[i + count].first) {
+            count++;
+        }
+        if (count == 1) {
+            result[*resultSize] = tuples[i];
+            (*resultSize)++;
+        }
+        i += count;
+    }
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 5}, {6, 7}, {8, 9}, {3, 10}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    Tuple *result = (Tuple *)malloc(n * sizeof(Tuple));
+    int resultSize = 0;
+
+    extractSingles(tuples, n, result, &resultSize);
+
+    for (int i = 0; i < resultSize; i++) {
+        printf("(%d, %d) ", result[i].first, result[i].second);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

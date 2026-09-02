@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-116-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-116-s2.c:66:40: style: Condition 'tuple_to_int(NULL,0,&result)==0' is always false [knownConditionTrueFalse]
+    if (tuple_to_int(NULL, 0, &result) == 0) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-116-s2.c:66:21: note: Calling function 'tuple_to_int' returns -1
+    if (tuple_to_int(NULL, 0, &result) == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-116-s2.c:66:40: note: Condition 'tuple_to_int(NULL,0,&result)==0' is always false
+    if (tuple_to_int(NULL, 0, &result) == 0) {
+                                       ^

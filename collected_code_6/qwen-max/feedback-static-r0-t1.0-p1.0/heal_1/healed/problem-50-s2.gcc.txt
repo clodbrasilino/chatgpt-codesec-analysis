@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-50-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-50-s2.c:54:49: error: passing argument 1 of 'find_min_length_list' from incompatible pointer type [-Wincompatible-pointer-types]
+   54 |     const List *min_list = find_min_length_list(const_lists, num_lists);
+      |                                                 ^~~~~~~~~~~
+      |                                                 |
+      |                                                 List * const*
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-50-s2.c:31:41: note: expected 'const List **' but argument is of type 'List * const*'
+   31 | List* find_min_length_list(const List **lists, size_t count) {
+      |                            ~~~~~~~~~~~~~^~~~~

@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-446-s2.c: In function 'count_occurrences':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-446-s2.c:88:15: error: incompatible types when assigning to type 'ElementCount' from type 'ElementCount *'
+   88 |     *result = unique_counts;
+      |               ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-446-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-446-s2.c:107:38: error: passing argument 3 of 'count_occurrences' from incompatible pointer type [-Wincompatible-pointer-types]
+  107 |     count_occurrences(&list, &tuple, &result, &result_size);
+      |                                      ^~~~~~~
+      |                                      |
+      |                                      ElementCount **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-446-s2.c:20:76: note: expected 'ElementCount *' but argument is of type 'ElementCount **'
+   20 | void count_occurrences(const List *list, const Tuple *tuple, ElementCount *result, size_t *result_size) {
+      |                                                              ~~~~~~~~~~~~~~^~~~~~

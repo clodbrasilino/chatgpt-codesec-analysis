@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_numeric(const void *a, const void *b) {
+    const char *str_a = *(const char * const *)a;
+    const char *str_b = *(const char * const *)b;
+    double num_a = strtod(str_a, NULL);
+    double num_b = strtod(str_b, NULL);
+    if (num_a < num_b) return -1;
+    if (num_a > num_b) return 1;
+    return strcmp(str_a, str_b);
+}
+
+void sort_strings_numeric(char **strings, size_t count) {
+    if (strings == NULL || count == 0) {
+        return;
+    }
+    qsort(strings, count, sizeof(char *), compare_numeric);
+}
+
+int main(void) {
+    char *strings[] = {
+        "10", "2", "1", "100", "20", "3", "1.5", "2.5", "0.5", "3.0"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    sort_strings_numeric(strings, count);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", strings[i]);
+    }
+
+    return 0;
+}

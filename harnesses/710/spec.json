@@ -1,0 +1,71 @@
+{
+  "task_id": 710,
+  "text": "Write a C function to access the initial and last data of the given tuple record.",
+  "fn_candidates": [
+    "front_and_rear",
+    "FrontAndRear",
+    "frontAndRear",
+    "frontandrear"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "front_and_rear",
+      "args": [
+        [
+          10,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": [
+        10,
+        7
+      ],
+      "assert_src": "assert front_and_rear((10, 4, 5, 6, 7)) == (10, 7)"
+    },
+    {
+      "fn_name": "front_and_rear",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": [
+        1,
+        5
+      ],
+      "assert_src": "assert front_and_rear((1, 2, 3, 4, 5)) == (1, 5)"
+    },
+    {
+      "fn_name": "front_and_rear",
+      "args": [
+        [
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "expected": [
+        6,
+        10
+      ],
+      "assert_src": "assert front_and_rear((6, 7, 8, 9, 10)) == (6, 10)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

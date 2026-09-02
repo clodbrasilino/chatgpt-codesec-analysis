@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool areAllCharsSame(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+
+    char firstChar = *str;
+    for (size_t i = 1; str[i] != '\0'; ++i) {
+        if (str[i] != firstChar) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    const char *testStr1 = "aaaaa";
+    const char *testStr2 = "abcde";
+    const char *testStr3 = "a";
+
+    printf("Test 1: %s\n", areAllCharsSame(testStr1) ? "All characters are same" : "Not all characters are same");
+    printf("Test 2: %s\n", areAllCharsSame(testStr2) ? "All characters are same" : "Not all characters are same");
+    printf("Test 3: %s\n", areAllCharsSame(testStr3) ? "All characters are same" : "Not all characters are same");
+
+    return 0;
+}

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+double multiply_and_divide(int *list, size_t length) {
+    double product = 1.0;
+    for (size_t i = 0; i < length; i++) {
+        product *= list[i];
+    }
+    return product / (double)length;
+}
+
+int main(void) {
+    int list[] = {2, 3, 4, 5, 6};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    
+    double result = multiply_and_divide(list, length);
+    printf("Result: %.2f\n", result);
+    
+    return 0;
+}

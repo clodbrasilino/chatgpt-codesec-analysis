@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSmallestMissing(int arr[], int n) {
+    int i, temp;
+    for (i = 0; i < n; i++) {
+        while (arr[i] >= 1 && arr[i] <= n && arr[i] != arr[arr[i] - 1]) {
+            temp = arr[i];
+            arr[i] = arr[temp - 1];
+            arr[temp - 1] = temp;
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] != i + 1) {
+            return i + 1;
+        }
+    }
+
+    return n + 1;
+}
+
+int main() {
+    int arr[] = {3, 4, -1, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findSmallestMissing(arr, n);
+    printf("The smallest missing number is %d\n", result);
+    return 0;
+}

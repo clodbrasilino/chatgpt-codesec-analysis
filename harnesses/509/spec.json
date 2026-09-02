@@ -1,0 +1,44 @@
+{
+  "task_id": 509,
+  "text": "Write a C function to find the average of odd numbers till a given odd number.",
+  "fn_candidates": [
+    "average_Odd",
+    "AverageOdd",
+    "averageOdd",
+    "averageOdd"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "average_Odd",
+      "args": [
+        9
+      ],
+      "expected": 5,
+      "assert_src": "assert average_Odd(9) == 5"
+    },
+    {
+      "fn_name": "average_Odd",
+      "args": [
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert average_Odd(5) == 3"
+    },
+    {
+      "fn_name": "average_Odd",
+      "args": [
+        11
+      ],
+      "expected": 6,
+      "assert_src": "assert average_Odd(11) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

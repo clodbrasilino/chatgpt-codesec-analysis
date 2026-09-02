@@ -1,0 +1,65 @@
+{
+  "task_id": 21,
+  "text": "Write a C function to find m number of multiples of n.",
+  "fn_candidates": [
+    "multiples_of_num",
+    "MultiplesOfNum",
+    "multiplesOfNum",
+    "multiplesofnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "multiples_of_num",
+      "args": [
+        4,
+        3
+      ],
+      "expected": [
+        3,
+        6,
+        9,
+        12
+      ],
+      "assert_src": "assert multiples_of_num(4,3)== [3,6,9,12]"
+    },
+    {
+      "fn_name": "multiples_of_num",
+      "args": [
+        2,
+        5
+      ],
+      "expected": [
+        5,
+        10
+      ],
+      "assert_src": "assert multiples_of_num(2,5)== [5,10]"
+    },
+    {
+      "fn_name": "multiples_of_num",
+      "args": [
+        9,
+        2
+      ],
+      "expected": [
+        2,
+        4,
+        6,
+        8,
+        10,
+        12,
+        14,
+        16,
+        18
+      ],
+      "assert_src": "assert multiples_of_num(9,2)== [2,4,6,8,10,12,14,16,18]"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

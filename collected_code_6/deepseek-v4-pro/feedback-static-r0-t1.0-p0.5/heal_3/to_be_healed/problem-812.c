@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *abbreviate_road(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    while (i < len) {
+        if (i + 3 < len && 
+            tolower(input[i]) == 'r' &&
+            tolower(input[i + 1]) == 'o' &&
+            tolower(input[i + 2]) == 'a' &&
+            tolower(input[i + 3]) == 'd') {
+            
+            if ((i == 0 || !isalpha((unsigned char)input[i - 1])) &&
+                (i + 4 >= len || !isalpha((unsigned char)input[i + 4]))) {
+                result[j++] = 'r';
+                result[j++] = 'd';
+                result[j++] = '.';
+                i += 4;
+                continue;
+            }
+        }
+        result[j++] = input[i++];
+    }
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "123 Main Road, Springfield";
+    const char *test2 = "Road to nowhere";
+    const char *test3 = "Broadway road";
+    const char *test4 = "No abbreviation here";
+    const char *test5 = "road";
+    const char *test6 = "Road";
+    const char *test7 = "ROAD";
+    const char *test8 = "roadside";
+    const char *test9 = "main road.";
+    const char *test10 = NULL;
+
+    char *result1 = abbreviate_road(test1);
+    char *result2 = abbreviate_road(test2);
+    char *result3 = abbreviate_road(test3);
+    char *result4 = abbreviate_road(test4);
+    char *result5 = abbreviate_road(test5);
+    char *result6 = abbreviate_road(test6);
+    char *result7 = abbreviate_road(test7);
+    char *result8 = abbreviate_road(test8);
+    char *result9 = abbreviate_road(test9);
+    /* Possible weaknesses found:
+     *  Calling function 'abbreviate_road' returns 0
+     *  Assignment 'result10=abbreviate_road(test10)', assigned value is 0
+     */
+    char *result10 = abbreviate_road(test10);
+
+    printf("%s -> %s\n", test1, result1 ? result1 : "(null)");
+    printf("%s -> %s\n", test2, result2 ? result2 : "(null)");
+    printf("%s -> %s\n", test3, result3 ? result3 : "(null)");
+    printf("%s -> %s\n", test4, result4 ? result4 : "(null)");
+    printf("%s -> %s\n", test5, result5 ? result5 : "(null)");
+    printf("%s -> %s\n", test6, result6 ? result6 : "(null)");
+    printf("%s -> %s\n", test7, result7 ? result7 : "(null)");
+    printf("%s -> %s\n", test8, result8 ? result8 : "(null)");
+    printf("%s -> %s\n", test9, result9 ? result9 : "(null)");
+    /* Possible weaknesses found:
+     *  Condition 'result10' is always false [knownConditionTrueFalse]
+     *  Condition 'result10' is always false
+     */
+    printf("(null) -> %s\n", result10 ? result10 : "(null)");
+
+    free(result1);
+    free(result2);
+    free(result3);
+    free(result4);
+    free(result5);
+    free(result6);
+    free(result7);
+    free(result8);
+    free(result9);
+    free(result10);
+
+    return 0;
+}

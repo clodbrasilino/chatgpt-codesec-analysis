@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->first - ((Tuple *)b)->first;
+}
+
+void extractSinglyOccurring(Tuple *tuples, int n, Tuple *result, int *resultSize) {
+    qsort(tuples, n, sizeof(Tuple), compare);
+    for (int i = 0; i < n; i++) {
+        if ((i == 0 || tuples[i].first != tuples[i-1].first) && (i == n-1 || tuples[i].first != tuples[i+1].first)) {
+            result[*resultSize] = tuples[i];
+            (*resultSize)++;
+        }
+    }
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {2, 3}, {4, 5}, {1, 6}, {4, 7}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    Tuple result[n];
+    int resultSize = 0;
+
+    extractSinglyOccurring(tuples, n, result, &resultSize);
+
+    for (int i = 0; i < resultSize; i++) {
+        printf("(%d, %d)\n", result[i].first, result[i].second);
+    }
+
+    return 0;
+}

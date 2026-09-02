@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t cube_sum(uint32_t n) {
+    uint64_t sum = 0;
+    for (uint32_t i = 1; i <= n; ++i) {
+        sum += (uint64_t)i * i * i;
+    }
+    return sum;
+}
+
+int main() {
+    uint32_t n;
+    printf("Enter a natural number: ");
+    if (scanf("%u", &n) == 1) {
+        uint64_t result = cube_sum(n);
+        printf("The cube sum of first %u natural numbers is: %llu\n", n, result);
+    } else {
+        fprintf(stderr, "Invalid input. Please enter a natural number.\n");
+    }
+    return 0;
+}

@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int longestConsecutive(const int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+
+    int *map = (int *)calloc(100001, sizeof(int));
+    if (map == NULL) exit(EXIT_FAILURE);
+
+    for (int i = 0; i < numsSize; ++i) {
+        map[nums[i] + 50000]++;
+    }
+
+    int maxLength = 0;
+    for (int i = 0; i < 100001; ++i) {
+        if (map[i] > 0) {
+            int currentLength = 1;
+            while (map[i + 1] > 0) {
+                currentLength++;
+                i++;
+            }
+            if (currentLength > maxLength) {
+                maxLength = currentLength;
+            }
+        }
+    }
+
+    free(map);
+    return maxLength;
+}
+
+int main() {
+    int nums[] = {100, 4, 200, 1, 3, 2};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    printf("%d\n", longestConsecutive(nums, numsSize));
+    return 0;
+}
+```

@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-783.c: In function 'rgb_to_hsv':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-783.c:8:21: error: implicit declaration of function 'fmaxf' [-Wimplicit-function-declaration]
+    8 |     float max_val = fmaxf(fmaxf(rf, gf), bf);
+      |                     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-783.c:2:1: note: include '<math.h>' or provide a declaration of 'fmaxf'
+    1 | #include <stdio.h>
+  +++ |+#include <math.h>
+    2 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-783.c:9:21: error: implicit declaration of function 'fminf' [-Wimplicit-function-declaration]
+    9 |     float min_val = fminf(fminf(rf, gf), bf);
+      |                     ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-783.c:9:21: note: include '<math.h>' or provide a declaration of 'fminf'

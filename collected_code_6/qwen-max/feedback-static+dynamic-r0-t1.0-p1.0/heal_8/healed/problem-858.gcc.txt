@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-858.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-858.c:16:29: error: variable-sized object may not be initialized except with an empty initializer
+   16 |     void *list[list_size] = { (void*)1, (void*)2, (void*)3, (void*)4, (void*)5 };
+      |                             ^

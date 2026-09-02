@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int count;
+    struct Node *next;
+} Node;
+
+Node* createNode(int value, int count) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->count = count;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node* decode(Node *encoded) {
+    Node *decodedHead = NULL, *decodedTail = NULL;
+    while (encoded != NULL) {
+        for (int i = 0; i < encoded->count; ++i) {
+            if (decodedHead == NULL) {
+                decodedHead = decodedTail = createNode(encoded->value, 1);
+            } else {
+                decodedTail->next = createNode(encoded->value, 1);
+                decodedTail = decodedTail->next;
+            }
+        }
+        encoded = encoded->next;
+    }
+    return decodedHead;
+}
+
+int main() {
+    Node *encodedHead = createNode(1, 3);
+    encodedHead->next = createNode(2, 2);
+    encodedHead->next->next = createNode(3, 4);
+
+    Node *decodedHead = decode(encodedHead);
+
+    for (Node *node = decodedHead; node != NULL; node = node->next) {
+        printf("%d ", node->value);
+    }
+
+    freeList(encodedHead);
+    freeList(decodedHead);
+
+    return 0;
+}

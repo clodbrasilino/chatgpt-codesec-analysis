@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct ListNode {
+    int *data;
+    int size;
+    struct ListNode *next;
+} ListNode;
+
+ListNode* createNode(int *arr, int size) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    newNode->data = (int *)malloc(size * sizeof(int));
+    memcpy(newNode->data, arr, size * sizeof(int));
+    newNode->size = size;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(ListNode *head) {
+    while (head != NULL) {
+        free(head->data);
+        ListNode *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int isUnique(ListNode *head, int *arr, int size) {
+    while (head != NULL) {
+        if (head->size == size && memcmp(head->data, arr, size * sizeof(int)) == 0) {
+            return 0;
+        }
+        head = head->next;
+    }
+    return 1;
+}
+
+int countUniqueLists(ListNode *head) {
+    int count = 0;
+    ListNode *current = head;
+    while (current != NULL) {
+        if (isUnique(head, current->data, current->size)) {
+            count++;
+        }
+        current = current->next;
+    }
+    return count;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 6};
+    int arr3[] = {1, 2, 3};
+
+    ListNode *head = createNode(arr1, 3);
+    head->next = createNode(arr2, 3);
+    head->next->next = createNode(arr3, 3);
+
+    int uniqueCount = countUniqueLists(head);
+    printf("Number of unique lists: %d\n", uniqueCount);
+
+    freeList(head);
+    return 0;
+}
+```

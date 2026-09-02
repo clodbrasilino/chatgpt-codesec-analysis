@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int val;
+    struct Node *next;
+} Node;
+
+Node* flatten(Node *head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+    Node *tail = head;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    Node *current = head;
+    while (current != NULL) {
+        if (current->val > 0) {
+            Node *nestedHead = flatten(current->next);
+            if (nestedHead != NULL) {
+                current->next = nestedHead;
+                Node *nestedTail = nestedHead;
+                while (nestedTail->next != NULL) {
+                    nestedTail = nestedTail->next;
+                }
+                nestedTail->next = current->next;
+                current = nestedTail;
+            }
+        } else {
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+int main() {
+    Node *head = (Node*)malloc(sizeof(Node));
+    head->val = 1;
+    head->next = (Node*)malloc(sizeof(Node));
+    head->next->val = -2;
+    head->next->next = (Node*)malloc(sizeof(Node));
+    head->next->next->val = 3;
+    head->next->next->next = (Node*)malloc(sizeof(Node));
+    head->next->next->next->val = -4;
+    head->next->next->next->next = NULL;
+
+    head = flatten(head);
+
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->val);
+        current = current->next;
+    }
+    printf("\n");
+
+    // Free memory
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+```

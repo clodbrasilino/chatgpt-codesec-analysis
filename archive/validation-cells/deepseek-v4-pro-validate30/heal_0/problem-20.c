@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_woodall(int n) {
+    if (n < 1) {
+        return false;
+    }
+
+    for (int h = 1; h <= n; h++) {
+        long long power = 1;
+        bool overflow = false;
+
+        for (int i = 0; i < h; i++) {
+            if (power > (LLONG_MAX - 1) / 2) {
+                overflow = true;
+                break;
+            }
+            power = power * 2 + 1;
+        }
+
+        if (!overflow) {
+            long long result = (long long)h * power;
+            if (result == n) {
+                return true;
+            }
+            if (result > n) {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    int test_numbers[] = {1, 3, 7, 23, 63, 159, 383, 895, 2047, 4607, 10239, 100, 50, 2, 0, -5};
+    int num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        printf("%d: %s\n", test_numbers[i], is_woodall(test_numbers[i]) ? "true" : "false");
+    }
+
+    return 0;
+}

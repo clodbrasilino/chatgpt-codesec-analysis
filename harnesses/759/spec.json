@@ -1,0 +1,44 @@
+{
+  "task_id": 759,
+  "text": "Write a C function to check a decimal with a precision of 2.",
+  "fn_candidates": [
+    "is_decimal",
+    "IsDecimal",
+    "isDecimal",
+    "isdecimal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_decimal",
+      "args": [
+        "123.11"
+      ],
+      "expected": true,
+      "assert_src": "assert is_decimal('123.11')==True"
+    },
+    {
+      "fn_name": "is_decimal",
+      "args": [
+        "e666.86"
+      ],
+      "expected": false,
+      "assert_src": "assert is_decimal('e666.86')==False"
+    },
+    {
+      "fn_name": "is_decimal",
+      "args": [
+        "3.124587"
+      ],
+      "expected": false,
+      "assert_src": "assert is_decimal('3.124587')==False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

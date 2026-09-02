@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+void replace_chars_with_colon(char *str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    char pattern[] = "[ ,.]";
+    /* Possible weaknesses found:
+     *  Unused variable: reti [unusedVariable]
+     */
+    int reti;
+    char buffer[500];
+
+    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+        return;
+    }
+
+    while (regexec(&regex, str, 1, pmatch, 0) == 0) {
+        if (pmatch[0].rm_so == -1 || pmatch[0].rm_eo == -1) {
+            break;
+        }
+        strncpy(buffer, str + pmatch[0].rm_eo, strlen(str + pmatch[0].rm_eo) + 1);
+        *(str + pmatch[0].rm_so) = ':';
+        memmove(str + pmatch[0].rm_so + 1, buffer, strlen(buffer) + 1);
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char test_str[] = "Hello, world. This is a test string  with spaces, commas, and dots.";
+    printf("Original: %s\n", test_str);
+    replace_chars_with_colon(test_str);
+    printf("Modified: %s\n", test_str);
+    return 0;
+}

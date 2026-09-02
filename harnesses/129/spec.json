@@ -1,0 +1,101 @@
+{
+  "task_id": 129,
+  "text": "Write a C function to calculate magic square.",
+  "fn_candidates": [
+    "magic_square_test",
+    "MagicSquareTest",
+    "magicSquareTest",
+    "magicsquaretest"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "magic_square_test",
+      "args": [
+        [
+          [
+            7,
+            12,
+            1,
+            14
+          ],
+          [
+            2,
+            13,
+            8,
+            11
+          ],
+          [
+            16,
+            3,
+            10,
+            5
+          ],
+          [
+            9,
+            6,
+            15,
+            4
+          ]
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert magic_square_test([[7, 12, 1, 14], [2, 13, 8, 11], [16, 3, 10, 5], [9, 6, 15, 4]])==True"
+    },
+    {
+      "fn_name": "magic_square_test",
+      "args": [
+        [
+          [
+            2,
+            7,
+            6
+          ],
+          [
+            9,
+            5,
+            1
+          ],
+          [
+            4,
+            3,
+            8
+          ]
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert magic_square_test([[2, 7, 6], [9, 5, 1], [4, 3, 8]])==True"
+    },
+    {
+      "fn_name": "magic_square_test",
+      "args": [
+        [
+          [
+            2,
+            7,
+            6
+          ],
+          [
+            9,
+            5,
+            1
+          ],
+          [
+            4,
+            3,
+            7
+          ]
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert magic_square_test([[2, 7, 6], [9, 5, 1], [4, 3, 7]])==False"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

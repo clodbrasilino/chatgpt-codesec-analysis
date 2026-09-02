@@ -1,0 +1,44 @@
+{
+  "task_id": 210,
+  "text": "Write a C function to check that the given string contains only a certain set of characters(in this case a-z, a-z and 0-9) by using regex.",
+  "fn_candidates": [
+    "is_allowed_specific_char",
+    "IsAllowedSpecificChar",
+    "isAllowedSpecificChar",
+    "isallowedspecificchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_allowed_specific_char",
+      "args": [
+        "ABCDEFabcdef123450"
+      ],
+      "expected": true,
+      "assert_src": "assert is_allowed_specific_char(\"ABCDEFabcdef123450\") == True"
+    },
+    {
+      "fn_name": "is_allowed_specific_char",
+      "args": [
+        "*&%@#!}{"
+      ],
+      "expected": false,
+      "assert_src": "assert is_allowed_specific_char(\"*&%@#!}{\") == False"
+    },
+    {
+      "fn_name": "is_allowed_specific_char",
+      "args": [
+        "HELLOhowareyou98765"
+      ],
+      "expected": true,
+      "assert_src": "assert is_allowed_specific_char(\"HELLOhowareyou98765\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c: In function 'create_hexagon':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c:28:40: error: 'M_PI' undeclared (first use in this function)
+   28 |         double angle_rad = angle_deg * M_PI / 180.0;
+      |                                        ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c:28:40: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c:29:48: error: implicit declaration of function 'cos' [-Wimplicit-function-declaration]
+   29 |         hex->points[i].x = center_x + radius * cos(angle_rad);
+      |                                                ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c:3:1: note: include '<math.h>' or provide a declaration of 'cos'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c:30:48: error: implicit declaration of function 'sin' [-Wimplicit-function-declaration]
+   30 |         hex->points[i].y = center_y + radius * sin(angle_rad);
+      |                                                ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-493.c:30:48: note: include '<math.h>' or provide a declaration of 'sin'

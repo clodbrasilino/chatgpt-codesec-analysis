@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double factorial(int n) {
+    double result = 1;
+    for (int i = 2; i <= n; ++i) {
+        result *= i;
+    }
+    return result;
+}
+
+double binomial_coefficient(int n, int k) {
+    return factorial(n) / (factorial(k) * factorial(n - k));
+}
+
+double binomial_probability(int n, int k, double p) {
+    if (n < 0 || k < 0 || k > n || p < 0.0 || p > 1.0) {
+        return -1.0;
+    }
+    return binomial_coefficient(n, k) * pow(p, k) * pow(1 - p, n - k);
+}
+
+int main() {
+    int n, k;
+    double p;
+
+    printf("Enter the number of trials (n): ");
+    scanf("%d", &n);
+    printf("Enter the number of successes (k): ");
+    scanf("%d", &k);
+    printf("Enter the probability of success (p): ");
+    scanf("%lf", &p);
+
+    double probability = binomial_probability(n, k, p);
+    if (probability >= 0.0) {
+        printf("Binomial probability: %f\n", probability);
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}
+```

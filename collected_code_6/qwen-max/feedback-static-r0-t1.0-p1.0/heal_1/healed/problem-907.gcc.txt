@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-907.c: In function 'get_lucky_numbers':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-907.c:22:20: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)pos++ * 4))'
+   22 |         arr[pos++] = i;
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-907.c:32:32: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)new_pos++ * 4))'
+   32 |                 arr[new_pos++] = arr[i];
+      |                                ^

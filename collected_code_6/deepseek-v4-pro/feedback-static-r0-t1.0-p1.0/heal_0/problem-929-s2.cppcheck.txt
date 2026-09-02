@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-929-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-929-s2.c:19:74: style: Parameter 'found_indices' can be declared as pointer to const [constParameterPointer]
+int find_item(Tuple *tuple, int tuple_len, void *item, size_t size, int *found_indices, int found_count) {
+                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-929-s2.c:19:50: style: Parameter 'item' can be declared as pointer to const [constParameterPointer]
+int find_item(Tuple *tuple, int tuple_len, void *item, size_t size, int *found_indices, int found_count) {
+                                                 ^

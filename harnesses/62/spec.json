@@ -1,0 +1,59 @@
+{
+  "task_id": 62,
+  "text": "Write a C function to find smallest number in a list.",
+  "fn_candidates": [
+    "smallest_num",
+    "SmallestNum",
+    "smallestNum",
+    "smallestnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "smallest_num",
+      "args": [
+        [
+          10,
+          20,
+          1,
+          45,
+          99
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert smallest_num([10, 20, 1, 45, 99]) == 1"
+    },
+    {
+      "fn_name": "smallest_num",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert smallest_num([1, 2, 3]) == 1"
+    },
+    {
+      "fn_name": "smallest_num",
+      "args": [
+        [
+          45,
+          46,
+          50,
+          60
+        ]
+      ],
+      "expected": 45,
+      "assert_src": "assert smallest_num([45, 46, 50, 60]) == 45"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,50 @@
+{
+  "task_id": 640,
+  "text": "Write a C function to remove the parenthesis area in a string.",
+  "fn_candidates": [
+    "remove_parenthesis",
+    "RemoveParenthesis",
+    "removeParenthesis",
+    "removeparenthesis"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_parenthesis",
+      "args": [
+        [
+          "python (chrome)"
+        ]
+      ],
+      "expected": "python",
+      "assert_src": "assert remove_parenthesis([\"python (chrome)\"])==(\"python\")"
+    },
+    {
+      "fn_name": "remove_parenthesis",
+      "args": [
+        [
+          "string(.abc)"
+        ]
+      ],
+      "expected": "string",
+      "assert_src": "assert remove_parenthesis([\"string(.abc)\"])==(\"string\")"
+    },
+    {
+      "fn_name": "remove_parenthesis",
+      "args": [
+        [
+          "alpha(num)"
+        ]
+      ],
+      "expected": "alpha",
+      "assert_src": "assert remove_parenthesis([\"alpha(num)\"])==(\"alpha\")"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

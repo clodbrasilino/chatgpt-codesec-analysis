@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int count;
+} Dictionary;
+
+/* Possible weaknesses found:
+ *  Parameter 'dict' can be declared as pointer to const [constParameterPointer]
+ */
+bool isDictionaryEmpty(Dictionary *dict) {
+    return dict->count == 0;
+}
+
+int main() {
+    Dictionary myDict = {0};
+    if (isDictionaryEmpty(&myDict)) {
+        printf("The dictionary is empty.\n");
+    } else {
+        printf("The dictionary is not empty.\n");
+    }
+    return 0;
+}

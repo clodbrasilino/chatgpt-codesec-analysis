@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int isLastElementEvenOrOdd(const int arr[], int n, int p) {
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        temp[i] = arr[i];
+    }
+    
+    for (int op = 0; op < p; op++) {
+        for (int i = 0; i < n; i++) {
+            if (i == n - 1) {
+                temp[i] += temp[0];
+            } else {
+                temp[i] += temp[i + 1];
+            }
+        }
+    }
+    
+    int result = (temp[n - 1] % 2 == 0) ? 0 : 1;
+    free(temp);
+    return result;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int p = 3;
+    
+    int result = isLastElementEvenOrOdd(arr, n, p);
+    
+    if (result == -1) {
+        printf("Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (result == 0) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

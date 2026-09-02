@@ -1,0 +1,44 @@
+{
+  "task_id": 155,
+  "text": "Write a C function to toggle all even bits of a given number.",
+  "fn_candidates": [
+    "even_bit_toggle_number",
+    "EvenBitToggleNumber",
+    "evenBitToggleNumber",
+    "evenbittogglenumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_bit_toggle_number",
+      "args": [
+        10
+      ],
+      "expected": 0,
+      "assert_src": "assert even_bit_toggle_number(10) == 0"
+    },
+    {
+      "fn_name": "even_bit_toggle_number",
+      "args": [
+        20
+      ],
+      "expected": 30,
+      "assert_src": "assert even_bit_toggle_number(20) == 30"
+    },
+    {
+      "fn_name": "even_bit_toggle_number",
+      "args": [
+        30
+      ],
+      "expected": 20,
+      "assert_src": "assert even_bit_toggle_number(30) == 20"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

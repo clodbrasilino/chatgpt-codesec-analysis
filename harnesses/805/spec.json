@@ -1,0 +1,99 @@
+{
+  "task_id": 805,
+  "text": "Write a C function to find the list in a list of lists whose sum of elements is the highest.",
+  "fn_candidates": [
+    "max_sum_list",
+    "MaxSumList",
+    "maxSumList",
+    "maxsumlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sum_list",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            4,
+            5,
+            6
+          ],
+          [
+            10,
+            11,
+            12
+          ],
+          [
+            7,
+            8,
+            9
+          ]
+        ]
+      ],
+      "expected": [
+        10,
+        11,
+        12
+      ],
+      "assert_src": "assert max_sum_list([[1,2,3], [4,5,6], [10,11,12], [7,8,9]])==[10, 11, 12] "
+    },
+    {
+      "fn_name": "max_sum_list",
+      "args": [
+        [
+          [
+            3,
+            2,
+            1
+          ],
+          [
+            6,
+            5,
+            4
+          ],
+          [
+            12,
+            11,
+            10
+          ]
+        ]
+      ],
+      "expected": [
+        12,
+        11,
+        10
+      ],
+      "assert_src": "assert max_sum_list([[3,2,1], [6,5,4], [12,11,10]])==[12,11,10] "
+    },
+    {
+      "fn_name": "max_sum_list",
+      "args": [
+        [
+          [
+            2,
+            3,
+            1
+          ]
+        ]
+      ],
+      "expected": [
+        2,
+        3,
+        1
+      ],
+      "assert_src": "assert max_sum_list([[2,3,1]])==[2,3,1] "
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

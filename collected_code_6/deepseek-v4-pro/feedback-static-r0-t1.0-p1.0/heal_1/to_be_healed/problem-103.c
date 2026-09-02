@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long eulerian_number(int n, int m) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'm>=n' is not redundant
+     */
+    if (m < 0 || n < 0 || m >= n) {
+        return 0;
+    }
+    /* Possible weaknesses found:
+     *  Assuming that condition 'n==0' is not redundant
+     */
+    if (n == 0) {
+        /* Possible weaknesses found:
+         *  Condition 'm==0' is always false
+         *  Condition 'm==0' is always false [knownConditionTrueFalse]
+         */
+        return m == 0 ? 1 : 0;
+    }
+
+    long long *dp = (long long*)calloc((size_t)n + 1, sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 1;
+    for (int i = 1; i <= n; i++) {
+        for (int j = i; j >= 1; j--) {
+            dp[j] = (i - j) * dp[j - 1] + (j + 1) * dp[j];
+        }
+        dp[0] = 1;
+    }
+
+    long long result = dp[m];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int n, m;
+    printf("Enter n and m: ");
+    if (scanf("%d %d", &n, &m) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = eulerian_number(n, m);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("A(%d, %d) = %lld\n", n, m, result);
+    return EXIT_SUCCESS;
+}

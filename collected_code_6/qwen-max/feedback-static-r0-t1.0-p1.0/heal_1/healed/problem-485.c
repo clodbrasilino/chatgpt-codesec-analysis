@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_palindrome(int n) {
+    int original = n, reversed = 0;
+    for (int remainder; n != 0; n /= 10) {
+        remainder = n % 10;
+        reversed = reversed * 10 + remainder;
+    }
+    return original == reversed;
+}
+
+int find_largest_palindromic(const int arr[], int size) {
+    int max_palindrome = -1;
+    for (int i = 0; i < size; ++i) {
+        if (is_palindrome(arr[i]) && arr[i] > max_palindrome) {
+            max_palindrome = arr[i];
+        }
+    }
+    return max_palindrome;
+}
+
+int main() {
+    int arr[] = {123, 121, 13431, 12321, 45654, 78987};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int largest_palindrome = find_largest_palindromic(arr, size);
+    printf("The largest palindromic number is: %d\n", largest_palindrome);
+    return 0;
+}

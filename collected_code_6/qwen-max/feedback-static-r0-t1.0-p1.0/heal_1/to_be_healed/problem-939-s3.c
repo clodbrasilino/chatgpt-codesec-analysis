@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char* key;
+    int value;
+} Dictionary;
+
+typedef struct {
+    Dictionary* dict;
+    int size;
+} DictList;
+
+int compare(const void* a, const void* b) {
+    return ((Dictionary*)a)->value - ((Dictionary*)b)->value;
+}
+
+void sortDictList(DictList* list) {
+    qsort(list->dict, list->size, sizeof(Dictionary), compare);
+}
+
+int main() {
+    DictList list = {NULL, 0};
+    int n;
+    printf("Enter number of dictionaries: ");
+    scanf("%d", &n);
+    list.dict = (Dictionary*)malloc(n * sizeof(Dictionary));
+    if (list.dict == NULL) {
+        return 1;
+    }
+    list.size = n;
+
+    for (int i = 0; i < n; i++) {
+        list.dict[i].key = (char*)malloc(100 * sizeof(char));
+        if (list.dict[i].key == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list.dict[j].key);
+            }
+            free(list.dict);
+            return 1;
+        }
+        printf("Enter key: ");
+        /* Possible weaknesses found:
+         *  scanf() without field width limits can crash with huge input data. [invalidscanf]
+         */
+        scanf("%s", list.dict[i].key);
+        printf("Enter value: ");
+        scanf("%d", &list.dict[i].value);
+    }
+
+    sortDictList(&list);
+
+    for (int i = 0; i < n; i++) {
+        printf("Key: %s, Value: %d\n", list.dict[i].key, list.dict[i].value);
+    }
+
+    for (int i = 0; i < n; i++) {
+        free(list.dict[i].key);
+    }
+    free(list.dict);
+
+    return 0;
+}

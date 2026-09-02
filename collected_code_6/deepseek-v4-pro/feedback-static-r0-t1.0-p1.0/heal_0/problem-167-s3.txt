@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+unsigned int smallest_power_of_two(unsigned int n) {
+    if (n == 0) return 1;
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    return n + 1;
+}
+
+int main(void) {
+    unsigned int values[] = {0, 1, 2, 3, 4, 5, 9, 16, 17, 1023, 1024, 1025, UINT32_MAX};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        unsigned int result = smallest_power_of_two(values[i]);
+        if (values[i] == UINT32_MAX) {
+            printf("smallest_power_of_two(%u) = %u (overflow)\n", values[i], result);
+        } else {
+            printf("smallest_power_of_two(%u) = %u\n", values[i], result);
+        }
+    }
+
+    return 0;
+}
+```

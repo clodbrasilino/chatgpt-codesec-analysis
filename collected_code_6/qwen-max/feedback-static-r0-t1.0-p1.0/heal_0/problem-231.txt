@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int** allocate_triangle(int n, int* sizes) {
+    int **triangle = (int **)malloc(n * sizeof(int *));
+    for (int i = 0; i < n; ++i) {
+        triangle[i] = (int *)malloc((i + 1) * sizeof(int));
+        sizes[i] = i + 1;
+    }
+    return triangle;
+}
+
+void free_triangle(int **triangle, int n) {
+    for (int i = 0; i < n; ++i) {
+        free(triangle[i]);
+    }
+    free(triangle);
+}
+
+int max_sum_path(int **triangle, int n) {
+    for (int row = n - 2; row >= 0; --row) {
+        for (int col = 0; col <= row; ++col) {
+            triangle[row][col] += (triangle[row + 1][col] > triangle[row + 1][col + 1]) ? 
+                                  triangle[row + 1][col] : triangle[row + 1][col + 1];
+        }
+    }
+    return triangle[0][0];
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int *sizes = (int *)malloc(n * sizeof(int));
+    int **triangle = allocate_triangle(n, sizes);
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j <= i; ++j) {
+            scanf("%d", &triangle[i][j]);
+        }
+    }
+
+    int result = max_sum_path(triangle, n);
+
+    free(sizes);
+    free_triangle(triangle, n);
+
+    printf("%d\n", result);
+
+    return 0;
+}
+```

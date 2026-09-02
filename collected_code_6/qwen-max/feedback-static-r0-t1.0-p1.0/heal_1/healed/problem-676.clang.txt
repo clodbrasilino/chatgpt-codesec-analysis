@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-676.c:25:51: error: incompatible pointer to integer conversion passing 'size_t *' (aka 'unsigned long *') to parameter of type 'int' [-Wint-conversion]
+   25 |             if (regexec(&regex, &str[i], 1, NULL, &match_len) == 0)
+      |                                                   ^~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_regex.h:227:62: note: passing argument to parameter here
+  227 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                                                                            ^
+1 error generated.

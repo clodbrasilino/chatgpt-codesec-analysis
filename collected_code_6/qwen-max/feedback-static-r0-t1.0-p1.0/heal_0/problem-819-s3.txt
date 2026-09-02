@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Frequency;
+
+int countConsecutiveDuplicates(int *arr, int n, Frequency **result) {
+    if (n < 1 || arr == NULL) {
+        *result = NULL;
+        return 0;
+    }
+
+    Frequency *freq = (Frequency *)malloc(n * sizeof(Frequency));
+    if (freq == NULL) {
+        *result = NULL;
+        return -1;
+    }
+
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        freq[index].value = arr[i];
+        freq[index].count = 1;
+        while (i + 1 < n && arr[i] == arr[i + 1]) {
+            freq[index].count++;
+            i++;
+        }
+        index++;
+    }
+
+    *result = (Frequency *)realloc(freq, index * sizeof(Frequency));
+    return index;
+}
+
+int main() {
+    int arr[] = {1, 1, 2, 3, 3, 3, 4, 4, 5, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    Frequency *result = NULL;
+
+    int r = countConsecutiveDuplicates(arr, n, &result);
+    if (r > 0) {
+        for (int i = 0; i < r; i++) {
+            printf("%d: %d\n", result[i].value, result[i].count);
+        }
+        free(result);
+    } else {
+        printf("Error or no duplicates found.\n");
+    }
+    return 0;
+}
+```

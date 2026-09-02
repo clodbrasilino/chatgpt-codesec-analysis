@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countSubsequences(const int *arr, int n, int k) {
+    int count = 0;
+
+    for (int i = 1; i < (1 << n); i++) {
+        int prod = 1;
+        for (int j = 0; j < n; j++) {
+            if (i & (1 << j)) {
+                prod *= arr[j];
+                if (prod >= k) {
+                    break;
+                }
+            }
+        }
+        if (prod < k && prod > 0) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 10;
+    int result = countSubsequences(arr, n, k);
+    printf("Number of subsequences with product less than %d: %d\n", k, result);
+    return 0;
+}

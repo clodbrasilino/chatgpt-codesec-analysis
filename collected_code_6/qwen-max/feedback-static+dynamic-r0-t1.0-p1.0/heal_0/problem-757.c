@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int is_reverse(const char *str1, const char *str2) {
+    int len1 = strlen(str1);
+    int len2 = strlen(str2);
+    if (len1 != len2) return 0;
+    for (int i = 0; i < len1; ++i) {
+        if (str1[i] != str2[len2 - 1 - i]) return 0;
+    }
+    return 1;
+}
+
+int count_reverse_pairs(const char *list[], size_t list_size) {
+    int count = 0;
+    for (size_t i = 0; i < list_size; ++i) {
+        for (size_t j = i + 1; j < list_size; ++j) {
+            if (is_reverse(list[i], list[j])) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char *strings[] = {"abc", "cba", "xyz", "zyx", "123"};
+    size_t list_size = 5;
+    int result = count_reverse_pairs(strings, list_size);
+    printf("Number of reverse string pairs: %d\n", result);
+    return 0;
+}

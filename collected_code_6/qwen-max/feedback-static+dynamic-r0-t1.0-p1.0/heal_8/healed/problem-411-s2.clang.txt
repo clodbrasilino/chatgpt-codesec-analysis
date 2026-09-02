@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-411-s2.c:22:51: error: use of undeclared identifier 'matches'
+   22 |     while (regexec(&regex, camel_str + offset, 2, matches, 0) == 0) {
+      |                                                   ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-411-s2.c:23:25: error: use of undeclared identifier 'matches'
+   23 |         int match_pos = matches[1].rm_so + offset;
+      |                         ^~~~~~~
+2 errors generated.

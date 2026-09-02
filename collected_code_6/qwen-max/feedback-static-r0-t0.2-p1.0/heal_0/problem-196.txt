@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+void free_tuple(Tuple *t) {
+    if (t->data) {
+        free(t->data);
+    }
+    t->data = NULL;
+    t->length = 0;
+}
+
+int main() {
+    Tuple tuples[] = {{.data = (int[]){1, 2, 3}, .length = 3},
+                      {.data = (int[]){4, 5}, .length = 2},
+                      {.data = (int[]){6, 7, 8, 9}, .length = 4},
+                      {.data = (int[]){10, 11, 12}, .length = 3}};
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    size_t k = 3;
+
+    for (size_t i = 0; i < num_tuples; ) {
+        if (tuples[i].length == k) {
+            free_tuple(&tuples[i]);
+            for (size_t j = i; j < num_tuples - 1; ++j) {
+                tuples[j] = tuples[j + 1];
+            }
+            --num_tuples;
+        } else {
+            ++i;
+        }
+    }
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        for (size_t j = 0; j < tuples[i].length; ++j) {
+            printf("%d ", tuples[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        free_tuple(&tuples[i]);
+    }
+
+    return 0;
+}
+```

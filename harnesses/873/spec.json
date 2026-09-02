@@ -1,0 +1,44 @@
+{
+  "task_id": 873,
+  "text": "Write a C function to solve the fibonacci sequence using recursion.",
+  "fn_candidates": [
+    "fibonacci",
+    "Fibonacci",
+    "fibonacci",
+    "fibonacci"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "fibonacci",
+      "args": [
+        7
+      ],
+      "expected": 13,
+      "assert_src": "assert fibonacci(7) == 13"
+    },
+    {
+      "fn_name": "fibonacci",
+      "args": [
+        8
+      ],
+      "expected": 21,
+      "assert_src": "assert fibonacci(8) == 21"
+    },
+    {
+      "fn_name": "fibonacci",
+      "args": [
+        9
+      ],
+      "expected": 34,
+      "assert_src": "assert fibonacci(9) == 34"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

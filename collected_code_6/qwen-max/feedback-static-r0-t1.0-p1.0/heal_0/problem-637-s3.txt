@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_no_profit_no_loss(float cost_price, float selling_price) {
+    if (cost_price == selling_price) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    float cost_price, selling_price;
+
+    printf("Enter the cost price: ");
+    if (scanf("%f", &cost_price) != 1) {
+        fprintf(stderr, "Invalid input for cost price\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the selling price: ");
+    if (scanf("%f", &selling_price) != 1) {
+        fprintf(stderr, "Invalid input for selling price\n");
+        return EXIT_FAILURE;
+    }
+
+    if (check_no_profit_no_loss(cost_price, selling_price)) {
+        printf("There is no profit and no loss.\n");
+    } else {
+        printf("There is either a profit or a loss.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

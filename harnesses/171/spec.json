@@ -1,0 +1,44 @@
+{
+  "task_id": 171,
+  "text": "Write a C function to find the perimeter of a pentagon.",
+  "fn_candidates": [
+    "perimeter_pentagon",
+    "PerimeterPentagon",
+    "perimeterPentagon",
+    "perimeterpentagon"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "perimeter_pentagon",
+      "args": [
+        5
+      ],
+      "expected": 25,
+      "assert_src": "assert perimeter_pentagon(5)==25"
+    },
+    {
+      "fn_name": "perimeter_pentagon",
+      "args": [
+        10
+      ],
+      "expected": 50,
+      "assert_src": "assert perimeter_pentagon(10)==50"
+    },
+    {
+      "fn_name": "perimeter_pentagon",
+      "args": [
+        15
+      ],
+      "expected": 75,
+      "assert_src": "assert perimeter_pentagon(15)==75"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

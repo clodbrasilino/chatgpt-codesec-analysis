@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+Tuple* create_tuple(int arr[], int size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    tuple->size = size;
+    tuple->data = (int *)malloc(size * sizeof(int));
+    for (int i = 0; i < size; i++) {
+        tuple->data[i] = arr[i];
+    }
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    free(tuple->data);
+    free(tuple);
+}
+
+Tuple* remove_duplicates(Tuple *tuple) {
+    if (tuple->size == 0) {
+        return tuple;
+    }
+
+    qsort(tuple->data, tuple->size, sizeof(int), compare);
+
+    int *new_data = (int *)malloc(tuple->size * sizeof(int));
+    int unique_count = 1;
+    new_data[0] = tuple->data[0];
+
+    for (int i = 1; i < tuple->size; i++) {
+        if (tuple->data[i] != tuple->data[i - 1]) {
+            new_data[unique_count++] = tuple->data[i];
+        }
+    }
+
+    free(tuple->data);
+    tuple->data = new_data;
+    tuple->size = unique_count;
+
+    return tuple;
+}
+
+int main() {
+    int arr[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    Tuple *tuple = create_tuple(arr, size);
+
+    Tuple *result = remove_duplicates(tuple);
+
+    for (int i = 0; i < result->size; i++) {
+        printf("%d ", result->data[i]);
+    }
+    printf("\n");
+
+    free_tuple(result);
+    return 0;
+}

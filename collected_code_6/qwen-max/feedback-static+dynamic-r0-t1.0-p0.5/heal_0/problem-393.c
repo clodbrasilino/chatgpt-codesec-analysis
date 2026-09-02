@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* createNode(int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+int listLength(Node *head) {
+    int length = 0;
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+Node* findMaxList(Node *list1, Node *list2) {
+    int len1 = listLength(list1);
+    int len2 = listLength(list2);
+    return (len1 >= len2) ? list1 : list2;
+}
+
+int main() {
+    Node *list1 = createNode(1);
+    list1->next = createNode(2);
+    list1->next->next = createNode(3);
+
+    Node *list2 = createNode(10);
+    list2->next = createNode(20);
+
+    Node *maxList = findMaxList(list1, list2);
+
+    for (Node *current = maxList; current != NULL; current = current->next) {
+        printf("%d -> ", current->data);
+    }
+    printf("NULL\n");
+
+    while (list1 != NULL) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+
+    while (list2 != NULL) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+
+    return 0;
+}

@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_frequency_difference(const int *array, int size) {
+    if (array == NULL || size <= 0) {
+        return -1;
+    }
+
+    int max_value = array[0];
+    int min_value = array[0];
+
+    for (int i = 1; i < size; i++) {
+        if (array[i] > max_value) max_value = array[i];
+        if (array[i] < min_value) min_value = array[i];
+    }
+
+    int range = max_value - min_value + 1;
+    int *freq = (int *)calloc(range, sizeof(int));
+    if (freq == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        freq[array[i] - min_value]++;
+    }
+
+    int max_freq = 0;
+    int min_freq = size;
+    int has_min_freq = 0;
+
+    for (int i = 0; i < range; i++) {
+        if (freq[i] > 0) {
+            has_min_freq = 1;
+            if (freq[i] > max_freq) max_freq = freq[i];
+            if (freq[i] < min_freq) min_freq = freq[i];
+        }
+    }
+
+    free(freq);
+
+    if (!has_min_freq) {
+        return -1;
+    }
+
+    return max_freq - min_freq;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 2, 3, 3, 3};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = find_frequency_difference(arr1, size1);
+    printf("Array 1: difference = %d\n", result1);
+
+    int arr2[] = {5, 5, 5, 5, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = find_frequency_difference(arr2, size2);
+    printf("Array 2: difference = %d\n", result2);
+
+    int arr3[] = {10, 20, 30, 40};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = find_frequency_difference(arr3, size3);
+    printf("Array 3: difference = %d\n", result3);
+
+    int *arr4 = NULL;
+    int result4 = find_frequency_difference(arr4, 0);
+    printf("Array 4 (NULL): difference = %d\n", result4);
+
+    return 0;
+}
+```

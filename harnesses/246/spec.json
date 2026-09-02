@@ -1,0 +1,44 @@
+{
+  "task_id": 246,
+  "text": "Write a C function for computing square roots using the babylonian method.",
+  "fn_candidates": [
+    "babylonian_squareroot",
+    "BabylonianSquareroot",
+    "babylonianSquareroot",
+    "babyloniansquareroot"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "babylonian_squareroot",
+      "args": [
+        10
+      ],
+      "expected": 3.162277660168379,
+      "assert_src": "assert babylonian_squareroot(10)==3.162277660168379"
+    },
+    {
+      "fn_name": "babylonian_squareroot",
+      "args": [
+        2
+      ],
+      "expected": 1.414213562373095,
+      "assert_src": "assert babylonian_squareroot(2)==1.414213562373095"
+    },
+    {
+      "fn_name": "babylonian_squareroot",
+      "args": [
+        9
+      ],
+      "expected": 3.0,
+      "assert_src": "assert babylonian_squareroot(9)==3.0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

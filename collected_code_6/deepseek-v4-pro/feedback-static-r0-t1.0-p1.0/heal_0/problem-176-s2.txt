@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+} Triangle;
+
+double calculate_perimeter(Triangle tri) {
+    return tri.a + tri.b + tri.c;
+}
+
+int validate_triangle(Triangle tri) {
+    if (tri.a <= 0 || tri.b <= 0 || tri.c <= 0) {
+        return 0;
+    }
+    if ((tri.a + tri.b <= tri.c) ||
+        (tri.a + tri.c <= tri.b) ||
+        (tri.b + tri.c <= tri.a)) {
+        return 0;
+    }
+    return 1;
+}
+
+int main(void) {
+    Triangle tri;
+
+    printf("Enter three side lengths of a triangle: ");
+    if (scanf("%lf %lf %lf", &tri.a, &tri.b, &tri.c) != 3) {
+        fprintf(stderr, "Error: Invalid input. Please enter three numeric values.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!validate_triangle(tri)) {
+        fprintf(stderr, "Error: Invalid triangle sides. The triangle inequality must hold and all sides must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    double perimeter = calculate_perimeter(tri);
+    printf("The perimeter of the triangle is: %.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}
+```

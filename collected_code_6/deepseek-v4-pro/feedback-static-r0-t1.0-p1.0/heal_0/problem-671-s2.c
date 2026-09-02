@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+int setRightmostUnsetBit(int n) {
+    return n | (n + 1);
+}
+
+int main(void) {
+    int num = 5;
+    int result = setRightmostUnsetBit(num);
+    printf("%d\n", result);
+    return 0;
+}

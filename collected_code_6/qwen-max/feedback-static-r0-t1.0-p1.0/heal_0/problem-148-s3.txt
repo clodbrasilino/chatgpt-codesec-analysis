@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_digits(int num) {
+    int sum = 0;
+    while (num > 0) {
+        sum += num % 10;
+        num /= 10;
+    }
+    return sum;
+}
+
+void split_number(int n, int *a, int *b) {
+    int max_sum = -1;
+    for (int i = 1; i < 10; i++) {
+        int part1 = n / i;
+        int part2 = n - part1;
+        int current_sum = sum_of_digits(part1) + sum_of_digits(part2);
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            *a = part1;
+            *b = part2;
+        }
+    }
+}
+
+int main() {
+    int number = 12345;
+    int part1, part2;
+    split_number(number, &part1, &part2);
+    printf("Part1: %d, Part2: %d\n", part1, part2);
+    return 0;
+}
+```

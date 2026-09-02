@@ -1,0 +1,79 @@
+{
+  "task_id": 576,
+  "text": "Write a C function to check whether an array is subarray of another or not.",
+  "fn_candidates": [
+    "is_Sub_Array",
+    "IsSubArray",
+    "isSubArray",
+    "isSubArray"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Sub_Array",
+      "args": [
+        [
+          1,
+          4,
+          3,
+          5
+        ],
+        [
+          1,
+          2
+        ],
+        4,
+        2
+      ],
+      "expected": false,
+      "assert_src": "assert is_Sub_Array([1,4,3,5],[1,2],4,2) == False"
+    },
+    {
+      "fn_name": "is_Sub_Array",
+      "args": [
+        [
+          1,
+          2,
+          1
+        ],
+        [
+          1,
+          2,
+          1
+        ],
+        3,
+        3
+      ],
+      "expected": true,
+      "assert_src": "assert is_Sub_Array([1,2,1],[1,2,1],3,3) == True"
+    },
+    {
+      "fn_name": "is_Sub_Array",
+      "args": [
+        [
+          1,
+          0,
+          2,
+          2
+        ],
+        [
+          2,
+          2,
+          0
+        ],
+        4,
+        3
+      ],
+      "expected": false,
+      "assert_src": "assert is_Sub_Array([1,0,2,2],[2,2,0],4,3) ==False"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

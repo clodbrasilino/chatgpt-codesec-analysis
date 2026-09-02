@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'coins' can be declared as pointer to const [constParameterPointer]
+ */
+int countChange(int amount, int *coins, int n) {
+    int dp[amount + 1];
+    for (int i = 0; i <= amount; i++) {
+        dp[i] = 0;
+    }
+    dp[0] = 1;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = coins[i]; j <= amount; j++) {
+            dp[j] += dp[j - coins[i]];
+        }
+    }
+
+    return dp[amount];
+}
+
+int main() {
+    int coins[] = {1, 5, 10, 25};
+    int n = sizeof(coins) / sizeof(coins[0]);
+    int amount = 100;
+
+    int result = countChange(amount, coins, n);
+    printf("Number of ways to make change: %d\n", result);
+
+    return 0;
+}

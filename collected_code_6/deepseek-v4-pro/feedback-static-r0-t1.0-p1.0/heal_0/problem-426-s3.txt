@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int *filter_odd_numbers(const int *input, size_t length, size_t *output_length) {
+    if (input == NULL || output_length == NULL) {
+        return NULL;
+    }
+
+    size_t odd_count = 0;
+    for (size_t i = 0; i < length; i++) {
+        if (input[i] % 2 != 0) {
+            odd_count++;
+        }
+    }
+
+    if (odd_count == 0) {
+        *output_length = 0;
+        return NULL;
+    }
+
+    int *result = (int *)malloc(odd_count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    for (size_t i = 0; i < length; i++) {
+        if (input[i] % 2 != 0) {
+            result[result_index++] = input[i];
+        }
+    }
+
+    *output_length = odd_count;
+    return result;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    size_t odd_count = 0;
+
+    int *odd_numbers = filter_odd_numbers(numbers, length, &odd_count);
+    if (odd_numbers == NULL) {
+        if (odd_count == 0) {
+            printf("No odd numbers found\n");
+        } else {
+            printf("Memory allocation failed\n");
+        }
+        return 1;
+    }
+
+    printf("Odd numbers: ");
+    for (size_t i = 0; i < odd_count; i++) {
+        printf("%d ", odd_numbers[i]);
+    }
+    printf("\n");
+
+    free(odd_numbers);
+    return 0;
+}
+```

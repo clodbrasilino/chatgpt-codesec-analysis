@@ -1,0 +1,63 @@
+{
+  "task_id": 510,
+  "text": "Write a C function to find the number of subsequences having product smaller than k for the given non negative array.",
+  "fn_candidates": [
+    "no_of_subsequences",
+    "NoOfSubsequences",
+    "noOfSubsequences",
+    "noofsubsequences"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "no_of_subsequences",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        10
+      ],
+      "expected": 11,
+      "assert_src": "assert no_of_subsequences([1,2,3,4], 10) == 11"
+    },
+    {
+      "fn_name": "no_of_subsequences",
+      "args": [
+        [
+          4,
+          8,
+          7,
+          2
+        ],
+        50
+      ],
+      "expected": 9,
+      "assert_src": "assert no_of_subsequences([4,8,7,2], 50) == 9"
+    },
+    {
+      "fn_name": "no_of_subsequences",
+      "args": [
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        15
+      ],
+      "expected": 4,
+      "assert_src": "assert no_of_subsequences([5,6,7,8], 15) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

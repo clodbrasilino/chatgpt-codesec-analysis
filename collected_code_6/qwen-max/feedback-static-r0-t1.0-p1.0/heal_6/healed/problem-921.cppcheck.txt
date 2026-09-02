@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:46:16: style: Condition 'chunks==NULL' is always true [knownConditionTrueFalse]
+    if (chunks == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:45:38: note: Calling function 'create_chunk' returns 0
+    TupleChunk *chunks = create_chunk(data, n, chunkSize);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:45:38: note: Assignment 'chunks=create_chunk(data,n,chunkSize)', assigned value is 0
+    TupleChunk *chunks = create_chunk(data, n, chunkSize);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:46:16: note: Condition 'chunks==NULL' is always true
+    if (chunks == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:11:11: warning: Either the condition 'chunkSize==0' is redundant or there is division by zero at line 11. [zerodivcond]
+    if (n % chunkSize != 0 || n == 0 || chunkSize == 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:11:51: note: Assuming that condition 'chunkSize==0' is not redundant
+    if (n % chunkSize != 0 || n == 0 || chunkSize == 0) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-921.c:11:11: note: Division by zero
+    if (n % chunkSize != 0 || n == 0 || chunkSize == 0) {
+          ^

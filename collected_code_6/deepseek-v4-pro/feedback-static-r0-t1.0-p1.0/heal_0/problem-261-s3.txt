@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double dividend;
+    double divisor;
+    double quotient;
+    int valid;
+} DivisionTuple;
+
+int perform_division(DivisionTuple *tuples, int count) {
+    if (tuples == NULL || count <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (tuples[i].divisor == 0.0) {
+            tuples[i].valid = 0;
+            continue;
+        }
+        tuples[i].quotient = tuples[i].dividend / tuples[i].divisor;
+        tuples[i].valid = 1;
+    }
+    return 1;
+}
+
+int main(void) {
+    DivisionTuple tuples[] = {
+        {10.0, 2.0, 0.0, 0},
+        {7.5, 0.0, 0.0, 0},
+        {15.0, 3.0, 0.0, 0},
+        {9.0, 4.0, 0.0, 0}
+    };
+    int count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (!perform_division(tuples, count)) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (tuples[i].valid) {
+            printf("%.2f / %.2f = %.2f\n",
+                   tuples[i].dividend,
+                   tuples[i].divisor,
+                   tuples[i].quotient);
+        } else {
+            printf("%.2f / %.2f = undefined (division by zero)\n",
+                   tuples[i].dividend,
+                   tuples[i].divisor);
+        }
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-154-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-154-s3.c:38:9: style: Condition 'result' is always false [knownConditionTrueFalse]
+    if (result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-154-s3.c:36:36: note: Calling function 'extract_elements' returns 0
+    int **result = extract_elements(matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-154-s3.c:36:36: note: Assignment 'result=extract_elements(matrix,rows,cols,step)', assigned value is 0
+    int **result = extract_elements(matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-154-s3.c:38:9: note: Condition 'result' is always false
+    if (result) {
+        ^

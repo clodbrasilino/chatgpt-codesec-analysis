@@ -1,0 +1,64 @@
+{
+  "task_id": 701,
+  "text": "Write a C function to find the equilibrium index of the given array.",
+  "fn_candidates": [
+    "equilibrium_index",
+    "EquilibriumIndex",
+    "equilibriumIndex",
+    "equilibriumindex"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "equilibrium_index",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert equilibrium_index([1, 2, 3, 4, 1, 2, 3]) == 3"
+    },
+    {
+      "fn_name": "equilibrium_index",
+      "args": [
+        [
+          -7,
+          1,
+          5,
+          2,
+          -4,
+          3,
+          0
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert equilibrium_index([-7, 1, 5, 2, -4, 3, 0]) == 3"
+    },
+    {
+      "fn_name": "equilibrium_index",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": -1,
+      "assert_src": "assert equilibrium_index([1, 2, 3]) == -1"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

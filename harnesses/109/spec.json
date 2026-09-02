@@ -1,0 +1,48 @@
+{
+  "task_id": 109,
+  "text": "Write a C function to find the count of rotations of a binary string with odd value.",
+  "fn_candidates": [
+    "odd_Equivalent",
+    "OddEquivalent",
+    "oddEquivalent",
+    "oddEquivalent"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_Equivalent",
+      "args": [
+        "011001",
+        6
+      ],
+      "expected": 3,
+      "assert_src": "assert odd_Equivalent(\"011001\",6) == 3"
+    },
+    {
+      "fn_name": "odd_Equivalent",
+      "args": [
+        "11011",
+        5
+      ],
+      "expected": 4,
+      "assert_src": "assert odd_Equivalent(\"11011\",5) == 4"
+    },
+    {
+      "fn_name": "odd_Equivalent",
+      "args": [
+        "1010",
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert odd_Equivalent(\"1010\",4) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

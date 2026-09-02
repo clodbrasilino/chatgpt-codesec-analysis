@@ -1,0 +1,44 @@
+{
+  "task_id": 365,
+  "text": "Write a C function to count the number of digits of a given number.",
+  "fn_candidates": [
+    "count_Digit",
+    "CountDigit",
+    "countDigit",
+    "countDigit"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Digit",
+      "args": [
+        12345
+      ],
+      "expected": 5,
+      "assert_src": "assert count_Digit(12345) == 5"
+    },
+    {
+      "fn_name": "count_Digit",
+      "args": [
+        11223305
+      ],
+      "expected": 8,
+      "assert_src": "assert count_Digit(11223305) == 8"
+    },
+    {
+      "fn_name": "count_Digit",
+      "args": [
+        4123459
+      ],
+      "expected": 7,
+      "assert_src": "assert count_Digit(4123459) == 7"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

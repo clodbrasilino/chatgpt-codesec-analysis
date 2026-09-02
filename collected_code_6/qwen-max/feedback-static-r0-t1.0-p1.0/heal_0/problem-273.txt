@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* subtract_tuples(const Tuple *t1, const Tuple *t2) {
+    if (t1 == NULL || t2 == NULL) {
+        return NULL;
+    }
+    
+    Tuple *result = (Tuple *)malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    result->a = t1->a - t2->a;
+    result->b = t1->b - t2->b;
+    
+    return result;
+}
+
+int main() {
+    Tuple t1 = {5, 10};
+    Tuple t2 = {3, 4};
+    
+    Tuple *result = subtract_tuples(&t1, &t2);
+    
+    if (result != NULL) {
+        printf("Result: (%d, %d)\n", result->a, result->b);
+        free(result);
+    } else {
+        printf("Operation failed.\n");
+    }
+    
+    return 0;
+}
+```

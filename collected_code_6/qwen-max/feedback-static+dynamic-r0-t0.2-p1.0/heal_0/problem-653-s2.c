@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct Map {
+    int size;
+    Node **buckets;
+} Map;
+
+Map* create_map(int size) {
+    Map *map = (Map*)malloc(sizeof(Map));
+    map->size = size;
+    map->buckets = (Node**)calloc(size, sizeof(Node*));
+    return map;
+}
+
+unsigned long hash_function(const char *str, int size) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+    return hash % size;
+}
+
+void add_to_map(Map *map, const char *key, const char *value) {
+    unsigned long index = hash_function(key, map->size);
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->key = strdup(key);
+    new_node->value = strdup(value);
+    new_node->next = map->buckets[index];
+    map->buckets[index] = new_node;
+}
+
+void free_map(Map *map) {
+    for (int i = 0; i < map->size; ++i) {
+        Node *current = map->buckets[i];
+        while (current) {
+            Node *temp = current;
+            current = current->next;
+            free(temp->key);
+            free(temp->value);
+            free(temp);
+        }
+    }
+    free(map->buckets);
+    free(map);
+}
+
+void print_map(Map *map) {
+    for (int i = 0; i < map->size; ++i) {
+        Node *current = map->buckets[i];
+        while (current) {
+            printf("Key: %s, Value: %s\n", current->key, current->value);
+            current = current->next;
+        }
+    }
+}
+
+int main() {
+    Map *map = create_map(10);
+    add_to_map(map, "key1", "value1");
+    add_to_map(map, "key2", "value2");
+    add_to_map(map, "key1", "value3");
+    add_to_map(map, "key3", "value4");
+
+    print_map(map);
+
+    free_map(map);
+    return 0;
+}

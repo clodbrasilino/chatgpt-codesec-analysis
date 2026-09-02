@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c:24:17: portability: Casting from float * to const signed int * is not portable due to different binary data representations on different platforms. [invalidPointerCast]
+    if (u.i == *(const int32_t*)&u.f) return INTEGER;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c:16:34: style: Same expression on both sides of '-'. [duplicateExpression]
+    if (*str == 0 || (size_t)str - (size_t)ptr + strlen(str) + 1 > sizeof(uintptr_t)) return STRING;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c:15:23: note: 'str' is assigned value 'ptr' here.
+    const char* str = ptr;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-222.c:16:34: note: Same expression on both sides of '-'.
+    if (*str == 0 || (size_t)str - (size_t)ptr + strlen(str) + 1 > sizeof(uintptr_t)) return STRING;
+                                 ^

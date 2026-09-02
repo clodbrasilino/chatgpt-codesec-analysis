@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
+
+typedef struct {
+    uint64_t *data;
+    size_t length;
+} Tuple;
+
+Tuple tuple_xor(const Tuple *a, const Tuple *b) {
+    Tuple result;
+    size_t max_len = a->length > b->length ? a->length : b->length;
+    
+    result.data = (uint64_t *)calloc(max_len, sizeof(uint64_t));
+    if (result.data == NULL) {
+        result.length = 0;
+        return result;
+    }
+    
+    result.length = max_len;
+    
+    for (size_t i = 0; i < a->length; i++) {
+        result.data[i] ^= a->data[i];
+    }
+    
+    for (size_t i = 0; i < b->length; i++) {
+        result.data[i] ^= b->data[i];
+    }
+    
+    return result;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple->data != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+    }
+    tuple->length = 0;
+}
+
+int main(void) {
+    uint64_t data1[] = {0x0F0F0F0F0F0F0F0FULL, 0x00FF00FF00FF00FFULL};
+    uint64_t data2[] = {0x3333333333333333ULL, 0x5555555555555555ULL, 0x123456789ABCDEF0ULL};
+    
+    Tuple tuple1 = {data1, 2};
+    Tuple tuple2 = {data2, 3};
+    
+    Tuple result = tuple_xor(&tuple1, &tuple2);
+    
+    if (result.data == NULL && result.length == 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("XOR result length: %zu\n", result.length);
+    for (size_t i = 0; i < result.length; i++) {
+        printf("Result[%zu] = 0x%016llX\n", i, (unsigned long long)result.data[i]);
+    }
+    
+    free_tuple(&result);
+    
+    return EXIT_SUCCESS;
+}

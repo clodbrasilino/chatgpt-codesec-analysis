@@ -1,0 +1,90 @@
+{
+  "task_id": 632,
+  "text": "Write a C function to move all zeroes to the end of the given list.",
+  "fn_candidates": [
+    "move_zero",
+    "MoveZero",
+    "moveZero",
+    "movezero"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "move_zero",
+      "args": [
+        [
+          1,
+          0,
+          2,
+          0,
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4,
+        0,
+        0
+      ],
+      "assert_src": "assert move_zero([1,0,2,0,3,4]) == [1,2,3,4,0,0]"
+    },
+    {
+      "fn_name": "move_zero",
+      "args": [
+        [
+          2,
+          3,
+          2,
+          0,
+          0,
+          4,
+          0,
+          5,
+          0
+        ]
+      ],
+      "expected": [
+        2,
+        3,
+        2,
+        4,
+        5,
+        0,
+        0,
+        0,
+        0
+      ],
+      "assert_src": "assert move_zero([2,3,2,0,0,4,0,5,0]) == [2,3,2,4,5,0,0,0,0]"
+    },
+    {
+      "fn_name": "move_zero",
+      "args": [
+        [
+          0,
+          1,
+          0,
+          1,
+          1
+        ]
+      ],
+      "expected": [
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "assert_src": "assert move_zero([0,1,0,1,1]) == [1,1,1,0,0]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

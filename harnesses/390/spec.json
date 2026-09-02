@@ -1,0 +1,79 @@
+{
+  "task_id": 390,
+  "text": "Write a C function to insert a given string at the beginning of all items in a list.",
+  "fn_candidates": [
+    "add_string",
+    "AddString",
+    "addString",
+    "addstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "add_string",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        "temp{0}"
+      ],
+      "expected": [
+        "temp1",
+        "temp2",
+        "temp3",
+        "temp4"
+      ],
+      "assert_src": "assert add_string([1,2,3,4],'temp{0}')==['temp1', 'temp2', 'temp3', 'temp4']"
+    },
+    {
+      "fn_name": "add_string",
+      "args": [
+        [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "python{0}"
+      ],
+      "expected": [
+        "pythona",
+        "pythonb",
+        "pythonc",
+        "pythond"
+      ],
+      "assert_src": "assert add_string(['a','b','c','d'], 'python{0}')==[ 'pythona', 'pythonb', 'pythonc', 'pythond']"
+    },
+    {
+      "fn_name": "add_string",
+      "args": [
+        [
+          5,
+          6,
+          7,
+          8
+        ],
+        "string{0}"
+      ],
+      "expected": [
+        "string5",
+        "string6",
+        "string7",
+        "string8"
+      ],
+      "assert_src": "assert add_string([5,6,7,8],'string{0}')==['string5', 'string6', 'string7', 'string8']"
+    }
+  ],
+  "arg_kinds": [
+    "int-list",
+    "str",
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

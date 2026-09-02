@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+
+int isRootDoubleTheOther(double a, double b, double c) {
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) {
+        return 0;
+    }
+    double root1 = (-b + sqrt(discriminant)) / (2 * a);
+    double root2 = (-b - sqrt(discriminant)) / (2 * a);
+    if (root1 == 2 * root2 || root2 == 2 * root1) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    double a, b, c;
+    printf("Enter coefficients a, b, and c: ");
+    int result = scanf("%lf %lf %lf", &a, &b, &c);
+    if (result != 3 || a == 0) {
+        printf("Invalid input or a cannot be zero.\n");
+        return 1;
+    }
+    if (isRootDoubleTheOther(a, b, c)) {
+        printf("One root is twice the other.\n");
+    } else {
+        printf("One root is not twice the other.\n");
+    }
+    return 0;
+}

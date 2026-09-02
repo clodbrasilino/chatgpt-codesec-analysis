@@ -1,0 +1,84 @@
+{
+  "task_id": 623,
+  "text": "Write a C function to find the n-th power of individual elements in a list.",
+  "fn_candidates": [
+    "nth_nums",
+    "NthNums",
+    "nthNums",
+    "nthnums"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "nth_nums",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        2
+      ],
+      "expected": [
+        1,
+        4,
+        9,
+        16,
+        25,
+        36,
+        49,
+        64,
+        81,
+        100
+      ],
+      "assert_src": "assert nth_nums([1, 2, 3, 4, 5, 6, 7, 8, 9, 10],2)==[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]"
+    },
+    {
+      "fn_name": "nth_nums",
+      "args": [
+        [
+          10,
+          20,
+          30
+        ],
+        3
+      ],
+      "expected": [
+        1000,
+        8000,
+        27000
+      ],
+      "assert_src": "assert nth_nums([10,20,30],3)==([1000, 8000, 27000])"
+    },
+    {
+      "fn_name": "nth_nums",
+      "args": [
+        [
+          12,
+          15
+        ],
+        5
+      ],
+      "expected": [
+        248832,
+        759375
+      ],
+      "assert_src": "assert nth_nums([12,15],5)==([248832, 759375])"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

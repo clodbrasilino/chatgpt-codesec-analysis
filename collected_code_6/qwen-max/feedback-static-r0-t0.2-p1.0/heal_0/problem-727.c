@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_non_alnum(char *str) {
+    regex_t regex;
+    regmatch_t match[1];
+    char *p = str;
+    char *q = str;
+
+    if (regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED) != 0) {
+        return;
+    }
+
+    while (*p) {
+        if (regexec(&regex, p, 1, match, 0) != 0) {
+            *q++ = *p;
+        }
+        p++;
+    }
+    *q = '\0';
+    regfree(&regex);
+}
+
+int main() {
+    char input[] = "Hello, World! 123";
+    remove_non_alnum(input);
+    printf("%s\n", input);
+    return 0;
+}

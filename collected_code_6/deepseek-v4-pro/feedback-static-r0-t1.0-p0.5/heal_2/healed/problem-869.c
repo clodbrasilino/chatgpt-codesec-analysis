@@ -1,0 +1,157 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+List* create_list(const int* arr, int size) {
+    List* list = (List*)malloc(sizeof(List));
+    if (!list) return NULL;
+    list->head = NULL;
+    list->next = NULL;
+    
+    Node* tail = NULL;
+    for (int i = 0; i < size; i++) {
+        Node* node = (Node*)malloc(sizeof(Node));
+        if (!node) {
+            Node* current = list->head;
+            while (current) {
+                Node* temp = current;
+                current = current->next;
+                free(temp);
+            }
+            free(list);
+            return NULL;
+        }
+        node->data = arr[i];
+        node->next = NULL;
+        if (!list->head) {
+            list->head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return list;
+}
+
+void free_list(List* list) {
+    if (!list) return;
+    Node* current = list->head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+void free_all_lists(List* head) {
+    List* current = head;
+    while (current) {
+        List* temp = current;
+        current = current->next;
+        free_list(temp);
+    }
+}
+
+int list_sum(Node* head) {
+    int sum = 0;
+    Node* current = head;
+    while (current) {
+        sum += current->data;
+        current = current->next;
+    }
+    return sum;
+}
+
+List* remove_sublists_outside_range(List* head, int low, int high) {
+    if (!head) return NULL;
+    
+    List* dummy = (List*)malloc(sizeof(List));
+    if (!dummy) return head;
+    dummy->next = head;
+    dummy->head = NULL;
+    
+    List* prev = dummy;
+    List* current = head;
+    
+    while (current) {
+        int sum = list_sum(current->head);
+        if (sum < low || sum > high) {
+            prev->next = current->next;
+            free_list(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    
+    List* result = dummy->next;
+    free(dummy);
+    return result;
+}
+
+void print_lists(List* head) {
+    List* current = head;
+    while (current) {
+        Node* node = current->head;
+        printf("[");
+        while (node) {
+            printf("%d", node->data);
+            if (node->next) printf(", ");
+            node = node->next;
+        }
+        printf("] ");
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    const int arr1[] = {1, 2, 3};
+    const int arr2[] = {10, 20};
+    const int arr3[] = {5, 5, 5};
+    const int arr4[] = {1};
+    const int arr5[] = {7, 8, 9, 10};
+    
+    List* list1 = create_list(arr1, 3);
+    List* list2 = create_list(arr2, 2);
+    List* list3 = create_list(arr3, 3);
+    List* list4 = create_list(arr4, 1);
+    List* list5 = create_list(arr5, 4);
+    
+    if (!list1 || !list2 || !list3 || !list4 || !list5) {
+        if (list1) free_list(list1);
+        if (list2) free_list(list2);
+        if (list3) free_list(list3);
+        if (list4) free_list(list4);
+        if (list5) free_list(list5);
+        return 1;
+    }
+    
+    list1->next = list2;
+    list2->next = list3;
+    list3->next = list4;
+    list4->next = list5;
+    
+    printf("Original lists: ");
+    print_lists(list1);
+    
+    List* filtered = remove_sublists_outside_range(list1, 5, 20);
+    
+    printf("Filtered lists (sum between 5 and 20): ");
+    print_lists(filtered);
+    
+    free_all_lists(filtered);
+    
+    return 0;
+}

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_duplicates(int *arr, int size, int replacement) {
+    int i, j, k;
+    int *count = (int *)calloc(size, sizeof(int));
+    if (count == NULL) {
+        return;
+    }
+    
+    for (i = 0; i < size; i++) {
+        for (j = 0; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count[i]++;
+            }
+        }
+    }
+    
+    for (i = 0; i < size; i++) {
+        if (count[i] > 1) {
+            for (k = 0; k < size; k++) {
+                if (arr[k] == arr[i] && k != i) {
+                    arr[k] = replacement;
+                }
+            }
+            arr[i] = replacement;
+        }
+    }
+    
+    free(count);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 5, 3, 6, 1};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int replacement = -1;
+    int i;
+    
+    remove_duplicates(arr, size, replacement);
+    
+    for (i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **split_string_into_characters(const char *str, size_t *count) {
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    size_t length = strlen(str);
+    char **result = (char **)malloc(length * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        result[i] = (char *)malloc(2 * sizeof(char));
+        if (result[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+        result[i][0] = str[i];
+        result[i][1] = '\0';
+    }
+
+    *count = length;
+    return result;
+}
+
+void free_split_characters(char **characters, size_t count) {
+    if (characters == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        free(characters[i]);
+    }
+    free(characters);
+}
+
+int main(void) {
+    const char *input = "Hello";
+    size_t count = 0;
+    char **chars = split_string_into_characters(input, &count);
+
+    if (chars == NULL) {
+        fprintf(stderr, "Error: Unable to split string\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        printf("%s\n", chars[i]);
+    }
+
+    free_split_characters(chars, count);
+    return 0;
+}

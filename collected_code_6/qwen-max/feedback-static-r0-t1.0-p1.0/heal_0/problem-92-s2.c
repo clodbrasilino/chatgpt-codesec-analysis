@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_undulating(int n) {
+    if (n < 100) return false;
+    
+    int prev_digit = n % 10;
+    n /= 10;
+    while (n > 0) {
+        int current_digit = n % 10;
+        n /= 10;
+        if (prev_digit == current_digit || n / 10 % 10 != prev_digit) return false;
+        prev_digit = current_digit;
+    }
+    return true;
+}
+
+int main() {
+    int num = 121212;
+    if (is_undulating(num)) {
+        printf("%d is undulating.\n", num);
+    } else {
+        printf("%d is not undulating.\n", num);
+    }
+    return 0;
+}

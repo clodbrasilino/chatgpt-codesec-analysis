@@ -1,0 +1,62 @@
+{
+  "task_id": 660,
+  "text": "Write a C function to choose points from two ranges such that no point lies in both the ranges.",
+  "fn_candidates": [
+    "find_Points",
+    "FindPoints",
+    "findPoints",
+    "findPoints"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Points",
+      "args": [
+        5,
+        10,
+        1,
+        5
+      ],
+      "expected": [
+        1,
+        10
+      ],
+      "assert_src": "assert find_Points(5,10,1,5) == (1,10)"
+    },
+    {
+      "fn_name": "find_Points",
+      "args": [
+        3,
+        5,
+        7,
+        9
+      ],
+      "expected": [
+        3,
+        9
+      ],
+      "assert_src": "assert find_Points(3,5,7,9) == (3,9)"
+    },
+    {
+      "fn_name": "find_Points",
+      "args": [
+        1,
+        5,
+        2,
+        8
+      ],
+      "expected": [
+        1,
+        8
+      ],
+      "assert_src": "assert find_Points(1,5,2,8) == (1,8)"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

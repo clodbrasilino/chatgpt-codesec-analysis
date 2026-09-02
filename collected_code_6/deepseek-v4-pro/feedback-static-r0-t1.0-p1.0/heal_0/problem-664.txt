@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_even_till(int n) {
+    if (n < 2) {
+        fprintf(stderr, "Error: Input must be a positive even number.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n % 2 != 0) {
+        fprintf(stderr, "Error: Input must be an even number.\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    int count = n / 2;
+    long long sum = (long long)count * (count + 1);
+    return (double)sum / count;
+}
+
+int main(void) {
+    int number;
+    
+    printf("Enter an even number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (number < 2) {
+        fprintf(stderr, "Error: Input must be a positive even number.\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (number % 2 != 0) {
+        fprintf(stderr, "Error: Input must be an even number.\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = average_even_till(number);
+    printf("Average of even numbers from 2 to %d is: %.2f\n", number, result);
+    
+    return EXIT_SUCCESS;
+}
+```

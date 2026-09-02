@@ -1,0 +1,48 @@
+{
+  "task_id": 220,
+  "text": "Write a C function to replace maximum n occurrences of spaces, commas, or dots with a colon.",
+  "fn_candidates": [
+    "replace_max_specialchar",
+    "ReplaceMaxSpecialchar",
+    "replaceMaxSpecialchar",
+    "replacemaxspecialchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "replace_max_specialchar",
+      "args": [
+        "Python language, Programming language.",
+        2
+      ],
+      "expected": "Python:language: Programming language.",
+      "assert_src": "assert replace_max_specialchar('Python language, Programming language.',2)==('Python:language: Programming language.')"
+    },
+    {
+      "fn_name": "replace_max_specialchar",
+      "args": [
+        "a b c,d e f",
+        3
+      ],
+      "expected": "a:b:c:d e f",
+      "assert_src": "assert replace_max_specialchar('a b c,d e f',3)==('a:b:c:d e f')"
+    },
+    {
+      "fn_name": "replace_max_specialchar",
+      "args": [
+        "ram reshma,ram rahim",
+        1
+      ],
+      "expected": "ram:reshma,ram rahim",
+      "assert_src": "assert replace_max_specialchar('ram reshma,ram rahim',1)==('ram:reshma,ram rahim')"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

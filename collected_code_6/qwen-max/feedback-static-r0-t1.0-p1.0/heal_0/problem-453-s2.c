@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sumEvenFactors(int n) {
+    int sum = 0;
+    for (int i = 2; i <= n; i += 2) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: Invalid input. Please enter an integer.\n");
+        return EXIT_FAILURE;
+    }
+    int result = sumEvenFactors(number);
+    printf("Sum of even factors: %d\n", result);
+    return EXIT_SUCCESS;
+}

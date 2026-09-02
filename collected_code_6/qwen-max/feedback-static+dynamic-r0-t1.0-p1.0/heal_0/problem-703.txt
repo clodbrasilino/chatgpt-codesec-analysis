@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct dictionary_entry {
+    char *key;
+    char *value;
+    struct dictionary_entry *next;
+} dictionary_entry_t;
+
+typedef struct {
+    dictionary_entry_t *head;
+} dictionary_t;
+
+dictionary_t* create_dictionary() {
+    dictionary_t *dict = (dictionary_t*)malloc(sizeof(dictionary_t));
+    if (dict == NULL) return NULL;
+    dict->head = NULL;
+    return dict;
+}
+
+void add_entry(dictionary_t *dict, const char *key, const char *value) {
+    dictionary_entry_t *new_entry = (dictionary_entry_t*)malloc(sizeof(dictionary_entry_t));
+    if (new_entry == NULL) return;
+    
+    new_entry->key = strdup(key);
+    new_entry->value = strdup(value);
+    new_entry->next = dict->head;
+    dict->head = new_entry;
+}
+
+int is_key_present(dictionary_t *dict, const char *key) {
+    dictionary_entry_t *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+void free_dictionary(dictionary_t *dict) {
+    dictionary_entry_t *current = dict->head;
+    while (current != NULL) {
+        dictionary_entry_t *temp = current;
+        current = current->next;
+        free(temp->key);
+        free(temp->value);
+        free(temp);
+    }
+    free(dict);
+}
+
+int main() {
+    dictionary_t *my_dict = create_dictionary();
+    
+    if (my_dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return 1;
+    }
+    
+    add_entry(my_dict, "name", "Alice");
+    add_entry(my_dict, "age", "25");
+    add_entry(my_dict, "city", "Wonderland");
+
+    if (is_key_present(my_dict, "name")) {
+        printf("Key 'name' is present in the dictionary.\n");
+    } else {
+        printf("Key 'name' is not present in the dictionary.\n");
+    }
+
+    if (is_key_present(my_dict, "country")) {
+        printf("Key 'country' is present in the dictionary.\n");
+    } else {
+        printf("Key 'country' is not present in the dictionary.\n");
+    }
+
+    free_dictionary(my_dict);
+    return 0;
+}
+```

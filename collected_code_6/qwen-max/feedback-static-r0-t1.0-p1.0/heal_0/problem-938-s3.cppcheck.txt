@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:25:19: warning: Uninitialized variable: p [uninitvar]
+    res[0] = arr1[p], res[1] = arr2[q], res[2] = arr3[r];
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:10:29: note: Assuming condition is false
+    while (i < n1 && j < n2 && k < n3) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:25:19: note: Uninitialized variable: p
+    res[0] = arr1[p], res[1] = arr2[q], res[2] = arr3[r];
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:25:37: warning: Uninitialized variable: q [uninitvar]
+    res[0] = arr1[p], res[1] = arr2[q], res[2] = arr3[r];
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:10:29: note: Assuming condition is false
+    while (i < n1 && j < n2 && k < n3) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:25:37: note: Uninitialized variable: q
+    res[0] = arr1[p], res[1] = arr2[q], res[2] = arr3[r];
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:25:55: warning: Uninitialized variable: r [uninitvar]
+    res[0] = arr1[p], res[1] = arr2[q], res[2] = arr3[r];
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:10:29: note: Assuming condition is false
+    while (i < n1 && j < n2 && k < n3) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938-s3.c:25:55: note: Uninitialized variable: r
+    res[0] = arr1[p], res[1] = arr2[q], res[2] = arr3[r];
+                                                      ^

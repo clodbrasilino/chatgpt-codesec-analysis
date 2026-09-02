@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+void moveZeroesToEnd(int *array, int size) {
+    int nonZeroIndex = 0;
+    for (int i = 0; i < size; ++i) {
+        if (array[i] != 0) {
+            if (i != nonZeroIndex) {
+                array[nonZeroIndex] = array[i];
+                array[i] = 0;
+            }
+            nonZeroIndex++;
+        }
+    }
+}
+
+int main() {
+    int arr[] = {1, 0, 2, 0, 3, 4, 0, 5, 0, 6};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    moveZeroesToEnd(arr, size);
+    
+    for (int i = 0; i < size; ++i) {
+        printf("%d ", arr[i]);
+    }
+    return 0;
+}

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+bool has_unique_elements(struct ListNode *head) {
+    if (head == NULL) {
+        return true;
+    }
+    
+    struct ListNode *outer = head;
+    while (outer != NULL) {
+        struct ListNode *inner = outer->next;
+        while (inner != NULL) {
+            if (outer->val == inner->val) {
+                return false;
+            }
+            inner = inner->next;
+        }
+        outer = outer->next;
+    }
+    return true;
+}
+
+struct ListNode *create_node(int val) {
+    struct ListNode *node = (struct ListNode *)malloc(sizeof(struct ListNode));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(struct ListNode *head) {
+    struct ListNode *current = head;
+    while (current != NULL) {
+        struct ListNode *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct ListNode *head = create_node(1);
+    if (head == NULL) {
+        return 1;
+    }
+    head->next = create_node(2);
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next = create_node(3);
+    if (head->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next->next = create_node(2);
+    if (head->next->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    
+    if (has_unique_elements(head)) {
+        printf("Elements are unique\n");
+    } else {
+        printf("Elements are not unique\n");
+    }
+    
+    free_list(head);
+    return 0;
+}

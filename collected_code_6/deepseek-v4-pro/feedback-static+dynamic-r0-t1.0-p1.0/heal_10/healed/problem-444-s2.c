@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+TupleList* trim_tuples(TupleList *list, int k) {
+    if (list == NULL || k < 0 || list->count <= 0 || list->tuples == NULL) {
+        return NULL;
+    }
+
+    TupleList *result = (TupleList*)malloc(sizeof(TupleList));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->count = 0;
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements != NULL && list->tuples[i].size > k) {
+            result->count++;
+        }
+    }
+
+    if (result->count == 0) {
+        result->tuples = NULL;
+        return result;
+    }
+
+    result->tuples = (Tuple*)calloc(result->count, sizeof(Tuple));
+    if (result->tuples == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    int result_index = 0;
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements == NULL) {
+            continue;
+        }
+
+        if (k >= list->tuples[i].size) {
+            continue;
+        }
+
+        int new_size = list->tuples[i].size - k;
+        result->tuples[result_index].elements = (int*)malloc(sizeof(int) * new_size);
+        if (result->tuples[result_index].elements == NULL) {
+            for (int j = 0; j < result_index; j++) {
+                free(result->tuples[j].elements);
+            }
+            free(result->tuples);
+            free(result);
+            return NULL;
+        }
+
+        result->tuples[result_index].size = new_size;
+        memcpy(result->tuples[result_index].elements, list->tuples[i].elements + k, sizeof(int) * new_size);
+        result_index++;
+    }
+
+    return result;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    if (list->tuples != NULL) {
+        for (int i = 0; i < list->count; i++) {
+            if (list->tuples[i].elements != NULL) {
+                free(list->tuples[i].elements);
+            }
+        }
+        free(list->tuples);
+    }
+    free(list);
+}
+
+int main(void) {
+    int arr1[] = {3, 2, 1};
+    int arr2[] = {4, 9, 2};
+    int arr3[] = {1, 2, 3};
+    int arr4[] = {8, 2, 1};
+
+    Tuple tuples_array[] = {
+        {arr1, 3},
+        {arr2, 3},
+        {arr3, 3},
+        {arr4, 3}
+    };
+
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return 1;
+    }
+
+    list->count = 4;
+    list->tuples = (Tuple*)calloc(list->count, sizeof(Tuple));
+    if (list->tuples == NULL) {
+        free(list);
+        return 1;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        list->tuples[i].elements = (int*)malloc(sizeof(int) * tuples_array[i].size);
+        if (list->tuples[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list->tuples[j].elements);
+            }
+            free(list->tuples);
+            free(list);
+            return 1;
+        }
+        memcpy(list->tuples[i].elements, tuples_array[i].elements, sizeof(int) * tuples_array[i].size);
+        list->tuples[i].size = tuples_array[i].size;
+    }
+
+    TupleList *trimmed = trim_tuples(list, 1);
+    if (trimmed != NULL) {
+        printf("[");
+        for (int i = 0; i < trimmed->count; i++) {
+            printf("(");
+            if (trimmed->tuples[i].size > 0 && trimmed->tuples[i].elements != NULL) {
+                for (int j = 0; j < trimmed->tuples[i].size; j++) {
+                    printf("%d", trimmed->tuples[i].elements[j]);
+                    if (j < trimmed->tuples[i].size - 1) {
+                        printf(", ");
+                    }
+                }
+            }
+            printf(")");
+            if (i < trimmed->count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free_tuple_list(trimmed);
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    free(list);
+
+    return 0;
+}

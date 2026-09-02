@@ -1,0 +1,63 @@
+{
+  "task_id": 489,
+  "text": "Write a C function to find the frequency of the largest value in a given array.",
+  "fn_candidates": [
+    "frequency_Of_Largest",
+    "FrequencyOfLargest",
+    "frequencyOfLargest",
+    "frequencyOfLargest"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "frequency_Of_Largest",
+      "args": [
+        5,
+        [
+          1,
+          2,
+          3,
+          4,
+          4
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert frequency_Of_Largest(5,[1,2,3,4,4]) == 2"
+    },
+    {
+      "fn_name": "frequency_Of_Largest",
+      "args": [
+        3,
+        [
+          5,
+          6,
+          5
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert frequency_Of_Largest(3,[5,6,5]) == 1"
+    },
+    {
+      "fn_name": "frequency_Of_Largest",
+      "args": [
+        4,
+        [
+          2,
+          7,
+          7,
+          7
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert frequency_Of_Largest(4,[2,7,7,7]) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Element {
+    char *value;
+    struct Element *next;
+} Element;
+
+Element* create_element(char *val) {
+    Element *new_elem = (Element*)malloc(sizeof(Element));
+    if (!new_elem) return NULL;
+    new_elem->value = strdup(val);
+    new_elem->next = NULL;
+    return new_elem;
+}
+
+void insert_at_end(Element **head, char *val) {
+    Element *new_elem = create_element(val);
+    if (*head == NULL) {
+        *head = new_elem;
+        return;
+    }
+    Element *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_elem;
+}
+
+Element* tuple_to_list(char *tuple, const char *separator, const char *insert_string) {
+    char *token = strtok(tuple, separator);
+    Element *list = NULL;
+    
+    while (token != NULL) {
+        insert_at_end(&list, token);
+        if (insert_string)
+            insert_at_end(&list, (char *)insert_string);
+        token = strtok(NULL, separator);
+    }
+
+    return list;
+}
+
+void free_list(Element *head) {
+    Element *current = head;
+    while (current != NULL) {
+        Element *temp = current;
+        current = current->next;
+        free(temp->value);
+        free(temp);
+    }
+}
+
+int main() {
+    char *tuple = "1,2,3,4";
+    const char *separator = ",";
+    const char *insert_string = "X";
+
+    Element *list = tuple_to_list(tuple, separator, insert_string);
+
+    Element *temp = list;
+    while (temp != NULL) {
+        printf("%s -> ", temp->value);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+
+    free_list(list);
+
+    return 0;
+}
+```

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-825.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-825.c:4:36: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+int* access_multiple_elements(int *list, int list_size, int *indices, int indices_count, int *result_count) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-825.c:4:62: style: Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+int* access_multiple_elements(int *list, int list_size, int *indices, int indices_count, int *result_count) {
+                                                             ^

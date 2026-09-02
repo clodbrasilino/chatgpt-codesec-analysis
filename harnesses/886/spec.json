@@ -1,0 +1,58 @@
+{
+  "task_id": 886,
+  "text": "Write a C function to add all the numbers in a list and divide it with the length of the list.",
+  "fn_candidates": [
+    "sum_num",
+    "SumNum",
+    "sumNum",
+    "sumnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_num",
+      "args": [
+        [
+          8,
+          2,
+          3,
+          0,
+          7
+        ]
+      ],
+      "expected": 4.0,
+      "assert_src": "assert sum_num((8, 2, 3, 0, 7))==4.0"
+    },
+    {
+      "fn_name": "sum_num",
+      "args": [
+        [
+          -10,
+          -20,
+          -30
+        ]
+      ],
+      "expected": -20.0,
+      "assert_src": "assert sum_num((-10,-20,-30))==-20.0"
+    },
+    {
+      "fn_name": "sum_num",
+      "args": [
+        [
+          19,
+          15,
+          18
+        ]
+      ],
+      "expected": 17.333333333333332,
+      "assert_src": "assert sum_num((19,15,18))==17.333333333333332"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

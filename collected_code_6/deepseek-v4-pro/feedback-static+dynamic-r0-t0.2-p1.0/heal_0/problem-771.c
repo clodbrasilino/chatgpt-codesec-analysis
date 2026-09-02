@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_SIZE 100
+
+typedef struct {
+    char items[MAX_SIZE];
+    int top;
+} Stack;
+
+void initStack(Stack *s) {
+    s->top = -1;
+}
+
+int isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+int isFull(Stack *s) {
+    return s->top == MAX_SIZE - 1;
+}
+
+void push(Stack *s, char c) {
+    if (!isFull(s)) {
+        s->items[++(s->top)] = c;
+    }
+}
+
+char pop(Stack *s) {
+    if (!isEmpty(s)) {
+        return s->items[(s->top)--];
+    }
+    return '\0';
+}
+
+int isMatchingPair(char open, char close) {
+    if (open == '(' && close == ')') return 1;
+    if (open == '{' && close == '}') return 1;
+    if (open == '[' && close == ']') return 1;
+    return 0;
+}
+
+int isBalanced(const char *expression) {
+    Stack stack;
+    initStack(&stack);
+    
+    for (int i = 0; expression[i] != '\0'; i++) {
+        char current = expression[i];
+        
+        if (current == '(' || current == '{' || current == '[') {
+            push(&stack, current);
+        }
+        else if (current == ')' || current == '}' || current == ']') {
+            if (isEmpty(&stack)) {
+                return 0;
+            }
+            
+            char top = pop(&stack);
+            if (!isMatchingPair(top, current)) {
+                return 0;
+            }
+        }
+    }
+    
+    return isEmpty(&stack);
+}
+
+int main() {
+    char expression[MAX_SIZE];
+    
+    printf("Enter an expression: ");
+    if (fgets(expression, sizeof(expression), stdin) != NULL) {
+        size_t len = strlen(expression);
+        if (len > 0 && expression[len - 1] == '\n') {
+            expression[len - 1] = '\0';
+        }
+        
+        if (isBalanced(expression)) {
+            printf("Balanced\n");
+        } else {
+            printf("Not Balanced\n");
+        }
+    }
+    
+    return 0;
+}

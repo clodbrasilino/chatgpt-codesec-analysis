@@ -1,0 +1,94 @@
+{
+  "task_id": 817,
+  "text": "Write a C function to find numbers divisible by m or n from a list of numbers.",
+  "fn_candidates": [
+    "div_of_nums",
+    "DivOfNums",
+    "divOfNums",
+    "divofnums"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "div_of_nums",
+      "args": [
+        [
+          19,
+          65,
+          57,
+          39,
+          152,
+          639,
+          121,
+          44,
+          90,
+          190
+        ],
+        19,
+        13
+      ],
+      "expected": [
+        19,
+        65,
+        57,
+        39,
+        152,
+        190
+      ],
+      "assert_src": "assert div_of_nums([19, 65, 57, 39, 152, 639, 121, 44, 90, 190],19,13)==[19, 65, 57, 39, 152, 190]"
+    },
+    {
+      "fn_name": "div_of_nums",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          10
+        ],
+        2,
+        5
+      ],
+      "expected": [
+        2,
+        5,
+        8,
+        10
+      ],
+      "assert_src": "assert div_of_nums([1, 2, 3, 5, 7, 8, 10],2,5)==[2, 5, 8, 10]"
+    },
+    {
+      "fn_name": "div_of_nums",
+      "args": [
+        [
+          10,
+          15,
+          14,
+          13,
+          18,
+          12,
+          20
+        ],
+        10,
+        5
+      ],
+      "expected": [
+        10,
+        15,
+        20
+      ],
+      "assert_src": "assert div_of_nums([10,15,14,13,18,12,20],10,5)==[10, 15, 20]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

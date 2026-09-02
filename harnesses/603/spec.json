@@ -1,0 +1,76 @@
+{
+  "task_id": 603,
+  "text": "Write a C function to get a lucid number smaller than or equal to n.",
+  "fn_candidates": [
+    "get_ludic",
+    "GetLudic",
+    "getLudic",
+    "getludic"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_ludic",
+      "args": [
+        10
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "assert_src": "assert get_ludic(10) == [1, 2, 3, 5, 7]"
+    },
+    {
+      "fn_name": "get_ludic",
+      "args": [
+        25
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        11,
+        13,
+        17,
+        23,
+        25
+      ],
+      "assert_src": "assert get_ludic(25) == [1, 2, 3, 5, 7, 11, 13, 17, 23, 25]"
+    },
+    {
+      "fn_name": "get_ludic",
+      "args": [
+        45
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        5,
+        7,
+        11,
+        13,
+        17,
+        23,
+        25,
+        29,
+        37,
+        41,
+        43
+      ],
+      "assert_src": "assert get_ludic(45) == [1, 2, 3, 5, 7, 11, 13, 17, 23, 25, 29, 37, 41, 43]"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

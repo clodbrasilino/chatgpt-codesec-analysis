@@ -1,0 +1,64 @@
+{
+  "task_id": 956,
+  "text": "Write a C function to split the given string at uppercase letters by using regex.",
+  "fn_candidates": [
+    "split_list",
+    "SplitList",
+    "splitList",
+    "splitlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "split_list",
+      "args": [
+        "LearnToBuildAnythingWithGoogle"
+      ],
+      "expected": [
+        "Learn",
+        "To",
+        "Build",
+        "Anything",
+        "With",
+        "Google"
+      ],
+      "assert_src": "assert split_list(\"LearnToBuildAnythingWithGoogle\") == ['Learn', 'To', 'Build', 'Anything', 'With', 'Google']"
+    },
+    {
+      "fn_name": "split_list",
+      "args": [
+        "ApmlifyingTheBlack+DeveloperCommunity"
+      ],
+      "expected": [
+        "Apmlifying",
+        "The",
+        "Black+",
+        "Developer",
+        "Community"
+      ],
+      "assert_src": "assert split_list(\"ApmlifyingTheBlack+DeveloperCommunity\") == ['Apmlifying', 'The', 'Black+', 'Developer', 'Community']"
+    },
+    {
+      "fn_name": "split_list",
+      "args": [
+        "UpdateInTheGoEcoSystem"
+      ],
+      "expected": [
+        "Update",
+        "In",
+        "The",
+        "Go",
+        "Eco",
+        "System"
+      ],
+      "assert_src": "assert split_list(\"UpdateInTheGoEcoSystem\") == ['Update', 'In', 'The', 'Go', 'Eco', 'System']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

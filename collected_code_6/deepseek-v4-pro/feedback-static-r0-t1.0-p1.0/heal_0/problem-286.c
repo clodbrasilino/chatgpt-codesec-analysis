@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long max_subarray_sum(int arr[], int n, int k) {
+    if (n <= 0 || k <= 0) {
+        return 0;
+    }
+    
+    long long max_so_far = LLONG_MIN;
+    long long max_ending_here = 0;
+    long long total_sum = 0;
+    long long max_prefix = LLONG_MIN;
+    long long max_suffix = LLONG_MIN;
+    long long current_sum = 0;
+    
+    for (int i = 0; i < n; i++) {
+        total_sum += arr[i];
+        current_sum += arr[i];
+        if (current_sum > max_prefix) {
+            max_prefix = current_sum;
+        }
+    }
+    
+    current_sum = 0;
+    for (int i = n - 1; i >= 0; i--) {
+        current_sum += arr[i];
+        if (current_sum > max_suffix) {
+            max_suffix = current_sum;
+        }
+    }
+    
+    int size = n * (k < 3 ? k : 3);
+    if (size <= 0) {
+        size = n;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        max_ending_here += arr[i % n];
+        if (max_so_far < max_ending_here) {
+            max_so_far = max_ending_here;
+        }
+        if (max_ending_here < 0) {
+            max_ending_here = 0;
+        }
+    }
+    
+    if (k > 2 && total_sum > 0) {
+        long long candidate = max_suffix + (k - 2) * total_sum + max_prefix;
+        if (candidate > max_so_far) {
+            max_so_far = candidate;
+        }
+    }
+    
+    return max_so_far;
+}
+
+int main() {
+    int t;
+    scanf("%d", &t);
+    
+    while (t--) {
+        int n, k;
+        scanf("%d %d", &n, &k);
+        
+        int *arr = (int *)malloc(n * sizeof(int));
+        if (arr == NULL) {
+            return 1;
+        }
+        
+        for (int i = 0; i < n; i++) {
+            scanf("%d", &arr[i]);
+        }
+        
+        long long result = max_subarray_sum(arr, n, k);
+        printf("%lld\n", result);
+        
+        free(arr);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    int *elements;
+    int size;
+    int capacity;
+} Set;
+
+Set* set_create() {
+    Set *set = (Set*)malloc(sizeof(Set));
+    if (!set) return NULL;
+    set->capacity = 10;
+    set->size = 0;
+    set->elements = (int*)malloc(set->capacity * sizeof(int));
+    if (!set->elements) {
+        free(set);
+        return NULL;
+    }
+    return set;
+}
+
+int set_contains(Set *set, int value) {
+    for (int i = 0; i < set->size; i++) {
+        if (set->elements[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int set_add(Set *set, int value) {
+    if (set_contains(set, value)) {
+        return 0;
+    }
+    if (set->size >= set->capacity) {
+        int new_capacity = set->capacity * 2;
+        int *new_elements = (int*)realloc(set->elements, new_capacity * sizeof(int));
+        if (!new_elements) {
+            return -1;
+        }
+        set->elements = new_elements;
+        set->capacity = new_capacity;
+    }
+    set->elements[set->size] = value;
+    set->size++;
+    return 1;
+}
+
+void set_destroy(Set *set) {
+    if (set) {
+        free(set->elements);
+        free(set);
+    }
+}
+
+int* tuple_union(Tuple *tuples, int tuple_count, int *result_size) {
+    if (!tuples || tuple_count <= 0 || !result_size) {
+        return NULL;
+    }
+    
+    Set *union_set = set_create();
+    if (!union_set) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < tuple_count; i++) {
+        for (int j = 0; j < tuples[i].size; j++) {
+            if (set_add(union_set, tuples[i].elements[j]) < 0) {
+                set_destroy(union_set);
+                return NULL;
+            }
+        }
+    }
+    
+    int *result = (int*)malloc(union_set->size * sizeof(int));
+    if (!result) {
+        set_destroy(union_set);
+        return NULL;
+    }
+    
+    for (int i = 0; i < union_set->size; i++) {
+        result[i] = union_set->elements[i];
+    }
+    
+    *result_size = union_set->size;
+    set_destroy(union_set);
+    return result;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4};
+    int arr2[] = {3, 4, 5, 6};
+    int arr3[] = {7, 8, 9};
+    
+    Tuple tuples[3];
+    tuples[0].elements = arr1;
+    tuples[0].size = 4;
+    tuples[1].elements = arr2;
+    tuples[1].size = 4;
+    tuples[2].elements = arr3;
+    tuples[2].size = 3;
+    
+    int result_size = 0;
+    int *result = tuple_union(tuples, 3, &result_size);
+    
+    if (result) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+    
+    return 0;
+}

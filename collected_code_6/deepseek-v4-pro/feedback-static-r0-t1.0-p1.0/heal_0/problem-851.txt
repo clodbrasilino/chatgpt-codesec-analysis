@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double sum_inverse_divisors(int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+    
+    double sum = 0.0;
+    for (int i = 1; i <= n; i++) {
+        if (n % i == 0) {
+            sum += 1.0 / i;
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int num;
+    
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (num <= 0) {
+        fprintf(stderr, "Number must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = sum_inverse_divisors(num);
+    printf("Sum of inverse of divisors of %d: %f\n", num, result);
+    
+    return EXIT_SUCCESS;
+}
+```

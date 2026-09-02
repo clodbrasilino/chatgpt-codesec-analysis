@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void countingSort(const int arr[], int n, int max, int min) {
+    int range = max - min + 1;
+    int *countArr = (int *)malloc(range * sizeof(int));
+    int *outputArr = (int *)calloc(n, sizeof(int));
+
+    for (int i = 0; i < range; i++) {
+        countArr[i] = 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        countArr[arr[i] - min]++;
+    }
+
+    for (int i = 1; i < range; i++) {
+        countArr[i] += countArr[i - 1];
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        outputArr[countArr[arr[i] - min] - 1] = arr[i];
+        countArr[arr[i] - min]--;
+    }
+
+    for (int i = 0; i < n; i++) {
+        /* Possible weaknesses found:
+         *  read-only variable is not assignable
+         *  assignment of read-only location '*(arr + (sizetype)((long unsigned int)i * 4))'
+         */
+        arr[i] = outputArr[i];
+    }
+
+    free(countArr);
+    free(outputArr);
+}
+
+int findMin(const int arr[], int n) {
+    int min = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+    return min;
+}
+
+int findMax(const int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+int main() {
+    int arr[] = {4, 2, 2, 8, 3, 3, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int min = findMin(arr, n);
+    int max = findMax(arr, n);
+
+    countingSort(arr, n, max, min);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    return 0;
+}

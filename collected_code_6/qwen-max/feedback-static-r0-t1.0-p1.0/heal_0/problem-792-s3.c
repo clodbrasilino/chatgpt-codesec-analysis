@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+int count_lists(int num_lists) {
+    return num_lists;
+}
+
+int main() {
+    int num_lists = 5;
+    int result = count_lists(num_lists);
+    printf("Number of lists: %d\n", result);
+    return 0;
+}

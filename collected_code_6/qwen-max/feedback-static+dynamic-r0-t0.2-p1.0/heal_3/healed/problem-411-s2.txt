@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake_str) {
+    int len = strlen(snake_str);
+    char *camel_str = malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    int camel_idx = 0;
+    for (int i = 0; i < len; i++) {
+        if (snake_str[i] == '_') {
+            i++;
+            if (i < len) {
+                camel_str[camel_idx++] = toupper(snake_str[i]);
+            }
+        } else {
+            camel_str[camel_idx++] = snake_str[i];
+        }
+    }
+    camel_str[camel_idx] = '\0';
+
+    char *result = realloc(camel_str, camel_idx + 1);
+    if (result == NULL) {
+        free(camel_str);
+        return NULL;
+    }
+
+    char *temp = result;
+    if (islower(result[0])) {
+        result[0] = toupper(result[0]);
+    }
+    for (int i = 1; temp[i] != '\0'; i++) {
+        if (isupper(temp[i-1]) && isupper(temp[i])) {
+            temp[i] = tolower(temp[i]);
+        }
+    }
+    return result;
+}
+
+int main() {
+    const char *test_cases[] = {"google_pixel", "apple_watch", "android_tv"};
+    const char *expected[] = {"GooglePixel", "AppleWatch", "AndroidTv"};
+
+    for (int i = 0; i < 3; i++) {
+        char *camel_str = snake_to_camel(test_cases[i]);
+        if (camel_str != NULL) {
+            if (strcmp(camel_str, expected[i]) == 0) {
+                printf("Test case %d: Passed\n", i);
+            } else {
+                printf("Test case %d: Failed, expected '%s', got '%s'\n", i, expected[i], camel_str);
+            }
+            free(camel_str);
+        } else {
+            printf("Test case %d: Conversion failed.\n", i);
+        }
+    }
+
+    return 0;
+}
+```

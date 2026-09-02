@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_perfect(int n) {
+    int sum = 0;
+    for (int i = 1; i <= n / 2; ++i) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    return sum == n;
+}
+
+int square_root_of_perfect(int n) {
+    if (is_perfect(n)) {
+        for (int i = 1; i * i <= n; ++i) {
+            if (i * i == n) {
+                return i;
+            }
+        }
+    }
+    return -1; // Indicate no valid square root found
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    int result = square_root_of_perfect(n);
+    if (result != -1) {
+        printf("Square root of the perfect number %d is %d\n", n, result);
+    } else {
+        printf("The number %d is not a perfect number or does not have an integer square root.\n", n);
+    }
+
+    return 0;
+}

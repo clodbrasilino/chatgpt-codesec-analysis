@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *move_numbers_to_string(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    for (size_t i = 0; i < input_len; i++) {
+        if (isdigit((unsigned char)input[i])) {
+            result[result_index++] = input[i];
+        }
+    }
+    result[result_index] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *test_string = "a1b2c3d4e5";
+    char *numbers = move_numbers_to_string(test_string);
+
+    if (numbers != NULL) {
+        printf("Numbers: %s\n", numbers);
+        free(numbers);
+    } else {
+        printf("Memory allocation failed or input is NULL\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

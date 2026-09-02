@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int minOperations(const int* nums, int numsSize, int k) {
+    if (nums == NULL || numsSize <= 0 || k < 0) {
+        return -1;
+    }
+    
+    int min = INT_MAX;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] < min) {
+            min = nums[i];
+        }
+    }
+    
+    if (k > min) {
+        return -1;
+    }
+    
+    int operations = 0;
+    int target = min - k;
+    int* seen = (int*)calloc(numsSize, sizeof(int));
+    if (seen == NULL) {
+        return -1;
+    }
+    
+    int uniqueCount = 0;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] < k) {
+            free(seen);
+            return -1;
+        }
+        if (nums[i] > target) {
+            int found = 0;
+            for (int j = 0; j < uniqueCount; j++) {
+                if (seen[j] == nums[i]) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                seen[uniqueCount++] = nums[i];
+                operations++;
+            }
+        }
+    }
+    
+    free(seen);
+    return operations;
+}
+
+int main(void) {
+    int nums1[] = {5, 2, 5, 4, 5};
+    int k1 = 1;
+    int size1 = sizeof(nums1) / sizeof(nums1[0]);
+    int result1 = minOperations(nums1, size1, k1);
+    printf("Test 1: %d\n", result1);
+    
+    int nums2[] = {2, 1, 2};
+    int k2 = 1;
+    int size2 = sizeof(nums2) / sizeof(nums2[0]);
+    int result2 = minOperations(nums2, size2, k2);
+    printf("Test 2: %d\n", result2);
+    
+    int nums3[] = {1, 2, 3};
+    int k3 = 2;
+    int size3 = sizeof(nums3) / sizeof(nums3[0]);
+    int result3 = minOperations(nums3, size3, k3);
+    printf("Test 3: %d\n", result3);
+    
+    int nums4[] = {1, 1, 1};
+    int k4 = 0;
+    int size4 = sizeof(nums4) / sizeof(nums4[0]);
+    int result4 = minOperations(nums4, size4, k4);
+    printf("Test 4: %d\n", result4);
+    
+    int result5 = minOperations(NULL, 0, 1);
+    printf("Test 5: %d\n", result5);
+    
+    return 0;
+}
+```

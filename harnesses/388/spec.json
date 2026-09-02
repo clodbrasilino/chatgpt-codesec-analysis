@@ -1,0 +1,44 @@
+{
+  "task_id": 388,
+  "text": "Write a C function to find the highest power of 2 that is less than or equal to n.",
+  "fn_candidates": [
+    "highest_Power_of_2",
+    "HighestPowerOf2",
+    "highestPowerOf2",
+    "highestPowerof2"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "highest_Power_of_2",
+      "args": [
+        10
+      ],
+      "expected": 8,
+      "assert_src": "assert highest_Power_of_2(10) == 8"
+    },
+    {
+      "fn_name": "highest_Power_of_2",
+      "args": [
+        19
+      ],
+      "expected": 16,
+      "assert_src": "assert highest_Power_of_2(19) == 16"
+    },
+    {
+      "fn_name": "highest_Power_of_2",
+      "args": [
+        32
+      ],
+      "expected": 32,
+      "assert_src": "assert highest_Power_of_2(32) == 32"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

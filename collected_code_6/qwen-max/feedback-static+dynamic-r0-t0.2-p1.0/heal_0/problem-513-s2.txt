@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    char **elements;
+    int size;
+} List;
+
+List *tupleToList(Tuple *t, const char *str) {
+    if (t == NULL || t->elements == NULL || str == NULL) return NULL;
+    
+    List *l = (List *)malloc(sizeof(List));
+    if (l == NULL) return NULL;
+    
+    l->size = t->size * 2;
+    l->elements = (char **)malloc(l->size * sizeof(char *));
+    if (l->elements == NULL) {
+        free(l);
+        return NULL;
+    }
+    
+    for (int i = 0, j = 0; i < t->size; ++i, j += 2) {
+        l->elements[j] = strdup(t->elements[i]);
+        if (l->elements[j] == NULL) {
+            for (int k = 0; k < j; ++k) free(l->elements[k]);
+            free(l->elements);
+            free(l);
+            return NULL;
+        }
+        l->elements[j + 1] = strdup(str);
+        if (l->elements[j + 1] == NULL) {
+            for (int k = 0; k <= j; ++k) free(l->elements[k]);
+            free(l->elements);
+            free(l);
+            return NULL;
+        }
+    }
+    
+    return l;
+}
+
+void freeList(List *l) {
+    if (l != NULL) {
+        for (int i = 0; i < l->size; ++i) {
+            free(l->elements[i]);
+        }
+        free(l->elements);
+        free(l);
+    }
+}
+
+int main() {
+    Tuple t = { .elements = (char *[]){"a", "b", "c"}, .size = 3 };
+    const char *str = "X";
+    
+    List *l = tupleToList(&t, str);
+    if (l != NULL) {
+        for (int i = 0; i < l->size; ++i) {
+            printf("%s ", l->elements[i]);
+        }
+        printf("\n");
+        freeList(l);
+    } else {
+        fprintf(stderr, "Failed to convert tuple to list.\n");
+    }
+    
+    return 0;
+}
+```

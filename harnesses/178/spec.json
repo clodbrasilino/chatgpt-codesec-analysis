@@ -1,0 +1,54 @@
+{
+  "task_id": 178,
+  "text": "Write a C function to search some literals strings in a string.",
+  "fn_candidates": [
+    "string_literals",
+    "StringLiterals",
+    "stringLiterals",
+    "stringliterals"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "string_literals",
+      "args": [
+        [
+          "language"
+        ],
+        "python language"
+      ],
+      "expected": "Matched!",
+      "assert_src": "assert string_literals(['language'],'python language')==('Matched!')"
+    },
+    {
+      "fn_name": "string_literals",
+      "args": [
+        [
+          "program"
+        ],
+        "python language"
+      ],
+      "expected": "Not Matched!",
+      "assert_src": "assert string_literals(['program'],'python language')==('Not Matched!')"
+    },
+    {
+      "fn_name": "string_literals",
+      "args": [
+        [
+          "python"
+        ],
+        "programming language"
+      ],
+      "expected": "Not Matched!",
+      "assert_src": "assert string_literals(['python'],'programming language')==('Not Matched!')"
+    }
+  ],
+  "arg_kinds": [
+    "str",
+    "str-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

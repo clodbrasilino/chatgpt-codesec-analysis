@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-896-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-896-s2.c:26:15: error: assignment to 'int (*)[3]' from incompatible pointer type 'int (**)[3]' [-Wincompatible-pointer-types]
+   26 |     list.data = tuples;
+      |               ^

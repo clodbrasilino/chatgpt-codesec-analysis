@@ -1,0 +1,50 @@
+{
+  "task_id": 334,
+  "text": "Write a C function to check whether the triangle is valid or not if sides are given.",
+  "fn_candidates": [
+    "check_Validity",
+    "CheckValidity",
+    "checkValidity",
+    "checkValidity"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Validity",
+      "args": [
+        1,
+        2,
+        3
+      ],
+      "expected": false,
+      "assert_src": "assert check_Validity(1,2,3) == False"
+    },
+    {
+      "fn_name": "check_Validity",
+      "args": [
+        2,
+        3,
+        5
+      ],
+      "expected": false,
+      "assert_src": "assert check_Validity(2,3,5) == False"
+    },
+    {
+      "fn_name": "check_Validity",
+      "args": [
+        7,
+        10,
+        5
+      ],
+      "expected": true,
+      "assert_src": "assert check_Validity(7,10,5) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

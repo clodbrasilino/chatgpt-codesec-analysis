@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+Tuple* union_tuples(Tuple *t1, Tuple *t2) {
+    int *union_elements = (int *)malloc((t1->size + t2->size) * sizeof(int));
+    if (union_elements == NULL) {
+        return NULL;
+    }
+
+    int i = 0, j = 0, k = 0;
+    while (i < t1->size && j < t2->size) {
+        if (t1->elements[i] < t2->elements[j]) {
+            union_elements[k++] = t1->elements[i++];
+        } else if (t1->elements[i] > t2->elements[j]) {
+            union_elements[k++] = t2->elements[j++];
+        } else {
+            union_elements[k++] = t1->elements[i++];
+            j++;
+        }
+    }
+
+    while (i < t1->size) {
+        union_elements[k++] = t1->elements[i++];
+    }
+
+    while (j < t2->size) {
+        union_elements[k++] = t2->elements[j++];
+    }
+
+    qsort(union_elements, k, sizeof(int), compare);
+
+    int unique_count = 0;
+    for (int l = 0; l < k; ) {
+        int count = 1;
+        while (l + count < k && union_elements[l + count] == union_elements[l]) {
+            count++;
+        }
+        if (unique_count < l || (unique_count == l && count == 1)) {
+            union_elements[unique_count++] = union_elements[l];
+        }
+        l += count;
+    }
+
+    Tuple *result = (Tuple*)malloc(sizeof(Tuple));
+    result->elements = (int*)malloc(unique_count * sizeof(int));
+    if (result->elements == NULL) {
+        free(union_elements);
+        free(result);
+        return NULL;
+    }
+    for (int m = 0; m < unique_count; m++) {
+        result->elements[m] = union_elements[m];
+    }
+    result->size = unique_count;
+
+    free(union_elements);
+    return result;
+}
+
+int main() {
+    int elements1[] = {1, 3, 5, 7};
+    int elements2[] = {3, 5, 6, 8};
+
+    Tuple t1 = {elements1, 4};
+    Tuple t2 = {elements2, 4};
+
+    Tuple *result = union_tuples(&t1, &t2);
+
+    if (result != NULL) {
+        for (int i = 0; i < result->size; i++) {
+            printf("%d ", result->elements[i]);
+        }
+        printf("\n");
+        free(result->elements);
+        free(result);
+    } else {
+        printf("Error in union operation.\n");
+    }
+
+    return 0;
+}
+```

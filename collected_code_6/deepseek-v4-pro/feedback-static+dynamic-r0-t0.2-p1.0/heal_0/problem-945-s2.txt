@@ -1,0 +1,137 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+    int capacity;
+} Set;
+
+typedef struct {
+    int *data;
+    int length;
+} Tuple;
+
+Set *create_set(int capacity) {
+    Set *set = (Set *)malloc(sizeof(Set));
+    if (set == NULL) {
+        return NULL;
+    }
+    set->elements = (int *)malloc(sizeof(int) * capacity);
+    if (set->elements == NULL) {
+        free(set);
+        return NULL;
+    }
+    set->size = 0;
+    set->capacity = capacity;
+    return set;
+}
+
+int set_contains(Set *set, int value) {
+    for (int i = 0; i < set->size; i++) {
+        if (set->elements[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int set_add(Set *set, int value) {
+    if (set_contains(set, value)) {
+        return 0;
+    }
+    if (set->size >= set->capacity) {
+        int new_capacity = set->capacity * 2;
+        int *new_elements = (int *)realloc(set->elements, sizeof(int) * new_capacity);
+        if (new_elements == NULL) {
+            return -1;
+        }
+        set->elements = new_elements;
+        set->capacity = new_capacity;
+    }
+    set->elements[set->size] = value;
+    set->size++;
+    return 1;
+}
+
+void free_set(Set *set) {
+    if (set != NULL) {
+        free(set->elements);
+        free(set);
+    }
+}
+
+Set *tuples_to_set(Tuple *tuples, int tuple_count) {
+    if (tuples == NULL || tuple_count <= 0) {
+        return NULL;
+    }
+    
+    int total_elements = 0;
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].data == NULL || tuples[i].length < 0) {
+            return NULL;
+        }
+        total_elements += tuples[i].length;
+    }
+    
+    Set *result = create_set(total_elements > 0 ? total_elements : 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < tuple_count; i++) {
+        for (int j = 0; j < tuples[i].length; j++) {
+            if (set_add(result, tuples[i].data[j]) == -1) {
+                free_set(result);
+                return NULL;
+            }
+        }
+    }
+    
+    return result;
+}
+
+void print_set(Set *set) {
+    if (set == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    printf("{");
+    for (int i = 0; i < set->size; i++) {
+        printf("%d", set->elements[i]);
+        if (i < set->size - 1) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void) {
+    int tuple1_data[] = {1, 2, 3, 2};
+    int tuple2_data[] = {3, 4, 5, 1};
+    int tuple3_data[] = {6, 7, 8};
+    
+    Tuple tuples[3];
+    tuples[0].data = tuple1_data;
+    tuples[0].length = 4;
+    tuples[1].data = tuple2_data;
+    tuples[1].length = 4;
+    tuples[2].data = tuple3_data;
+    tuples[2].length = 3;
+    
+    Set *result = tuples_to_set(tuples, 3);
+    if (result == NULL) {
+        printf("Failed to convert tuples to set\n");
+        return 1;
+    }
+    
+    printf("Resulting set: ");
+    print_set(result);
+    
+    free_set(result);
+    
+    return 0;
+}
+```

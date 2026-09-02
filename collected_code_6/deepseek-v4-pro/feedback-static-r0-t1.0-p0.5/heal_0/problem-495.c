@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_lowercase_substrings(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int reti = regcomp(&regex, "[a-z]+", REG_EXTENDED);
+    if (reti) {
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+    char *result = (char *)malloc(input_len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t result_pos = 0;
+    size_t search_pos = 0;
+    regmatch_t match;
+
+    while (search_pos < input_len && regexec(&regex, input + search_pos, 1, &match, 0) == 0) {
+        size_t match_start = search_pos + match.rm_so;
+        size_t match_end = search_pos + match.rm_eo;
+
+        if (match_start > search_pos) {
+            size_t copy_len = match_start - search_pos;
+            memcpy(result + result_pos, input + search_pos, copy_len);
+            result_pos += copy_len;
+        }
+
+        search_pos = match_end;
+
+        if (match.rm_so == match.rm_eo) {
+            if (search_pos < input_len) {
+                result[result_pos++] = input[search_pos++];
+            } else {
+                break;
+            }
+        }
+    }
+
+    if (search_pos < input_len) {
+        size_t remaining_len = input_len - search_pos;
+        memcpy(result + result_pos, input + search_pos, remaining_len);
+        result_pos += remaining_len;
+    }
+
+    result[result_pos] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "HelloWorld",
+        "abc123def456",
+        "UPPERlowerMIXEDcase",
+        "NoLowercaseHere",
+        "alllowercase",
+        "",
+        "aBcDeFgHiJkLmNoPqRsTuVwXyZ",
+        NULL
+    };
+
+    for (int i = 0; test_strings[i] != NULL; i++) {
+        char *result = remove_lowercase_substrings(test_strings[i]);
+        if (result != NULL) {
+            printf("Input: '%s' -> Output: '%s'\n", test_strings[i], result);
+            free(result);
+        } else {
+            printf("Input: '%s' -> Error processing\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

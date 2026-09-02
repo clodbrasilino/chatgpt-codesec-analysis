@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} ListNode;
+
+void add_element(ListNode **head, int value) {
+    ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
+    new_node->value = value;
+    new_node->next = *head;
+    *head = new_node;
+}
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->second - ((Tuple *)b)->second;
+}
+
+ListNode** group_elements(Tuple *list, int n, int *returnSize) {
+    qsort(list, n, sizeof(Tuple), compare);
+    *returnSize = 0;
+    int current_group = -1;
+    ListNode **result = (ListNode **)malloc(n * sizeof(ListNode *));
+    
+    for (int i = 0; i < n; i++) {
+        if (list[i].second != current_group) {
+            current_group = list[i].second;
+            result[(*returnSize)++] = NULL;
+        }
+        add_element(&result[(*returnSize) - 1], list[i].first);
+    }
+    return result;
+}
+
+void print_list(ListNode *list) {
+    while (list) {
+        printf("%d -> ", list->value);
+        list = list->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    Tuple list[] = {{5, 1}, {3, 2}, {4, 1}, {2, 2}, {6, 1}};
+    int n = sizeof(list) / sizeof(list[0]);
+    int returnSize;
+    ListNode **result = group_elements(list, n, &returnSize);
+
+    for (int i = 0; i < returnSize; i++) {
+        print_list(result[i]);
+        ListNode *current = result[i];
+        while (current) {
+            ListNode *temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(result);
+
+    return 0;
+}
+```

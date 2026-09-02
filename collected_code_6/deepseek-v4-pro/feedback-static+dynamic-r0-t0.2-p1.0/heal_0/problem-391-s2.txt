@@ -1,0 +1,183 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    void *value;
+    int is_dict;
+    struct DictNode *next;
+} DictNode;
+
+typedef struct {
+    DictNode *head;
+} Dict;
+
+typedef struct {
+    char **items;
+    int length;
+} List;
+
+Dict *create_dict(void) {
+    Dict *dict = (Dict *)malloc(sizeof(Dict));
+    if (!dict) return NULL;
+    dict->head = NULL;
+    return dict;
+}
+
+DictNode *create_dict_node(const char *key, void *value, int is_dict) {
+    DictNode *node = (DictNode *)malloc(sizeof(DictNode));
+    if (!node) return NULL;
+    node->key = strdup(key);
+    if (!node->key) {
+        free(node);
+        return NULL;
+    }
+    node->value = value;
+    node->is_dict = is_dict;
+    node->next = NULL;
+    return node;
+}
+
+void dict_set(Dict *dict, const char *key, void *value, int is_dict) {
+    if (!dict || !key) return;
+    DictNode *node = create_dict_node(key, value, is_dict);
+    if (!node) return;
+    node->next = dict->head;
+    dict->head = node;
+}
+
+DictNode *dict_get(Dict *dict, const char *key) {
+    if (!dict || !key) return NULL;
+    DictNode *current = dict->head;
+    while (current) {
+        if (strcmp(current->key, key) == 0) return current;
+        current = current->next;
+    }
+    return NULL;
+}
+
+void free_dict(Dict *dict) {
+    if (!dict) return;
+    DictNode *current = dict->head;
+    while (current) {
+        DictNode *next = current->next;
+        free(current->key);
+        if (current->is_dict && current->value) {
+            free_dict((Dict *)current->value);
+        } else {
+            free(current->value);
+        }
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+Dict *lists_to_nested_dict(List *keys_list, List *values_list, int num_lists) {
+    if (!keys_list || !values_list || num_lists <= 0) return NULL;
+    
+    Dict *root = create_dict();
+    if (!root) return NULL;
+    
+    for (int i = 0; i < num_lists; i++) {
+        if (keys_list[i].length != values_list[i].length) {
+            free_dict(root);
+            return NULL;
+        }
+    }
+    
+    for (int i = 0; i < keys_list[0].length; i++) {
+        Dict *current_dict = root;
+        
+        for (int j = 0; j < num_lists - 1; j++) {
+            const char *key = keys_list[j].items[i];
+            DictNode *existing = dict_get(current_dict, key);
+            
+            if (!existing) {
+                Dict *new_dict = create_dict();
+                if (!new_dict) {
+                    free_dict(root);
+                    return NULL;
+                }
+                dict_set(current_dict, key, new_dict, 1);
+                existing = dict_get(current_dict, key);
+                if (!existing) {
+                    free_dict(new_dict);
+                    free_dict(root);
+                    return NULL;
+                }
+            }
+            
+            if (!existing->is_dict) {
+                free_dict(root);
+                return NULL;
+            }
+            
+            current_dict = (Dict *)existing->value;
+        }
+        
+        const char *final_key = keys_list[num_lists - 1].items[i];
+        char *value = strdup(values_list[num_lists - 1].items[i]);
+        if (!value) {
+            free_dict(root);
+            return NULL;
+        }
+        
+        DictNode *existing_final = dict_get(current_dict, final_key);
+        if (existing_final) {
+            free(existing_final->value);
+            existing_final->value = value;
+            existing_final->is_dict = 0;
+        } else {
+            dict_set(current_dict, final_key, value, 0);
+        }
+    }
+    
+    return root;
+}
+
+void print_dict(Dict *dict, int indent) {
+    if (!dict) return;
+    DictNode *current = dict->head;
+    while (current) {
+        for (int i = 0; i < indent; i++) printf("  ");
+        printf("%s: ", current->key);
+        if (current->is_dict) {
+            printf("{\n");
+            print_dict((Dict *)current->value, indent + 1);
+            for (int i = 0; i < indent; i++) printf("  ");
+            printf("}\n");
+        } else {
+            printf("%s\n", (char *)current->value);
+        }
+        current = current->next;
+    }
+}
+
+int main(void) {
+    char *keys1[] = {"a", "b", "a"};
+    char *keys2[] = {"x", "y", "z"};
+    char *values[] = {"1", "2", "3"};
+    
+    List keys_list[2];
+    List values_list[1];
+    
+    keys_list[0].items = keys1;
+    keys_list[0].length = 3;
+    keys_list[1].items = keys2;
+    keys_list[1].length = 3;
+    
+    values_list[0].items = values;
+    values_list[0].length = 3;
+    
+    Dict *result = lists_to_nested_dict(keys_list, values_list, 2);
+    if (result) {
+        print_dict(result, 0);
+        free_dict(result);
+    }
+    
+    return 0;
+}
+```

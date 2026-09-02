@@ -1,0 +1,60 @@
+{
+  "task_id": 633,
+  "text": "Write a C function to find the sum of xor of all pairs of numbers in the given array.",
+  "fn_candidates": [
+    "pair_OR_Sum",
+    "PairOrSum",
+    "pairOrSum",
+    "pairORSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "pair_OR_Sum",
+      "args": [
+        [
+          5,
+          9,
+          7,
+          6
+        ],
+        4
+      ],
+      "expected": 47,
+      "assert_src": "assert pair_OR_Sum([5,9,7,6],4) == 47"
+    },
+    {
+      "fn_name": "pair_OR_Sum",
+      "args": [
+        [
+          7,
+          3,
+          5
+        ],
+        3
+      ],
+      "expected": 12,
+      "assert_src": "assert pair_OR_Sum([7,3,5],3) == 12"
+    },
+    {
+      "fn_name": "pair_OR_Sum",
+      "args": [
+        [
+          7,
+          3
+        ],
+        2
+      ],
+      "expected": 4,
+      "assert_src": "assert pair_OR_Sum([7,3],2) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

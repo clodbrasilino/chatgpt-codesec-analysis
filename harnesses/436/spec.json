@@ -1,0 +1,59 @@
+{
+  "task_id": 436,
+  "text": "Write a C function to print negative numbers in a list.",
+  "fn_candidates": [
+    "neg_nos",
+    "NegNos",
+    "negNos",
+    "negnos"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "neg_nos",
+      "args": [
+        [
+          -1,
+          4,
+          5,
+          -6
+        ]
+      ],
+      "expected": -1,
+      "assert_src": "assert neg_nos([-1,4,5,-6]) == -1,-6"
+    },
+    {
+      "fn_name": "neg_nos",
+      "args": [
+        [
+          -1,
+          -2,
+          3,
+          4
+        ]
+      ],
+      "expected": -1,
+      "assert_src": "assert neg_nos([-1,-2,3,4]) == -1,-2"
+    },
+    {
+      "fn_name": "neg_nos",
+      "args": [
+        [
+          -7,
+          -6,
+          8,
+          9
+        ]
+      ],
+      "expected": -7,
+      "assert_src": "assert neg_nos([-7,-6,8,9]) == -7,-6"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

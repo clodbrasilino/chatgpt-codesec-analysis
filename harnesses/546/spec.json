@@ -1,0 +1,38 @@
+{
+  "task_id": 546,
+  "text": "Write a C function to find the last occurrence of a character in a string.",
+  "fn_candidates": [
+    "last_occurence_char",
+    "LastOccurenceChar",
+    "lastOccurenceChar",
+    "lastoccurencechar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "last_occurence_char",
+      "args": [
+        "hello world",
+        "l"
+      ],
+      "expected": 10,
+      "assert_src": "assert last_occurence_char(\"hello world\",'l')==10"
+    },
+    {
+      "fn_name": "last_occurence_char",
+      "args": [
+        "language",
+        "g"
+      ],
+      "expected": 7,
+      "assert_src": "assert last_occurence_char(\"language\",'g')==7"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

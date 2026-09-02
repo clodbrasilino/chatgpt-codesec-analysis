@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple* create_tuple(int first, int second) {
+    Tuple* t = (Tuple*)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->first = first;
+    t->second = second;
+    return t;
+}
+
+void free_tuples(Tuple** tuples, int size) {
+    for (int i = 0; i < size; ++i) {
+        free(tuples[i]);
+    }
+    free(tuples);
+}
+
+/* Possible weaknesses found:
+ *  expected 'const Tuple *' but argument is of type 'Tuple **'
+ */
+const Tuple* get_nth_element(const Tuple* tuples, int n, int size) {
+    if (n < 0 || n >= size) {
+        return NULL;
+    }
+    return &tuples[n];
+}
+
+int main() {
+    int size = 5;
+    Tuple** tuples = (Tuple**)malloc(size * sizeof(Tuple*));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < size; ++i) {
+        tuples[i] = create_tuple(i, i * 2);
+        if (tuples[i] == NULL) {
+            free_tuples(tuples, i);
+            return 1;
+        }
+    }
+
+    int n = 2;
+    /* Possible weaknesses found:
+     *  passing argument 1 of 'get_nth_element' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    const Tuple* nth_element = get_nth_element(tuples, n, size);
+    if (nth_element != NULL) {
+        printf("The %dth element: (%d, %d)\n", n, nth_element->first, nth_element->second);
+    } else {
+        printf("Invalid index\n");
+    }
+
+    free_tuples(tuples, size);
+    return 0;
+}

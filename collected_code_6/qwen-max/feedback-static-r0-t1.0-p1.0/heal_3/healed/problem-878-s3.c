@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int has_k_elements(const void *tuple, size_t element_size, size_t k) {
+    if (tuple == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < k; ++i) {
+        const char *element = (const char *)tuple + i * element_size;
+    }
+    const char *next_element = (const char *)tuple + k * element_size;
+    return *(const void **)next_element == NULL;
+}
+
+int main() {
+    const int tuple[] = {1, 2, 3, 0};
+    size_t k = 3;
+    size_t element_size = sizeof(*tuple);
+    if (has_k_elements(tuple, element_size, k)) {
+        printf("Tuple has exactly %zu elements.\n", k);
+    } else {
+        printf("Tuple does not have exactly %zu elements.\n", k);
+    }
+    return 0;
+}

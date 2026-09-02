@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_median(double base1, double base2) {
+    return (base1 + base2) / 2.0;
+}
+
+int main() {
+    double base1, base2;
+
+    printf("Enter the length of the first base: ");
+    if (scanf("%lf", &base1) != 1) {
+        fprintf(stderr, "Invalid input for the first base.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the length of the second base: ");
+    if (scanf("%lf", &base2) != 1) {
+        fprintf(stderr, "Invalid input for the second base.\n");
+        return EXIT_FAILURE;
+    }
+
+    double median = find_median(base1, base2);
+    printf("The median of the trapezium is: %.2f\n", median);
+
+    return EXIT_SUCCESS;
+}

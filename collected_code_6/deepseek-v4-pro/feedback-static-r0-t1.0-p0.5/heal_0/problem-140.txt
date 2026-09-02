@@ -1,0 +1,115 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int* extract_singly_occurring(Tuple *tuples, int tuple_count, int *result_size) {
+    int max_size = 0;
+    int i, j, k;
+    
+    for (i = 0; i < tuple_count; i++) {
+        max_size += tuples[i].size;
+    }
+    
+    int *all_elements = (int*)malloc(max_size * sizeof(int));
+    int *counts = (int*)calloc(max_size, sizeof(int));
+    int *result = (int*)malloc(max_size * sizeof(int));
+    
+    if (!all_elements || !counts || !result) {
+        free(all_elements);
+        free(counts);
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int total = 0;
+    for (i = 0; i < tuple_count; i++) {
+        for (j = 0; j < tuples[i].size; j++) {
+            all_elements[total++] = tuples[i].elements[j];
+        }
+    }
+    
+    for (i = 0; i < total; i++) {
+        for (j = 0; j < total; j++) {
+            if (all_elements[i] == all_elements[j]) {
+                counts[i]++;
+            }
+        }
+    }
+    
+    int result_index = 0;
+    for (i = 0; i < total; i++) {
+        if (counts[i] == 1) {
+            int is_duplicate = 0;
+            for (k = 0; k < result_index; k++) {
+                if (result[k] == all_elements[i]) {
+                    is_duplicate = 1;
+                    break;
+                }
+            }
+            if (!is_duplicate) {
+                result[result_index++] = all_elements[i];
+            }
+        }
+    }
+    
+    *result_size = result_index;
+    
+    free(all_elements);
+    free(counts);
+    
+    if (result_index == 0) {
+        free(result);
+        return NULL;
+    }
+    
+    int *final_result = (int*)malloc(result_index * sizeof(int));
+    if (!final_result) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+    
+    for (i = 0; i < result_index; i++) {
+        final_result[i] = result[i];
+    }
+    
+    free(result);
+    return final_result;
+}
+
+int main() {
+    int tuple1_elements[] = {1, 2, 3, 4};
+    int tuple2_elements[] = {3, 4, 5, 6};
+    int tuple3_elements[] = {7, 8, 9};
+    
+    Tuple tuples[3];
+    tuples[0].elements = tuple1_elements;
+    tuples[0].size = 4;
+    tuples[1].elements = tuple2_elements;
+    tuples[1].size = 4;
+    tuples[2].elements = tuple3_elements;
+    tuples[2].size = 3;
+    
+    int result_size;
+    int *result = extract_singly_occurring(tuples, 3, &result_size);
+    
+    if (result) {
+        printf("Singly occurring elements: ");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No singly occurring elements found.\n");
+    }
+    
+    return 0;
+}
+```

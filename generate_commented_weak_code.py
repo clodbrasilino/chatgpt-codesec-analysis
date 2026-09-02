@@ -1,5 +1,6 @@
 import os
 import sys
+import tqdm
 from os.path import isfile
 
 
@@ -14,7 +15,7 @@ def generate_commented_weak_code(input_dir: str, output_dir: str) -> None:
     create_output_folders(output_dir)
 
     # Add the comments to the sources (saving on new files)
-    for problem_id in range(1, 975):
+    for problem_id in tqdm.tqdm(range(1, 975), "Generating comments on weak code: "):
         # Only write files which has weaknesses found
         if problem_id in pw_map.keys() and pw_map[problem_id] and isfile(f"{input_dir}/problem-{problem_id}.c"):
             with open(f"{input_dir}/problem-{problem_id}.c", "r") as inputfile:
@@ -29,11 +30,10 @@ def generate_commented_weak_code(input_dir: str, output_dir: str) -> None:
 def create_output_folders(path: str) -> None:
     path_elements = path.split("/")
     path = ""
-    for i in range(1, len(path_elements)):
+    for i in range(len(path_elements)):
         path += path_elements[i] + "/"
         try:
-            if i != 1:
-                os.mkdir(path)
+            os.mkdir(path)
         except FileExistsError:
             pass
 
@@ -65,6 +65,12 @@ def get_problems_weaknesses(input_dir: str) -> list[dict[str, int | list[dict[st
                     errors["errors"].extend(extract_gcc_messages(text))
             except FileNotFoundError:
                 pass
+            try:
+                with open(f"{input_dir}/problem-{i}.clang.txt", "r") as file:
+                    text += file.read()
+                    errors["errors"].extend(extract_gcc_messages(text))
+            except FileNotFoundError:
+                pass
             problems_weaknesses.append(errors)
     return problems_weaknesses
 
@@ -74,7 +80,7 @@ def extract_gcc_messages(input: str) -> list[dict[str, int | str]]:
     for line in input.split("\n"):
         tokens = line.split(":")
         if len(tokens) == 5:
-            output.append({"line": int(tokens[1]), "message": tokens[4]})
+            output.append({"line": int(tokens[1]), "message": "".join(tokens[4:])})
     return output
 
 

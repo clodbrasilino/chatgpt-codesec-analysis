@@ -1,0 +1,67 @@
+{
+  "task_id": 697,
+  "text": "Write a C function to find number of even elements in the given list.",
+  "fn_candidates": [
+    "count_even",
+    "CountEven",
+    "countEven",
+    "counteven"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_even",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          7,
+          8,
+          9,
+          10
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert count_even([1, 2, 3, 5, 7, 8, 9, 10])==3"
+    },
+    {
+      "fn_name": "count_even",
+      "args": [
+        [
+          10,
+          15,
+          14,
+          13,
+          -18,
+          12,
+          -20
+        ]
+      ],
+      "expected": 5,
+      "assert_src": "assert count_even([10,15,14,13,-18,12,-20])==5"
+    },
+    {
+      "fn_name": "count_even",
+      "args": [
+        [
+          1,
+          2,
+          4,
+          8,
+          9
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert count_even([1, 2, 4, 8, 9])==3"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List* createList() {
+    return (List*)malloc(sizeof(List));
+}
+
+void insertNode(List *list, int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+int compareLists(Node *a, Node *b) {
+    while (a && b) {
+        if (a->data != b->data) {
+            return 0;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return (a == NULL && b == NULL);
+}
+
+int countUniqueLists(List **lists, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        int isUnique = 1;
+        for (int j = i + 1; j < size; j++) {
+            if (compareLists(lists[i]->head, lists[j]->head)) {
+                isUnique = 0;
+                break;
+            }
+        }
+        if (isUnique) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    List *list1 = createList();
+    List *list2 = createList();
+    List *list3 = createList();
+
+    insertNode(list1, 1);
+    insertNode(list1, 2);
+
+    insertNode(list2, 1);
+    insertNode(list2, 2);
+
+    insertNode(list3, 3);
+    insertNode(list3, 4);
+
+    List *lists[] = {list1, list2, list3};
+    int size = sizeof(lists) / sizeof(lists[0]);
+
+    int uniqueCount = countUniqueLists(lists, size);
+
+    printf("Number of unique lists: %d\n", uniqueCount);
+
+    // Free allocated memory
+    for (int i = 0; i < size; i++) {
+        Node *current = lists[i]->head;
+        while (current) {
+            Node *temp = current;
+            current = current->next;
+            free(temp);
+        }
+        free(lists[i]);
+    }
+
+    return 0;
+}
+```

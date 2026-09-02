@@ -1,0 +1,93 @@
+{
+  "task_id": 597,
+  "text": "Write a C function to find kth element from the given two sorted arrays.",
+  "fn_candidates": [
+    "find_kth",
+    "FindKth",
+    "findKth",
+    "findkth"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_kth",
+      "args": [
+        [
+          2,
+          3,
+          6,
+          7,
+          9
+        ],
+        [
+          1,
+          4,
+          8,
+          10
+        ],
+        5,
+        4,
+        5
+      ],
+      "expected": 6,
+      "assert_src": "assert find_kth([2, 3, 6, 7, 9], [1, 4, 8, 10], 5, 4, 5) == 6"
+    },
+    {
+      "fn_name": "find_kth",
+      "args": [
+        [
+          100,
+          112,
+          256,
+          349,
+          770
+        ],
+        [
+          72,
+          86,
+          113,
+          119,
+          265,
+          445,
+          892
+        ],
+        5,
+        7,
+        7
+      ],
+      "expected": 256,
+      "assert_src": "assert find_kth([100, 112, 256, 349, 770], [72, 86, 113, 119, 265, 445, 892], 5, 7, 7) == 256"
+    },
+    {
+      "fn_name": "find_kth",
+      "args": [
+        [
+          3,
+          4,
+          7,
+          8,
+          10
+        ],
+        [
+          2,
+          5,
+          9,
+          11
+        ],
+        5,
+        4,
+        6
+      ],
+      "expected": 8,
+      "assert_src": "assert find_kth([3, 4, 7, 8, 10], [2, 5, 9, 11], 5, 4, 6) == 8"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

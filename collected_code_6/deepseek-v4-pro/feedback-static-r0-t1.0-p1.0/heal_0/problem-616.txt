@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+void tuple_modulo(const Tuple *a, const Tuple *b, Tuple *result) {
+    if (a == NULL || b == NULL || result == NULL) {
+        fprintf(stderr, "Error: NULL pointer passed to tuple_modulo\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (a->size != b->size) {
+        fprintf(stderr, "Error: Tuples must have the same size\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (a->elements == NULL || b->elements == NULL) {
+        fprintf(stderr, "Error: Tuple elements are NULL\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    result->size = a->size;
+    result->elements = (int *)malloc(result->size * sizeof(int));
+    
+    if (result->elements == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (size_t i = 0; i < result->size; i++) {
+        if (b->elements[i] == 0) {
+            fprintf(stderr, "Error: Division by zero at index %zu\n", i);
+            free(result->elements);
+            exit(EXIT_FAILURE);
+        }
+        result->elements[i] = a->elements[i] % b->elements[i];
+    }
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->elements != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    int a_data[] = {10, 20, 30, 40};
+    int b_data[] = {3, 7, 5, 9};
+    
+    Tuple tuple_a = {a_data, 4};
+    Tuple tuple_b = {b_data, 4};
+    Tuple tuple_result = {NULL, 0};
+    
+    tuple_modulo(&tuple_a, &tuple_b, &tuple_result);
+    
+    printf("Result: ");
+    for (size_t i = 0; i < tuple_result.size; i++) {
+        printf("%d ", tuple_result.elements[i]);
+    }
+    printf("\n");
+    
+    free_tuple(&tuple_result);
+    
+    int c_data[] = {15, 25, 35};
+    int d_data[] = {4, 6, 8};
+    
+    Tuple tuple_c = {c_data, 3};
+    Tuple tuple_d = {d_data, 3};
+    Tuple tuple_result2 = {NULL, 0};
+    
+    tuple_modulo(&tuple_c, &tuple_d, &tuple_result2);
+    
+    printf("Result: ");
+    for (size_t i = 0; i < tuple_result2.size; i++) {
+        printf("%d ", tuple_result2.elements[i]);
+    }
+    printf("\n");
+    
+    free_tuple(&tuple_result2);
+    
+    return 0;
+}
+```

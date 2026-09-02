@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void is_lucky(const int *arr, int size, int target) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target)
+            return;
+        if (arr[i] > target)
+            break;
+    }
+    exit(1);
+}
+
+void get_lucky_numbers(int n, int *result) {
+    const int *arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        exit(1);
+    }
+    int pos = 0;
+
+    for (int i = 1; ; i += 2) {
+        /* Possible weaknesses found:
+         *  read-only variable is not assignable
+         *  assignment of read-only location '*(arr + (sizetype)((long unsigned int)pos++ * 4))'
+         */
+        arr[pos++] = i;
+        if (pos == n)
+            break;
+    }
+
+    int step = 2;
+    while (step < n) {
+        int new_pos = 0;
+        for (int i = 0; i < pos; i++) {
+            if ((i + 1) % step != 0) {
+                /* Possible weaknesses found:
+                 *  read-only variable is not assignable
+                 *  assignment of read-only location '*(arr + (sizetype)((long unsigned int)new_pos++ * 4))'
+                 */
+                arr[new_pos++] = arr[i];
+            }
+        }
+        pos = new_pos;
+        step++;
+    }
+
+    for (int i = 0; i < n; i++) {
+        result[i] = arr[i];
+    }
+    free((int *)arr);
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    if (n <= 0) {
+        return 1;
+    }
+
+    int *lucky_numbers = malloc(n * sizeof(int));
+    if (lucky_numbers == NULL) {
+        exit(1);
+    }
+
+    get_lucky_numbers(n, lucky_numbers);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", lucky_numbers[i]);
+    }
+    printf("\n");
+
+    free(lucky_numbers);
+    return 0;
+}

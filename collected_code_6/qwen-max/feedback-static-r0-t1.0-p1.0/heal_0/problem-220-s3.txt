@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void replace_chars(char *str, int max_count) {
+    if (str == NULL) return;
+    
+    int count = 0;
+    for (char *p = str; *p; ++p) {
+        if (*p == ' ' || *p == ',' || *p == '.') {
+            if (count < max_count) {
+                *p = ':';
+                ++count;
+            }
+        }
+    }
+}
+
+int main() {
+    char input[] = "This, is. a test string with spaces, commas, and dots.";
+    int max_replacements = 5;
+    
+    replace_chars(input, max_replacements);
+    printf("%s\n", input);
+
+    return 0;
+}
+```

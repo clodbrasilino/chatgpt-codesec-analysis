@@ -1,0 +1,44 @@
+{
+  "task_id": 79,
+  "text": "Write a C function to check whether the length of the word is odd or not.",
+  "fn_candidates": [
+    "word_len",
+    "WordLen",
+    "wordLen",
+    "wordlen"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "word_len",
+      "args": [
+        "Hadoop"
+      ],
+      "expected": false,
+      "assert_src": "assert word_len(\"Hadoop\") == False"
+    },
+    {
+      "fn_name": "word_len",
+      "args": [
+        "great"
+      ],
+      "expected": true,
+      "assert_src": "assert word_len(\"great\") == True"
+    },
+    {
+      "fn_name": "word_len",
+      "args": [
+        "structure"
+      ],
+      "expected": true,
+      "assert_src": "assert word_len(\"structure\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

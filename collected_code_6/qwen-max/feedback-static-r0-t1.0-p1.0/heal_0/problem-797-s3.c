@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int sum_of_odd_numbers(int l, int r) {
+    int sum = 0;
+    for (int i = (l % 2 == 0) ? l + 1 : l; i <= r; i += 2) {
+        sum += i;
+    }
+    return sum;
+}
+
+int main() {
+    int l = 1, r = 10;
+    int result = sum_of_odd_numbers(l, r);
+    printf("Sum of odd numbers between %d and %d is: %d\n", l, r, result);
+    return 0;
+}

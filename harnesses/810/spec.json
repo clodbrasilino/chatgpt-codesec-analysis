@@ -1,0 +1,129 @@
+{
+  "task_id": 810,
+  "text": "Write a C function to iterate over elements repeating each as many times as its count.",
+  "fn_candidates": [
+    "count_variable",
+    "CountVariable",
+    "countVariable",
+    "countvariable"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_variable",
+      "args": [
+        4,
+        2,
+        0,
+        -2
+      ],
+      "expected": [
+        "p",
+        "p",
+        "p",
+        "p",
+        "q",
+        "q"
+      ],
+      "assert_src": "assert count_variable(4,2,0,-2)==['p', 'p', 'p', 'p', 'q', 'q'] "
+    },
+    {
+      "fn_name": "count_variable",
+      "args": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "expected": [
+        "q",
+        "r",
+        "r",
+        "s",
+        "s",
+        "s"
+      ],
+      "assert_src": "assert count_variable(0,1,2,3)==['q', 'r', 'r', 's', 's', 's'] "
+    },
+    {
+      "fn_name": "count_variable",
+      "args": [
+        11,
+        15,
+        12,
+        23
+      ],
+      "expected": [
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "p",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "q",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "r",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s",
+        "s"
+      ],
+      "assert_src": "assert count_variable(11,15,12,23)==['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'q', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 'r', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's', 's']"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

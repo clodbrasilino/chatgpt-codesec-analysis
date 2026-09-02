@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+double round_to_digits(double value, int digits) {
+    if (digits < 0 || digits > 308) {
+        errno = EINVAL;
+        return value;
+    }
+
+    if (!isfinite(value)) {
+        return value;
+    }
+
+    double factor = pow(10.0, digits);
+    if (!isfinite(factor)) {
+        errno = ERANGE;
+        return value;
+    }
+
+    double scaled = value * factor;
+    if (!isfinite(scaled)) {
+        errno = ERANGE;
+        return value;
+    }
+
+    if (fabs(scaled) > (double)LLONG_MAX) {
+        errno = ERANGE;
+        return value;
+    }
+
+    double rounded = round(scaled);
+    double result = rounded / factor;
+
+    if (!isfinite(result)) {
+        errno = ERANGE;
+        return value;
+    }
+
+    return result;
+}
+
+int main(void) {
+    double values[] = {3.14159, 2.71828, 123.456789, 0.000123456, 987654.321, -42.424242};
+    int digits[] = {2, 3, 4, 6, 0, 5};
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < count; i++) {
+        errno = 0;
+        double result = round_to_digits(values[i], digits[i]);
+        printf("round_to_digits(%.9f, %d) = %.9f", values[i], digits[i], result);
+        if (errno != 0) {
+            printf(" (errno=%d)", errno);
+        }
+        printf("\n");
+    }
+
+    errno = 0;
+    double special = round_to_digits(INFINITY, 3);
+    printf("round_to_digits(INFINITY, 3) = %f (errno=%d)\n", special, errno);
+
+    errno = 0;
+    special = round_to_digits(1.234, -2);
+    printf("round_to_digits(1.234, -2) = %f (errno=%d)\n", special, errno);
+
+    return 0;
+}
+```

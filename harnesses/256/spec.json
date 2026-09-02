@@ -1,0 +1,44 @@
+{
+  "task_id": 256,
+  "text": "Write a C function to count the number of prime numbers less than a given non-negative number.",
+  "fn_candidates": [
+    "count_Primes_nums",
+    "CountPrimesNums",
+    "countPrimesNums",
+    "countPrimesnums"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Primes_nums",
+      "args": [
+        5
+      ],
+      "expected": 2,
+      "assert_src": "assert count_Primes_nums(5) == 2"
+    },
+    {
+      "fn_name": "count_Primes_nums",
+      "args": [
+        10
+      ],
+      "expected": 4,
+      "assert_src": "assert count_Primes_nums(10) == 4"
+    },
+    {
+      "fn_name": "count_Primes_nums",
+      "args": [
+        100
+      ],
+      "expected": 25,
+      "assert_src": "assert count_Primes_nums(100) == 25"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

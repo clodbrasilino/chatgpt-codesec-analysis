@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_duplicates(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return;
+    }
+
+    int *seen = NULL;
+    int seen_count = 0;
+    int seen_capacity = 0;
+
+    for (int i = 0; i < size; i++) {
+        int found = 0;
+        for (int j = 0; j < seen_count; j++) {
+            if (arr[i] == seen[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (found) {
+            continue;
+        }
+
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                if (seen_count == seen_capacity) {
+                    int new_capacity = seen_capacity == 0 ? 8 : seen_capacity * 2;
+                    int *temp = (int *)realloc(seen, new_capacity * sizeof(int));
+                    if (temp == NULL) {
+                        free(seen);
+                        return;
+                    }
+                    seen = temp;
+                    seen_capacity = new_capacity;
+                }
+                seen[seen_count++] = arr[i];
+                printf("%d ", arr[i]);
+                break;
+            }
+        }
+    }
+
+    free(seen);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 2, 7, 8, 8, 3, 1, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    print_duplicates(arr, size);
+
+    return 0;
+}

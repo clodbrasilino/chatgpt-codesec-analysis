@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_digits(long n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+void divide_into_two_parts_with_max_sum(long num, long *part1, long *part2) {
+    int max_sum = -1;
+    for (long i = 1; i < num; i++) {
+        long current_part = i;
+        long other_part = num - i;
+        int current_sum = sum_of_digits(current_part) + sum_of_digits(other_part);
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            *part1 = current_part;
+            *part2 = other_part;
+        }
+    }
+}
+
+int main() {
+    long num, part1 = 0, part2 = 0;
+    printf("Enter a number: ");
+    if (scanf("%ld", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    divide_into_two_parts_with_max_sum(num, &part1, &part2);
+    printf("The two parts are: %ld and %ld with maximum digit sum\n", part1, part2);
+
+    return EXIT_SUCCESS;
+}

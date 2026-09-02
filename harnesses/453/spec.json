@@ -1,0 +1,44 @@
+{
+  "task_id": 453,
+  "text": "Write a C function to find the sum of even factors of a number.",
+  "fn_candidates": [
+    "sumofFactors",
+    "Sumoffactors",
+    "sumofFactors",
+    "sumofFactors"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sumofFactors",
+      "args": [
+        18
+      ],
+      "expected": 26,
+      "assert_src": "assert sumofFactors(18) == 26"
+    },
+    {
+      "fn_name": "sumofFactors",
+      "args": [
+        30
+      ],
+      "expected": 48,
+      "assert_src": "assert sumofFactors(30) == 48"
+    },
+    {
+      "fn_name": "sumofFactors",
+      "args": [
+        6
+      ],
+      "expected": 8,
+      "assert_src": "assert sumofFactors(6) == 8"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

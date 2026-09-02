@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple* join_tuples(Tuple *tuples, int n, int *result_count) {
+    if (n == 0) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    Tuple *result = (Tuple *)malloc(n * sizeof(Tuple));
+    if (!result) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    *result_count = 1;
+    result[0] = tuples[0];
+
+    for (int i = 1; i < n; ++i) {
+        if (tuples[i].a == result[*result_count - 1].a) {
+            result[*result_count - 1].b += tuples[i].b;
+        } else {
+            result[*result_count] = tuples[i];
+            (*result_count)++;
+        }
+    }
+
+    result = (Tuple *)realloc(result, *result_count * sizeof(Tuple));
+    if (!result) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    return result;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {1, 3}, {2, 4}, {2, 5}, {3, 6}};
+    int n = 5;
+    int result_count = 0;
+
+    Tuple *result = join_tuples(tuples, n, &result_count);
+
+    if (result) {
+        for (int i = 0; i < result_count; ++i) {
+            printf("(%d, %d) ", result[i].a, result[i].b);
+        }
+        free(result);
+    } else {
+        printf("Failed to join tuples\n");
+    }
+
+    return 0;
+}
+```

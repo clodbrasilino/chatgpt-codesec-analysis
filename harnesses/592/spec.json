@@ -1,0 +1,44 @@
+{
+  "task_id": 592,
+  "text": "Write a C function to find sum of product of binomial co-efficients.",
+  "fn_candidates": [
+    "sum_Of_product",
+    "SumOfProduct",
+    "sumOfProduct",
+    "sumOfproduct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Of_product",
+      "args": [
+        3
+      ],
+      "expected": 15,
+      "assert_src": "assert sum_Of_product(3) == 15"
+    },
+    {
+      "fn_name": "sum_Of_product",
+      "args": [
+        4
+      ],
+      "expected": 56,
+      "assert_src": "assert sum_Of_product(4) == 56"
+    },
+    {
+      "fn_name": "sum_Of_product",
+      "args": [
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert sum_Of_product(1) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

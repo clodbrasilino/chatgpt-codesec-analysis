@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+
+bool check_string(const char *str, size_t length) {
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+
+    for (size_t i = 0; i < length; ++i) {
+        if (isupper(str[i])) {
+            has_upper = true;
+        } else if (islower(str[i])) {
+            has_lower = true;
+        } else if (isdigit(str[i])) {
+            has_digit = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit && (strlen(str) == length);
+}
+
+int main() {
+    const char *test_string = "Aa1";
+    size_t length = 3;
+
+    if (check_string(test_string, length)) {
+        printf("String is valid.\n");
+    } else {
+        printf("String is invalid.\n");
+    }
+
+    return 0;
+}
+```

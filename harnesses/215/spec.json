@@ -1,0 +1,42 @@
+{
+  "task_id": 215,
+  "text": "Write a C function to decode a run-length encoded given list.",
+  "fn_candidates": [
+    "decode_list",
+    "DecodeList",
+    "decodeList",
+    "decodelist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "decode_list",
+      "args": [
+        [
+          "p",
+          "y",
+          "t",
+          "h",
+          "o",
+          "n"
+        ]
+      ],
+      "expected": [
+        "p",
+        "y",
+        "t",
+        "h",
+        "o",
+        "n"
+      ],
+      "assert_src": "assert decode_list(['p', 'y', 't', 'h', 'o', 'n'])==['p', 'y', 't', 'h', 'o', 'n']"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

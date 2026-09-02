@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+
+const char* chinese_zodiac(int year) {
+    const char* animals[] = {
+        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
+        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
+    };
+    
+    int index = ((year - 4) % 12 + 12) % 12;
+    return animals[index];
+}
+
+int main(void) {
+    int year;
+    
+    printf("Enter a year: ");
+    if (scanf("%d", &year) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("%d is the year of the %s\n", year, chinese_zodiac(year));
+    
+    return 0;
+}
+```

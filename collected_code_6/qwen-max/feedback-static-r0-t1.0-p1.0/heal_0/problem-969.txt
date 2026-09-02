@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    char name[50];
+} Tuple;
+
+Tuple* create_tuple(int id, const char *name) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    t->id = id;
+    strncpy(t->name, name, 49);
+    t->name[49] = '\0';
+    return t;
+}
+
+void append_name(char *dest, const char *src) {
+    size_t dest_len = strlen(dest);
+    if (dest_len + strlen(src) + 2 > 49) {
+        dest[49] = '\0';
+        return;
+    }
+    strcat(dest, ", ");
+    strcat(dest, src);
+}
+
+Tuple* join_tuples(Tuple *a, Tuple *b) {
+    if (a->id != b->id) {
+        return NULL;
+    }
+    append_name(a->name, b->name);
+    free(b);
+    return a;
+}
+
+int main() {
+    Tuple *t1 = create_tuple(1, "Alice");
+    Tuple *t2 = create_tuple(1, "Bob");
+    Tuple *t3 = create_tuple(2, "Carol");
+
+    Tuple *result = join_tuples(t1, t2);
+    if (result != NULL) {
+        printf("Joined: %d - %s\n", result->id, result->name);
+        free(result);
+    } else {
+        printf("Did not join.\n");
+    }
+
+    if (t3 != NULL) {
+        free(t3);
+    }
+
+    return 0;
+}
+```

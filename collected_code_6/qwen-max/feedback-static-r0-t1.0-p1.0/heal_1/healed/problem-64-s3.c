@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef int (*CompareFunc)(const void*, const void*);
+
+int compareTuples(const void *a, const void *b) {
+    const Tuple *tupleA = a;
+    const Tuple *tupleB = b;
+    if (tupleA->first == tupleB->first)
+        return tupleA->second - tupleB->second;
+    else
+        return tupleA->first - tupleB->first;
+}
+
+void sortTuples(Tuple *tuples, size_t count, CompareFunc cmp) {
+    qsort(tuples, count, sizeof(Tuple), cmp);
+}
+
+int main() {
+    Tuple tuples[] = {{3, 1}, {2, 2}, {3, 3}, {1, 4}};
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    sortTuples(tuples, count, compareTuples);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(%d, %d) ", tuples[i].first, tuples[i].second);
+    }
+
+    return 0;
+}

@@ -1,0 +1,60 @@
+{
+  "task_id": 46,
+  "text": "Write a C function to determine whether all the numbers are different from each other are not.",
+  "fn_candidates": [
+    "test_distinct",
+    "TestDistinct",
+    "testDistinct",
+    "testdistinct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "test_distinct",
+      "args": [
+        [
+          1,
+          5,
+          7,
+          9
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert test_distinct([1,5,7,9]) == True"
+    },
+    {
+      "fn_name": "test_distinct",
+      "args": [
+        [
+          2,
+          4,
+          5,
+          5,
+          7,
+          9
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert test_distinct([2,4,5,5,7,9]) == False"
+    },
+    {
+      "fn_name": "test_distinct",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert test_distinct([1,2,3]) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

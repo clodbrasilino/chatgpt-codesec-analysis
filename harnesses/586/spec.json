@@ -1,0 +1,93 @@
+{
+  "task_id": 586,
+  "text": "Write a C function to split the array and add the first part to the end.",
+  "fn_candidates": [
+    "split_Arr",
+    "SplitArr",
+    "splitArr",
+    "splitArr"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "split_Arr",
+      "args": [
+        [
+          12,
+          10,
+          5,
+          6,
+          52,
+          36
+        ],
+        6,
+        2
+      ],
+      "expected": [
+        5,
+        6,
+        52,
+        36,
+        12,
+        10
+      ],
+      "assert_src": "assert split_Arr([12,10,5,6,52,36],6,2) == [5,6,52,36,12,10]"
+    },
+    {
+      "fn_name": "split_Arr",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        4,
+        1
+      ],
+      "expected": [
+        2,
+        3,
+        4,
+        1
+      ],
+      "assert_src": "assert split_Arr([1,2,3,4],4,1) == [2,3,4,1]"
+    },
+    {
+      "fn_name": "split_Arr",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        8,
+        3
+      ],
+      "expected": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        0,
+        1,
+        2
+      ],
+      "assert_src": "assert split_Arr([0,1,2,3,4,5,6,7],8,3) == [3,4,5,6,7,0,1,2]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

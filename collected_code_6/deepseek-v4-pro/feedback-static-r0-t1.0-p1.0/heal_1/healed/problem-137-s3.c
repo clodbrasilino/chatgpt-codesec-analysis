@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stddef.h>
+
+float zero_ratio(const int arr[], int size) {
+    if (size <= 0 || arr == NULL) {
+        return -1.0f;
+    }
+    
+    int zero_count = 0;
+    
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        }
+    }
+    
+    return (float)zero_count / size;
+}
+
+int main(void) {
+    int arr1[] = {0, 1, 0, 2, 0, 3, 0, 4};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    
+    int arr2[] = {1, 2, 3, 4, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    int arr3[] = {0, 0, 0, 0};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    float ratio1 = zero_ratio(arr1, size1);
+    float ratio2 = zero_ratio(arr2, size2);
+    float ratio3 = zero_ratio(arr3, size3);
+    
+    printf("Ratio of zeros in arr1: %.2f\n", ratio1);
+    printf("Ratio of zeros in arr2: %.2f\n", ratio2);
+    printf("Ratio of zeros in arr3: %.2f\n", ratio3);
+    
+    float ratio_invalid = zero_ratio(NULL, 5);
+    printf("Ratio with NULL array: %.2f\n", ratio_invalid);
+    
+    float ratio_invalid_size = zero_ratio(arr1, 0);
+    printf("Ratio with invalid size: %.2f\n", ratio_invalid_size);
+    
+    return 0;
+}

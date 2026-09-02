@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-833.c: In function 'add_entry':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_0/problem-833.c:21:42: error: implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+   21 |     dict->entries[dict->count - 1].key = strdup(key);
+      |                                          ^~~~~~

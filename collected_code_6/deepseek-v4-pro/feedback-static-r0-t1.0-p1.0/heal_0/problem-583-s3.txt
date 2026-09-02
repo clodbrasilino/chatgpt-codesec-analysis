@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long catalan_number(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    if (n <= 1) {
+        return 1;
+    }
+    
+    unsigned long long *catalan = (unsigned long long *)malloc((n + 1) * sizeof(unsigned long long));
+    if (catalan == NULL) {
+        return 0;
+    }
+    
+    catalan[0] = 1;
+    catalan[1] = 1;
+    
+    for (int i = 2; i <= n; i++) {
+        catalan[i] = 0;
+        for (int j = 0; j < i; j++) {
+            catalan[i] += catalan[j] * catalan[i - 1 - j];
+        }
+    }
+    
+    unsigned long long result = catalan[n];
+    free(catalan);
+    return result;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n > 33) {
+        fprintf(stderr, "Result too large for unsigned long long\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = catalan_number(n);
+    printf("Catalan number C(%d) = %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

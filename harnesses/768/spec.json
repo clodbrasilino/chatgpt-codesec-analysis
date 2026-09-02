@@ -1,0 +1,44 @@
+{
+  "task_id": 768,
+  "text": "Write a C function to check for odd parity of a given number.",
+  "fn_candidates": [
+    "check_Odd_Parity",
+    "CheckOddParity",
+    "checkOddParity",
+    "checkOddParity"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Odd_Parity",
+      "args": [
+        13
+      ],
+      "expected": true,
+      "assert_src": "assert check_Odd_Parity(13) == True"
+    },
+    {
+      "fn_name": "check_Odd_Parity",
+      "args": [
+        21
+      ],
+      "expected": true,
+      "assert_src": "assert check_Odd_Parity(21) == True"
+    },
+    {
+      "fn_name": "check_Odd_Parity",
+      "args": [
+        18
+      ],
+      "expected": false,
+      "assert_src": "assert check_Odd_Parity(18) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

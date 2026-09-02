@@ -1,0 +1,44 @@
+{
+  "task_id": 495,
+  "text": "Write a C function to remove lowercase substrings from a given string by using regex.",
+  "fn_candidates": [
+    "remove_lowercase",
+    "RemoveLowercase",
+    "removeLowercase",
+    "removelowercase"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_lowercase",
+      "args": [
+        "KDeoALOklOOHserfLoAJSIskdsf"
+      ],
+      "expected": "KDALOOOHLAJSI",
+      "assert_src": "assert remove_lowercase('KDeoALOklOOHserfLoAJSIskdsf') == 'KDALOOOHLAJSI'"
+    },
+    {
+      "fn_name": "remove_lowercase",
+      "args": [
+        "ProducTnamEstreAmIngMediAplAYer"
+      ],
+      "expected": "PTEAIMAAY",
+      "assert_src": "assert remove_lowercase('ProducTnamEstreAmIngMediAplAYer') == 'PTEAIMAAY'"
+    },
+    {
+      "fn_name": "remove_lowercase",
+      "args": [
+        "maNufacTuredbYSheZenTechNolOGIes"
+      ],
+      "expected": "NTYSZTNOGI",
+      "assert_src": "assert remove_lowercase('maNufacTuredbYSheZenTechNolOGIes') == 'NTYSZTNOGI'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

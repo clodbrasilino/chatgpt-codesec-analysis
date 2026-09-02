@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-97-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-97-s3.c:91:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before ':' token
+   91 |         for (int v : (int[]){1, 2, 3, 4, 5}) {
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-97-s3.c:92:33: error: 'v' undeclared (first use in this function)
+   92 |             add_value(lists[i], v + i);  // Modify values to simulate different lists
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-97-s3.c:92:33: note: each undeclared identifier is reported only once for each function it appears in

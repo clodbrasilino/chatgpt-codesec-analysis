@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ItemCount;
+
+ItemCount find_max_occurrences(const int *list, size_t size) {
+    ItemCount *counts = NULL;
+    size_t capacity = 0;
+    size_t num_items = 0;
+    
+    for (size_t i = 0; i < size; i++) {
+        int found = 0;
+        for (size_t j = 0; j < num_items; j++) {
+            if (counts[j].value == list[i]) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        
+        if (!found) {
+            if (num_items >= capacity) {
+                size_t new_capacity = (capacity == 0) ? 1 : capacity * 2;
+                ItemCount *new_counts = realloc(counts, new_capacity * sizeof(ItemCount));
+                if (new_counts == NULL) {
+                    free(counts);
+                    ItemCount result = {0, -1};
+                    return result;
+                }
+                counts = new_counts;
+                capacity = new_capacity;
+            }
+            
+            counts[num_items].value = list[i];
+            counts[num_items].count = 1;
+            num_items++;
+        }
+    }
+    
+    ItemCount max_item = {0, -1};
+    for (size_t i = 0; i < num_items; i++) {
+        if (counts[i].count > max_item.count) {
+            max_item = counts[i];
+        }
+    }
+    
+    free(counts);
+    return max_item;
+}
+
+int main(void) {
+    int list[] = {1, 3, 2, 3, 4, 3, 2, 3, 5, 3};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    
+    ItemCount result = find_max_occurrences(list, size);
+    
+    if (result.count != -1) {
+        printf("Item %d occurs %d times\n", result.value, result.count);
+    } else {
+        printf("No items in list\n");
+    }
+    
+    return 0;
+}
+```

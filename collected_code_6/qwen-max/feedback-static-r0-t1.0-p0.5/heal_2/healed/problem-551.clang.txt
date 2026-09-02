@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-551.c:57:17: error: call to undeclared function 'free_list'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   57 |                 free_list(sub_result);
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-551.c:57:17: note: did you mean 'create_list'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-551.c:14:7: note: 'create_list' declared here
+   14 | List* create_list() {
+      |       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-551.c:74:6: error: conflicting types for 'free_list'
+   74 | void free_list(List *list) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p0.5/heal_2/healed/problem-551.c:57:17: note: previous implicit declaration is here
+   57 |                 free_list(sub_result);
+      |                 ^
+2 errors generated.

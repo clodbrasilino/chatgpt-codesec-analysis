@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-946-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-946-s2.c:30:11: warning: Uninitialized variable: result [uninitvar]
+    qsort(result, *resultSize, sizeof(CharCount), compare);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-946-s2.c:38:34: note: Calling function 'findMostCommonElements', 2nd argument 'result' value is <Uninit>
+    findMostCommonElements(text, result, &resultSize);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-946-s2.c:23:23: note: Assuming condition is false
+        if (counts[i] > 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-946-s2.c:30:11: note: Uninitialized variable: result
+    qsort(result, *resultSize, sizeof(CharCount), compare);
+          ^

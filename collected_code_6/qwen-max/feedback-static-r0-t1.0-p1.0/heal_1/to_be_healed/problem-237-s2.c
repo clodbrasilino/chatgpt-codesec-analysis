@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *value;
+    int count;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return strcmp(((Tuple *)a)->value, ((Tuple *)b)->value);
+}
+
+int checkSimilarOccurrences(Tuple *tuples, int size) {
+    if (size <= 1) return 0;
+
+    qsort(tuples, size, sizeof(Tuple), compare);
+
+    /* Possible weaknesses found:
+     *  Variable 'matchCount' is assigned a value that is never used. [unreadVariable]
+     */
+    int matchCount = 1;
+    for (int i = 1; i < size; ++i) {
+        if (strcmp(tuples[i-1].value, tuples[i].value) == 0) {
+            tuples[i-1].count++;
+            tuples[i].count = 0;
+        }
+    }
+
+    for (int i = 0; i < size; ++i) {
+        if (tuples[i].count > 0) {
+            for (int j = i + 1; j < size; ++j) {
+                if (tuples[j].count == tuples[i].count && strcmp(tuples[i].value, tuples[j].value) != 0) {
+                    return 1;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {"apple", 0},
+        {"banana", 0},
+        {"apple", 0},
+        {"orange", 0},
+        {"banana", 0},
+        {"pear", 0}
+    };
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    int result = checkSimilarOccurrences(tuples, size);
+    printf("Result: %s\n", result ? "True" : "False");
+
+    return 0;
+}

@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+
+void replace_multiple_occurrence(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int read_index = 0;
+    int write_index = 0;
+
+    while (str[read_index] != '\0') {
+        if (read_index == 0 || str[read_index] != str[read_index - 1]) {
+            str[write_index] = str[read_index];
+            write_index++;
+        }
+        read_index++;
+    }
+    str[write_index] = '\0';
+}
+
+int main(void) {
+    char str1[] = "aaabbbcccdddeee";
+    char str2[] = "hello   world";
+    char str3[] = "programming";
+    char str4[] = "a";
+
+    replace_multiple_occurrence(str1);
+    replace_multiple_occurrence(str2);
+    replace_multiple_occurrence(str3);
+    replace_multiple_occurrence(str4);
+
+    printf("%s\n", str1);
+    printf("%s\n", str2);
+    printf("%s\n", str3);
+    printf("%s\n", str4);
+
+    return 0;
+}
+```

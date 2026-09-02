@@ -1,0 +1,57 @@
+{
+  "task_id": 313,
+  "text": "Write a C function to print positive numbers in a list.",
+  "fn_candidates": [
+    "pos_nos",
+    "PosNos",
+    "posNos",
+    "posnos"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "pos_nos",
+      "args": [
+        [
+          -1,
+          -2,
+          1,
+          2
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert pos_nos([-1,-2,1,2]) == 1,2"
+    },
+    {
+      "fn_name": "pos_nos",
+      "args": [
+        [
+          3,
+          4,
+          -5
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert pos_nos([3,4,-5]) == 3,4"
+    },
+    {
+      "fn_name": "pos_nos",
+      "args": [
+        [
+          -2,
+          -3,
+          1
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert pos_nos([-2,-3,1]) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

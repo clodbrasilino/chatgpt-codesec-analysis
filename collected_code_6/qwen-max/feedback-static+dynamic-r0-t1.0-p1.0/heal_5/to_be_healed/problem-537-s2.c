@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got (null)
+  */
+
+char* firstRepeatedWord(const char* str) {
+    const int maxWords = 100;
+    char* words[maxWords];
+    int wordCount = 0;
+
+    for (int i = 0; i < maxWords; ++i) {
+        words[i] = NULL;
+    }
+
+    char* token = strtok((char*)str, " ");
+    while (token != NULL && wordCount < maxWords) {
+        for (int i = 0; i < wordCount; ++i) {
+            if (strcmp(words[i], token) == 0) {
+                return strdup(token);
+            }
+        }
+        words[wordCount++] = strdup(token);
+        token = strtok(NULL, " ");
+    }
+
+    return NULL;
+}
+
+int main() {
+    const char* input = "the quick brown fox jumps over the lazy dog the";
+    char* result = firstRepeatedWord(input);
+
+    if (result != NULL) {
+        printf("First repeated word: %s\n", result);
+        free(result);
+    } else {
+        printf("No repeated word found.\n");
+    }
+
+    char* words[100] = {NULL};
+    for (int i = 0; i < 100; ++i) {
+        if (words[i] != NULL) {
+            free(words[i]);
+        }
+    }
+
+    return 0;
+}

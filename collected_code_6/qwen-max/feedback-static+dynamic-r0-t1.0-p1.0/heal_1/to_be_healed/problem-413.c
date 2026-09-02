@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    char second;
+} Tuple;
+
+Tuple* create_tuple_list(int n) {
+    Tuple *list = (Tuple*)malloc(n * sizeof(Tuple));
+    if (list == NULL) {
+        return NULL;
+    }
+    for (int i = 0; i < n; ++i) {
+        list[i].first = i;
+        list[i].second = 'A' + i;
+    }
+    return list;
+}
+
+void free_tuple_list(Tuple *list) {
+    if (list != NULL) {
+        free(list);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+Tuple get_nth_tuple(Tuple *list, int n, int size) {
+    if (n < 0 || n >= size) {
+        Tuple invalid = {-1, '\0'};
+        return invalid;
+    }
+    return list[n];
+}
+
+int main() {
+    int n = 5; 
+    Tuple *tuple_list = create_tuple_list(n);
+    if (tuple_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    int index = 2;
+    Tuple nth_tuple = get_nth_tuple(tuple_list, index, n);
+    if (nth_tuple.first != -1) {
+        printf("Tuple %d: (%d, '%c')\n", index, nth_tuple.first, nth_tuple.second);
+    } else {
+        printf("Invalid index\n");
+    }
+
+    free_tuple_list(tuple_list);
+    return 0;
+}

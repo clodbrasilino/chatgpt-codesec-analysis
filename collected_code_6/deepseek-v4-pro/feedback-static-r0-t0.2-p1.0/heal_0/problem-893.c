@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+int* get_last_elements(List* lists, int num_lists, int* out_size) {
+    if (lists == NULL || num_lists <= 0 || out_size == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* result = (int*)malloc(num_lists * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    List* current_list = lists;
+
+    while (current_list != NULL && count < num_lists) {
+        if (current_list->head == NULL) {
+            free(result);
+            *out_size = 0;
+            return NULL;
+        }
+
+        Node* current_node = current_list->head;
+        while (current_node->next != NULL) {
+            current_node = current_node->next;
+        }
+
+        result[count] = current_node->data;
+        count++;
+        current_list = current_list->next;
+    }
+
+    *out_size = count;
+    return result;
+}
+
+Node* create_node(int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+List* create_list(Node* head) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = head;
+    list->next = NULL;
+    return list;
+}
+
+void free_list(List* list) {
+    while (list != NULL) {
+        Node* current = list->head;
+        while (current != NULL) {
+            Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+        List* temp_list = list;
+        list = list->next;
+        free(temp_list);
+    }
+}
+
+int main() {
+    Node* n1 = create_node(1);
+    Node* n2 = create_node(2);
+    Node* n3 = create_node(3);
+    n1->next = n2;
+    n2->next = n3;
+
+    Node* n4 = create_node(4);
+    Node* n5 = create_node(5);
+    n4->next = n5;
+
+    Node* n6 = create_node(6);
+
+    List* l1 = create_list(n1);
+    List* l2 = create_list(n4);
+    List* l3 = create_list(n6);
+
+    l1->next = l2;
+    l2->next = l3;
+
+    int size = 0;
+    int* last_elements = get_last_elements(l1, 3, &size);
+
+    if (last_elements != NULL) {
+        for (int i = 0; i < size; i++) {
+            printf("%d ", last_elements[i]);
+        }
+        printf("\n");
+        free(last_elements);
+    }
+
+    free_list(l1);
+
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+void heapify(int *arr, int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        int swap = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = swap;
+
+        heapify(arr, n, largest);
+    }
+}
+
+void buildHeap(int *arr, int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int getMin(int *arr, int n) {
+    int minVal = INT_MAX;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < minVal) {
+            minVal = arr[i];
+        }
+    }
+    return minVal;
+}
+
+int main() {
+    int arr[] = {34, 5, 23, 7, 90, 89, 45, 12, 37};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    buildHeap(arr, n);
+
+    int minVal = getMin(arr, n);
+
+    printf("The smallest number is: %d\n", minVal);
+
+    return 0;
+}

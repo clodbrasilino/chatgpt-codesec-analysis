@@ -1,0 +1,59 @@
+{
+  "task_id": 680,
+  "text": "Write a C function to check whether a sequence of numbers has an increasing trend or not.",
+  "fn_candidates": [
+    "increasing_trend",
+    "IncreasingTrend",
+    "increasingTrend",
+    "increasingtrend"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "increasing_trend",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert increasing_trend([1,2,3,4]) == True"
+    },
+    {
+      "fn_name": "increasing_trend",
+      "args": [
+        [
+          4,
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert increasing_trend([4,3,2,1]) == False"
+    },
+    {
+      "fn_name": "increasing_trend",
+      "args": [
+        [
+          0,
+          1,
+          4,
+          9
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert increasing_trend([0,1,4,9]) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+void freeTuple(Tuple *t) {
+    free(t->data);
+    t->data = NULL;
+    t->length = 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int createTuple(Tuple *t, int *arr, size_t len) {
+    t->data = (int *)malloc(len * sizeof(int));
+    if (t->data == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < len; ++i) {
+        t->data[i] = arr[i];
+    }
+    t->length = len;
+    return 0;
+}
+
+void removeTuplesWithLengthK(Tuple **tuples, size_t *count, size_t k) {
+    size_t new_count = 0;
+    for (size_t i = 0; i < *count; ++i) {
+        if (tuples[i]->length != k) {
+            tuples[new_count++] = tuples[i];
+        } else {
+            freeTuple(tuples[i]);
+            free(tuples[i]);
+        }
+    }
+    *count = new_count;
+}
+
+int main() {
+    Tuple *tuples[4];
+    for (size_t i = 0; i < 4; ++i) {
+        tuples[i] = (Tuple *)malloc(sizeof(Tuple));
+    }
+
+    int data1[] = {1, 2};
+    if (createTuple(tuples[0], data1, 2) != 0) {
+        return 1;
+    }
+
+    int data2[] = {3, 4, 5};
+    if (createTuple(tuples[1], data2, 3) != 0) {
+        return 1;
+    }
+
+    int data3[] = {6, 7};
+    if (createTuple(tuples[2], data3, 2) != 0) {
+        return 1;
+    }
+
+    int data4[] = {8, 9, 10, 11};
+    if (createTuple(tuples[3], data4, 4) != 0) {
+        return 1;
+    }
+
+    size_t count = 4;
+    size_t k = 2;
+    removeTuplesWithLengthK(tuples, &count, k);
+
+    for (size_t i = 0; i < count; ++i) {
+        for (size_t j = 0; j < tuples[i]->length; ++j) {
+            printf("%d ", tuples[i]->data[j]);
+        }
+        printf("\n");
+        freeTuple(tuples[i]);
+        free(tuples[i]);
+    }
+
+    return 0;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c:13:25: style: Parameter 'arr1' can be declared as pointer to const [constParameterPointer]
+Triple findClosest(int *arr1, int *arr2, int *arr3, int n1, int n2, int n3) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c:13:36: style: Parameter 'arr2' can be declared as pointer to const [constParameterPointer]
+Triple findClosest(int *arr1, int *arr2, int *arr3, int n1, int n2, int n3) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c:13:47: style: Parameter 'arr3' can be declared as pointer to const [constParameterPointer]
+Triple findClosest(int *arr1, int *arr2, int *arr3, int n1, int n2, int n3) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c:33:12: warning: Uninitialized variables: result.a, result.b, result.c [uninitvar]
+    return result;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c:16:23: note: Assuming condition is false
+    for (int i = 0; i < n1; ++i) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-938-s2.c:33:12: note: Uninitialized variables: result.a, result.b, result.c
+    return result;
+           ^

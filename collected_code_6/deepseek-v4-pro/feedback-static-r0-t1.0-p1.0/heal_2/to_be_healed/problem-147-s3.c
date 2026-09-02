@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_path_sum(int **triangle, int rows, const int *cols) {
+    if (triangle == NULL || rows <= 0 || cols == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        if (triangle[i] == NULL || cols[i] <= 0) {
+            return 0;
+        }
+    }
+    
+    if (rows == 1) {
+        return triangle[0][0];
+    }
+    
+    int **dp = (int **)malloc(rows * sizeof(int *));
+    if (dp == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        dp[i] = (int *)malloc(cols[i] * sizeof(int));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    for (int j = 0; j < cols[rows - 1]; j++) {
+        dp[rows - 1][j] = triangle[rows - 1][j];
+    }
+    
+    for (int i = rows - 2; i >= 0; i--) {
+        for (int j = 0; j < cols[i]; j++) {
+            if (j < cols[i + 1] && j + 1 < cols[i + 1]) {
+                int left = dp[i + 1][j];
+                int right = dp[i + 1][j + 1];
+                dp[i][j] = triangle[i][j] + (left > right ? left : right);
+            } else if (j < cols[i + 1]) {
+                dp[i][j] = triangle[i][j] + dp[i + 1][j];
+            } else if (j + 1 < cols[i + 1]) {
+                dp[i][j] = triangle[i][j] + dp[i + 1][j + 1];
+            } else {
+                dp[i][j] = triangle[i][j];
+            }
+        }
+    }
+    
+    int result = dp[0][0];
+    
+    for (int i = 0; i < rows; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int rows = 4;
+    /* Possible weaknesses found:
+     *  Variable 'cols' can be declared as const array [constVariable]
+     */
+    int cols[] = {1, 2, 3, 4};
+    int **triangle = (int **)malloc(rows * sizeof(int *));
+    
+    for (int i = 0; i < rows; i++) {
+        triangle[i] = (int *)malloc(cols[i] * sizeof(int));
+    }
+    
+    const int row0[] = {3};
+    const int row1[] = {7, 4};
+    const int row2[] = {2, 4, 6};
+    const int row3[] = {8, 5, 9, 3};
+    
+    for (int j = 0; j < cols[0]; j++) triangle[0][j] = row0[j];
+    for (int j = 0; j < cols[1]; j++) triangle[1][j] = row1[j];
+    for (int j = 0; j < cols[2]; j++) triangle[2][j] = row2[j];
+    for (int j = 0; j < cols[3]; j++) triangle[3][j] = row3[j];
+    
+    int result = max_path_sum(triangle, rows, cols);
+    printf("%d\n", result);
+    
+    for (int i = 0; i < rows; i++) {
+        free(triangle[i]);
+    }
+    free(triangle);
+    
+    return 0;
+}

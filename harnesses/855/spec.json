@@ -1,0 +1,44 @@
+{
+  "task_id": 855,
+  "text": "Write a C function to check for even parity of a given number.",
+  "fn_candidates": [
+    "check_Even_Parity",
+    "CheckEvenParity",
+    "checkEvenParity",
+    "checkEvenParity"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Even_Parity",
+      "args": [
+        10
+      ],
+      "expected": true,
+      "assert_src": "assert check_Even_Parity(10) == True"
+    },
+    {
+      "fn_name": "check_Even_Parity",
+      "args": [
+        11
+      ],
+      "expected": false,
+      "assert_src": "assert check_Even_Parity(11) == False"
+    },
+    {
+      "fn_name": "check_Even_Parity",
+      "args": [
+        18
+      ],
+      "expected": true,
+      "assert_src": "assert check_Even_Parity(18) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

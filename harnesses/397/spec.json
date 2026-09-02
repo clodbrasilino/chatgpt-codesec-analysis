@@ -1,0 +1,50 @@
+{
+  "task_id": 397,
+  "text": "Write a C function to find the median of three specific numbers.",
+  "fn_candidates": [
+    "median_numbers",
+    "MedianNumbers",
+    "medianNumbers",
+    "mediannumbers"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "median_numbers",
+      "args": [
+        25,
+        55,
+        65
+      ],
+      "expected": 55.0,
+      "assert_src": "assert median_numbers(25,55,65)==55.0"
+    },
+    {
+      "fn_name": "median_numbers",
+      "args": [
+        20,
+        10,
+        30
+      ],
+      "expected": 20.0,
+      "assert_src": "assert median_numbers(20,10,30)==20.0"
+    },
+    {
+      "fn_name": "median_numbers",
+      "args": [
+        15,
+        45,
+        75
+      ],
+      "expected": 45.0,
+      "assert_src": "assert median_numbers(15,45,75)==45.0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

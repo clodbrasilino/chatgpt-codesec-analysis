@@ -1,0 +1,44 @@
+{
+  "task_id": 935,
+  "text": "Write a C function to calculate the sum of series 1\u00b2+2\u00b2+3\u00b2+\u2026.+n\u00b2.",
+  "fn_candidates": [
+    "series_sum",
+    "SeriesSum",
+    "seriesSum",
+    "seriessum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "series_sum",
+      "args": [
+        6
+      ],
+      "expected": 91,
+      "assert_src": "assert series_sum(6)==91"
+    },
+    {
+      "fn_name": "series_sum",
+      "args": [
+        7
+      ],
+      "expected": 140,
+      "assert_src": "assert series_sum(7)==140"
+    },
+    {
+      "fn_name": "series_sum",
+      "args": [
+        12
+      ],
+      "expected": 650,
+      "assert_src": "assert series_sum(12)==650"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

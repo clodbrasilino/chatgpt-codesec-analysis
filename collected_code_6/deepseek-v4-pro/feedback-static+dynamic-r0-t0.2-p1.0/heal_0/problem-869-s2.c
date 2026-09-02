@@ -1,0 +1,174 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+List* create_list() {
+    List* new_list = (List*)malloc(sizeof(List));
+    if (!new_list) {
+        return NULL;
+    }
+    new_list->head = NULL;
+    new_list->next = NULL;
+    return new_list;
+}
+
+void append_node(List* list, int data) {
+    if (!list) return;
+    Node* new_node = create_node(data);
+    if (!new_node) return;
+    
+    if (!list->head) {
+        list->head = new_node;
+        return;
+    }
+    
+    Node* current = list->head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void append_list(List** head, List* new_list) {
+    if (!head || !new_list) return;
+    
+    if (!*head) {
+        *head = new_list;
+        return;
+    }
+    
+    List* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_list;
+}
+
+int list_sum(List* list) {
+    if (!list) return 0;
+    int sum = 0;
+    Node* current = list->head;
+    while (current) {
+        sum += current->data;
+        current = current->next;
+    }
+    return sum;
+}
+
+void free_list(List* list) {
+    if (!list) return;
+    Node* current = list->head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+void free_all_lists(List* head) {
+    List* current = head;
+    while (current) {
+        List* temp = current;
+        current = current->next;
+        free_list(temp);
+    }
+}
+
+List* remove_sublists_outside_range(List* head, int min_sum, int max_sum) {
+    if (!head) return NULL;
+    
+    List* current = head;
+    List* prev = NULL;
+    
+    while (current) {
+        int sum = list_sum(current);
+        if (sum < min_sum || sum > max_sum) {
+            List* to_remove = current;
+            if (prev) {
+                prev->next = current->next;
+                current = current->next;
+            } else {
+                head = current->next;
+                current = head;
+            }
+            free_list(to_remove);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    
+    return head;
+}
+
+void print_lists(List* head) {
+    List* current = head;
+    int list_index = 0;
+    while (current) {
+        printf("List %d: ", list_index++);
+        Node* node = current->head;
+        while (node) {
+            printf("%d ", node->data);
+            node = node->next;
+        }
+        printf("\n");
+        current = current->next;
+    }
+}
+
+int main() {
+    List* head = NULL;
+    
+    List* list1 = create_list();
+    append_node(list1, 1);
+    append_node(list1, 2);
+    append_node(list1, 3);
+    append_list(&head, list1);
+    
+    List* list2 = create_list();
+    append_node(list2, 10);
+    append_node(list2, 20);
+    append_list(&head, list2);
+    
+    List* list3 = create_list();
+    append_node(list3, 5);
+    append_node(list3, 5);
+    append_node(list3, 5);
+    append_list(&head, list3);
+    
+    List* list4 = create_list();
+    append_node(list4, 100);
+    append_list(&head, list4);
+    
+    printf("Original lists:\n");
+    print_lists(head);
+    
+    head = remove_sublists_outside_range(head, 5, 30);
+    
+    printf("\nLists after removing those outside range [5, 30]:\n");
+    print_lists(head);
+    
+    free_all_lists(head);
+    
+    return 0;
+}

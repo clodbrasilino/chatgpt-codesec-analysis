@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double to_radians(double degrees) {
+    return degrees * M_PI / 180.0;
+}
+
+double haversine_km(double lat1, double lon1, double lat2, double lon2) {
+    double d_lat = to_radians(lat2 - lat1);
+    double d_lon = to_radians(lon2 - lon1);
+    double a = sin(d_lat/2) * sin(d_lat/2) +
+               cos(to_radians(lat1)) * cos(to_radians(lat2)) *
+               sin(d_lon/2) * sin(d_lon/2);
+    double c = 2 * atan2(sqrt(a), sqrt(1-a));
+    return 6371 * c; // Earth radius in kilometers
+}
+
+int main() {
+    double lat1 = 52.2296756;
+    double lon1 = 21.0122287;
+    double lat2 = 52.406374;
+    double lon2 = 16.9251681;
+
+    double distance = haversine_km(lat1, lon1, lat2, lon2);
+    printf("Distance: %.2f km\n", distance);
+
+    return 0;
+}
+```

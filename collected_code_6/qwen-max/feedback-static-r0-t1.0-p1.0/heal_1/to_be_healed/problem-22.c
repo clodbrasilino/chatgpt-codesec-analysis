@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+int findFirstDuplicate(int arr[], int n) {
+    /* Possible weaknesses found:
+     *  Variable 'found' is assigned a value that is never used. [unreadVariable]
+     */
+    bool found = false;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] == arr[j]) {
+                return arr[i];
+            }
+        }
+    }
+    return -1; // No duplicates found
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 2, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findFirstDuplicate(arr, n);
+    if (result != -1) {
+        printf("First duplicate: %d\n", result);
+    } else {
+        printf("No duplicates found\n");
+    }
+    return 0;
+}

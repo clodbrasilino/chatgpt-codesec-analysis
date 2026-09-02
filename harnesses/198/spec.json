@@ -1,0 +1,47 @@
+{
+  "task_id": 198,
+  "text": "Write a C function to find the largest triangle that can be inscribed in an ellipse.",
+  "fn_candidates": [
+    "largest_triangle",
+    "LargestTriangle",
+    "largestTriangle",
+    "largesttriangle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "largest_triangle",
+      "args": [
+        4,
+        2
+      ],
+      "expected": 10.392304845413264,
+      "assert_src": "assert largest_triangle(4,2)==10.392304845413264"
+    },
+    {
+      "fn_name": "largest_triangle",
+      "args": [
+        5,
+        7
+      ],
+      "expected": 4.639421805988064,
+      "assert_src": "assert largest_triangle(5,7)==4.639421805988064"
+    },
+    {
+      "fn_name": "largest_triangle",
+      "args": [
+        9,
+        1
+      ],
+      "expected": 105.2220865598093,
+      "assert_src": "assert largest_triangle(9,1)==105.2220865598093"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

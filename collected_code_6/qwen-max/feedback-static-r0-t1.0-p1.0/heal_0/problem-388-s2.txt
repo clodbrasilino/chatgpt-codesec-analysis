@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+int highestPowerOf2(int n) {
+    int res = 0;
+    while (n > 1) {
+        n >>= 1;
+        res++;
+    }
+    return 1 << res;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) == 1) {
+        int result = highestPowerOf2(n);
+        printf("The highest power of 2 less than or equal to %d is %d\n", n, result);
+    } else {
+        fprintf(stderr, "Invalid input.\n");
+    }
+    return 0;
+}
+```

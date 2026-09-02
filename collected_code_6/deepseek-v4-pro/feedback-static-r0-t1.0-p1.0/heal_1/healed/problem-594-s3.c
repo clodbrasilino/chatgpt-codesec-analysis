@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int diff_first_even_odd(const int *arr, int size) {
+    int first_even = -1;
+    int first_odd = -1;
+    int i;
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            if (first_even == -1) {
+                first_even = arr[i];
+            }
+        } else {
+            if (first_odd == -1) {
+                first_odd = arr[i];
+            }
+        }
+        
+        if (first_even != -1 && first_odd != -1) {
+            break;
+        }
+    }
+
+    if (first_even == -1 || first_odd == -1) {
+        return 0;
+    }
+
+    return first_even - first_odd;
+}
+
+int main(void) {
+    int arr[] = {3, 1, 4, 1, 5, 9, 2, 6};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = diff_first_even_odd(arr, size);
+    printf("Difference: %d\n", result);
+
+    return 0;
+}

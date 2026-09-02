@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void *a, const void *b) {
+    return *(int *)a - *(int *)b;
+}
+
+int lists_are_equal(int *list1, int *list2, int size) {
+    for (int i = 0; i < size; i++) {
+        if (list1[i] != list2[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int count_unique_lists(int **lists, int *sizes, int num_lists) {
+    for (int i = 0; i < num_lists; i++) {
+        qsort(lists[i], sizes[i], sizeof(int), compare);
+    }
+
+    int count = 0;
+    for (int i = 0; i < num_lists; i++) {
+        int is_unique = 1;
+        for (int j = 0; j < i; j++) {
+            if (sizes[i] == sizes[j] && lists_are_equal(lists[i], lists[j], sizes[i])) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int lists[] = {1, 2, 2, 1, 2, 3, 4, 5, 4, 5};
+    int *list1 = lists + 0;
+    int *list2 = lists + 2;
+    int *list3 = lists + 4;
+    int *list4 = lists + 7;
+
+    int sizes[] = {2, 2, 5, 3};
+    int num_lists = 4;
+
+    int **ptrs = (int **)malloc(num_lists * sizeof(int *));
+    for (int i = 0; i < num_lists; i++) {
+        ptrs[i] = (i == 0) ? list1 : (i == 1) ? list2 : (i == 2) ? list3 : list4;
+    }
+
+    int unique_count = count_unique_lists(ptrs, sizes, num_lists);
+    printf("Number of unique lists: %d\n", unique_count);
+
+    free(ptrs);
+    return 0;
+}

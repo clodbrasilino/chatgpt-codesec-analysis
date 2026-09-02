@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-775.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-775.c:37:49: style: Condition 'check_odd_indices_odd(NULL,0)' is always false [knownConditionTrueFalse]
+    printf("Test 5: %s\n", check_odd_indices_odd(NULL, 0) ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-775.c:37:49: note: Calling function 'check_odd_indices_odd' returns 0
+    printf("Test 5: %s\n", check_odd_indices_odd(NULL, 0) ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-775.c:37:49: note: Condition 'check_odd_indices_odd(NULL,0)' is always false
+    printf("Test 5: %s\n", check_odd_indices_odd(NULL, 0) ? "true" : "false");
+                                                ^

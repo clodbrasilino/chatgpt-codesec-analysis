@@ -1,0 +1,44 @@
+{
+  "task_id": 80,
+  "text": "Write a C function to find the nth tetrahedral number.",
+  "fn_candidates": [
+    "tetrahedral_number",
+    "TetrahedralNumber",
+    "tetrahedralNumber",
+    "tetrahedralnumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tetrahedral_number",
+      "args": [
+        5
+      ],
+      "expected": 35.0,
+      "assert_src": "assert tetrahedral_number(5) == 35.0"
+    },
+    {
+      "fn_name": "tetrahedral_number",
+      "args": [
+        6
+      ],
+      "expected": 56.0,
+      "assert_src": "assert tetrahedral_number(6) == 56.0"
+    },
+    {
+      "fn_name": "tetrahedral_number",
+      "args": [
+        7
+      ],
+      "expected": 84.0,
+      "assert_src": "assert tetrahedral_number(7) == 84.0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

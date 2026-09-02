@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-535-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-535-s3.c:27:25: style: The comparison 'surface_type == 0' is always true. [knownConditionTrueFalse]
+           surface_type == 0 ? "top" : "bottom", area);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-535-s3.c:23:24: note: 'surface_type' is assigned value '0' here.
+    int surface_type = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-535-s3.c:27:25: note: The comparison 'surface_type == 0' is always true.
+           surface_type == 0 ? "top" : "bottom", area);
+                        ^

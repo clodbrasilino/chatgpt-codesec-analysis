@@ -1,0 +1,48 @@
+{
+  "task_id": 830,
+  "text": "Write a C function to round up a number to specific digits.",
+  "fn_candidates": [
+    "round_up",
+    "RoundUp",
+    "roundUp",
+    "roundup"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "round_up",
+      "args": [
+        123.01247,
+        0
+      ],
+      "expected": 124,
+      "assert_src": "assert round_up(123.01247,0)==124"
+    },
+    {
+      "fn_name": "round_up",
+      "args": [
+        123.01247,
+        1
+      ],
+      "expected": 123.1,
+      "assert_src": "assert round_up(123.01247,1)==123.1"
+    },
+    {
+      "fn_name": "round_up",
+      "args": [
+        123.01247,
+        2
+      ],
+      "expected": 123.02,
+      "assert_src": "assert round_up(123.01247,2)==123.02"
+    }
+  ],
+  "arg_kinds": [
+    "float",
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

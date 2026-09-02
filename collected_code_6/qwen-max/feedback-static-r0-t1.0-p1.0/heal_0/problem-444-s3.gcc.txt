@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-444-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-444-s3.c:21:43: error: extra brace group at end of initializer
+   21 |     Tuple tuples[MAX_TUPLES] = {{{5, 10}, {15, 20}, {25, 30}}};
+      |                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-444-s3.c:21:43: note: (near initialization for 'tuples[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-444-s3.c:21:53: error: extra brace group at end of initializer
+   21 |     Tuple tuples[MAX_TUPLES] = {{{5, 10}, {15, 20}, {25, 30}}};
+      |                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-444-s3.c:21:53: note: (near initialization for 'tuples[0]')

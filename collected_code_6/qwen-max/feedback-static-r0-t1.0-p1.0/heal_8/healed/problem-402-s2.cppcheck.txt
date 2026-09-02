@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402-s2.c:18:17: style: Redundant condition: The condition 'x1 != 0' is redundant since 'x1 < 0' is sufficient. [redundantCondition]
+    if (x1 != 0 && x1 < 0)
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-402-s2.c:18:23: style: Checking if unsigned expression 'x1' is less than zero. [unsignedLessThanZero]
+    if (x1 != 0 && x1 < 0)
+                      ^

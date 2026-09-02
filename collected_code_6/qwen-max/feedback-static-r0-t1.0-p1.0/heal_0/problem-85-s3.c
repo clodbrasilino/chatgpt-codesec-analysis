@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+double sphere_surface_area(double radius) {
+    return 4.0 * M_PI * pow(radius, 2);
+}
+
+int main() {
+    double radius;
+    printf("Enter the radius of the sphere: ");
+    if (scanf("%lf", &radius) != 1 || radius < 0) {
+        printf("Invalid input. Please enter a non-negative number.\n");
+        return 1;
+    }
+    double area = sphere_surface_area(radius);
+    printf("The surface area of the sphere is: %.2f\n", area);
+    return 0;
+}

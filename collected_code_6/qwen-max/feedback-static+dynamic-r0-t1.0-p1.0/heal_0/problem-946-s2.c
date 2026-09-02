@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_SIZE 1024
+
+typedef struct {
+    char character;
+    int count;
+} CharCount;
+
+int compare(const void *a, const void *b) {
+    return ((CharCount *)b)->count - ((CharCount *)a)->count;
+}
+
+void findMostCommonElements(const char *text, int *mostCommonCounts, char *mostCommonChars, size_t *numResults) {
+    CharCount charCounts[MAX_SIZE] = {0};
+    for (int i = 0; i < MAX_SIZE; ++i) {
+        charCounts[i].character = (char)i;
+        charCounts[i].count = 0;
+    }
+
+    for (int i = 0; text[i] != '\0'; ++i) {
+        if (isalpha(text[i])) {
+            charCounts[toupper(text[i])].count++;
+        }
+    }
+
+    qsort(charCounts, MAX_SIZE, sizeof(CharCount), compare);
+
+    int maxCount = charCounts[0].count;
+    *numResults = 0;
+    for (size_t i = 0; i < MAX_SIZE && charCounts[i].count == maxCount; ++i) {
+        mostCommonCounts[*numResults] = charCounts[i].count;
+        mostCommonChars[*numResults] = charCounts[i].character;
+        (*numResults)++;
+    }
+}
+
+int main() {
+    const char *text = "Hello, World! This is a test. Let's see what happens with the text analysis.";
+    int mostCommonCounts[MAX_SIZE];
+    char mostCommonChars[MAX_SIZE];
+    size_t numResults;
+
+    findMostCommonElements(text, mostCommonCounts, mostCommonChars, &numResults);
+
+    for (size_t i = 0; i < numResults; ++i) {
+        printf("Character: %c, Count: %d\n", mostCommonChars[i], mostCommonCounts[i]);
+    }
+
+    return 0;
+}

@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_product(int *numbers, size_t length) {
+    unsigned long long product = 1;
+    for (size_t i = 0; i < length; i++) {
+        product *= (unsigned long long)numbers[i];
+    }
+    return product;
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    unsigned long long result = calculate_product(numbers, length);
+    printf("The product of all numbers is %llu\n", result);
+    return 0;
+}

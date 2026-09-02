@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int calculate_perimeter(int side) {
+    return 4 * side;
+}
+
+int main() {
+    int side;
+    printf("Enter the side of the square: ");
+    if (scanf("%d", &side) == 1) {
+        int perimeter = calculate_perimeter(side);
+        printf("The perimeter of the square is: %d\n", perimeter);
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

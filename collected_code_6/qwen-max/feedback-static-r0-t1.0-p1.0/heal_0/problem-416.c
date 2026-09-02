@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum_divide_three(int n) {
+    if (n == 0) return 0;
+    if (n < 3) return n;
+
+    int *dp = (int *)malloc((n + 1) * sizeof(int));
+    if (dp == NULL) exit(1);
+
+    dp[0] = 0;
+    dp[1] = 1;
+    dp[2] = 2;
+
+    for (int i = 3; i <= n; ++i) {
+        dp[i] = i;
+        for (int x = 1; x <= i / 3; ++x) {
+            dp[i] = (dp[i] > (dp[x] + dp[i - x])) ? dp[i] : (dp[x] + dp[i - x]);
+        }
+    }
+
+    int result = dp[n];
+    free(dp);
+    return result;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+
+    int result = max_sum_divide_three(n);
+    printf("Maximum sum: %d\n", result);
+
+    return 0;
+}

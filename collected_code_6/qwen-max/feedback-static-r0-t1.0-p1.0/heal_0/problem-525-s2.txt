@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    double a, b, c;
+} Line;
+
+bool are_parallel(Line line1, Line line2) {
+    return (line1.a * line2.b == line2.a * line1.b);
+}
+
+int main() {
+    Line line1 = {1, 2, 3};
+    Line line2 = {2, 4, 6};
+
+    if (are_parallel(line1, line2)) {
+        printf("Lines are parallel.\n");
+    } else {
+        printf("Lines are not parallel.\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-703.c: In function 'isKeyPresent':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-703.c:16:60: error: implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+   16 |         if (dict->entries[i].key != NULL && key != NULL && strcmp(dict->entries[i].key, key) == 0) {
+      |                                                            ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_0/problem-703.c:3:1: note: include '<string.h>' or provide a declaration of 'strcmp'
+    2 | #include <stdbool.h>
+  +++ |+#include <string.h>
+    3 | 

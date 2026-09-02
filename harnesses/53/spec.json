@@ -1,0 +1,44 @@
+{
+  "task_id": 53,
+  "text": "Write a C function to check whether the first and last characters of a given string are equal or not.",
+  "fn_candidates": [
+    "check_Equality",
+    "CheckEquality",
+    "checkEquality",
+    "checkEquality"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Equality",
+      "args": [
+        "abcda"
+      ],
+      "expected": "Equal",
+      "assert_src": "assert check_Equality(\"abcda\") == \"Equal\""
+    },
+    {
+      "fn_name": "check_Equality",
+      "args": [
+        "ab"
+      ],
+      "expected": "Not Equal",
+      "assert_src": "assert check_Equality(\"ab\") == \"Not Equal\""
+    },
+    {
+      "fn_name": "check_Equality",
+      "args": [
+        "mad"
+      ],
+      "expected": "Not Equal",
+      "assert_src": "assert check_Equality(\"mad\") == \"Not Equal\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

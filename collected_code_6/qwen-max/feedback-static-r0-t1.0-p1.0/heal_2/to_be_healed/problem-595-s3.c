@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+int minSwaps(char* s1, const char* s2) {
+    int count[2] = {0, 0};
+    int n = strlen(s1);
+
+    for (int i = 0; i < n; i++) {
+        if (s1[i] != s2[i]) {
+            count[s1[i] - '0']++;
+        }
+    }
+
+    return count[0] == count[1] ? count[0] : -1;
+}
+
+int main() {
+    char s1[] = "1100";
+    /* Possible weaknesses found:
+     *  Variable 's2' can be declared as const array [constVariable]
+     */
+    char s2[] = "0011";
+
+    int swaps = minSwaps(s1, s2);
+    if (swaps != -1) {
+        printf("Minimum number of swaps: %d\n", swaps);
+    } else {
+        printf("Cannot convert string s1 to s2 with swaps.\n");
+    }
+
+    return 0;
+}

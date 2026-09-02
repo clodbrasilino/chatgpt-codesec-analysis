@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Element;
+
+typedef struct {
+    Element *elements;
+    int size;
+    int capacity;
+} MinHeap;
+
+int compare(const void *a, const void *b) {
+    return ((Element *)a)->count - ((Element *)b)->count;
+}
+
+void swap(Element *a, Element *b) {
+    Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(MinHeap *heap, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->elements[left].count < heap->elements[smallest].count)
+        smallest = left;
+
+    if (right < heap->size && heap->elements[right].count < heap->elements[smallest].count)
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap->elements[i], &heap->elements[smallest]);
+        heapify(heap, smallest);
+    }
+}
+
+void insert(MinHeap *heap, Element element) {
+    if (heap->size == heap->capacity) {
+        heap->capacity *= 2;
+        heap->elements = realloc(heap->elements, heap->capacity * sizeof(Element));
+    }
+
+    int i = heap->size;
+    heap->elements[i] = element;
+    heap->size++;
+
+    while (i > 0 && heap->elements[(i - 1) / 2].count > heap->elements[i].count) {
+        swap(&heap->elements[i], &heap->elements[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+Element extractMin(MinHeap *heap) {
+    if (heap->size <= 0) {
+        Element empty = {0, 0};
+        return empty;
+    }
+
+    Element root = heap->elements[0];
+    heap->elements[0] = heap->elements[heap->size - 1];
+    heap->size--;
+    heapify(heap, 0);
+
+    return root;
+}
+
+void buildHeap(MinHeap *heap) {
+    for (int i = (heap->size - 1) / 2; i >= 0; i--) {
+        heapify(heap, i);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'nums' can be declared as pointer to const [constParameterPointer]
+ */
+int* topKFrequent(int* nums, int numsSize, int k, int* returnSize) {
+    int *result = (int *)malloc(k * sizeof(int));
+    *returnSize = 0;
+
+    if (numsSize == 0 || k == 0) {
+        return result;
+    }
+
+    int *counts = (int *)calloc(numsSize, sizeof(int));
+    for (int i = 0; i < numsSize; i++) {
+        counts[nums[i]]++;
+    }
+
+    MinHeap heap;
+    heap.elements = (Element *)malloc(k * sizeof(Element));
+    heap.size = 0;
+    heap.capacity = k;
+
+    for (int i = 0; i < numsSize; i++) {
+        if (counts[i] > 0) {
+            Element element = {i, counts[i]};
+            if (heap.size < k) {
+                insert(&heap, element);
+            } else if (element.count > heap.elements[0].count) {
+                extractMin(&heap);
+                insert(&heap, element);
+            }
+        }
+    }
+
+    for (int i = 0; i < k; i++) {
+        result[*returnSize] = extractMin(&heap).value;
+        (*returnSize)++;
+    }
+
+    free(heap.elements);
+    free(counts);
+
+    return result;
+}
+
+int main() {
+    int nums[] = {1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int k = 2;
+    int returnSize;
+
+    int *result = topKFrequent(nums, numsSize, k, &returnSize);
+
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+
+    return 0;
+}

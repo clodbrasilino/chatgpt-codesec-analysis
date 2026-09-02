@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double geometric_series_sum(double first_term, double common_ratio, int terms) {
+    if (terms <= 0) {
+        return 0.0;
+    }
+    if (common_ratio == 1.0) {
+        return first_term * terms;
+    }
+    return first_term * (1.0 - pow(common_ratio, terms)) / (1.0 - common_ratio);
+}
+
+int main(int argc, const char *argv[]) {
+    double first_term, common_ratio, sum;
+    int terms;
+    char *endptr;
+
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <first_term> <common_ratio> <terms>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    first_term = strtod(argv[1], &endptr);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Error: Invalid first term.\n");
+        return EXIT_FAILURE;
+    }
+
+    common_ratio = strtod(argv[2], &endptr);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Error: Invalid common ratio.\n");
+        return EXIT_FAILURE;
+    }
+
+    terms = (int)strtol(argv[3], &endptr, 10);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Error: Invalid number of terms.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (terms <= 0) {
+        fprintf(stderr, "Error: Number of terms must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    sum = geometric_series_sum(first_term, common_ratio, terms);
+    printf("Sum of geometric series: %.10f\n", sum);
+
+    return EXIT_SUCCESS;
+}

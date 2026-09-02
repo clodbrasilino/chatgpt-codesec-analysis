@@ -1,0 +1,44 @@
+{
+  "task_id": 482,
+  "text": "Write a C function to find sequences of one upper case letter followed by lower case letters in the given string by using regex.",
+  "fn_candidates": [
+    "match",
+    "Match",
+    "match",
+    "match"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "match",
+      "args": [
+        "Geeks"
+      ],
+      "expected": "Yes",
+      "assert_src": "assert match(\"Geeks\") == 'Yes'"
+    },
+    {
+      "fn_name": "match",
+      "args": [
+        "geeksforGeeks"
+      ],
+      "expected": "Yes",
+      "assert_src": "assert match(\"geeksforGeeks\") == 'Yes'"
+    },
+    {
+      "fn_name": "match",
+      "args": [
+        "geeks"
+      ],
+      "expected": "No",
+      "assert_src": "assert match(\"geeks\") == 'No'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

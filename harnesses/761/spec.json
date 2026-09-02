@@ -1,0 +1,38 @@
+{
+  "task_id": 761,
+  "text": "Write a C function to caluclate arc length of an angle.",
+  "fn_candidates": [
+    "arc_length",
+    "ArcLength",
+    "arcLength",
+    "arclength"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "arc_length",
+      "args": [
+        9,
+        45
+      ],
+      "expected": 3.5357142857142856,
+      "assert_src": "assert arc_length(9,45)==3.5357142857142856"
+    },
+    {
+      "fn_name": "arc_length",
+      "args": [
+        5,
+        270
+      ],
+      "expected": 11.785714285714285,
+      "assert_src": "assert arc_length(5,270)==11.785714285714285"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

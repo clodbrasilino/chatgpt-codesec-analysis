@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:58:33: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("Empty array: %s\n", result ? "true" : "false");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:57:47: note: Calling function 'contains_consecutive_numbers' returns 0
+    bool result = contains_consecutive_numbers(NULL, 0);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:57:47: note: Assignment 'result=contains_consecutive_numbers(NULL,0)', assigned value is 0
+    bool result = contains_consecutive_numbers(NULL, 0);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:58:33: note: Condition 'result' is always false
+    printf("Empty array: %s\n", result ? "true" : "false");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:61:32: style: Condition 'result' is always false [knownConditionTrueFalse]
+    printf("NULL array: %s\n", result ? "true" : "false");
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:60:42: note: Calling function 'contains_consecutive_numbers' returns 0
+    result = contains_consecutive_numbers(NULL, 0);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:60:42: note: Assignment 'result=contains_consecutive_numbers(NULL,0)', assigned value is 0
+    result = contains_consecutive_numbers(NULL, 0);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-472-s2.c:61:32: note: Condition 'result' is always false
+    printf("NULL array: %s\n", result ? "true" : "false");
+                               ^

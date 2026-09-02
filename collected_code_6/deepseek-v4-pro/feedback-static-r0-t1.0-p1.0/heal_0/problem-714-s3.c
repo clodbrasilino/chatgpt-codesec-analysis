@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countDistinctPrimePowers(int n) {
+    if (n <= 1) {
+        return 0;
+    }
+
+    int count = 0;
+    int temp = n;
+
+    for (int p = 2; p * p <= temp; p++) {
+        if (temp % p == 0) {
+            int power = 0;
+            while (temp % p == 0) {
+                temp /= p;
+                power++;
+            }
+            int powerCount = 0;
+            int base = p;
+            int result = 1;
+            while (result <= power) {
+                result *= base;
+                powerCount++;
+            }
+            count += powerCount - 1;
+        }
+    }
+
+    if (temp > 1) {
+        count += 1;
+    }
+
+    return count;
+}
+
+int main(void) {
+    int number;
+
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = countDistinctPrimePowers(number);
+    printf("Number of distinct prime powers: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

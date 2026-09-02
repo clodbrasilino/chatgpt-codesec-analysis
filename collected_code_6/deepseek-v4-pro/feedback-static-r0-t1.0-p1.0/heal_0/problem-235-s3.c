@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+unsigned int set_even_bits(unsigned int num) {
+    unsigned int mask = 0xAAAAAAAA;
+    return num | mask;
+}
+
+int main(void) {
+    unsigned int num = 0;
+    unsigned int result = 0;
+    
+    printf("Enter a number: ");
+    scanf("%u", &num);
+    
+    result = set_even_bits(num);
+    
+    printf("Original number: %u (0x%08X)\n", num, num);
+    printf("After setting even bits: %u (0x%08X)\n", result, result);
+    
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 416,
+  "text": "Write a C function to find the maximum sum we can make by dividing number in three parts recursively and summing them up together for the given number.",
+  "fn_candidates": [
+    "breakSum",
+    "Breaksum",
+    "breakSum",
+    "breakSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "breakSum",
+      "args": [
+        12
+      ],
+      "expected": 13,
+      "assert_src": "assert breakSum(12) == 13"
+    },
+    {
+      "fn_name": "breakSum",
+      "args": [
+        24
+      ],
+      "expected": 27,
+      "assert_src": "assert breakSum(24) == 27"
+    },
+    {
+      "fn_name": "breakSum",
+      "args": [
+        23
+      ],
+      "expected": 23,
+      "assert_src": "assert breakSum(23) == 23"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

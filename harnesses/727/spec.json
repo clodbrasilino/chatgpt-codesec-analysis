@@ -1,0 +1,44 @@
+{
+  "task_id": 727,
+  "text": "Write a C function to remove all characters except letters and numbers using regex",
+  "fn_candidates": [
+    "remove_char",
+    "RemoveChar",
+    "removeChar",
+    "removechar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_char",
+      "args": [
+        "123abcjw:, .@! eiw"
+      ],
+      "expected": "123abcjweiw",
+      "assert_src": "assert remove_char(\"123abcjw:, .@! eiw\") == '123abcjweiw'"
+    },
+    {
+      "fn_name": "remove_char",
+      "args": [
+        "Hello1234:, ! Howare33u"
+      ],
+      "expected": "Hello1234Howare33u",
+      "assert_src": "assert remove_char(\"Hello1234:, ! Howare33u\") == 'Hello1234Howare33u'"
+    },
+    {
+      "fn_name": "remove_char",
+      "args": [
+        "Cool543Triks@:, Make@987Trips"
+      ],
+      "expected": "Cool543TriksMake987Trips",
+      "assert_src": "assert remove_char(\"Cool543Triks@:, Make@987Trips\") == 'Cool543TriksMake987Trips' "
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

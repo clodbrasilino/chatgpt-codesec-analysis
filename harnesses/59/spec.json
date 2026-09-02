@@ -1,0 +1,44 @@
+{
+  "task_id": 59,
+  "text": "Write a C function to find the nth octagonal number.",
+  "fn_candidates": [
+    "is_octagonal",
+    "IsOctagonal",
+    "isOctagonal",
+    "isoctagonal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_octagonal",
+      "args": [
+        5
+      ],
+      "expected": 65,
+      "assert_src": "assert is_octagonal(5) == 65"
+    },
+    {
+      "fn_name": "is_octagonal",
+      "args": [
+        10
+      ],
+      "expected": 280,
+      "assert_src": "assert is_octagonal(10) == 280"
+    },
+    {
+      "fn_name": "is_octagonal",
+      "args": [
+        15
+      ],
+      "expected": 645,
+      "assert_src": "assert is_octagonal(15) == 645"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

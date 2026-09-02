@@ -1,0 +1,92 @@
+{
+  "task_id": 26,
+  "text": "Write a C function to check if the given tuple list has all k elements.",
+  "fn_candidates": [
+    "check_k_elements",
+    "CheckKElements",
+    "checkKElements",
+    "checkkelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_k_elements",
+      "args": [
+        [
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            4,
+            4
+          ],
+          [
+            4,
+            4
+          ],
+          [
+            4,
+            4,
+            4,
+            4
+          ],
+          [
+            4
+          ]
+        ],
+        4
+      ],
+      "expected": true,
+      "assert_src": "assert check_k_elements([(4, 4), (4, 4, 4), (4, 4), (4, 4, 4, 4), (4, )], 4) == True"
+    },
+    {
+      "fn_name": "check_k_elements",
+      "args": [
+        [
+          [
+            7,
+            7,
+            7
+          ],
+          [
+            7,
+            7
+          ]
+        ],
+        7
+      ],
+      "expected": true,
+      "assert_src": "assert check_k_elements([(7, 7, 7), (7, 7)], 7) == True"
+    },
+    {
+      "fn_name": "check_k_elements",
+      "args": [
+        [
+          [
+            9,
+            9
+          ],
+          [
+            9,
+            9,
+            9,
+            9
+          ]
+        ],
+        7
+      ],
+      "expected": false,
+      "assert_src": "assert check_k_elements([(9, 9), (9, 9, 9, 9)], 7) == False"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

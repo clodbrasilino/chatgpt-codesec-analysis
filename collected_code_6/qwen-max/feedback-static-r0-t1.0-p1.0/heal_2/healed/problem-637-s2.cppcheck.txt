@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:19:16: style: Condition 'result==1' is always false [knownConditionTrueFalse]
+    if (result == 1) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:17:35: note: Calling function 'check_profit_loss' returns 2
+    int result = check_profit_loss(cost_price, selling_price);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:17:35: note: Assignment 'result=check_profit_loss(cost_price,selling_price)', assigned value is 2
+    int result = check_profit_loss(cost_price, selling_price);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:19:16: note: Condition 'result==1' is always false
+    if (result == 1) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:21:23: style: Condition 'result==2' is always true [knownConditionTrueFalse]
+    } else if (result == 2) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:17:35: note: Calling function 'check_profit_loss' returns 2
+    int result = check_profit_loss(cost_price, selling_price);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:17:35: note: Assignment 'result=check_profit_loss(cost_price,selling_price)', assigned value is 2
+    int result = check_profit_loss(cost_price, selling_price);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-637-s2.c:21:23: note: Condition 'result==2' is always true
+    } else if (result == 2) {
+                      ^

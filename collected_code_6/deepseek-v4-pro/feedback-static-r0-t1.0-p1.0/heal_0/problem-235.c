@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+unsigned int setEvenBits(unsigned int num) {
+    unsigned int mask = 0xAAAAAAAA;
+    return num | mask;
+}
+
+int main(void) {
+    unsigned int input = 0x0;
+    unsigned int result = setEvenBits(input);
+    
+    printf("Input: 0x%X\n", input);
+    printf("Result: 0x%X\n", result);
+    
+    return 0;
+}

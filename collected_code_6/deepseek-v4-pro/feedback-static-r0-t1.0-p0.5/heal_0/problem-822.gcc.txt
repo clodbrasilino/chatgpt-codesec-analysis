@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-822.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-822.c:52:13: error: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   52 |             printf("Valid: %s\n", test_passwords[i]);
+      |             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-822.c:4:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    3 | #include <ctype.h>
+  +++ |+#include <stdio.h>
+    4 | 

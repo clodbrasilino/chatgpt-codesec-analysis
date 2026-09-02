@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-974-s3.c: In function 'minimumTotal':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-974-s3.c:10:31: error: implicit declaration of function 'fmin' [-Wimplicit-function-declaration]
+   10 |             triangle[i][j] += fmin(triangle[i + 1][j], triangle[i + 1][j + 1]);
+      |                               ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-974-s3.c:4:1: note: include '<math.h>' or provide a declaration of 'fmin'
+    3 | #include <limits.h>
+  +++ |+#include <math.h>
+    4 | 

@@ -1,0 +1,44 @@
+{
+  "task_id": 441,
+  "text": "Write a C function to find the surface area of a cube.",
+  "fn_candidates": [
+    "surfacearea_cube",
+    "SurfaceareaCube",
+    "surfaceareaCube",
+    "surfaceareacube"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "surfacearea_cube",
+      "args": [
+        5
+      ],
+      "expected": 150,
+      "assert_src": "assert surfacearea_cube(5)==150"
+    },
+    {
+      "fn_name": "surfacearea_cube",
+      "args": [
+        3
+      ],
+      "expected": 54,
+      "assert_src": "assert surfacearea_cube(3)==54"
+    },
+    {
+      "fn_name": "surfacearea_cube",
+      "args": [
+        10
+      ],
+      "expected": 600,
+      "assert_src": "assert surfacearea_cube(10)==600"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

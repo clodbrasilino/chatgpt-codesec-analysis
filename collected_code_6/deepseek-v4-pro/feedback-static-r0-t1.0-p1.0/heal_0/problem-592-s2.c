@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    if (k == 0 || k == n) return 1;
+    if (k > n - k) k = n - k;
+    
+    long long result = 1;
+    for (int i = 0; i < k; i++) {
+        result = result * (n - i) / (i + 1);
+    }
+    return result;
+}
+
+long long sum_of_product_binomial(int n) {
+    if (n < 0) return 0;
+    
+    long long sum = 0;
+    for (int i = 0; i <= n; i++) {
+        sum += binomial_coefficient(n, i) * binomial_coefficient(n, i);
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_of_product_binomial(n);
+    printf("Sum of product of binomial coefficients: %lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,54 @@
+{
+  "task_id": 923,
+  "text": "Write a C function to find the length of the shortest string that has both str1 and str2 as subsequences.",
+  "fn_candidates": [
+    "super_seq",
+    "SuperSeq",
+    "superSeq",
+    "superseq"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "super_seq",
+      "args": [
+        "AGGTAB",
+        "GXTXAYB",
+        6,
+        7
+      ],
+      "expected": 9,
+      "assert_src": "assert super_seq(\"AGGTAB\", \"GXTXAYB\", 6, 7) == 9"
+    },
+    {
+      "fn_name": "super_seq",
+      "args": [
+        "feek",
+        "eke",
+        4,
+        3
+      ],
+      "expected": 5,
+      "assert_src": "assert super_seq(\"feek\", \"eke\", 4, 3) == 5"
+    },
+    {
+      "fn_name": "super_seq",
+      "args": [
+        "PARRT",
+        "RTA",
+        5,
+        3
+      ],
+      "expected": 6,
+      "assert_src": "assert super_seq(\"PARRT\", \"RTA\", 5, 3) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

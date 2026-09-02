@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) return 0;
+    if (k == 0 || k == n) return 1;
+    if (k > n - k) k = n - k;
+    int result = 1;
+    for (int i = 0; i < k; i++) {
+        result = result * (n - i) / (i + 1);
+    }
+    return result;
+}
+
+int main(void) {
+    int n = 5;
+    int k = 2;
+    printf("%d\n", binomial_coefficient(n, k));
+    return 0;
+}

@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *adverb;
+    int position;
+} AdverbInfo;
+
+int is_adverb(const char *word) {
+    size_t len = strlen(word);
+    if (len < 2) return 0;
+    if (word[len - 1] == 'y' && word[len - 2] != 'l') return 1;
+    if (word[len - 1] == 'e' && word[len - 2] == 'l') return 1;
+    if (word[len - 1] == 'y' && word[len - 2] == 'l') return 1;
+    return 0;
+}
+
+int split_words(const char *sentence, char ***words, int *count) {
+    const char delimiters[] = " ,.!?;:";
+    char *token;
+    char *copy = strdup(sentence);
+    *count = 0;
+    *words = NULL;
+
+    token = strtok(copy, delimiters);
+    while (token) {
+        (*count)++;
+        *words = realloc(*words, (*count) * sizeof(char *));
+        (*words)[*count - 1] = strdup(token);
+        token = strtok(NULL, delimiters);
+    }
+    free(copy);
+    return 0;
+}
+
+void find_adverbs(const char *sentence, AdverbInfo **adverbs, int *adverb_count) {
+    char **words = NULL;
+    int word_count = 0;
+    *adverb_count = 0;
+    *adverbs = NULL;
+
+    split_words(sentence, &words, &word_count);
+
+    for (int i = 0; i < word_count; ++i) {
+        if (is_adverb(words[i])) {
+            (*adverb_count)++;
+            *adverbs = realloc(*adverbs, (*adverb_count) * sizeof(AdverbInfo));
+            (*adverbs)[*adverb_count - 1].adverb = words[i];
+            (*adverbs)[*adverb_count - 1].position = i;
+        } else {
+            free(words[i]);
+        }
+    }
+
+    free(words);
+}
+
+int main() {
+    const char *sentence = "He quickly and quietly walked away from the scene.";
+    AdverbInfo *adverbs = NULL;
+    int adverb_count = 0;
+
+    find_adverbs(sentence, &adverbs, &adverb_count);
+
+    for (int i = 0; i < adverb_count; ++i) {
+        printf("Adverb: %s, Position: %d\n", adverbs[i].adverb, adverbs[i].position);
+    }
+
+    for (int i = 0; i < adverb_count; ++i) {
+        free(adverbs[i].adverb);
+    }
+    free(adverbs);
+
+    return 0;
+}
+```

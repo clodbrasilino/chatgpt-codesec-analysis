@@ -1,0 +1,48 @@
+{
+  "task_id": 125,
+  "text": "Write a C function to find the maximum difference between the number of 0s and number of 1s in any sub-string of the given binary string.",
+  "fn_candidates": [
+    "find_length",
+    "FindLength",
+    "findLength",
+    "findlength"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_length",
+      "args": [
+        "11000010001",
+        11
+      ],
+      "expected": 6,
+      "assert_src": "assert find_length(\"11000010001\", 11) == 6"
+    },
+    {
+      "fn_name": "find_length",
+      "args": [
+        "10111",
+        5
+      ],
+      "expected": 1,
+      "assert_src": "assert find_length(\"10111\", 5) == 1"
+    },
+    {
+      "fn_name": "find_length",
+      "args": [
+        "11011101100101",
+        14
+      ],
+      "expected": 2,
+      "assert_src": "assert find_length(\"11011101100101\", 14) == 2 "
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

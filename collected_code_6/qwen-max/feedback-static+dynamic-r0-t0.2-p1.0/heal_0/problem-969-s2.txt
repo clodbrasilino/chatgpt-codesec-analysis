@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+Node* createNode(Tuple t) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = t;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertNode(Node **head, Tuple t) {
+    Node *newNode = createNode(t);
+    if (*head == NULL || (*head)->data.key > t.key) {
+        newNode->next = *head;
+        *head = newNode;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL && current->next->data.key <= t.key) {
+            current = current->next;
+        }
+        newNode->next = current->next;
+        current->next = newNode;
+    }
+}
+
+Node* joinTuples(Node *list1, Node *list2) {
+    Node *result = NULL;
+    Node *current1 = list1;
+    Node *current2 = list2;
+
+    while (current1 != NULL && current2 != NULL) {
+        if (current1->data.key == current2->data.key) {
+            Tuple t = {current1->data.key, current1->data.value + current2->data.value};
+            insertNode(&result, t);
+            current1 = current1->next;
+            current2 = current2->next;
+        } else if (current1->data.key < current2->data.key) {
+            insertNode(&result, current1->data);
+            current1 = current1->next;
+        } else {
+            insertNode(&result, current2->data);
+            current2 = current2->next;
+        }
+    }
+
+    while (current1 != NULL) {
+        insertNode(&result, current1->data);
+        current1 = current1->next;
+    }
+
+    while (current2 != NULL) {
+        insertNode(&result, current2->data);
+        current2 = current2->next;
+    }
+
+    return result;
+}
+
+void printList(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("(%d, %d) ", current->data.key, current->data.value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    insertNode(&list1, (Tuple){1, 2});
+    insertNode(&list1, (Tuple){3, 4});
+    insertNode(&list1, (Tuple){5, 6});
+
+    insertNode(&list2, (Tuple){1, 7});
+    insertNode(&list2, (Tuple){3, 8});
+    insertNode(&list2, (Tuple){4, 9});
+
+    Node *result = joinTuples(list1, list2);
+
+    printList(result);
+
+    return 0;
+}
+```

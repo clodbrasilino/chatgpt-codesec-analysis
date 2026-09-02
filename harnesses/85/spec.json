@@ -1,0 +1,44 @@
+{
+  "task_id": 85,
+  "text": "Write a C function to find the surface area of a sphere.",
+  "fn_candidates": [
+    "surfacearea_sphere",
+    "SurfaceareaSphere",
+    "surfaceareaSphere",
+    "surfaceareasphere"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "surfacearea_sphere",
+      "args": [
+        10
+      ],
+      "expected": 1256.6370614359173,
+      "assert_src": "assert surfacearea_sphere(10)==1256.6370614359173"
+    },
+    {
+      "fn_name": "surfacearea_sphere",
+      "args": [
+        15
+      ],
+      "expected": 2827.4333882308138,
+      "assert_src": "assert surfacearea_sphere(15)==2827.4333882308138"
+    },
+    {
+      "fn_name": "surfacearea_sphere",
+      "args": [
+        20
+      ],
+      "expected": 5026.548245743669,
+      "assert_src": "assert surfacearea_sphere(20)==5026.548245743669"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

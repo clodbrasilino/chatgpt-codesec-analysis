@@ -1,0 +1,64 @@
+{
+  "task_id": 565,
+  "text": "Write a C function to split a string into characters.",
+  "fn_candidates": [
+    "split",
+    "Split",
+    "split",
+    "split"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "split",
+      "args": [
+        "python"
+      ],
+      "expected": [
+        "p",
+        "y",
+        "t",
+        "h",
+        "o",
+        "n"
+      ],
+      "assert_src": "assert split('python') == ['p','y','t','h','o','n']"
+    },
+    {
+      "fn_name": "split",
+      "args": [
+        "Name"
+      ],
+      "expected": [
+        "N",
+        "a",
+        "m",
+        "e"
+      ],
+      "assert_src": "assert split('Name') == ['N','a','m','e']"
+    },
+    {
+      "fn_name": "split",
+      "args": [
+        "program"
+      ],
+      "expected": [
+        "p",
+        "r",
+        "o",
+        "g",
+        "r",
+        "a",
+        "m"
+      ],
+      "assert_src": "assert split('program') == ['p','r','o','g','r','a','m']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

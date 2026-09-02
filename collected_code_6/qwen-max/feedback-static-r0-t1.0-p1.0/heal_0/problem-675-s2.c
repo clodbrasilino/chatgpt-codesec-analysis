@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int add_with_condition(int a, int b, int lower, int upper) {
+    int sum = a + b;
+    if (sum >= lower && sum <= upper) {
+        return 20;
+    }
+    return sum;
+}
+
+int main() {
+    int a = 5;
+    int b = 10;
+    int lower = 10;
+    int upper = 20;
+
+    int result = add_with_condition(a, b, lower, upper);
+    printf("%d\n", result);
+
+    return 0;
+}

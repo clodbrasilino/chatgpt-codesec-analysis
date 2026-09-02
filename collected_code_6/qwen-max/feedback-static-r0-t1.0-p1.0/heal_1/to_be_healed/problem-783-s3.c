@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+typedef struct {
+    double r, g, b;
+} RGB;
+
+typedef struct {
+    double h, s, v;
+} HSV;
+
+HSV rgb_to_hsv(RGB in) {
+    double min, max, delta;
+    HSV out;
+
+    min = in.r < in.g ? (in.r < in.b ? in.r : in.b) : (in.g < in.b ? in.g : in.b);
+    max = in.r > in.g ? (in.r > in.b ? in.r : in.b) : (in.g > in.b ? in.g : in.b);
+
+    out.v = max; 
+    delta = max - min;
+    if (delta < 0.00001) {
+        out.s = 0;
+        out.h = 0; 
+        return out;
+    }
+    if (max > 0.0) { 
+        out.s = (delta / max);
+    } else {
+        out.s = 0.0;
+        /* Possible weaknesses found:
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  use of undeclared identifier 'NAN'
+         *  'NAN' undeclared (first use in this function)
+         */
+        out.h = NAN;
+        return out;
+    }
+    if (in.r >= max)              
+        out.h = (in.g - in.b) / delta;       
+    else if (in.g >= max)         
+        out.h = 2.0 + (in.b - in.r) / delta;  
+    else                         
+        out.h = 4.0 + (in.r - in.g) / delta;
+
+    out.h *= 60.0;                
+    if (out.h < 0.0) 
+        out.h += 360.0;
+
+    return out; 
+}
+
+int main() {
+    RGB color = {0.5, 0.8, 0.2};
+    HSV result = rgb_to_hsv(color);
+    printf("H: %f, S: %f, V: %f\n", result.h, result.s, result.v);
+    return 0;
+}

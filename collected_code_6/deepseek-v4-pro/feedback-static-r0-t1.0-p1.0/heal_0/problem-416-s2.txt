@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_N 1000000
+
+static long long memo[MAX_N + 1];
+
+long long max_sum_recursive(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    if (n <= MAX_N && memo[n] != -1) {
+        return memo[n];
+    }
+
+    long long sum_2 = n / 2;
+    long long sum_3 = n / 3;
+    long long sum_4 = n / 4;
+
+    long long result = max_sum_recursive((int)sum_2) +
+                       max_sum_recursive((int)sum_3) +
+                       max_sum_recursive((int)sum_4);
+
+    if (result < n) {
+        result = n;
+    }
+
+    if (n <= MAX_N) {
+        memo[n] = result;
+    }
+    return result;
+}
+
+int main(void) {
+    for (int i = 0; i <= MAX_N; ++i) {
+        memo[i] = -1;
+    }
+
+    int n;
+    while (scanf("%d", &n) == 1) {
+        printf("%lld\n", max_sum_recursive(n));
+    }
+
+    return 0;
+}
+```

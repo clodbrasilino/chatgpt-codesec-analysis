@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+
+int gcd(int a, int b) {
+    if (b == 0)
+        return a;
+    return gcd(b, a % b);
+}
+
+int sum_of_divisors(int n) {
+    int sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        if (n % i == 0)
+            sum += i;
+    }
+    return sum;
+}
+
+int common_divisor_sum(int x, int y) {
+    int divisor = gcd(x, y);
+    return sum_of_divisors(divisor);
+}
+
+int main() {
+    int num1 = 12, num2 = 18;
+    int result = common_divisor_sum(num1, num2);
+    printf("Sum of common divisors: %d\n", result);
+    return 0;
+}
+```

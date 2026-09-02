@@ -1,0 +1,95 @@
+{
+  "task_id": 400,
+  "text": "Write a C function to extract the frequency of unique tuples in the given list order irrespective.",
+  "fn_candidates": [
+    "extract_freq",
+    "ExtractFreq",
+    "extractFreq",
+    "extractfreq"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "extract_freq",
+      "args": [
+        [
+          [
+            3,
+            4
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            4,
+            3
+          ],
+          [
+            5,
+            6
+          ]
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert extract_freq([(3, 4), (1, 2), (4, 3), (5, 6)] ) == 3"
+    },
+    {
+      "fn_name": "extract_freq",
+      "args": [
+        [
+          [
+            4,
+            15
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            5,
+            4
+          ],
+          [
+            6,
+            7
+          ]
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert extract_freq([(4, 15), (2, 3), (5, 4), (6, 7)] ) == 4"
+    },
+    {
+      "fn_name": "extract_freq",
+      "args": [
+        [
+          [
+            5,
+            16
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            6,
+            5
+          ],
+          [
+            6,
+            9
+          ]
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert extract_freq([(5, 16), (2, 3), (6, 5), (6, 9)] ) == 4"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

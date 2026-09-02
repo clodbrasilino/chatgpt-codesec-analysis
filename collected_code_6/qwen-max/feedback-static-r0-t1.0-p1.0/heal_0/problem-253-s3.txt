@@ -1,0 +1,17 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t countListInts(const int *list, size_t size) {
+    if (!list || size == 0) return 0;
+    return size;
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    size_t count = countListInts(list, size);
+    printf("Number of integers: %zu\n", count);
+    return 0;
+}
+```

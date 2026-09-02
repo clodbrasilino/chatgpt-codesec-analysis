@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key;
+    char* value;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->key - ((Tuple *)b)->key;
+}
+
+Tuple* findMinKRecords(Tuple* tuples, int n, int k) {
+    qsort(tuples, n, sizeof(Tuple), compare);
+    Tuple* result = (Tuple*)malloc(k * sizeof(Tuple));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    for (int i = 0; i < k; ++i) {
+        result[i] = tuples[i];
+    }
+    return result;
+}
+
+int main() {
+    int n = 5, k = 3;
+    Tuple tuples[] = {{2, "B"}, {1, "A"}, {5, "E"}, {3, "C"}, {4, "D"}};
+    Tuple* minKRecords = findMinKRecords(tuples, n, k);
+
+    for (int i = 0; i < k; ++i) {
+        printf("%d %s\n", minKRecords[i].key, minKRecords[i].value);
+    }
+
+    free(minKRecords);
+    return 0;
+}

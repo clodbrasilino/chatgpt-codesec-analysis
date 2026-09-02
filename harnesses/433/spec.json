@@ -1,0 +1,67 @@
+{
+  "task_id": 433,
+  "text": "Write a C function to check whether the entered number is greater than the elements of the given array.",
+  "fn_candidates": [
+    "check_greater",
+    "CheckGreater",
+    "checkGreater",
+    "checkgreater"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_greater",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        4
+      ],
+      "expected": "No, entered number is less than those in the array",
+      "assert_src": "assert check_greater([1, 2, 3, 4, 5], 4) == 'No, entered number is less than those in the array'"
+    },
+    {
+      "fn_name": "check_greater",
+      "args": [
+        [
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        8
+      ],
+      "expected": "Yes, the entered number is greater than those in the array",
+      "assert_src": "assert check_greater([2, 3, 4, 5, 6], 8) == 'Yes, the entered number is greater than those in the array'"
+    },
+    {
+      "fn_name": "check_greater",
+      "args": [
+        [
+          9,
+          7,
+          4,
+          8,
+          6,
+          1
+        ],
+        11
+      ],
+      "expected": "Yes, the entered number is greater than those in the array",
+      "assert_src": "assert check_greater([9, 7, 4, 8, 6, 1], 11) == 'Yes, the entered number is greater than those in the array'"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:51:33: error: field designator cannot initialize a non-struct, non-union type 'Item[10]'
+   51 |     List lists[MAX_LISTS] = { {{.item = "a"}, .count = 1}, 
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:52:33: error: field designator cannot initialize a non-struct, non-union type 'Item[10]'
+   52 |                               {{.item = "a"}, .count = 1, {.item = "c"}, .count = 2}, 
+      |                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-779-s3.c:53:33: error: field designator cannot initialize a non-struct, non-union type 'Item[10]'
+   53 |                               {{.item = "b"}, .count = 2, {.item = "a"}, .count = 3}};
+      |                                 ^
+3 errors generated.

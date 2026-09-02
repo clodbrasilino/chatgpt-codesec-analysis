@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Item;
+
+int compare(const void *a, const void *b) {
+    return ((Item *)a)->value - ((Item *)b)->value;
+}
+
+int findMaxOccurrences(int *arr, int n, int *maxVal, int *maxCount) {
+    if (n <= 0) {
+        return 1;
+    }
+
+    qsort(arr, n, sizeof(int), compare);
+
+    *maxVal = arr[0];
+    *maxCount = 1;
+    int currentCount = 1;
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            currentCount++;
+        } else {
+            if (currentCount > *maxCount) {
+                *maxCount = currentCount;
+                *maxVal = arr[i - 1];
+            }
+            currentCount = 1;
+        }
+    }
+
+    if (currentCount > *maxCount) {
+        *maxCount = currentCount;
+        *maxVal = arr[n - 1];
+    }
+
+    return 0;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 2, 1, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int maxVal, maxCount;
+
+    if (findMaxOccurrences(arr, n, &maxVal, &maxCount) == 0) {
+        printf("Max Value: %d, Occurrences: %d\n", maxVal, maxCount);
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}
+```

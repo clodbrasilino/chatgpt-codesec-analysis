@@ -1,0 +1,40 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:32:23: style: Condition 'parts!=NULL' is always false [knownConditionTrueFalse]
+            if (parts != NULL) free(parts);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:29:19: note: Assuming that condition 'parts==NULL' is not redundant
+        if (parts == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:32:23: note: Condition 'parts!=NULL' is always false
+            if (parts != NULL) free(parts);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:50:23: style: Condition 'parts!=NULL' is always false [knownConditionTrueFalse]
+            if (parts != NULL) free(parts);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:47:19: note: Assuming that condition 'parts==NULL' is not redundant
+        if (parts == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:50:23: note: Condition 'parts!=NULL' is always false
+            if (parts != NULL) free(parts);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:63:19: style: Condition 'parts!=NULL' is always false [knownConditionTrueFalse]
+        if (parts != NULL) free(parts);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:60:15: note: Assuming that condition 'parts==NULL' is not redundant
+    if (parts == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:63:19: note: Condition 'parts!=NULL' is always false
+        if (parts != NULL) free(parts);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:28:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 2) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:46:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 1) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:59:5: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+    parts = realloc(parts, (count + 1) * sizeof(char*));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:55:17: style: Variable 'part_idx' is assigned a value that is never used. [unreadVariable]
+        part_idx++;
+                ^

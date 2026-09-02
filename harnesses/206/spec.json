@@ -1,0 +1,83 @@
+{
+  "task_id": 206,
+  "text": "Write a C function to perform the adjacent element concatenation in the given tuples.",
+  "fn_candidates": [
+    "concatenate_elements",
+    "ConcatenateElements",
+    "concatenateElements",
+    "concatenateelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "concatenate_elements",
+      "args": [
+        [
+          "DSP ",
+          "IS ",
+          "BEST ",
+          "FOR ",
+          "ALL ",
+          "UTS"
+        ]
+      ],
+      "expected": [
+        "DSP IS ",
+        "IS BEST ",
+        "BEST FOR ",
+        "FOR ALL ",
+        "ALL UTS"
+      ],
+      "assert_src": "assert concatenate_elements((\"DSP \", \"IS \", \"BEST \", \"FOR \", \"ALL \", \"UTS\")) == ('DSP IS ', 'IS BEST ', 'BEST FOR ', 'FOR ALL ', 'ALL UTS')"
+    },
+    {
+      "fn_name": "concatenate_elements",
+      "args": [
+        [
+          "RES ",
+          "IS ",
+          "BEST ",
+          "FOR ",
+          "ALL ",
+          "QESR"
+        ]
+      ],
+      "expected": [
+        "RES IS ",
+        "IS BEST ",
+        "BEST FOR ",
+        "FOR ALL ",
+        "ALL QESR"
+      ],
+      "assert_src": "assert concatenate_elements((\"RES \", \"IS \", \"BEST \", \"FOR \", \"ALL \", \"QESR\")) == ('RES IS ', 'IS BEST ', 'BEST FOR ', 'FOR ALL ', 'ALL QESR')"
+    },
+    {
+      "fn_name": "concatenate_elements",
+      "args": [
+        [
+          "MSAM",
+          "IS ",
+          "BEST ",
+          "FOR ",
+          "ALL ",
+          "SKD"
+        ]
+      ],
+      "expected": [
+        "MSAMIS ",
+        "IS BEST ",
+        "BEST FOR ",
+        "FOR ALL ",
+        "ALL SKD"
+      ],
+      "assert_src": "assert concatenate_elements((\"MSAM\", \"IS \", \"BEST \", \"FOR \", \"ALL \", \"SKD\")) == ('MSAMIS ', 'IS BEST ', 'BEST FOR ', 'FOR ALL ', 'ALL SKD')"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

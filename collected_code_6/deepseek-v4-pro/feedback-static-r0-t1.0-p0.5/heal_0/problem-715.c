@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *values;
+    size_t length;
+} Tuple;
+
+Tuple string_to_tuple(const char *str) {
+    Tuple tuple = {NULL, 0};
+    if (str == NULL) {
+        return tuple;
+    }
+
+    size_t capacity = 10;
+    tuple.values = (int *)malloc(capacity * sizeof(int));
+    if (tuple.values == NULL) {
+        return tuple;
+    }
+
+    const char *p = str;
+    while (*p) {
+        while (*p && !isdigit((unsigned char)*p) && *p != '-') {
+            p++;
+        }
+        if (!*p) {
+            break;
+        }
+
+        char *end;
+        long val = strtol(p, &end, 10);
+        if (end == p) {
+            p++;
+            continue;
+        }
+
+        if (tuple.length == capacity) {
+            capacity *= 2;
+            int *new_values = (int *)realloc(tuple.values, capacity * sizeof(int));
+            if (new_values == NULL) {
+                free(tuple.values);
+                tuple.values = NULL;
+                tuple.length = 0;
+                return tuple;
+            }
+            tuple.values = new_values;
+        }
+
+        tuple.values[tuple.length++] = (int)val;
+        p = end;
+    }
+
+    if (tuple.length == 0) {
+        free(tuple.values);
+        tuple.values = NULL;
+    }
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->values != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+        tuple->length = 0;
+    }
+}
+
+int main(void) {
+    const char *input = "12 34 -56 78 90";
+    Tuple tuple = string_to_tuple(input);
+
+    if (tuple.values == NULL) {
+        fprintf(stderr, "Failed to parse string or no integers found\n");
+        return 1;
+    }
+
+    printf("Tuple length: %zu\n", tuple.length);
+    for (size_t i = 0; i < tuple.length; i++) {
+        printf("%d ", tuple.values[i]);
+    }
+    printf("\n");
+
+    free_tuple(&tuple);
+    return 0;
+}

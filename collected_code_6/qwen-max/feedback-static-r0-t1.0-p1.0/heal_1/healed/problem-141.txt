@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void flip(int *arr, int k) {
+    for (int start = 0; start < k; ) {
+        int temp = arr[start];
+        arr[start] = arr[k];
+        arr[k] = temp;
+        start++;
+        k--;
+    }
+}
+
+int findMax(const int *arr, int n) {
+    int mi = 0;
+    for (int i = 0; i < n; ++i)
+        if (arr[i] > arr[mi])
+            mi = i;
+    return mi;
+}
+
+void pancakeSort(int *arr, int n) {
+    for (int curr_size = n; curr_size > 1; --curr_size) {
+        int mi = findMax(arr, curr_size);
+        if (mi != curr_size-1) {
+            flip(arr, mi);
+            flip(arr, curr_size-1);
+        }
+    }
+}
+
+int main() {
+    int arr[] = {23, 10, 20, 11, 12, 6, 7};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    pancakeSort(arr, n);
+    
+    printf("Sorted array: \n");
+    for (int i = 0; i < n; ++i)
+        printf("%d ", arr[i]);
+    
+    return 0;
+}
+```

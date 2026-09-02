@@ -1,0 +1,92 @@
+{
+  "task_id": 261,
+  "text": "Write a C function to perform mathematical division operation across the given tuples.",
+  "fn_candidates": [
+    "division_elements",
+    "DivisionElements",
+    "divisionElements",
+    "divisionelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "division_elements",
+      "args": [
+        [
+          10,
+          4,
+          6,
+          9
+        ],
+        [
+          5,
+          2,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        2,
+        2,
+        2,
+        3
+      ],
+      "assert_src": "assert division_elements((10, 4, 6, 9),(5, 2, 3, 3)) == (2, 2, 2, 3)"
+    },
+    {
+      "fn_name": "division_elements",
+      "args": [
+        [
+          12,
+          6,
+          8,
+          16
+        ],
+        [
+          6,
+          3,
+          4,
+          4
+        ]
+      ],
+      "expected": [
+        2,
+        2,
+        2,
+        4
+      ],
+      "assert_src": "assert division_elements((12, 6, 8, 16),(6, 3, 4, 4)) == (2, 2, 2, 4)"
+    },
+    {
+      "fn_name": "division_elements",
+      "args": [
+        [
+          20,
+          14,
+          36,
+          18
+        ],
+        [
+          5,
+          7,
+          6,
+          9
+        ]
+      ],
+      "expected": [
+        4,
+        2,
+        6,
+        2
+      ],
+      "assert_src": "assert division_elements((20, 14, 36, 18),(5, 7, 6, 9)) == (4, 2, 6, 2)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

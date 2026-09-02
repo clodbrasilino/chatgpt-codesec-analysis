@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 
 python3 sanitize_llm_outputs_into_sources.py $1 && \
 ./diagnose_code.sh $1 && \

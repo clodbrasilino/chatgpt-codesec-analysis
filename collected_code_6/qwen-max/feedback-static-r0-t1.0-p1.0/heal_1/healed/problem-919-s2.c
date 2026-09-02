@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long multiply_items(const long long *list, size_t length) {
+    if (length == 0) return 0;
+    long long result = 1;
+    for (size_t i = 0; i < length; ++i) {
+        result *= list[i];
+    }
+    return result;
+}
+
+int main() {
+    long long numbers[] = {2, 3, 4, 5};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    long long product = multiply_items(numbers, length);
+    printf("Product: %lld\n", product);
+    return 0;
+}

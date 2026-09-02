@@ -1,0 +1,61 @@
+#include <stdio.h>
+
+int contains_single_distinct_element(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+    
+    int first = arr[0];
+    for (int i = 1; i < size; i++) {
+        if (arr[i] != first) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    int arr1[] = {5, 5, 5, 5};
+    int arr2[] = {5, 5, 7, 5};
+    int arr3[] = {42};
+    int arr4[] = {1, 2, 3, 4};
+    const int *null_arr = NULL;
+    
+    /* Possible weaknesses found:
+     *  Assignment 'null_result=contains_single_distinct_element(null_arr,5)', assigned value is -1
+     *  Calling function 'contains_single_distinct_element' returns -1
+     */
+    int null_result = contains_single_distinct_element(null_arr, 5);
+    int zero_result = contains_single_distinct_element(arr1, 0);
+    
+    printf("arr1: %s\n", contains_single_distinct_element(arr1, sizeof(arr1) / sizeof(arr1[0])) == 1 ? "yes" : "no");
+    printf("arr2: %s\n", contains_single_distinct_element(arr2, sizeof(arr2) / sizeof(arr2[0])) == 1 ? "yes" : "no");
+    printf("arr3: %s\n", contains_single_distinct_element(arr3, sizeof(arr3) / sizeof(arr3[0])) == 1 ? "yes" : "no");
+    printf("arr4: %s\n", contains_single_distinct_element(arr4, sizeof(arr4) / sizeof(arr4[0])) == 1 ? "yes" : "no");
+    
+    /* Possible weaknesses found:
+     *  Condition 'null_result==1' is always false [knownConditionTrueFalse]
+     *  Condition 'null_result==1' is always false
+     */
+    if (null_result == 1) {
+        printf("NULL: yes\n");
+    /* Possible weaknesses found:
+     *  Condition 'null_result==0' is always false
+     *  Condition 'null_result==0' is always false [knownConditionTrueFalse]
+     */
+    } else if (null_result == 0) {
+        printf("NULL: no\n");
+    } else {
+        printf("NULL: invalid\n");
+    }
+    
+    if (zero_result == 1) {
+        printf("size 0: yes\n");
+    } else if (zero_result == 0) {
+        printf("size 0: no\n");
+    } else {
+        printf("size 0: invalid\n");
+    }
+    
+    return 0;
+}

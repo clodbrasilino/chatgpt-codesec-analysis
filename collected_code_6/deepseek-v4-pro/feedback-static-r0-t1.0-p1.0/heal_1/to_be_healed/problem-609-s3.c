@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+double periodic_function(double x, double A, double w, double phi, double B) {
+    return A * sin(w * x + phi) + B;
+}
+
+double find_minimum_periodic(double A, double w, double phi, double B, double period, double x_start, double x_end, double step) {
+    if (period <= 0.0 || step <= 0.0 || x_end < x_start) {
+        fprintf(stderr, "Invalid parameters\n");
+        exit(EXIT_FAILURE);
+    }
+
+    double min_value = DBL_MAX;
+    /* Possible weaknesses found:
+     *  Variable 'x' is assigned a value that is never used. [unreadVariable]
+     */
+    double x = x_start;
+    long long steps = (long long)((x_end - x_start) / period);
+    long long steps_in_period = (long long)(period / step);
+
+    if (steps_in_period <= 0) {
+        steps_in_period = 100;
+    }
+
+    for (long long i = 0; i < steps; i++) {
+        double x_period_start = x_start + i * period;
+        for (long long j = 0; j <= steps_in_period; j++) {
+            double current_x = x_period_start + j * (period / steps_in_period);
+            if (current_x > x_end) {
+                current_x = x_end;
+            }
+            double y = periodic_function(current_x, A, w, phi, B);
+            if (y < min_value) {
+                min_value = y;
+            }
+            if (current_x >= x_end) {
+                break;
+            }
+        }
+    }
+
+    if (min_value == DBL_MAX) {
+        min_value = periodic_function(x_start, A, w, phi, B);
+    }
+
+    return min_value;
+}
+
+int main(void) {
+    double A = 5.0;
+    double w = 2.0;
+    double phi = 0.5;
+    double B = 3.0;
+    double period = 2.0 * M_PI / w;
+    double x_start = 0.0;
+    double x_end = 4.0 * period;
+    double step = 0.001;
+
+    double min_val = find_minimum_periodic(A, w, phi, B, period, x_start, x_end, step);
+    printf("Minimum value of the periodic function: %.6f\n", min_val);
+
+    return 0;
+}

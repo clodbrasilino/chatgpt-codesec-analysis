@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:52:10: error: array designator cannot initialize non-array type 'List'
+   52 |         {[0].items[0].item = "a", .count = 1},
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:10: error: array designator cannot initialize non-array type 'List'
+   53 |         {[0].items[0].item = "a", [0].items[1].item = "c", .count = 2},
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:53:35: error: array designator cannot initialize non-array type 'List'
+   53 |         {[0].items[0].item = "a", [0].items[1].item = "c", .count = 2},
+      |                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:10: error: array designator cannot initialize non-array type 'List'
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:35: error: array designator cannot initialize non-array type 'List'
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-779-s3.c:54:60: error: array designator cannot initialize non-array type 'List'
+   54 |         {[0].items[0].item = "b", [0].items[1].item = "a", [0].items[2].item = "c", .count = 3}
+      |                                                            ^
+6 errors generated.

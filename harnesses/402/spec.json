@@ -1,0 +1,50 @@
+{
+  "task_id": 402,
+  "text": "Write a C function to compute the value of ncr%p.",
+  "fn_candidates": [
+    "ncr_modp",
+    "NcrModp",
+    "ncrModp",
+    "ncrmodp"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "ncr_modp",
+      "args": [
+        10,
+        2,
+        13
+      ],
+      "expected": 6,
+      "assert_src": "assert ncr_modp(10,2,13)==6"
+    },
+    {
+      "fn_name": "ncr_modp",
+      "args": [
+        15,
+        12,
+        43
+      ],
+      "expected": 25,
+      "assert_src": "assert ncr_modp(15,12,43)==25"
+    },
+    {
+      "fn_name": "ncr_modp",
+      "args": [
+        17,
+        9,
+        18
+      ],
+      "expected": 10,
+      "assert_src": "assert ncr_modp(17,9,18)==10"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

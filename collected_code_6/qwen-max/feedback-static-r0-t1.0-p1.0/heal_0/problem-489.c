@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findLargestAndFrequency(int *arr, int n, int *largest) {
+    int frequency = 0;
+    if (n <= 0) return 0;
+
+    *largest = INT_MIN;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] > *largest) {
+            *largest = arr[i];
+            frequency = 1;
+        } else if (arr[i] == *largest) {
+            frequency++;
+        }
+    }
+    return frequency;
+}
+
+int main() {
+    int arr[] = {3, 5, 2, 5, 8, 5, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int largest;
+    int frequency = findLargestAndFrequency(arr, n, &largest);
+    printf("Largest Value: %d, Frequency: %d\n", largest, frequency);
+    return 0;
+}

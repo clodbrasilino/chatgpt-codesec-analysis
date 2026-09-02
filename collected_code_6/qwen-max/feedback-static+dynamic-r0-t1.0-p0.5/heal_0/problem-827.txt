@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+int sum_column(IntList *lists, size_t list_count, size_t column) {
+    int sum = 0;
+    for (size_t i = 0; i < list_count; ++i) {
+        if (column < lists[i].size) {
+            sum += lists[i].data[column];
+        }
+    }
+    return sum;
+}
+
+int main() {
+    IntList lists[] = {
+        { .data = (int[]){1, 2, 3}, .size = 3 },
+        { .data = (int[]){4, 5, 6}, .size = 3 },
+        { .data = (int[]){7, 8, 9}, .size = 3 }
+    };
+    size_t list_count = sizeof(lists) / sizeof(lists[0]);
+    size_t column = 1;
+    int result = sum_column(lists, list_count, column);
+    printf("Sum of column %zu: %d\n", column, result);
+    return 0;
+}
+```

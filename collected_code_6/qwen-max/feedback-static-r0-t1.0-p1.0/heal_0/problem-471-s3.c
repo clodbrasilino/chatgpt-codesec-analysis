@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t array_multiplication_remainder(const uint64_t *arr, size_t len, uint64_t n) {
+    uint64_t result = 1;
+    for (size_t i = 0; i < len; ++i) {
+        result = (result * arr[i]) % n;
+    }
+    return result;
+}
+
+int main() {
+    uint64_t arr[] = {10, 20, 30, 40, 50};
+    size_t len = sizeof(arr) / sizeof(arr[0]);
+    uint64_t n = 101;
+    uint64_t remainder = array_multiplication_remainder(arr, len, n);
+    printf("The remainder of the multiplication of the array elements divided by %lu is %lu\n", n, remainder);
+    return 0;
+}

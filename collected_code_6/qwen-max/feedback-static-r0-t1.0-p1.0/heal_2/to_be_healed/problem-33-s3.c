@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+
+void decimalToBinary(int n, char *buffer) {
+    int i = 0;
+    while (n > 0) {
+        buffer[i++] = (n % 2) + '0';
+        n /= 2;
+    }
+    buffer[i] = '\0';
+    for (int j = 0; j < i / 2; j++) {
+        char temp = buffer[j];
+        buffer[j] = buffer[i - j - 1];
+        buffer[i - j - 1] = temp;
+    }
+}
+
+int main() {
+    int num = 10;
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'binary'
+     *  'binary' undeclared (first use in this function)
+     *  each undeclared identifier is reported only once for each function it appears in
+     */
+    decimalToBinary(num, binary);
+    /* Possible weaknesses found:
+     *  use of undeclared identifier 'binary'
+     */
+    printf("%s\n", binary);
+    return 0;
+}

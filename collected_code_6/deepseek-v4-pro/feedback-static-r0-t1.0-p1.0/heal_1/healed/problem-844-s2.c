@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_kth_element(const int arr[], int n, int k) {
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] % 2 != 0) {
+            temp[index++] = arr[i];
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        if (arr[i] % 2 == 0) {
+            temp[index++] = arr[i];
+        }
+    }
+
+    if (k < 0 || k >= n) {
+        free(temp);
+        return -1;
+    }
+
+    int result = temp[k];
+    free(temp);
+    return result;
+}
+
+int main(void) {
+    int arr[] = {3, 1, 2, 12, 5, 8, 7, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+
+    int element = find_kth_element(arr, n, k);
+    if (element != -1) {
+        printf("%d\n", element);
+    } else {
+        printf("Invalid k or allocation error\n");
+    }
+
+    return 0;
+}

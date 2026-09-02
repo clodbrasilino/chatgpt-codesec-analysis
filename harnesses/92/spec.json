@@ -1,0 +1,44 @@
+{
+  "task_id": 92,
+  "text": "Write a C function to check whether the given number is undulating or not.",
+  "fn_candidates": [
+    "is_undulating",
+    "IsUndulating",
+    "isUndulating",
+    "isundulating"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_undulating",
+      "args": [
+        "1212121"
+      ],
+      "expected": true,
+      "assert_src": "assert is_undulating(\"1212121\") == True"
+    },
+    {
+      "fn_name": "is_undulating",
+      "args": [
+        "1991"
+      ],
+      "expected": false,
+      "assert_src": "assert is_undulating(\"1991\") == False"
+    },
+    {
+      "fn_name": "is_undulating",
+      "args": [
+        "121"
+      ],
+      "expected": true,
+      "assert_src": "assert is_undulating(\"121\") == True"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

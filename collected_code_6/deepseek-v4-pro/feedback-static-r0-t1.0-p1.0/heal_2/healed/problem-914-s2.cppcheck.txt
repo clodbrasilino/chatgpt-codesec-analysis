@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-914-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-914-s2.c:11:27: error: Array 'str[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+    for (size_t i = 2; str[i] != '\0'; i++) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-914-s2.c:11:21: note: Assignment 'i=2', assigned value is 2
+    for (size_t i = 2; str[i] != '\0'; i++) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-914-s2.c:11:27: note: Array index out of bounds
+    for (size_t i = 2; str[i] != '\0'; i++) {
+                          ^

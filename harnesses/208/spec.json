@@ -1,0 +1,44 @@
+{
+  "task_id": 208,
+  "text": "Write a C function to check the given decimal with a precision of 2 by using regex.",
+  "fn_candidates": [
+    "is_decimal",
+    "IsDecimal",
+    "isDecimal",
+    "isdecimal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_decimal",
+      "args": [
+        "123.11"
+      ],
+      "expected": true,
+      "assert_src": "assert is_decimal('123.11') == True"
+    },
+    {
+      "fn_name": "is_decimal",
+      "args": [
+        "0.21"
+      ],
+      "expected": true,
+      "assert_src": "assert is_decimal('0.21') == True"
+    },
+    {
+      "fn_name": "is_decimal",
+      "args": [
+        "123.1214"
+      ],
+      "expected": false,
+      "assert_src": "assert is_decimal('123.1214') == False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

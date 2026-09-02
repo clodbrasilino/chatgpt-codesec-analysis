@@ -1,0 +1,44 @@
+{
+  "task_id": 48,
+  "text": "Write a C function to set all odd bits of a given number.",
+  "fn_candidates": [
+    "odd_bit_set_number",
+    "OddBitSetNumber",
+    "oddBitSetNumber",
+    "oddbitsetnumber"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_bit_set_number",
+      "args": [
+        10
+      ],
+      "expected": 15,
+      "assert_src": "assert odd_bit_set_number(10) == 15"
+    },
+    {
+      "fn_name": "odd_bit_set_number",
+      "args": [
+        20
+      ],
+      "expected": 21,
+      "assert_src": "assert odd_bit_set_number(20) == 21"
+    },
+    {
+      "fn_name": "odd_bit_set_number",
+      "args": [
+        30
+      ],
+      "expected": 31,
+      "assert_src": "assert odd_bit_set_number(30) == 31"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

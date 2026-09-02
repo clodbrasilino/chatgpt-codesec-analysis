@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_first_last_occurrence(char *str, char ch) {
+    int len = strlen(str);
+    int first = -1;
+    int last = -1;
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] == ch) {
+            if (first == -1) {
+                first = i;
+            }
+            last = i;
+        }
+    }
+
+    if (first == -1) {
+        return;
+    }
+
+    if (first == last) {
+        memmove(&str[first], &str[first + 1], len - first);
+        return;
+    }
+
+    memmove(&str[first], &str[first + 1], len - first);
+
+    if (last > first) {
+        last--;
+    }
+
+    memmove(&str[last], &str[last + 1], len - last);
+}
+
+int main(void) {
+    char str[100] = "hello world, hello everyone";
+    char ch = 'o';
+
+    printf("Original: %s\n", str);
+    remove_first_last_occurrence(str, ch);
+    printf("Modified: %s\n", str);
+
+    return 0;
+}

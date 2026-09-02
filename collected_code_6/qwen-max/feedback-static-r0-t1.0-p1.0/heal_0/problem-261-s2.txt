@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} Tuple;
+
+int divideTuples(Tuple *result, const Tuple *numerator, const Tuple *denominator) {
+    if (numerator->length != denominator->length || !numerator->data || !denominator->data) {
+        return -1;
+    }
+    
+    result->data = (int*) malloc(numerator->length * sizeof(int));
+    if (!result->data) {
+        return -1;
+    }
+    
+    result->length = numerator->length;
+    for (size_t i = 0; i < numerator->length; ++i) {
+        if (denominator->data[i] == 0) {
+            free(result->data);
+            result->data = NULL;
+            return -1;
+        }
+        result->data[i] = numerator->data[i] / denominator->data[i];
+    }
+    
+    return 0;
+}
+
+int main() {
+    int numData[] = {10, 20, 30};
+    int denData[] = {2, 4, 5};
+    Tuple numerator = {numData, 3};
+    Tuple denominator = {denData, 3};
+    Tuple result = {NULL, 0};
+
+    if (divideTuples(&result, &numerator, &denominator) == 0) {
+        for (size_t i = 0; i < result.length; ++i) {
+            printf("%d ", result.data[i]);
+        }
+        free(result.data);
+    } else {
+        printf("Error in division\n");
+    }
+
+    return 0;
+}
+```

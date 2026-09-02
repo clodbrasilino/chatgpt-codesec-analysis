@@ -1,0 +1,44 @@
+{
+  "task_id": 135,
+  "text": "Write a C function to find the nth hexagonal number.",
+  "fn_candidates": [
+    "hexagonal_num",
+    "HexagonalNum",
+    "hexagonalNum",
+    "hexagonalnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "hexagonal_num",
+      "args": [
+        10
+      ],
+      "expected": 190,
+      "assert_src": "assert hexagonal_num(10) == 190"
+    },
+    {
+      "fn_name": "hexagonal_num",
+      "args": [
+        5
+      ],
+      "expected": 45,
+      "assert_src": "assert hexagonal_num(5) == 45"
+    },
+    {
+      "fn_name": "hexagonal_num",
+      "args": [
+        7
+      ],
+      "expected": 91,
+      "assert_src": "assert hexagonal_num(7) == 91"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

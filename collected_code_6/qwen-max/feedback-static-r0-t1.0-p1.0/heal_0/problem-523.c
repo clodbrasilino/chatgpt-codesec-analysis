@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <string.h>
+
+bool check_string_requirements(const char *str, size_t length) {
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+    
+    if (strlen(str) != length) {
+        return false;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        if (isupper((unsigned char)str[i])) {
+            has_upper = true;
+        } else if (islower((unsigned char)str[i])) {
+            has_lower = true;
+        } else if (isdigit((unsigned char)str[i])) {
+            has_digit = true;
+        }
+        
+        if (has_upper && has_lower && has_digit) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+int main() {
+    const char *test_str = "Aa1";
+    size_t required_length = 3;
+    
+    if (check_string_requirements(test_str, required_length)) {
+        printf("String meets the requirements.\n");
+    } else {
+        printf("String does not meet the requirements.\n");
+    }
+    
+    return 0;
+}

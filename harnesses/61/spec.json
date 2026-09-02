@@ -1,0 +1,48 @@
+{
+  "task_id": 61,
+  "text": "Write a C function to count number of substrings with the sum of digits equal to their length.",
+  "fn_candidates": [
+    "count_Substrings",
+    "CountSubstrings",
+    "countSubstrings",
+    "countSubstrings"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Substrings",
+      "args": [
+        "112112",
+        6
+      ],
+      "expected": 6,
+      "assert_src": "assert count_Substrings('112112',6) == 6"
+    },
+    {
+      "fn_name": "count_Substrings",
+      "args": [
+        "111",
+        3
+      ],
+      "expected": 6,
+      "assert_src": "assert count_Substrings('111',3) == 6"
+    },
+    {
+      "fn_name": "count_Substrings",
+      "args": [
+        "1101112",
+        7
+      ],
+      "expected": 12,
+      "assert_src": "assert count_Substrings('1101112',7) == 12"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

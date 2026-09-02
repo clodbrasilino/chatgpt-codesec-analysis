@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdarg.h>
+#include <stdlib.h>
+
+typedef struct {
+    void **items;
+    int size;
+} Tuple;
+
+bool tuple_has_none(Tuple *tuple) {
+    if (tuple == NULL || tuple->items == NULL) {
+        return true;
+    }
+    
+    for (int i = 0; i < tuple->size; i++) {
+        if (tuple->items[i] == NULL) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+Tuple create_tuple(int size, ...) {
+    Tuple tuple;
+    tuple.size = size;
+    tuple.items = malloc(sizeof(void *) * size);
+    
+    if (tuple.items == NULL) {
+        tuple.size = 0;
+        return tuple;
+    }
+    
+    va_list args;
+    va_start(args, size);
+    
+    for (int i = 0; i < size; i++) {
+        tuple.items[i] = va_arg(args, void *);
+    }
+    
+    va_end(args);
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->items != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    int a = 10;
+    int b = 20;
+    char c = 'x';
+    double d = 3.14;
+    
+    Tuple tuple1 = create_tuple(3, &a, &b, &c);
+    Tuple tuple2 = create_tuple(4, &a, (void *)NULL, &c, &d);
+    Tuple tuple3 = create_tuple(2, (void *)NULL, (void *)NULL);
+    Tuple tuple4 = create_tuple(0);
+    
+    printf("Tuple1 has none: %s\n", tuple_has_none(&tuple1) ? "true" : "false");
+    printf("Tuple2 has none: %s\n", tuple_has_none(&tuple2) ? "true" : "false");
+    printf("Tuple3 has none: %s\n", tuple_has_none(&tuple3) ? "true" : "false");
+    printf("Tuple4 has none: %s\n", tuple_has_none(&tuple4) ? "true" : "false");
+    
+    free_tuple(&tuple1);
+    free_tuple(&tuple2);
+    free_tuple(&tuple3);
+    free_tuple(&tuple4);
+    
+    return 0;
+}

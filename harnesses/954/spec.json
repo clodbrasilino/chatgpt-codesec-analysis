@@ -1,0 +1,29 @@
+{
+  "task_id": 954,
+  "text": "Write a C function that gives profit amount if the given amount has profit else return none.",
+  "fn_candidates": [
+    "profit_amount",
+    "ProfitAmount",
+    "profitAmount",
+    "profitamount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "profit_amount",
+      "args": [
+        1500,
+        1200
+      ],
+      "expected": 300,
+      "assert_src": "assert profit_amount(1500,1200)==300"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

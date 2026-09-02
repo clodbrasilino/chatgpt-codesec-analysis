@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'coins' can be declared as const array [constParameter]
+ */
+int countCoinChange(int amount, int coins[], int n) {
+    int table[amount + 1];
+    table[0] = 1;
+    for (int i = 1; i <= amount; i++) {
+        table[i] = 0;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = coins[i]; j <= amount; j++) {
+            table[j] += table[j - coins[i]];
+        }
+    }
+    return table[amount];
+}
+
+int main() {
+    int amount = 10;
+    int coins[] = {1, 2, 5};
+    int n = 3;
+    printf("Number of ways to make change: %d\n", countCoinChange(amount, coins, n));
+    return 0;
+}

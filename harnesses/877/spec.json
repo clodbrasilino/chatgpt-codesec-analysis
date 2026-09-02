@@ -1,0 +1,44 @@
+{
+  "task_id": 877,
+  "text": "Write a C function to sort the given string.",
+  "fn_candidates": [
+    "sort_String",
+    "SortString",
+    "sortString",
+    "sortString"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sort_String",
+      "args": [
+        "cba"
+      ],
+      "expected": "abc",
+      "assert_src": "assert sort_String(\"cba\") == \"abc\""
+    },
+    {
+      "fn_name": "sort_String",
+      "args": [
+        "data"
+      ],
+      "expected": "aadt",
+      "assert_src": "assert sort_String(\"data\") == \"aadt\""
+    },
+    {
+      "fn_name": "sort_String",
+      "args": [
+        "zxy"
+      ],
+      "expected": "xyz",
+      "assert_src": "assert sort_String(\"zxy\") == \"xyz\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

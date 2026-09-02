@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool areCharactersUnique(const char *str) {
+    int charSet[256] = {0};
+    while (*str) {
+        if (charSet[(unsigned char)*str]) {
+            return false;
+        }
+        charSet[(unsigned char)*str]++;
+        str++;
+    }
+    return true;
+}
+
+int main() {
+    const char *test1 = "abcdefg";
+    const char *test2 = "hello";
+    
+    if (areCharactersUnique(test1)) {
+        printf("All characters in \"%s\" are unique.\n", test1);
+    } else {
+        printf("Not all characters in \"%s\" are unique.\n", test1);
+    }
+
+    if (areCharactersUnique(test2)) {
+        printf("All characters in \"%s\" are unique.\n", test2);
+    } else {
+        printf("Not all characters in \"%s\" are unique.\n", test2);
+    }
+
+    return 0;
+}

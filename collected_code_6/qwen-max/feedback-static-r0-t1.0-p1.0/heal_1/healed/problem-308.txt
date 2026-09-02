@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)b - *(int *)a);
+}
+
+void findLargestProducts(const int *list1, const int *list2, int n, int m, int k, int *result) {
+    int products[n * m];
+    int index = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            products[index++] = list1[i] * list2[j];
+        }
+    }
+    qsort(products, n * m, sizeof(int), compare);
+    for (int i = 0; i < k; ++i) {
+        result[i] = products[i];
+    }
+}
+
+int main() {
+    int list1[] = { 3, 4, 5 };
+    int list2[] = { 2, 7, 2 };
+    int n = sizeof(list1) / sizeof(list1[0]);
+    int m = sizeof(list2) / sizeof(list2[0]);
+    int k = 5;
+    int *result = (int *)malloc(k * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    findLargestProducts(list1, list2, n, m, k, result);
+    for (int i = 0; i < k; ++i) {
+        printf("%d ", result[i]);
+    }
+    free(result);
+    return 0;
+}
+```

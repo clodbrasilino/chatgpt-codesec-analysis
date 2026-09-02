@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+int max_of_two(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int main(void) {
+    int num1 = 10;
+    int num2 = 20;
+    int result = max_of_two(num1, num2);
+    printf("Maximum: %d\n", result);
+    return 0;
+}

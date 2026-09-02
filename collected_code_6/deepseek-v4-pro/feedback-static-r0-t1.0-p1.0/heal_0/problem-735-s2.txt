@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+unsigned int toggle_middle_bits(unsigned int num) {
+    if (num <= 1) {
+        return num;
+    }
+    
+    unsigned int highest_bit = 0;
+    unsigned int temp = num;
+    while (temp > 1) {
+        temp >>= 1;
+        highest_bit++;
+    }
+    
+    unsigned int mask = 0;
+    for (unsigned int i = 1; i < highest_bit; i++) {
+        mask |= (1u << i);
+    }
+    
+    return num ^ mask;
+}
+
+int main(void) {
+    unsigned int test_values[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 15, 16, 255, 1024, 4294967295u};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        unsigned int input = test_values[i];
+        unsigned int result = toggle_middle_bits(input);
+        printf("toggle_middle_bits(%u) = %u\n", input, result);
+    }
+    
+    return 0;
+}
+```

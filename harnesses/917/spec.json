@@ -1,0 +1,44 @@
+{
+  "task_id": 917,
+  "text": "Write a C function to find the sequences of one upper case letter followed by lower case letters.",
+  "fn_candidates": [
+    "text_uppercase_lowercase",
+    "TextUppercaseLowercase",
+    "textUppercaseLowercase",
+    "textuppercaselowercase"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_uppercase_lowercase",
+      "args": [
+        "AaBbGg"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_uppercase_lowercase(\"AaBbGg\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_uppercase_lowercase",
+      "args": [
+        "aA"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_uppercase_lowercase(\"aA\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_uppercase_lowercase",
+      "args": [
+        "PYTHON"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_uppercase_lowercase(\"PYTHON\")==('Not matched!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

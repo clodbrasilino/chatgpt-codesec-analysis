@@ -1,0 +1,44 @@
+{
+  "task_id": 96,
+  "text": "Write a C function to find the number of divisors of a given integer.",
+  "fn_candidates": [
+    "divisor",
+    "Divisor",
+    "divisor",
+    "divisor"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "divisor",
+      "args": [
+        15
+      ],
+      "expected": 4,
+      "assert_src": "assert divisor(15) == 4 "
+    },
+    {
+      "fn_name": "divisor",
+      "args": [
+        12
+      ],
+      "expected": 6,
+      "assert_src": "assert divisor(12) == 6"
+    },
+    {
+      "fn_name": "divisor",
+      "args": [
+        9
+      ],
+      "expected": 3,
+      "assert_src": "assert divisor(9) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

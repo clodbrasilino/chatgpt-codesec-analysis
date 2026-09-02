@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areElementsSame(const int *list, int length) {
+    if (length <= 1) {
+        return true;
+    }
+
+    for (int i = 1; i < length; i++) {
+        if (list[i] != list[0]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main() {
+    const int list1[] = {1, 1, 1, 1};
+    const int list2[] = {1, 2, 1, 1};
+    const int list3[] = {};
+
+    int length1 = sizeof(list1) / sizeof(list1[0]);
+    int length2 = sizeof(list2) / sizeof(list2[0]);
+    int length3 = sizeof(list3) / sizeof(list3[0]);
+
+    bool result1 = areElementsSame(list1, length1);
+    printf("List 1 elements are same: %s\n", result1 ? "true" : "false");
+
+    bool result2 = areElementsSame(list2, length2);
+    printf("List 2 elements are same: %s\n", result2 ? "true" : "false");
+
+    bool result3 = areElementsSame(list3, length3);
+    printf("List 3 elements are same: %s\n", result3 ? "true" : "false");
+
+    return 0;
+}

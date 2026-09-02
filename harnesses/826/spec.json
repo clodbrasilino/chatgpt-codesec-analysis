@@ -1,0 +1,50 @@
+{
+  "task_id": 826,
+  "text": "Write a C function to find the type of triangle from the given sides.",
+  "fn_candidates": [
+    "check_Type_Of_Triangle",
+    "CheckTypeOfTriangle",
+    "checkTypeOfTriangle",
+    "checkTypeOfTriangle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Type_Of_Triangle",
+      "args": [
+        1,
+        2,
+        3
+      ],
+      "expected": "Obtuse-angled Triangle",
+      "assert_src": "assert check_Type_Of_Triangle(1,2,3) == \"Obtuse-angled Triangle\""
+    },
+    {
+      "fn_name": "check_Type_Of_Triangle",
+      "args": [
+        2,
+        2,
+        2
+      ],
+      "expected": "Acute-angled Triangle",
+      "assert_src": "assert check_Type_Of_Triangle(2,2,2) == \"Acute-angled Triangle\""
+    },
+    {
+      "fn_name": "check_Type_Of_Triangle",
+      "args": [
+        1,
+        0,
+        1
+      ],
+      "expected": "Right-angled Triangle",
+      "assert_src": "assert check_Type_Of_Triangle(1,0,1) == \"Right-angled Triangle\""
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

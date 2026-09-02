@@ -1,0 +1,74 @@
+{
+  "task_id": 418,
+  "text": "Write a C function to find the sublist having maximum length.",
+  "fn_candidates": [
+    "Find_Max",
+    "FindMax",
+    "FindMax",
+    "FindMax"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Find_Max",
+      "args": [
+        [
+          [
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            3
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3
+      ],
+      "assert_src": "assert Find_Max([[1],[1,2],[1,2,3]]) == [1,2,3]"
+    },
+    {
+      "fn_name": "Find_Max",
+      "args": [
+        [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            5,
+            6,
+            1
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        5,
+        6,
+        1
+      ],
+      "assert_src": "assert Find_Max([[1,1],[1,2,3],[1,5,6,1]]) == [1,5,6,1]"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

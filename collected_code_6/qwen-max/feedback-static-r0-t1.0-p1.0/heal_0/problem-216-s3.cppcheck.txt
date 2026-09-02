@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s3.c:18:24: style: Local variable 'main' shadows outer function [shadowFunction]
+        for (ListNode *main = mainList->head; main != NULL; main = main->next) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s3.c:29:5: note: Shadowed declaration
+int main() {
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s3.c:18:24: note: Shadow variable
+        for (ListNode *main = mainList->head; main != NULL; main = main->next) {
+                       ^

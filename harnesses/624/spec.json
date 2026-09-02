@@ -1,0 +1,44 @@
+{
+  "task_id": 624,
+  "text": "Write a C function to convert the given string to upper case.",
+  "fn_candidates": [
+    "is_upper",
+    "IsUpper",
+    "isUpper",
+    "isupper"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_upper",
+      "args": [
+        "person"
+      ],
+      "expected": "PERSON",
+      "assert_src": "assert is_upper(\"person\") ==\"PERSON\""
+    },
+    {
+      "fn_name": "is_upper",
+      "args": [
+        "final"
+      ],
+      "expected": "FINAL",
+      "assert_src": "assert is_upper(\"final\") == \"FINAL\""
+    },
+    {
+      "fn_name": "is_upper",
+      "args": [
+        "Valid"
+      ],
+      "expected": "VALID",
+      "assert_src": "assert is_upper(\"Valid\") == \"VALID\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int data) {
+    Node *new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+int list_length(Node *head) {
+    int length = 0;
+    Node *current = head;
+    while (current != NULL) {
+        length++;
+        current = current->next;
+    }
+    return length;
+}
+
+Node *rotate_right(Node *head, int k) {
+    if (head == NULL || head->next == NULL || k == 0) {
+        return head;
+    }
+
+    int length = list_length(head);
+    k = k % length;
+    if (k == 0) {
+        return head;
+    }
+
+    Node *current = head;
+    int steps = length - k - 1;
+    for (int i = 0; i < steps; i++) {
+        current = current->next;
+    }
+
+    Node *new_head = current->next;
+    current->next = NULL;
+
+    Node *tail = new_head;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    tail->next = head;
+
+    return new_head;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    int values[] = {1, 2, 3, 4, 5};
+    int size = sizeof(values) / sizeof(values[0]);
+
+    for (int i = 0; i < size; i++) {
+        append_node(&head, values[i]);
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    int k = 2;
+    head = rotate_right(head, k);
+
+    printf("Rotated list by %d: ", k);
+    print_list(head);
+
+    free_list(head);
+    return 0;
+}

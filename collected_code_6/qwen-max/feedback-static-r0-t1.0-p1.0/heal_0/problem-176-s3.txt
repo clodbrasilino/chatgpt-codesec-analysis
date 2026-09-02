@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+
+double calculate_perimeter(double a, double b, double c) {
+    return a + b + c;
+}
+
+int main() {
+    double side1, side2, side3;
+
+    printf("Enter the length of side 1: ");
+    if (scanf("%lf", &side1) != 1) return 1;
+
+    printf("Enter the length of side 2: ");
+    if (scanf("%lf", &side2) != 1) return 1;
+
+    printf("Enter the length of side 3: ");
+    if (scanf("%lf", &side3) != 1) return 1;
+
+    double perimeter = calculate_perimeter(side1, side2, side3);
+    printf("The perimeter of the triangle is: %.2f\n", perimeter);
+
+    return 0;
+}
+```

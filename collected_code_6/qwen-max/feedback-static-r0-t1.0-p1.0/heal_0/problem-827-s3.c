@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_column(int **array, int rows, int cols, int col_index) {
+    int sum = 0;
+    for (int i = 0; i < rows; ++i) {
+        sum += array[i][col_index];
+    }
+    return sum;
+}
+
+int main() {
+    int rows = 3;
+    int cols = 4;
+    int **list_of_lists = (int **)malloc(rows * sizeof(int *));
+    
+    for (int i = 0; i < rows; ++i) {
+        list_of_lists[i] = (int *)malloc(cols * sizeof(int));
+    }
+    
+    int data[3][4] = {
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12}
+    };
+    
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            list_of_lists[i][j] = data[i][j];
+        }
+    }
+    
+    int col_to_sum = 2;
+    int result = sum_column(list_of_lists, rows, cols, col_to_sum);
+    printf("Sum of column %d: %d\n", col_to_sum, result);
+
+    for (int i = 0; i < rows; ++i) {
+        free(list_of_lists[i]);
+    }
+    free(list_of_lists);
+    
+    return 0;
+}

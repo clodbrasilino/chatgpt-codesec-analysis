@@ -1,0 +1,44 @@
+{
+  "task_id": 274,
+  "text": "Write a C function to find sum of even index binomial coefficients.",
+  "fn_candidates": [
+    "even_binomial_Coeff_Sum",
+    "EvenBinomialCoeffSum",
+    "evenBinomialCoeffSum",
+    "evenbinomialCoeffSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_binomial_Coeff_Sum",
+      "args": [
+        4
+      ],
+      "expected": 8,
+      "assert_src": "assert even_binomial_Coeff_Sum(4) == 8"
+    },
+    {
+      "fn_name": "even_binomial_Coeff_Sum",
+      "args": [
+        6
+      ],
+      "expected": 32,
+      "assert_src": "assert even_binomial_Coeff_Sum(6) == 32"
+    },
+    {
+      "fn_name": "even_binomial_Coeff_Sum",
+      "args": [
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert even_binomial_Coeff_Sum(2) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

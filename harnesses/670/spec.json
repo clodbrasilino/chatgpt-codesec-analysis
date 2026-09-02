@@ -1,0 +1,57 @@
+{
+  "task_id": 670,
+  "text": "Write a C function to check whether a sequence of numbers has a decreasing trend or not.",
+  "fn_candidates": [
+    "decreasing_trend",
+    "DecreasingTrend",
+    "decreasingTrend",
+    "decreasingtrend"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "decreasing_trend",
+      "args": [
+        [
+          -4,
+          -3,
+          -2,
+          -1
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert decreasing_trend([-4,-3,-2,-1]) == True"
+    },
+    {
+      "fn_name": "decreasing_trend",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert decreasing_trend([1,2,3]) == True"
+    },
+    {
+      "fn_name": "decreasing_trend",
+      "args": [
+        [
+          3,
+          2,
+          1
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert decreasing_trend([3,2,1]) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int find_literals(const char *str, const char **literals, size_t num_literals) {
+    for (size_t i = 0; i < num_literals; i++) {
+        if (strstr(str, literals[i]) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    const char *search_str = "This is a test string to search for certain words.";
+    const char *literals[] = {"test", "words", "none"};
+    size_t num_literals = sizeof(literals) / sizeof(literals[0]);
+
+    if (find_literals(search_str, literals, num_literals)) {
+        printf("One or more literals found.\n");
+    } else {
+        printf("No literals found.\n");
+    }
+
+    return 0;
+}

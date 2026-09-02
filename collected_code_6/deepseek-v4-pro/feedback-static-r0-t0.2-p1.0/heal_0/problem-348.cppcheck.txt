@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-348.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-348.c:36:23: style: Condition 'remaining>=0' is always true [knownConditionTrueFalse]
+        if (remaining >= 0 && remaining <= length) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-348.c:34:23: note: Assuming that condition 'i<=length' is not redundant
+    for (int i = 0; i <= length; i++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-348.c:35:32: note: Assignment 'remaining=length-i', assigned value is greater than -1
+        int remaining = length - i;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-348.c:36:23: note: Condition 'remaining>=0' is always true
+        if (remaining >= 0 && remaining <= length) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-348.c:4:26: style: Parameter 'values' can be declared as pointer to const [constParameterPointer]
+int count_sequences(int *values, int values_count, int length) {
+                         ^

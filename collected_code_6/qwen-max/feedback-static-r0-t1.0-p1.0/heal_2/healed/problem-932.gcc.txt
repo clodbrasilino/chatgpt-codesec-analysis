@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-932.c: In function 'removeDuplicates':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-932.c:51:19: error: assignment of read-only location '*(result + (sizetype)((long unsigned int)i * 8))'
+   51 |         result[i] = temp->word;
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-932.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-932.c:77:16: error: passing argument 1 of 'printArray' from incompatible pointer type [-Wincompatible-pointer-types]
+   77 |     printArray(result, newLength);
+      |                ^~~~~~
+      |                |
+      |                char * const*
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-932.c:65:29: note: expected 'const char **' but argument is of type 'char * const*'
+   65 | void printArray(const char* arr[], int size) {
+      |                 ~~~~~~~~~~~~^~~~~

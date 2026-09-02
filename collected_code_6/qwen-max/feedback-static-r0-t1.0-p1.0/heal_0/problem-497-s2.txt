@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_surface_area_cone(double radius, double height) {
+    double slant_height = sqrt(radius * radius + height * height);
+    return M_PI * radius * (radius + slant_height);
+}
+
+int main() {
+    double radius, height;
+    printf("Enter the radius of the cone: ");
+    if (scanf("%lf", &radius) != 1 || radius <= 0) {
+        fprintf(stderr, "Invalid input for radius\n");
+        return 1;
+    }
+    printf("Enter the height of the cone: ");
+    if (scanf("%lf", &height) != 1 || height <= 0) {
+        fprintf(stderr, "Invalid input for height\n");
+        return 1;
+    }
+    double surface_area = calculate_surface_area_cone(radius, height);
+    printf("The surface area of the cone is: %.2f\n", surface_area);
+    return 0;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 248,
+  "text": "Write a C function to calculate the harmonic sum of n-1.",
+  "fn_candidates": [
+    "harmonic_sum",
+    "HarmonicSum",
+    "harmonicSum",
+    "harmonicsum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "harmonic_sum",
+      "args": [
+        7
+      ],
+      "expected": 2.5928571428571425,
+      "assert_src": "assert harmonic_sum(7) == 2.5928571428571425"
+    },
+    {
+      "fn_name": "harmonic_sum",
+      "args": [
+        4
+      ],
+      "expected": 2.083333333333333,
+      "assert_src": "assert harmonic_sum(4) == 2.083333333333333"
+    },
+    {
+      "fn_name": "harmonic_sum",
+      "args": [
+        19
+      ],
+      "expected": 3.547739657143682,
+      "assert_src": "assert harmonic_sum(19) == 3.547739657143682"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

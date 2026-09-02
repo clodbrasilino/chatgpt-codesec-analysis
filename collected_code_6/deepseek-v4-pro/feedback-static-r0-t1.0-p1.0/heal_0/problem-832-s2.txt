@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+
+int extract_max_numeric(const char *input, long *max_value) {
+    if (input == NULL || max_value == NULL) {
+        return -1;
+    }
+
+    regex_t regex;
+    regmatch_t matches[2];
+    const char *pattern = "[-+]?[0-9]+";
+    int ret;
+    int found = 0;
+    long current_max = LONG_MIN;
+    char *cursor = (char *)input;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    while (regexec(&regex, cursor, 2, matches, 0) == 0) {
+        if (matches[0].rm_so == -1) {
+            break;
+        }
+
+        size_t match_len = matches[0].rm_eo - matches[0].rm_so;
+        char *match_str = (char *)malloc(match_len + 1);
+        if (match_str == NULL) {
+            regfree(&regex);
+            return -1;
+        }
+
+        strncpy(match_str, cursor + matches[0].rm_so, match_len);
+        match_str[match_len] = '\0';
+
+        char *endptr;
+        long value = strtol(match_str, &endptr, 10);
+        
+        if (endptr != match_str && *endptr == '\0') {
+            if (value > current_max) {
+                current_max = value;
+            }
+            found = 1;
+        }
+
+        free(match_str);
+        cursor += matches[0].rm_eo;
+
+        if (matches[0].rm_eo == 0) {
+            cursor++;
+            if (*cursor == '\0') {
+                break;
+            }
+        }
+    }
+
+    regfree(&regex);
+
+    if (found) {
+        *max_value = current_max;
+        return 0;
+    }
+
+    return -1;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "abc123def456",
+        "-10 20 -30 40",
+        "no numbers here",
+        "42",
+        "3.14 and 2",
+        "",
+        "   -500 +600 700  ",
+        NULL
+    };
+
+    for (int i = 0; test_strings[i] != NULL; i++) {
+        long result;
+        int status = extract_max_numeric(test_strings[i], &result);
+        
+        printf("Input: \"%s\"\n", test_strings[i]);
+        if (status == 0) {
+            printf("Max numeric value: %ld\n", result);
+        } else {
+            printf("No numeric value found or error occurred\n");
+        }
+        printf("---\n");
+    }
+
+    return 0;
+}
+```

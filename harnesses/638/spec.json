@@ -1,0 +1,47 @@
+{
+  "task_id": 638,
+  "text": "Write a C function to calculate wind chill index.",
+  "fn_candidates": [
+    "wind_chill",
+    "WindChill",
+    "windChill",
+    "windchill"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "wind_chill",
+      "args": [
+        120,
+        35
+      ],
+      "expected": 40,
+      "assert_src": "assert wind_chill(120,35)==40"
+    },
+    {
+      "fn_name": "wind_chill",
+      "args": [
+        40,
+        70
+      ],
+      "expected": 86,
+      "assert_src": "assert wind_chill(40,70)==86"
+    },
+    {
+      "fn_name": "wind_chill",
+      "args": [
+        10,
+        100
+      ],
+      "expected": 116,
+      "assert_src": "assert wind_chill(10,100)==116"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

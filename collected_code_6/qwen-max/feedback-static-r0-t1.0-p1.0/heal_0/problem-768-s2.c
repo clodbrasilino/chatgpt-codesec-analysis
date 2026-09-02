@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_odd_parity(unsigned int num) {
+    int parity = 0;
+    while (num) {
+        parity ^= (num & 1);
+        num >>= 1;
+    }
+    return (parity == 1);
+}
+
+int main() {
+    unsigned int number;
+    printf("Enter a number: ");
+    if (scanf("%u", &number) != 1) {
+        return 1;
+    }
+
+    if (check_odd_parity(number)) {
+        printf("The number has odd parity.\n");
+    } else {
+        printf("The number does not have odd parity.\n");
+    }
+
+    return 0;
+}

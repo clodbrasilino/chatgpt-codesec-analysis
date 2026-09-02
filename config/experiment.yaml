@@ -1,0 +1,19 @@
+# Experiment defaults (overridable per run).
+experiment:
+  root: collected_code_6            # new data root
+  max_rounds: 10                    # raised from 7 (user decision 2026-09-01); cost cap
+  subset_size: 200                  # vulnerable-prone subset (user decision)
+  main_samples: 3                   # samples per task, 7-model sweep (user decision)
+  ablation_samples: 1
+  key_cell_samples: 2               # static+dynamic and reasoning cells
+  temp_grid: [[1.0, 1.0], [0.2, 1.0], [1.0, 0.5]]
+  cost_cap_tokens: null             # optional global token cap
+
+# Pre-registered statistical tests (recorded for the paper).
+analysis:
+  rq1_models: [openai-gpt56-sol, claude-sonnet-5, gemini-3-pro, deepseek-v4-pro, qwen-max, kimi-k3, glm-5.1]
+  tests:
+    rq1: [cochran_q, pairwise_mcnemar_holm, wilson_ci, cohens_g]
+    rq2_rq3: [mcnemar, wilcoxon_signed_rank, effect_size_r, bootstrap_ci]
+    rq6: [kaplan_meier, logrank]
+  alpha: 0.05

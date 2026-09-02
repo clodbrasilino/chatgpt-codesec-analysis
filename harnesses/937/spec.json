@@ -1,0 +1,44 @@
+{
+  "task_id": 937,
+  "text": "Write a C function to count the most common character in a given string.",
+  "fn_candidates": [
+    "max_char",
+    "MaxChar",
+    "maxChar",
+    "maxchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_char",
+      "args": [
+        "hello world"
+      ],
+      "expected": "l",
+      "assert_src": "assert max_char(\"hello world\")==('l')"
+    },
+    {
+      "fn_name": "max_char",
+      "args": [
+        "hello "
+      ],
+      "expected": "l",
+      "assert_src": "assert max_char(\"hello \")==('l')"
+    },
+    {
+      "fn_name": "max_char",
+      "args": [
+        "python pr"
+      ],
+      "expected": "p",
+      "assert_src": "assert max_char(\"python pr\")==('p')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 434,
+  "text": "Write a C function that matches a string that has an a followed by one or more b's.",
+  "fn_candidates": [
+    "text_match_one",
+    "TextMatchOne",
+    "textMatchOne",
+    "textmatchone"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match_one",
+      "args": [
+        "ac"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_one(\"ac\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match_one",
+      "args": [
+        "dc"
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_one(\"dc\")==('Not matched!')"
+    },
+    {
+      "fn_name": "text_match_one",
+      "args": [
+        "abba"
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_one(\"abba\")==('Found a match!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

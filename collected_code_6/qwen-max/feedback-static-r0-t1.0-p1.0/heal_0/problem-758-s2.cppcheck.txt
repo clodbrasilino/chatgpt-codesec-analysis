@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-758-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-758-s2.c:9:26: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+int lists_are_equal(int *list1, int *list2, int size) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-758-s2.c:9:38: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+int lists_are_equal(int *list1, int *list2, int size) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-758-s2.c:18:42: style: Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+int count_unique_lists(int **lists, int *sizes, int num_lists) {
+                                         ^

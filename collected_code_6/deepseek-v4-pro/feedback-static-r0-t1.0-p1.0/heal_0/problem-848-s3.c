@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double trapezium_area(double a, double b, double h) {
+    if (a < 0 || b < 0 || h < 0) {
+        fprintf(stderr, "Error: Dimensions must be non-negative.\n");
+        exit(EXIT_FAILURE);
+    }
+    return 0.5 * (a + b) * h;
+}
+
+int main(void) {
+    double a = 5.0;
+    double b = 7.0;
+    double h = 4.0;
+    double area = trapezium_area(a, b, h);
+    printf("Area of trapezium: %.2f\n", area);
+    return 0;
+}

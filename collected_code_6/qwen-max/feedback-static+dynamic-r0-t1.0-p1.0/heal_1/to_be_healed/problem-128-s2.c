@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** filter_long_words(char *words[], int word_count, int min_length, int *filtered_count) {
+    char **result = NULL;
+    *filtered_count = 0;
+
+    for (int i = 0; i < word_count; ++i) {
+        if (strlen(words[i]) > min_length) {
+            /* Possible weaknesses found:
+             *  Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+             */
+            result = realloc(result, sizeof(char*) * (*filtered_count + 1));
+            if (result == NULL) {
+                return NULL;
+            }
+            result[*filtered_count] = strdup(words[i]);
+            if (result[*filtered_count] == NULL) {
+                while (*filtered_count) {
+                    free(result[--(*filtered_count)]);
+                }
+                free(result);
+                return NULL;
+            }
+            (*filtered_count)++;
+        }
+    }
+    return result;
+}
+
+void free_filtered_words(char **words, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main() {
+    char *words[] = {"hello", "world", "a", "of", "programming"};
+    int word_count = 5;
+    int min_length = 2;
+    int filtered_count = 0;
+    char **filtered_words = filter_long_words(words, word_count, min_length, &filtered_count);
+
+    if (filtered_words != NULL) {
+        for (int i = 0; i < filtered_count; ++i) {
+            printf("%s\n", filtered_words[i]);
+        }
+        free_filtered_words(filtered_words, filtered_count);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

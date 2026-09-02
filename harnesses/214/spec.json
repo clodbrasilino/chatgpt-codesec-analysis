@@ -1,0 +1,44 @@
+{
+  "task_id": 214,
+  "text": "Write a C function to convert radians to degrees.",
+  "fn_candidates": [
+    "degree_radian",
+    "DegreeRadian",
+    "degreeRadian",
+    "degreeradian"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "degree_radian",
+      "args": [
+        90
+      ],
+      "expected": 5156.620156177409,
+      "assert_src": "assert degree_radian(90)==5156.620156177409"
+    },
+    {
+      "fn_name": "degree_radian",
+      "args": [
+        60
+      ],
+      "expected": 3437.746770784939,
+      "assert_src": "assert degree_radian(60)==3437.746770784939"
+    },
+    {
+      "fn_name": "degree_radian",
+      "args": [
+        120
+      ],
+      "expected": 6875.493541569878,
+      "assert_src": "assert degree_radian(120)==6875.493541569878"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,51 @@
+{
+  "task_id": 486,
+  "text": "Write a C function to compute binomial probability for the given number.",
+  "fn_candidates": [
+    "binomial_probability",
+    "BinomialProbability",
+    "binomialProbability",
+    "binomialprobability"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "binomial_probability",
+      "args": [
+        10,
+        5,
+        0.3333333333333333
+      ],
+      "expected": 0.13656454808718185,
+      "assert_src": "assert binomial_probability(10, 5, 1.0/3) == 0.13656454808718185"
+    },
+    {
+      "fn_name": "binomial_probability",
+      "args": [
+        11,
+        6,
+        0.5
+      ],
+      "expected": 0.2255859375,
+      "assert_src": "assert binomial_probability(11, 6, 2.0/4) == 0.2255859375"
+    },
+    {
+      "fn_name": "binomial_probability",
+      "args": [
+        12,
+        7,
+        0.6
+      ],
+      "expected": 0.227030335488,
+      "assert_src": "assert binomial_probability(12, 7, 3.0/5) == 0.227030335488"
+    }
+  ],
+  "arg_kinds": [
+    "float",
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

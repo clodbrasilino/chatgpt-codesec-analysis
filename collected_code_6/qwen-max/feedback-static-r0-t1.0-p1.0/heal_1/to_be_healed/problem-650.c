@@ -1,0 +1,33 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+bool areArraysEqual(const int *array1, const int *array2, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        if (array1[i] != array2[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const int array1[] = {1, 2, 3, 4, 5};
+    const int array2[] = {1, 2, 3, 4, 5};
+
+    /* Possible weaknesses found:
+     *  Assignment 'length1=sizeof(array1)/sizeof(array1[0])', assigned value is 5
+     */
+    size_t length1 = sizeof(array1) / sizeof(array1[0]);
+    size_t length2 = sizeof(array2) / sizeof(array2[0]);
+
+    /* Possible weaknesses found:
+     *  Condition 'length1==length2' is always true
+     *  Condition 'length1==length2' is always true [knownConditionTrueFalse]
+     */
+    if (length1 == length2 && areArraysEqual(array1, array2, length1)) {
+        return 0;
+    } else {
+        return 1;
+    }
+}

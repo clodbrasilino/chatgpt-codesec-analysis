@@ -1,0 +1,86 @@
+{
+  "task_id": 2,
+  "text": "Write a C function to find the similar elements from the given two tuple lists.",
+  "fn_candidates": [
+    "similar_elements",
+    "SimilarElements",
+    "similarElements",
+    "similarelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "similar_elements",
+      "args": [
+        [
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          5,
+          7,
+          4,
+          10
+        ]
+      ],
+      "expected": [
+        4,
+        5
+      ],
+      "assert_src": "assert similar_elements((3, 4, 5, 6),(5, 7, 4, 10)) == (4, 5)"
+    },
+    {
+      "fn_name": "similar_elements",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          5,
+          4,
+          3,
+          7
+        ]
+      ],
+      "expected": [
+        3,
+        4
+      ],
+      "assert_src": "assert similar_elements((1, 2, 3, 4),(5, 4, 3, 7)) == (3, 4)"
+    },
+    {
+      "fn_name": "similar_elements",
+      "args": [
+        [
+          11,
+          12,
+          14,
+          13
+        ],
+        [
+          17,
+          15,
+          14,
+          13
+        ]
+      ],
+      "expected": [
+        13,
+        14
+      ],
+      "assert_src": "assert similar_elements((11, 12, 14, 13),(17, 15, 14, 13)) == (13, 14)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

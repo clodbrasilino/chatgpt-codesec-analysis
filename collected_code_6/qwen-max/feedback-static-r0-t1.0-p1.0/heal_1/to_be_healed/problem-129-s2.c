@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generate_magic_square(int n, int magic[][10]) {
+    /* Possible weaknesses found:
+     *  Unused variable: j [unusedVariable]
+     */
+    int i, j, num = 1;
+    int x = n / 2, y = n - 1;
+
+    for (i = 0; i < n * n; ++i) {
+        if (x == -1 && y == n) { 
+            x = 0;
+            y = n - 2;
+        } else if (x < 0) {
+            x = n - 1;
+        } else if (y == n) {
+            y = 0;
+        }
+        
+        if (magic[x][y] > 0) {
+            y -= 2;
+            x++;
+            continue;
+        }
+
+        magic[x][y] = num++;
+        y++;
+        x--;
+    }
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Assignment 'n=3', assigned value is 3
+     */
+    int n = 3;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'magic' can be reduced. [variableScope]
+     */
+    int magic[10][10] = {0};
+
+    /* Possible weaknesses found:
+     *  Condition 'n%2==1' is always true
+     *  Condition 'n%2==1' is always true [knownConditionTrueFalse]
+     */
+    if (n % 2 == 1) {
+        generate_magic_square(n, magic);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                printf("%d ", magic[i][j]);
+            }
+            printf("\n");
+        }
+    } else {
+        printf("Size must be an odd number.\n");
+        return 1;
+    }
+    
+    return 0;
+}

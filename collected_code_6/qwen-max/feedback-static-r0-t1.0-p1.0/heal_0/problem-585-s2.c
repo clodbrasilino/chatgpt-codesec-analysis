@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int price;
+    int index;
+} Item;
+
+int compare(const void *a, const void *b) {
+    return ((Item *)b)->price - ((Item *)a)->price;
+}
+
+void find_n_expensive(int n, Item *items, int size, Item *result) {
+    qsort(items, size, sizeof(Item), compare);
+    for (int i = 0; i < n && i < size; ++i) {
+        result[i] = items[i];
+    }
+}
+
+int main() {
+    int n = 3;
+    Item items[] = {{100, 0}, {200, 1}, {50, 2}, {300, 3}, {40, 4}};
+    int size = sizeof(items) / sizeof(items[0]);
+    Item result[n];
+
+    find_n_expensive(n, items, size, result);
+
+    for (int i = 0; i < n; ++i) {
+        printf("Price: %d, Index: %d\n", result[i].price, result[i].index);
+    }
+
+    return 0;
+}

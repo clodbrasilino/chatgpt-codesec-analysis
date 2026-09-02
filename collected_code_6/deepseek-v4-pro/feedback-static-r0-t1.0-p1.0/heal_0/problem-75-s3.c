@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int find_divisible_tuples(Tuple *tuples, int tuple_count, int k, Tuple **result) {
+    if (tuples == NULL || tuple_count <= 0 || result == NULL || k == 0) {
+        return 0;
+    }
+
+    int count = 0;
+    int *valid_indices = (int *)malloc(tuple_count * sizeof(int));
+    if (valid_indices == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].elements == NULL || tuples[i].size <= 0) {
+            continue;
+        }
+        
+        int all_divisible = 1;
+        for (int j = 0; j < tuples[i].size; j++) {
+            if (tuples[i].elements[j] % k != 0) {
+                all_divisible = 0;
+                break;
+            }
+        }
+        
+        if (all_divisible) {
+            valid_indices[count++] = i;
+        }
+    }
+
+    *result = (Tuple *)malloc(count * sizeof(Tuple));
+    if (*result == NULL && count > 0) {
+        free(valid_indices);
+        return 0;
+    }
+
+    for (int i = 0; i < count; i++) {
+        int idx = valid_indices[i];
+        (*result)[i].size = tuples[idx].size;
+        (*result)[i].elements = (int *)malloc(tuples[idx].size * sizeof(int));
+        if ((*result)[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free((*result)[j].elements);
+            }
+            free(*result);
+            *result = NULL;
+            free(valid_indices);
+            return 0;
+        }
+        
+        for (int j = 0; j < tuples[idx].size; j++) {
+            (*result)[i].elements[j] = tuples[idx].elements[j];
+        }
+    }
+
+    free(valid_indices);
+    return count;
+}
+
+void free_tuples(Tuple *tuples, int count) {
+    if (tuples == NULL || count <= 0) {
+        return;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        free(tuples[i].elements);
+    }
+    free(tuples);
+}
+
+int main(void) {
+    int elements1[] = {10, 20, 30};
+    int elements2[] = {5, 7, 15};
+    int elements3[] = {40, 50, 60};
+    int elements4[] = {8, 12, 16};
+    
+    Tuple tuples[4];
+    tuples[0].elements = elements1;
+    tuples[0].size = 3;
+    tuples[1].elements = elements2;
+    tuples[1].size = 3;
+    tuples[2].elements = elements3;
+    tuples[2].size = 3;
+    tuples[3].elements = elements4;
+    tuples[3].size = 3;
+    
+    int k = 5;
+    Tuple *result = NULL;
+    int count = find_divisible_tuples(tuples, 4, k, &result);
+    
+    printf("Tuples with all elements divisible by %d:\n", k);
+    for (int i = 0; i < count; i++) {
+        printf("(");
+        for (int j = 0; j < result[i].size; j++) {
+            printf("%d", result[i].elements[j]);
+            if (j < result[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+    
+    free_tuples(result, count);
+    return 0;
+}

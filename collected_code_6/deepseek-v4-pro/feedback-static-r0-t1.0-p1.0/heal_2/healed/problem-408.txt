@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int** find_pairs(const int arr1[], int size1, const int arr2[], int size2, int k, int* out_count) {
+    if (out_count == NULL) {
+        return NULL;
+    }
+
+    if (arr1 == NULL || arr2 == NULL || size1 <= 0 || size2 <= 0 || k <= 0) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    int total_possible = size1 * size2;
+    if (k > total_possible) {
+        k = total_possible;
+    }
+
+    int** pairs = (int**)malloc(k * sizeof(int*));
+    if (pairs == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < size1 && count < k; i++) {
+        for (int j = 0; j < size2 && count < k; j++) {
+            pairs[count] = (int*)malloc(2 * sizeof(int));
+            if (pairs[count] == NULL) {
+                for (int m = 0; m < count; m++) {
+                    free(pairs[m]);
+                }
+                free(pairs);
+                *out_count = 0;
+                return NULL;
+            }
+            pairs[count][0] = arr1[i];
+            pairs[count][1] = arr2[j];
+            count++;
+        }
+    }
+
+    *out_count = count;
+    return pairs;
+}
+
+void free_pairs(int** pairs, int count) {
+    if (pairs == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(pairs[i]);
+    }
+    free(pairs);
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k = 4;
+    int count = 0;
+
+    int** pairs = find_pairs(arr1, size1, arr2, size2, k, &count);
+
+    if (pairs != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("(%d, %d)\n", pairs[i][0], pairs[i][1]);
+        }
+        free_pairs(pairs, count);
+    } else {
+        printf("No pairs generated.\n");
+    }
+
+    return 0;
+}
+```

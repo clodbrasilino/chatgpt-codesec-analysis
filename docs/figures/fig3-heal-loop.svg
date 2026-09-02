@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 600" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="940" height="600" fill="#ffffff"/>
+  <text x="470" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">Anatomy of one heal round (round N)</text>
+  <text x="470" y="46" text-anchor="middle" font-size="11.5" fill="#64748b">the loop inside run_cell that turns analyzer findings into repaired code — and decides every outcome category</text>
+
+  <!-- ============ CARD 1 ============ -->
+  <rect x="16" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.2"/>
+  <rect x="16" y="64" width="172" height="32" rx="8" fill="#4f46e5"/>
+  <rect x="16" y="82" width="172" height="14" fill="#4f46e5"/>
+  <text x="102" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">① SELECT reports</text>
+  <text x="26" y="116" font-size="9.5" fill="#334155">comment_inject reads the report</text>
+  <text x="26" y="129" font-size="9.5" fill="#334155">suffixes selected by feedback:</text>
+  <text x="26" y="150" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace">static → .gcc.txt .clang.txt</text>
+  <text x="26" y="163" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace">  .cppcheck.txt .flawfinder.txt</text>
+  <text x="26" y="181" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace">dynamic → .test.txt .asan.txt</text>
+  <text x="26" y="194" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace">  .fuzz.txt</text>
+  <text x="26" y="215" font-size="9.5" fill="#334155">none → nothing is consumed</text>
+  <text x="26" y="228" font-size="9.5" fill="#334155">(control arm: zero feedback)</text>
+  <text x="26" y="249" font-size="9.5" fill="#334155">each report parsed as</text>
+  <text x="26" y="262" font-size="9" fill="#475569" font-family="Menlo, SFMono-Regular, Consolas, monospace">file:line:col:severity:message</text>
+  <text x="26" y="283" font-size="9.5" fill="#334155">line ≤ 0 (info / error notes)</text>
+  <text x="26" y="296" font-size="9.5" fill="#334155">never becomes a comment;</text>
+  <text x="26" y="309" font-size="9.5" fill="#334155">per-case failures map to the</text>
+  <text x="26" y="322" font-size="9.5" fill="#334155">function's own line</text>
+  <text x="26" y="343" font-size="9.5" fill="#475569">CHANNEL_SUFFIXES in</text>
+  <text x="26" y="356" font-size="9.5" fill="#475569">comment_inject.py is the single</text>
+  <text x="26" y="369" font-size="9.5" fill="#475569">source of truth</text>
+
+  <path d="M 190 222 L 196 222 L 196 216 L 206 222 L 196 228 L 196 222 z" fill="#94a3b8"/>
+
+  <!-- ============ CARD 2 ============ -->
+  <rect x="198" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.2"/>
+  <rect x="198" y="64" width="172" height="32" rx="8" fill="#7c3aed"/>
+  <rect x="198" y="82" width="172" height="14" fill="#7c3aed"/>
+  <text x="284" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">② ANNOTATE</text>
+  <text x="208" y="116" font-size="9.5" fill="#334155">for every flagged line a comment</text>
+  <text x="208" y="129" font-size="9.5" fill="#334155">block is inserted directly above it,</text>
+  <text x="208" y="142" font-size="9.5" fill="#334155">matching the line's indentation:</text>
+  <rect x="208" y="152" width="152" height="88" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="216" y="168" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace">/* Possible weaknesses</text>
+  <text x="216" y="181" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace"> * found:</text>
+  <text x="216" y="194" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace"> * &lt;finding message&gt;</text>
+  <text x="216" y="207" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace"> * &lt;finding message&gt;</text>
+  <text x="216" y="220" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace"> */</text>
+  <text x="216" y="236" font-size="8.5" fill="#64748b" font-family="Menlo, SFMono-Regular, Consolas, monospace">int x = malloc(...)</text>
+  <text x="208" y="258" font-size="9.5" fill="#334155">annotated copies land in</text>
+  <text x="208" y="274" font-size="9" fill="#475569" font-family="Menlo, SFMono-Regular, Consolas, monospace">heal_N/to_be_healed/</text>
+  <text x="208" y="290" font-size="9.5" fill="#334155">files with zero findings are</text>
+  <text x="208" y="303" font-size="9.5" fill="#334155">NOT copied — they are already</text>
+  <text x="208" y="316" font-size="9.5" fill="#334155">clean and drop out of the loop</text>
+  <text x="208" y="340" font-size="9.5" fill="#475569">this annotated file is exactly</text>
+  <text x="208" y="353" font-size="9.5" fill="#475569">what the LLM sees next — the</text>
+  <text x="208" y="366" font-size="9.5" fill="#475569">findings are the only feedback</text>
+
+  <path d="M 372 222 L 378 222 L 378 216 L 388 222 L 378 228 L 378 222 z" fill="#94a3b8"/>
+
+  <!-- ============ CARD 3 ============ -->
+  <rect x="380" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#fde68a" stroke-width="1.2"/>
+  <rect x="380" y="64" width="172" height="32" rx="8" fill="#b45309"/>
+  <rect x="380" y="82" width="172" height="14" fill="#b45309"/>
+  <text x="466" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">③ HEAL (LLM)</text>
+  <text x="390" y="116" font-size="9.5" fill="#334155">_heal_batch: ThreadPool</text>
+  <text x="390" y="129" font-size="9.5" fill="#334155">(cfg.concurrency), one</text>
+  <text x="390" y="142" font-size="9.5" fill="#334155">gen.heal_code call per file</text>
+  <rect x="390" y="152" width="152" height="104" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="398" y="168" font-size="8.5" fill="#92400e" font-family="Menlo, SFMono-Regular, Consolas, monospace">HEALING_PROMPT (v1-verbatim):</text>
+  <text x="398" y="184" font-size="8.5" fill="#92400e" font-style="italic">"Acting as an experienced C</text>
+  <text x="398" y="197" font-size="8.5" fill="#92400e" font-style="italic">developer, analyze the</text>
+  <text x="398" y="210" font-size="8.5" fill="#92400e" font-style="italic">following source-code: …</text>
+  <text x="398" y="223" font-size="8.5" fill="#92400e" font-style="italic">Re-write the source-code,</text>
+  <text x="398" y="236" font-size="8.5" fill="#92400e" font-style="italic">paying attention to the</text>
+  <text x="398" y="249" font-size="8.5" fill="#92400e" font-style="italic">comments to check for fixes…"</text>
+  <text x="390" y="274" font-size="9.5" fill="#334155">raw answer → healed/problem-X.txt</text>
+  <text x="390" y="287" font-size="9.5" fill="#334155">sanitized → healed/problem-X.c</text>
+  <text x="390" y="308" font-size="9.5" fill="#334155">_safe retries ≤ 5; a permanent</text>
+  <text x="390" y="321" font-size="9.5" fill="#334155">failure ⇒ warn + NO artifact</text>
+  <text x="390" y="334" font-size="9.5" fill="#334155">(later classified heal_failed —</text>
+  <text x="390" y="347" font-size="9.5" fill="#334155">a missing file is never</text>
+  <text x="390" y="360" font-size="9.5" fill="#334155">counted as clean)</text>
+
+  <path d="M 554 222 L 560 222 L 560 216 L 570 222 L 560 228 L 560 222 z" fill="#94a3b8"/>
+
+  <!-- ============ CARD 4 ============ -->
+  <rect x="562" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#99f6e4" stroke-width="1.2"/>
+  <rect x="562" y="64" width="172" height="32" rx="8" fill="#0d9488"/>
+  <rect x="562" y="82" width="172" height="14" fill="#0d9488"/>
+  <text x="648" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">④ RE-ANALYZE</text>
+  <text x="572" y="116" font-size="9.5" fill="#334155">_run_analyze(healed/, measure):</text>
+  <rect x="572" y="128" width="152" height="76" rx="4" fill="#f0fdfa" stroke="#5eead4" stroke-width="1"/>
+  <text x="580" y="144" font-size="9" font-weight="bold" fill="#115e59">static gate (always in RQ1)</text>
+  <text x="580" y="158" font-size="8.5" fill="#475569">gcc -fanalyzer · clang+z3 ·</text>
+  <text x="580" y="170" font-size="8.5" fill="#475569">cppcheck · flawfinder ·</text>
+  <text x="580" y="182" font-size="8.5" fill="#475569">compile gate → .o</text>
+  <text x="580" y="196" font-size="8.5" fill="#475569">+ compile gate → .o</text>
+  <rect x="572" y="212" width="152" height="62" rx="4" fill="#f0fdfa" stroke="#5eead4" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="580" y="228" font-size="9" font-weight="bold" fill="#115e59">dynamic (measure ⊇ dynamic)</text>
+  <text x="580" y="242" font-size="8.5" fill="#475569">sanitizer oracle (.test/.asan)</text>
+  <text x="580" y="254" font-size="8.5" fill="#475569">+ AFL++ (.fuzz) when --fuzz</text>
+  <text x="580" y="266" font-size="8.5" fill="#475569">and program consumes input</text>
+  <text x="572" y="292" font-size="9.5" fill="#334155">reports that already exist are</text>
+  <text x="572" y="305" font-size="9.5" fill="#334155">skipped — an interrupted</text>
+  <text x="572" y="318" font-size="9.5" fill="#334155">round resumes for free</text>
+  <text x="572" y="343" font-size="9.5" fill="#475569">the healed directory is a</text>
+  <text x="572" y="356" font-size="9.5" fill="#475569">fresh measurement of the</text>
+  <text x="572" y="369" font-size="9.5" fill="#475569">same 974-task population</text>
+
+  <path d="M 736 222 L 742 222 L 742 216 L 752 222 L 742 228 L 742 222 z" fill="#94a3b8"/>
+
+  <!-- ============ CARD 5 ============ -->
+  <rect x="744" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#fbcfe8" stroke-width="1.2"/>
+  <rect x="744" y="64" width="172" height="32" rx="8" fill="#be185d"/>
+  <rect x="744" y="82" width="172" height="14" fill="#be185d"/>
+  <text x="830" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">⑤ CLASSIFY</text>
+  <text x="754" y="116" font-size="9.5" fill="#334155">pre-build heal_{N+1}/to_be_healed</text>
+  <text x="754" y="129" font-size="9.5" fill="#334155">from healed/ (same</text>
+  <text x="754" y="142" font-size="9.5" fill="#334155">comment_inject call)</text>
+  <rect x="754" y="152" width="152" height="30" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="830" y="171" text-anchor="middle" font-size="9" fill="#92400e">file reappears → still flagged</text>
+  <rect x="754" y="188" width="152" height="30" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="830" y="207" text-anchor="middle" font-size="9" fill="#065f46">gone + .c exists → clean @ N</text>
+  <rect x="754" y="224" width="152" height="30" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="830" y="243" text-anchor="middle" font-size="9" fill="#991b1b">gone + no .c → heal_failed</text>
+  <text x="754" y="274" font-size="9.5" fill="#334155">to_be_healed empty →</text>
+  <text x="754" y="287" font-size="9.5" fill="#334155">loop ends (all clean or</text>
+  <text x="754" y="300" font-size="9.5" fill="#334155">nothing left to heal)</text>
+  <text x="754" y="325" font-size="9.5" fill="#475569">prev_healed = healed/ and</text>
+  <text x="754" y="338" font-size="9.5" fill="#475569">the next iteration consumes</text>
+  <text x="754" y="351" font-size="9.5" fill="#475569">the just-produced reports</text>
+  <text x="754" y="372" font-size="9.5" fill="#475569">max_rounds caps the loop</text>
+
+  <!-- ============ OUTCOMES BAND ============ -->
+  <rect x="16" y="404" width="908" height="122" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="32" y="428" font-size="12.5" font-weight="bold" fill="#0f172a">Outcomes recorded in the manifest — one entry per problem-sample</text>
+
+  <rect x="32" y="440" width="214" height="66" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="42" y="458" font-size="10.5" font-weight="bold" fill="#065f46">clean_at_start</text>
+  <text x="42" y="473" font-size="9" fill="#475569">never flagged in any round ≥ 1</text>
+  <text x="42" y="486" font-size="9" fill="#475569">(rounds_to_clean = 0) — includes</text>
+  <text x="42" y="499" font-size="9" fill="#475569">code the analyzers accepted at heal_0</text>
+
+  <rect x="256" y="440" width="214" height="66" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="266" y="458" font-size="10.5" font-weight="bold" fill="#065f46">clean</text>
+  <text x="266" y="473" font-size="9" fill="#475569">flagged at least once, reached zero</text>
+  <text x="266" y="486" font-size="9" fill="#475569">findings in round r</text>
+  <text x="266" y="499" font-size="9" fill="#475569">(rounds_to_clean = r)</text>
+
+  <rect x="480" y="440" width="214" height="66" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="490" y="458" font-size="10.5" font-weight="bold" fill="#991b1b">heal_failed</text>
+  <text x="490" y="473" font-size="9" fill="#475569">repair call failed permanently;</text>
+  <text x="490" y="486" font-size="9" fill="#475569">healed artifact missing —</text>
+  <text x="490" y="499" font-size="9" fill="#475569">never counted as clean</text>
+
+  <rect x="704" y="440" width="214" height="66" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="714" y="458" font-size="10.5" font-weight="bold" fill="#92400e">not_cleaned</text>
+  <text x="714" y="473" font-size="9" fill="#475569">still flagged when round &gt;</text>
+  <text x="714" y="486" font-size="9" fill="#475569">max_rounds (rounds_to_clean =</text>
+  <text x="714" y="499" font-size="9" fill="#475569">max_rounds)</text>
+
+  <text x="470" y="556" text-anchor="middle" font-size="10" fill="#64748b">Termination: to_be_healed is empty, or round &gt; max_rounds (default 7). The survival curve (fig_survival) is derived from these outcomes.</text>
+</svg>

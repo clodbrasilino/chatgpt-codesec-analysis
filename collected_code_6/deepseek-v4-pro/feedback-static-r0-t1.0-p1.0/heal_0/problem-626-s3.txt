@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double largest_triangle_area(double radius) {
+    if (radius <= 0.0) {
+        return NAN;
+    }
+    return (sqrt(3.0) / 4.0) * radius * radius;
+}
+
+int main(void) {
+    double radius;
+    double area;
+
+    printf("Enter the radius of the semicircle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    area = largest_triangle_area(radius);
+
+    if (isnan(area)) {
+        fprintf(stderr, "Radius must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Largest triangle area: %.6f\n", area);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,78 @@
+{
+  "task_id": 306,
+  "text": "Write a C function to find the maximum sum of increasing subsequence from prefix till ith index and also including a given kth element which is after i, i.e., k > i .",
+  "fn_candidates": [
+    "max_sum_increasing_subseq",
+    "MaxSumIncreasingSubseq",
+    "maxSumIncreasingSubseq",
+    "maxsumincreasingsubseq"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sum_increasing_subseq",
+      "args": [
+        [
+          1,
+          101,
+          2,
+          3,
+          100,
+          4,
+          5
+        ],
+        7,
+        4,
+        6
+      ],
+      "expected": 11,
+      "assert_src": "assert max_sum_increasing_subseq([1, 101, 2, 3, 100, 4, 5 ], 7, 4, 6) == 11"
+    },
+    {
+      "fn_name": "max_sum_increasing_subseq",
+      "args": [
+        [
+          1,
+          101,
+          2,
+          3,
+          100,
+          4,
+          5
+        ],
+        7,
+        2,
+        5
+      ],
+      "expected": 7,
+      "assert_src": "assert max_sum_increasing_subseq([1, 101, 2, 3, 100, 4, 5 ], 7, 2, 5) == 7"
+    },
+    {
+      "fn_name": "max_sum_increasing_subseq",
+      "args": [
+        [
+          11,
+          15,
+          19,
+          21,
+          26,
+          28,
+          31
+        ],
+        7,
+        2,
+        4
+      ],
+      "expected": 71,
+      "assert_src": "assert max_sum_increasing_subseq([11, 15, 19, 21, 26, 28, 31], 7, 2, 4) == 71"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

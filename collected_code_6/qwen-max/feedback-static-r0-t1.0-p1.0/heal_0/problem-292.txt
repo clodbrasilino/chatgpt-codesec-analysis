@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+
+int find_quotient(int numerator, int denominator) {
+    if (denominator == 0) {
+        return -1;
+    }
+    return numerator / denominator;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter two numbers: ");
+    scanf("%d %d", &num1, &num2);
+    
+    int quotient = find_quotient(num1, num2);
+    if (quotient == -1) {
+        printf("Cannot divide by zero.\n");
+    } else {
+        printf("Quotient: %d\n", quotient);
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 244,
+  "text": "Write a C function to find the next perfect square greater than a given number.",
+  "fn_candidates": [
+    "next_Perfect_Square",
+    "NextPerfectSquare",
+    "nextPerfectSquare",
+    "nextPerfectSquare"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "next_Perfect_Square",
+      "args": [
+        35
+      ],
+      "expected": 36,
+      "assert_src": "assert next_Perfect_Square(35) == 36"
+    },
+    {
+      "fn_name": "next_Perfect_Square",
+      "args": [
+        6
+      ],
+      "expected": 9,
+      "assert_src": "assert next_Perfect_Square(6) == 9"
+    },
+    {
+      "fn_name": "next_Perfect_Square",
+      "args": [
+        9
+      ],
+      "expected": 16,
+      "assert_src": "assert next_Perfect_Square(9) == 16"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-699-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-699-s3.c:23:14: style: Condition 'len1!=len2' is always false [knownConditionTrueFalse]
+    if (len1 != len2) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-699-s3.c:17:24: note: Assignment 'str1="1100"', assigned value is "1100"
+    const char *str1 = "1100";
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-699-s3.c:20:22: note: Assignment 'len1=strlen(str1)', assigned value is 4
+    int len1 = strlen(str1);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_9/healed/problem-699-s3.c:23:14: note: Condition 'len1!=len2' is always false
+    if (len1 != len2) {
+             ^

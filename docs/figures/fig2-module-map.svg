@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 800" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="800" fill="#ffffff"/>
+  <text x="470" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a">Module map — five packages under src/</text>
+  <text x="470" y="46" text-anchor="middle" font-size="11.5" fill="#64748b">pipeline orchestrates · llm talks to providers · harness compiles &amp; runs · dyn adds sanitizers/AFL++ · analysis is offline</text>
+
+  <!-- ======== src/pipeline ======== -->
+  <rect x="40" y="62" width="860" height="196" rx="10" fill="#eef2ff" stroke="#c3cdf5" stroke-width="1.5"/>
+  <text x="56" y="86" font-size="13" font-weight="bold" fill="#3730a3">src/pipeline — orchestration (the only entry point: python -m src.pipeline.run_experiment)</text>
+
+  <rect x="56" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1"/>
+  <text x="66" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b">run_experiment.py</text>
+  <text x="66" y="133" font-size="9.5" fill="#475569">ExperimentCell / cell_slug</text>
+  <text x="66" y="148" font-size="9.5" fill="#475569">run_cell(cell)</text>
+  <text x="66" y="163" font-size="9.5" fill="#475569">_run_analyze / _run_dynamic</text>
+  <text x="66" y="178" font-size="9.5" fill="#475569">_heal_batch (ThreadPool heal)</text>
+  <text x="66" y="193" font-size="9.5" fill="#475569">_parse_tasks (all|subset|1-30)</text>
+  <text x="66" y="208" font-size="9.5" fill="#475569">manifest writer (outcomes)</text>
+
+  <rect x="266" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1"/>
+  <text x="276" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b">generate.py</text>
+  <text x="276" y="133" font-size="9.5" fill="#475569">GENERATION_PROMPT / HEALING_PROMPT</text>
+  <text x="276" y="148" font-size="9.5" fill="#475569">(both v1-verbatim)</text>
+  <text x="276" y="163" font-size="9.5" fill="#475569">generate_code / heal_code</text>
+  <text x="276" y="178" font-size="9.5" fill="#475569">run_batch (ThreadPool per sample)</text>
+  <text x="276" y="193" font-size="9.5" fill="#475569">_safe (≤5 retries, 5s backoff)</text>
+  <text x="276" y="208" font-size="9.5" fill="#475569">skip-existing .txt → free resume</text>
+
+  <rect x="476" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1"/>
+  <text x="486" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b">comment_inject.py</text>
+  <text x="486" y="133" font-size="9.5" fill="#475569">CHANNEL_SUFFIXES (single source</text>
+  <text x="486" y="148" font-size="9.5" fill="#475569">of truth for feedback+measure)</text>
+  <text x="486" y="163" font-size="9.5" fill="#475569">generate_commented_weak_code</text>
+  <text x="486" y="178" font-size="9.5" fill="#475569">get_problems_weaknesses</text>
+  <text x="486" y="193" font-size="9.5" fill="#475569">add_comments_to_weak_source</text>
+  <text x="486" y="208" font-size="9.5" fill="#475569">extract_standard_messages</text>
+
+  <rect x="686" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1"/>
+  <text x="696" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b">static.py</text>
+  <text x="696" y="133" font-size="9.5" fill="#475569">analyze(dir, tools, compile_gate)</text>
+  <text x="696" y="148" font-size="9.5" fill="#475569">_run_one (per tool, 120s timeout)</text>
+  <text x="696" y="163" font-size="9.5" fill="#475569">_compile_gate (gcc -c → .o)</text>
+  <text x="696" y="178" font-size="9.5" fill="#475569">tools from config/tools.yaml</text>
+  <text x="696" y="193" font-size="9.5" fill="#475569">missing tool → warn + skip,</text>
+  <text x="696" y="208" font-size="9.5" fill="#475569">existing reports skipped</text>
+
+  <!-- arrows pipeline -> row 2 -->
+  <line x1="175" y1="258" x2="175" y2="322" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <text x="182" y="294" font-size="9.5" fill="#64748b">all generation &amp; heal calls</text>
+  <line x1="760" y1="258" x2="760" y2="322" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <text x="700" y="294" font-size="9.5" fill="#64748b">when measure ⊇ dynamic</text>
+
+  <!-- ======== src/llm ======== -->
+  <rect x="40" y="326" width="270" height="268" rx="10" fill="#f5f3ff" stroke="#d6cdf5" stroke-width="1.5"/>
+  <text x="52" y="348" font-size="12.5" font-weight="bold" fill="#5b21b6">src/llm — provider-agnostic access</text>
+
+  <rect x="52" y="358" width="246" height="36" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="60" y="372" font-size="10" font-weight="bold" fill="#3b0764">registry.py</text>
+  <text x="60" y="386" font-size="9" fill="#475569">load_registry · get_client · ModelConfig (extra_body, concurrency)</text>
+  <rect x="52" y="400" width="246" height="36" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="60" y="414" font-size="10" font-weight="bold" fill="#3b0764">client.py</text>
+  <text x="60" y="428" font-size="9" fill="#475569">LLMClient protocol · LLMResponse (text, reasoning, usage, raw)</text>
+  <rect x="52" y="442" width="246" height="48" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="60" y="456" font-size="10" font-weight="bold" fill="#3b0764">openai_compatible.py</text>
+  <text x="60" y="470" font-size="9" fill="#475569">OpenAI · DeepSeek · Qwen · Kimi · GLM</text>
+  <text x="60" y="483" font-size="9" fill="#475569">extra_body= quirks · empty-content guard</text>
+  <rect x="52" y="496" width="246" height="48" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="60" y="510" font-size="10" font-weight="bold" fill="#3b0764">claude_adapter.py · gemini_adapter.py</text>
+  <text x="60" y="524" font-size="9" fill="#475569">native SDKs, thinking/threshold support,</text>
+  <text x="60" y="537" font-size="9" fill="#475569">behind the same protocol</text>
+  <rect x="52" y="550" width="246" height="36" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="60" y="564" font-size="10" font-weight="bold" fill="#3b0764">retry.py · parse.py</text>
+  <text x="60" y="578" font-size="9" fill="#475569">per-provider semaphores · retry_call · sanitize_llm_output</text>
+
+  <!-- ======== src/harness ======== -->
+  <rect x="330" y="326" width="270" height="268" rx="10" fill="#fff7ed" stroke="#f3d9b5" stroke-width="1.5"/>
+  <text x="342" y="348" font-size="12.5" font-weight="bold" fill="#9a3412">src/harness — compile &amp; run oracle</text>
+
+  <rect x="342" y="358" width="246" height="48" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
+  <text x="350" y="372" font-size="10" font-weight="bold" fill="#7c2d12">mbpp_loader.py</text>
+  <text x="350" y="386" font-size="9" fill="#475569">HarnessSpec per task — oracle = MBPP reference</text>
+  <text x="350" y="399" font-size="9" fill="#475569">Python, results serialized canonically</text>
+  <rect x="342" y="412" width="246" height="48" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
+  <text x="350" y="426" font-size="10" font-weight="bold" fill="#7c2d12">run.py</text>
+  <text x="350" y="440" font-size="9" fill="#475569">run_one: LINK vs CLI vs none · RunOutcome</text>
+  <text x="350" y="453" font-size="9" fill="#475569">ASan/UBSan stderr parsing → findings</text>
+  <rect x="342" y="466" width="246" height="48" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
+  <text x="350" y="480" font-size="10" font-weight="bold" fill="#7c2d12">driver_gen.py</text>
+  <text x="350" y="494" font-size="9" fill="#475569">single-TU driver · -Dmain= rename trick ·</text>
+  <text x="350" y="507" font-size="9" fill="#475569">candidate bindings tried most-likely-first</text>
+  <rect x="342" y="520" width="246" height="36" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1"/>
+  <text x="350" y="534" font-size="10" font-weight="bold" fill="#7c2d12">find_function.py · translate.py</text>
+  <text x="350" y="548" font-size="9" fill="#475569">fuzzy function-name match · Python literal → C</text>
+
+  <!-- ======== src/dyn ======== -->
+  <rect x="620" y="326" width="280" height="268" rx="10" fill="#ecfeff" stroke="#a5e8e0" stroke-width="1.5"/>
+  <text x="632" y="348" font-size="12.5" font-weight="bold" fill="#155e75">src/dyn — dynamic channel</text>
+
+  <rect x="632" y="358" width="256" height="76" rx="5" fill="#ffffff" stroke="#67e8f9" stroke-width="1"/>
+  <text x="640" y="372" font-size="10" font-weight="bold" fill="#164e63">runner.py</text>
+  <text x="640" y="386" font-size="9" fill="#475569">analyze_dynamic(dir, fuzz): per .c —</text>
+  <text x="640" y="399" font-size="9" fill="#475569">sanitizer test oracle → .test.txt / .asan.txt</text>
+  <text x="640" y="412" font-size="9" fill="#475569">findings in file:line:col:severity:message</text>
+  <text x="640" y="425" font-size="9" fill="#475569">(empty report = never written)</text>
+  <rect x="632" y="442" width="256" height="76" rx="5" fill="#ffffff" stroke="#67e8f9" stroke-width="1"/>
+  <text x="640" y="456" font-size="10" font-weight="bold" fill="#164e63">fuzzer.py</text>
+  <text x="640" y="470" font-size="9" fill="#475569">fuzz_program: AFL++ 5.02c, two-binary design</text>
+  <text x="640" y="483" font-size="9" fill="#475569">(UBSan fuzz build + ASan replay build for</text>
+  <text x="640" y="496" font-size="9" fill="#475569">line attribution) → .fuzz.txt</text>
+  <text x="640" y="509" font-size="9" fill="#475569">stdin/argv consumers only</text>
+  <rect x="632" y="526" width="256" height="50" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="640" y="544" font-size="9" fill="#475569">scratch (not durable):</text>
+  <text x="640" y="557" font-size="9" fill="#475569">$TMPDIR/chatgpt-codesec-analysis/</text>
+  <text x="640" y="570" font-size="9" fill="#475569">{build,fuzz}/ — outside the repo</text>
+
+  <!-- arrow dyn -> harness -->
+  <line x1="620" y1="430" x2="602" y2="430" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow2)"/>
+  <text x="611" y="420" text-anchor="middle" font-size="9.5" fill="#64748b">run_one · fuzz builds</text>
+
+  <!-- ======== src/analysis ======== -->
+  <rect x="40" y="630" width="860" height="140" rx="10" fill="#f0fdfa" stroke="#99e5d4" stroke-width="1.5"/>
+  <text x="56" y="654" font-size="13" font-weight="bold" fill="#0f766e">src/analysis — offline, decoupled (never imported by the pipeline)</text>
+
+  <rect x="56" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1"/>
+  <text x="66" y="682" font-size="11" font-weight="bold" fill="#134e4a">metrics.py</text>
+  <text x="66" y="697" font-size="9" fill="#475569">scans manifests + cells →</text>
+  <text x="66" y="710" font-size="9" fill="#475569">results/metrics.csv (tidy table:</text>
+  <text x="66" y="723" font-size="9" fill="#475569">defect / repair / dynamic metrics)</text>
+
+  <rect x="266" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1"/>
+  <text x="276" y="682" font-size="11" font-weight="bold" fill="#134e4a">stats.py</text>
+  <text x="276" y="697" font-size="9" fill="#475569">Fisher/χ² + Cohen's h ·</text>
+  <text x="276" y="710" font-size="9" fill="#475569">Mann-Whitney U + Cliff's δ ·</text>
+  <text x="276" y="723" font-size="9" fill="#475569">bootstrap CIs · Holm-Bonferroni</text>
+
+  <rect x="476" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1"/>
+  <text x="486" y="682" font-size="11" font-weight="bold" fill="#134e4a">figures.py</text>
+  <text x="486" y="697" font-size="9" fill="#475569">6 publication figures → PDF + SVG</text>
+  <text x="486" y="710" font-size="9" fill="#475569">(defect rate, survival, rounds,</text>
+  <text x="486" y="723" font-size="9" fill="#475569">analyzers, CWE heatmap, ablation)</text>
+
+  <rect x="686" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1"/>
+  <text x="696" y="682" font-size="11" font-weight="bold" fill="#134e4a">cwe_map.py</text>
+  <text x="696" y="697" font-size="9" fill="#475569">findings → CWE → pillar rollup</text>
+  <text x="696" y="710" font-size="9" fill="#475569">(v1-compatible mapping + new</text>
+  <text x="696" y="723" font-size="9" fill="#475569">ASan/UBSan kinds) → cwes_by_problem.csv</text>
+
+  <text x="470" y="758" text-anchor="middle" font-size="9.5" fill="#64748b">input: results/*.manifest.json · collected_code_6/** · results/metrics.csv — regenerate metrics, stats and figures any time without touching the pipeline</text>
+</svg>

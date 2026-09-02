@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222-s3.c: In function 'getDataType':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222-s3.c:22:35: error: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+   22 |     if (stringTest[0] != '\0' && !isdigit(stringTest[0])) return STRING;
+      |                                   ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-222-s3.c:5:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+    4 | #include <string.h>
+  +++ |+#include <ctype.h>
+    5 | 

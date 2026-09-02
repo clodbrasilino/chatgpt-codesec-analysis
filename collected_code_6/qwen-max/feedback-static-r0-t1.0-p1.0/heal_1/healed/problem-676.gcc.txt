@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-676.c: In function 'remove_non_alphanumeric':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-676.c:25:51: error: passing argument 5 of 'regexec' makes integer from pointer without a cast [-Wint-conversion]
+   25 |             if (regexec(&regex, &str[i], 1, NULL, &match_len) == 0)
+      |                                                   ^~~~~~~~~~
+      |                                                   |
+      |                                                   size_t * {aka long unsigned int *}
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/regex.h:89,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-676.c:4:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_regex.h:219:73: note: expected 'int' but argument is of type 'size_t *' {aka 'long unsigned int *'}
+  219 |                 regmatch_t __pmatch[ __restrict _LIBC_COUNT(__nmatch)], int);
+      |                                                                         ^~~

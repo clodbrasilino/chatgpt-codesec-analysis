@@ -1,0 +1,80 @@
+{
+  "task_id": 942,
+  "text": "Write a C function to check if any list element is present in the given list.",
+  "fn_candidates": [
+    "check_element",
+    "CheckElement",
+    "checkElement",
+    "checkelement"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_element",
+      "args": [
+        [
+          4,
+          5,
+          7,
+          9,
+          3
+        ],
+        [
+          6,
+          7,
+          10,
+          11
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_element((4, 5, 7, 9, 3),  [6, 7, 10, 11]) == True"
+    },
+    {
+      "fn_name": "check_element",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ],
+        [
+          4,
+          6,
+          7,
+          8,
+          9
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_element((1, 2, 3, 4),  [4, 6, 7, 8, 9]) == True"
+    },
+    {
+      "fn_name": "check_element",
+      "args": [
+        [
+          3,
+          2,
+          1,
+          4,
+          5
+        ],
+        [
+          9,
+          8,
+          7,
+          6
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_element((3, 2, 1, 4, 5),  [9, 8, 7, 6]) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

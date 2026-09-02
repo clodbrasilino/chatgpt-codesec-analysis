@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int periodic_function(int x) {
+    return ((x * x) % 100 + 50) % 100;
+}
+
+int find_minimum_value(int (*func)(int), int start, int end) {
+    int min_val = INT_MAX;
+    for (int i = start; i <= end; ++i) {
+        int val = func(i);
+        if (val < min_val) {
+            min_val = val;
+        }
+    }
+    return min_val;
+}
+
+int main() {
+    int start = 0;
+    int end = 99;
+    int min_value = find_minimum_value(periodic_function, start, end);
+    printf("Minimum value: %d\n", min_value);
+    return 0;
+}
+```

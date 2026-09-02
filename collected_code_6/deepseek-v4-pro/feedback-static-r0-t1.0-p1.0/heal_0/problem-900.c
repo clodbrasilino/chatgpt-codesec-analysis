@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool string_starts_with_number(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    return isdigit((unsigned char)str[0]);
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "123abc",
+        "abc123",
+        "1",
+        " 456",
+        "",
+        NULL,
+        "7eleven",
+        "-42"
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        const char *current = test_strings[i];
+        bool result = string_starts_with_number(current);
+        
+        if (current == NULL) {
+            printf("String: NULL -> %s\n", result ? "starts with number" : "does not start with number");
+        } else {
+            printf("String: \"%s\" -> %s\n", current, result ? "starts with number" : "does not start with number");
+        }
+    }
+    
+    return 0;
+}

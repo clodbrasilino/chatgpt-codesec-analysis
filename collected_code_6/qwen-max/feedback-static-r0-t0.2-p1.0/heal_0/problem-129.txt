@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int** createMagicSquare(int n, int* size) {
+    *size = n;
+    int** magicSquare = (int**)malloc(n * sizeof(int*));
+    for (int i = 0; i < n; ++i) {
+        magicSquare[i] = (int*)malloc(n * sizeof(int));
+        for (int j = 0; j < n; ++j) {
+            magicSquare[i][j] = 0;
+        }
+    }
+    return magicSquare;
+}
+
+void freeMagicSquare(int** magicSquare, int n) {
+    for (int i = 0; i < n; ++i) {
+        free(magicSquare[i]);
+    }
+    free(magicSquare);
+}
+
+int** generateMagicSquare(int n) {
+    if (n % 2 == 0 || n < 1) {
+        return NULL;
+    }
+    int** magicSquare = createMagicSquare(n, &n);
+    int i = n / 2;
+    int j = n - 1;
+    for (int num = 1; num <= n * n; ) {
+        if (i == -1 && j == n) {
+            i = 0;
+            j = n - 2;
+        } else {
+            if (j == n) j = 0;
+            if (i < 0) i = n - 1;
+        }
+        if (magicSquare[i][j]) {
+            i += 1;
+            j -= 2;
+            continue;
+        } else {
+            magicSquare[i][j] = num++;
+        }
+        i--;
+        j++;
+    }
+    return magicSquare;
+}
+
+void printMagicSquare(int** magicSquare, int n) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            printf("%4d ", magicSquare[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int n = 3;
+    int** magicSquare = generateMagicSquare(n);
+    if (magicSquare != NULL) {
+        printMagicSquare(magicSquare, n);
+        freeMagicSquare(magicSquare, n);
+    }
+    return 0;
+}
+```

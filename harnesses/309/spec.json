@@ -1,0 +1,47 @@
+{
+  "task_id": 309,
+  "text": "Write a C function to find the maximum of two numbers.",
+  "fn_candidates": [
+    "maximum",
+    "Maximum",
+    "maximum",
+    "maximum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "maximum",
+      "args": [
+        5,
+        10
+      ],
+      "expected": 10,
+      "assert_src": "assert maximum(5,10) == 10"
+    },
+    {
+      "fn_name": "maximum",
+      "args": [
+        -1,
+        -2
+      ],
+      "expected": -1,
+      "assert_src": "assert maximum(-1,-2) == -1"
+    },
+    {
+      "fn_name": "maximum",
+      "args": [
+        9,
+        7
+      ],
+      "expected": 9,
+      "assert_src": "assert maximum(9,7) == 9"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

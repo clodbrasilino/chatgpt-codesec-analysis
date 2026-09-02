@@ -1,0 +1,50 @@
+{
+  "task_id": 51,
+  "text": "Write a C function to print check if the triangle is equilateral or not.",
+  "fn_candidates": [
+    "check_equilateral",
+    "CheckEquilateral",
+    "checkEquilateral",
+    "checkequilateral"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_equilateral",
+      "args": [
+        6,
+        8,
+        12
+      ],
+      "expected": false,
+      "assert_src": "assert check_equilateral(6,8,12)==False "
+    },
+    {
+      "fn_name": "check_equilateral",
+      "args": [
+        6,
+        6,
+        12
+      ],
+      "expected": false,
+      "assert_src": "assert check_equilateral(6,6,12)==False"
+    },
+    {
+      "fn_name": "check_equilateral",
+      "args": [
+        6,
+        6,
+        6
+      ],
+      "expected": true,
+      "assert_src": "assert check_equilateral(6,6,6)==True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

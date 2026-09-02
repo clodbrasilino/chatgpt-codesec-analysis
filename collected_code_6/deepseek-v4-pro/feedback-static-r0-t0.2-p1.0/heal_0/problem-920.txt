@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    void **values;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t size;
+} TupleList;
+
+bool tuple_is_all_none(Tuple *tuple) {
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->values[i] != NULL) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void remove_all_none_tuples(TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < list->size; read_index++) {
+        if (!tuple_is_all_none(&list->tuples[read_index])) {
+            if (write_index != read_index) {
+                list->tuples[write_index] = list->tuples[read_index];
+            }
+            write_index++;
+        } else {
+            free(list->tuples[read_index].values);
+        }
+    }
+    list->size = write_index;
+}
+
+int main(void) {
+    TupleList list;
+    list.size = 4;
+    list.tuples = malloc(list.size * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.size; i++) {
+        list.tuples[i].size = 3;
+        list.tuples[i].values = malloc(3 * sizeof(void *));
+        if (list.tuples[i].values == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list.tuples[j].values);
+            }
+            free(list.tuples);
+            return 1;
+        }
+    }
+
+    list.tuples[0].values[0] = (void *)1;
+    list.tuples[0].values[1] = NULL;
+    list.tuples[0].values[2] = NULL;
+
+    list.tuples[1].values[0] = NULL;
+    list.tuples[1].values[1] = NULL;
+    list.tuples[1].values[2] = NULL;
+
+    list.tuples[2].values[0] = (void *)2;
+    list.tuples[2].values[1] = (void *)3;
+    list.tuples[2].values[2] = NULL;
+
+    list.tuples[3].values[0] = NULL;
+    list.tuples[3].values[1] = NULL;
+    list.tuples[3].values[2] = NULL;
+
+    remove_all_none_tuples(&list);
+
+    for (size_t i = 0; i < list.size; i++) {
+        for (size_t j = 0; j < list.tuples[i].size; j++) {
+            printf("%p ", list.tuples[i].values[j]);
+        }
+        printf("\n");
+        free(list.tuples[i].values);
+    }
+
+    free(list.tuples);
+    return 0;
+}
+```

@@ -1,0 +1,47 @@
+{
+  "task_id": 498,
+  "text": "Write a C function to find gcd of two positive integers.",
+  "fn_candidates": [
+    "gcd",
+    "Gcd",
+    "gcd",
+    "gcd"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "gcd",
+      "args": [
+        12,
+        17
+      ],
+      "expected": 1,
+      "assert_src": "assert gcd(12, 17) == 1"
+    },
+    {
+      "fn_name": "gcd",
+      "args": [
+        4,
+        6
+      ],
+      "expected": 2,
+      "assert_src": "assert gcd(4,6) == 2"
+    },
+    {
+      "fn_name": "gcd",
+      "args": [
+        2,
+        9
+      ],
+      "expected": 1,
+      "assert_src": "assert gcd(2,9) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

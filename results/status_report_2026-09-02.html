@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" data-page-node-id="4TDlE1I6skeyR00FODtnOC">
+<head data-page-node-id="yWVeN2qA2q3AVeADPOWjCA">
+<meta charset="UTF-8" data-page-node-id="FUmjpYHVV9MMCVyfBBqtsY">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="sG7aWgCPQjGxbOthiYU2oZ">
+<title>FSE 2027 — Interim Status Report · Sep 2, 2026</title>
+<style>
+  :root{
+    --ink:#1a2332; --muted:#5b6b7f; --faint:#8b99ab; --line:#e3e8ef; --bg:#f6f8fb;
+    --card:#ffffff; --accent:#1f5eff; --accent-soft:#e8effe;
+    --good:#0e8a4d; --good-soft:#e3f4ec; --bad:#c0392b; --bad-soft:#fbe9e7;
+    --warn:#b07d00; --warn-soft:#fdf3d7; --pend:#5b6b7f; --pend-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.55;font-size:15px;padding:32px 16px}
+  .wrap{max-width:1060px;margin:0 auto}
+  header{margin-bottom:26px}
+  .kicker{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:27px;font-weight:800;letter-spacing:-.02em;margin:4px 0 6px}
+  .meta{color:var(--muted);font-size:13.5px}
+  .pill{display:inline-block;padding:2px 11px;border-radius:999px;font-size:12px;font-weight:700;vertical-align:middle}
+  .pill.run{background:var(--good-soft);color:var(--good)}
+  h2{font-size:19px;font-weight:800;letter-spacing:-.01em;margin:38px 0 4px;padding-top:18px;border-top:1px solid var(--line)}
+  h2 .qnum{display:inline-block;background:var(--accent);color:#fff;border-radius:7px;font-size:13px;
+           padding:2px 9px;margin-right:9px;vertical-align:2px}
+  h3{font-size:15px;font-weight:700;margin:18px 0 8px;color:var(--ink)}
+  p{margin:8px 0}
+  .sub{color:var(--muted);font-size:13.5px;margin-bottom:12px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card .lab{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:700}
+  .card .val{font-size:23px;font-weight:800;letter-spacing:-.02em;margin-top:3px}
+  .card .note{font-size:12px;color:var(--muted);margin-top:2px}
+  table{border-collapse:collapse;width:100%;background:var(--card);border:1px solid var(--line);
+        border-radius:10px;overflow:hidden;font-size:13.5px;margin:12px 0}
+  th{background:#eef2f7;text-align:left;padding:8px 11px;font-size:12px;letter-spacing:.04em;
+     text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}
+  td{padding:8px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pos{color:var(--good);font-weight:700}.neg{color:var(--bad);font-weight:700}
+  .neu{color:var(--pend);font-weight:600}
+  .tag{display:inline-block;padding:1px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+  .t-done{background:var(--good-soft);color:var(--good)}
+  .t-run{background:var(--accent-soft);color:var(--accent)}
+  .t-queue{background:var(--pend-soft);color:var(--pend)}
+  .t-warn{background:var(--warn-soft);color:var(--warn)}
+  .verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);
+           border-radius:10px;padding:13px 17px;margin:14px 0;font-size:14.5px}
+  .verdict b{font-weight:800}
+  .verdict.pending{border-left-color:var(--warn)}
+  .bars{margin:14px 0}
+  .brow{display:grid;grid-template-columns:270px 1fr 64px;gap:10px;align-items:center;margin:7px 0;font-size:13px}
+  .blab{color:var(--ink);text-align:right}
+  .btrack{background:#edf0f5;border-radius:6px;height:20px;position:relative;overflow:hidden}
+  .bfill{height:100%;border-radius:6px 0 0 6px}
+  .f-blue{background:linear-gradient(90deg,#3b74ff,#1f5eff)}
+  .f-teal{background:linear-gradient(90deg,#20b48f,#0e8a4d)}
+  .f-red{background:linear-gradient(90deg,#e57368,#c0392b)}
+  .f-gray{background:linear-gradient(90deg,#a8b4c4,#8b99ab)}
+  .bval{font-weight:700;font-variant-numeric:tabular-nums}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:6px 0 2px}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .lg-a::before{background:#1f5eff}.lg-b::before{background:#0e8a4d}.lg-c::before{background:#c0392b}.lg-d::before{background:#8b99ab}
+  .callout{background:var(--warn-soft);border:1px solid #ecd9a0;border-radius:10px;padding:11px 15px;
+           font-size:13.5px;margin:12px 0;color:#6b5300}
+  .callout b{color:#4d3c00}
+  .foot{margin-top:36px;padding-top:14px;border-top:1px solid var(--line);color:var(--faint);font-size:12.5px}
+  code{background:#eef2f7;border-radius:5px;padding:1px 6px;font-size:12.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}.brow{grid-template-columns:150px 1fr 52px}}
+</style>
+</head>
+<body data-page-node-id="dQm4DdWtEMYeMMBtinHAsi">
+<div class="wrap" data-page-node-id="1zmpMts0SvHaHxG46bWicC">
+
+<header data-page-node-id="HlIUOIhGptNhVeNwFAPTrP">
+  <div class="kicker" data-page-node-id="aBObaZTHKrdS5asdp8l91W">FSE 2027 extension · “All That Glitters is not Gold” · BCT dataset (974 C tasks)</div>
+  <h1 data-page-node-id="41sfkjAxEKMeOeIaW0clz1">Interim Results &amp; Data-Collection Status <span class="pill run" data-page-node-id="LP8lje52S5XlzneFsxkR6j">EXPERIMENTS RUNNING</span></h1>
+  <div class="meta" data-page-node-id="ZMt8qr3FZ18nzG2mwnHCcF">Generated 2026-09-02 21:55 (GMT+8) · Repo <code data-page-node-id="arVEFLyE82ngaaYXQGUXd5">chatgpt-codesec-analysis</code> · Models live: deepseek-v4-pro, qwen-max · 5 models pending API keys (GPT-5.6-Sol, Claude Sonnet 5, Gemini 3.1 Pro, Kimi K3, GLM-5.1)</div>
+</header>
+
+<div class="cards" data-page-node-id="cCWaXAFxRrOQbNnFKLqgCH">
+  <div class="card" data-page-node-id="nkTRTfrv9NPjHuJROuAhEL"><div class="lab" data-page-node-id="ytKJ6AcpiQ1CQ2FCC5aCFg">LLM code samples analyzed</div><div class="val" data-page-node-id="zwKTYTA9mIXR0tJGQnluBm">7,044</div><div class="note" data-page-node-id="0eEYUqE6unhXG4mVpewxT7">2 models × 974 tasks × 3 samples (RQ1) + 1,600 subset samples in ablations</div></div>
+  <div class="card" data-page-node-id="QJtO3ySF2C9kAM5TVWEXam"><div class="lab" data-page-node-id="B07R7qnu7bQmRmro9BZtKy">Initial defect rate (static gate)</div><div class="val" data-page-node-id="bsrkIaipE3xPA1fcJBgN0x">34–38%</div><div class="note" data-page-node-id="PKnNOpOR7KfFMDBtWBBDAw">of first-shot generations flagged before any healing</div></div>
+  <div class="card" data-page-node-id="Qjh3m9wut23EYE1FHwJMtk"><div class="lab" data-page-node-id="JQAsynlhPfRpSrW4ZvPqkT">API tokens spent (ledger)</div><div class="val" data-page-node-id="pXGk9GX2y8jlJBwxeG1XhZ">1.97M</div><div class="note" data-page-node-id="U95dhoMmKqCLcTOyBdYtbD">DeepSeek 0.93M · Qwen 1.03M · 0 failed calls to date</div></div>
+  <div class="card" data-page-node-id="FNDJEog05upUdgii1hl2DD"><div class="lab" data-page-node-id="5VrMKhYeRqtzV24nTvAYxO">Experiment cells</div><div class="val" data-page-node-id="3y2qgsPeLvALEj3ZmZoecC">8 / 17</div><div class="note" data-page-node-id="TgLc9XOrpHbYAyHGjl3St0">complete + valid · 2 running · rest queued in live chains</div></div>
+</div>
+
+<!-- ============ Q1 ============ -->
+<h2 data-page-node-id="VBs1io9G5ciWZ2XMaGdhMG"><span class="qnum" data-page-node-id="7hcdLY31eOHCfp1COfbdTy">Q1</span>Is LLM code generation vulnerable? How vulnerable?</h2>
+<p class="sub" data-page-node-id="e9KtZ1TmgQJR88x3eUPxDp">Full-dataset evidence, 974 tasks × 3 independent samples per model, multi-analyzer static gate (gcc-15 -fanalyzer, clang --analyze, Cppcheck Premium, flawfinder), max 10 healing rounds.</p>
+
+<div class="verdict" data-page-node-id="RFclblQnc7C0iNaLiDQZsS"><b data-page-node-id="LFOMJqQTbdakz7M70CYBAj">Yes — substantially.</b> Between <b data-page-node-id="fzgL4wGGllRHyKneDoKJT8">34.4%</b> (deepseek-v4-pro) and <b data-page-node-id="g39mhW4Y74EH6bpTpenoOe">38.3%</b> (qwen-max) of first-shot generations contain defects detectable by static analysis alone, before any repair. Iterative healing with static feedback removes most of them (final clean 96.9–98.8%), but <b data-page-node-id="koesix2lL2Cjt5KCH4YkpG">90 and 36 samples respectively (3.1% / 1.2%) remain defective after 10 rounds</b>. On the top-200 most vulnerability-prone tasks under the full static+dynamic gate, roughly <b data-page-node-id="QSHXU0XpunjK74gGFzGMfj">43–48% of initial samples are flagged</b>.</p></div>
+
+<table data-page-node-id="4EOjoAVGG3gjXNCXQ3GfAB">
+  <tr data-page-node-id="1PPbDd8n4xU9yLkRHnFpNb"><th data-page-node-id="Op4p2Uamzhxs4w9zGDQnpS">Cell (full 974-task dataset)</th><th class="num" data-page-node-id="slSTCswVVvxKL2PFT9keKt">n</th><th class="num" data-page-node-id="AEGx3RTpVqJnGjyiQjRAAV">Clean at start</th><th class="num" data-page-node-id="koz3xnFouqhhL7CqwxIvcC">Initially defective</th><th class="num" data-page-node-id="gvCiozfBldLiyAlkKqj7j5">Final clean (≤10 rounds)</th><th class="num" data-page-node-id="2MyAZ6HfCukMkwIcutxpdi">Never cleaned</th></tr>
+  <tr data-page-node-id="HhZVehjXKiTnoiAaBWWHTA"><td data-page-node-id="TmvtCAb13vKkVWzlmXOZ66">deepseek-v4-pro · static gate</td><td class="num" data-page-node-id="K2JO2rFEHC29Des1ABH9nc">2,922</td><td class="num" data-page-node-id="ATeVU8r13oQXxyjd73RRJW">1,916 (65.6%)</td><td class="num neg" data-page-node-id="MZNGYQa4NAYOyysTog0zUb">1,006 (34.4%)</td><td class="num pos" data-page-node-id="mkaHqX3CBDWqbjLQEymE5p">2,832 (96.9%)</td><td class="num neg" data-page-node-id="1xubPyHkCmVLl2LJARC7UV">90 (3.1%)</td></tr>
+  <tr data-page-node-id="au0i82Ckj36UemMHcCp6iI"><td data-page-node-id="McnqDfY5KY5Rlwj6B8No74">qwen-max · static gate</td><td class="num" data-page-node-id="tFXDbOsgZZVJJQb1uH7IzN">2,922</td><td class="num" data-page-node-id="RU0rMXAEK43JgxC8xVoTH9">1,804 (61.7%)</td><td class="num neg" data-page-node-id="vOHlbCqRAgYttgyRfLSQJG">1,118 (38.3%)</td><td class="num pos" data-page-node-id="GbZyRXkLFhq68VWuPfwds9">2,886 (98.8%)</td><td class="num neg" data-page-node-id="e0zapRxLnn06nSN6EFmuiF">36 (1.2%)</td></tr>
+</table>
+
+<h3 data-page-node-id="xixVPb0Zotwo0sHLHzXYaK">Same tasks, stricter gate (top-200 vulnerable subset)</h3>
+<div class="bars" data-page-node-id="MEa9VC8nfSObxpKzExkXta">
+  <div class="legend" data-page-node-id="fyNr85mGG5qJAhwNXmkWe5"><span class="lg-a" data-page-node-id="ZOQhR7HnnabJeig2DpjjcN">clean at start (static gate only)</span><span class="lg-c" data-page-node-id="7NSFQQVQtjkDdErjGB4A6k">clean at start (static+dynamic gate)</span></div>
+  <div class="brow" data-page-node-id="qGjKSp5AY7FpWmZEYOWobw"><div class="blab" data-page-node-id="ZQKdvXfMVPhi4b8OnG59Bc">deepseek · subset, static gate</div><div class="btrack" data-page-node-id="RpCz10VKPD4Rl8Oo2fCYfF"><div class="bfill f-blue" style="width:60.5%" data-page-node-id="PAJudAdcZKVKnWsF1EPCTI"></div></div><div class="bval" data-page-node-id="cqM55MinMt7qPsvcheEohj">60.5%</div></div>
+  <div class="brow" data-page-node-id="JBcIVpzCSGtaCTJ3j95JQY"><div class="blab" data-page-node-id="JJnsZRi3NexZYsDL3CCLD5">deepseek · subset, s+d gate <span class="tag t-run" data-page-node-id="LjZhVnWJHEsnxgIJ1QWA4o">heal_0 done</span></div><div class="btrack" data-page-node-id="HzGt3JDeGd0EFPhTyXFVK4"><div class="bfill f-red" style="width:57.2%" data-page-node-id="oExqhF1JDSDdY2s9gJrAmY"></div></div><div class="bval" data-page-node-id="X5eGvc1BFobsAyyZudVnWP">57.2%</div></div>
+  <div class="brow" data-page-node-id="kv0vIkDkORrhEu4EkveB3l"><div class="blab" data-page-node-id="s796lJoG0CGFwF1S9XnyqR">qwen · subset, static gate</div><div class="btrack" data-page-node-id="ZxDkMjSZfxuyFyAWxDvdWn"><div class="bfill f-blue" style="width:58.7%" data-page-node-id="EEWX4I9EZKwp7HCZrgf5bV"></div></div><div class="bval" data-page-node-id="bPROnRWLuP8IaxE9Jf41C8">58.7%</div></div>
+  <div class="brow" data-page-node-id="v2e2jq0r8KAnSGBM5NGvF5"><div class="blab" data-page-node-id="kSIwypLe1k3HfvFD6n3wHP">qwen · subset, s+d gate (RQ2)</div><div class="btrack" data-page-node-id="TXQ54OKBTEOCOWqKCmfmaw"><div class="bfill f-red" style="width:51.7%" data-page-node-id="LsdctY4gjF2PMo3g2Oopq3"></div></div><div class="bval" data-page-node-id="icNYJrNNz4uj1gXsNEDYVb">51.7%</div></div>
+</div>
+<p class="sub" data-page-node-id="piPiYZqBWh5LxF6lvR3YAA">The subset is vulnerability-ranked by design, so absolute rates there are not comparable to the full dataset; the static-vs-s+d contrast within the same tasks is the meaningful comparison (see Q3).</p>
+
+<!-- ============ Q2 ============ -->
+<h2 data-page-node-id="HAM7uc1fDNs4p0S6x4YMY3"><span class="qnum" data-page-node-id="WqptfCf5uh2UQPOWJsnGez">Q2</span>Does reasoning generate more secure code? Is reasoning enough?</h2>
+
+<div class="verdict pending" data-page-node-id="RHKRa3Ek3slq6UQFJNqNbd"><b data-page-node-id="XcIVP0JBfvi1HjJdql4eKC">No conclusion possible yet — the data does not exist.</b> The reasoning (thinking-mode) ablation has only a 3-instance pilot on disk; the full cell — deepseek-v4-pro-<i data-page-node-id="MN6gigSMK5OtfhW6vgGYdv">thinking</i> on the top-200 subset, 3 samples (600 generations), static feedback — is the <b data-page-node-id="bQiqHLQCaEsDF9cX9VeNon">last cell in the running DeepSeek chain</b>. Per your instruction, we state only what the data supports.</div>
+
+<h3 data-page-node-id="8yBJnA3Yq8e16rbWyK1Hs8">What the pilot data shows (n = 3 problem-instances, static gate)</h3>
+<table data-page-node-id="okknKiBMbgiK6xMdBHOUVk">
+  <tr data-page-node-id="GtsdVbRJ7pduYnDlvDNpAY"><th data-page-node-id="QwXvFuyPeg84XhgKjmhgxM">Metric</th><th class="num" data-page-node-id="TzK0NyAxD7tyAhKHNeQoKO">Non-thinking (deepseek-v4-pro, per call)</th><th class="num" data-page-node-id="fALSYxYtbDbRounC6NRBTd">Thinking (deepseek-v4-pro-thinking, per call)</th><th class="num" data-page-node-id="3k6SI5JEvhSvWODCEZnynQ">Ratio</th></tr>
+  <tr data-page-node-id="b0OWOqoGfNBFYscKu2EXI7"><td data-page-node-id="kx4IFVy6hrUKLRWZUHzhoS">Output tokens per generation</td><td class="num" data-page-node-id="RoqFi6iQkYrnWp7GGGYvev">≈ 440</td><td class="num" data-page-node-id="7Y9ei2bP3tQRLB1bDj0QkY">8,523 (of which 8,043 reasoning)</td><td class="num neg" data-page-node-id="E9VYjxEGcSQmYt7G0Cimt5">≈ 19×</td></tr>
+  <tr data-page-node-id="NMs92MKcvOSUtFE2iI7zTK"><td data-page-node-id="lKcLkNf5IAtOCDOFNFUXGD">Latency per generation</td><td class="num" data-page-node-id="EZb1mn0l8ccLHjODqTUTR4">≈ 4.0 s</td><td class="num" data-page-node-id="HjLfyJpg7Ky5VsOuetQLZ1">111 s</td><td class="num neg" data-page-node-id="v3VfArGiD5Ab9kCkG1WjVO">≈ 28×</td></tr>
+  <tr data-page-node-id="JypP4REWie5CVlGm69l3Ro"><td data-page-node-id="AyLAGmkVi2QPrK0QqW3sjX">Pilot instances clean at start</td><td class="num" data-page-node-id="U8jTa0a6uDW7StxaFpkaV6">—</td><td class="num" data-page-node-id="ugakc3uTFLm8ymgX5PagNc">3 / 3</td><td class="num" data-page-node-id="CZLpcNwrAIMxKxNsqH1gnB">anecdotal (n=3)</td></tr>
+</table>
+<p class="sub" data-page-node-id="8JPHJ5j7dtqxvK28eeH5J7"><b data-page-node-id="Ff6CieIAAiUGshznC5YIDu">What can be said from data:</b> thinking mode carries a large, verified cost penalty (~19× output tokens, ~28× latency). The 3 pilot instances were all clean at start, but n=3 is anecdote, not evidence — the 600-sample cell now queued will answer both “more secure?” and “enough to mitigate?” against the non-thinking baseline (deepseek RQ1 static cell, same 200 tasks, 3 samples: 60.5% clean at start, 98.0% final clean). Even if reasoning improves initial security, the RQ2 data already shows a static+dynamic-measurable residual defect class (Q3), so “reasoning alone mitigates everything” would require the thinking cell to reach ≈100% clean-at-start under the s+d gate — the experiment to test that is queued, not finished.</p>
+
+<!-- ============ Q3 ============ -->
+<h2 data-page-node-id="sNT1DIOHuH6xg7xUqrPpiM"><span class="qnum" data-page-node-id="C9Ge28bPRn7buZJVvGnaf4">Q3</span>Static vs dynamic detection — rates and consequences</h2>
+<p class="sub" data-page-node-id="rfEvDM0xKEwQGo3w4GkjQT">Dynamic channel = sanitizer oracle (ASan/UBSan build + automated test execution). All s+d figures are on the top-200 subset; static-only comparators are restricted to the same tasks.</p>
+
+<h3 data-page-node-id="qRxnvqqG9aClpIYPT7Z66G">Detection rates on identical round-0 code (initial generations)</h3>
+<div class="bars" data-page-node-id="N1nuP2g3ldKpZe2u7CDEr7">
+  <div class="legend" data-page-node-id="DDvZc5ybOTZoCYOFFAG83A"><span class="lg-a" data-page-node-id="PviPx7DoQAyLVi61jdySBU">static gate only — clean at start</span><span class="lg-c" data-page-node-id="xMKUBCVTaDrrRaI7t7yN11">static+dynamic gate — clean at start</span></div>
+  <div class="brow" data-page-node-id="ISF8S3aD8PuvNBmqsWNaaL"><div class="blab" data-page-node-id="tSgz4ObWDWLh4oQiUOWF5x">deepseek-v4-pro (t1.0, p1.0, 600 samples)</div><div class="btrack" data-page-node-id="HxueCU0LA1PJ2VCEP3s0DW"><div class="bfill f-blue" style="width:60.5%" data-page-node-id="tBIlkwQgBh2GTMGJKQV9la"></div></div><div class="bval" data-page-node-id="rgAVcz9kTeLXIdGSo0OOym">60.5%</div></div>
+  <div class="brow" data-page-node-id="2mXeZG1QDI8SDW3EbAm0Hf"><div class="blab" data-page-node-id="7KE5Jp7W8VLDNXFSzCbFfr">&nbsp;</div><div class="btrack" data-page-node-id="KdpLXYL6omAxitRoCtSaml"><div class="bfill f-red" style="width:57.2%" data-page-node-id="bHey1jje7E1kAGwWm4qf73"></div></div><div class="bval" data-page-node-id="iW5ogGGvT1j4sFrABozjet">57.2%</div></div>
+  <div class="brow" data-page-node-id="OSPnGCSqbTDrEaO7vZPuzE"><div class="blab" data-page-node-id="PnHRThreyPdrg1d69XVFub">qwen-max (t1.0, p1.0)</div><div class="btrack" data-page-node-id="mznWxEXGZo0IGNY6YAdTz7"><div class="bfill f-blue" style="width:58.7%" data-page-node-id="ZCSimayBQKBXAaAtlq0iiy"></div></div><div class="bval" data-page-node-id="B6ARpdFQpN75345F7sh4SH">58.7%</div></div>
+  <div class="brow" data-page-node-id="mgxNbfVezuBaCu9FoPgD6S"><div class="blab" data-page-node-id="3QYXM7OvYOIqpJUZryR8qb">&nbsp;</div><div class="btrack" data-page-node-id="1KIQ4SNUjx1npFpCWV7eZW"><div class="bfill f-red" style="width:51.7%" data-page-node-id="czeKmAbcumPjnzT8OW0eKF"></div></div><div class="bval" data-page-node-id="DB13BfzIiHHSbb1gNdbvyb">51.7%</div></div>
+  <div class="brow" data-page-node-id="HTNFVEt6ygwYXK4rB25eX7"><div class="blab" data-page-node-id="ItDStGhr1Rj65TYMwGsGJi">qwen-max (t0.2 decoding)</div><div class="btrack" data-page-node-id="uGg3cKSVrg1K0KOeNcSPKf"><div class="bfill f-blue" style="width:63.0%" data-page-node-id="hLS7kx2U7jHB3fOqXeubHy"></div></div><div class="bval" data-page-node-id="yUhjcSqMrz7hyMG3ACmDf3">63.0%</div></div>
+  <div class="brow" data-page-node-id="I9MF6iFCEMXebPDdZ9tU6R"><div class="blab" data-page-node-id="TNbjEBjPasqDwSMaHcGl2q">&nbsp;</div><div class="btrack" data-page-node-id="jlPZAwqLPpGsx3UCHP7PWW"><div class="bfill f-red" style="width:54.3%" data-page-node-id="UXBhN2OWOM3wjQWlfcU9kX"></div></div><div class="bval" data-page-node-id="xFqZh0Q8FSYTIQV6knIfFW">54.3%</div></div>
+</div>
+<table data-page-node-id="gYYjbZVJ5CMPB2HGsZxMF0">
+  <tr data-page-node-id="DquEbu9JqJHMu9V61FsQrw"><th data-page-node-id="URx0eHooq5ZaUf0P3MDT5N">Model / decoding</th><th class="num" data-page-node-id="nj6Bqve9gtY22ZcXWDELyP">Static-only initial flag rate</th><th class="num" data-page-node-id="tgtxSOBYAryZWUosCmxBaH">s+d initial flag rate</th><th class="num" data-page-node-id="L1cGHaGh14pkjvToXxaEh4">Extra samples flagged by dynamic channel</th></tr>
+  <tr data-page-node-id="D2JJSsWvwv2ASghCPG0Z97"><td data-page-node-id="AkJyjj99JkdRFRKl26DKif">deepseek-v4-pro (t1.0-p1.0)</td><td class="num" data-page-node-id="F846gXbAZHf8YuloUJijQ2">39.5%</td><td class="num" data-page-node-id="PRAfJYMWHEhGEIdPZMrZBf">42.8%</td><td class="num" data-page-node-id="Bgen2aMkxx7UctEpYY6qEE">+3.3 pp</td></tr>
+  <tr data-page-node-id="rCeCkXfQzp7wXZFDjtLEMq"><td data-page-node-id="9OdTJgw3AWOuyNUh9Gh9wL">qwen-max (t1.0-p1.0)</td><td class="num" data-page-node-id="sTFVI20N0gKl1205GGqqrS">41.3%</td><td class="num" data-page-node-id="0nH8YDE86e5YZ1yfgmbHqJ">48.3%</td><td class="num" data-page-node-id="oeHzlORQxC2TNHKSiCGg4M">+7.0 pp</td></tr>
+  <tr data-page-node-id="GwwHS1tzmCwdhHOb3hDOOy"><td data-page-node-id="Qk3pLycAVl9ODSMcsQh9uG">qwen-max (t0.2-p1.0) <span class="tag t-warn" data-page-node-id="V6kvjNBw9nmbOCQVlZBdso">prelim.</span></td><td class="num" data-page-node-id="yAHAULUj6vFWnzTJYQOimO">37.0%</td><td class="num" data-page-node-id="o69DbD3iRubunTO0sYdXqP">45.7%</td><td class="num" data-page-node-id="xynmZ6NLPgfVLWuZE09fZU">+8.7 pp</td></tr>
+</table>
+<p class="sub" data-page-node-id="vICrWSzVFoH1D5YwtrBFfL">The qwen t0.2 row compares a 1-sample static-only cell against a 3-sample s+d cell — indicative only until the s+d grid re-runs land. qwen s+d baseline (RQ2) uses 2 samples/task; all other rows 3 samples/task.</p>
+
+<h3 data-page-node-id="NgC7s1HuWEHiCpMftFCz3f">Consequence 1 — the stricter gate is significantly harder to satisfy</h3>
+<p data-page-node-id="UmHORJmZhqiQebp1KDUCsK">qwen-max, top-200 subset, paired per problem (n = 200), static vs static+dynamic feedback, max 10 rounds:</p>
+<table data-page-node-id="TnG59nZGWbQ7atMcRsMFs9">
+  <tr data-page-node-id="Sty7myPDPosSgQUOTmVot6"><th data-page-node-id="IJ1liAPLv33K2MFFZsJ8mR">Metric</th><th class="num" data-page-node-id="2eE54RpuDYeFqOQJRLVnBJ">Static feedback</th><th class="num" data-page-node-id="PoCE82yfgJLJC3T9upfwPt">Static+dynamic feedback</th><th class="num" data-page-node-id="nASlttn9kBOKCbQBaFdcRm">Test</th></tr>
+  <tr data-page-node-id="x0gvH25IZCCEMn2byBEthD"><td data-page-node-id="jFOLKRpEYf48KLo1kmKksp">Final clean (under own gate)</td><td class="num" data-page-node-id="wQVvUwXweblOb2EVIE4Qws">98.0%</td><td class="num neg" data-page-node-id="17ir6Gl2HyNQ9wGYk3CyRF">91.8%</td><td class="num" data-page-node-id="YfPWiUxcfZpivAkDiY2ykx">McNemar exact p = 0.0037 (b=22 / c=6)</td></tr>
+  <tr data-page-node-id="h1Gg4RjwUG6TCm3z87Ak8Z"><td data-page-node-id="i7LyY2lz2gV8HOKaQTb0IQ">Rounds-to-clean (penalized)</td><td class="num" data-page-node-id="mmWreoRakV9kpUoLaXxl2I">lower</td><td class="num neu" data-page-node-id="oOqQmmztrB2DFo0HCSaaFv">higher</td><td class="num" data-page-node-id="qHfBoWDsYpECm9msByjkji">Wilcoxon p = 2.1e-06, r = +0.381</td></tr>
+  <tr data-page-node-id="DJYVYpog1Xt0oBUkDoe8EE"><td data-page-node-id="suBGKE61C5SxqYw9zxYzQB">Paired clean-rate difference</td><td colspan="2" class="num" data-page-node-id="f5hTBFN6GFnJtTVCsERwz4">−6.2 pp (s+d − static)</td><td class="num" data-page-node-id="GozagosxvqrRlzPHQtsVF5">bootstrap 95% CI [−13.0, −3.0] pp</td></tr>
+</table>
+
+<h3 data-page-node-id="oBGYvblOfL5CKopfnMiTzi">Consequence 2 — unhealed samples are stuck mostly on dynamic-only findings</h3>
+<p data-page-node-id="FVobQEHeDWly7Q1kTscOyh">Of the 33 qwen s+d samples never cleaned in 10 rounds, the final-round reports attribute:</p>
+<div class="bars" data-page-node-id="6Z6h8QKBzAnuDLTUCyUvGz">
+  <div class="brow" data-page-node-id="y9MKt8yMMIOPjtrppTwuAS"><div class="blab" data-page-node-id="veW6aIvuvht5np1oipYzOd">blocked by dynamic-only findings</div><div class="btrack" data-page-node-id="vTvf7w9v6NrQBjtbG8oU77"><div class="bfill f-red" style="width:75.8%" data-page-node-id="wQJ3X6BKzsMDDPBbzigzsH"></div></div><div class="bval" data-page-node-id="VY8vsFSd70HoHmkVWxUJSB">25 (76%)</div></div>
+  <div class="brow" data-page-node-id="tqHT4M2FNLJQbeVsYCcmy0"><div class="blab" data-page-node-id="VOY6BjlkUzWX8mCBwpBC4l">blocked by static-only findings</div><div class="btrack" data-page-node-id="qFUXmjKCnZsT4kKLUDlHdZ"><div class="bfill f-blue" style="width:15.2%" data-page-node-id="AYTCtqtgQahvuzT5xFHi9N"></div></div><div class="bval" data-page-node-id="CeOeNTeRJi9nctf9RDJIyr">5 (15%)</div></div>
+  <div class="brow" data-page-node-id="o28ejiOMs65L0pYx7TPybE"><div class="blab" data-page-node-id="ULLxrZh8Kt8xHkiWylUE8F">blocked by both channels</div><div class="btrack" data-page-node-id="l1bNK3S6V63rLXdL5cWJRQ"><div class="bfill f-gray" style="width:9.1%" data-page-node-id="lPw0QQzscl5vmh0kNMwBeu"></div></div><div class="bval" data-page-node-id="2w9RjeuYXasvWYhK0ajVmm">3 (9%)</div></div>
+</div>
+<p class="sub" data-page-node-id="relYyHPkjiJBVjPSC6u7OW">By tool on the final flagged reports: dynamic — 23 test-harness reports + 5 ASan reports; static — 6 cppcheck, 2 gcc-analyzer, 2 clang-analyzer. <b data-page-node-id="2Da1cU8vlAh9GBcfgUrECL">Reading:</b> dynamic findings are both a meaningful extra detector (+3–9 pp initial detection) and the dominant reason healing stalls — three quarters of never-cleaned samples fail on dynamic-only findings, and static feedback alone provably cannot see them.</p>
+
+<!-- ============ Q4 ============ -->
+<h2 data-page-node-id="SDNp5OF6Fe7E7usRwASkLk"><span class="qnum" data-page-node-id="7v5iACxl8n6WpdhJQZkcnT">Q4</span>Do different LLMs and decoding parameters behave differently?</h2>
+<p class="sub" data-page-node-id="ueMBcBv6Pv8klCjXBMH2OS">Temp/top_p grid on the top-200 subset, 1 sample/task, static feedback+gate, sample-1 paired vs each model's RQ1 baseline (n = 200 problems). These are the completed static-healing grid cells; the s+d re-runs (3 samples) are the running chains and will supersede them.</p>
+
+<div class="two" data-page-node-id="8zB2XM5L6dx6klCOBhmiUs">
+<div data-page-node-id="ST3JXQot1TaCNfukHjos0Y">
+<h3 data-page-node-id="hnCqaxUFxcvir7TLB6gHYk">deepseek-v4-pro</h3>
+<table data-page-node-id="wvvY3geR05gMhyDxwbmN97">
+  <tr data-page-node-id="4yliUHupWOE5V3GqeB8QKo"><th data-page-node-id="5UNgZcuH7G40YpSYZnKAUx">Cell</th><th class="num" data-page-node-id="ORflSu0MD0JmOwUcvzsFD2">Clean at start</th><th class="num" data-page-node-id="QnLeND59BYQckWplPDFKIK">Final clean</th><th data-page-node-id="YOShA6FVfz1Rq3QSMXLiGH">vs baseline</th></tr>
+  <tr data-page-node-id="IpBgkDNPqC7Yh8ivfrDgky"><td data-page-node-id="Dpiy4Yio08pX1TX0lydDjH">t1.0-p1.0 (baseline)</td><td class="num" data-page-node-id="jbzHxDAyuv34CpWCx0XZi7">57.5%</td><td class="num" data-page-node-id="Mqi9hIj8m4ypBHr7lKyC6W">98.0%</td><td data-page-node-id="4G0rLVGHYTJkJj4ibfDN8W">—</td></tr>
+  <tr data-page-node-id="sljmj2UyYD1NjjrOuDS7Fv"><td data-page-node-id="3MTmZtiswD9W3SIqRTLoU7"><b data-page-node-id="7gsBfCo4otpyen0aUrdu47">t0.2</b>-p1.0</td><td class="num pos" data-page-node-id="059qE8DmHDAVH2xfxkvn79">69.5%</td><td class="num" data-page-node-id="neRTJnOScSoRmtQKb8HkLk">98.0%</td><td class="pos" data-page-node-id="5fSxuEITDifnEZMqE6DeWv">+12.0 pp start · Wilcoxon p=0.0295, r=−0.26 (significant)</td></tr>
+  <tr data-page-node-id="UEuKp7iHt0wbSmEVsTHM8I"><td data-page-node-id="Z1vaSHNFAeP7JBGyuojXOo">t1.0-<b data-page-node-id="X66btJWCF9HCLCa3775r6T">p0.5</b></td><td class="num" data-page-node-id="IDvHfpJnjbUrhg4qieXpMg">63.5%</td><td class="num" data-page-node-id="2nIU8inB9yzxl0WlrkDusL">98.0%</td><td class="neu" data-page-node-id="zewMnHdKxElBxJRGjscHvM">+6.0 pp start · p=0.29 (n.s.)</td></tr>
+</table>
+</div>
+<div data-page-node-id="8jXabHej2WKnXXsdniM3uf">
+<h3 data-page-node-id="L2vV7HfTanQcCgGpbKhM8Q">qwen-max</h3>
+<table data-page-node-id="Xq6yBIhrJMKhBuQl1fYFOs">
+  <tr data-page-node-id="0yjH3LVbxz8T5NCX7DWjGW"><th data-page-node-id="mlkHCngHW0g6n49CLyZ62N">Cell</th><th class="num" data-page-node-id="JrYng3sHuN0n2tXA93Np5F">Clean at start</th><th class="num" data-page-node-id="KajxYPmTMVfzodR7mIIr13">Final clean</th><th data-page-node-id="Jt3ecAHDqJY0N5p30CluRv">vs baseline</th></tr>
+  <tr data-page-node-id="5SwrnunQWmIZztL7H3WbGp"><td data-page-node-id="KVw6QAoyhxz9TYBijaeIwF">t1.0-p1.0 (baseline)</td><td class="num" data-page-node-id="y4Yzr1zf8oXr19Sf3QHnB7">62.5%</td><td class="num" data-page-node-id="Zte7mliR8IDMfeO0T2kRBX">98.0%</td><td data-page-node-id="XPMQI2UaeXMOEgN7uedVtg">—</td></tr>
+  <tr data-page-node-id="koCj0on13Y7SABN1XCHn6F"><td data-page-node-id="oWhB2wlnwEgg8GZZ33U7yL"><b data-page-node-id="du7QLRA5P6apbL7L4auz0P">t0.2</b>-p1.0</td><td class="num" data-page-node-id="Xi2TqXwc36ZwsCbn9VdoVf">63.0%</td><td class="num" data-page-node-id="vQGCi23JouxjOixA4YFJoX">99.0%</td><td class="neu" data-page-node-id="pH6JPOfpRFjawDgkUiAq0Q">+0.5 pp start · p=0.31 (n.s.; all-samples sensitivity p=0.021)</td></tr>
+  <tr data-page-node-id="7FErq73pfAACYpsmDXLpO1"><td data-page-node-id="aurwU7K38CmIuJuVycp3mv">t1.0-<b data-page-node-id="mEJhsZ9MC8GALYSH6suFv1">p0.5</b></td><td class="num" data-page-node-id="WVAJvDGqYJkNAw0Q3NErKL">71.0%</td><td class="num" data-page-node-id="Jy36wEyvqyCAa36boIjwMU">98.5%</td><td class="neu" data-page-node-id="s54eRZxNjaPJJD4wJApNX2">+8.5 pp start · p=0.12 (n.s.; sensitivity p=0.065)</td></tr>
+</table>
+</div>
+</div>
+
+<div class="verdict" data-page-node-id="vOTtBa44SCkFCGaYFBEnBs"><b data-page-node-id="YKKpVNATRCwlYUYNWpHKVC">Yes — behavior differs by model, and the effective knob is model-specific.</b> For deepseek-v4-pro, low temperature (t0.2) is the significant lever (+12 pp initial cleanliness, p=0.0295). For qwen-max, the pattern reverses: t0.2 does almost nothing (+0.5 pp) while top_p 0.5 shows the larger start-cleanliness gain (+8.5 pp, not significant under the pre-registered sample-1 pairing, borderline under the all-samples sensitivity bar). Across all 6 grid cells, <b data-page-node-id="VdWtX06FHIAaxcT0sxoXP5">final clean rates stay ≥ 98%</b> — conservative decoding never hurt repairability, and always numerically improved initial security. Model-level differences exist independently of decoding: qwen flags more initially (38.3% vs 34.4% full dataset) but retains fewer uncleaned samples (1.2% vs 3.1%).</div>
+
+<div class="callout" data-page-node-id="8tl0V9BAsftmuKoThSM6O2"><b data-page-node-id="AtaaKOIFHP6v0MaFB8nvhY">Caveats (data-driven honesty):</b> grid cells are 1-sample and were healed under the <b data-page-node-id="hFlSljnp7hBTQIKVFzq8lZ">static</b> gate; non-significance is inconclusive, not evidence of no effect. The definitive s+d versions (3 samples, shared round-0 via gen-source) are exactly what the running chains are producing now.</div>
+
+<!-- ============ PROGRESS ============ -->
+<h2 data-page-node-id="ht6jjh8qRcOrJSQwOB8qer">Data-collection progress — Qwen &amp; DeepSeek</h2>
+
+<h3 data-page-node-id="e3dIIHEUoz9kRbejWH8wlu">qwen-max</h3>
+<table data-page-node-id="6nPCSvnxud8GUeiwCyE0wa">
+  <tr data-page-node-id="ZfnWUQICC3vrou3839pW1A"><th data-page-node-id="ABGWyWm7NCS3OdmRDb35He">Cell</th><th data-page-node-id="q4x4RHpw9yX5451hvKQnYV">Status</th><th class="num" data-page-node-id="tkdUr5Z5uQBJCYIPY4M4Se">n</th><th data-page-node-id="EVmG56zWGemkjcPmlw85rC">Outcome / progress</th><th class="num" data-page-node-id="T8bDFNzmoMF2lVKcDjBERO">Tokens (ledger)</th></tr>
+  <tr data-page-node-id="VmZYrrZPHVGvLSDspwzfFx"><td data-page-node-id="bE1UGY7t2YpR4GBiASY2IC">RQ1 · static gate · full 974 × 3</td><td data-page-node-id="IM2NILihDO0JbfvktJhxbY"><span class="tag t-done" data-page-node-id="hyR97nWgvBVZJ7NYoYBeEu">DONE</span></td><td class="num" data-page-node-id="X2vxuAvDwvhEIwkvfIJyhL">2,922</td><td data-page-node-id="ciyzp6AFNpVCEXRrcYKkC4">96.9%→<b data-page-node-id="InDgHs2lDG8jFyzdMYwi9X">98.8%</b> final clean · 36 never cleaned</td><td class="num" data-page-node-id="uryvAjeFwRQvBdnClmkULy">—</td></tr>
+  <tr data-page-node-id="DUTVxvJT9TwVZP19eDqecD"><td data-page-node-id="kGQXMKDelGNDGk1wHrDreP">RQ2 · s+d feedback · subset × 2</td><td data-page-node-id="V8DlP6zEle9ZaNziPTLE5O"><span class="tag t-done" data-page-node-id="ErnB97fGI2qmX7zzfuNHKv">DONE</span></td><td class="num" data-page-node-id="oJOLgR0t1RD7R1vFRWA3Ub">400</td><td data-page-node-id="DQHrRfC4n47lBc1KMofPzK">51.7% start · <b data-page-node-id="nsjNiG5MkvtCkk1SBlkHxa">91.8%</b> final clean · 33 never cleaned</td><td class="num" data-page-node-id="HEcFLiflnM3Hof9mxlCc28">—</td></tr>
+  <tr data-page-node-id="HceDTpBx0GCS7Pc8RRj032"><td data-page-node-id="z7eHBdes2W11HZWXz8kzfi">Grid t0.2 · static · subset × 1</td><td data-page-node-id="7QI7ABRtlPPvzC8jtc0CkP"><span class="tag t-done" data-page-node-id="KI8R4T1C48T8LHgZViBwix">DONE</span></td><td class="num" data-page-node-id="r7nAZWkBYczxPT1HTxhRN0">200</td><td data-page-node-id="XCARdWhPn7ohCjS55VATOP">63.0% start · 99.0% final clean</td><td class="num" data-page-node-id="JoLWF45BFlhzneGjMOL4aU">187,056</td></tr>
+  <tr data-page-node-id="n3cayEc72sS0V4zxRb7Yf8"><td data-page-node-id="8gVV4wImbAGcBeMkDhCUUB">Grid p0.5 · static · subset × 1</td><td data-page-node-id="BTKN5VmJdPgPFfxNV6H229"><span class="tag t-done" data-page-node-id="PsA9LX3rp0bCzOpO4usBHh">DONE</span></td><td class="num" data-page-node-id="RjoXlCcZBPpTlnDjnGqkwf">200</td><td data-page-node-id="XKa23hsv54YIiPBbRZ9AcH">71.0% start · 98.5% final clean</td><td class="num" data-page-node-id="BKbjUnjC1r76MFF8EvzAvt">198,636</td></tr>
+  <tr data-page-node-id="0grk32CoaAeI7wcLAFLEEN"><td data-page-node-id="nSZl3wxLw3SvtOk1eBBkqr">Grid s+d t0.2 · subset × 3</td><td data-page-node-id="WjSHJ0FUOjwhuSBUxRkQVr"><span class="tag t-run" data-page-node-id="4hvRY9Fu70WoFbyYDevaiR">RUNNING</span></td><td class="num" data-page-node-id="Bd5FGaX2Cy4UQ8B067WJ38">600</td><td data-page-node-id="JBfp7FKzCvNiM4HQgcJ8RZ">heal_0 measured: 54.3% start clean · round 1 healed 168/274 flagged · 106 samples resuming at round 2</td><td class="num" data-page-node-id="l4kz3Gkd3RAyZgKfy6HiuB">430,198</td></tr>
+  <tr data-page-node-id="QZYzHhUpgne4Fn5GX6lkmx"><td data-page-node-id="JPqTjTu5EvdnX6cLDYH2Tu">Grid s+d p0.5 · subset × 3</td><td data-page-node-id="oi7cLJxrqTLh9MzrbNFFwM"><span class="tag t-queue" data-page-node-id="JYxOnuzBRnMfCFEZte2AFz">QUEUED</span></td><td class="num" data-page-node-id="ZgocN5LdzTI9dWJNoqgYPk">600</td><td data-page-node-id="QnZaAWKf9tlBfyzHXNAjwh">round-0 sample 1 imported; 400 new generations + s+d healing pending</td><td class="num" data-page-node-id="Cg4vyU8u0BZRHv1945zTXI">0</td></tr>
+  <tr data-page-node-id="casILIPLHFIvktctQwwGhE"><td data-page-node-id="53IAqCC15fIJxX6ybyNFQD">Dynamic-only arm · subset × 3</td><td data-page-node-id="OmOsiSaNqHNHgKLiVwPS2t"><span class="tag t-queue" data-page-node-id="6rZY583NQaCPZ0SmDAEONK">QUEUED</span></td><td class="num" data-page-node-id="1e34Iuw60h90yITFeLKqPY">600</td><td data-page-node-id="9I7QiP2gggjiRmvBzFJSPh">round-0 shared from RQ1 (import only) · healing pending</td><td class="num" data-page-node-id="uMAitVbmNZM8ef3UzrotqT">0</td></tr>
+</table>
+
+<h3 data-page-node-id="yShzuBlVs8H0rj9fluQCBx">deepseek-v4-pro (+ thinking)</h3>
+<table data-page-node-id="JsCJEI5qiQ9BaugbWutk4A">
+  <tr data-page-node-id="CeC3Ag1HJ5iHu8wwsNn7xQ"><th data-page-node-id="gqBQABQRjLsJsufpBXhB1T">Cell</th><th data-page-node-id="uTXcwnltwjiUUrxsyBIkS5">Status</th><th class="num" data-page-node-id="YCO2SKWweDkxL4ftQwkwlC">n</th><th data-page-node-id="MqUw5X9d6TzFhp4nX2y5fk">Outcome / progress</th><th class="num" data-page-node-id="N27cZLtY0FBzkydTNZXKYB">Tokens (ledger)</th></tr>
+  <tr data-page-node-id="RqHHeP3KM3aXdSYGDAsCmo"><td data-page-node-id="2cFUIFPAIBF4nKDATOiygJ">RQ1 · static gate · full 974 × 3</td><td data-page-node-id="5jKWlFKhbhWTJbD7ZIvLQB"><span class="tag t-done" data-page-node-id="AP0zaveITtdbtvaRjwwgH7">DONE</span></td><td class="num" data-page-node-id="6VAOTatb8B7vpBHvqJQeED">2,922</td><td data-page-node-id="XOWqOss8SQFBHtXpFRIsUA"><b data-page-node-id="EaNolIbaRD7uc6mml8xLmh">96.9%</b> final clean · 90 never cleaned</td><td class="num" data-page-node-id="2icddReEZHUHCPyIDXCYbd">—</td></tr>
+  <tr data-page-node-id="Kq2bW55jvEnvwYGrNaeHOC"><td data-page-node-id="SG24EexZDS3ACuqNbL5Zp0">Grid t0.2 · static · subset × 1</td><td data-page-node-id="nvKmCjLRmSWY1xz3LHmzG9"><span class="tag t-done" data-page-node-id="HMA6W2kQBP0AQADYZwDwbI">DONE</span></td><td class="num" data-page-node-id="kbEcwzBnN3x9HbGDcdC4Jc">200</td><td data-page-node-id="nhqs6MGRY2BkEN8gw1YEvb">69.5% start · 98.0% final clean</td><td class="num" data-page-node-id="iSgaS9pxdGl40Fn2uVj2YP">305,297</td></tr>
+  <tr data-page-node-id="k6q8Df0k1yO0vZBZRGkx2c"><td data-page-node-id="F4HkJ4ebybRSFWXI9T7VeG">Grid p0.5 · static · subset × 1</td><td data-page-node-id="Rj5tT6UTPWFbAcXn35cvGC"><span class="tag t-done" data-page-node-id="kiGNFNbdL8y49XhatFc8gn">DONE</span></td><td class="num" data-page-node-id="wszIf4wXBYTLAra7P30HCG">200</td><td data-page-node-id="p0CBJwCohlEGdnRoAWE1nT">63.5% start · 98.0% final clean</td><td class="num" data-page-node-id="YNJejEqnufHytViJtcXDtU">343,151</td></tr>
+  <tr data-page-node-id="PRABoJYqZ35nBYKz367PzL"><td data-page-node-id="aIhwvwcFKcSVvEwjZuovUX">Grid s+d baseline t1.0 · subset × 3</td><td data-page-node-id="3zmbGEsHL8CriqQa0SG94U"><span class="tag t-run" data-page-node-id="yVUPby34EZnGePY2Y6r28A">RUNNING</span></td><td class="num" data-page-node-id="mcQXXVDMhQjBjTvoLL7b6A">600</td><td data-page-node-id="VjzBJD0yTLuFkxmu3FvNDC">1,200 round-0 files imported from RQ1 (0 generation cost) · heal_0 measured: 57.2% start clean · healing 257 flagged samples in progress</td><td class="num" data-page-node-id="gptky6VdrpaWr5PlVzOiZk">0</td></tr>
+  <tr data-page-node-id="TY91AG14sRTf26IGE6Gf3C"><td data-page-node-id="uADVmKfwp5aI5FQvkok4yn">Grid s+d t0.2 / p0.5 · subset × 3</td><td data-page-node-id="BJHcGM3bBvATBmmqKv2PYw"><span class="tag t-queue" data-page-node-id="q1XGiz4hrwwrOLQp33hYSS">QUEUED</span></td><td class="num" data-page-node-id="yv6xyXjGGG1zwB3HACybCv">600+600</td><td data-page-node-id="gR7hxg2GAcyGicNvS9Oc7P">sample-1 round-0 imported · 400 gens each + s+d healing pending</td><td class="num" data-page-node-id="gydLhfiMylPG1OuvKrYtWw">0</td></tr>
+  <tr data-page-node-id="gyg3FfZOPJKuGX1n8dws0W"><td data-page-node-id="tNEhxTj46T8GxlTwtFblBI">Dynamic-only arm · subset × 3</td><td data-page-node-id="VmZLTBzsangvtvnxGEoBwk"><span class="tag t-queue" data-page-node-id="EAjhdYRjasgUPFZzy2bRUx">QUEUED</span></td><td class="num" data-page-node-id="DIMuC1aeuS99gLzaTyehKo">600</td><td data-page-node-id="vcACL8lTFTwVGymuKbnXPO">round-0 shared from RQ1 · healing pending</td><td class="num" data-page-node-id="LGn1eLbRpraEJP5RtNCP2B">0</td></tr>
+  <tr data-page-node-id="053zNGxcAezRKstuBvM0fq"><td data-page-node-id="WsYczs6yLlp3sDX4DRyK84"><b data-page-node-id="1c22piNW4L3P9EEd1JAGfN">Thinking</b> · static · subset × 3</td><td data-page-node-id="PHrIYqyoMClUk5pysyFDYh"><span class="tag t-queue" data-page-node-id="BLEWECaZb4G90EjKIgV6YO">QUEUED (last)</span></td><td class="num" data-page-node-id="QaJtHZZDuGQkFujkSiqN4d">600</td><td data-page-node-id="nyL9WrZ5B77rgslaKueamf">pilot only (3 instances, clean at start) · full run generates with reasoning</td><td class="num" data-page-node-id="8xM2f8TBDN7lRVaCScbfit">8,851</td></tr>
+</table>
+
+<h3 data-page-node-id="h4TlGUaFPs3OcwB5E0e05d">Elapsed timeline &amp; operational incidents (today)</h3>
+<table data-page-node-id="p2IsgmvKOMPtENGN10FXQW">
+  <tr data-page-node-id="x6Gn1Jn7MgGy3jMv0F2wQ2"><th data-page-node-id="VLPzPdjVp03DQm7pJHggOR">When</th><th data-page-node-id="mmYt6FKIwIuGHaHrfo6DY3">Event</th></tr>
+  <tr data-page-node-id="qiDIG1fk7RYkDc8irgj3kP"><td data-page-node-id="gdxXyd52JoZyVE54Y5gIFg">Aug 31 – Sep 1</td><td data-page-node-id="hLGNQjF0dXo9zggwOvBvcT">RQ1 full sweeps both models (5,844 samples); RQ2 qwen s+d key cell; usage ledger instrumented; max_rounds 7→10.</td></tr>
+  <tr data-page-node-id="xTdmmqhuOmBZFSbrcxhRe1"><td data-page-node-id="F1iM8FFN8IvBV8mo0yj6kZ">Sep 1 – Sep 2 early</td><td data-page-node-id="noMYlJNUMCbZ0ub2VPFYBz">Temp/top_p static grid (4 cells) + paired analyses; 10-round extensions; design audit of generation/healing flow.</td></tr>
+  <tr data-page-node-id="o4j4fiePOoRxHBzRymxSbH"><td data-page-node-id="W6BsmHA6OPbz8d41GgrbNm">Sep 2, 14:40</td><td data-page-node-id="47knOnAtqkVXyy6UQCCIBe">Corrected-design chains launched (shared round-0 via new <code data-page-node-id="sWpoMT1euth1Gw5X19WTNF">--gen-source</code>, 3 samples, s+d).</td></tr>
+  <tr data-page-node-id="G6xolCBlnL1VrZe43TCil9"><td data-page-node-id="QFpWBRjqFnbE1TUtYqIJC0">Sep 2, 15:31</td><td data-page-node-id="APCyug0uunwvIOLNr5efLl">⚠️ App restart killed both chains mid-run (no data lost — skip-existing resume).</td></tr>
+  <tr data-page-node-id="wMauPoM8Blyj7LBSIYCbBK"><td data-page-node-id="O64pEfCbakLYj6D87PqoKO">Sep 2, 17:43</td><td data-page-node-id="cl1R2WQi5NLYLanYiA54VB">Chains relaunched; caffeinate + 2-hourly self-healing supervisor deployed.</td></tr>
+  <tr data-page-node-id="DISWA6qSXYIFjt2A2RK1OY"><td data-page-node-id="II3M3IwjAqDYnHdEadgsRe">Sep 2, 18:05</td><td data-page-node-id="14e8wMQIsjWeTivmlviHwF">⚠️ Scheduled off-peak DeepSeek launch never fired (scheduler miss); triggered manually at 21:14.</td></tr>
+  <tr data-page-node-id="tyq7745ONFwsEE5x23im6t"><td data-page-node-id="646WUggfKWMnuG6FPXN9J9">Sep 2, 21:25–21:52</td><td data-page-node-id="fKk7mYT4BXbH4N7dPuZRai">⚠️ API-key environment loss (app restart) made all heal/generation calls fail → 2 invalid manifests; <b data-page-node-id="9Yo2SjEOEwIGpBwcMaeu3v">zero token spend</b> (failed calls cost nothing). Garbage manifests deleted; both chains relaunched 21:52 with keys sourced and verified. Supervisor updated to detect and self-heal this failure mode.</td></tr>
+  <tr data-page-node-id="wNTxhyMvdARmBaeZxlXp8l"><td data-page-node-id="7lolbGsTbRV1cmiQrvWVUW">Sep 2, 21:52 → now</td><td data-page-node-id="YZHOA7fo17ntN3ks2s2w6U">Both chains healthy: dynamic analysis ~2 files/s, healing rounds proceeding. Caffeinate assertion active (14-day). Daily 07:30 digest + 2-hourly supervisor active.</td></tr>
+</table>
+
+<h3 data-page-node-id="PUUiy9OcVxRHPQI5qNHEzu">Spend &amp; budget</h3>
+<table data-page-node-id="MHjS3I0hZBFSOni4j7yhLF">
+  <tr data-page-node-id="DIPz4XmghpONUc2X6w9haR"><th data-page-node-id="5Kng3bBnosZvgkbb4Ta9yl">Account</th><th class="num" data-page-node-id="uy1Qq14Ot8PFRllmXCwZOD">Ledger tokens (Sep 1 →)</th><th class="num" data-page-node-id="YF6xqgo6Xziy6Qv2h4zINp">Failed calls</th><th data-page-node-id="FG7Ftf2i5SKtuKKtQQRB6g">Status</th></tr>
+  <tr data-page-node-id="VjXxs2gCZP6SGllrtMEvXB"><td data-page-node-id="bSGZEM9UDs6OEK9TuTOiQC">qwen-max (DashScope)</td><td class="num" data-page-node-id="jN41iCGAhEVvYVdV3lAexd">1,029,613</td><td class="num" data-page-node-id="a0GjOucrGNAKgQ8nvBO8RK">0</td><td data-page-node-id="uBHBK5eFs1aeiNNjq2OPYy">funded, running</td></tr>
+  <tr data-page-node-id="cRX3yCaschGQSLenweOXZe"><td data-page-node-id="AFBq81xzL5E2i22ePRMrx8">deepseek-v4-pro</td><td class="num" data-page-node-id="aLIK9tcoVHDibkvKvCt6IM">934,769</td><td class="num" data-page-node-id="788PRg8rOEIIsIIIVAWAne">0</td><td data-page-node-id="WAzV0Iz1Ycf06egv95yHJK">balance ¥235.16 after ¥150 top-up; projected full program ≈ ¥190–210 (off-peak)</td></tr>
+  <tr data-page-node-id="GxhFh8flfaJNiei9Tp7Nmw"><td data-page-node-id="SJacdrMKityW7bCFDw4gCA">deepseek-v4-pro-thinking</td><td class="num" data-page-node-id="SGcxxlN6izM8DE92CjUHWh">8,851 (pilot)</td><td class="num" data-page-node-id="QjX6uinip61cL9jv0uK7B3">0</td><td data-page-node-id="aOySMQKlsWBO4GHOvn7kA1">600-generation cell queued last in chain</td></tr>
+</table>
+<p class="sub" data-page-node-id="eU7UOoGFsbbpFBiNNj7tzJ">Pre-ledger rounds (Aug 31 – Sep 1) are char-estimated in <code data-page-node-id="znqaH3EMWxG55VmJgKhhdj">results/usage_report.md</code>; all calls since 2026-09-01 are exact per-call JSONL records (tokens incl. reasoning, latency, kind, round, task, sample).</p>
+
+<div class="foot" data-page-node-id="eGSSr0ER8HSnoEjwIKAfRA">
+  <b data-page-node-id="DPzQsGP5j9yUfEd9bFOPSM">Standing caveats:</b> (1) RQ1 “clean” = static-gate clean only; s+d cells are held to the stricter bar (gate asymmetry). (2) All subset cells live on the top-200 vulnerability-ranked tasks — absolute rates are upper bounds by design. (3) Grid cells completed so far are 1-sample static-healing; the 3-sample s+d re-runs now in flight supersede them. (4) Reasoning ablation pending — no conclusions drawn beyond the cost pilot. (5) 5 of 7 models await API keys; OpenAI additionally requires a working proxy (current DataImpulse credentials rejected, 407).<br data-page-node-id="KBaraSfyMtz83ABTHuECsU"><br data-page-node-id="c3PxNvAOio4OKtW6QUJ6mO">
+  Sources: <code data-page-node-id="2D7bLfhpzpmXHNN7O80Kia">results/*.manifest.json</code> · <code data-page-node-id="P8olqAouTUmnkIHGF6MR2M">results/rq2_paired_report.md</code> · <code data-page-node-id="dvvOCBTEjE5IN219bNlGoT">results/grid_paired_report_{deepseek-v4-pro,qwen-max}.md</code> · <code data-page-node-id="Bswf5buOl1MUump5DbGySN">results/*/*.usage.jsonl</code> · live chain logs <code data-page-node-id="8vpVSHM46bvf8nyOn3RV6d">/tmp/{qsd_t02,qsd_p05,qdyn,dsd_base,dsd_t02,dsd_p05,ddyn,dthink}.log</code>
+</div>
+
+</div>
+</body>
+</html>

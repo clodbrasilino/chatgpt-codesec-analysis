@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-209.c:30:5: error: call to undeclared function 'insertIntoHeap'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   30 |     insertIntoHeap(arr, n, value);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-209.c:33:6: error: conflicting types for 'insertIntoHeap'
+   33 | void insertIntoHeap(int *arr, int *n, int value) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-209.c:30:5: note: previous implicit declaration is here
+   30 |     insertIntoHeap(arr, n, value);
+      |     ^
+2 errors generated.

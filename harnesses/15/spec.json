@@ -1,0 +1,64 @@
+{
+  "task_id": 15,
+  "text": "Write a C function to split a string at lowercase letters.",
+  "fn_candidates": [
+    "split_lowerstring",
+    "SplitLowerstring",
+    "splitLowerstring",
+    "splitlowerstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "split_lowerstring",
+      "args": [
+        "AbCd"
+      ],
+      "expected": [
+        "bC",
+        "d"
+      ],
+      "assert_src": "assert split_lowerstring(\"AbCd\")==['bC','d']"
+    },
+    {
+      "fn_name": "split_lowerstring",
+      "args": [
+        "Python"
+      ],
+      "expected": [
+        "y",
+        "t",
+        "h",
+        "o",
+        "n"
+      ],
+      "assert_src": "assert split_lowerstring(\"Python\")==['y', 't', 'h', 'o', 'n']"
+    },
+    {
+      "fn_name": "split_lowerstring",
+      "args": [
+        "Programming"
+      ],
+      "expected": [
+        "r",
+        "o",
+        "g",
+        "r",
+        "a",
+        "m",
+        "m",
+        "i",
+        "n",
+        "g"
+      ],
+      "assert_src": "assert split_lowerstring(\"Programming\")==['r', 'o', 'g', 'r', 'a', 'm', 'm', 'i', 'n', 'g']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

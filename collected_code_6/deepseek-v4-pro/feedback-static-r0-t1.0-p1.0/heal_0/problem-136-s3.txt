@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define RATE_1 0.50
+#define RATE_2 0.75
+#define RATE_3 1.20
+#define RATE_4 1.50
+#define LIMIT_1 100
+#define LIMIT_2 200
+#define LIMIT_3 400
+
+double calculate_electricity_bill(int units) {
+    double bill = 0.0;
+    
+    if (units < 0) {
+        return -1.0;
+    }
+    
+    if (units <= LIMIT_1) {
+        bill = units * RATE_1;
+    }
+    else if (units <= LIMIT_2) {
+        bill = LIMIT_1 * RATE_1 + (units - LIMIT_1) * RATE_2;
+    }
+    else if (units <= LIMIT_3) {
+        bill = LIMIT_1 * RATE_1 + (LIMIT_2 - LIMIT_1) * RATE_2 + (units - LIMIT_2) * RATE_3;
+    }
+    else {
+        bill = LIMIT_1 * RATE_1 + (LIMIT_2 - LIMIT_1) * RATE_2 + (LIMIT_3 - LIMIT_2) * RATE_3 + (units - LIMIT_3) * RATE_4;
+    }
+    
+    return bill;
+}
+
+int main(void) {
+    int units;
+    double bill;
+    int result;
+    
+    printf("Enter electricity units consumed: ");
+    result = scanf("%d", &units);
+    
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    bill = calculate_electricity_bill(units);
+    
+    if (bill < 0) {
+        fprintf(stderr, "Units cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Electricity bill: $%.2f\n", bill);
+    
+    return EXIT_SUCCESS;
+}
+```

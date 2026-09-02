@@ -1,0 +1,74 @@
+{
+  "task_id": 456,
+  "text": "Write a C function to reverse strings in a given list of string values.",
+  "fn_candidates": [
+    "reverse_string_list",
+    "ReverseStringList",
+    "reverseStringList",
+    "reversestringlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "reverse_string_list",
+      "args": [
+        [
+          "Red",
+          "Green",
+          "Blue",
+          "White",
+          "Black"
+        ]
+      ],
+      "expected": [
+        "deR",
+        "neerG",
+        "eulB",
+        "etihW",
+        "kcalB"
+      ],
+      "assert_src": "assert reverse_string_list(['Red', 'Green', 'Blue', 'White', 'Black'])==['deR', 'neerG', 'eulB', 'etihW', 'kcalB']"
+    },
+    {
+      "fn_name": "reverse_string_list",
+      "args": [
+        [
+          "john",
+          "amal",
+          "joel",
+          "george"
+        ]
+      ],
+      "expected": [
+        "nhoj",
+        "lama",
+        "leoj",
+        "egroeg"
+      ],
+      "assert_src": "assert reverse_string_list(['john','amal','joel','george'])==['nhoj','lama','leoj','egroeg']"
+    },
+    {
+      "fn_name": "reverse_string_list",
+      "args": [
+        [
+          "jack",
+          "john",
+          "mary"
+        ]
+      ],
+      "expected": [
+        "kcaj",
+        "nhoj",
+        "yram"
+      ],
+      "assert_src": "assert reverse_string_list(['jack','john','mary'])==['kcaj','nhoj','yram']"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

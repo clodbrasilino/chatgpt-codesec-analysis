@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-843.c: In function 'heapifyUp':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-843.c:49:45: error: incompatible type for argument 2 of 'swap'
+   49 |         swap(&heap->data[parent], heap->data[idx]);
+      |                                   ~~~~~~~~~~^~~~~
+      |                                             |
+      |                                             HeapNode
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t0.2-p1.0/heal_0/problem-843.c:24:34: note: expected 'HeapNode *' but argument is of type 'HeapNode'
+   24 | void swap(HeapNode *a, HeapNode *b) {
+      |                        ~~~~~~~~~~^

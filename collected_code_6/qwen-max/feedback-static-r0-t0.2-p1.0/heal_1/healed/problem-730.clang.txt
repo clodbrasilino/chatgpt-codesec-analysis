@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-730.c:34:11: warning: Value stored to 'prev' during its initialization is never read [deadcode.DeadStores]
+   34 |     Node *prev = *head;
+      |           ^~~~   ~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t0.2-p1.0/heal_1/healed/problem-730.c:41:13: warning: Value stored to 'prev' is never read [deadcode.DeadStores]
+   41 |             prev = current;
+      |             ^      ~~~~~~~
+2 warnings generated.

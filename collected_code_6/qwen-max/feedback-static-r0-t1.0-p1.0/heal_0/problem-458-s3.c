@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+double calculate_area(double width, double height) {
+    return width * height;
+}
+
+int main() {
+    double width = 5.0;
+    double height = 10.0;
+    double area = calculate_area(width, height);
+    printf("Area: %f\n", area);
+    return 0;
+}

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **filter_long_words(char *words[], int word_count, int n, int *filtered_count) {
+    char **result = (char **)malloc(word_count * sizeof(char *));
+    if (result == NULL) return NULL;
+    *filtered_count = 0;
+
+    for (int i = 0; i < word_count; ++i) {
+        if (strlen(words[i]) > n) {
+            result[*filtered_count] = strdup(words[i]);
+            if (result[*filtered_count] == NULL) {
+                while (*filtered_count > 0) free(result[--*filtered_count]);
+                free(result);
+                return NULL;
+            }
+            (*filtered_count)++;
+        }
+    }
+
+    return result;
+}
+
+void free_filtered_words(char **filtered_words, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(filtered_words[i]);
+    }
+    free(filtered_words);
+}
+
+int main() {
+    char *words[] = {"hello", "world", "a", "of", "programming"};
+    int word_count = 5;
+    int n = 3;
+    int filtered_count;
+
+    char **filtered_words = filter_long_words(words, word_count, n, &filtered_count);
+    if (filtered_words != NULL) {
+        for (int i = 0; i < filtered_count; ++i) {
+            printf("%s\n", filtered_words[i]);
+        }
+        free_filtered_words(filtered_words, filtered_count);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

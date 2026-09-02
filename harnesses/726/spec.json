@@ -1,0 +1,77 @@
+{
+  "task_id": 726,
+  "text": "Write a C function to multiply the adjacent elements of the given tuple.",
+  "fn_candidates": [
+    "multiply_elements",
+    "MultiplyElements",
+    "multiplyElements",
+    "multiplyelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "multiply_elements",
+      "args": [
+        [
+          1,
+          5,
+          7,
+          8,
+          10
+        ]
+      ],
+      "expected": [
+        5,
+        35,
+        56,
+        80
+      ],
+      "assert_src": "assert multiply_elements((1, 5, 7, 8, 10)) == (5, 35, 56, 80)"
+    },
+    {
+      "fn_name": "multiply_elements",
+      "args": [
+        [
+          2,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": [
+        8,
+        20,
+        30,
+        42
+      ],
+      "assert_src": "assert multiply_elements((2, 4, 5, 6, 7)) == (8, 20, 30, 42)"
+    },
+    {
+      "fn_name": "multiply_elements",
+      "args": [
+        [
+          12,
+          13,
+          14,
+          9,
+          15
+        ]
+      ],
+      "expected": [
+        156,
+        182,
+        126,
+        135
+      ],
+      "assert_src": "assert multiply_elements((12, 13, 14, 9, 15)) == (156, 182, 126, 135)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

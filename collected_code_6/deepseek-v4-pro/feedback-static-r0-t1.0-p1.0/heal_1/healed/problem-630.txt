@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Coordinate;
+
+Coordinate* get_adjacent_coordinates(Coordinate coord, int *count) {
+    Coordinate *adjacent = (Coordinate*)malloc(8 * sizeof(Coordinate));
+    if (adjacent == NULL) {
+        *count = 0;
+        return NULL;
+    }
+
+    const int dx[] = {-1, -1, -1, 0, 0, 1, 1, 1};
+    const int dy[] = {-1, 0, 1, -1, 1, -1, 0, 1};
+    
+    for (int i = 0; i < 8; i++) {
+        adjacent[i].x = coord.x + dx[i];
+        adjacent[i].y = coord.y + dy[i];
+    }
+    
+    *count = 8;
+    return adjacent;
+}
+
+int main(void) {
+    Coordinate start = {5, 5};
+    int count = 0;
+    
+    Coordinate *neighbors = get_adjacent_coordinates(start, &count);
+    
+    if (neighbors == NULL || count == 0) {
+        fprintf(stderr, "Failed to allocate memory for adjacent coordinates\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Adjacent coordinates for (%d, %d):\n", start.x, start.y);
+    for (int i = 0; i < count; i++) {
+        printf("(%d, %d)\n", neighbors[i].x, neighbors[i].y);
+    }
+    
+    free(neighbors);
+    return EXIT_SUCCESS;
+}
+```

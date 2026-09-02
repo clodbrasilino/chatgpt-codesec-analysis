@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool isBalanced(const char *expr) {
+    int len = 0;
+    while (expr[len] != '\0') len++;
+    int stack[len];
+    int top = -1;
+
+    for (int i = 0; expr[i] != '\0'; i++) {
+        if (expr[i] == '(' || expr[i] == '[' || expr[i] == '{') {
+            if (top + 1 >= len) return false;
+            stack[++top] = expr[i];
+        } else if (expr[i] == ')' || expr[i] == ']' || expr[i] == '}') {
+            if (top == -1) return false;
+            char last = stack[top--];
+            if ((expr[i] == ')' && last != '(') ||
+                (expr[i] == ']' && last != '[') ||
+                (expr[i] == '}' && last != '{')) {
+                return false;
+            }
+        }
+    }
+    return top == -1;
+}
+
+int main() {
+    const char *expr1 = "((a + b) * [c / d])";
+    const char *expr2 = "([a + b) * (c / d)]";
+
+    if (isBalanced(expr1)) {
+        printf("Expression 1 is balanced.\n");
+    } else {
+        printf("Expression 1 is not balanced.\n");
+    }
+
+    if (isBalanced(expr2)) {
+        printf("Expression 2 is balanced.\n");
+    } else {
+        printf("Expression 2 is not balanced.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool contains_all_vowels(const char *str) {
+    bool has_a = false, has_e = false, has_i = false, has_o = false, has_u = false;
+
+    while (*str) {
+        switch (*str) {
+            case 'a': case 'A': has_a = true; break;
+            case 'e': case 'E': has_e = true; break;
+            case 'i': case 'I': has_i = true; break;
+            case 'o': case 'O': has_o = true; break;
+            case 'u': case 'U': has_u = true; break;
+        }
+        str++;
+    }
+
+    return has_a && has_e && has_i && has_o && has_u;
+}
+
+int main() {
+    const char *test1 = "A quick brown fox jumps over the lazy dog";
+    const char *test2 = "Hello World";
+    
+    if (contains_all_vowels(test1)) {
+        printf("%s contains all vowels.\n", test1);
+    } else {
+        printf("%s does not contain all vowels.\n", test1);
+    }
+
+    if (contains_all_vowels(test2)) {
+        printf("%s contains all vowels.\n", test2);
+    } else {
+        printf("%s does not contain all vowels.\n", test2);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 735,
+  "text": "Write a C function to toggle bits of the number except the first and the last bit.",
+  "fn_candidates": [
+    "toggle_middle_bits",
+    "ToggleMiddleBits",
+    "toggleMiddleBits",
+    "togglemiddlebits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "toggle_middle_bits",
+      "args": [
+        9
+      ],
+      "expected": 15,
+      "assert_src": "assert toggle_middle_bits(9) == 15"
+    },
+    {
+      "fn_name": "toggle_middle_bits",
+      "args": [
+        10
+      ],
+      "expected": 12,
+      "assert_src": "assert toggle_middle_bits(10) == 12"
+    },
+    {
+      "fn_name": "toggle_middle_bits",
+      "args": [
+        11
+      ],
+      "expected": 13,
+      "assert_src": "assert toggle_middle_bits(11) == 13"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int count;
+} Dictionary;
+
+Dictionary *create_dictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    
+    dict->entries = (DictionaryEntry *)calloc(size, sizeof(DictionaryEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->count = size;
+    for (int i = 0; i < size; ++i) {
+        dict->entries[i].key = NULL;
+    }
+    
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict) {
+        for (int i = 0; i < dict->count; ++i) {
+            free(dict->entries[i].key);
+        }
+        free(dict->entries);
+        free(dict);
+    }
+}
+
+int are_all_values_same(const Dictionary *dict) {
+    if (dict->count == 0) return 1;
+    
+    int first_value = dict->entries[0].value;
+    for (int i = 1; i < dict->count; ++i) {
+        if (dict->entries[i].key && dict->entries[i].value != first_value) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(3);
+    if (!dict) {
+        fprintf(stderr, "Failed to allocate memory\n");
+        return 1;
+    }
+
+    dict->entries[0].key = strdup("one");
+    dict->entries[0].value = 1;
+    dict->entries[1].key = strdup("two");
+    dict->entries[1].value = 1;
+    dict->entries[2].key = strdup("three");
+    dict->entries[2].value = 1;
+
+    if (are_all_values_same(dict)) {
+        printf("All values in the dictionary are the same.\n");
+    } else {
+        printf("Not all values in the dictionary are the same.\n");
+    }
+
+    free_dictionary(dict);
+    return 0;
+}

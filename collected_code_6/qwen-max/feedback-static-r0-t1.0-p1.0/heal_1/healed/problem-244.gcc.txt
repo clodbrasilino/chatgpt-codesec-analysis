@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-244.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-244.c:16:18: error: expected ')' before 'SCNu64'
+   16 |     if (scanf("%" SCNu64, &number) != 1) {
+      |              ~   ^~~~~~~
+      |                  )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-244.c:4:1: note: 'SCNu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+    3 | #include <stdint.h>
+  +++ |+#include <inttypes.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-244.c:21:36: error: expected ')' before 'PRIu64'
+   21 |     printf("Next perfect square: %" PRIu64 "\n", next_square);
+      |           ~                        ^~~~~~~
+      |                                    )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-244.c:21:37: note: 'PRIu64' is defined in header '<inttypes.h>'; this is probably fixable by adding '#include <inttypes.h>'
+   21 |     printf("Next perfect square: %" PRIu64 "\n", next_square);
+      |                                     ^~~~~~

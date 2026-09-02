@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long f(long long n, long long *memo) {
+    if (n < 2) return n;
+    if (memo[n] != -1) return memo[n];
+    
+    long long a = f(n / 2, memo);
+    long long b = f(n / 3, memo);
+    long long c = f(n / 4, memo);
+    long long d = f(n / 5, memo);
+    
+    memo[n] = (a + b + c + d > n) ? (a + b + c + d) : n;
+    return memo[n];
+}
+
+int main() {
+    long long n;
+    if (scanf("%lld", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 0) {
+        return 1;
+    }
+    
+    long long *memo = (long long *)malloc((n + 1) * sizeof(long long));
+    if (memo == NULL) {
+        return 1;
+    }
+    for (long long i = 0; i <= n; i++) {
+        memo[i] = -1;
+    }
+    
+    long long result = f(n, memo);
+    printf("%lld\n", result);
+    
+    free(memo);
+    return 0;
+}

@@ -1,0 +1,64 @@
+{
+  "task_id": 296,
+  "text": "Write a C function to count inversions in an array.",
+  "fn_candidates": [
+    "get_Inv_Count",
+    "GetInvCount",
+    "getInvCount",
+    "getInvCount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "get_Inv_Count",
+      "args": [
+        [
+          1,
+          20,
+          6,
+          4,
+          5
+        ],
+        5
+      ],
+      "expected": 5,
+      "assert_src": "assert get_Inv_Count([1,20,6,4,5],5) == 5"
+    },
+    {
+      "fn_name": "get_Inv_Count",
+      "args": [
+        [
+          1,
+          2,
+          1
+        ],
+        3
+      ],
+      "expected": 1,
+      "assert_src": "assert get_Inv_Count([1,2,1],3) == 1"
+    },
+    {
+      "fn_name": "get_Inv_Count",
+      "args": [
+        [
+          1,
+          2,
+          5,
+          6,
+          1
+        ],
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert get_Inv_Count([1,2,5,6,1],5) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

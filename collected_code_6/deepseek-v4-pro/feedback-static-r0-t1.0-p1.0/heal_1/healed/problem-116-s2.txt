@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <errno.h>
+
+int tuple_to_int(const int *tuple, size_t len, int *result) {
+    if (tuple == NULL || result == NULL || len == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (tuple[i] <= 0 || tuple[i] > 9) {
+            return -1;
+        }
+    }
+
+    unsigned long long value = 0ULL;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (value > (ULLONG_MAX - (unsigned long long)tuple[i]) / 10ULL) {
+            return -1;
+        }
+        value = value * 10ULL + (unsigned long long)tuple[i];
+    }
+    
+    if (value > (unsigned long long)INT_MAX) {
+        return -1;
+    }
+    
+    *result = (int)value;
+    return 0;
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4, 5};
+    int tuple2[] = {9, 8, 7};
+    int tuple3[] = {0, 5, 6};
+    int tuple4[] = {2, 2, 2, 2, 2, 2, 2, 2, 2, 2};
+    int result;
+    
+    if (tuple_to_int(tuple1, sizeof(tuple1) / sizeof(tuple1[0]), &result) == 0) {
+        printf("Result: %d\n", result);
+    } else {
+        printf("Conversion failed\n");
+    }
+    
+    if (tuple_to_int(tuple2, sizeof(tuple2) / sizeof(tuple2[0]), &result) == 0) {
+        printf("Result: %d\n", result);
+    } else {
+        printf("Conversion failed\n");
+    }
+    
+    if (tuple_to_int(tuple3, sizeof(tuple3) / sizeof(tuple3[0]), &result) == 0) {
+        printf("Result: %d\n", result);
+    } else {
+        printf("Conversion failed\n");
+    }
+    
+    if (tuple_to_int(tuple4, sizeof(tuple4) / sizeof(tuple4[0]), &result) == 0) {
+        printf("Result: %d\n", result);
+    } else {
+        printf("Conversion failed\n");
+    }
+    
+    if (tuple_to_int(NULL, 0, &result) == 0) {
+        printf("Result: %d\n", result);
+    } else {
+        printf("Conversion failed\n");
+    }
+    
+    return 0;
+}
+```

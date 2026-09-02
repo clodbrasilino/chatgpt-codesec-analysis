@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    return (arg1 > arg2) - (arg1 < arg2);
+}
+
+int *get_n_smallest(const int *data, size_t data_size, size_t n, size_t *result_size) {
+    int *copy = NULL;
+    int *result = NULL;
+
+    if (result_size == NULL) {
+        return NULL;
+    }
+
+    *result_size = 0;
+
+    if (data == NULL || n == 0 || data_size == 0) {
+        return NULL;
+    }
+
+    if (n > data_size) {
+        n = data_size;
+    }
+
+    copy = malloc(data_size * sizeof(int));
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, data, data_size * sizeof(int));
+    qsort(copy, data_size, sizeof(int), compare_ints);
+
+    result = malloc(n * sizeof(int));
+    if (result == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    memcpy(result, copy, n * sizeof(int));
+    free(copy);
+
+    *result_size = n;
+    return result;
+}
+
+int main(void) {
+    int dataset[] = {42, 17, 8, 3, 99, 23, 56, 1, 74, 12};
+    size_t data_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    size_t result_size = 0;
+    int *smallest = NULL;
+
+    smallest = get_n_smallest(dataset, data_size, n, &result_size);
+
+    if (smallest != NULL) {
+        for (size_t i = 0; i < result_size; i++) {
+            printf("%d ", smallest[i]);
+        }
+        printf("\n");
+        free(smallest);
+    } else {
+        printf("No result\n");
+    }
+
+    return 0;
+}

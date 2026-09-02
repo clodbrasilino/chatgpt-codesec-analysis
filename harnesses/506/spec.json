@@ -1,0 +1,47 @@
+{
+  "task_id": 506,
+  "text": "Write a C function to calculate the permutation coefficient of given p(n, k).",
+  "fn_candidates": [
+    "permutation_coefficient",
+    "PermutationCoefficient",
+    "permutationCoefficient",
+    "permutationcoefficient"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "permutation_coefficient",
+      "args": [
+        10,
+        2
+      ],
+      "expected": 90,
+      "assert_src": "assert permutation_coefficient(10, 2) == 90"
+    },
+    {
+      "fn_name": "permutation_coefficient",
+      "args": [
+        10,
+        3
+      ],
+      "expected": 720,
+      "assert_src": "assert permutation_coefficient(10, 3) == 720"
+    },
+    {
+      "fn_name": "permutation_coefficient",
+      "args": [
+        10,
+        1
+      ],
+      "expected": 10,
+      "assert_src": "assert permutation_coefficient(10, 1) == 10"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[32];
+} Record;
+
+typedef struct {
+    Record record;
+    int attribute;
+} Tuple;
+
+int find_max_attribute(const Tuple *tuples, size_t count, int *max_value) {
+    if (tuples == NULL || count == 0 || max_value == NULL) {
+        return -1;
+    }
+
+    *max_value = tuples[0].attribute;
+    for (size_t i = 1; i < count; ++i) {
+        if (tuples[i].attribute > *max_value) {
+            *max_value = tuples[i].attribute;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {{1, "Alice"}, 25},
+        {{2, "Bob"}, 42},
+        {{3, "Charlie"}, 37},
+        {{4, "Diana"}, 51}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int max_value = 0;
+
+    if (find_max_attribute(tuples, count, &max_value) == 0) {
+        printf("Maximum attribute value: %d\n", max_value);
+        printf("Record with maximum attribute: %s (ID: %d)\n", 
+               tuples[max_value == tuples[0].attribute ? 0 : max_value == tuples[1].attribute ? 1 : max_value == tuples[2].attribute ? 2 : 3].record.name,
+               tuples[max_value == tuples[0].attribute ? 0 : max_value == tuples[1].attribute ? 1 : max_value == tuples[2].attribute ? 2 : 3].record.id);
+    } else {
+        fprintf(stderr, "Error: invalid input to find_max_attribute\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

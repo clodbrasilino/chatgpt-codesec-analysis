@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t count;
+} Dictionary;
+
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->count = 0;
+    dict->entries = NULL;
+    return dict;
+}
+
+int add_entry(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) return -1;
+    
+    dict->count++;
+    dict->entries = (DictionaryEntry*)realloc(dict->entries, dict->count * sizeof(DictionaryEntry));
+    if (dict->entries == NULL) return -1;
+    
+    /* Possible weaknesses found:
+     *  include the header <string.h> or explicitly provide a declaration for 'strdup'
+     *  call to undeclared library function 'strdup' with type 'char *(const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+     */
+    dict->entries[dict->count - 1].key = strdup(key);
+    if (dict->entries[dict->count - 1].key == NULL) return -1;
+    
+    dict->entries[dict->count - 1].value = strdup(value);
+    if (dict->entries[dict->count - 1].value == NULL) {
+        free(dict->entries[dict->count - 1].key);
+        return -1;
+    }
+    
+    return 0;
+}
+
+char** get_keys(Dictionary *dict, size_t *keys_count) {
+    if (dict == NULL || keys_count == NULL) return NULL;
+    
+    *keys_count = dict->count;
+    if (*keys_count == 0) return NULL;
+    
+    char **keys = (char**)malloc(*keys_count * sizeof(char*));
+    if (keys == NULL) return NULL;
+    
+    for (size_t i = 0; i < *keys_count; i++) {
+        keys[i] = strdup(dict->entries[i].key);
+        if (keys[i] == NULL) {
+            for (size_t j = 0; j < i; j++) free(keys[j]);
+            free(keys);
+            return NULL;
+        }
+    }
+    
+    return keys;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) return;
+    
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    
+    free(dict->entries);
+    free(dict);
+}
+
+void free_keys(char **keys, size_t keys_count) {
+    if (keys == NULL) return;
+    
+    for (size_t i = 0; i < keys_count; i++) {
+        free(keys[i]);
+    }
+    
+    free(keys);
+}
+
+int main() {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) return -1;
+    
+    add_entry(dict, "key1", "value1");
+    add_entry(dict, "key2", "value2");
+    add_entry(dict, "key3", "value3");
+    
+    size_t keys_count;
+    char **keys = get_keys(dict, &keys_count);
+    if (keys != NULL) {
+        for (size_t i = 0; i < keys_count; i++) {
+            printf("Key: %s\n", keys[i]);
+        }
+        free_keys(keys, keys_count);
+    }
+    
+    free_dictionary(dict);
+    return 0;
+}

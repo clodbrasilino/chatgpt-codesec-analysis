@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int value;
+    struct Tuple *next;
+} Tuple;
+
+Tuple* create_tuple(int value, Tuple *next) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    t->value = value;
+    t->next = next;
+    return t;
+}
+
+int count_frequency(Tuple *t, int target) {
+    if (t == NULL) {
+        return 0;
+    }
+    return (t->value == target ? 1 : 0) + count_frequency(t->next, target);
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free_tuple(t->next);
+        free(t);
+    }
+}
+
+int main() {
+    Tuple *t1 = create_tuple(1, NULL);
+    Tuple *t2 = create_tuple(2, t1);
+    Tuple *t3 = create_tuple(3, t2);
+    Tuple *t4 = create_tuple(2, t3);
+
+    int target = 2;
+    int frequency = count_frequency(t4, target);
+
+    printf("Frequency of %d: %d\n", target, frequency);
+
+    free_tuple(t4);
+    return 0;
+}

@@ -1,0 +1,58 @@
+{
+  "task_id": 98,
+  "text": "Write a C function to multiply all the numbers in a list and divide with the length of the list.",
+  "fn_candidates": [
+    "multiply_num",
+    "MultiplyNum",
+    "multiplyNum",
+    "multiplynum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "multiply_num",
+      "args": [
+        [
+          8,
+          2,
+          3,
+          -1,
+          7
+        ]
+      ],
+      "expected": -67.2,
+      "assert_src": "assert multiply_num((8, 2, 3, -1, 7))==-67.2"
+    },
+    {
+      "fn_name": "multiply_num",
+      "args": [
+        [
+          -10,
+          -20,
+          -30
+        ]
+      ],
+      "expected": -2000.0,
+      "assert_src": "assert multiply_num((-10,-20,-30))==-2000.0"
+    },
+    {
+      "fn_name": "multiply_num",
+      "args": [
+        [
+          19,
+          15,
+          18
+        ]
+      ],
+      "expected": 1710.0,
+      "assert_src": "assert multiply_num((19,15,18))==1710.0"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

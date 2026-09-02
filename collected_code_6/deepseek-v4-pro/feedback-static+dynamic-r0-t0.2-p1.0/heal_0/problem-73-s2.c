@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char **split_string(const char *input, const char *delimiters, int *count) {
+    if (input == NULL || delimiters == NULL || count == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    char pattern[512];
+    int pattern_len = snprintf(pattern, sizeof(pattern), "[%s]+", delimiters);
+    if (pattern_len < 0 || pattern_len >= (int)sizeof(pattern)) {
+        return NULL;
+    }
+
+    int ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    char *input_copy = strdup(input);
+    if (input_copy == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    int capacity = 10;
+    char **tokens = malloc(capacity * sizeof(char *));
+    if (tokens == NULL) {
+        free(input_copy);
+        regfree(&regex);
+        return NULL;
+    }
+
+    int token_count = 0;
+    char *cursor = input_copy;
+    regmatch_t match;
+
+    while (*cursor != '\0') {
+        if (regexec(&regex, cursor, 1, &match, 0) == 0) {
+            if (match.rm_so > 0) {
+                if (token_count >= capacity) {
+                    capacity *= 2;
+                    char **new_tokens = realloc(tokens, capacity * sizeof(char *));
+                    if (new_tokens == NULL) {
+                        for (int i = 0; i < token_count; i++) {
+                            free(tokens[i]);
+                        }
+                        free(tokens);
+                        free(input_copy);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    tokens = new_tokens;
+                }
+                tokens[token_count] = strndup(cursor, match.rm_so);
+                if (tokens[token_count] == NULL) {
+                    for (int i = 0; i < token_count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    free(input_copy);
+                    regfree(&regex);
+                    return NULL;
+                }
+                token_count++;
+            }
+            cursor += match.rm_eo;
+        } else {
+            size_t remaining = strlen(cursor);
+            if (remaining > 0) {
+                if (token_count >= capacity) {
+                    capacity *= 2;
+                    char **new_tokens = realloc(tokens, capacity * sizeof(char *));
+                    if (new_tokens == NULL) {
+                        for (int i = 0; i < token_count; i++) {
+                            free(tokens[i]);
+                        }
+                        free(tokens);
+                        free(input_copy);
+                        regfree(&regex);
+                        return NULL;
+                    }
+                    tokens = new_tokens;
+                }
+                tokens[token_count] = strdup(cursor);
+                if (tokens[token_count] == NULL) {
+                    for (int i = 0; i < token_count; i++) {
+                        free(tokens[i]);
+                    }
+                    free(tokens);
+                    free(input_copy);
+                    regfree(&regex);
+                    return NULL;
+                }
+                token_count++;
+            }
+            break;
+        }
+    }
+
+    free(input_copy);
+    regfree(&regex);
+    *count = token_count;
+    return tokens;
+}
+
+void free_split_result(char **tokens, int count) {
+    if (tokens == NULL) {
+        return;
+    }
+    for (int i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void) {
+    const char *input = "Hello,world;this|is a test";
+    const char *delimiters = ",;| ";
+    int count = 0;
+
+    char **tokens = split_string(input, delimiters, &count);
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split string\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("Token %d: %s\n", i, tokens[i]);
+    }
+
+    free_split_result(tokens, count);
+    return 0;
+}

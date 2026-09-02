@@ -1,0 +1,47 @@
+{
+  "task_id": 667,
+  "text": "Write a C function to count number of vowels in the string.",
+  "fn_candidates": [
+    "Check_Vow",
+    "CheckVow",
+    "CheckVow",
+    "CheckVow"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Check_Vow",
+      "args": [
+        "corner",
+        "AaEeIiOoUu"
+      ],
+      "expected": 2,
+      "assert_src": "assert Check_Vow('corner','AaEeIiOoUu') == 2"
+    },
+    {
+      "fn_name": "Check_Vow",
+      "args": [
+        "valid",
+        "AaEeIiOoUu"
+      ],
+      "expected": 2,
+      "assert_src": "assert Check_Vow('valid','AaEeIiOoUu') == 2"
+    },
+    {
+      "fn_name": "Check_Vow",
+      "args": [
+        "true",
+        "AaEeIiOoUu"
+      ],
+      "expected": 2,
+      "assert_src": "assert Check_Vow('true','AaEeIiOoUu') ==2"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

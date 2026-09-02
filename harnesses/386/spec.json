@@ -1,0 +1,44 @@
+{
+  "task_id": 386,
+  "text": "Write a C function to find out the minimum no of swaps required for bracket balancing in the given string.",
+  "fn_candidates": [
+    "swap_count",
+    "SwapCount",
+    "swapCount",
+    "swapcount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "swap_count",
+      "args": [
+        "[]][]["
+      ],
+      "expected": 2,
+      "assert_src": "assert swap_count(\"[]][][\") == 2"
+    },
+    {
+      "fn_name": "swap_count",
+      "args": [
+        "[[][]]"
+      ],
+      "expected": 0,
+      "assert_src": "assert swap_count(\"[[][]]\") == 0"
+    },
+    {
+      "fn_name": "swap_count",
+      "args": [
+        "[[][]]]["
+      ],
+      "expected": 1,
+      "assert_src": "assert swap_count(\"[[][]]][\") == 1"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

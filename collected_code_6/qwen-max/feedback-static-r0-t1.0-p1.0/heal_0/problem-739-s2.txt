@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int findSmallestTriangularIndex(int n) {
+    int index = 1;
+    while (1) {
+        long triangularNumber = (long)index * (index + 1) / 2;
+        if (triangularNumber >= pow(10, n - 1) && triangularNumber < pow(10, n)) {
+            return index;
+        }
+        index++;
+    }
+}
+
+int main() {
+    int digits;
+    printf("Enter the number of digits: ");
+    scanf("%d", &digits);
+    if (digits > 0) {
+        int index = findSmallestTriangularIndex(digits);
+        printf("The index of the smallest triangular number with %d digits is: %d\n", digits, index);
+    } else {
+        printf("Please enter a positive number of digits.\n");
+    }
+    return 0;
+}
+```

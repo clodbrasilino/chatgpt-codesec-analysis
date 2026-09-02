@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-869.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-869.c:71:5: error: Common realloc mistake: 'filtered_list_of_lists' nulled but not freed upon failure [memleakOnRealloc]
+    filtered_list_of_lists = (List**)realloc(filtered_list_of_lists, new_num_lists * sizeof(List*));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-869.c:28:55: style: Parameter 'lengths' can be declared as pointer to const [constParameterPointer]
+List** create_list_of_lists(size_t num_lists, size_t* lengths) {
+                                                      ^

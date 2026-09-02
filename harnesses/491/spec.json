@@ -1,0 +1,50 @@
+{
+  "task_id": 491,
+  "text": "Write a C function to find the sum of geometric progression series.",
+  "fn_candidates": [
+    "sum_gp",
+    "SumGp",
+    "sumGp",
+    "sumgp"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_gp",
+      "args": [
+        1,
+        5,
+        2
+      ],
+      "expected": 31,
+      "assert_src": "assert sum_gp(1,5,2)==31"
+    },
+    {
+      "fn_name": "sum_gp",
+      "args": [
+        1,
+        5,
+        4
+      ],
+      "expected": 341,
+      "assert_src": "assert sum_gp(1,5,4)==341"
+    },
+    {
+      "fn_name": "sum_gp",
+      "args": [
+        2,
+        6,
+        3
+      ],
+      "expected": 728,
+      "assert_src": "assert sum_gp(2,6,3)==728"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

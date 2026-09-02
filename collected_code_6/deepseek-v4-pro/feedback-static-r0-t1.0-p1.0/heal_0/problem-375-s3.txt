@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int round_to_multiple(int num, int multiple) {
+    if (multiple == 0) {
+        return 0;
+    }
+    if (num < 0) {
+        return ((num - multiple / 2) / multiple) * multiple;
+    }
+    return ((num + multiple / 2) / multiple) * multiple;
+}
+
+int main(void) {
+    int num;
+    int multiple;
+
+    printf("Enter number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter multiple: ");
+    if (scanf("%d", &multiple) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (multiple == 0) {
+        fprintf(stderr, "Multiple cannot be zero\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: %d\n", round_to_multiple(num, multiple));
+    return EXIT_SUCCESS;
+}
+```

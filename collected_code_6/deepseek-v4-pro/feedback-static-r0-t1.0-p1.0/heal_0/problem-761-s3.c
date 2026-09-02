@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double calculate_arc_length(double radius, double angle_degrees) {
+    if (radius < 0 || angle_degrees < 0) {
+        return -1.0;
+    }
+    
+    double angle_radians = angle_degrees * (PI / 180.0);
+    return radius * angle_radians;
+}
+
+int main(void) {
+    double radius;
+    double angle_degrees;
+    double arc_length;
+    
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        printf("Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter angle in degrees: ");
+    if (scanf("%lf", &angle_degrees) != 1) {
+        printf("Invalid input for angle\n");
+        return 1;
+    }
+    
+    arc_length = calculate_arc_length(radius, angle_degrees);
+    
+    if (arc_length < 0) {
+        printf("Invalid parameters: radius and angle must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Arc length: %.6f\n", arc_length);
+    
+    return 0;
+}

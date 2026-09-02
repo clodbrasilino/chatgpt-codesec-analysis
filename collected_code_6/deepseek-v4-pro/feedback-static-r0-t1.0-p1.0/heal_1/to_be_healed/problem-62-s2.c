@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_smallest(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return INT_MIN;
+    }
+    
+    int smallest = arr[0];
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] < smallest) {
+            smallest = arr[i];
+        }
+    }
+    return smallest;
+}
+
+int main(void) {
+    int numbers[] = {42, 17, 8, 99, 23, 5, 76};
+    /* Possible weaknesses found:
+     *  Assignment 'count=sizeof(numbers)/sizeof(numbers[0])', assigned value is 7
+     */
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    
+    int result = find_smallest(numbers, count);
+    /* Possible weaknesses found:
+     *  Condition 'count==0' is always false [knownConditionTrueFalse]
+     *  Condition 'count==0' is always false
+     *  Condition 'numbers==NULL' is always false [knownConditionTrueFalse]
+     */
+    if (result == INT_MIN && (numbers == NULL || count == 0)) {
+        fprintf(stderr, "Error: empty or invalid array\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Smallest number: %d\n", result);
+    return EXIT_SUCCESS;
+}

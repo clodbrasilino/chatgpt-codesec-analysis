@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s2.c:9:26: error: array type has incomplete element type 'char *[]'
+    9 | void sort_sublists(char *list[][], int num_lists, int sublist_sizes[]) {
+      |                          ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s2.c:9:26: note: declaration of 'list' as multidimensional array must have bounds for all dimensions except the first
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s2.c:20:11: error: array type has incomplete element type 'char *[]'
+   20 |     char *list[][] = {list1, list2, list3};
+      |           ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s2.c:20:11: note: declaration of 'list' as multidimensional array must have bounds for all dimensions except the first
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s2.c:24:19: error: type of formal parameter 1 is incomplete
+   24 |     sort_sublists(list, num_lists, sublist_sizes);
+      |                   ^~~~

@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STR
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int int_val;
+        char *str_val;
+    } data;
+} MixedItem;
+
+typedef struct {
+    MixedItem *items;
+    size_t size;
+} MixedList;
+
+void free_mixed_list(MixedList *list) {
+    if (list == NULL) return;
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->items[i].type == TYPE_STR) {
+            free(list->items[i].data.str_val);
+        }
+    }
+    free(list->items);
+    list->items = NULL;
+    list->size = 0;
+}
+
+int compare_items(const void *a, const void *b) {
+    const MixedItem *item_a = (const MixedItem *)a;
+    const MixedItem *item_b = (const MixedItem *)b;
+    
+    if (item_a->type == TYPE_INT && item_b->type == TYPE_INT) {
+        return (item_a->data.int_val > item_b->data.int_val) - 
+               (item_a->data.int_val < item_b->data.int_val);
+    }
+    if (item_a->type == TYPE_STR && item_b->type == TYPE_STR) {
+        return strcmp(item_a->data.str_val, item_b->data.str_val);
+    }
+    return (item_a->type == TYPE_INT) ? -1 : 1;
+}
+
+void sort_mixed_list(MixedList *list) {
+    if (list == NULL || list->items == NULL || list->size == 0) return;
+    qsort(list->items, list->size, sizeof(MixedItem), compare_items);
+}
+
+MixedList create_mixed_list(size_t capacity) {
+    MixedList list;
+    list.items = (MixedItem *)calloc(capacity, sizeof(MixedItem));
+    if (list.items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    list.size = 0;
+    return list;
+}
+
+void add_int(MixedList *list, int value) {
+    if (list == NULL) return;
+    list->items[list->size].type = TYPE_INT;
+    list->items[list->size].data.int_val = value;
+    list->size++;
+}
+
+void add_string(MixedList *list, const char *str) {
+    if (list == NULL || str == NULL) return;
+    char *copy = (char *)malloc(strlen(str) + 1);
+    if (copy == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(copy, str);
+    list->items[list->size].type = TYPE_STR;
+    list->items[list->size].data.str_val = copy;
+    list->size++;
+}
+
+void print_mixed_list(const MixedList *list) {
+    if (list == NULL) return;
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->items[i].type == TYPE_INT) {
+            printf("%d ", list->items[i].data.int_val);
+        } else {
+            printf("%s ", list->items[i].data.str_val);
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    MixedList list = create_mixed_list(6);
+    
+    add_int(&list, 42);
+    add_string(&list, "apple");
+    add_int(&list, 7);
+    add_string(&list, "banana");
+    add_int(&list, 15);
+    add_string(&list, "cherry");
+    
+    printf("Original list: ");
+    print_mixed_list(&list);
+    
+    sort_mixed_list(&list);
+    
+    printf("Sorted list: ");
+    print_mixed_list(&list);
+    
+    free_mixed_list(&list);
+    return 0;
+}

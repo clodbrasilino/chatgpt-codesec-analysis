@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findFirstKTimes(int *arr, int n, int k) {
+    int *count = (int *)calloc(n, sizeof(int));
+    for (int i = 0; i < n; ++i) {
+        count[arr[i]]++;
+    }
+    for (int i = 0; i < n; ++i) {
+        if (count[arr[i]] == k) {
+            free(count);
+            return arr[i];
+        }
+    }
+    free(count);
+    return -1;
+}
+
+int main() {
+    int arr[] = {1, 7, 4, 3, 4, 8, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    int result = findFirstKTimes(arr, n, k);
+    if (result != -1) {
+        printf("The first element occurring %d times is: %d\n", k, result);
+    } else {
+        printf("No element occurs %d times.\n", k);
+    }
+    return 0;
+}

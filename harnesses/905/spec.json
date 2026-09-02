@@ -1,0 +1,44 @@
+{
+  "task_id": 905,
+  "text": "Write a C function to find the sum of squares of binomial co-efficients.",
+  "fn_candidates": [
+    "sum_of_square",
+    "SumOfSquare",
+    "sumOfSquare",
+    "sumofsquare"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_of_square",
+      "args": [
+        4
+      ],
+      "expected": 70,
+      "assert_src": "assert sum_of_square(4) == 70"
+    },
+    {
+      "fn_name": "sum_of_square",
+      "args": [
+        5
+      ],
+      "expected": 252,
+      "assert_src": "assert sum_of_square(5) == 252"
+    },
+    {
+      "fn_name": "sum_of_square",
+      "args": [
+        2
+      ],
+      "expected": 6,
+      "assert_src": "assert sum_of_square(2) == 6"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

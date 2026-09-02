@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_odd_numbers(int *numbers, int n) {
+    for (int i = 0; i < n; ++i) {
+        if (numbers[i] % 2 != 0) {
+            printf("%d ", numbers[i]);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    find_odd_numbers(arr, n);
+    return 0;
+}

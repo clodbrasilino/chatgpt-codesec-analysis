@@ -1,0 +1,67 @@
+{
+  "task_id": 42,
+  "text": "Write a C function to find the sum of repeated elements in a given array.",
+  "fn_candidates": [
+    "find_Sum",
+    "FindSum",
+    "findSum",
+    "findSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Sum",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          1,
+          4,
+          5,
+          6
+        ],
+        8
+      ],
+      "expected": 3,
+      "assert_src": "assert find_Sum([1,2,3,1,1,4,5,6],8) == 3"
+    },
+    {
+      "fn_name": "find_Sum",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          1
+        ],
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert find_Sum([1,2,3,1,1],5) == 3"
+    },
+    {
+      "fn_name": "find_Sum",
+      "args": [
+        [
+          1,
+          1,
+          2
+        ],
+        3
+      ],
+      "expected": 2,
+      "assert_src": "assert find_Sum([1,1,2],3) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

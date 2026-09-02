@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool isPerfectSquare(int num) {
+    if (num < 0) return false;
+    int root = sqrt(num);
+    return root * root == num;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    if (isPerfectSquare(n)) {
+        printf("%d is a perfect square.\n", n);
+    } else {
+        printf("%d is not a perfect square.\n", n);
+    }
+    return 0;
+}

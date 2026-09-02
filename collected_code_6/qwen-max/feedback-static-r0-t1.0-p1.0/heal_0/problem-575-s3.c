@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_non_multiple(int n, int multiple) {
+    int count = 0;
+    int current = 1;
+
+    while (1) {
+        if (current % multiple != 0) {
+            count++;
+            if (count == n) {
+                return current;
+            }
+        }
+        current++;
+    }
+
+    return -1; // This line is unreachable but included to avoid compiler warnings
+}
+
+int main() {
+    int n, multiple;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input for n\n");
+        return 1;
+    }
+
+    printf("Enter the multiple: ");
+    if (scanf("%d", &multiple) != 1 || multiple <= 0) {
+        printf("Invalid input for multiple\n");
+        return 1;
+    }
+
+    int result = find_nth_non_multiple(n, multiple);
+    printf("The %dth number in the sequence that is not a multiple of %d is: %d\n", n, multiple, result);
+    return 0;
+}

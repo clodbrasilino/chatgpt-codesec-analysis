@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void reverse_array_up_to(int *array, size_t n, size_t position) {
+    if (position > n) {
+        return;
+    }
+    for (size_t i = 0; i < position / 2; ++i) {
+        int temp = array[i];
+        array[i] = array[position - 1 - i];
+        array[position - 1 - i] = temp;
+    }
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t n = sizeof(array) / sizeof(array[0]);
+    size_t position = 5;
+
+    reverse_array_up_to(array, n, position);
+
+    for (size_t i = 0; i < n; ++i) {
+        printf("%d ", array[i]);
+    }
+    putchar('\n');
+
+    return 0;
+}
+```

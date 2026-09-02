@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_sum_of_factors(int n) {
+    int sum = 0;
+    for (int i = 2; i * i <= n; i++) {
+        while (n % i == 0) {
+            sum += i;
+            n /= i;
+        }
+    }
+    if (n > 1) {
+        sum += n;
+    }
+    return sum;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return EXIT_FAILURE;
+    }
+    if (num < 1) {
+        fprintf(stderr, "Number must be greater than 0.\n");
+        return EXIT_FAILURE;
+    }
+    int result = min_sum_of_factors(num);
+    printf("Minimum sum of factors: %d\n", result);
+    return EXIT_SUCCESS;
+}

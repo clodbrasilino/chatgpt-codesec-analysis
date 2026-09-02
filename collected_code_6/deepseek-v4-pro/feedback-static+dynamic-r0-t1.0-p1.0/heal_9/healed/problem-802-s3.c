@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countRotations(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+    
+    int low = 0;
+    int high = size - 1;
+    
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    
+    return low;
+}
+
+int main(void) {
+    int test1[] = {4, 5, 6, 7, 0, 1, 2};
+    int test2[] = {1, 2, 3, 4, 5};
+    int test3[] = {2, 1};
+    int test4[] = {7, 8, 1, 2, 3, 4, 5, 6};
+    
+    int rotations1 = countRotations(test1, sizeof(test1) / sizeof(test1[0]));
+    int rotations2 = countRotations(test2, sizeof(test2) / sizeof(test2[0]));
+    int rotations3 = countRotations(test3, sizeof(test3) / sizeof(test3[0]));
+    int rotations4 = countRotations(test4, sizeof(test4) / sizeof(test4[0]));
+    
+    printf("%d\n", rotations1);
+    printf("%d\n", rotations2);
+    printf("%d\n", rotations3);
+    printf("%d\n", rotations4);
+    
+    return 0;
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": 404,
+  "text": "Write a C function to find the minimum of two numbers.",
+  "fn_candidates": [
+    "minimum",
+    "Minimum",
+    "minimum",
+    "minimum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "minimum",
+      "args": [
+        1,
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert minimum(1,2) == 1"
+    },
+    {
+      "fn_name": "minimum",
+      "args": [
+        -5,
+        -4
+      ],
+      "expected": -5,
+      "assert_src": "assert minimum(-5,-4) == -5"
+    },
+    {
+      "fn_name": "minimum",
+      "args": [
+        0,
+        0
+      ],
+      "expected": 0,
+      "assert_src": "assert minimum(0,0) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

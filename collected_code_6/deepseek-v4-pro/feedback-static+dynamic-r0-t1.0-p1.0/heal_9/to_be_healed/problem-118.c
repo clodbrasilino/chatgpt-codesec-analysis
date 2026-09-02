@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got ["python","�"
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  */
+
+Node *string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t start = 0;
+    size_t end = 0;
+
+    while (end <= len) {
+        if (end == len || !isalpha((unsigned char)str[end])) {
+            if (end > start) {
+                size_t word_len = end - start;
+                char *word = (char *)malloc(word_len + 1);
+                if (word == NULL) {
+                    Node *current = head;
+                    while (current != NULL) {
+                        Node *next = current->next;
+                        free(current->data);
+                        free(current);
+                        current = next;
+                    }
+                    return NULL;
+                }
+                memcpy(word, str + start, word_len);
+                word[word_len] = '\0';
+
+                Node *new_node = (Node *)malloc(sizeof(Node));
+                if (new_node == NULL) {
+                    free(word);
+                    Node *current = head;
+                    while (current != NULL) {
+                        Node *next = current->next;
+                        free(current->data);
+                        free(current);
+                        current = next;
+                    }
+                    return NULL;
+                }
+
+                new_node->data = word;
+                new_node->next = NULL;
+
+                if (head == NULL) {
+                    head = new_node;
+                    tail = new_node;
+                } else {
+                    tail->next = new_node;
+                    tail = new_node;
+                }
+            }
+            start = end + 1;
+        }
+        end++;
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    int first = 1;
+    printf("[");
+    while (current != NULL) {
+        if (!first) {
+            printf(", ");
+        }
+        printf("\"%s\"", current->data);
+        first = 0;
+        current = current->next;
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    const char *test_str1 = "python programming";
+    Node *list1 = string_to_list(test_str1);
+    if (list1 != NULL) {
+        print_list(list1);
+        free_list(list1);
+    } else {
+        printf("[]\n");
+    }
+
+    const char *test_str2 = "lists tuples strings";
+    Node *list2 = string_to_list(test_str2);
+    if (list2 != NULL) {
+        print_list(list2);
+        free_list(list2);
+    } else {
+        printf("[]\n");
+    }
+
+    const char *test_str3 = "write a program";
+    Node *list3 = string_to_list(test_str3);
+    if (list3 != NULL) {
+        print_list(list3);
+        free_list(list3);
+    } else {
+        printf("[]\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compare_tuples(const void *t1, const void *t2) {
+    const Tuple *tuple1 = t1;
+    const Tuple *tuple2 = t2;
+    if (tuple1->a == tuple2->a) {
+        return tuple1->b - tuple2->b;
+    }
+    return tuple1->a - tuple2->a;
+}
+
+int tuples_intersect(Tuple t1, Tuple t2) {
+    return (t1.a == t2.a && t1.b == t2.b) || (t1.a == t2.b && t1.b == t2.a);
+}
+
+Tuple* find_tuple_intersection(Tuple *list1, int len1, Tuple *list2, int len2, int *result_len) {
+    qsort(list1, len1, sizeof(Tuple), compare_tuples);
+    qsort(list2, len2, sizeof(Tuple), compare_tuples);
+
+    *result_len = 0;
+    Tuple *result = (Tuple *)malloc(len1 * sizeof(Tuple));
+    if (!result) return NULL;
+
+    int i = 0, j = 0;
+    while (i < len1 && j < len2) {
+        if (tuples_intersect(list1[i], list2[j])) {
+            result[*result_len] = list1[i];
+            (*result_len)++;
+            i++;
+            j++;
+        } else if (compare_tuples(&list1[i], &list2[j]) < 0) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple list2[] = {{2, 1}, {4, 3}, {7, 8}};
+    int len1 = sizeof(list1) / sizeof(list1[0]);
+    int len2 = sizeof(list2) / sizeof(list2[0]);
+    int result_len;
+
+    Tuple *intersection = find_tuple_intersection(list1, len1, list2, len2, &result_len);
+
+    for (int i = 0; i < result_len; i++) {
+        printf("(%d, %d)\n", intersection[i].a, intersection[i].b);
+    }
+
+    free(intersection);
+    return 0;
+}

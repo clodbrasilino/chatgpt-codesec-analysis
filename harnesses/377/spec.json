@@ -1,0 +1,47 @@
+{
+  "task_id": 377,
+  "text": "Write a C function to remove all occurrences of a character in a given string.",
+  "fn_candidates": [
+    "remove_Char",
+    "RemoveChar",
+    "removeChar",
+    "removeChar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_Char",
+      "args": [
+        "aba",
+        "a"
+      ],
+      "expected": "b",
+      "assert_src": "assert remove_Char(\"aba\",'a') == \"b\""
+    },
+    {
+      "fn_name": "remove_Char",
+      "args": [
+        "toggle",
+        "g"
+      ],
+      "expected": "tole",
+      "assert_src": "assert remove_Char(\"toggle\",'g') == \"tole\""
+    },
+    {
+      "fn_name": "remove_Char",
+      "args": [
+        "aabbc",
+        "b"
+      ],
+      "expected": "aac",
+      "assert_src": "assert remove_Char(\"aabbc\",'b') == \"aac\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

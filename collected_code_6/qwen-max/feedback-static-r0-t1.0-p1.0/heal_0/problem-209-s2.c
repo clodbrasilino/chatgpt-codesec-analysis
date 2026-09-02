@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void heapify(int arr[], int n, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] < arr[smallest])
+        smallest = left;
+
+    if (right < n && arr[right] < arr[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        int temp = arr[i];
+        arr[i] = arr[smallest];
+        arr[smallest] = temp;
+        heapify(arr, n, smallest);
+    }
+}
+
+void deleteSmallestAndInsert(int *arr, int *n, int item) {
+    if (*n == 0) return;
+
+    arr[0] = arr[*n - 1];
+    (*n)--;
+    heapify(arr, *n, 0);
+
+    arr[(*n)++] = item;
+    for (int i = (*n) / 2 - 1; i >= 0; i--) {
+        heapify(arr, *n, i);
+    }
+}
+
+int main() {
+    int arr[] = {3, 5, 7, 10, 12, 18, 20};
+    int n = 7;
+
+    printf("Original heap: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    deleteSmallestAndInsert(arr, &n, 2);
+
+    printf("Heap after deletion and insertion: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

@@ -1,0 +1,38 @@
+{
+  "task_id": 452,
+  "text": "Write a C function that gives loss amount if the given amount has loss else return none.",
+  "fn_candidates": [
+    "loss_amount",
+    "LossAmount",
+    "lossAmount",
+    "lossamount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "loss_amount",
+      "args": [
+        100,
+        200
+      ],
+      "expected": 100,
+      "assert_src": "assert loss_amount(100,200)==100"
+    },
+    {
+      "fn_name": "loss_amount",
+      "args": [
+        2000,
+        5000
+      ],
+      "expected": 3000,
+      "assert_src": "assert loss_amount(2000,5000)==3000"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

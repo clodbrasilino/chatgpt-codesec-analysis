@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-358-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-358-s2.c:6:10: warning: Either the condition 'result_len==NULL' is redundant or there is possible null pointer dereference: result_len. [nullPointerRedundantCheck]
+        *result_len = -1;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-358-s2.c:5:80: note: Assuming that condition 'result_len==NULL' is not redundant
+    if (len1 == 0 || len2 == 0 || list1 == NULL || list2 == NULL || result_len == NULL) {
+                                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-358-s2.c:6:10: note: Null pointer dereference
+        *result_len = -1;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-358-s2.c:4:27: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+int* modulo_division(int* list1, int len1, int* list2, int len2, int *result_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-358-s2.c:4:49: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+int* modulo_division(int* list1, int len1, int* list2, int len2, int *result_len) {
+                                                ^

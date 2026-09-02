@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-241.c:21:28: error: incompatible pointer to integer conversion assigning to 'char' from 'void *' [-Wint-conversion]
+   21 |             array[0][i][j] = malloc(z * sizeof(char));
+      |                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-241.c:25:26: error: incompatible integer to pointer conversion passing 'char' to parameter of type 'void *' [-Wint-conversion]
+   25 |                     free(array[0][i][k]);
+      |                          ^~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-241.c:34:31: error: subscripted value is not an array, pointer, or vector
+   34 |                 array[0][i][j][k] = '*';
+      |                 ~~~~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-241.c:43:18: error: incompatible integer to pointer conversion passing 'char' to parameter of type 'void *' [-Wint-conversion]
+   43 |             free(array[0][i][j]);
+      |                  ^~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-241.c:66:45: error: subscripted value is not an array, pointer, or vector
+   66 |                 printf("%c ", array[0][i][j][k]);
+      |                               ~~~~~~~~~~~~~~^~
+5 errors generated.

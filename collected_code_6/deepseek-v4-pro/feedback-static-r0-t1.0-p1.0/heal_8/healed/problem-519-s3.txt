@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double tetrahedron_volume(double a, double b, double c, double d, double e, double f) {
+    double a2 = a * a;
+    double b2 = b * b;
+    double c2 = c * c;
+    double d2 = d * d;
+    double e2 = e * e;
+    double f2 = f * f;
+    
+    double term1 = a2 * d2 * (b2 + c2 + e2 + f2 - a2 - d2);
+    double term2 = b2 * e2 * (a2 + c2 + d2 + f2 - b2 - e2);
+    double term3 = c2 * f2 * (a2 + b2 + d2 + e2 - c2 - f2);
+    double term4 = a2 * b2 * c2 + a2 * e2 * f2 + d2 * b2 * f2 + d2 * e2 * c2;
+    
+    double discriminant = term1 + term2 + term3 - term4;
+    
+    if (discriminant < 0) {
+        return -1.0;
+    }
+    
+    return sqrt(discriminant) / 12.0;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 7) {
+        fprintf(stderr, "Usage: %s a b c d e f\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    double edges[6];
+    
+    for (int i = 0; i < 6; i++) {
+        edges[i] = strtod(argv[i + 1], &endptr);
+        if (*endptr != '\0' || edges[i] <= 0) {
+            fprintf(stderr, "Error: Invalid edge length '%s'\n", argv[i + 1]);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    double volume = tetrahedron_volume(edges[0], edges[1], edges[2], edges[3], edges[4], edges[5]);
+    
+    if (volume < 0) {
+        fprintf(stderr, "Error: Invalid tetrahedron dimensions\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%.10f\n", volume);
+    
+    return EXIT_SUCCESS;
+}
+```

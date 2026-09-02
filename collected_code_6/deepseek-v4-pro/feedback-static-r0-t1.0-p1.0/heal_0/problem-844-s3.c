@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findKthElement(int arr[], int size, int k) {
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    int index = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            temp[index++] = arr[i];
+        }
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            temp[index++] = arr[i];
+        }
+    }
+
+    int result;
+    if (k >= 0 && k < size) {
+        result = temp[k];
+    } else {
+        result = -1;
+    }
+
+    free(temp);
+    return result;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    for (int k = 0; k < size; k++) {
+        printf("%d\n", findKthElement(arr, size, k));
+    }
+
+    return 0;
+}

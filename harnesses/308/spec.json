@@ -1,0 +1,108 @@
+{
+  "task_id": 308,
+  "text": "Write a C function to find the specified number of largest products from two given lists.",
+  "fn_candidates": [
+    "large_product",
+    "LargeProduct",
+    "largeProduct",
+    "largeproduct"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "large_product",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          3,
+          6,
+          8,
+          9,
+          10,
+          6
+        ],
+        3
+      ],
+      "expected": [
+        60,
+        54,
+        50
+      ],
+      "assert_src": "assert large_product([1, 2, 3, 4, 5, 6],[3, 6, 8, 9, 10, 6],3)==[60, 54, 50]"
+    },
+    {
+      "fn_name": "large_product",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          3,
+          6,
+          8,
+          9,
+          10,
+          6
+        ],
+        4
+      ],
+      "expected": [
+        60,
+        54,
+        50,
+        48
+      ],
+      "assert_src": "assert large_product([1, 2, 3, 4, 5, 6],[3, 6, 8, 9, 10, 6],4)==[60, 54, 50, 48]"
+    },
+    {
+      "fn_name": "large_product",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        [
+          3,
+          6,
+          8,
+          9,
+          10,
+          6
+        ],
+        5
+      ],
+      "expected": [
+        60,
+        54,
+        50,
+        48,
+        45
+      ],
+      "assert_src": "assert large_product([1, 2, 3, 4, 5, 6],[3, 6, 8, 9, 10, 6],5)==[60, 54, 50, 48, 45]"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

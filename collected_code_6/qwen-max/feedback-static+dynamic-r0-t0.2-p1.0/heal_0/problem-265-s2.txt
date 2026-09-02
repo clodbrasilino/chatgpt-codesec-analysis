@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+}
+
+Node** split_list(Node* head, int n, int* count) {
+    *count = 0;
+    if (n <= 0 || head == NULL) {
+        return NULL;
+    }
+
+    Node** result = (Node**)malloc(sizeof(Node*) * (1 + (n - 1) / n));
+    if (result == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    Node* current = head;
+    int index = 0;
+    while (current != NULL) {
+        result[index] = current;
+        for (int i = 0; i < n - 1 && current->next != NULL; i++) {
+            current = current->next;
+        }
+        Node* temp = current->next;
+        current->next = NULL;
+        current = temp;
+        (*count)++;
+        index++;
+    }
+
+    return result;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current->next;
+        free(current);
+        current = temp;
+    }
+}
+
+void free_split_lists(Node** lists, int count) {
+    for (int i = 0; i < count; i++) {
+        free_list(lists[i]);
+    }
+    free(lists);
+}
+
+int main() {
+    Node* head = NULL;
+    for (int i = 1; i <= 10; i++) {
+        append_node(&head, i);
+    }
+
+    int count;
+    int n = 3;
+    Node** lists = split_list(head, n, &count);
+
+    for (int i = 0; i < count; i++) {
+        Node* current = lists[i];
+        while (current != NULL) {
+            printf("%d ", current->data);
+            current = current->next;
+        }
+        printf("\n");
+    }
+
+    free_split_lists(lists, count);
+
+    return 0;
+}
+```

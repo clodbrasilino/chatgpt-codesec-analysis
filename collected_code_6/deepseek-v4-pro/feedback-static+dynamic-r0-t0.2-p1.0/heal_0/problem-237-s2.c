@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    int count;
+} Record;
+
+typedef struct {
+    Record *records;
+    int size;
+    int capacity;
+} RecordList;
+
+void init_record_list(RecordList *list) {
+    list->size = 0;
+    list->capacity = 10;
+    list->records = (Record *)malloc(list->capacity * sizeof(Record));
+    if (list->records == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+}
+
+void free_record_list(RecordList *list) {
+    free(list->records);
+    list->records = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+void add_record(RecordList *list, int id, int count) {
+    if (list->size >= list->capacity) {
+        list->capacity *= 2;
+        Record *temp = (Record *)realloc(list->records, list->capacity * sizeof(Record));
+        if (temp == NULL) {
+            fprintf(stderr, "Memory reallocation failed\n");
+            free_record_list(list);
+            exit(1);
+        }
+        list->records = temp;
+    }
+    list->records[list->size].id = id;
+    list->records[list->size].count = count;
+    list->size++;
+}
+
+int find_record(RecordList *list, int id) {
+    for (int i = 0; i < list->size; i++) {
+        if (list->records[i].id == id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int check_similar_occurrences(int tuples[][2], int tuple_count) {
+    if (tuples == NULL || tuple_count <= 0) {
+        return 0;
+    }
+
+    RecordList list;
+    init_record_list(&list);
+
+    for (int i = 0; i < tuple_count; i++) {
+        int id = tuples[i][0];
+        int count = tuples[i][1];
+        int index = find_record(&list, id);
+        if (index == -1) {
+            add_record(&list, id, count);
+        } else {
+            list.records[index].count += count;
+        }
+    }
+
+    int result = 1;
+    int first_count = -1;
+    for (int i = 0; i < list.size; i++) {
+        if (first_count == -1) {
+            first_count = list.records[i].count;
+        } else if (list.records[i].count != first_count) {
+            result = 0;
+            break;
+        }
+    }
+
+    free_record_list(&list);
+    return result;
+}
+
+int main(void) {
+    int tuples1[][2] = {{1, 2}, {2, 2}, {3, 2}};
+    int tuples2[][2] = {{1, 2}, {2, 3}, {3, 2}};
+    int tuples3[][2] = {{1, 1}, {1, 1}, {2, 2}, {2, 2}};
+    int tuples4[][2] = {{1, 1}, {2, 1}, {1, 1}, {2, 1}};
+
+    printf("Test 1: %d\n", check_similar_occurrences(tuples1, 3));
+    printf("Test 2: %d\n", check_similar_occurrences(tuples2, 3));
+    printf("Test 3: %d\n", check_similar_occurrences(tuples3, 4));
+    printf("Test 4: %d\n", check_similar_occurrences(tuples4, 4));
+
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 776,
+  "text": "Write a C function to count those characters which have vowels as their neighbors in the given string.",
+  "fn_candidates": [
+    "count_vowels",
+    "CountVowels",
+    "countVowels",
+    "countvowels"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_vowels",
+      "args": [
+        "bestinstareels"
+      ],
+      "expected": 7,
+      "assert_src": "assert count_vowels('bestinstareels') == 7"
+    },
+    {
+      "fn_name": "count_vowels",
+      "args": [
+        "partofthejourneyistheend"
+      ],
+      "expected": 12,
+      "assert_src": "assert count_vowels('partofthejourneyistheend') == 12"
+    },
+    {
+      "fn_name": "count_vowels",
+      "args": [
+        "amazonprime"
+      ],
+      "expected": 5,
+      "assert_src": "assert count_vowels('amazonprime') == 5"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,100 @@
+{
+  "task_id": 216,
+  "text": "Write a C function to check if a nested list is a subset of another nested list.",
+  "fn_candidates": [
+    "check_subset_list",
+    "CheckSubsetList",
+    "checkSubsetList",
+    "checksubsetlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_subset_list",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        [
+          [
+            12,
+            18,
+            23,
+            25,
+            45
+          ],
+          [
+            7,
+            11,
+            19,
+            24,
+            28
+          ],
+          [
+            1,
+            5,
+            8,
+            18,
+            15,
+            16
+          ]
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_subset_list([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],[[12, 18, 23, 25, 45], [7, 11, 19, 24, 28], [1, 5, 8, 18, 15, 16]])==False"
+    },
+    {
+      "fn_name": "check_subset_list",
+      "args": [
+        [
+          [
+            2,
+            3,
+            1
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            6,
+            8
+          ]
+        ],
+        [
+          [
+            4,
+            5
+          ],
+          [
+            6,
+            8
+          ]
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_subset_list([[2, 3, 1], [4, 5], [6, 8]],[[4, 5], [6, 8]])==True"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

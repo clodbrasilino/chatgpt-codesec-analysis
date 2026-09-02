@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c:27:45: warning: Possible null pointer dereference: value [nullPointer]
+    dict->items[dict->count].value = strdup(value);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c:61:28: note: Calling function 'add_item', 3rd argument 'NULL' value is 0
+    add_item(dict, "key4", NULL);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c:27:45: note: Null pointer dereference
+    dict->items[dict->count].value = strdup(value);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c:27:45: error: Null pointer dereference: value [ctunullpointer]
+    dict->items[dict->count].value = strdup(value);
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c:61:13: note: Calling function add_item, 3rd argument is null
+    add_item(dict, "key4", NULL);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465-s3.c:27:45: note: Dereferencing argument value that is null
+    dict->items[dict->count].value = strdup(value);
+                                            ^

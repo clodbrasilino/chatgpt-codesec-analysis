@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdbool.h>
+
+bool is_valid_sequence(const char *str) {
+    regex_t regex;
+    int ret = regcomp(&regex, "^[a-z]+(_[a-z]+)*$", 0);
+    if (ret) {
+        return false;
+    }
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    return !ret;
+}
+
+int main() {
+    const char *test_strings[] = {"abc_def", "Abc_def", "abc_def_ghi", "abc_deF", "abc", ""};
+    for (size_t i = 0; i < sizeof(test_strings) / sizeof(test_strings[0]); ++i) {
+        printf("%s: %s\n", test_strings[i], is_valid_sequence(test_strings[i]) ? "valid" : "invalid");
+    }
+    return 0;
+}

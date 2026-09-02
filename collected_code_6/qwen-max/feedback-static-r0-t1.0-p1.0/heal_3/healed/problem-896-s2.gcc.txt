@@ -1,0 +1,16 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:25:28: error: initialization of 'int (*)[3]' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+   25 |     int (*tuples[3])[3] = {a, b, c};
+      |                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:25:28: note: (near initialization for 'tuples[0]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:25:31: error: initialization of 'int (*)[3]' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+   25 |     int (*tuples[3])[3] = {a, b, c};
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:25:31: note: (near initialization for 'tuples[1]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:25:34: error: initialization of 'int (*)[3]' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+   25 |     int (*tuples[3])[3] = {a, b, c};
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:25:34: note: (near initialization for 'tuples[2]')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-896-s2.c:26:15: error: assignment to 'int (*)[3]' from incompatible pointer type 'int (**)[3]' [-Wincompatible-pointer-types]
+   26 |     list.data = tuples;
+      |               ^

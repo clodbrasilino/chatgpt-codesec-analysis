@@ -1,0 +1,47 @@
+{
+  "task_id": 688,
+  "text": "Write a C function to get the length of a complex number.",
+  "fn_candidates": [
+    "len_complex",
+    "LenComplex",
+    "lenComplex",
+    "lencomplex"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "len_complex",
+      "args": [
+        3,
+        4
+      ],
+      "expected": 5.0,
+      "assert_src": "assert len_complex(3,4)==5.0"
+    },
+    {
+      "fn_name": "len_complex",
+      "args": [
+        9,
+        10
+      ],
+      "expected": 13.45362404707371,
+      "assert_src": "assert len_complex(9,10)==13.45362404707371"
+    },
+    {
+      "fn_name": "len_complex",
+      "args": [
+        7,
+        9
+      ],
+      "expected": 11.40175425099138,
+      "assert_src": "assert len_complex(7,9)==11.40175425099138"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

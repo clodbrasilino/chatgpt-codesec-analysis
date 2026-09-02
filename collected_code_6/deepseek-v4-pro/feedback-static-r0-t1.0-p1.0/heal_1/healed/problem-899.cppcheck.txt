@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-899.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-899.c:49:39: style: Condition 'can_sort_by_corners(arr4,n4)' is always true [knownConditionTrueFalse]
+    printf("%s\n", can_sort_by_corners(arr4, n4) ? "true" : "false");
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-899.c:49:39: note: Calling function 'can_sort_by_corners' returns 1
+    printf("%s\n", can_sort_by_corners(arr4, n4) ? "true" : "false");
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-899.c:49:39: note: Condition 'can_sort_by_corners(arr4,n4)' is always true
+    printf("%s\n", can_sort_by_corners(arr4, n4) ? "true" : "false");
+                                      ^

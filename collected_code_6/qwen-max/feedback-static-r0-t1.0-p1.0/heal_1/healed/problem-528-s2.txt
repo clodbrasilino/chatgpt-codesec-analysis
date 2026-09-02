@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    int length;
+} List;
+
+typedef struct ListOfLists {
+    List **lists;
+    int numLists;
+} ListOfLists;
+
+List *createList(int length) {
+    List *lst = (List *)malloc(sizeof(List));
+    lst->data = (int *)malloc(length * sizeof(int));
+    lst->length = length;
+    return lst;
+}
+
+ListOfLists *createListOfLists(int numLists) {
+    ListOfLists *listOfLists = (ListOfLists *)malloc(sizeof(ListOfLists));
+    listOfLists->lists = (List **)malloc(numLists * sizeof(List *));
+    listOfLists->numLists = numLists;
+    return listOfLists;
+}
+
+void freeList(List *lst) {
+    free(lst->data);
+    free(lst);
+}
+
+void freeListOfLists(ListOfLists *lol) {
+    for (int i = 0; i < lol->numLists; i++) {
+        freeList(lol->lists[i]);
+    }
+    free(lol->lists);
+    free(lol);
+}
+
+const List *findMinLengthList(const ListOfLists *lol) {
+    if (lol->numLists == 0) {
+        return NULL;
+    }
+
+    const List *minList = lol->lists[0];
+    for (int i = 1; i < lol->numLists; i++) {
+        if (lol->lists[i]->length < minList->length) {
+            minList = lol->lists[i];
+        }
+    }
+    return minList;
+}
+
+int main() {
+    ListOfLists *lol = createListOfLists(3);
+
+    lol->lists[0] = createList(5);
+    lol->lists[1] = createList(3);
+    lol->lists[2] = createList(7);
+
+    const List *minList = findMinLengthList(lol);
+
+    if (minList != NULL) {
+        printf("Minimum length list has length %d\n", minList->length);
+    } else {
+        printf("No lists found.\n");
+    }
+
+    freeListOfLists(lol);
+    return 0;
+}
+```

@@ -1,0 +1,44 @@
+{
+  "task_id": 529,
+  "text": "Write a C function to find the nth jacobsthal-lucas number.",
+  "fn_candidates": [
+    "jacobsthal_lucas",
+    "JacobsthalLucas",
+    "jacobsthalLucas",
+    "jacobsthallucas"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "jacobsthal_lucas",
+      "args": [
+        5
+      ],
+      "expected": 31,
+      "assert_src": "assert jacobsthal_lucas(5) == 31"
+    },
+    {
+      "fn_name": "jacobsthal_lucas",
+      "args": [
+        2
+      ],
+      "expected": 5,
+      "assert_src": "assert jacobsthal_lucas(2) == 5"
+    },
+    {
+      "fn_name": "jacobsthal_lucas",
+      "args": [
+        4
+      ],
+      "expected": 17,
+      "assert_src": "assert jacobsthal_lucas(4) == 17"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,47 @@
+{
+  "task_id": 233,
+  "text": "Write a C function to find the lateral surface area of a cylinder.",
+  "fn_candidates": [
+    "lateralsuface_cylinder",
+    "LateralsufaceCylinder",
+    "lateralsufaceCylinder",
+    "lateralsufacecylinder"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lateralsuface_cylinder",
+      "args": [
+        10,
+        5
+      ],
+      "expected": 314.15000000000003,
+      "assert_src": "assert lateralsuface_cylinder(10,5)==314.15000000000003"
+    },
+    {
+      "fn_name": "lateralsuface_cylinder",
+      "args": [
+        4,
+        5
+      ],
+      "expected": 125.66000000000001,
+      "assert_src": "assert lateralsuface_cylinder(4,5)==125.66000000000001"
+    },
+    {
+      "fn_name": "lateralsuface_cylinder",
+      "args": [
+        4,
+        10
+      ],
+      "expected": 251.32000000000002,
+      "assert_src": "assert lateralsuface_cylinder(4,10)==251.32000000000002"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

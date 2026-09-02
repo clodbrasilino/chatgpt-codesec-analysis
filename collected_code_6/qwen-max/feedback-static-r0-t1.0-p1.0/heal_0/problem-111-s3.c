@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *lst, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (!newNode) return;
+    newNode->data = value;
+    newNode->next = lst->head;
+    lst->head = newNode;
+}
+
+int isPresent(Node *head, int value) {
+    for (Node *current = head; current; current = current->next) {
+        if (current->data == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void findCommonElements(List *list1, List *list2) {
+    for (Node *current = list1->head; current; current = current->next) {
+        if (isPresent(list2->head, current->data)) {
+            printf("%d ", current->data);
+        }
+    }
+}
+
+void freeList(List *lst) {
+    Node *current = lst->head;
+    while (current) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    List list1 = {NULL};
+    List list2 = {NULL};
+
+    addNode(&list1, 5);
+    addNode(&list1, 10);
+    addNode(&list1, 15);
+    addNode(&list1, 20);
+
+    addNode(&list2, 10);
+    addNode(&list2, 20);
+    addNode(&list2, 25);
+    addNode(&list2, 30);
+
+    printf("Common elements: ");
+    findCommonElements(&list1, &list2);
+    printf("\n");
+
+    freeList(&list1);
+    freeList(&list2);
+
+    return 0;
+}

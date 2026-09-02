@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <regex.h>
+
+int match_ab(const char *str) {
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "^a(b*)$", 0);
+    if (ret) return 1;
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    return !ret;
+}
+
+int main() {
+    const char *test_strings[] = {"a", "ab", "abb", "ac", "b", ""};
+    size_t len = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < len; ++i) {
+        if (match_ab(test_strings[i])) {
+            printf("Match: %s\n", test_strings[i]);
+        } else {
+            printf("No match: %s\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

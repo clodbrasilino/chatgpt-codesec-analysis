@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-413-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-413-s2.c:49:48: error: passing argument 1 of 'get_nth_element' from incompatible pointer type [-Wincompatible-pointer-types]
+   49 |     const Tuple* nth_element = get_nth_element(tuples, n, size);
+      |                                                ^~~~~~
+      |                                                |
+      |                                                Tuple **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-413-s2.c:26:43: note: expected 'const Tuple *' but argument is of type 'Tuple **'
+   26 | const Tuple* get_nth_element(const Tuple* tuples, int n, int size) {
+      |                              ~~~~~~~~~~~~~^~~~~~

@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int *get_n_smallest(const int *data, size_t data_size, size_t n) {
+    if (data == NULL || data_size == 0 || n == 0) {
+        return NULL;
+    }
+    
+    if (n > data_size) {
+        n = data_size;
+    }
+    
+    int *copy = (int *)malloc(data_size * sizeof(int));
+    if (copy == NULL) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < data_size; i++) {
+        copy[i] = data[i];
+    }
+    
+    qsort(copy, data_size, sizeof(int), compare_ints);
+    
+    int *result = (int *)malloc(n * sizeof(int));
+    if (result == NULL) {
+        free(copy);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        result[i] = copy[i];
+    }
+    
+    free(copy);
+    return result;
+}
+
+int main(void) {
+    int data[] = {5, 2, 8, 1, 9, 3, 7, 4, 6};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    size_t n = 4;
+    
+    int *result = get_n_smallest(data, data_size, n);
+    if (result == NULL) {
+        return 1;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    return 0;
+}

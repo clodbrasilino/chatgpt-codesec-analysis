@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+float zero_ratio(const int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return -1.0f;
+    }
+
+    int zero_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        }
+    }
+
+    return (float)zero_count / (float)size;
+}
+
+int main(void) {
+    int test1[] = {0, 2, 0, 4, 0, 6};
+    float ratio1 = zero_ratio(test1, sizeof(test1) / sizeof(test1[0]));
+    printf("Test 1 ratio: %.3f\n", ratio1);
+
+    int test2[] = {1, 2, 3, 4, 5};
+    float ratio2 = zero_ratio(test2, sizeof(test2) / sizeof(test2[0]));
+    printf("Test 2 ratio: %.3f\n", ratio2);
+
+    float ratio3 = zero_ratio(NULL, 0);
+    printf("Test 3 ratio: %.3f\n", ratio3);
+
+    return 0;
+}

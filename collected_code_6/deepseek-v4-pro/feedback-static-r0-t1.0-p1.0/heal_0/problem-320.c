@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+long long difference_of_squares(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    long long sum = (long long)n * (n + 1) / 2;
+    long long sum_sq = (long long)n * (n + 1) * (2 * n + 1) / 6;
+    
+    return sum * sum - sum_sq;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a natural number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Difference: %lld\n", difference_of_squares(n));
+    
+    return 0;
+}

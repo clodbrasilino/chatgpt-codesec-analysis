@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long first_digit(unsigned long long n) {
+    unsigned long long fact = 1;
+    while (n > 1) {
+        fact *= n;
+        while (fact % 10 == 0) {
+            fact /= 10;
+        }
+        fact %= 1000000000000000;  // Limit the size to avoid overflow
+        n--;
+    }
+    while (fact >= 10) {
+        fact /= 10;
+    }
+    return fact;
+}
+
+int main() {
+    unsigned long long num;
+    printf("Enter a number: ");
+    if (scanf("%llu", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    printf("The first digit of the factorial is: %llu\n", first_digit(num));
+    return EXIT_SUCCESS;
+}

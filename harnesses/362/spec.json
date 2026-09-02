@@ -1,0 +1,72 @@
+{
+  "task_id": 362,
+  "text": "Write a C function to find the item with maximum occurrences in a given list.",
+  "fn_candidates": [
+    "max_occurrences",
+    "MaxOccurrences",
+    "maxOccurrences",
+    "maxoccurrences"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_occurrences",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          2,
+          3,
+          12,
+          4,
+          2
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert max_occurrences([1,2,3,1,2,3,12,4,2]) ==  2"
+    },
+    {
+      "fn_name": "max_occurrences",
+      "args": [
+        [
+          1,
+          2,
+          6,
+          7,
+          0,
+          1,
+          0,
+          1,
+          0
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert max_occurrences([1,2,6,7,0,1,0,1,0]) == 1,0"
+    },
+    {
+      "fn_name": "max_occurrences",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          1,
+          2,
+          4,
+          1
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert max_occurrences([1,2,3,1,2,4,1]) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

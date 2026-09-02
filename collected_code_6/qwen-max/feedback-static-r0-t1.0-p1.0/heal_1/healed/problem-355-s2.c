@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+
+int count_rectangles_in_circle(double r) {
+    int count = 0;
+    for (double x1 = -r; x1 <= r; x1 += 0.1) {
+        for (double y1 = -r; y1 <= r; y1 += 0.1) {
+            for (double x2 = -r; x2 <= r; x2 += 0.1) {
+                for (double y2 = -r; y2 <= r; y2 += 0.1) {
+                    if (x1 != x2 && y1 != y2) {
+                        double x3 = x2, y3 = y1;
+                        double x4 = x1, y4 = y2;
+                        if (x1*x1 + y1*y1 <= r*r && x2*x2 + y2*y2 <= r*r && x3*x3 + y3*y3 <= r*r && x4*x4 + y4*y4 <= r*r) {
+                            count++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return count / 4;
+}
+
+int main() {
+    double r;
+    printf("Enter the radius of the circle: ");
+    scanf("%lf", &r);
+    int result = count_rectangles_in_circle(r);
+    printf("Number of rectangles in the circle: %d\n", result);
+    return 0;
+}

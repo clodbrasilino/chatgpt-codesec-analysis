@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int is_lowercase_letter(char c) {
+    return c >= 'a' && c <= 'z';
+}
+
+int is_valid_sequence(const char *str, int start, int end) {
+    if (start > end) return 0;
+    if (!is_lowercase_letter(str[start]) && str[start] != '_') return 0;
+    if (!is_lowercase_letter(str[end]) && str[end] != '_') return 0;
+    
+    for (int i = start; i <= end; i++) {
+        if (i > start && str[i] == '_' && str[i-1] == '_') return 0;
+        if (str[i] == '_') continue;
+        if (!is_lowercase_letter(str[i])) return 0;
+    }
+    
+    return 1;
+}
+
+void find_sequences(const char *str) {
+    int len = strlen(str);
+    int in_sequence = 0;
+    int start = 0;
+    
+    for (int i = 0; i < len; i++) {
+        if (is_lowercase_letter(str[i]) || str[i] == '_') {
+            if (!in_sequence) {
+                in_sequence = 1;
+                start = i;
+            }
+        } else {
+            if (in_sequence) {
+                if (i - start > 1 && is_valid_sequence(str, start, i - 1)) {
+                    printf("%.*s\n", i - start, str + start);
+                }
+                in_sequence = 0;
+            }
+        }
+    }
+    
+    if (in_sequence) {
+        if (len - start > 1 && is_valid_sequence(str, start, len - 1)) {
+            printf("%.*s\n", len - start, str + start);
+        }
+    }
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello_world",
+        "test_case_123",
+        "no_sequence",
+        "valid_sequence_here",
+        "single",
+        "a_b_c_d",
+        "with space_after",
+        "UPPER_case",
+        "",
+        "_starts_with_underscore",
+        "ends_with_underscore_",
+        "double__underscore",
+        "123_numbers_first",
+        "mixedCASE_test"
+    };
+    
+    int num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        printf("Test: \"%s\"\n", test_strings[i]);
+        find_sequences(test_strings[i]);
+        printf("---\n");
+    }
+    
+    return 0;
+}

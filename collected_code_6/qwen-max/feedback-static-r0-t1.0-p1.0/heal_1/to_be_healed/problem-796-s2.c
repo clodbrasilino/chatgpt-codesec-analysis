@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    /* Possible weaknesses found:
+     *  struct member 'DictItem::key' is never used. [unusedStructMember]
+     */
+    int key;
+    int value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t length;
+} Dictionary;
+
+int sum_all_items(Dictionary dict) {
+    int sum = 0;
+    for (size_t i = 0; i < dict.length; ++i) {
+        sum += dict.items[i].value;
+    }
+    return sum;
+}
+
+int main() {
+    DictItem items[] = {{1, 10}, {2, 20}, {3, 30}};
+    Dictionary dict = {items, sizeof(items) / sizeof(items[0])};
+    int result = sum_all_items(dict);
+    printf("Sum of all items: %d\n", result);
+    return 0;
+}

@@ -1,0 +1,56 @@
+{
+  "task_id": 947,
+  "text": "Write a C function to find the length of the shortest word.",
+  "fn_candidates": [
+    "len_log",
+    "LenLog",
+    "lenLog",
+    "lenlog"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "len_log",
+      "args": [
+        [
+          "win",
+          "lose",
+          "great"
+        ]
+      ],
+      "expected": 3,
+      "assert_src": "assert len_log([\"win\",\"lose\",\"great\"]) == 3"
+    },
+    {
+      "fn_name": "len_log",
+      "args": [
+        [
+          "a",
+          "ab",
+          "abc"
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert len_log([\"a\",\"ab\",\"abc\"]) == 1"
+    },
+    {
+      "fn_name": "len_log",
+      "args": [
+        [
+          "12",
+          "12",
+          "1234"
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert len_log([\"12\",\"12\",\"1234\"]) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

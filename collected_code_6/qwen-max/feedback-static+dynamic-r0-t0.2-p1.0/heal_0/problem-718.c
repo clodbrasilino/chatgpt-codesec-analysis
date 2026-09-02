@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+Node* alternateElements(Node* head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    Node* newHead = createNode(head->data);
+    if (newHead == NULL) {
+        return NULL;
+    }
+
+    Node* current = head->next->next;
+    Node* newCurrent = newHead;
+
+    while (current != NULL && current->next != NULL) {
+        newCurrent->next = createNode(current->data);
+        if (newCurrent->next == NULL) {
+            freeList(newHead);
+            return NULL;
+        }
+        newCurrent = newCurrent->next;
+        current = current->next->next;
+    }
+
+    return newHead;
+}
+
+int main() {
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
+
+    Node* newHead = alternateElements(head);
+
+    Node* current = newHead;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+
+    freeList(head);
+    freeList(newHead);
+
+    return 0;
+}

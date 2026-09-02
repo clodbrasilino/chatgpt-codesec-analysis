@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple **chunks;
+    size_t num_chunks;
+    size_t chunk_size;
+} ChunkedTuples;
+
+ChunkedTuples *chunk_tuples(Tuple *tuples, size_t num_tuples, size_t chunk_size) {
+    if (tuples == NULL || num_tuples == 0 || chunk_size == 0) {
+        return NULL;
+    }
+
+    ChunkedTuples *result = (ChunkedTuples *)malloc(sizeof(ChunkedTuples));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->num_chunks = (num_tuples + chunk_size - 1) / chunk_size;
+    result->chunk_size = chunk_size;
+    result->chunks = (Tuple **)malloc(result->num_chunks * sizeof(Tuple *));
+    if (result->chunks == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < result->num_chunks; i++) {
+        result->chunks[i] = (Tuple *)malloc(sizeof(Tuple));
+        if (result->chunks[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(result->chunks[j]->data);
+                free(result->chunks[j]);
+            }
+            free(result->chunks);
+            free(result);
+            return NULL;
+        }
+
+        size_t current_chunk_size = (i == result->num_chunks - 1) ? 
+            (num_tuples - i * chunk_size) : chunk_size;
+
+        result->chunks[i]->data = (void **)malloc(current_chunk_size * sizeof(void *));
+        if (result->chunks[i]->data == NULL) {
+            free(result->chunks[i]);
+            for (size_t j = 0; j < i; j++) {
+                free(result->chunks[j]->data);
+                free(result->chunks[j]);
+            }
+            free(result->chunks);
+            free(result);
+            return NULL;
+        }
+
+        result->chunks[i]->size = current_chunk_size;
+
+        for (size_t j = 0; j < current_chunk_size; j++) {
+            result->chunks[i]->data[j] = tuples[i * chunk_size + j].data[0];
+        }
+    }
+
+    return result;
+}
+
+void free_chunked_tuples(ChunkedTuples *chunked) {
+    if (chunked == NULL) {
+        return;
+    }
+
+    if (chunked->chunks != NULL) {
+        for (size_t i = 0; i < chunked->num_chunks; i++) {
+            if (chunked->chunks[i] != NULL) {
+                if (chunked->chunks[i]->data != NULL) {
+                    free(chunked->chunks[i]->data);
+                }
+                free(chunked->chunks[i]);
+            }
+        }
+        free(chunked->chunks);
+    }
+    free(chunked);
+}
+
+int main(void) {
+    const size_t num_tuples = 10;
+    const size_t chunk_size = 3;
+
+    Tuple *tuples = (Tuple *)malloc(num_tuples * sizeof(Tuple));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        tuples[i].data = (void **)malloc(sizeof(void *));
+        if (tuples[i].data == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuples[j].data);
+            }
+            free(tuples);
+            return 1;
+        }
+        int *value = (int *)malloc(sizeof(int));
+        if (value == NULL) {
+            free(tuples[i].data);
+            for (size_t j = 0; j < i; j++) {
+                free(tuples[j].data);
+            }
+            free(tuples);
+            return 1;
+        }
+        *value = (int)(i * 10);
+        tuples[i].data[0] = value;
+        tuples[i].size = 1;
+    }
+
+    ChunkedTuples *chunked = chunk_tuples(tuples, num_tuples, chunk_size);
+    if (chunked == NULL) {
+        for (size_t i = 0; i < num_tuples; i++) {
+            free(tuples[i].data[0]);
+            free(tuples[i].data);
+        }
+        free(tuples);
+        return 1;
+    }
+
+    for (size_t i = 0; i < chunked->num_chunks; i++) {
+        printf("Chunk %zu: ", i);
+        for (size_t j = 0; j < chunked->chunks[i]->size; j++) {
+            printf("%d ", *(int *)chunked->chunks[i]->data[j]);
+        }
+        printf("\n");
+    }
+
+    free_chunked_tuples(chunked);
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        free(tuples[i].data[0]);
+        free(tuples[i].data);
+    }
+    free(tuples);
+
+    return 0;
+}
+```

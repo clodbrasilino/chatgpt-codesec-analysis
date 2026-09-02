@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* filter_even_numbers(int *arr, int len, int *filtered_len) {
+    int count = 0;
+    for (int i = 0; i < len; ++i) {
+        if (arr[i] % 2 == 0) {
+            count++;
+        }
+    }
+    
+    int *result = (int*)malloc(count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    *filtered_len = count;
+    count = 0;
+    for (int i = 0; i < len; ++i) {
+        if (arr[i] % 2 == 0) {
+            result[count++] = arr[i];
+        }
+    }
+    
+    return result;
+}
+
+void free_memory(int *ptr) {
+    free(ptr);
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int length = sizeof(numbers) / sizeof(numbers[0]);
+    int filtered_length;
+
+    int *even_numbers = filter_even_numbers(numbers, length, &filtered_length);
+
+    if (even_numbers != NULL) {
+        for (int i = 0; i < filtered_length; ++i) {
+            printf("%d ", even_numbers[i]);
+        }
+        printf("\n");
+        free_memory(even_numbers);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

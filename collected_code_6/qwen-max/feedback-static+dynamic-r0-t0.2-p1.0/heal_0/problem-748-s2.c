@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void add_spaces_between_capital_words(char *str) {
+    regex_t regex;
+    regmatch_t match[1];
+    char pattern[] = "([A-Z][^A-Z]*)";
+    char result[256] = "";
+    int rc;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
+
+    while (regexec(&regex, str, 1, match, 0) == 0) {
+        strncat(result, str + match[0].rm_so, match[0].rm_eo - match[0].rm_so);
+        strncat(result, " ", 1);
+        str += match[0].rm_eo;
+    }
+    strcpy(str, result);
+
+    regfree(&regex);
+}
+
+int main() {
+    char input[] = "HelloWorldThisIsATest";
+    add_spaces_between_capital_words(input);
+    printf("%s\n", input);
+    return 0;
+}

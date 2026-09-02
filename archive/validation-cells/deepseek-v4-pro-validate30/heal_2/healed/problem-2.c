@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int* findSimilarElements(const Tuple* list1, int size1, const Tuple* list2, int size2, int* resultSize) {
+    if (list1 == NULL || list2 == NULL || resultSize == NULL || size1 <= 0 || size2 <= 0) {
+        if (resultSize != NULL) {
+            *resultSize = 0;
+        }
+        return NULL;
+    }
+
+    int maxPossibleMatches = size1 < size2 ? size1 : size2;
+    int* result = (int*)malloc((size_t)maxPossibleMatches * 2 * sizeof(int));
+    
+    if (result == NULL) {
+        *resultSize = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < size1; i++) {
+        for (int j = 0; j < size2; j++) {
+            if (list1[i].first == list2[j].first && list1[i].second == list2[j].second) {
+                result[count++] = list1[i].first;
+                result[count++] = list1[i].second;
+                break;
+            }
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *resultSize = 0;
+        return NULL;
+    }
+
+    *resultSize = count;
+    return result;
+}
+
+int main(void) {
+    const Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    const Tuple list2[] = {{3, 4}, {9, 10}, {5, 6}, {11, 12}};
+    
+    int resultSize = 0;
+    int* similar = findSimilarElements(list1, 4, list2, 4, &resultSize);
+    
+    if (similar == NULL) {
+        printf("No similar elements found or error occurred\n");
+        return 1;
+    }
+    
+    printf("Similar elements: ");
+    for (int i = 0; i < resultSize; i += 2) {
+        printf("(%d, %d) ", similar[i], similar[i + 1]);
+    }
+    printf("\n");
+    
+    free(similar);
+    return 0;
+}

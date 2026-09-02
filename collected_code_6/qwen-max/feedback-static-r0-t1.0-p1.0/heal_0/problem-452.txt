@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int amount;
+    int is_loss;
+} AmountStatus;
+
+AmountStatus* createAmountStatus(int amount, int is_loss) {
+    AmountStatus* status = (AmountStatus*)malloc(sizeof(AmountStatus));
+    if (status == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    status->amount = amount;
+    status->is_loss = is_loss;
+    return status;
+}
+
+void freeAmountStatus(AmountStatus* status) {
+    if (status != NULL) {
+        free(status);
+    }
+}
+
+int getLossAmount(AmountStatus* status) {
+    if (status != NULL && status->is_loss > 0) {
+        return status->amount;
+    }
+    return -1; // Indicate no loss
+}
+
+int main() {
+    AmountStatus* status1 = createAmountStatus(100, 1);
+    printf("Loss amount: %d\n", getLossAmount(status1));
+    freeAmountStatus(status1);
+
+    AmountStatus* status2 = createAmountStatus(200, 0);
+    printf("Loss amount: %d\n", getLossAmount(status2) == -1 ? 0 : getLossAmount(status2));
+    freeAmountStatus(status2);
+
+    return 0;
+}
+```

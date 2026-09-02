@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    int count;
+} Tuple;
+
+double average_of_tuples(Tuple *tuples, int tuple_count) {
+    if (tuples == NULL || tuple_count <= 0) {
+        return 0.0;
+    }
+
+    long long total_sum = 0;
+    long long total_count = 0;
+
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].values == NULL || tuples[i].count <= 0) {
+            continue;
+        }
+        for (int j = 0; j < tuples[i].count; j++) {
+            total_sum += tuples[i].values[j];
+            total_count++;
+        }
+    }
+
+    if (total_count == 0) {
+        return 0.0;
+    }
+
+    return (double)total_sum / total_count;
+}
+
+int main(void) {
+    int values1[] = {1, 2, 3};
+    int values2[] = {4, 5};
+    int values3[] = {6, 7, 8, 9};
+
+    Tuple tuples[] = {
+        {values1, 3},
+        {values2, 2},
+        {values3, 4}
+    };
+
+    double avg = average_of_tuples(tuples, 3);
+    printf("Average: %.2f\n", avg);
+
+    return 0;
+}

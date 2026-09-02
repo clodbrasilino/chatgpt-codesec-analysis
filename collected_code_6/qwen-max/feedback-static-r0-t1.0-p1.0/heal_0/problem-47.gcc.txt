@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c: In function 'last_digit_factorial_division':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c:20:22: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+   20 |     return (fact_b * pow(result, 10 - 2)) % 10;
+      |                      ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c:3:1: note: include '<math.h>' or provide a declaration of 'pow'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-47.c:20:43: error: invalid operands to binary % (have 'double' and 'int')
+   20 |     return (fact_b * pow(result, 10 - 2)) % 10;
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
+      |                    |
+      |                    double

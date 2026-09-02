@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int data) {
+    Node *new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+int contains_sublist(Node *list, Node *sublist) {
+    if (list == NULL || sublist == NULL) {
+        return 0;
+    }
+    
+    Node *list_ptr = list;
+    
+    while (list_ptr != NULL) {
+        Node *temp_list = list_ptr;
+        Node *temp_sublist = sublist;
+        
+        while (temp_list != NULL && temp_sublist != NULL && 
+               temp_list->data == temp_sublist->data) {
+            temp_list = temp_list->next;
+            temp_sublist = temp_sublist->next;
+        }
+        
+        if (temp_sublist == NULL) {
+            return 1;
+        }
+        
+        list_ptr = list_ptr->next;
+    }
+    
+    return 0;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *list = NULL;
+    Node *sublist = NULL;
+    
+    append_node(&list, 1);
+    append_node(&list, 2);
+    append_node(&list, 3);
+    append_node(&list, 4);
+    append_node(&list, 5);
+    
+    append_node(&sublist, 3);
+    append_node(&sublist, 4);
+    
+    if (contains_sublist(list, sublist)) {
+        printf("Sublist found\n");
+    } else {
+        printf("Sublist not found\n");
+    }
+    
+    free_list(list);
+    free_list(sublist);
+    
+    return 0;
+}

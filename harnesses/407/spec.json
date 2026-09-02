@@ -1,0 +1,44 @@
+{
+  "task_id": 407,
+  "text": "Write a C function to create the next bigger number by rearranging the digits of a given number.",
+  "fn_candidates": [
+    "rearrange_bigger",
+    "RearrangeBigger",
+    "rearrangeBigger",
+    "rearrangebigger"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "rearrange_bigger",
+      "args": [
+        12
+      ],
+      "expected": 21,
+      "assert_src": "assert rearrange_bigger(12)==21"
+    },
+    {
+      "fn_name": "rearrange_bigger",
+      "args": [
+        10
+      ],
+      "expected": false,
+      "assert_src": "assert rearrange_bigger(10)==False"
+    },
+    {
+      "fn_name": "rearrange_bigger",
+      "args": [
+        102
+      ],
+      "expected": 120,
+      "assert_src": "assert rearrange_bigger(102)==120"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

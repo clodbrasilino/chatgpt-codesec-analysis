@@ -1,0 +1,70 @@
+{
+  "task_id": 836,
+  "text": "Write a C function to find length of the subarray having maximum sum.",
+  "fn_candidates": [
+    "max_sub_array_sum",
+    "MaxSubArraySum",
+    "maxSubArraySum",
+    "maxsubarraysum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "max_sub_array_sum",
+      "args": [
+        [
+          -2,
+          -3,
+          4,
+          -1,
+          -2,
+          1,
+          5,
+          -3
+        ],
+        8
+      ],
+      "expected": 5,
+      "assert_src": "assert max_sub_array_sum([-2, -3, 4, -1, -2, 1, 5, -3],8) == 5"
+    },
+    {
+      "fn_name": "max_sub_array_sum",
+      "args": [
+        [
+          1,
+          -2,
+          1,
+          1,
+          -2,
+          1
+        ],
+        6
+      ],
+      "expected": 2,
+      "assert_src": "assert max_sub_array_sum([1, -2, 1, 1, -2, 1],6) == 2"
+    },
+    {
+      "fn_name": "max_sub_array_sum",
+      "args": [
+        [
+          -1,
+          -2,
+          3,
+          4,
+          5
+        ],
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert max_sub_array_sum([-1, -2, 3, 4, 5],5) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

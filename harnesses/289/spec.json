@@ -1,0 +1,44 @@
+{
+  "task_id": 289,
+  "text": "Write a C function to calculate the number of odd days in a given year.",
+  "fn_candidates": [
+    "odd_Days",
+    "OddDays",
+    "oddDays",
+    "oddDays"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_Days",
+      "args": [
+        100
+      ],
+      "expected": 5,
+      "assert_src": "assert odd_Days(100) == 5"
+    },
+    {
+      "fn_name": "odd_Days",
+      "args": [
+        50
+      ],
+      "expected": 6,
+      "assert_src": "assert odd_Days(50) ==6"
+    },
+    {
+      "fn_name": "odd_Days",
+      "args": [
+        75
+      ],
+      "expected": 2,
+      "assert_src": "assert odd_Days(75) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

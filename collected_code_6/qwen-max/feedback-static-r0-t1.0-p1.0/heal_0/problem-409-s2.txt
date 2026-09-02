@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int minProduct(Tuple *tuples, int size) {
+    if (size < 2) return INT_MAX;
+    int minProd = tuples[0].first * tuples[0].second;
+    for (int i = 1; i < size; ++i) {
+        int prod = tuples[i].first * tuples[i].second;
+        if (prod < minProd) {
+            minProd = prod;
+        }
+    }
+    return minProd;
+}
+
+int main() {
+    Tuple tuples[] = {{2, 3}, {4, 5}, {1, 6}, {-1, -7}};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    printf("Minimum product: %d\n", minProduct(tuples, size));
+    return 0;
+}
+```

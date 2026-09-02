@@ -1,0 +1,44 @@
+{
+  "task_id": 752,
+  "text": "Write a C function to find the nth jacobsthal number.",
+  "fn_candidates": [
+    "jacobsthal_num",
+    "JacobsthalNum",
+    "jacobsthalNum",
+    "jacobsthalnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "jacobsthal_num",
+      "args": [
+        5
+      ],
+      "expected": 11,
+      "assert_src": "assert jacobsthal_num(5) == 11"
+    },
+    {
+      "fn_name": "jacobsthal_num",
+      "args": [
+        2
+      ],
+      "expected": 1,
+      "assert_src": "assert jacobsthal_num(2) == 1"
+    },
+    {
+      "fn_name": "jacobsthal_num",
+      "args": [
+        4
+      ],
+      "expected": 5,
+      "assert_src": "assert jacobsthal_num(4) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

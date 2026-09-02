@@ -1,0 +1,44 @@
+{
+  "task_id": 411,
+  "text": "Write a C function to convert the given snake case string to camel case string by using regex.",
+  "fn_candidates": [
+    "snake_to_camel",
+    "SnakeToCamel",
+    "snakeToCamel",
+    "snaketocamel"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "snake_to_camel",
+      "args": [
+        "android_tv"
+      ],
+      "expected": "AndroidTv",
+      "assert_src": "assert snake_to_camel('android_tv') == 'AndroidTv'"
+    },
+    {
+      "fn_name": "snake_to_camel",
+      "args": [
+        "google_pixel"
+      ],
+      "expected": "GooglePixel",
+      "assert_src": "assert snake_to_camel('google_pixel') == 'GooglePixel'"
+    },
+    {
+      "fn_name": "snake_to_camel",
+      "args": [
+        "apple_watch"
+      ],
+      "expected": "AppleWatch",
+      "assert_src": "assert snake_to_camel('apple_watch') == 'AppleWatch'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

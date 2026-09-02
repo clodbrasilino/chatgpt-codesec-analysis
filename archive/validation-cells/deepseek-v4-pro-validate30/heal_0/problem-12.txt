@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int row_sum(const int *row, int cols) {
+    int sum = 0;
+    for (int i = 0; i < cols; i++) {
+        sum += row[i];
+    }
+    return sum;
+}
+
+int compare_rows(const void *a, const void *b, void *arg) {
+    int cols = *(int *)arg;
+    const int *row_a = (const int *)a;
+    const int *row_b = (const int *)b;
+    int sum_a = row_sum(row_a, cols);
+    int sum_b = row_sum(row_b, cols);
+    return (sum_a > sum_b) - (sum_a < sum_b);
+}
+
+void sort_matrix_by_row_sum(int *matrix, int rows, int cols) {
+    if (matrix == NULL || rows <= 0 || cols <= 0) {
+        return;
+    }
+    
+    int *matrix_copy = (int *)malloc((size_t)rows * (size_t)cols * sizeof(int));
+    if (matrix_copy == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < rows * cols; i++) {
+        matrix_copy[i] = matrix[i];
+    }
+    
+    int *row_pointers = (int *)malloc((size_t)rows * sizeof(int));
+    if (row_pointers == NULL) {
+        free(matrix_copy);
+        return;
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        row_pointers[i] = i;
+    }
+    
+    for (int i = 0; i < rows - 1; i++) {
+        for (int j = 0; j < rows - i - 1; j++) {
+            int sum1 = row_sum(&matrix_copy[row_pointers[j] * cols], cols);
+            int sum2 = row_sum(&matrix_copy[row_pointers[j + 1] * cols], cols);
+            if (sum1 > sum2) {
+                int temp = row_pointers[j];
+                row_pointers[j] = row_pointers[j + 1];
+                row_pointers[j + 1] = temp;
+            }
+        }
+    }
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            matrix[i * cols + j] = matrix_copy[row_pointers[i] * cols + j];
+        }
+    }
+    
+    free(matrix_copy);
+    free(row_pointers);
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 3;
+    int matrix[3][3] = {
+        {3, 2, 1},
+        {1, 1, 1},
+        {5, 4, 3}
+    };
+    
+    sort_matrix_by_row_sum(&matrix[0][0], rows, cols);
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
+```

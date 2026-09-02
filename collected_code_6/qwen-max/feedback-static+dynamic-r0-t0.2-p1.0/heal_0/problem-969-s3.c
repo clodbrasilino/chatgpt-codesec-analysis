@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+TupleList* create_tuple_list(size_t initial_capacity) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    list->tuples = (Tuple*)malloc(initial_capacity * sizeof(Tuple));
+    list->count = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+void free_tuple_list(TupleList *list) {
+    free(list->tuples);
+    free(list);
+}
+
+int find_index(TupleList *list, int key) {
+    for (size_t i = 0; i < list->count; ++i) {
+        if (list->tuples[i].key == key) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void add_tuple(TupleList *list, int key, int value) {
+    if (list->count >= list->capacity) {
+        list->capacity *= 2;
+        list->tuples = (Tuple*)realloc(list->tuples, list->capacity * sizeof(Tuple));
+    }
+    list->tuples[list->count].key = key;
+    list->tuples[list->count].value = value;
+    list->count++;
+}
+
+void join_tuples(TupleList *source, TupleList *destination) {
+    for (size_t i = 0; i < source->count; ++i) {
+        int index = find_index(destination, source->tuples[i].key);
+        if (index != -1) {
+            destination->tuples[index].value += source->tuples[i].value;
+        } else {
+            add_tuple(destination, source->tuples[i].key, source->tuples[i].value);
+        }
+    }
+}
+
+int main() {
+    TupleList *source = create_tuple_list(5);
+    add_tuple(source, 1, 10);
+    add_tuple(source, 2, 20);
+    add_tuple(source, 1, 30);
+
+    TupleList *destination = create_tuple_list(5);
+    add_tuple(destination, 1, 5);
+    add_tuple(destination, 2, 15);
+
+    join_tuples(source, destination);
+
+    for (size_t i = 0; i < destination->count; ++i) {
+        printf("Key: %d, Value: %d\n", destination->tuples[i].key, destination->tuples[i].value);
+    }
+
+    free_tuple_list(source);
+    free_tuple_list(destination);
+
+    return 0;
+}

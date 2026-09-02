@@ -1,0 +1,83 @@
+{
+  "task_id": 273,
+  "text": "Write a C function to substract the contents of one tuple with corresponding index of other tuple.",
+  "fn_candidates": [
+    "substract_elements",
+    "SubstractElements",
+    "substractElements",
+    "substractelements"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "substract_elements",
+      "args": [
+        [
+          10,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          18
+        ]
+      ],
+      "expected": [
+        8,
+        -1,
+        -13
+      ],
+      "assert_src": "assert substract_elements((10, 4, 5), (2, 5, 18)) == (8, -1, -13)"
+    },
+    {
+      "fn_name": "substract_elements",
+      "args": [
+        [
+          11,
+          2,
+          3
+        ],
+        [
+          24,
+          45,
+          16
+        ]
+      ],
+      "expected": [
+        -13,
+        -43,
+        -13
+      ],
+      "assert_src": "assert substract_elements((11, 2, 3), (24, 45 ,16)) == (-13, -43, -13)"
+    },
+    {
+      "fn_name": "substract_elements",
+      "args": [
+        [
+          7,
+          18,
+          9
+        ],
+        [
+          10,
+          11,
+          12
+        ]
+      ],
+      "expected": [
+        -3,
+        7,
+        -3
+      ],
+      "assert_src": "assert substract_elements((7, 18, 9), (10, 11, 12)) == (-3, 7, -3)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

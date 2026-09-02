@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Entry;
+
+typedef struct {
+    int size;
+    Entry **entries;
+} Dictionary;
+
+typedef struct {
+    void **items;
+    int size;
+    int capacity;
+} Tuple;
+
+Dictionary *createDictionary() {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->size = 0;
+    dict->entries = NULL;
+    return dict;
+}
+
+void destroyDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        free(dict->entries[i]->key);
+        free(dict->entries[i]);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+Entry *createEntry(const char *key, int value) {
+    Entry *entry = malloc(sizeof(Entry));
+    if (entry == NULL) return NULL;
+    entry->key = strdup(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return NULL;
+    }
+    entry->value = value;
+    return entry;
+}
+
+int addEntryToDictionary(Dictionary *dict, Entry *entry) {
+    dict->size++;
+    dict->entries = realloc(dict->entries, sizeof(Entry *) * dict->size);
+    if (dict->entries == NULL) return -1;
+    dict->entries[dict->size - 1] = entry;
+    return 0;
+}
+
+Tuple *createTuple(int capacity) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+    tuple->items = malloc(sizeof(void *) * capacity);
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->capacity = capacity;
+    tuple->size = 0;
+    return tuple;
+}
+
+void destroyTuple(Tuple *tuple) {
+    for (int i = 0; i < tuple->size; ++i) {
+        if (tuple->items[i]) {
+            if ((long)tuple->items[i] % 2 == 1) // Assuming odd pointer is a dictionary
+                destroyDictionary((Dictionary *)tuple->items[i]);
+            else
+                free(tuple->items[i]);
+        }
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+int addToTuple(Tuple *tuple, void *item) {
+    if (tuple->size >= tuple->capacity) {
+        size_t newCapacity = tuple->capacity * 2;
+        void **newItems = realloc(tuple->items, sizeof(void *) * newCapacity);
+        if (newItems == NULL) return -1;
+        tuple->items = newItems;
+        tuple->capacity = newCapacity;
+    }
+    tuple->items[tuple->size++] = item;
+    return 0;
+}
+
+int addDictionaryToTuple(Tuple *tuple, Dictionary *dict) {
+    long markedDict = (long)dict | 1;
+    return addToTuple(tuple, (void *)markedDict);
+}
+
+int main() {
+    Tuple *tuple = createTuple(10);
+    Dictionary *dict = createDictionary();
+    Entry *entry = createEntry("test", 10);
+
+    if (addEntryToDictionary(dict, entry) != 0 || addDictionaryToTuple(tuple, dict) != 0) {
+        fprintf(stderr, "Error adding dictionary to tuple\n");
+        destroyDictionary(dict);
+        destroyTuple(tuple);
+        return 1;
+    }
+
+    destroyTuple(tuple);
+    return 0;
+}
+```

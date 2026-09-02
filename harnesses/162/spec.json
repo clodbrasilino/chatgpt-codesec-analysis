@@ -1,0 +1,44 @@
+{
+  "task_id": 162,
+  "text": "Write a C function to calculate the sum of the positive integers of n+(n-2)+(n-4)... (until n-x =< 0).",
+  "fn_candidates": [
+    "sum_series",
+    "SumSeries",
+    "sumSeries",
+    "sumseries"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_series",
+      "args": [
+        6
+      ],
+      "expected": 12,
+      "assert_src": "assert sum_series(6)==12"
+    },
+    {
+      "fn_name": "sum_series",
+      "args": [
+        10
+      ],
+      "expected": 30,
+      "assert_src": "assert sum_series(10)==30"
+    },
+    {
+      "fn_name": "sum_series",
+      "args": [
+        9
+      ],
+      "expected": 25,
+      "assert_src": "assert sum_series(9)==25"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

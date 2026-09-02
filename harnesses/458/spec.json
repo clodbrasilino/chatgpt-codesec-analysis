@@ -1,0 +1,47 @@
+{
+  "task_id": 458,
+  "text": "Write a C function to find the area of a rectangle.",
+  "fn_candidates": [
+    "rectangle_area",
+    "RectangleArea",
+    "rectangleArea",
+    "rectanglearea"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "rectangle_area",
+      "args": [
+        10,
+        20
+      ],
+      "expected": 200,
+      "assert_src": "assert rectangle_area(10,20)==200"
+    },
+    {
+      "fn_name": "rectangle_area",
+      "args": [
+        10,
+        5
+      ],
+      "expected": 50,
+      "assert_src": "assert rectangle_area(10,5)==50"
+    },
+    {
+      "fn_name": "rectangle_area",
+      "args": [
+        4,
+        2
+      ],
+      "expected": 8,
+      "assert_src": "assert rectangle_area(4,2)==8"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,62 @@
+{
+  "task_id": 134,
+  "text": "Write a C function to check whether the last element of given array is even or odd after performing an operation p times.",
+  "fn_candidates": [
+    "check_last",
+    "CheckLast",
+    "checkLast",
+    "checklast"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_last",
+      "args": [
+        [
+          5,
+          7,
+          10
+        ],
+        3,
+        1
+      ],
+      "expected": "ODD",
+      "assert_src": "assert check_last([5,7,10],3,1) == \"ODD\""
+    },
+    {
+      "fn_name": "check_last",
+      "args": [
+        [
+          2,
+          3
+        ],
+        2,
+        3
+      ],
+      "expected": "EVEN",
+      "assert_src": "assert check_last([2,3],2,3) == \"EVEN\""
+    },
+    {
+      "fn_name": "check_last",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        3,
+        1
+      ],
+      "expected": "ODD",
+      "assert_src": "assert check_last([1,2,3],3,1) == \"ODD\""
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

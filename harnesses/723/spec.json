@@ -1,0 +1,117 @@
+{
+  "task_id": 723,
+  "text": "Write a C function to count the same pair in two given lists using map function.",
+  "fn_candidates": [
+    "count_same_pair",
+    "CountSamePair",
+    "countSamePair",
+    "countsamepair"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_same_pair",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        [
+          2,
+          2,
+          3,
+          1,
+          2,
+          6,
+          7,
+          9
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert count_same_pair([1, 2, 3, 4, 5, 6, 7, 8],[2, 2, 3, 1, 2, 6, 7, 9])==4"
+    },
+    {
+      "fn_name": "count_same_pair",
+      "args": [
+        [
+          0,
+          1,
+          2,
+          -1,
+          -5,
+          6,
+          0,
+          -3,
+          -2,
+          3,
+          4,
+          6,
+          8
+        ],
+        [
+          2,
+          1,
+          2,
+          -1,
+          -5,
+          6,
+          4,
+          -3,
+          -2,
+          3,
+          4,
+          6,
+          8
+        ]
+      ],
+      "expected": 11,
+      "assert_src": "assert count_same_pair([0, 1, 2, -1, -5, 6, 0, -3, -2, 3, 4, 6, 8],[2, 1, 2, -1, -5, 6, 4, -3, -2, 3, 4, 6, 8])==11"
+    },
+    {
+      "fn_name": "count_same_pair",
+      "args": [
+        [
+          2,
+          4,
+          -6,
+          -9,
+          11,
+          -12,
+          14,
+          -5,
+          17
+        ],
+        [
+          2,
+          1,
+          2,
+          -1,
+          -5,
+          6,
+          4,
+          -3,
+          -2,
+          3,
+          4,
+          6,
+          8
+        ]
+      ],
+      "expected": 1,
+      "assert_src": "assert count_same_pair([2, 4, -6, -9, 11, -12, 14, -5, 17],[2, 1, 2, -1, -5, 6, 4, -3, -2, 3, 4, 6, 8])==1"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

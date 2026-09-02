@@ -261,6 +261,8 @@ def get_cwe_pillar(cwe: int):
 
 
 def find_father(cwe: Weakness):
+    if not hasattr(cwe, "related_weaknesses"):
+        return None
     for related in cwe.related_weaknesses.split("::"):
         if related == "":
             continue

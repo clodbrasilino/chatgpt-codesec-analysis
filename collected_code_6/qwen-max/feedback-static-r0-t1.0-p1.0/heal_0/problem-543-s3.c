@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int add_and_count_digits(int a, int b) {
+    int sum = a + b;
+    int count = 0;
+    if (sum == 0) {
+        return 1;
+    }
+    if (sum < 0) {
+        sum = -sum;
+    }
+    while (sum > 0) {
+        sum /= 10;
+        count++;
+    }
+    return count;
+}
+
+int main() {
+    int num1 = 123;
+    int num2 = 456;
+    int digits = add_and_count_digits(num1, num2);
+    printf("The number of digits in the sum is: %d\n", digits);
+    return 0;
+}

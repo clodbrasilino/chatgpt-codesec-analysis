@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:25:9: style: Variable 'pos' is reassigned a value before the old one has been used. [redundantAssignment]
+    pos = left_insertion_point(sorted_array, size, 4);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:24:9: note: pos is assigned
+    pos = left_insertion_point(sorted_array, size, 2);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:25:9: note: pos is overwritten
+    pos = left_insertion_point(sorted_array, size, 4);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:26:9: style: Variable 'pos' is reassigned a value before the old one has been used. [redundantAssignment]
+    pos = left_insertion_point(sorted_array, size, 8);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:25:9: note: pos is assigned
+    pos = left_insertion_point(sorted_array, size, 4);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:26:9: note: pos is overwritten
+    pos = left_insertion_point(sorted_array, size, 8);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:27:9: style: Variable 'pos' is reassigned a value before the old one has been used. [redundantAssignment]
+    pos = left_insertion_point(sorted_array, size, 0);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:26:9: note: pos is assigned
+    pos = left_insertion_point(sorted_array, size, 8);
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-736-s3.c:27:9: note: pos is overwritten
+    pos = left_insertion_point(sorted_array, size, 0);
+        ^

@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    int length;
+} List;
+
+void initList(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    list->head = NULL;
+    list->length = 0;
+}
+
+void appendNode(List *list, int data) {
+    if (list == NULL) {
+        return;
+    }
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    if (list->head == NULL) {
+        list->head = newNode;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+    list->length++;
+}
+
+void freeList(List *list) {
+    if (list == NULL || list->head == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    list->head = NULL;
+    list->length = 0;
+}
+
+const List *findMinLengthList(const List *lists, int count) {
+    if (lists == NULL || count <= 0) {
+        return NULL;
+    }
+    const List *minList = &lists[0];
+    int minLength = lists[0].length;
+    for (int i = 1; i < count; i++) {
+        if (lists[i].length < minLength) {
+            minList = &lists[i];
+            minLength = lists[i].length;
+        }
+    }
+    return minList;
+}
+
+int main(void) {
+    List lists[3];
+    initList(&lists[0]);
+    initList(&lists[1]);
+    initList(&lists[2]);
+
+    appendNode(&lists[0], 1);
+    appendNode(&lists[0], 2);
+    appendNode(&lists[0], 3);
+
+    appendNode(&lists[1], 4);
+
+    appendNode(&lists[2], 5);
+    appendNode(&lists[2], 6);
+
+    const List *minList = findMinLengthList(lists, 3);
+    if (minList != NULL) {
+        printf("Minimum length: %d\n", minList->length);
+    }
+
+    freeList(&lists[0]);
+    freeList(&lists[1]);
+    freeList(&lists[2]);
+
+    return 0;
+}
+```

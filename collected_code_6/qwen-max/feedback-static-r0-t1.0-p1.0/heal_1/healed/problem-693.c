@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_multiple_spaces(char *str) {
+    regex_t reg;
+    const char *pattern = "\\s+";
+    const char *replacement = " ";
+
+    if (regcomp(&reg, pattern, REG_EXTENDED) != 0) {
+        fprintf(stderr, "Regex compilation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    size_t nmatch = 10;
+    regmatch_t pmatch[nmatch];
+    int match_count;
+
+    while ((match_count = regexec(&reg, str, nmatch, pmatch, 0)) == 0) {
+        size_t length_before = pmatch[0].rm_so;
+        size_t replacement_length = strlen(replacement);
+        size_t to_be_replaced_length = pmatch[0].rm_eo - pmatch[0].rm_so;
+        size_t remaining_length = strlen(str + pmatch[0].rm_eo);
+
+        memmove(str + length_before + replacement_length, str + pmatch[0].rm_eo, remaining_length + 1);
+        strncpy(str + length_before, replacement, replacement_length);
+    }
+
+    if (match_count != REG_NOMATCH) {
+        if (match_count != 0) {
+            fprintf(stderr, "Matching error\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    regfree(&reg);
+}
+
+int main() {
+    char *input = strdup("This   is  an example   text  with  multiple   spaces.");
+    remove_multiple_spaces(input);
+    printf("%s\n", input);
+    free(input);
+    return 0;
+}

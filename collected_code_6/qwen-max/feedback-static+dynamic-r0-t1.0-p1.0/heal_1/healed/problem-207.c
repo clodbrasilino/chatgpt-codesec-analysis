@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int longestRepeatingSubsequence(const char *X, int n) {
+    int dp[n+1][n+1];
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0 || j == 0) {
+                dp[i][j] = 0;
+            } else if (X[i-1] == X[j-1] && i != j) {
+                dp[i][j] = 1 + dp[i-1][j-1];
+            } else {
+                dp[i][j] = (dp[i-1][j] > dp[i][j-1]) ? dp[i-1][j] : dp[i][j-1];
+            }
+        }
+    }
+    return dp[n][n];
+}
+
+int main() {
+    const char X[] = "AABEBCDD";
+    int n = strlen(X);
+    printf("Length of the longest repeating subsequence is %d\n", longestRepeatingSubsequence(X, n));
+    return 0;
+}

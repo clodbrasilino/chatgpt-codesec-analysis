@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:28:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 2) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:58:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 1) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:83:5: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+    parts = realloc(parts, (count + 1) * sizeof(char*));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:33:22: warning: Either the condition 'parts==NULL' is redundant or there is possible null pointer dereference: parts. [nullPointerRedundantCheck]
+                free(parts[i]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:29:19: note: Assuming that condition 'parts==NULL' is not redundant
+        if (parts == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:33:22: note: Null pointer dereference
+                free(parts[i]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:63:22: warning: Either the condition 'parts==NULL' is redundant or there is possible null pointer dereference: parts. [nullPointerRedundantCheck]
+                free(parts[i]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:59:19: note: Assuming that condition 'parts==NULL' is not redundant
+        if (parts == NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:63:22: note: Null pointer dereference
+                free(parts[i]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:88:18: warning: Either the condition 'parts==NULL' is redundant or there is possible null pointer dereference: parts. [nullPointerRedundantCheck]
+            free(parts[i]);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:84:15: note: Assuming that condition 'parts==NULL' is not redundant
+    if (parts == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-73-s2.c:88:18: note: Null pointer dereference
+            free(parts[i]);
+                 ^

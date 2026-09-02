@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-36.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-36.c:24:31: warning: Either the condition 'remainder==0' is redundant or there is division by zero at line 24. [zerodivcond]
+        int digit = remainder / denominator;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-36.c:29:23: note: Assuming that condition 'remainder==0' is not redundant
+        if (remainder == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-36.c:25:22: note: Assignment to 'remainder%=denominator'
+        remainder %= denominator;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p0.5/heal_0/problem-36.c:24:31: note: Division by zero
+        int digit = remainder / denominator;
+                              ^

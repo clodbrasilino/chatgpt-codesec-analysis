@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+Tuple remove_duplicates(Tuple tuple) {
+    if (tuple.data == NULL || tuple.size <= 0) {
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    int *result = (int *)malloc(tuple.size * sizeof(int));
+    if (result == NULL) {
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    int result_size = 0;
+    int i, j;
+    
+    for (i = 0; i < tuple.size; i++) {
+        int is_duplicate = 0;
+        for (j = 0; j < result_size; j++) {
+            if (tuple.data[i] == result[j]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            result[result_size] = tuple.data[i];
+            result_size++;
+        }
+    }
+    
+    if (result_size == 0) {
+        free(result);
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    int *final_result = (int *)realloc(result, result_size * sizeof(int));
+    if (final_result == NULL) {
+        free(result);
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    Tuple new_tuple;
+    new_tuple.data = final_result;
+    new_tuple.size = result_size;
+    return new_tuple;
+}
+
+void print_tuple(Tuple tuple) {
+    printf("(");
+    for (int i = 0; i < tuple.size; i++) {
+        printf("%d", tuple.data[i]);
+        if (i < tuple.size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 1, 5, 3, 6, 4};
+    Tuple original;
+    original.data = arr;
+    original.size = 10;
+    
+    printf("Original tuple: ");
+    print_tuple(original);
+    
+    Tuple result = remove_duplicates(original);
+    
+    printf("Tuple after removing duplicates: ");
+    if (result.data != NULL) {
+        print_tuple(result);
+        free(result.data);
+    } else {
+        printf("()\n");
+    }
+    
+    int arr2[] = {5, 5, 5, 5};
+    Tuple original2;
+    original2.data = arr2;
+    original2.size = 4;
+    
+    printf("Original tuple 2: ");
+    print_tuple(original2);
+    
+    Tuple result2 = remove_duplicates(original2);
+    
+    printf("Tuple 2 after removing duplicates: ");
+    if (result2.data != NULL) {
+        print_tuple(result2);
+        free(result2.data);
+    } else {
+        printf("()\n");
+    }
+    
+    int arr3[] = {7};
+    Tuple original3;
+    original3.data = arr3;
+    original3.size = 1;
+    
+    printf("Original tuple 3: ");
+    print_tuple(original3);
+    
+    Tuple result3 = remove_duplicates(original3);
+    
+    printf("Tuple 3 after removing duplicates: ");
+    if (result3.data != NULL) {
+        print_tuple(result3);
+        free(result3.data);
+    } else {
+        printf("()\n");
+    }
+    
+    return 0;
+}
+```

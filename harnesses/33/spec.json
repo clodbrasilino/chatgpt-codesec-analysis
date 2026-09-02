@@ -1,0 +1,44 @@
+{
+  "task_id": 33,
+  "text": "Write a C function to convert a decimal number to binary number.",
+  "fn_candidates": [
+    "decimal_To_Binary",
+    "DecimalToBinary",
+    "decimalToBinary",
+    "decimalToBinary"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "decimal_To_Binary",
+      "args": [
+        10
+      ],
+      "expected": 1010,
+      "assert_src": "assert decimal_To_Binary(10) == 1010"
+    },
+    {
+      "fn_name": "decimal_To_Binary",
+      "args": [
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert decimal_To_Binary(1) == 1"
+    },
+    {
+      "fn_name": "decimal_To_Binary",
+      "args": [
+        20
+      ],
+      "expected": 10100,
+      "assert_src": "assert decimal_To_Binary(20) == 10100"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

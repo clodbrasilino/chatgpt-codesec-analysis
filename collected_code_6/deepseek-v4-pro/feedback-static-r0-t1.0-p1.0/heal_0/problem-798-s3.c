@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_array(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+    int total = 0;
+    for (size_t i = 0; i < n; i++) {
+        total += arr[i];
+    }
+    return total;
+}
+
+int main(void) {
+    int values[] = {5, 10, 15, 20, 25};
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    int result = sum_array(values, count);
+    printf("Sum: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

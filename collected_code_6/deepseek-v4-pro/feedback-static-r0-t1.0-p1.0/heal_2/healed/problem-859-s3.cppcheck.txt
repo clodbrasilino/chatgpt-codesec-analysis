@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:38:28: portability: Shifting signed 32-bit value by 31 bits is implementation-defined behaviour. See condition at line 33. [shiftTooManyBitsSigned]
+    int total_sublists = 1 << size;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:33:14: note: Assuming that condition 'size>=(int)(sizeof(int)*8)' is not redundant
+    if (size >= (int)(sizeof(int) * 8)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:38:28: note: Shift
+    int total_sublists = 1 << size;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:38:28: warning: Either the condition 'size>=(int)(sizeof(int)*8)' is redundant or there is signed integer overflow for expression '1<<size'. [integerOverflowCond]
+    int total_sublists = 1 << size;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:33:14: note: Assuming that condition 'size>=(int)(sizeof(int)*8)' is not redundant
+    if (size >= (int)(sizeof(int) * 8)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:38:28: note: Integer overflow
+    int total_sublists = 1 << size;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:39:42: warning: Expression 'total_sublists' can have a negative value. That is converted to an unsigned value and used in an unsigned calculation. [signConversionCond]
+    Sublist* sublists = (Sublist*)malloc(total_sublists * sizeof(Sublist));
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:33:14: note: Assuming that condition 'size>=(int)(sizeof(int)*8)' is not redundant
+    if (size >= (int)(sizeof(int) * 8)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:38:28: note: Assignment 'total_sublists=1<<size', assigned value is -2147483648
+    int total_sublists = 1 << size;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:39:42: note: Negative value is converted to an unsigned value
+    Sublist* sublists = (Sublist*)malloc(total_sublists * sizeof(Sublist));
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:5:9: style: struct member 'Node::data' is never used. [unusedStructMember]
+    int data;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-859-s3.c:6:18: style: struct member 'Node::next' is never used. [unusedStructMember]
+    struct Node* next;
+                 ^

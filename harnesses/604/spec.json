@@ -1,0 +1,44 @@
+{
+  "task_id": 604,
+  "text": "Write a C function to reverse words in a given string.",
+  "fn_candidates": [
+    "reverse_words",
+    "ReverseWords",
+    "reverseWords",
+    "reversewords"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "reverse_words",
+      "args": [
+        "python program"
+      ],
+      "expected": "program python",
+      "assert_src": "assert reverse_words(\"python program\")==(\"program python\")"
+    },
+    {
+      "fn_name": "reverse_words",
+      "args": [
+        "java language"
+      ],
+      "expected": "language java",
+      "assert_src": "assert reverse_words(\"java language\")==(\"language java\")"
+    },
+    {
+      "fn_name": "reverse_words",
+      "args": [
+        "indian man"
+      ],
+      "expected": "man indian",
+      "assert_src": "assert reverse_words(\"indian man\")==(\"man indian\")"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

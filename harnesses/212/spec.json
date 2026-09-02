@@ -1,0 +1,44 @@
+{
+  "task_id": 212,
+  "text": "Write a C function to find the sum of fourth power of n natural numbers.",
+  "fn_candidates": [
+    "fourth_Power_Sum",
+    "FourthPowerSum",
+    "fourthPowerSum",
+    "fourthPowerSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "fourth_Power_Sum",
+      "args": [
+        2
+      ],
+      "expected": 17,
+      "assert_src": "assert fourth_Power_Sum(2) == 17"
+    },
+    {
+      "fn_name": "fourth_Power_Sum",
+      "args": [
+        4
+      ],
+      "expected": 354,
+      "assert_src": "assert fourth_Power_Sum(4) == 354"
+    },
+    {
+      "fn_name": "fourth_Power_Sum",
+      "args": [
+        6
+      ],
+      "expected": 2275,
+      "assert_src": "assert fourth_Power_Sum(6) == 2275"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

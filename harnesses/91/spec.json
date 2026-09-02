@@ -1,0 +1,66 @@
+{
+  "task_id": 91,
+  "text": "Write a C function to check if a substring is present in a given list of string values.",
+  "fn_candidates": [
+    "find_substring",
+    "FindSubstring",
+    "findSubstring",
+    "findsubstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_substring",
+      "args": [
+        [
+          "red",
+          "black",
+          "white",
+          "green",
+          "orange"
+        ],
+        "ack"
+      ],
+      "expected": true,
+      "assert_src": "assert find_substring([\"red\", \"black\", \"white\", \"green\", \"orange\"],\"ack\")==True"
+    },
+    {
+      "fn_name": "find_substring",
+      "args": [
+        [
+          "red",
+          "black",
+          "white",
+          "green",
+          "orange"
+        ],
+        "abc"
+      ],
+      "expected": false,
+      "assert_src": "assert find_substring([\"red\", \"black\", \"white\", \"green\", \"orange\"],\"abc\")==False"
+    },
+    {
+      "fn_name": "find_substring",
+      "args": [
+        [
+          "red",
+          "black",
+          "white",
+          "green",
+          "orange"
+        ],
+        "ange"
+      ],
+      "expected": true,
+      "assert_src": "assert find_substring([\"red\", \"black\", \"white\", \"green\", \"orange\"],\"ange\")==True"
+    }
+  ],
+  "arg_kinds": [
+    "str",
+    "str-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

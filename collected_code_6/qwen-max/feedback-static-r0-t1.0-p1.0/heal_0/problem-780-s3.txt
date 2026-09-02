@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple* tuples;
+    size_t length;
+} TupleList;
+
+TupleList create_tuple_list(size_t length) {
+    TupleList list = {0};
+    list.tuples = (Tuple*)malloc(length * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    list.length = length;
+    return list;
+}
+
+void free_tuple_list(TupleList* list) {
+    free(list->tuples);
+    list->tuples = NULL;
+    list->length = 0;
+}
+
+int find_sum_combinations(TupleList* list, int target, Tuple** result, size_t* result_length) {
+    *result_length = 0;
+    for (size_t i = 0; i < list->length; ++i) {
+        for (size_t j = i + 1; j < list->length; ++j) {
+            if (list->tuples[i].a + list->tuples[j].b == target || list->tuples[i].b + list->tuples[j].a == target) {
+                (*result_length)++;
+                *result = (Tuple*)realloc(*result, (*result_length) * sizeof(Tuple));
+                if (*result == NULL) {
+                    return -1;
+                }
+                (*result)[*result_length - 1] = (Tuple){ .a = i, .b = j };
+            }
+        }
+    }
+    return 0;
+}
+
+int main() {
+    TupleList list = create_tuple_list(4);
+    list.tuples[0] = (Tuple){ .a = 1, .b = 2 };
+    list.tuples[1] = (Tuple){ .a = 3, .b = 4 };
+    list.tuples[2] = (Tuple){ .a = 5, .b = 6 };
+    list.tuples[3] = (Tuple){ .a = 7, .b = 8 };
+
+    Tuple* result = NULL;
+    size_t result_length = 0;
+
+    int target = 9;
+    if (find_sum_combinations(&list, target, &result, &result_length) == 0) {
+        for (size_t i = 0; i < result_length; ++i) {
+            printf("(%d, %d)\n", list.tuples[result[i].a].a, list.tuples[result[i].b].b);
+            printf("(%d, %d)\n", list.tuples[result[i].a].b, list.tuples[result[i].b].a);
+        }
+    }
+
+    free(result);
+    free_tuple_list(&list);
+    return 0;
+}
+```

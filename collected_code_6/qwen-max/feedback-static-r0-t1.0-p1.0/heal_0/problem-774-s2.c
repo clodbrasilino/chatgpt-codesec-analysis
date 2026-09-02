@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int is_valid_email(const char *email) {
+    const char *pattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+    regex_t re;
+    int reti;
+
+    if (regcomp(&re, pattern, REG_EXTENDED|REG_NOSUB) != 0) {
+        return 0;
+    }
+
+    reti = regexec(&re, email, 0, NULL, 0);
+
+    regfree(&re);
+
+    if (reti == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main() {
+    const char *email1 = "example@example.com";
+    const char *email2 = "invalid-email@@@.com";
+
+    if (is_valid_email(email1)) {
+        printf("Email 1 is valid\n");
+    } else {
+        printf("Email 1 is invalid\n");
+    }
+
+    if (is_valid_email(email2)) {
+        printf("Email 2 is valid\n");
+    } else {
+        printf("Email 2 is invalid\n");
+    }
+
+    return 0;
+}

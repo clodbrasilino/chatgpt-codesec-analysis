@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int max_upper_run(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    int max_run = 0;
+    int current_run = 0;
+    
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+        str++;
+    }
+    
+    return max_run;
+}
+
+int main(void) {
+    const char *test1 = "abcDEFghIJKLM";
+    const char *test2 = "ABCDEfgHI";
+    const char *test3 = "no uppercase here";
+    const char *test4 = "ALLUPPERCASE";
+    const char *test5 = "";
+    const char *test6 = "aBcDeFgH";
+    
+    printf("Test 1: %d\n", max_upper_run(test1));
+    printf("Test 2: %d\n", max_upper_run(test2));
+    printf("Test 3: %d\n", max_upper_run(test3));
+    printf("Test 4: %d\n", max_upper_run(test4));
+    printf("Test 5: %d\n", max_upper_run(test5));
+    printf("Test 6: %d\n", max_upper_run(test6));
+    printf("Test NULL: %d\n", max_upper_run(NULL));
+    
+    return 0;
+}

@@ -1,0 +1,66 @@
+{
+  "task_id": 471,
+  "text": "Write a C function to find remainder of array multiplication divided by n.",
+  "fn_candidates": [
+    "find_remainder",
+    "FindRemainder",
+    "findRemainder",
+    "findremainder"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_remainder",
+      "args": [
+        [
+          100,
+          10,
+          5,
+          25,
+          35,
+          14
+        ],
+        6,
+        11
+      ],
+      "expected": 9,
+      "assert_src": "assert find_remainder([ 100, 10, 5, 25, 35, 14 ],6,11) ==9"
+    },
+    {
+      "fn_name": "find_remainder",
+      "args": [
+        [
+          1,
+          1,
+          1
+        ],
+        3,
+        1
+      ],
+      "expected": 0,
+      "assert_src": "assert find_remainder([1,1,1],3,1) == 0"
+    },
+    {
+      "fn_name": "find_remainder",
+      "args": [
+        [
+          1,
+          2,
+          1
+        ],
+        3,
+        2
+      ],
+      "expected": 0,
+      "assert_src": "assert find_remainder([1,2,1],3,2) == 0"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

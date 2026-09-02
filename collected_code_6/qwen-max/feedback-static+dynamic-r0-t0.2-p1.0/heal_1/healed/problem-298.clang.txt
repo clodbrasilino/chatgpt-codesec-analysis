@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-298.c:20:12: error: use of undeclared identifier 'new_new_node'; did you mean 'new_node'?
+   20 |     return new_new_node;
+      |            ^~~~~~~~~~~~
+      |            new_node
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-298.c:14:11: note: 'new_node' declared here
+   14 |     Node *new_node = (Node *)malloc(sizeof(Node));
+      |           ^
+1 error generated.
+clang: error: unable to remove file: Operation not permitted

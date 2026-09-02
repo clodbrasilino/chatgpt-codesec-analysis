@@ -1,0 +1,52 @@
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void split_string_at_uppercase(const char *input, char ***result, int *count) {
+    regex_t regex;
+    regmatch_t matches[10];
+    int ret, nmatch = 10, index = 0;
+    size_t length;
+
+    *count = 0;
+    *result = NULL;
+
+    ret = regcomp(&regex, "[A-Z][^A-Z]*", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    while ((ret = regexec(&regex, input + index, nmatch, matches, 0)) == 0) {
+        length = matches[0].rm_eo - matches[0].rm_so;
+        (*result) = realloc(*result, sizeof(char *) * ((*count) + 1));
+        (*result)[*count] = malloc((length + 1) * sizeof(char));
+        strncpy((*result)[*count], input + index + matches[0].rm_so, length);
+        (*result)[*count][length] = '\0';
+        (*count)++;
+        index += matches[0].rm_eo;
+    }
+
+    if (ret != REG_NOMATCH) {
+        fprintf(stderr, "Regex match failed\n");
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *input = "HelloWorldExample";
+    char **result = NULL;
+    int count = 0;
+
+    split_string_at_uppercase(input, &result, &count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

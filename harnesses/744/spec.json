@@ -1,0 +1,34 @@
+{
+  "task_id": 744,
+  "text": "Write a C function to check if the given tuple has any none value or not.",
+  "fn_candidates": [
+    "check_none",
+    "CheckNone",
+    "checkNone",
+    "checknone"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_none",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          11,
+          14
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_none((7, 8, 9, 11, 14)) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,126 @@
+{
+  "task_id": 114,
+  "text": "Write a C function to assign frequency to each tuple in the given tuple list.",
+  "fn_candidates": [
+    "assign_freq",
+    "AssignFreq",
+    "assignFreq",
+    "assignfreq"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "assign_freq",
+      "args": [
+        [
+          [
+            6,
+            5,
+            8
+          ],
+          [
+            2,
+            7
+          ],
+          [
+            6,
+            5,
+            8
+          ],
+          [
+            6,
+            5,
+            8
+          ],
+          [
+            9
+          ],
+          [
+            2,
+            7
+          ]
+        ]
+      ],
+      "expected": "[(6, 5, 8, 3), (2, 7, 2), (9, 1)]",
+      "assert_src": "assert assign_freq([(6, 5, 8), (2, 7), (6, 5, 8), (6, 5, 8), (9, ), (2, 7)] ) == '[(6, 5, 8, 3), (2, 7, 2), (9, 1)]'"
+    },
+    {
+      "fn_name": "assign_freq",
+      "args": [
+        [
+          [
+            4,
+            2,
+            4
+          ],
+          [
+            7,
+            1
+          ],
+          [
+            4,
+            8
+          ],
+          [
+            4,
+            2,
+            4
+          ],
+          [
+            9,
+            2
+          ],
+          [
+            7,
+            1
+          ]
+        ]
+      ],
+      "expected": "[(4, 2, 4, 2), (7, 1, 2), (4, 8, 1), (9, 2, 1)]",
+      "assert_src": "assert assign_freq([(4, 2, 4), (7, 1), (4, 8), (4, 2, 4), (9, 2), (7, 1)] ) == '[(4, 2, 4, 2), (7, 1, 2), (4, 8, 1), (9, 2, 1)]'"
+    },
+    {
+      "fn_name": "assign_freq",
+      "args": [
+        [
+          [
+            11,
+            13,
+            10
+          ],
+          [
+            17,
+            21
+          ],
+          [
+            4,
+            2,
+            3
+          ],
+          [
+            17,
+            21
+          ],
+          [
+            9,
+            2
+          ],
+          [
+            4,
+            2,
+            3
+          ]
+        ]
+      ],
+      "expected": "[(11, 13, 10, 1), (17, 21, 2), (4, 2, 3, 2), (9, 2, 1)]",
+      "assert_src": "assert assign_freq([(11, 13, 10), (17, 21), (4, 2, 3), (17, 21), (9, 2), (4, 2, 3)] ) == '[(11, 13, 10, 1), (17, 21, 2), (4, 2, 3, 2), (9, 2, 1)]'"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,59 @@
+{
+  "task_id": 281,
+  "text": "Write a C function to check if the elements of a given list are unique or not.",
+  "fn_candidates": [
+    "all_unique",
+    "AllUnique",
+    "allUnique",
+    "allunique"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "all_unique",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert all_unique([1,2,3]) == True"
+    },
+    {
+      "fn_name": "all_unique",
+      "args": [
+        [
+          1,
+          2,
+          1,
+          2
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert all_unique([1,2,1,2]) == False"
+    },
+    {
+      "fn_name": "all_unique",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert all_unique([1,2,3,4,5]) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

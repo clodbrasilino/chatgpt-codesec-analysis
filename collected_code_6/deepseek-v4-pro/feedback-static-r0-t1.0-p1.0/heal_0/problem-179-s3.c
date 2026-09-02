@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_keith_number(int n) {
+    if (n < 10) {
+        return 0;
+    }
+
+    int temp = n;
+    int digits[32];
+    int count = 0;
+
+    while (temp > 0) {
+        digits[count++] = temp % 10;
+        temp /= 10;
+    }
+
+    for (int i = 0; i < count / 2; i++) {
+        int swap = digits[i];
+        digits[i] = digits[count - 1 - i];
+        digits[count - 1 - i] = swap;
+    }
+
+    int *sequence = (int *)malloc(sizeof(int) * (count + 1));
+    if (sequence == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        sequence[i] = digits[i];
+    }
+
+    int sum = 0;
+    for (int i = 0; i < count; i++) {
+        sum += sequence[i];
+    }
+
+    while (sum <= n) {
+        if (sum == n) {
+            free(sequence);
+            return 1;
+        }
+
+        for (int i = 0; i < count - 1; i++) {
+            sequence[i] = sequence[i + 1];
+        }
+        sequence[count - 1] = sum;
+
+        sum = 0;
+        for (int i = 0; i < count; i++) {
+            sum += sequence[i];
+        }
+    }
+
+    free(sequence);
+    return 0;
+}
+
+int main(void) {
+    int num;
+
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    int result = is_keith_number(num);
+    if (result == 1) {
+        printf("%d is a Keith number\n", num);
+    } else if (result == 0) {
+        printf("%d is not a Keith number\n", num);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    return 0;
+}

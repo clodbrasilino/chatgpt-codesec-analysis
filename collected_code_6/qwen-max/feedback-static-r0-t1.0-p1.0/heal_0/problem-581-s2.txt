@@ -1,0 +1,18 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double surface_area_square_pyramid(double base_edge, double slant_height) {
+    double base_area = pow(base_edge, 2);
+    double lateral_area = 0.5 * 4 * base_edge * slant_height;
+    return base_area + lateral_area;
+}
+
+int main() {
+    double base_edge = 5.0;
+    double slant_height = 7.0;
+    double surface_area = surface_area_square_pyramid(base_edge, slant_height);
+    printf("Surface Area: %.2f\n", surface_area);
+    return 0;
+}
+```

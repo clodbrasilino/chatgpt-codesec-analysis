@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define RADIX 10
+
+int getMax(const int arr[], int n) {
+    int mx = arr[0];
+    for (int i = 1; i < n; i++)
+        if (arr[i] > mx)
+            mx = arr[i];
+    return mx;
+}
+
+void countSort(int arr[], int n, int exp) {
+    int *output = (int *)malloc(n * sizeof(int));
+    int count[RADIX] = {0};
+    int i;
+
+    for (i = 0; i < n; i++)
+        count[(arr[i] / exp) % RADIX]++;
+
+    for (i = 1; i < RADIX; i++)
+        count[i] += count[i - 1];
+
+    for (i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % RADIX] - 1] = arr[i];
+        count[(arr[i] / exp) % RADIX]--;
+    }
+
+    for (i = 0; i < n; i++)
+        arr[i] = output[i];
+
+    free(output);
+}
+
+/* Possible weaknesses found:
+ *  conflicting types for 'radixsort'; have 'void(int *, int)'
+ *  conflicting types for 'radixsort'
+ */
+void radixsort(int arr[], int n) {
+    int m = getMax(arr, n);
+
+    for (int exp = 1; m / exp > 0; exp *= RADIX)
+        countSort(arr, n, exp);
+}
+
+int main() {
+    int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    /* Possible weaknesses found:
+     *  too few arguments to function call, expected 4, have 2
+     */
+    radixsort(arr, n);
+
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+
+    return 0;
+}

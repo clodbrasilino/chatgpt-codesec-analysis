@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void reverse(char *str, int start, int end) {
+    while (start < end) {
+        char temp = str[start];
+        str[start] = str[end];
+        str[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+int main() {
+    char input[] = "Hello World";
+    int length = strlen(input);
+    int start = 0;
+
+    for (int i = 0; i <= length; i++) {
+        if (input[i] == ' ' || input[i] == '\0') {
+            reverse(input, start, i - 1);
+            start = i + 1;
+        }
+    }
+
+    reverse(input, 0, length - 1);
+
+    printf("%s\n", input);
+
+    return 0;
+}

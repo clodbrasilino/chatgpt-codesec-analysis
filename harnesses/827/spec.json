@@ -1,0 +1,105 @@
+{
+  "task_id": 827,
+  "text": "Write a C function to sum a specific column of a list in a given list of lists.",
+  "fn_candidates": [
+    "sum_column",
+    "SumColumn",
+    "sumColumn",
+    "sumcolumn"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_column",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            2
+          ],
+          [
+            4,
+            5,
+            6,
+            2
+          ],
+          [
+            7,
+            8,
+            9,
+            5
+          ]
+        ],
+        0
+      ],
+      "expected": 12,
+      "assert_src": "assert sum_column( [[1,2,3,2],[4,5,6,2],[7,8,9,5],],0)==12"
+    },
+    {
+      "fn_name": "sum_column",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            2
+          ],
+          [
+            4,
+            5,
+            6,
+            2
+          ],
+          [
+            7,
+            8,
+            9,
+            5
+          ]
+        ],
+        1
+      ],
+      "expected": 15,
+      "assert_src": "assert sum_column( [[1,2,3,2],[4,5,6,2],[7,8,9,5],],1)==15"
+    },
+    {
+      "fn_name": "sum_column",
+      "args": [
+        [
+          [
+            1,
+            2,
+            3,
+            2
+          ],
+          [
+            4,
+            5,
+            6,
+            2
+          ],
+          [
+            7,
+            8,
+            9,
+            5
+          ]
+        ],
+        3
+      ],
+      "expected": 9,
+      "assert_src": "assert sum_column( [[1,2,3,2],[4,5,6,2],[7,8,9,5],],3)==9"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list",
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

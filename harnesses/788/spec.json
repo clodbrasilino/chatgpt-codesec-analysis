@@ -1,0 +1,69 @@
+{
+  "task_id": 788,
+  "text": "Write a C function to create a new tuple from the given string and list.",
+  "fn_candidates": [
+    "new_tuple",
+    "NewTuple",
+    "newTuple",
+    "newtuple"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "new_tuple",
+      "args": [
+        [
+          "WEB",
+          "is"
+        ],
+        "best"
+      ],
+      "expected": [
+        "WEB",
+        "is",
+        "best"
+      ],
+      "assert_src": "assert new_tuple([\"WEB\", \"is\"], \"best\") == ('WEB', 'is', 'best')"
+    },
+    {
+      "fn_name": "new_tuple",
+      "args": [
+        [
+          "We",
+          "are"
+        ],
+        "Developers"
+      ],
+      "expected": [
+        "We",
+        "are",
+        "Developers"
+      ],
+      "assert_src": "assert new_tuple([\"We\", \"are\"], \"Developers\") == ('We', 'are', 'Developers')"
+    },
+    {
+      "fn_name": "new_tuple",
+      "args": [
+        [
+          "Part",
+          "is"
+        ],
+        "Wrong"
+      ],
+      "expected": [
+        "Part",
+        "is",
+        "Wrong"
+      ],
+      "assert_src": "assert new_tuple([\"Part\", \"is\"], \"Wrong\") == ('Part', 'is', 'Wrong')"
+    }
+  ],
+  "arg_kinds": [
+    "str",
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

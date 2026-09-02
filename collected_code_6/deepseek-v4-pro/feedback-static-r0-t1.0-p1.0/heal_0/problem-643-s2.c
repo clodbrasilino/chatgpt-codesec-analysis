@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool match_word_with_z(const char *text, size_t *match_start, size_t *match_end) {
+    if (text == NULL || match_start == NULL || match_end == NULL) {
+        return false;
+    }
+
+    size_t i = 0;
+    while (text[i] != '\0') {
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        size_t start = i;
+        while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+            i++;
+        }
+        size_t end = i;
+
+        if (start == end) {
+            continue;
+        }
+
+        if (end - start < 3) {
+            continue;
+        }
+
+        for (size_t j = start + 1; j < end - 1; j++) {
+            if (tolower((unsigned char)text[j]) == 'z') {
+                *match_start = start;
+                *match_end = end;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "zebra",
+        "amazing",
+        "pizza",
+        "zoo",
+        "buzz",
+        "no match here",
+        "az",
+        "z",
+        "a z b",
+        "hazelnut",
+        NULL
+    };
+
+    for (size_t i = 0; test_cases[i] != NULL; i++) {
+        size_t start = 0;
+        size_t end = 0;
+        if (match_word_with_z(test_cases[i], &start, &end)) {
+            printf("Match found in \"%s\": word [%.*s]\n", 
+                   test_cases[i], 
+                   (int)(end - start), 
+                   test_cases[i] + start);
+        } else {
+            printf("No match found in \"%s\"\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

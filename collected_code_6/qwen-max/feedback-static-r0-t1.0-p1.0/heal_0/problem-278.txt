@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+size_t find_element_count_before(const int *arr, size_t arr_size, int record) {
+    for (size_t i = 0; i < arr_size; ++i) {
+        if (arr[i] == record) {
+            return i;
+        }
+    }
+    return arr_size; // If not found, return the total size
+}
+
+int main() {
+    int data[] = {3, 5, 7, 2, 8, 10, 11, 9};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    int target = 10;
+
+    size_t count = find_element_count_before(data, data_size, target);
+    printf("Element count before record: %zu\n", count);
+
+    return 0;
+}
+```

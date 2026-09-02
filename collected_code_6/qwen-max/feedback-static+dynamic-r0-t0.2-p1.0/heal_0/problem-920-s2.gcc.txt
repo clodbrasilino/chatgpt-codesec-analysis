@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-920-s2.c: In function 'remove_all_none_tuples':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-920-s2.c:25:26: error: passing argument 1 of 'is_all_none' from incompatible pointer type [-Wincompatible-pointer-types]
+   25 |         if (!is_all_none(&list[i])) {
+      |                          ^~~~~~~~
+      |                          |
+      |                          Tuple **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-920-s2.c:18:30: note: expected 'const Tuple *' but argument is of type 'Tuple **'
+   18 | int is_all_none(const Tuple* t) {
+      |                 ~~~~~~~~~~~~~^

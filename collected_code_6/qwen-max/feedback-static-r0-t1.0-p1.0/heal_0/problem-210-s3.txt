@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int is_valid_string(const char *str) {
+    int ret;
+    regex_t regex;
+
+    ret = regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED);
+    if (ret) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    return !ret;
+}
+
+int main() {
+    const char *test_strings[] = {"abc123", "ABCdef456", "!@#123", "789HelloWorld"};
+    for (size_t i = 0; i < 4; ++i) {
+        printf("%s: %s\n", test_strings[i], is_valid_string(test_strings[i]) ? "Valid" : "Invalid");
+    }
+    return 0;
+}
+```

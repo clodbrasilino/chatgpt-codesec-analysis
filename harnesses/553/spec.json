@@ -1,0 +1,53 @@
+{
+  "task_id": 553,
+  "text": "Write a C function to convert the given tuple to a floating-point number.",
+  "fn_candidates": [
+    "tuple_to_float",
+    "TupleToFloat",
+    "tupleToFloat",
+    "tupletofloat"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "tuple_to_float",
+      "args": [
+        [
+          4,
+          56
+        ]
+      ],
+      "expected": 4.56,
+      "assert_src": "assert tuple_to_float((4, 56)) == 4.56"
+    },
+    {
+      "fn_name": "tuple_to_float",
+      "args": [
+        [
+          7,
+          256
+        ]
+      ],
+      "expected": 7.256,
+      "assert_src": "assert tuple_to_float((7, 256)) == 7.256"
+    },
+    {
+      "fn_name": "tuple_to_float",
+      "args": [
+        [
+          8,
+          123
+        ]
+      ],
+      "expected": 8.123,
+      "assert_src": "assert tuple_to_float((8, 123)) == 8.123"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

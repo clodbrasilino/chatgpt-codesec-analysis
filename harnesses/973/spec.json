@@ -1,0 +1,48 @@
+{
+  "task_id": 973,
+  "text": "Write a C function to left rotate the string.",
+  "fn_candidates": [
+    "left_rotate",
+    "LeftRotate",
+    "leftRotate",
+    "leftrotate"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "left_rotate",
+      "args": [
+        "python",
+        2
+      ],
+      "expected": "thonpy",
+      "assert_src": "assert left_rotate(\"python\",2) == \"thonpy\"   "
+    },
+    {
+      "fn_name": "left_rotate",
+      "args": [
+        "bigdata",
+        3
+      ],
+      "expected": "databig",
+      "assert_src": "assert left_rotate(\"bigdata\",3 ) == \"databig\" "
+    },
+    {
+      "fn_name": "left_rotate",
+      "args": [
+        "hadoop",
+        1
+      ],
+      "expected": "adooph",
+      "assert_src": "assert left_rotate(\"hadoop\",1 ) == \"adooph\" "
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

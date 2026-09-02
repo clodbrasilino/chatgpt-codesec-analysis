@@ -1,0 +1,47 @@
+{
+  "task_id": 699,
+  "text": "Write a C function to find the minimum number of swaps required to convert one binary string to another.",
+  "fn_candidates": [
+    "min_Swaps",
+    "MinSwaps",
+    "minSwaps",
+    "minSwaps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_Swaps",
+      "args": [
+        "1101",
+        "1110"
+      ],
+      "expected": 1,
+      "assert_src": "assert min_Swaps(\"1101\",\"1110\") == 1"
+    },
+    {
+      "fn_name": "min_Swaps",
+      "args": [
+        "1111",
+        "0100"
+      ],
+      "expected": "Not Possible",
+      "assert_src": "assert min_Swaps(\"1111\",\"0100\") == \"Not Possible\""
+    },
+    {
+      "fn_name": "min_Swaps",
+      "args": [
+        "1110000",
+        "0001101"
+      ],
+      "expected": 3,
+      "assert_src": "assert min_Swaps(\"1110000\",\"0001101\") == 3"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

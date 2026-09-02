@@ -1,0 +1,47 @@
+{
+  "task_id": 789,
+  "text": "Write a C function to calculate the perimeter of a regular polygon.",
+  "fn_candidates": [
+    "perimeter_polygon",
+    "PerimeterPolygon",
+    "perimeterPolygon",
+    "perimeterpolygon"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "perimeter_polygon",
+      "args": [
+        4,
+        20
+      ],
+      "expected": 80,
+      "assert_src": "assert perimeter_polygon(4,20)==80"
+    },
+    {
+      "fn_name": "perimeter_polygon",
+      "args": [
+        10,
+        15
+      ],
+      "expected": 150,
+      "assert_src": "assert perimeter_polygon(10,15)==150"
+    },
+    {
+      "fn_name": "perimeter_polygon",
+      "args": [
+        9,
+        7
+      ],
+      "expected": 63,
+      "assert_src": "assert perimeter_polygon(9,7)==63"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

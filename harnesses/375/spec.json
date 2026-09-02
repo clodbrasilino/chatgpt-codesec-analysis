@@ -1,0 +1,47 @@
+{
+  "task_id": 375,
+  "text": "Write a C function to round the given number to the nearest multiple of a specific number.",
+  "fn_candidates": [
+    "round_num",
+    "RoundNum",
+    "roundNum",
+    "roundnum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "round_num",
+      "args": [
+        4722,
+        10
+      ],
+      "expected": 4720,
+      "assert_src": "assert round_num(4722,10)==4720"
+    },
+    {
+      "fn_name": "round_num",
+      "args": [
+        1111,
+        5
+      ],
+      "expected": 1110,
+      "assert_src": "assert round_num(1111,5)==1110"
+    },
+    {
+      "fn_name": "round_num",
+      "args": [
+        219,
+        2
+      ],
+      "expected": 218,
+      "assert_src": "assert round_num(219,2)==218"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

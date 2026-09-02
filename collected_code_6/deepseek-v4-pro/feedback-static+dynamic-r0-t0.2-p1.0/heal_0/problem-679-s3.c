@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValue {
+    char *key;
+    int value;
+    struct KeyValue *next;
+} KeyValue;
+
+typedef struct {
+    KeyValue *head;
+    int size;
+} Dictionary;
+
+void dict_init(Dictionary *dict) {
+    dict->head = NULL;
+    dict->size = 0;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    KeyValue *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 0;
+        }
+        current = current->next;
+    }
+
+    KeyValue *new_pair = (KeyValue *)malloc(sizeof(KeyValue));
+    if (new_pair == NULL) {
+        return -1;
+    }
+
+    new_pair->key = (char *)malloc(strlen(key) + 1);
+    if (new_pair->key == NULL) {
+        free(new_pair);
+        return -1;
+    }
+
+    strcpy(new_pair->key, key);
+    new_pair->value = value;
+    new_pair->next = dict->head;
+    dict->head = new_pair;
+    dict->size++;
+    return 0;
+}
+
+int dict_get_by_index(Dictionary *dict, int index, char **key, int *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    if (index < 0 || index >= dict->size) {
+        return -1;
+    }
+
+    KeyValue *current = dict->head;
+    int current_index = 0;
+
+    while (current != NULL && current_index < index) {
+        current = current->next;
+        current_index++;
+    }
+
+    if (current == NULL) {
+        return -1;
+    }
+
+    *key = current->key;
+    *value = current->value;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    KeyValue *current = dict->head;
+    while (current != NULL) {
+        KeyValue *next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+    dict->head = NULL;
+    dict->size = 0;
+}
+
+int main(void) {
+    Dictionary dict;
+    dict_init(&dict);
+
+    dict_add(&dict, "apple", 10);
+    dict_add(&dict, "banana", 20);
+    dict_add(&dict, "cherry", 30);
+
+    char *key = NULL;
+    int value = 0;
+
+    if (dict_get_by_index(&dict, 0, &key, &value) == 0) {
+        printf("Index 0: %s = %d\n", key, value);
+    }
+
+    if (dict_get_by_index(&dict, 1, &key, &value) == 0) {
+        printf("Index 1: %s = %d\n", key, value);
+    }
+
+    if (dict_get_by_index(&dict, 2, &key, &value) == 0) {
+        printf("Index 2: %s = %d\n", key, value);
+    }
+
+    if (dict_get_by_index(&dict, 3, &key, &value) != 0) {
+        printf("Index 3: out of bounds\n");
+    }
+
+    dict_free(&dict);
+    return 0;
+}

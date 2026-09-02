@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sumOfDivisors(int n) {
+    int sum = 1;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+        }
+    }
+    return sum;
+}
+
+int isAmicable(int a, int b) {
+    return (sumOfDivisors(a) == b && sumOfDivisors(b) == a && a != b);
+}
+
+int sumAmicableNumbers(int limit) {
+    int sum = 0;
+    for (int i = 2; i <= limit; i++) {
+        int d = sumOfDivisors(i);
+        if (d > i && isAmicable(i, d)) {
+            sum += i + d;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int limit;
+    printf("Enter the limit: ");
+    if (scanf("%d", &limit) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = sumAmicableNumbers(limit);
+    printf("The sum of amicable numbers up to %d is: %d\n", limit, result);
+    return 0;
+}
+```

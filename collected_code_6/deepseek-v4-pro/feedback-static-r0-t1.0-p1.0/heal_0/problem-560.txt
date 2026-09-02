@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int *find_union(Tuple *tuples, int tuple_count, int *union_size) {
+    int capacity = 16;
+    int *union_set = malloc(capacity * sizeof(int));
+    if (!union_set) {
+        *union_size = 0;
+        return NULL;
+    }
+    
+    *union_size = 0;
+    
+    for (int i = 0; i < tuple_count; i++) {
+        for (int j = 0; j < tuples[i].size; j++) {
+            int current = tuples[i].elements[j];
+            int found = 0;
+            
+            for (int k = 0; k < *union_size; k++) {
+                if (union_set[k] == current) {
+                    found = 1;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                if (*union_size >= capacity) {
+                    capacity *= 2;
+                    int *temp = realloc(union_set, capacity * sizeof(int));
+                    if (!temp) {
+                        free(union_set);
+                        *union_size = 0;
+                        return NULL;
+                    }
+                    union_set = temp;
+                }
+                union_set[*union_size] = current;
+                (*union_size)++;
+            }
+        }
+    }
+    
+    return union_set;
+}
+
+int main(void) {
+    Tuple tuple1 = {
+        (int[]){1, 2, 3, 4},
+        4
+    };
+    
+    Tuple tuple2 = {
+        (int[]){3, 4, 5, 6},
+        4
+    };
+    
+    Tuple tuple3 = {
+        (int[]){5, 6, 7, 8, 9},
+        5
+    };
+    
+    Tuple tuples[] = {tuple1, tuple2, tuple3};
+    
+    int union_size = 0;
+    int *result = find_union(tuples, 3, &union_size);
+    
+    if (result) {
+        printf("Union elements: ");
+        for (int i = 0; i < union_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Failed to compute union\n");
+    }
+    
+    return 0;
+}
+```

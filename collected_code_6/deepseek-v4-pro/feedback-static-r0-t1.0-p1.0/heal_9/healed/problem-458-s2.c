@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double rectangle_area(double length, double width) {
+    if (length <= 0 || width <= 0) {
+        return -1;
+    }
+    return length * width;
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <length> <width>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    double length = strtod(argv[1], &endptr);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid length value: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    double width = strtod(argv[2], &endptr);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid width value: %s\n", argv[2]);
+        return EXIT_FAILURE;
+    }
+
+    double area = rectangle_area(length, width);
+    if (area < 0) {
+        fprintf(stderr, "Length and width must be positive numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", area);
+    return EXIT_SUCCESS;
+}

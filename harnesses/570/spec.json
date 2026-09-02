@@ -1,0 +1,93 @@
+{
+  "task_id": 570,
+  "text": "Write a C function to remove words from a given list of strings containing a character or string.",
+  "fn_candidates": [
+    "remove_words",
+    "RemoveWords",
+    "removeWords",
+    "removewords"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_words",
+      "args": [
+        [
+          "Red color",
+          "Orange#",
+          "Green",
+          "Orange @",
+          "White"
+        ],
+        [
+          "#",
+          "color",
+          "@"
+        ]
+      ],
+      "expected": [
+        "Red",
+        "",
+        "Green",
+        "Orange",
+        "White"
+      ],
+      "assert_src": "assert remove_words(['Red color', 'Orange#', 'Green', 'Orange @', \"White\"],['#', 'color', '@'])==['Red', '', 'Green', 'Orange', 'White']"
+    },
+    {
+      "fn_name": "remove_words",
+      "args": [
+        [
+          "Red &",
+          "Orange+",
+          "Green",
+          "Orange @",
+          "White"
+        ],
+        [
+          "&",
+          "+",
+          "@"
+        ]
+      ],
+      "expected": [
+        "Red",
+        "",
+        "Green",
+        "Orange",
+        "White"
+      ],
+      "assert_src": "assert remove_words(['Red &', 'Orange+', 'Green', 'Orange @', 'White'],['&', '+', '@'])==['Red', '', 'Green', 'Orange', 'White']"
+    },
+    {
+      "fn_name": "remove_words",
+      "args": [
+        [
+          "Red &",
+          "Orange+",
+          "Green",
+          "Orange @",
+          "White"
+        ],
+        [
+          "@"
+        ]
+      ],
+      "expected": [
+        "Red &",
+        "Orange+",
+        "Green",
+        "Orange",
+        "White"
+      ],
+      "assert_src": "assert remove_words(['Red &', 'Orange+', 'Green', 'Orange @', 'White'],['@'])==['Red &', 'Orange+', 'Green', 'Orange', 'White']"
+    }
+  ],
+  "arg_kinds": [
+    "str-list"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

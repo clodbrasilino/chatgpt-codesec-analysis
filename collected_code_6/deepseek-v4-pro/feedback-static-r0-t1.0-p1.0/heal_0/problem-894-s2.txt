@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+
+typedef struct {
+    float values[2];
+    int count;
+} FloatTuple;
+
+int parse_float_tuple(const char *str, FloatTuple *tuple) {
+    char *copy;
+    char *token;
+    char *endptr;
+    float value;
+    
+    if (str == NULL || tuple == NULL) {
+        return -1;
+    }
+    
+    copy = strdup(str);
+    if (copy == NULL) {
+        return -1;
+    }
+    
+    tuple->count = 0;
+    token = strtok(copy, "(,) \t\n");
+    
+    while (token != NULL && tuple->count < 2) {
+        value = strtof(token, &endptr);
+        if (endptr == token || *endptr != '\0') {
+            free(copy);
+            return -1;
+        }
+        tuple->values[tuple->count++] = value;
+        token = strtok(NULL, "(,) \t\n");
+    }
+    
+    free(copy);
+    
+    if (tuple->count == 2) {
+        return 0;
+    }
+    
+    return -1;
+}
+
+int main() {
+    const char *test_strings[] = {
+        "(1.5, 2.5)",
+        "3.14, 6.28",
+        "(0.0, -1.0)",
+        "invalid",
+        "(1.0, )",
+        NULL
+    };
+    
+    FloatTuple tuple;
+    int i;
+    int result;
+    
+    for (i = 0; test_strings[i] != NULL; i++) {
+        result = parse_float_tuple(test_strings[i], &tuple);
+        if (result == 0) {
+            printf("Parsed: %s -> (%.3f, %.3f)\n", 
+                   test_strings[i], tuple.values[0], tuple.values[1]);
+        } else {
+            printf("Failed to parse: %s\n", test_strings[i]);
+        }
+    }
+    
+    return 0;
+}
+```

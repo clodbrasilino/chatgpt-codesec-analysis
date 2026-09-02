@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-12.c: In function 'sort_matrix':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-12.c:16:5: error: too many arguments to function 'qsort'; expected 4, have 5
+   16 |     qsort(*matrix, rows, sizeof(int*), (int(*)(const void*, const void*))compare, cols);
+      |     ^~~~~                                                                         ~~~~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-12.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:175:10: note: declared here
+  175 | void     qsort(void *_LIBC_SIZE(__nel * __width) __base, size_t __nel, size_t __width,
+      |          ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-12.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-12.c:26:28: error: variable-sized object may not be initialized except with an empty initializer
+   26 |     int data[rows][cols] = {
+      |                            ^

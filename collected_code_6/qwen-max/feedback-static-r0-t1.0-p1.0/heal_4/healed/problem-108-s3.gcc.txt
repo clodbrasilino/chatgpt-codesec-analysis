@@ -1,0 +1,18 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c: In function 'create_iterator':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c:26:15: error: 'iterator_next' undeclared (first use in this function)
+   26 |     it.next = iterator_next;
+      |               ^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c:26:15: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c: In function 'merge_sorted_iterators':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c:93:44: error: passing argument 1 of '(iterators + (sizetype)((long unsigned int)i * 16))->next' from incompatible pointer type [-Wincompatible-pointer-types]
+   93 |             Node *node = iterators[i].next(&iterators[i].has_next);
+      |                                            ^~~~~~~~~~~~~~~~~~~~~~
+      |                                            |
+      |                                            int *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c:93:44: note: expected 'Node **' but argument is of type 'int *'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c:107:53: error: passing argument 1 of '(iterators + (sizetype)((long unsigned int)i * 16))->next' from incompatible pointer type [-Wincompatible-pointer-types]
+  107 |                 Node *next_node = iterators[i].next(&iterators[i].has_next);
+      |                                                     ^~~~~~~~~~~~~~~~~~~~~~
+      |                                                     |
+      |                                                     int *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-108-s3.c:107:53: note: expected 'Node **' but argument is of type 'int *'

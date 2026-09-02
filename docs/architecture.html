@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en" data-page-node-id="BvJUUFWycERXTWJE7Ksfpi">
+<head data-page-node-id="5kYTfy5IgDzpSWeUODETie">
+<meta charset="utf-8" data-page-node-id="QfaaIsVeXOY2wT425Cobrr">
+<title>Experiment Pipeline Architecture — FSE 2027 Extension</title>
+<style>
+  body { max-width: 980px; margin: 2rem auto; padding: 0 1.5rem;
+         font: 16px/1.65 -apple-system, "Helvetica Neue", Arial, sans-serif;
+         color: #1f2937; background: #ffffff; }
+  h1 { font-size: 1.9rem; border-bottom: 3px solid #4f46e5; padding-bottom: .4rem; }
+  h2 { font-size: 1.35rem; margin-top: 2.2rem; border-bottom: 1px solid #e5e7eb;
+       padding-bottom: .25rem; }
+  h3 { font-size: 1.1rem; margin-top: 1.6rem; }
+  code { font: .88em/1.5 "SF Mono", Menlo, Consolas, monospace;
+         background: #f1f5f9; padding: .1em .35em; border-radius: 4px; }
+  pre { background: #0f172a; color: #e2e8f0; padding: 1rem 1.2rem;
+        border-radius: 8px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; margin: 1rem 0; width: 100%; font-size: .92rem; }
+  th, td { border: 1px solid #e2e8f0; padding: .45rem .65rem; text-align: left; }
+  th { background: #f8fafc; }
+  tr:nth-child(even) td { background: #fbfcfe; }
+  .fig { margin: 1.8rem 0; }
+  .fig svg { width: 100%; height: auto; border: 1px solid #e5e7eb;
+             border-radius: 8px; }
+  figcaption { text-align: center; font-size: .85rem; color: #64748b;
+               margin-top: .4rem; }
+  blockquote { border-left: 4px solid #c7d2fe; margin: 1rem 0;
+               padding: .3rem 1rem; color: #475569; background: #f8fafc; }
+  a { color: #4f46e5; }
+  hr { border: none; border-top: 1px solid #e5e7eb; margin: 2rem 0; }
+</style>
+</head>
+<body data-page-node-id="YenWo35WjrBMt5rgnw8SFE">
+<h1 id="experiment-pipeline-architecture-fse-2027-extension" data-page-node-id="xzPMPpVV4B1BlOCxlyYrzH">Experiment Pipeline Architecture — FSE 2027 Extension</h1>
+<p data-page-node-id="svKlmnmBZROmm7XZm3uQWx"><strong data-page-node-id="DvTtKd8uOl0TVGsBJUOcjQ">Repo:</strong> <code data-page-node-id="9XlCPcsqSgwy1N4AZBWmdq">chatgpt-codesec-analysis</code> (BCT dataset, 974 C programming tasks)
+<strong data-page-node-id="ZE9xEeKgrH7EWkcuaPuXNS">Successor of:</strong> the ISE 2026 v1 pipeline (<code data-page-node-id="LkBVL5pOlAxs36tBS3ar3A">run_full_experiment.py</code>, kept untouched for reproduction)
+<strong data-page-node-id="ubIcR0XOdUnhIupHundF9q">Document date:</strong> 2026-09-01</p>
+<p data-page-node-id="iso1AhzkkaBwGUCCOPGztv">This document explains, in depth, how the new experiment works: the main script's flow, the anatomy of the healing loop, what every module does, where every artifact lands on disk, and the design decisions behind it. The three figures referenced below are the same diagrams shown in the chat, each followed by a full textual explanation of everything it depicts.</p>
+<hr  data-page-node-id="ZfxRhH0SstyUjUaapecFBT"/>
+<h2 id="table-of-contents" data-page-node-id="AIHksxDB0sgHvMhH2mFD08">Table of contents</h2>
+<ol data-page-node-id="0Zp1kHEj1JBvEtxvNukJ8a">
+<li data-page-node-id="MjGg28B2FjxLOJkazKSd3v"><a href="#1-what-this-pipeline-does" data-page-node-id="8pBMdFBZlQ2yYkrABNgUJs">What this pipeline does</a></li>
+<li data-page-node-id="IyVszdHx5KFNIr2Dz90CHl"><a href="#2-the-unit-of-execution-the-cell" data-page-node-id="a3uVQN91hCLwv8YbyCg9gU">The unit of execution: the cell</a></li>
+<li data-page-node-id="XcE6BUOjkzGK0wwimVpvMV"><a href="#3-main-script-flow" data-page-node-id="HqgVKaVuXvKeCH48hdhVhZ">Main script flow (Figure 1)</a></li>
+<li data-page-node-id="dLdU8DDvKg9X2cC3mKCM7J"><a href="#4-the-heal-loop-round-by-round" data-page-node-id="DMcomXrv7K14uAmNXglRRC">The heal loop, round by round (Figure 3)</a></li>
+<li data-page-node-id="0pwmQV7XW7FsT7m8LJqGVF"><a href="#5-module-map" data-page-node-id="V2mpYFwytA7rYlVDEsFXbQ">Module map (Figure 2)</a></li>
+<li data-page-node-id="ABu1EjaHnPqBCCWpiSdZws"><a href="#6-data-on-disk" data-page-node-id="WfbgG5kJwgOlQTQHQ25sxt">Data on disk</a></li>
+<li data-page-node-id="Mv3WmX32Durl159TNzchJ2"><a href="#7-cross-cutting-design-decisions" data-page-node-id="8Mr44exMyWpDqTSQyJpYTB">Cross-cutting design decisions</a></li>
+<li data-page-node-id="xrwGvQChMXtfdrYo3HQBvB"><a href="#8-running-it" data-page-node-id="pbegq75sMoKaCYYkKwDb1F">Running it</a></li>
+<li data-page-node-id="EFPtpwwDptwk8UDAtF2fp4"><a href="#9-reading-the-first-results-through-the-architecture" data-page-node-id="d7CuRPS5NSTdUfv3bEZk4w">Reading the first results through the architecture</a></li>
+</ol>
+<hr  data-page-node-id="FHTCMGLKVYivF7mpemJC3W"/>
+<h2 id="1-what-this-pipeline-does" data-page-node-id="ZQHkIX4HlRGKuJqVzB70RR">1. What this pipeline does</h2>
+<p data-page-node-id="C6AyiGfhHHDt0Xp0XmZirh">The experiment answers the FSE 2027 research questions by letting 7 LLMs (each in a base and a <em data-page-node-id="PdK8kGv6Yy84NxGb8nTVsq">thinking</em> variant) write C code for the 974 BCT tasks, measuring how defective that code is, and then measuring how well the models repair their own defects when given analyzer feedback.</p>
+<p data-page-node-id="KMACrZTdLJT5WeDsP75fIh">One pass over a task works like this:</p>
+<ol data-page-node-id="Lt9jwgmBkS38TT29oQg8nB">
+<li data-page-node-id="4GBpAbddCdgVK77iFqxJdM"><strong data-page-node-id="Dl6iVpCBcRGhiMhtuhjwB0">Generate.</strong> The model produces a complete C program (with <code data-page-node-id="GsF9fckTYhMFip9Mj8QVp7">main</code>) for the task text, zero-shot. The prompt is <strong data-page-node-id="NnBnvo8YBBwJtYmRwwBwb6">byte-identical to v1</strong> (including the "Avoid CWE-664/703/710" suffix) so numbers stay comparable with the ISE 2026 paper.</li>
+<li data-page-node-id="2q4Fv7CLsJg9pQbgBZve4b"><strong data-page-node-id="lzmGhOkkslhApc8sy7ouZN">Measure.</strong> A multi-analyzer gate inspects the generated code:
+   - <strong data-page-node-id="xt30n7hfT054DDcvGvbG0b">static channel</strong> — GCC <code data-page-node-id="gyHTC5zYUKdhqw3T0ZHr34">-fanalyzer</code>, Clang static analyzer (+Z3), Cppcheck Premium, Flawfinder, plus a plain compile gate;
+   - <strong data-page-node-id="2TuXaqUoRFyvD0QDzCRqUa">dynamic channel</strong> — an ASan+UBSan test oracle that actually compiles and runs the program against MBPP-derived test cases, and (optionally) AFL++ fuzzing.</li>
+<li data-page-node-id="MBysLGDv6OJaa61M8HkyoW"><strong data-page-node-id="4hBKjQ3K4qWqj6OPb6cnAs">Heal.</strong> Every finding is injected into the source as a <code data-page-node-id="GSFD9tLA89UtHcvIFIlX9Y">/* Possible weaknesses found: ... */</code> comment, and the model is asked to rewrite the code paying attention to the comments — again with a v1-verbatim prompt.</li>
+<li data-page-node-id="A0Mb1G7ypLBTnC6VuaNFWl"><strong data-page-node-id="zXozBjjflUtVC91U6Xc45l">Repeat.</strong> Steps 2–3 loop until no findings remain or <code data-page-node-id="M1xdbeYRaJseCczyFFFsDd">max_rounds</code> (default 7) is exhausted. Every problem-sample ends in exactly one of four outcomes: <code data-page-node-id="gv5VvkNr6xYFfT6wUea7pw">clean_at_start</code>, <code data-page-node-id="9PEVCl7sjX2guz8dvZYmnY">clean</code>, <code data-page-node-id="rlpzXbyCBqI5zJCL5slrSJ">heal_failed</code>, <code data-page-node-id="A29jiDi9mu104e806x8r2x">not_cleaned</code>.</li>
+</ol>
+<p data-page-node-id="dmjFreNvggVaXDluxFaAi4">What is <em data-page-node-id="3wHUobh4z0w8YRlX5Jh0ms">new</em> relative to v1: the multi-provider model registry (including reasoning variants), the dynamic sanitizer oracle + AFL++ fuzzing channel, the orthogonal <code data-page-node-id="1FfCpzxIHc5p8GYGhalecM">measure</code>/<code data-page-node-id="NjqGwyoV34CJHpIdZFBtws">feedback</code> knobs, the statistical analysis suite (Fisher/χ², Mann–Whitney U, bootstrap CIs, Holm–Bonferroni), and a crash-resumable, file-based execution model.</p>
+<hr  data-page-node-id="slJD8oBFM2j7cJDzYr9C2D"/>
+<h2 id="2-the-unit-of-execution-the-cell" data-page-node-id="3mUrAFk9QxAURByRoGfGDu">2. The unit of execution: the cell</h2>
+<p data-page-node-id="puwiTWxN0tGM2fXlxxqhPx">Everything the pipeline runs is a <strong data-page-node-id="8TRNfCEEUODXdb4YWhCM50">cell</strong>, defined by the <code data-page-node-id="LkfWSkt0oWFrngBTOlgt9w">ExperimentCell</code> dataclass in <code data-page-node-id="uREEegcKNCYUOQpKNyTwkU">src/pipeline/run_experiment.py</code>:</p>
+<table data-page-node-id="zmaTFSTJ6zXN0HHHtnhcj6">
+<thead data-page-node-id="deVHpDF3zBtODoDf20hdWW">
+<tr data-page-node-id="XZFhzI42lsbCByoIszc9Jk">
+<th data-page-node-id="HWLZPx1ytm9XHKzIxAVXQR">Field</th>
+<th data-page-node-id="0EAtRCq1vyDQqHwZJEophG">Meaning</th>
+<th data-page-node-id="jXG7049eNmFnfr6mJOgXxP">Typical RQ1 value</th>
+</tr>
+</thead>
+<tbody data-page-node-id="uynU1cVffjWbATgobR5bBH">
+<tr data-page-node-id="wLk65YHShG9bj1l050ua1O">
+<td data-page-node-id="7EsDRWAksIyHJ1nkyEeCIR"><code data-page-node-id="9oVfRzG5ADcZXf1gTGL6m6">model</code></td>
+<td data-page-node-id="khlOTvH2HWcptrXnmeHhw0">registry id in <code data-page-node-id="yeVgQlVwrtHrJjBBnH9000">config/models.yaml</code></td>
+<td data-page-node-id="UxEOsabyI1OEe7c5MS3UXM"><code data-page-node-id="WHNoDQHTxx7sORJjv3JN0Z">deepseek-v4-pro</code></td>
+</tr>
+<tr data-page-node-id="5A8P9GlnPRagcS5JzhjgzX">
+<td data-page-node-id="pVr8MkwjW0EsJIy1vkKWoK"><code data-page-node-id="DD8aPb2r2JB5X3ADjPWUYz">feedback</code></td>
+<td data-page-node-id="hhrXrE5FH0YT9pmCoOu9ZL">which findings are injected as healing comments: <code data-page-node-id="DtEp04DA80T1wahMrR1Dda">none</code>/<code data-page-node-id="vjB4BMckEbVlNkqiYDksoS">static</code>/<code data-page-node-id="pAxON7gsBgc5GQdmFZkSBv">dynamic</code>/<code data-page-node-id="ldEuP6vdfp3YFfULxVkR9W">static+dynamic</code></td>
+<td data-page-node-id="fyoabLUVXQ8CDMKqz66jDP"><code data-page-node-id="kkT6fLTA9kCaYZy51zzZM5">static</code></td>
+</tr>
+<tr data-page-node-id="1sxLq6tnbd3FnvPomSlx9X">
+<td data-page-node-id="o5xGdP313fMBulSuEO3Iyf"><code data-page-node-id="KkpO3olNDwucuK4pTWyRDs">measure</code></td>
+<td data-page-node-id="HHTERcPZuHr1CKw0oftVsW">which detection channels <strong data-page-node-id="RlmV98eHByUPELNFbvzSrI">run</strong> and produce the paper's numbers: <code data-page-node-id="rF2NstfXbA198h0XYUdLV8">static</code>/<code data-page-node-id="MeIxiMXLhSp9EyBuakDfTv">dynamic</code>/<code data-page-node-id="s8jwE4KQ0MtB7TqFpDB1yG">static+dynamic</code></td>
+<td data-page-node-id="5kQXT8EKX2qF4RrZw4f34U"><code data-page-node-id="KVWMJo55eBDaXZpaG2Bx51">static</code></td>
+</tr>
+<tr data-page-node-id="ZCPkxNfljTg7V9w05WJdBT">
+<td data-page-node-id="BxZW3p6DLYvNEBRQDczJ1Y"><code data-page-node-id="UqBvDB19n7CifDBhdZRtcs">tasks</code></td>
+<td data-page-node-id="6aMiaANjvMckM87zf5oKWG">task ids (<code data-page-node-id="xs6vqxrls3MI8HQeIA2kl3">all</code> = 1–974, <code data-page-node-id="g41FXQPJ85FmFDus4pGw41">subset</code> = the 200-task vulnerable subset, or <code data-page-node-id="8fXORYiJAuCwFCatD8Qvax">1-30</code> ranges)</td>
+<td data-page-node-id="9ngGZczl8zaPjrN4t60OOy"><code data-page-node-id="tTY6xBaAc3boUkzQOOKh9D">all</code></td>
+</tr>
+<tr data-page-node-id="CdWDfSFFVvpx7dz5t6c3zI">
+<td data-page-node-id="whfXCZoiVY3vjS6m1IDEpx"><code data-page-node-id="iXjgAMPBqadiNLUlOL3Bcq">samples</code></td>
+<td data-page-node-id="LNpClNne5XnVSKkaFMPrhS">independent samples per task (temperature-driven diversity)</td>
+<td data-page-node-id="VoqEyUTb2L85Mzc3u1Ls2O">3</td>
+</tr>
+<tr data-page-node-id="UVCUhYm9aqRR3V6I0JCEOJ">
+<td data-page-node-id="cbllSOLXSz32GHoLuIXHeW"><code data-page-node-id="T8UX89UCT2fHnyKVjBNyy8">temp</code> / <code data-page-node-id="q8LWKVUe9cI8JrlOdDcngV">top_p</code></td>
+<td data-page-node-id="xrBgf15RcFObmxHHJkPxXU">sampling parameters</td>
+<td data-page-node-id="Gc3d2A5QlDv94n4l5GA0a1">1.0 / 1.0</td>
+</tr>
+<tr data-page-node-id="ZMKkOJnSFWyFboHaHmdDjy">
+<td data-page-node-id="EnK8GALAmUUJ90bH5E6FAg"><code data-page-node-id="pHEe3euXNuh65YE7nDbg98">max_rounds</code></td>
+<td data-page-node-id="0VnwBPtnRWqChXw7YhqyuC">healing round cap</td>
+<td data-page-node-id="xv2vublrlH4qKdOjAyb5NZ">7</td>
+</tr>
+<tr data-page-node-id="FSoPJdcT77zQWagEBZXhhk">
+<td data-page-node-id="N1vVFACh5hBVw9v41cdZjG"><code data-page-node-id="vT4NwuJUgzJadWtY5E2ENn">fuzz</code></td>
+<td data-page-node-id="18IlCgYIYLsJXjDd78cFg0">enable the AFL++ channel (costly; stdin/argv consumers only)</td>
+<td data-page-node-id="CsivBpNQqfTjxvqUuevPRH">off in RQ1</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="U94lmZ3VdCFhb7bFQjKmQ5">The cell's directory name is the <strong data-page-node-id="HCtHO7FRRBODAxju4BMxAR">slug</strong>:</p>
+<pre data-page-node-id="tZLz6YPQ2tqS2K4fAOFGcx"><code data-page-node-id="Q3MVAkSfsGTyHZbeTpByNL">cell_slug = feedback-{feedback}-r{reasoning}-t{temp}-p{top_p}
+</code></pre>
+<p data-page-node-id="VR9PLtH2f4WE2lsBWmOkiL">e.g. <code data-page-node-id="g6MgoF3RuxrybY2xIORmGd">feedback-static-r0-t1.0-p1.0</code>. Note carefully what the slug does <strong data-page-node-id="3Z4doKQjxN5wg7R1ZdVE4T">not</strong> encode: <code data-page-node-id="0u6iiZn8h8yHlZthRuHoux">measure</code>, <code data-page-node-id="heIaLhJKR7ACK7jzO65GmQ">samples</code>, <code data-page-node-id="1nWuEKhReIfIIIs7HTIDmx">tasks</code>, and <code data-page-node-id="K4TGAlWGgWsuHCzQj4NZJ0">fuzz</code>. This is deliberate (slug = the knobs v1's foldering had) but has a sharp edge we already hit once: if you run a 30-task validation cell and later a full sweep with the <em data-page-node-id="lyyNy5DWLyoAAQhJXPuXha">same</em> slug but a <em data-page-node-id="qJ9pnhqFTBEKefxLlFFwmt">different</em> <code data-page-node-id="c2xBkB3sEpMnS34K0xD2vc">measure</code>, both write into the same directory and pollute each other's metrics. That is why the <code data-page-node-id="DQ5Zplb0YkynMWVhX76NBI">validate30</code> cell now lives in <code data-page-node-id="KnT5rEXkE8pB8Q7hIo9VsG">archive/validation-cells/</code> with only its manifest copied to <code data-page-node-id="XOyzFEdy8zsymVmE8qK1cP">results/deepseek-v4-pro/validate30.manifest.json</code>.</p>
+<h3 id="measure-vs-feedback-the-key-orthogonality" data-page-node-id="Z6IeFKXobev18NvTQEOkHS"><code data-page-node-id="853UtAGr5VEIYEEmxNx1if">measure</code> vs <code data-page-node-id="Fuz4QS0YyRMoOksObjnRS8">feedback</code> — the key orthogonality</h3>
+<p data-page-node-id="eGAqn0wug4r37iTCLmphgQ">These two knobs are the heart of the extension's experiment design, and they are independent:</p>
+<ul data-page-node-id="zVZjBIHLNuWKaOizdyWbYG">
+<li data-page-node-id="CeKTif8kKLTUrWHc4wZ4Bo"><strong data-page-node-id="TqpirlL9dnr2639Pqu9RPz"><code data-page-node-id="LZhmFdGiU6zYxaiajAPLr5">measure</code></strong> decides <em data-page-node-id="VbN6wQWnaLXxACxinCB5kO">which analyzers run</em> on every source (round 0 and every healed round). The paper's defect rates and survival curves are computed <strong data-page-node-id="iZc4uNWmWeV2kBAnSVVeFn">only</strong> from the channels selected here. RQ1 uses <code data-page-node-id="lTyYaKTRnsLOh8D7il8BrP">measure=static</code> so the numbers are directly comparable to v1; <code data-page-node-id="gfMM4gOyHcIStECMg6BkN1">static+dynamic</code> cells are the RQ2/ablation cells.</li>
+<li data-page-node-id="1ps1CYDwWkDosC00qoBDLT"><strong data-page-node-id="G8czdb3TQe8TVCXD0guHue"><code data-page-node-id="hlAoeVYujjEPOHiGh2e5YP">feedback</code></strong> decides <em data-page-node-id="uCHrp6ex2halrmD6vhSils">which of the produced reports are consumed</em> by <code data-page-node-id="vdNyXQn4zYIkqdQVw0pCJl">comment_inject</code> and turned into healing comments. It can be a strict subset of what was measured (e.g. measure static+dynamic, feedback static — "does the model benefit from dynamic findings without us measuring dynamically?").</li>
+</ul>
+<p data-page-node-id="KslLlD696jYAJ7yeWZK72J">Both knobs are fed from one shared definition of report suffixes (<code data-page-node-id="GflUFdVDWuuiLXDBG1mrBf">CHANNEL_SUFFIXES</code> in <code data-page-node-id="HIOUV4jseEvDVzNGefCeR6">comment_inject.py</code>) — a single source of truth, so a report can only be injected if the corresponding analyzer actually ran.</p>
+<p data-page-node-id="Qhj9vuCTxlD1kvZ0SaFXSB">The CLI derives <code data-page-node-id="vMgYmT0mazqbG0cOqwq6Ws">measure</code> from <code data-page-node-id="YojgPNcoX34MpkmZSBwNGU">feedback</code> when you don't pass it explicitly: <code data-page-node-id="Z6ioPZjVtQthgMLmnHoRtb">measure = feedback</code>, except <code data-page-node-id="t7o7oMJLRkqyEPfgI2eGgB">feedback=none</code> or <code data-page-node-id="sqaUmHXzEe6bJiuFC06lZ1">dynamic</code> default to <code data-page-node-id="lsElzj6Fl9JifVyL24a6Y1">measure=static+dynamic</code> (the control arm still needs full detection to score outcomes).</p>
+<hr  data-page-node-id="ghdFPngECMM9JyzCUj2Xbf"/>
+<h2 id="3-main-script-flow" data-page-node-id="HX1NZzjFUHU9Mrc1K0oTnp">3. Main script flow</h2>
+<p data-page-node-id="8G5tqECnOvBPTfC8shSA0s"><figure class="fig" data-page-node-id="iEEWYs6kLn2GZ4joEIiGXs"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1064" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" data-page-node-id="uknXYEGLatxOFmZRGVOYF8">
+  <defs data-page-node-id="IsyQGvySvozI8W8qn5e91P">
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="sCYZhtjWaglk5FBBFQ4l0M">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" data-page-node-id="CakIE35Lk9B0TYOjOMQale"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="1064" fill="#ffffff" data-page-node-id="BQhI9sX3FsS9n9fHRWIht4"/>
+  <text x="450" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#0f172a" data-page-node-id="OsgOYuQDw4GWsyF81sOVLy">Main script flow — src/pipeline/run_experiment.py</text>
+  <text x="450" y="46" text-anchor="middle" font-size="11.5" fill="#64748b" data-page-node-id="RX0F7Idvf3IIwMpcnL3CVi">one CLI entry point · cell = model × feedback × measure × temp × top_p × samples × fuzz</text>
+
+  <!-- CLI box -->
+  <rect x="80" y="62" width="740" height="70" rx="8" fill="#0f172a" data-page-node-id="7vBsHJczaP0QBexIMnn89Y"/>
+  <text x="98" y="86" font-size="11" fill="#e2e8f0" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="WprfEYDFH6JqXDdeTnNCnZ">$ python -m src.pipeline.run_experiment \</text>
+  <text x="98" y="103" font-size="11" fill="#e2e8f0" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="HwKS06fwsNssMMqXAXPjRX">  --model deepseek-v4-pro --feedback static --measure static \</text>
+  <text x="98" y="120" font-size="11" fill="#e2e8f0" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="IJTLkMpfW8S1crwYIQdhKH">  --tasks all --samples 3 --max-rounds 7 --temp 1.0 --top-p 1.0 [--fuzz]</text>
+
+  <line x1="450" y1="132" x2="450" y2="154" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="GdNXhD5qDrQ8NPau1pbmwk"/>
+
+  <!-- Setup -->
+  <rect x="80" y="158" width="740" height="70" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" data-page-node-id="8HhGWhE3p8oZk9FpRQgYhk"/>
+  <text x="98" y="180" font-size="13" font-weight="bold" fill="#1f2937" data-page-node-id="U2bWY9FXHr9vW2D25hffXa">run_cell(cell) — setup</text>
+  <text x="98" y="199" font-size="11" fill="#475569" data-page-node-id="wrrXFGiEgYsiDgUUVDriSq">load_registry(config/models.yaml) → ModelConfig (model_id, base_url, extra_body, concurrency, max_tokens)</text>
+  <text x="98" y="215" font-size="11" fill="#475569" data-page-node-id="lZAl0ZlR8VyGotetwZLjBx">_load_tasks() → 974 BCT problems parsed out of bct.py via ast.literal_eval</text>
+
+  <line x1="450" y1="228" x2="450" y2="250" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="XQNpmKA3FF1n6iabeEK7Ee"/>
+
+  <!-- PHASE 1 -->
+  <rect x="50" y="254" width="800" height="236" rx="10" fill="#eef4ff" stroke="#b9c9ee" stroke-width="1.5" data-page-node-id="3FMRB3BVFos4BBBXzanBaT"/>
+  <text x="66" y="280" font-size="13" font-weight="bold" fill="#3730a3" data-page-node-id="qYkWmFmMxDWnELePF1gP85">PHASE 1 — heal_0 · initial generation, then first analysis</text>
+
+  <rect x="80" y="296" width="740" height="66" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1" data-page-node-id="IgQl5gHaur4ibSN0b7lb8h"/>
+  <text x="95" y="317" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="oSulpRVb0YvHIBuYLYkFZu">for sample in 1..samples:  gen.run_batch(cfg, tasks, heal_0/, sample, temp, top_p)</text>
+  <text x="95" y="336" font-size="10.5" fill="#475569" data-page-node-id="15NT8aj22f2X1xPFvBpJEn">ThreadPool(cfg.concurrency) · _safe caps retries at 5 · tasks with an existing .txt are skipped (free resume)</text>
+  <text x="95" y="352" font-size="10.5" fill="#475569" data-page-node-id="RiRIdG2GlPZbNcT0LqNlHy">prompt = v1 GENERATION_PROMPT verbatim (incl. the CWE-664/703/710 avoidance suffix)</text>
+
+  <text x="95" y="383" font-size="11" fill="#312e81" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="kXn5an4EBlPrqOCyukBhtW">writes: problem-{id}[-s{k}].txt (raw LLM answer)  +  problem-{id}[-s{k}].c (sanitize_llm_output → C)</text>
+
+  <rect x="80" y="398" width="740" height="76" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1" data-page-node-id="4uGdyhDftYBsNJwBmrJk3l"/>
+  <text x="95" y="419" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="U2OxREDCheiK9b8A1BahoS">_run_analyze(heal_0, measure, fuzz)</text>
+  <rect x="95" y="430" width="345" height="36" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" data-page-node-id="SxIzujNV3P7trbwzMV2HxX"/>
+  <text x="103" y="444" font-size="10" fill="#334155" data-page-node-id="GgwSFJa3KEyOARMQpxHBQy">static gate — gcc -fanalyzer · clang+z3 · cppcheck · flawfinder</text>
+  <text x="103" y="458" font-size="10" fill="#334155" data-page-node-id="f3bL7ZwLJRuJPhUTbhho8c">+ compile gate (-c → .o) → .gcc/.clang/.cppcheck/.flawfinder.txt</text>
+  <rect x="450" y="430" width="355" height="36" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3" data-page-node-id="zNMsAEgK5Z9kIEckMdW3rM"/>
+  <text x="458" y="444" font-size="10" fill="#334155" data-page-node-id="LJoSSM4DpEDgkhqiOEEaLJ">dynamic — dyn.runner.analyze_dynamic: sanitizer oracle + AFL++</text>
+  <text x="458" y="458" font-size="10" fill="#64748b" data-page-node-id="A3w1HQys2SlMP4h7u8rZYS">→ .test/.asan/.fuzz.txt — only if measure includes "dynamic"</text>
+
+  <line x1="450" y1="490" x2="450" y2="512" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="FcGYXdKCrlvM9REe6QuwpU"/>
+
+  <!-- PHASE 2 -->
+  <rect x="50" y="516" width="800" height="390" rx="10" fill="#fdf6e7" stroke="#e8d5a0" stroke-width="1.5" data-page-node-id="lCX6tPiP3fa1kPLGBgcK8t"/>
+  <text x="66" y="542" font-size="13" font-weight="bold" fill="#92400e" data-page-node-id="MjFOeXwW1wVGgjonYmSmuw">PHASE 2 — heal loop · round N = 1 … max_rounds</text>
+
+  <rect x="80" y="558" width="700" height="64" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1" data-page-node-id="aUlBX7EHG2GoHpeuSIO3IL"/>
+  <text x="95" y="578" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="dzv9u7oH4PuJLON1gafCuN">① comment_inject.generate_commented_weak_code(prev_healed/ → heal_N/to_be_healed/)</text>
+  <text x="95" y="597" font-size="10.5" fill="#475569" data-page-node-id="JEd4B125MVBTO5EQoTXIMS">feedback picks the report suffixes consumed (static / dynamic / both / none);</text>
+  <text x="95" y="611" font-size="10.5" fill="#475569" data-page-node-id="miwzv8eWxB7RqK1EXkzJdq">findings (file:line:col:severity:message) become /* Possible weaknesses found: … */ blocks above flagged lines</text>
+
+  <rect x="80" y="630" width="700" height="44" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1" data-page-node-id="nsqKuVcE7ZneP70OkAqeYT"/>
+  <text x="95" y="648" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="snmS8cBPjPiyrPQVxr9nF9">② flagged = to_be_healed/*.c   →   if empty: loop ends</text>
+  <text x="95" y="665" font-size="10.5" fill="#475569" data-page-node-id="GGR5z9weVXHoSNeFhhZ1SK">ever_flagged ∪= flagged  (remembers everyone who ever needed repair)</text>
+
+  <rect x="80" y="682" width="700" height="64" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1" data-page-node-id="vAS7H8F6nrx00K88zqIl8k"/>
+  <text x="95" y="702" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="3wrMsVKevW1tnj6Emb7sD6">③ _heal_batch(flagged) → gen.heal_code per file → heal_N/healed/</text>
+  <text x="95" y="721" font-size="10.5" fill="#475569" data-page-node-id="whYhDnr9fkZl2y6FRlGRiW">HEALING_PROMPT (v1-verbatim): "Re-write the source-code, paying attention to the comments…"</text>
+  <text x="95" y="735" font-size="10.5" fill="#475569" data-page-node-id="oYueIuwrb1gizFqo9H70SZ">ThreadPool + _safe; one permanent failure is isolated (warn), never kills the cell</text>
+
+  <rect x="80" y="754" width="700" height="88" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1" data-page-node-id="bqOFMbQ7PGcQNQIvtdsBH7"/>
+  <text x="95" y="774" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="DXKW2AJfhe3ec0Ge6gUct4">④ _run_analyze(healed/)  then  pre-build heal_{N+1}/to_be_healed/ from healed/</text>
+  <text x="95" y="793" font-size="10.5" fill="#475569" data-page-node-id="TViUdu8dyWwE6oZGIDBBGE">classification per file (does it reappear in the next round's to_be_healed?):</text>
+  <rect x="95" y="802" width="215" height="30" rx="5" fill="#fffbeb" stroke="#fcd34d" stroke-width="1" data-page-node-id="MzRxxCp03nugGtbGv6y0Or"/>
+  <text x="202" y="821" text-anchor="middle" font-size="10" fill="#92400e" data-page-node-id="7N71799qi1dyCLKLWqxCaI">still flagged → next round</text>
+  <rect x="320" y="802" width="235" height="30" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1" data-page-node-id="5axKuLFgEVV4LzBNg3eFc6"/>
+  <text x="437" y="821" text-anchor="middle" font-size="10" fill="#065f46" data-page-node-id="UKENFpI2QbwLPECJHk7CRq">unflagged + artifact → clean @ round N</text>
+  <text x="565" y="821" text-anchor="middle" font-size="10" fill="#991b1b" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-weight="normal" data-page-node-id="41CvhcGYGFGqHiazCgZP64"></text>
+  <rect x="565" y="802" width="205" height="30" rx="5" fill="#fef2f2" stroke="#fca5a5" stroke-width="1" data-page-node-id="PC4KnGUOtcJl5zPXvxTxH8"/>
+  <text x="667" y="821" text-anchor="middle" font-size="10" fill="#991b1b" data-page-node-id="PcQ3g8H9WGm6bEHW7qqso9">unflagged, artifact missing → heal_failed</text>
+
+  <path d="M 800 798 C 828 798, 828 590, 804 590" fill="none" stroke="#b45309" stroke-width="1.6" marker-end="url(#arrow)" data-page-node-id="zjWgyeQCoFqfOJ0RHvnirR"/>
+  <text x="843" y="700" font-size="10" fill="#b45309" transform="rotate(90 843 700)" text-anchor="middle" data-page-node-id="FQgp3FpeU99lEACAOUUMb0">still-flagged files carry into round N+1</text>
+
+  <line x1="450" y1="906" x2="450" y2="928" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" data-page-node-id="yUkEoNGvTNJOP8FrMBSkaX"/>
+
+  <!-- PHASE 3 -->
+  <rect x="50" y="932" width="800" height="112" rx="10" fill="#ecf9f2" stroke="#a9d8c0" stroke-width="1.5" data-page-node-id="ClKA9JPxxqtXWfJCwFajMe"/>
+  <text x="66" y="958" font-size="13" font-weight="bold" fill="#065f46" data-page-node-id="S1zjBlC6yQnhbOqs0fx45u">PHASE 3 — outcome accounting + manifest</text>
+
+  <rect x="66" y="970" width="170" height="38" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1" data-page-node-id="YWppPMDERlvyacEnU3jOqq"/>
+  <text x="151" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#065f46" data-page-node-id="exItnpz9oQmbFtErwPPMVr">clean_at_start</text>
+  <text x="151" y="999" text-anchor="middle" font-size="9.5" fill="#64748b" data-page-node-id="yhSpgDMFoXDJ4zcx8TTSw4">rounds_to_clean = 0</text>
+  <rect x="248" y="970" width="170" height="38" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1" data-page-node-id="uw7V7SpUQjhXcIrrLug4eO"/>
+  <text x="333" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#065f46" data-page-node-id="gAbxx47lOcy0bJQqGfZJw7">clean</text>
+  <text x="333" y="999" text-anchor="middle" font-size="9.5" fill="#64748b" data-page-node-id="oZB7U9WANW31emOjueMkBd">rounds_to_clean = r</text>
+  <rect x="430" y="970" width="170" height="38" rx="5" fill="#fef2f2" stroke="#fca5a5" stroke-width="1" data-page-node-id="CmGUI33QkzYV1jwXlf8eLK"/>
+  <text x="515" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#991b1b" data-page-node-id="ivPoDGC4n4NtxcKJnZO5S1">heal_failed</text>
+  <text x="515" y="999" text-anchor="middle" font-size="9.5" fill="#64748b" data-page-node-id="agZjmePaneJP6JUqKEKE17">repair call failed, no artifact</text>
+  <rect x="612" y="970" width="170" height="38" rx="5" fill="#fffbeb" stroke="#fde68a" stroke-width="1" data-page-node-id="tNETAtujp7cnjrgSkjjylF"/>
+  <text x="697" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#92400e" data-page-node-id="T908DXAIc6kfg3SYEjFM5g">not_cleaned</text>
+  <text x="697" y="999" text-anchor="middle" font-size="9.5" fill="#64748b" data-page-node-id="dyxberocbJpjDsgZT3laIp">still flagged after max_rounds</text>
+
+  <text x="450" y="1032" text-anchor="middle" font-size="11" fill="#312e81" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="Le6CEW4Ifwn3gb8sYEGIdM">results/{model}/feedback-{fb}-r{reasoning}-t{temp}-p{top_p}.manifest.json   (read later by src.analysis.metrics)</text>
+</svg>
+<figcaption data-page-node-id="UtBnyPnQJVvuP2K4KwH9DJ">Main script flow — run_experiment.py</figcaption></figure></p>
+<p data-page-node-id="AHCHT8DGwsrWnppHLLFjJK"><strong data-page-node-id="6KdSgP1jaFvf4NaeIMyvHk">Figure 1</strong> shows the entire lifecycle of one cell invocation. In text:</p>
+<h3 id="31-command-line" data-page-node-id="e7vDcLlsXcUJs7Yg0XbuDn">3.1 Command line</h3>
+<p data-page-node-id="WUsQdKDW9x3OeQ27udNAcq">There is exactly one entry point:</p>
+<pre data-page-node-id="T46nMrpjQo4l1EcE8x48f9"><code class="language-bash" data-page-node-id="xrvFhsVPOgBnTAOpGJuYSX">python -m src.pipeline.run_experiment \
+    --model deepseek-v4-pro \        # registry id from config/models.yaml
+    --feedback static \              # none | static | dynamic | static+dynamic
+    --measure static \               # static | dynamic | static+dynamic (default: derived)
+    --tasks all \                    # all | subset | comma list / inclusive ranges (1-30)
+    --samples 3 \                    # independent samples per task
+    --max-rounds 7 \
+    --temp 1.0 --top-p 1.0 \         # sampling grid (ablations)
+    [--fuzz]                         # AFL++ channel on (stdin/argv consumers only)
+</code></pre>
+<p data-page-node-id="gFO3M4MdfKQ8lgyiNLyWMf"><code data-page-node-id="GXGz5ZL6RSxtTg29kdZAw5">__main__</code> parses this into an <code data-page-node-id="n2WgLSGBrFKJagnFrnVxYE">ExperimentCell</code> and calls <code data-page-node-id="2iHHAbAgKry1ETIh0a12lD">run_cell(cell)</code>. Task parsing (<code data-page-node-id="I4HB8m5SXFA9tKxKMPv9so">_parse_tasks</code>) accepts <code data-page-node-id="fO8xAM73JVEvvBLTNJiKgs">all</code> (1–974), <code data-page-node-id="d2GGDHUHn7OJJtddF1dT0J">subset</code> (reads <code data-page-node-id="ojBb6NN9acD0V6e4pLlHYR">results/vulnerable_subset.csv</code> — the 200-task ablation subset), or explicit ids/ranges.</p>
+<h3 id="32-setup-top-white-box" data-page-node-id="Y9DKMdHVJq3vCfAGwy1LbG">3.2 Setup (top white box)</h3>
+<p data-page-node-id="8EvdN9ajHIlsAFQUfEGvGw"><code data-page-node-id="lLha4HH1AIZSmHdkjU1uud">run_cell</code> first does two lookups:</p>
+<ul data-page-node-id="BOVGw2UUlEEeQJMpJSPD5m">
+<li data-page-node-id="g9PBODbcW1A4Jm7All8gJp"><code data-page-node-id="tEAIpA7L2ysEjQp1FK6GGh">load_registry("config/models.yaml")</code> → the <code data-page-node-id="Xj2CjXbnA3KZmp7T431zFK">ModelConfig</code> for the model id. This carries everything the LLM layer needs: provider, real API <code data-page-node-id="FqN4pHVbjFHk3FNaqdgicy">model_id</code>, <code data-page-node-id="DNB9kTcAuLY06wsX4UaxG6">base_url</code>, <code data-page-node-id="DMNWBQfv5K76WLoGn12Bts">api_key_env</code>, <code data-page-node-id="vwYu9ogZJmyUthhkkMWHhO">max_tokens</code>, <code data-page-node-id="DY8ax7pi9vG3KkWzKaG0Cj">concurrency</code>, and <code data-page-node-id="UTeHCylLUkdBERYcYwNXMO">extra_body</code> (provider-specific toggles like DeepSeek's <code data-page-node-id="ukuvEANqe1NATT9kiEefJ0">thinking: {type: disabled}</code> — these are applied on <em data-page-node-id="dQjBqnFMrJJcjRJ3ewMzsk">both</em> reasoning and non-reasoning paths).</li>
+<li data-page-node-id="aAYAVYplWaBS3Zd3OEEBMV"><code data-page-node-id="JQFHBlE8h6rhkkPTXlBVGD">_load_tasks()</code> → the 974 BCT problems. Tasks live in <code data-page-node-id="fFzIwPOYvMcvvtagGZRNlr">bct.py</code> as a giant Python literal; the loader <code data-page-node-id="0YKEooFODa8cNjSWE1pAFj">ast.parse</code>s the file and <code data-page-node-id="ecx1WLi84wUqr4vhH6g30g">ast.literal_eval</code>s the <code data-page-node-id="rvoE9RoPruEtMA6YoGCeAM">problems</code> list (no import side effects).</li>
+</ul>
+<h3 id="33-phase-1-heal_0-initial-generation-first-analysis-blue-container" data-page-node-id="DO2BZtUMh3XT7w8iGdbod7">3.3 Phase 1 — <code data-page-node-id="xN7EJ2BhNLOsLf5ieQpOeo">heal_0</code>: initial generation + first analysis (blue container)</h3>
+<p data-page-node-id="M5alckWFMIVVrxKOh8EXyB">For each sample <code data-page-node-id="UqrN2KEViWhda2nFhve9Hz">1..samples</code>, <code data-page-node-id="5HGdQMVvJ72Q18Hx0mpWUj">gen.run_batch</code> fans out one <code data-page-node-id="1fGU34n8pTc2RBcf6bTwDs">generate_code</code> call per task through a <code data-page-node-id="rgWhwb0M4HIAAecIRBheF7">ThreadPoolExecutor(cfg.concurrency)</code>. Each call:</p>
+<ol data-page-node-id="VeT2T29jYwVR0Gj8lvfyjQ">
+<li data-page-node-id="3EyZlz6bXG3gU1ZkCHFkkf">checks whether <code data-page-node-id="N6i8bPdYbAzFuO8obBswx4">problem-{id}[-s{k}].txt</code> already exists — <strong data-page-node-id="bKCzgPtADekoytvM0NjIcF">if so it returns immediately</strong> (this is the resume mechanism; a killed sweep restarts with zero duplicated API calls);</li>
+<li data-page-node-id="GH6fJHyMUoyqfmMfov5fFW">sends the v1-verbatim <code data-page-node-id="FN6fzrGv7sVns9MirIsvGC">GENERATION_PROMPT</code>;</li>
+<li data-page-node-id="4RtPUYe0trgM64Ipj7rv8U">writes the raw answer to <code data-page-node-id="5yYmAKQX2JbDCHsl3eJX37">.txt</code> <strong data-page-node-id="0B1xCVWiyEELA5h9MuWfPD">and immediately the sanitized code to <code data-page-node-id="EvKUHU1AFFJU6NUDi8DDmf">.c</code></strong> (<code data-page-node-id="9huj8HoEeObiMdKSIA5GAI">sanitize_llm_output</code> strips markdown fences and trailing prose).</li>
+</ol>
+<p data-page-node-id="wPWKrokFKxIVzGEqg8lhXZ">Sample suffixes: sample 1 has none (<code data-page-node-id="En9EEDuIdvwbaiuTgh7kGe">problem-5.c</code>), samples 2+ get <code data-page-node-id="LTC0jz5cAik5OF0FISArWw">-s2</code>, <code data-page-node-id="Kru90hUyBIB8J3TA6BaRdn">-s3</code>, … (<code data-page-node-id="ArmRWBSjwvnV0QucKPEUEU">problem-5-s2.c</code>). Every report file later shares this basename.</p>
+<p data-page-node-id="z44wNAPKtzFJvC9pAMY5EB">Then <code data-page-node-id="VvvCxYneeHmBLbByIipOhb">_run_analyze(heal_0, measure, fuzz)</code> runs the detection channels for the first time:</p>
+<ul data-page-node-id="byF9CWZgBo90Bx5qtJFWUo">
+<li data-page-node-id="2GLUix8BaU69QooWDTQtfF"><strong data-page-node-id="pGpOHjtmzwdK6x5OlTUMVD">static gate</strong> (solid chip in the figure) — <code data-page-node-id="45ZcbuuecLV3He0XsF5JDf">static.analyze</code> runs all four tools over every <code data-page-node-id="m2yyIBjJUdeXGku01oeylQ">.c</code> with 120 s per (file, tool) timeout, plus a compile gate (<code data-page-node-id="LE2GXT4knrCpXppVrjyHIZ">gcc -c</code> → <code data-page-node-id="TE9fmHqLlUIqMxPaM42kyq">.o</code>) that records compilability. Writes <code data-page-node-id="fiFLHa5an6yuUDQCHEjCkv">.gcc.txt</code>, <code data-page-node-id="n08irsKYs7QxX6pyq13HDq">.clang.txt</code>, <code data-page-node-id="qp9xCLrYN0UHE2BGAnTT39">.cppcheck.txt</code>, <code data-page-node-id="jPcw0skC63EZc8GZwiuL0W">.flawfinder.txt</code> (reports are only meaningful in the shared <code data-page-node-id="2uik8IMMB8KzpvXU7TdSOq">file:line:col:severity:message</code> format; a missing tool or an existing report is skipped, never an error).</li>
+<li data-page-node-id="V6tHsOynflr3d2luP9AvrP"><strong data-page-node-id="xYUfp41vdA5bZn9djSdwlp">dynamic channel</strong> (dashed chip) — only if <code data-page-node-id="pNwOGdVh08MEP5dKsz3kJ1">measure</code> includes <code data-page-node-id="HxAEu4oa9n6ANDeWe5cjTd">dynamic</code>: <code data-page-node-id="yA9YY0Q0PsQntQ4XnMbHkK">dyn.runner.analyze_dynamic</code> compiles each program under ASan+UBSan, runs the test oracle, and optionally fuzzes. Writes <code data-page-node-id="pYguqr7btoHQUeV3GX6RXi">.test.txt</code>, <code data-page-node-id="5WJD6WxPUUBbDeQRaRLdXw">.asan.txt</code>, <code data-page-node-id="l5W2rcO6Zpdk1drsoFkIJj">.fuzz.txt</code>.</li>
+</ul>
+<h3 id="34-phase-2-the-heal-loop-amber-container" data-page-node-id="6NZ9Y1ay8DHWIXBp9G9moC">3.4 Phase 2 — the heal loop (amber container)</h3>
+<p data-page-node-id="9LkiucFW4VL0P2FJyUizhH">Rounds <code data-page-node-id="gr4aMqnqXyGAanNLGrJZvX">1..max_rounds</code>, each round = four steps (①–④ in the figure): inject comments → collect the flagged set → heal with the LLM → re-analyze and classify. The full anatomy is §4. The curved arrow on the right of the figure is the loop edge: files that are still flagged after round N carry into round N+1 with <code data-page-node-id="EZtt8oF4segaEjlKFf0dGm">prev_healed = healed/</code>.</p>
+<h3 id="35-phase-3-outcome-accounting-manifest-green-container" data-page-node-id="zMAeMahPCHlQF3Zx7YuuPj">3.5 Phase 3 — outcome accounting + manifest (green container)</h3>
+<p data-page-node-id="wOZEqemuv2gsUsuJijlUBF">After the loop ends (empty <code data-page-node-id="gNe8TOAZPIMSV6awwlA5eE">to_be_healed</code> or round cap), every problem-sample that never got an outcome during the loop is classified:</p>
+<ul data-page-node-id="s28lIJbU4k2f03TeqrmL66">
+<li data-page-node-id="KeA0vm3lfF8h1JJJCG9svn">never flagged in any round → <strong data-page-node-id="glopk4u1aCvttKUfYqYcnY"><code data-page-node-id="ZDNInsuv8xJx4FfoBdUVYS">clean_at_start</code></strong> (<code data-page-node-id="c3ZfJmiIpm5BwOtc7Q4ozP">rounds_to_clean = 0</code>);</li>
+<li data-page-node-id="V3JJo1ugHlBpCbAre350Px">flagged at least once and never reached zero → <strong data-page-node-id="S78m1SbCST5fIQzgwB20Hc"><code data-page-node-id="DE6TvMZI7uQNSFYIL7TmhU">not_cleaned</code></strong> (<code data-page-node-id="XnVunDGKEudJTpAAX3G3QE">rounds_to_clean = max_rounds</code>).</li>
+</ul>
+<p data-page-node-id="lI8ivftIFpgqp62eX87Wwt">Together with the in-loop outcomes (<code data-page-node-id="c6tbIEr5akUuAuwO3sREGm">clean</code>, <code data-page-node-id="1nzDyMUz6JlNBD8pimOgbu">heal_failed</code>), the full outcome map is written to:</p>
+<pre data-page-node-id="IQhSrpJmNOas80t5C9W7Eo"><code data-page-node-id="l1iPoKeWPqBaltU4eKihZX">results/{model}/feedback-{fb}-r{reasoning}-t{temp}-p{top_p}.manifest.json
+</code></pre>
+<p data-page-node-id="2s05dnXhzG83JvD3thEmE9">The manifest holds the complete cell config plus one entry per problem-sample. It is the <em data-page-node-id="GKfDqP353l81H3pUmIUFBM">only</em> input the analysis suite needs for outcome metrics — <code data-page-node-id="LiIo8GQG9YAtL0FIHvRgYM">src.analysis.metrics</code> never looks at the raw directory tree for outcomes.</p>
+<hr  data-page-node-id="opqbbIbY1WucOviuowXyl7"/>
+<h2 id="4-the-heal-loop-round-by-round" data-page-node-id="7d8SVBYFOTY7JFKFCweosE">4. The heal loop, round by round</h2>
+<p data-page-node-id="MF2pAtdiBBccCBVI8ODIKG"><figure class="fig" data-page-node-id="fqH3I41tGvWA5WxkoQe6Bb"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 600" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" data-page-node-id="GAlaIylbEDN2SSAC7MDYbi">
+  <rect x="0" y="0" width="940" height="600" fill="#ffffff" data-page-node-id="qzFpvowXW4UB8cyIhMfNAD"/>
+  <text x="470" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a" data-page-node-id="tCKch63Gp4TejBvXNBejDD">Anatomy of one heal round (round N)</text>
+  <text x="470" y="46" text-anchor="middle" font-size="11.5" fill="#64748b" data-page-node-id="d6XapciuHk2hX8F2ZIjieE">the loop inside run_cell that turns analyzer findings into repaired code — and decides every outcome category</text>
+
+  <!-- ============ CARD 1 ============ -->
+  <rect x="16" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#c7d2fe" stroke-width="1.2" data-page-node-id="wPQrvPnSCLYSJ7xcPhZFhE"/>
+  <rect x="16" y="64" width="172" height="32" rx="8" fill="#4f46e5" data-page-node-id="CBFXGHH99YRqGEcnXznurP"/>
+  <rect x="16" y="82" width="172" height="14" fill="#4f46e5" data-page-node-id="98I1mu1uej8ER9nqGDwSc8"/>
+  <text x="102" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff" data-page-node-id="s2BLAVs0izcVGQzG2N2FqB">① SELECT reports</text>
+  <text x="26" y="116" font-size="9.5" fill="#334155" data-page-node-id="OWlXEejtuDnNsgpfUotk2G">comment_inject reads the report</text>
+  <text x="26" y="129" font-size="9.5" fill="#334155" data-page-node-id="jTyVYtiDqr6ZNCConAU33j">suffixes selected by feedback:</text>
+  <text x="26" y="150" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="388Qj4BA6ZB8ILBIcuVnyp">static → .gcc.txt .clang.txt</text>
+  <text x="26" y="163" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="FgALecGjqrtpkldsES91yY">  .cppcheck.txt .flawfinder.txt</text>
+  <text x="26" y="181" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="Cc9bCJ89u96AER7UAQG1Eh">dynamic → .test.txt .asan.txt</text>
+  <text x="26" y="194" font-size="9.5" fill="#3730a3" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="hW73qU1FVMIUPgIZSb3DDP">  .fuzz.txt</text>
+  <text x="26" y="215" font-size="9.5" fill="#334155" data-page-node-id="Yag2lVmAyd0QlxuCIwZRtm">none → nothing is consumed</text>
+  <text x="26" y="228" font-size="9.5" fill="#334155" data-page-node-id="nxGmM5biqcPJnwtSXGQWOF">(control arm: zero feedback)</text>
+  <text x="26" y="249" font-size="9.5" fill="#334155" data-page-node-id="n0zPFvTQr4Ve1ZuqtO0W5T">each report parsed as</text>
+  <text x="26" y="262" font-size="9" fill="#475569" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="XSrHpcpI0ywFx2TOxywIGP">file:line:col:severity:message</text>
+  <text x="26" y="283" font-size="9.5" fill="#334155" data-page-node-id="s801kv2YVyd9s0CReGQvsG">line ≤ 0 (info / error notes)</text>
+  <text x="26" y="296" font-size="9.5" fill="#334155" data-page-node-id="ye1bM1HgaIeWiQxqpaVo7y">never becomes a comment;</text>
+  <text x="26" y="309" font-size="9.5" fill="#334155" data-page-node-id="scfZtYyLgZ6oN0EkfTvGtj">per-case failures map to the</text>
+  <text x="26" y="322" font-size="9.5" fill="#334155" data-page-node-id="Eoy8O87xQQTQu7c50mtdkN">function's own line</text>
+  <text x="26" y="343" font-size="9.5" fill="#475569" data-page-node-id="0YJVAs1egP1xMFPD3SUBzI">CHANNEL_SUFFIXES in</text>
+  <text x="26" y="356" font-size="9.5" fill="#475569" data-page-node-id="OfDN2SP1iimgnA3SdBoI32">comment_inject.py is the single</text>
+  <text x="26" y="369" font-size="9.5" fill="#475569" data-page-node-id="2SSHxG42UEH7dTXOzNPSyY">source of truth</text>
+
+  <path d="M 190 222 L 196 222 L 196 216 L 206 222 L 196 228 L 196 222 z" fill="#94a3b8" data-page-node-id="Kss6CgwQ0HoyWG4DIB4FZn"/>
+
+  <!-- ============ CARD 2 ============ -->
+  <rect x="198" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#ddd6fe" stroke-width="1.2" data-page-node-id="krVBr334hlQXBzZP4qOp4s"/>
+  <rect x="198" y="64" width="172" height="32" rx="8" fill="#7c3aed" data-page-node-id="5J1qce2bZYk6aO84YmS4V2"/>
+  <rect x="198" y="82" width="172" height="14" fill="#7c3aed" data-page-node-id="iAtGRQRbIMSLGoX6JAVecY"/>
+  <text x="284" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff" data-page-node-id="34Mjrs2I6FQVwsS1mRqHYV">② ANNOTATE</text>
+  <text x="208" y="116" font-size="9.5" fill="#334155" data-page-node-id="1ZvOwPk1FcX7f0rFe493YF">for every flagged line a comment</text>
+  <text x="208" y="129" font-size="9.5" fill="#334155" data-page-node-id="0qZY6dAAVeKCjb1mZTLQSz">block is inserted directly above it,</text>
+  <text x="208" y="142" font-size="9.5" fill="#334155" data-page-node-id="TI7CzC6wKk26kSOR3Mepag">matching the line's indentation:</text>
+  <rect x="208" y="152" width="152" height="88" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1" data-page-node-id="mMRbz00hDBOFiJTKm4OLWk"/>
+  <text x="216" y="168" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="Htg11KvmU8JAWHsz2fOoje">/* Possible weaknesses</text>
+  <text x="216" y="181" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="cUbgd576P9rHARLlQ3fDPT"> * found:</text>
+  <text x="216" y="194" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="Z4px7cUIuxdlCCXv3xT3hv"> * &lt;finding message&gt;</text>
+  <text x="216" y="207" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="Zx2I6rCJkBTfJGoqA8dE22"> * &lt;finding message&gt;</text>
+  <text x="216" y="220" font-size="9" fill="#5b21b6" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="yVrcacfgYqkVd3dyPrVAj6"> */</text>
+  <text x="216" y="236" font-size="8.5" fill="#64748b" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="CWtxvSTmcJj08Qw6cYgQD2">int x = malloc(...)</text>
+  <text x="208" y="258" font-size="9.5" fill="#334155" data-page-node-id="ZtZxGoYD9NRCSxopgIYjfU">annotated copies land in</text>
+  <text x="208" y="274" font-size="9" fill="#475569" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="mB52G9G4gNqPJ8CyinY4Nx">heal_N/to_be_healed/</text>
+  <text x="208" y="290" font-size="9.5" fill="#334155" data-page-node-id="qp4zzqKGqO3BMYCbxhPr8W">files with zero findings are</text>
+  <text x="208" y="303" font-size="9.5" fill="#334155" data-page-node-id="KkBWbIqf1TEppfe8n1f6Tc">NOT copied — they are already</text>
+  <text x="208" y="316" font-size="9.5" fill="#334155" data-page-node-id="X9OhvX4aqEcZLbicPXnODX">clean and drop out of the loop</text>
+  <text x="208" y="340" font-size="9.5" fill="#475569" data-page-node-id="qOVc9DSN2ZhgePxCVFceNm">this annotated file is exactly</text>
+  <text x="208" y="353" font-size="9.5" fill="#475569" data-page-node-id="gzjqHct6f5SlG4NnqBJwfb">what the LLM sees next — the</text>
+  <text x="208" y="366" font-size="9.5" fill="#475569" data-page-node-id="HuKDrCFpZdB2B7ZLom7UjL">findings are the only feedback</text>
+
+  <path d="M 372 222 L 378 222 L 378 216 L 388 222 L 378 228 L 378 222 z" fill="#94a3b8" data-page-node-id="izwlzyvKOm8sE9jMJnrhmQ"/>
+
+  <!-- ============ CARD 3 ============ -->
+  <rect x="380" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#fde68a" stroke-width="1.2" data-page-node-id="qcIQAqs5bNBkxOMo7U9Mrs"/>
+  <rect x="380" y="64" width="172" height="32" rx="8" fill="#b45309" data-page-node-id="dCXXCMlQtk96tYmoIXMwBB"/>
+  <rect x="380" y="82" width="172" height="14" fill="#b45309" data-page-node-id="nwgDupFGSY883rKCu7KLiZ"/>
+  <text x="466" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff" data-page-node-id="j4ufQxpCaD623OiR5D9dAn">③ HEAL (LLM)</text>
+  <text x="390" y="116" font-size="9.5" fill="#334155" data-page-node-id="MlJIo9FfQYzeI6ONc4XgPv">_heal_batch: ThreadPool</text>
+  <text x="390" y="129" font-size="9.5" fill="#334155" data-page-node-id="9WZn4ViGroHkkfMowfI3PA">(cfg.concurrency), one</text>
+  <text x="390" y="142" font-size="9.5" fill="#334155" data-page-node-id="CWfJqwSu0u8RfOXoNjGSFY">gen.heal_code call per file</text>
+  <rect x="390" y="152" width="152" height="104" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1" data-page-node-id="JjZYk0spisHum2zcEdHETn"/>
+  <text x="398" y="168" font-size="8.5" fill="#92400e" font-family="Menlo, SFMono-Regular, Consolas, monospace" data-page-node-id="FoRA2atcNjPJ8nxeB5vo1u">HEALING_PROMPT (v1-verbatim):</text>
+  <text x="398" y="184" font-size="8.5" fill="#92400e" font-style="italic" data-page-node-id="xpVmKBTANig4YjH28MV6zr">"Acting as an experienced C</text>
+  <text x="398" y="197" font-size="8.5" fill="#92400e" font-style="italic" data-page-node-id="9nnuWoPYdUopSnu6VMGi3t">developer, analyze the</text>
+  <text x="398" y="210" font-size="8.5" fill="#92400e" font-style="italic" data-page-node-id="bhEt4CdyxeQWLp2yzN4X09">following source-code: …</text>
+  <text x="398" y="223" font-size="8.5" fill="#92400e" font-style="italic" data-page-node-id="bnuebfM3HBkh9e9YhqwK7m">Re-write the source-code,</text>
+  <text x="398" y="236" font-size="8.5" fill="#92400e" font-style="italic" data-page-node-id="3Jt4QE3zeLZoS94J83hLbj">paying attention to the</text>
+  <text x="398" y="249" font-size="8.5" fill="#92400e" font-style="italic" data-page-node-id="84nibtHnHuHtCFXK2JmSfh">comments to check for fixes…"</text>
+  <text x="390" y="274" font-size="9.5" fill="#334155" data-page-node-id="oCues4lESDd5e3k5kdpI8G">raw answer → healed/problem-X.txt</text>
+  <text x="390" y="287" font-size="9.5" fill="#334155" data-page-node-id="YI2BsSPyJhZ4RLG4dvHjHM">sanitized → healed/problem-X.c</text>
+  <text x="390" y="308" font-size="9.5" fill="#334155" data-page-node-id="nGgHIDkcNXEW6Fi8SNOchl">_safe retries ≤ 5; a permanent</text>
+  <text x="390" y="321" font-size="9.5" fill="#334155" data-page-node-id="irWaovouDD9KdNUXfeh9YD">failure ⇒ warn + NO artifact</text>
+  <text x="390" y="334" font-size="9.5" fill="#334155" data-page-node-id="CdrjAuGv8222ZUnzYWRHw9">(later classified heal_failed —</text>
+  <text x="390" y="347" font-size="9.5" fill="#334155" data-page-node-id="SkCFhDEv5gUAm8EkbBOpD3">a missing file is never</text>
+  <text x="390" y="360" font-size="9.5" fill="#334155" data-page-node-id="eIAt14hwmH3kpuyWaNN4wQ">counted as clean)</text>
+
+  <path d="M 554 222 L 560 222 L 560 216 L 570 222 L 560 228 L 560 222 z" fill="#94a3b8" data-page-node-id="LPH4EQzaBxwT3g7uzDAkRE"/>
+
+  <!-- ============ CARD 4 ============ -->
+  <rect x="562" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#99f6e4" stroke-width="1.2" data-page-node-id="ZJZOw8ZBDODWAgC7RyX7Zu"/>
+  <rect x="562" y="64" width="172" height="32" rx="8" fill="#0d9488" data-page-node-id="TPtmA29T3uaPdVT9yvyhl0"/>
+  <rect x="562" y="82" width="172" height="14" fill="#0d9488" data-page-node-id="VoN6glB2OrXuDMCJworQ9p"/>
+  <text x="648" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff" data-page-node-id="gkISff30nPojbpVh47X92q">④ RE-ANALYZE</text>
+  <text x="572" y="116" font-size="9.5" fill="#334155" data-page-node-id="ixB6ciX6loVqs7vdersTz0">_run_analyze(healed/, measure):</text>
+  <rect x="572" y="128" width="152" height="76" rx="4" fill="#f0fdfa" stroke="#5eead4" stroke-width="1" data-page-node-id="AMEEU2yjgAL5UgbQvg04hn"/>
+  <text x="580" y="144" font-size="9" font-weight="bold" fill="#115e59" data-page-node-id="54tPS729CL9NSedQc2bJdD">static gate (always in RQ1)</text>
+  <text x="580" y="158" font-size="8.5" fill="#475569" data-page-node-id="uPsue1MNeuoN430tHCI2ta">gcc -fanalyzer · clang+z3 ·</text>
+  <text x="580" y="170" font-size="8.5" fill="#475569" data-page-node-id="QHuIZa53Kj7Ih8C0JXe9iN">cppcheck · flawfinder ·</text>
+  <text x="580" y="182" font-size="8.5" fill="#475569" data-page-node-id="lWaTPh2FL0b6O7WrPnhEQC">compile gate → .o</text>
+  <text x="580" y="196" font-size="8.5" fill="#475569" data-page-node-id="JFhwAs385lFpsvxvUejGyv">+ compile gate → .o</text>
+  <rect x="572" y="212" width="152" height="62" rx="4" fill="#f0fdfa" stroke="#5eead4" stroke-width="1" stroke-dasharray="4,3" data-page-node-id="jmQVktk0MfV4qSKSsg8I5D"/>
+  <text x="580" y="228" font-size="9" font-weight="bold" fill="#115e59" data-page-node-id="GGWnkGI6EFRk04mFhAJop5">dynamic (measure ⊇ dynamic)</text>
+  <text x="580" y="242" font-size="8.5" fill="#475569" data-page-node-id="AhGpAoUxYbqU1O51gS92y9">sanitizer oracle (.test/.asan)</text>
+  <text x="580" y="254" font-size="8.5" fill="#475569" data-page-node-id="PX1iRqYjFXBgtKCG0dIgrp">+ AFL++ (.fuzz) when --fuzz</text>
+  <text x="580" y="266" font-size="8.5" fill="#475569" data-page-node-id="RNi7PDccJBN8RuObdnDIWm">and program consumes input</text>
+  <text x="572" y="292" font-size="9.5" fill="#334155" data-page-node-id="NApfxTLD343wsdVTMTBk4x">reports that already exist are</text>
+  <text x="572" y="305" font-size="9.5" fill="#334155" data-page-node-id="i8ejZTOzjIWngK35IJxZQi">skipped — an interrupted</text>
+  <text x="572" y="318" font-size="9.5" fill="#334155" data-page-node-id="SQirySaO0y14mkTsOZQiao">round resumes for free</text>
+  <text x="572" y="343" font-size="9.5" fill="#475569" data-page-node-id="5CdxNFkk5DcI6d6sL67uzo">the healed directory is a</text>
+  <text x="572" y="356" font-size="9.5" fill="#475569" data-page-node-id="YnQNgKCsA9PFmGHzI1XNiV">fresh measurement of the</text>
+  <text x="572" y="369" font-size="9.5" fill="#475569" data-page-node-id="PtIptUeURatGuzgjoPbEBv">same 974-task population</text>
+
+  <path d="M 736 222 L 742 222 L 742 216 L 752 222 L 742 228 L 742 222 z" fill="#94a3b8" data-page-node-id="wDTAdJY5EClsgE5WEE9pgu"/>
+
+  <!-- ============ CARD 5 ============ -->
+  <rect x="744" y="64" width="172" height="316" rx="8" fill="#ffffff" stroke="#fbcfe8" stroke-width="1.2" data-page-node-id="9A7JXzT3O2ykb6YrG7PzNW"/>
+  <rect x="744" y="64" width="172" height="32" rx="8" fill="#be185d" data-page-node-id="Z2LC40yhRZDZ2XzHfO4XnY"/>
+  <rect x="744" y="82" width="172" height="14" fill="#be185d" data-page-node-id="kPrABEAqYvpdfOa9bo4TnA"/>
+  <text x="830" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff" data-page-node-id="J9DNnr5vzTadditK9VEBCK">⑤ CLASSIFY</text>
+  <text x="754" y="116" font-size="9.5" fill="#334155" data-page-node-id="rmEkbX3uwz9w4EBF8qzAVt">pre-build heal_{N+1}/to_be_healed</text>
+  <text x="754" y="129" font-size="9.5" fill="#334155" data-page-node-id="2YpCDHcZS1Fh9H2ha9rgjU">from healed/ (same</text>
+  <text x="754" y="142" font-size="9.5" fill="#334155" data-page-node-id="Jzy6KszqLjXweFr1VIqbCM">comment_inject call)</text>
+  <rect x="754" y="152" width="152" height="30" rx="4" fill="#fffbeb" stroke="#fcd34d" stroke-width="1" data-page-node-id="7yXAp66OOcrUPvbFWbPv1Q"/>
+  <text x="830" y="171" text-anchor="middle" font-size="9" fill="#92400e" data-page-node-id="Te8bBOpa84gumHRWqFMQIw">file reappears → still flagged</text>
+  <rect x="754" y="188" width="152" height="30" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1" data-page-node-id="QiuA1TbFPPuPrxlmuTIyid"/>
+  <text x="830" y="207" text-anchor="middle" font-size="9" fill="#065f46" data-page-node-id="bWOFJszpaQpZYz90eeOnTY">gone + .c exists → clean @ N</text>
+  <rect x="754" y="224" width="152" height="30" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1" data-page-node-id="fo0ZqiUwLXDwBRlzdRgZCI"/>
+  <text x="830" y="243" text-anchor="middle" font-size="9" fill="#991b1b" data-page-node-id="MBe8gbGB9jntY6mZJVKTAK">gone + no .c → heal_failed</text>
+  <text x="754" y="274" font-size="9.5" fill="#334155" data-page-node-id="l7CEBu39vvzdAlmsVU2QUT">to_be_healed empty →</text>
+  <text x="754" y="287" font-size="9.5" fill="#334155" data-page-node-id="w3PEsXGpTusGAQq2aQHe8O">loop ends (all clean or</text>
+  <text x="754" y="300" font-size="9.5" fill="#334155" data-page-node-id="kmDDoTQwd3sTe8wqfJewGq">nothing left to heal)</text>
+  <text x="754" y="325" font-size="9.5" fill="#475569" data-page-node-id="QsqXfefrjz1RVXUkXdRKgo">prev_healed = healed/ and</text>
+  <text x="754" y="338" font-size="9.5" fill="#475569" data-page-node-id="LIsdZFFF2pV6VkOniEpBBU">the next iteration consumes</text>
+  <text x="754" y="351" font-size="9.5" fill="#475569" data-page-node-id="f4cMJLaALE5DyQytyjkJYp">the just-produced reports</text>
+  <text x="754" y="372" font-size="9.5" fill="#475569" data-page-node-id="svHd08QBDupWhemCOPWzGA">max_rounds caps the loop</text>
+
+  <!-- ============ OUTCOMES BAND ============ -->
+  <rect x="16" y="404" width="908" height="122" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2" data-page-node-id="dB6ZjZxJt1GETzDm3CSKHw"/>
+  <text x="32" y="428" font-size="12.5" font-weight="bold" fill="#0f172a" data-page-node-id="iM7FPTYGhY3HY2iTo5YoXA">Outcomes recorded in the manifest — one entry per problem-sample</text>
+
+  <rect x="32" y="440" width="214" height="66" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1" data-page-node-id="YZBG9gbjw2UME7GR2bBBHF"/>
+  <text x="42" y="458" font-size="10.5" font-weight="bold" fill="#065f46" data-page-node-id="jbV6ohuCUSuqGFuCs4kJ6u">clean_at_start</text>
+  <text x="42" y="473" font-size="9" fill="#475569" data-page-node-id="lBc5bSHuyiyDnVj4cTsclY">never flagged in any round ≥ 1</text>
+  <text x="42" y="486" font-size="9" fill="#475569" data-page-node-id="2fEC9VPkykeHtOsIHXakEe">(rounds_to_clean = 0) — includes</text>
+  <text x="42" y="499" font-size="9" fill="#475569" data-page-node-id="GE19ITZ3HhhLgl8507TMFv">code the analyzers accepted at heal_0</text>
+
+  <rect x="256" y="440" width="214" height="66" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1" data-page-node-id="zTlsP6RVVE9V4wlMYKWh5v"/>
+  <text x="266" y="458" font-size="10.5" font-weight="bold" fill="#065f46" data-page-node-id="dSjFPGCzGmkU8OXmJ3Gy2F">clean</text>
+  <text x="266" y="473" font-size="9" fill="#475569" data-page-node-id="DSU10cOhAlgAvkyPjG77tR">flagged at least once, reached zero</text>
+  <text x="266" y="486" font-size="9" fill="#475569" data-page-node-id="dmVq6Vrx4tkCPWZH6cY55h">findings in round r</text>
+  <text x="266" y="499" font-size="9" fill="#475569" data-page-node-id="iSjLPZQiQ6AJkrqSIi7Mky">(rounds_to_clean = r)</text>
+
+  <rect x="480" y="440" width="214" height="66" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1" data-page-node-id="7xYirLXTufRZWXmoc71sxp"/>
+  <text x="490" y="458" font-size="10.5" font-weight="bold" fill="#991b1b" data-page-node-id="mRNerRhEj6Tusf2nbPMgsE">heal_failed</text>
+  <text x="490" y="473" font-size="9" fill="#475569" data-page-node-id="dzvjrrBiBS4FhZbceWryHJ">repair call failed permanently;</text>
+  <text x="490" y="486" font-size="9" fill="#475569" data-page-node-id="KcRHNaREmBQEyqF5j3GWfe">healed artifact missing —</text>
+  <text x="490" y="499" font-size="9" fill="#475569" data-page-node-id="kTzSReXaXs5AIacrzg64Vv">never counted as clean</text>
+
+  <rect x="704" y="440" width="214" height="66" rx="6" fill="#fffbeb" stroke="#fde68a" stroke-width="1" data-page-node-id="6nOo6qkOjXkkNPNDZ621M1"/>
+  <text x="714" y="458" font-size="10.5" font-weight="bold" fill="#92400e" data-page-node-id="qAFUitBhfGDf9G8kvEPn2H">not_cleaned</text>
+  <text x="714" y="473" font-size="9" fill="#475569" data-page-node-id="EfOToHV1fDJEx7RM0A1sxU">still flagged when round &gt;</text>
+  <text x="714" y="486" font-size="9" fill="#475569" data-page-node-id="O6IXIAIHOyYxiYpOxXp5F6">max_rounds (rounds_to_clean =</text>
+  <text x="714" y="499" font-size="9" fill="#475569" data-page-node-id="EE2J3GKmDgwWFGEDipSezJ">max_rounds)</text>
+
+  <text x="470" y="556" text-anchor="middle" font-size="10" fill="#64748b" data-page-node-id="eNcoAscJd4dwIkXdvqgoZy">Termination: to_be_healed is empty, or round &gt; max_rounds (default 7). The survival curve (fig_survival) is derived from these outcomes.</text>
+</svg>
+<figcaption data-page-node-id="1NnQRWWFezp9XFwVIBJiZU">Anatomy of one heal round</figcaption></figure></p>
+<p data-page-node-id="4T8S3TEoawPurIn4D7DXX5"><strong data-page-node-id="jCyN9JmxVuSVu6VfwIULAC">Figure 3</strong> dissects round N into five steps. This is the heart of the experiment — everything the paper reports about repair behavior is decided here.</p>
+<h3 id="1-select-reports" data-page-node-id="5RD8iD3kmhiOPBFgZ2w2qU">① SELECT reports</h3>
+<p data-page-node-id="xGkJU0akqblSfUA6llm2jd"><code data-page-node-id="FMHQbHVJof3TibV4qWIRcX">comment_inject.generate_commented_weak_code</code> starts from the previous round's source directory (<code data-page-node-id="ekiAVqeQmeQSVbdMdX3PGe">prev_healed</code>) and reads the report suffixes that the cell's <code data-page-node-id="vy9Ef7D8HPwfDmzp37NIiT">feedback</code> selects:</p>
+<table data-page-node-id="nXjPzHisJqNuKjbBLKTwvI">
+<thead data-page-node-id="JPCaSgRWHZzQCOIf2ki9Wb">
+<tr data-page-node-id="CAE5ccKbGGdPSEMHbkn1Op">
+<th data-page-node-id="kkH0UgJDNCD4LAZ4mBp4sK"><code data-page-node-id="eR5WccxoWt85AGiV9jKFYR">feedback</code></th>
+<th data-page-node-id="xXjJdZZGWkN0ATiByLhvyv">suffixes consumed</th>
+</tr>
+</thead>
+<tbody data-page-node-id="EMPoGj4j43qJ9j8bG1nT4t">
+<tr data-page-node-id="ADAebI6SaxBy5ELQK9GP5U">
+<td data-page-node-id="DshBCEKMATO4eKxY1ijAes"><code data-page-node-id="pEFpgH1mKvLGOxr47ri4AS">none</code></td>
+<td data-page-node-id="ssHRmAPACl8iZzqUtKxQMt">nothing (control arm — the model is asked to "repair" with no findings)</td>
+</tr>
+<tr data-page-node-id="pRMpKKk13oey4K0l18oCoo">
+<td data-page-node-id="vui83umhtApBDHmtu6TRF4"><code data-page-node-id="KZvklnJtN0OPYTqmSrcO09">static</code></td>
+<td data-page-node-id="v6nOA2TRADgC3m7XyownZ5"><code data-page-node-id="fnSGHPUdbanAVEziYnh0Y7">.gcc.txt</code>, <code data-page-node-id="sBuK1ZiBCK4r0GTpcunPb4">.clang.txt</code>, <code data-page-node-id="rJJ1uD21HXqRjAW4z63bsY">.cppcheck.txt</code>, <code data-page-node-id="lzAbbGCiofV4bBISm93Zev">.flawfinder.txt</code></td>
+</tr>
+<tr data-page-node-id="C9JsLY5RyCsV2Rpo18A4lk">
+<td data-page-node-id="RNzA6wHk7W8HAzYJcbCSNU"><code data-page-node-id="9xrRh2zmCq3mORHulasBV7">dynamic</code></td>
+<td data-page-node-id="MQTLmGvwnjSPz4tAGmLczA"><code data-page-node-id="VRRQT4sj8WwxqtzueYCglN">.test.txt</code>, <code data-page-node-id="6iPIfKf8XBklG27SyGLmLI">.asan.txt</code>, <code data-page-node-id="GuF3dM3NjwwF1XqDhc5Uyj">.fuzz.txt</code></td>
+</tr>
+<tr data-page-node-id="W6GMnEMR7hdPhuNioDU4zs">
+<td data-page-node-id="z6kvVnrpPDhb1mCD74FPqt"><code data-page-node-id="Zzj4PIw615b53ZfOhyEN7A">static+dynamic</code></td>
+<td data-page-node-id="iVt8ncgIBVY0uiusbCUEfZ">all seven</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="9Y4wiUVOP5L603HGbodp6p">Each report is parsed line-by-line as <code data-page-node-id="68ATq5A7ZKFGWjqehY6HIW">file:line:col:severity:message</code>. Lines with <code data-page-node-id="Ub77faBXPbTt8gSbSdoT6D">line ≤ 0</code> (info notes like "all 30 test cases passed" or errors like "could not compile under sanitizers") are <strong data-page-node-id="aio66wsWRYS5qaGBSdpoDb">never</strong> comment targets; per-case test failures are attributed to the target function's own line so they still become actionable comments.</p>
+<h3 id="2-annotate" data-page-node-id="ShPliZ4h9R3DGsOJQezT17">② ANNOTATE</h3>
+<p data-page-node-id="cXk8YxXa8SajbK1DtnB9ic">For every flagged line, a comment block is inserted <em data-page-node-id="eOLtfwnHWukFZBC7AAJOHR">directly above it</em>, matching the line's indentation:</p>
+<pre data-page-node-id="Ho9REJ6FwbVwf7CwOchrgI"><code class="language-c" data-page-node-id="7mo8FygFkZAdBLGu8484oJ">    /* Possible weaknesses found:
+     * memory leak: malloc without free
+     */
+    int *p = malloc(n * sizeof(int));
+</code></pre>
+<p data-page-node-id="EJ4JPJ4xKkMmMbe1te1E79">Annotated copies are written to <code data-page-node-id="tBrkwpWoCGlhnF7f11ThJG">heal_N/to_be_healed/</code>. Files with <strong data-page-node-id="DzVdnTP87LprwtoelIc8I4">zero findings are not copied</strong> — they are already clean and simply drop out of the loop. This annotated file is the <em data-page-node-id="Bge2yjCODu8LdsgYzUboEa">only</em> feedback the model ever sees: no chat history, no scores, just findings pinned to lines.</p>
+<h3 id="3-heal-llm" data-page-node-id="0sWdkPXohLxWQD0NaDtOBi">③ HEAL (LLM)</h3>
+<p data-page-node-id="zcHNAY84dsu7GwVvTrC531"><code data-page-node-id="A2cDaZUru8DyGGjPbyEZ8u">_heal_batch</code> fans the flagged files out through a thread pool, one <code data-page-node-id="Ty7eDb3b0wXgGgzcrzYlVV">gen.heal_code</code> call each, using the v1-verbatim <code data-page-node-id="FygGFK06EgZflRA49hg34q">HEALING_PROMPT</code> ("Re-write the source-code, paying attention to the comments to check for fixes for the possible weaknesses identified…"). Two artifacts per file land in <code data-page-node-id="EFCAQMBB7GNxwGT9z56SD2">heal_N/healed/</code>: the raw answer (<code data-page-node-id="BNKyBkO42R4VudgkEwCAY9">.txt</code>) and the sanitized code (<code data-page-node-id="A4EyB7WjcQlq9vpPfCQY53">.c</code>).</p>
+<p data-page-node-id="ftuhcnOkArJLGQKpKSZxmC">Reliability wraps: <code data-page-node-id="inNgWzEQbuROWTs9zMfQOl">_safe</code> retries any call up to 5 times with 5 s backoff; a <em data-page-node-id="vfy0RyXEQSvEjdTsplxPpi">permanent</em> failure (after 5 attempts) is logged as a warning and the file simply has <strong data-page-node-id="vyDZDrGf4Q4zmeI7u1gicz">no artifact</strong> — one bad task can never kill the cell. The client layer additionally raises on <strong data-page-node-id="tiYhHML4ZDCI5D8JYBKNlv">empty completions</strong> (reasoning-only or truncated responses), which would otherwise sanitize to an empty <code data-page-node-id="VEAUenzhYfcxlqaP3Al6Dg">.c</code> file and sail through every analyzer as "clean".</p>
+<h3 id="4-re-analyze" data-page-node-id="DHNqK5UULoWeaEfHesm3J0">④ RE-ANALYZE</h3>
+<p data-page-node-id="iu0Zefk9YToLDEHUB15aaJ"><code data-page-node-id="nVGAd6yvpFNW9xe2eve5Dw">_run_analyze(healed/, measure)</code> runs exactly the same detection stack as Phase 1 over the repaired code. Reports that already exist are skipped (resume-friendly — an interrupted round costs nothing to redo).</p>
+<h3 id="5-classify" data-page-node-id="SSYEEuQ1txy6m4Q4bzCX0X">⑤ CLASSIFY</h3>
+<p data-page-node-id="JMSNhwQxbt6axsuiLpdXGP">The subtle step: to know whether a healed file is <em data-page-node-id="6xAuKfbvaTu8jPNsyF89Po">still</em> defective, the pipeline <strong data-page-node-id="UtA9MHd1BXCWx3jzi2DIu3">pre-builds the next round's <code data-page-node-id="5XDpd2Edbr3OYDX3LeoTst">to_be_healed</code></strong> by running the same comment-injection call over <code data-page-node-id="bpEMZWzwRsF8vYnyGPePf8">healed/</code>. Then, for each file that was flagged this round:</p>
+<ul data-page-node-id="RtR46oBoRsWpixRb4dzqyI">
+<li data-page-node-id="4X49b9VBnJLbPfxD1v4qAd">it <strong data-page-node-id="WS7CwBNcPsUFcY4TTArlSA">reappears</strong> in <code data-page-node-id="628HpLBLo2WUNh4MCUyuNj">heal_{N+1}/to_be_healed</code> → still flagged → it continues into the next round;</li>
+<li data-page-node-id="YPEwtFzbUKkrAymdYAewG8">it's <strong data-page-node-id="u8x7YhNmkoYZjbEeoSH3CG">gone and its <code data-page-node-id="6XuGDUcOGCqiMklH1fXwAH">.c</code> exists</strong> → outcome <code data-page-node-id="ZHMwUZ2nbqJd48hki9bita">clean</code> with <code data-page-node-id="l6dBunf1GNY9xVTHxmPURP">rounds_to_clean = N</code>;</li>
+<li data-page-node-id="jiOOXMn8F2NNO9PqAbaqGY">it's <strong data-page-node-id="vJ9VEYVFl7gZN23a2sQCyc">gone and there is no <code data-page-node-id="AhIuzO0r0ucRZoAGvzHEoG">.c</code></strong> → the heal call failed permanently → outcome <code data-page-node-id="xi7tGEC6Aost79Cjgkcx6S">heal_failed</code> (never counted as clean — this is the guard against the empty-artifact hazard).</li>
+</ul>
+<p data-page-node-id="J8UL9uNThzoNw8SVmsH7NZ">This "the next round's input doubles as this round's verdict" trick is why the loop needs no database: the directory tree <em data-page-node-id="qOSwrMExX7SjgZFHy1ZWZc">is</em> the state.</p>
+<h3 id="outcome-summary-bottom-band-of-the-figure" data-page-node-id="Du7bYY0Lquw2BPlAfiXJXh">Outcome summary (bottom band of the figure)</h3>
+<table data-page-node-id="5tXuWjQ3MfjcJyYdaVaPG6">
+<thead data-page-node-id="9oK0vvS3ECzb3fBJ8mHOC7">
+<tr data-page-node-id="iXfOLWDQdM4HSp8jhpKx98">
+<th data-page-node-id="NjI2lmeeCuGeMkGu0dedpL">Outcome</th>
+<th data-page-node-id="iVOpbYo6DoOGag5pJ4Ba8D">Definition</th>
+<th data-page-node-id="ErgNePxKO6iwVyvbe7udme"><code data-page-node-id="ZSxxNBn6fHho3Qn3c43376">rounds_to_clean</code></th>
+</tr>
+</thead>
+<tbody data-page-node-id="qCZehdp5jz6yheSFVz73En">
+<tr data-page-node-id="sjbV4SO55wNHtOUeNYOtYM">
+<td data-page-node-id="scPW5uI5q6NLS1tvYJkX7j"><code data-page-node-id="aA4hCSrGIoN2tZTzDUxo8t">clean_at_start</code></td>
+<td data-page-node-id="4lwzvmIyG4CuwqoEobp4XN">never flagged in any round ≥ 1</td>
+<td data-page-node-id="WWrVoFHJpgdvAkhdakEvjc">0</td>
+</tr>
+<tr data-page-node-id="wSwms84TLzuxRCrfVRajNK">
+<td data-page-node-id="pH6EMLfZlVJsMpeN3SmFek"><code data-page-node-id="I6wLst6NsBbygf7CDHFclB">clean</code></td>
+<td data-page-node-id="aWHnhTGqZj2LtEV4MuPyuP">flagged at least once, reached zero findings in round r</td>
+<td data-page-node-id="4zulTinnea1WkFvInlOYEi">r</td>
+</tr>
+<tr data-page-node-id="iV1etmcSiiwHEQamZfP2ee">
+<td data-page-node-id="f0Y9VM7ZNEiNd1d62HrBr9"><code data-page-node-id="gjwzyYFCS3Jv0EBlJZHb2d">heal_failed</code></td>
+<td data-page-node-id="oGHlsoD2VNE9KtBoqC7LpW">repair call failed permanently; artifact missing</td>
+<td data-page-node-id="vaGrfBDSi9nKfSxueqeFY8">the round it failed in</td>
+</tr>
+<tr data-page-node-id="FchOTfrcemK5QDfjZfoIMM">
+<td data-page-node-id="UDXcXZLsS2YYUyX2SPlkd0"><code data-page-node-id="WmEu9bBlj9FDYKagHOFHwJ">not_cleaned</code></td>
+<td data-page-node-id="Y5K8eQzKtzj0AUZdbDG4oU">still flagged when round &gt; <code data-page-node-id="dcK9y3j7OHEkcatscPAF4j">max_rounds</code></td>
+<td data-page-node-id="25WEq7GTPwYzEvKqutHxVe"><code data-page-node-id="KU6xyQ0z3qKsHIP1oNnB5V">max_rounds</code></td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="FRCKs89TbkXyykcfr7i9AI"><strong data-page-node-id="IrcVWrtDQE4BhXJicsJagu">Termination:</strong> <code data-page-node-id="aoZT5IVA5tPLc0iYzjTH9s">to_be_healed</code> is empty (nothing left to heal) or round &gt; <code data-page-node-id="94XIWyNaxBVCDLz3Dgpcp2">max_rounds</code> (default 7). The survival curve in <code data-page-node-id="KGWv5RVJ7rXl8H4fGo5gmY">fig_survival</code> (fraction still flagged per round) is derived entirely from these outcomes.</p>
+<hr  data-page-node-id="fSMn9FD2aL4zONTUnMV3NT"/>
+<h2 id="5-module-map" data-page-node-id="QbtineHtFWKgDDiYK3HqD6">5. Module map</h2>
+<p data-page-node-id="fuJDtcGQwoD944ijryKIF8"><figure class="fig" data-page-node-id="Jdgrat2Wt6rmrM7ZNYYmkx"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 800" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" data-page-node-id="EZpQESgHikFNSC7uKcCBGZ">
+  <defs data-page-node-id="7S2d1kEYbUOrNq6d1RYMsU">
+    <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse" data-page-node-id="ChyYW4BlRmDPfDNTgh4sMd">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" data-page-node-id="yKZ1y6rEEja5EXMfoEJXgB"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="800" fill="#ffffff" data-page-node-id="AaS7LkwzMmJR0wjE51xmvP"/>
+  <text x="470" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#0f172a" data-page-node-id="HFttzEfJwcUifqvekDI8ts">Module map — five packages under src/</text>
+  <text x="470" y="46" text-anchor="middle" font-size="11.5" fill="#64748b" data-page-node-id="MkUv62NIV5bcxu3OWmQXBN">pipeline orchestrates · llm talks to providers · harness compiles &amp; runs · dyn adds sanitizers/AFL++ · analysis is offline</text>
+
+  <!-- ======== src/pipeline ======== -->
+  <rect x="40" y="62" width="860" height="196" rx="10" fill="#eef2ff" stroke="#c3cdf5" stroke-width="1.5" data-page-node-id="7aCEC10AtZuFQiLpPyMwDf"/>
+  <text x="56" y="86" font-size="13" font-weight="bold" fill="#3730a3" data-page-node-id="Db5FEBfGiHl0dwuyKiJp8g">src/pipeline — orchestration (the only entry point: python -m src.pipeline.run_experiment)</text>
+
+  <rect x="56" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1" data-page-node-id="6FOg817dX0siFb2qTHoTPL"/>
+  <text x="66" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b" data-page-node-id="GfpBE1RlDLdwR59JphXIxw">run_experiment.py</text>
+  <text x="66" y="133" font-size="9.5" fill="#475569" data-page-node-id="QWxjLnbmk6cgyza0Wykvsr">ExperimentCell / cell_slug</text>
+  <text x="66" y="148" font-size="9.5" fill="#475569" data-page-node-id="mYgn2V8mudvaPDNkWPvS9T">run_cell(cell)</text>
+  <text x="66" y="163" font-size="9.5" fill="#475569" data-page-node-id="NU2XJI4nBAo8HgK2pu03Zm">_run_analyze / _run_dynamic</text>
+  <text x="66" y="178" font-size="9.5" fill="#475569" data-page-node-id="mjbpEFXcFSZ5xfiKVQZQHH">_heal_batch (ThreadPool heal)</text>
+  <text x="66" y="193" font-size="9.5" fill="#475569" data-page-node-id="9caGRCLEPQTHi13HGRhrCI">_parse_tasks (all|subset|1-30)</text>
+  <text x="66" y="208" font-size="9.5" fill="#475569" data-page-node-id="IQ9UHxZ4Uwh0PWcgzpG0l0">manifest writer (outcomes)</text>
+
+  <rect x="266" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1" data-page-node-id="WSnR5aY1F1WEMWyML5AyAh"/>
+  <text x="276" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b" data-page-node-id="HB8qVxjA2hTSVEcIbFMzVc">generate.py</text>
+  <text x="276" y="133" font-size="9.5" fill="#475569" data-page-node-id="yOLyCIrHwiDGCReNHaZlGx">GENERATION_PROMPT / HEALING_PROMPT</text>
+  <text x="276" y="148" font-size="9.5" fill="#475569" data-page-node-id="1CCi6WwqqgAgUJ9iXepaCD">(both v1-verbatim)</text>
+  <text x="276" y="163" font-size="9.5" fill="#475569" data-page-node-id="PUxpFMF45VMXS8gQa1kdkg">generate_code / heal_code</text>
+  <text x="276" y="178" font-size="9.5" fill="#475569" data-page-node-id="4j9PSsez3PX1tTDratNlxB">run_batch (ThreadPool per sample)</text>
+  <text x="276" y="193" font-size="9.5" fill="#475569" data-page-node-id="EgkZNWFU8bNdqSCrizitZ7">_safe (≤5 retries, 5s backoff)</text>
+  <text x="276" y="208" font-size="9.5" fill="#475569" data-page-node-id="IkaopEoJ05MIFRbqtfylKL">skip-existing .txt → free resume</text>
+
+  <rect x="476" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1" data-page-node-id="VFSJhT5zsvUqtXoBmErA7i"/>
+  <text x="486" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b" data-page-node-id="NBMHqdqdJyKZ9ctoYzy1XH">comment_inject.py</text>
+  <text x="486" y="133" font-size="9.5" fill="#475569" data-page-node-id="rogtOUYpiwJodhwOU5B19e">CHANNEL_SUFFIXES (single source</text>
+  <text x="486" y="148" font-size="9.5" fill="#475569" data-page-node-id="yuQTupG0LtaPsRUlXbTc6f">of truth for feedback+measure)</text>
+  <text x="486" y="163" font-size="9.5" fill="#475569" data-page-node-id="Imd2a2DL7ZjbnYEH5UgaBD">generate_commented_weak_code</text>
+  <text x="486" y="178" font-size="9.5" fill="#475569" data-page-node-id="sjNH08uNbvCvZPgOZX8Cgb">get_problems_weaknesses</text>
+  <text x="486" y="193" font-size="9.5" fill="#475569" data-page-node-id="26NY7ICQPQMAc7ciBlH1Py">add_comments_to_weak_source</text>
+  <text x="486" y="208" font-size="9.5" fill="#475569" data-page-node-id="ZnjKlo70CugHWA3jTITnaa">extract_standard_messages</text>
+
+  <rect x="686" y="98" width="200" height="146" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1" data-page-node-id="DBRqysJeC9nmJ4FC0EqT4i"/>
+  <text x="696" y="116" font-size="11.5" font-weight="bold" fill="#1e1b4b" data-page-node-id="vRVMmGOhcBYOXvFKjEnmqV">static.py</text>
+  <text x="696" y="133" font-size="9.5" fill="#475569" data-page-node-id="ArSaBVDaaXpJLGCh5MRGCH">analyze(dir, tools, compile_gate)</text>
+  <text x="696" y="148" font-size="9.5" fill="#475569" data-page-node-id="XKCGxrP5lwu5zPLys1OrAc">_run_one (per tool, 120s timeout)</text>
+  <text x="696" y="163" font-size="9.5" fill="#475569" data-page-node-id="ARRV8JaDlBOOTONzdhzfK0">_compile_gate (gcc -c → .o)</text>
+  <text x="696" y="178" font-size="9.5" fill="#475569" data-page-node-id="tKbG1vP4BQ66BslnBs9fXJ">tools from config/tools.yaml</text>
+  <text x="696" y="193" font-size="9.5" fill="#475569" data-page-node-id="rqoZH8nO87X1lEkRG3L8pO">missing tool → warn + skip,</text>
+  <text x="696" y="208" font-size="9.5" fill="#475569" data-page-node-id="LoeWX4XFSkzMANeCGRpDBZ">existing reports skipped</text>
+
+  <!-- arrows pipeline -> row 2 -->
+  <line x1="175" y1="258" x2="175" y2="322" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow2)" data-page-node-id="JreQV17PvMYUOfsrYnVKwf"/>
+  <text x="182" y="294" font-size="9.5" fill="#64748b" data-page-node-id="UBJRcBbRP2tAKntRW2LyvJ">all generation &amp; heal calls</text>
+  <line x1="760" y1="258" x2="760" y2="322" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow2)" data-page-node-id="mcC9VGAFMkDXNyD3w4Jrhz"/>
+  <text x="700" y="294" font-size="9.5" fill="#64748b" data-page-node-id="dgxrsWk7NHbNPpmQMNsUii">when measure ⊇ dynamic</text>
+
+  <!-- ======== src/llm ======== -->
+  <rect x="40" y="326" width="270" height="268" rx="10" fill="#f5f3ff" stroke="#d6cdf5" stroke-width="1.5" data-page-node-id="v9En3ZA1XjxOfVmD1pgdBy"/>
+  <text x="52" y="348" font-size="12.5" font-weight="bold" fill="#5b21b6" data-page-node-id="xWjoNgOYn2m5SLD8b6GxIv">src/llm — provider-agnostic access</text>
+
+  <rect x="52" y="358" width="246" height="36" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1" data-page-node-id="dhtboVlRt4CO5TN9NHJ1P9"/>
+  <text x="60" y="372" font-size="10" font-weight="bold" fill="#3b0764" data-page-node-id="3sBrWMDZnhQqDe9DMLLff2">registry.py</text>
+  <text x="60" y="386" font-size="9" fill="#475569" data-page-node-id="Ehu2D7JLtTC6CnpD3CPGFt">load_registry · get_client · ModelConfig (extra_body, concurrency)</text>
+  <rect x="52" y="400" width="246" height="36" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1" data-page-node-id="12KQmDSHrmCufOPdqbU2c3"/>
+  <text x="60" y="414" font-size="10" font-weight="bold" fill="#3b0764" data-page-node-id="s8U7fb1Of2Iz5hBd5iNLl8">client.py</text>
+  <text x="60" y="428" font-size="9" fill="#475569" data-page-node-id="KjZ6w7oJyJWwsHsUmzku5E">LLMClient protocol · LLMResponse (text, reasoning, usage, raw)</text>
+  <rect x="52" y="442" width="246" height="48" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1" data-page-node-id="yHXxQh6VcgtSkmghGRAXyN"/>
+  <text x="60" y="456" font-size="10" font-weight="bold" fill="#3b0764" data-page-node-id="F9wE7eJlGXnrC9ARFYdkOv">openai_compatible.py</text>
+  <text x="60" y="470" font-size="9" fill="#475569" data-page-node-id="1H1DcGwUFTMLAUPBZFY6uo">OpenAI · DeepSeek · Qwen · Kimi · GLM</text>
+  <text x="60" y="483" font-size="9" fill="#475569" data-page-node-id="XANNfwVJNKOGvAXpIyZ321">extra_body= quirks · empty-content guard</text>
+  <rect x="52" y="496" width="246" height="48" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1" data-page-node-id="BVw2y9NMh58NsjMd7wCWLN"/>
+  <text x="60" y="510" font-size="10" font-weight="bold" fill="#3b0764" data-page-node-id="RD6QMSnVrOw9C8Vpd0q69y">claude_adapter.py · gemini_adapter.py</text>
+  <text x="60" y="524" font-size="9" fill="#475569" data-page-node-id="8nyk7dGzXLjZgwXfCCvoSj">native SDKs, thinking/threshold support,</text>
+  <text x="60" y="537" font-size="9" fill="#475569" data-page-node-id="1fTGqDgYjMJaJu3mVq5lCU">behind the same protocol</text>
+  <rect x="52" y="550" width="246" height="36" rx="5" fill="#ffffff" stroke="#c4b5fd" stroke-width="1" data-page-node-id="1IPA0w3joHfP7Qbwdsc4rf"/>
+  <text x="60" y="564" font-size="10" font-weight="bold" fill="#3b0764" data-page-node-id="DKHTIhUkVcj5XEe7X5fzwS">retry.py · parse.py</text>
+  <text x="60" y="578" font-size="9" fill="#475569" data-page-node-id="1dLBKVCVHfLD0AzSoFhhdH">per-provider semaphores · retry_call · sanitize_llm_output</text>
+
+  <!-- ======== src/harness ======== -->
+  <rect x="330" y="326" width="270" height="268" rx="10" fill="#fff7ed" stroke="#f3d9b5" stroke-width="1.5" data-page-node-id="h8hUeaMxCJXglwQrcPdCTP"/>
+  <text x="342" y="348" font-size="12.5" font-weight="bold" fill="#9a3412" data-page-node-id="FyVojyXzBnQgvJVRM9YS8g">src/harness — compile &amp; run oracle</text>
+
+  <rect x="342" y="358" width="246" height="48" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1" data-page-node-id="VcPddAfnGdg6jxix77QICr"/>
+  <text x="350" y="372" font-size="10" font-weight="bold" fill="#7c2d12" data-page-node-id="Tb1ZTbblbivyGIWtMwkJW2">mbpp_loader.py</text>
+  <text x="350" y="386" font-size="9" fill="#475569" data-page-node-id="8zfapXpV0Hv9htSLpM06dK">HarnessSpec per task — oracle = MBPP reference</text>
+  <text x="350" y="399" font-size="9" fill="#475569" data-page-node-id="Tdu5Z5ESFbM59UTWHe2YvF">Python, results serialized canonically</text>
+  <rect x="342" y="412" width="246" height="48" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1" data-page-node-id="eBW4p4WkJLOQzhGbCY20q5"/>
+  <text x="350" y="426" font-size="10" font-weight="bold" fill="#7c2d12" data-page-node-id="xf6opaadX2zf2zd16W4RmB">run.py</text>
+  <text x="350" y="440" font-size="9" fill="#475569" data-page-node-id="7Af1H9GeOIy1fNnHqBuZ9C">run_one: LINK vs CLI vs none · RunOutcome</text>
+  <text x="350" y="453" font-size="9" fill="#475569" data-page-node-id="gfkTbjFYn2DugKeY6LNRQq">ASan/UBSan stderr parsing → findings</text>
+  <rect x="342" y="466" width="246" height="48" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1" data-page-node-id="1a04ExQ5ZHLJIXaU4b7cQO"/>
+  <text x="350" y="480" font-size="10" font-weight="bold" fill="#7c2d12" data-page-node-id="Cj4QvI8iVnCAYmDcbaCos3">driver_gen.py</text>
+  <text x="350" y="494" font-size="9" fill="#475569" data-page-node-id="vsXbyc3lMz1Z4dtHkNKg51">single-TU driver · -Dmain= rename trick ·</text>
+  <text x="350" y="507" font-size="9" fill="#475569" data-page-node-id="8EEuRqB3eppam1H0HfyXhy">candidate bindings tried most-likely-first</text>
+  <rect x="342" y="520" width="246" height="36" rx="5" fill="#ffffff" stroke="#fdba74" stroke-width="1" data-page-node-id="K1FHxrkG41OlA8mbS2zTSe"/>
+  <text x="350" y="534" font-size="10" font-weight="bold" fill="#7c2d12" data-page-node-id="aRA3WRsUmaoWV7oWLcRYxH">find_function.py · translate.py</text>
+  <text x="350" y="548" font-size="9" fill="#475569" data-page-node-id="9TZ370GOBNhC4dAdeGvvVa">fuzzy function-name match · Python literal → C</text>
+
+  <!-- ======== src/dyn ======== -->
+  <rect x="620" y="326" width="280" height="268" rx="10" fill="#ecfeff" stroke="#a5e8e0" stroke-width="1.5" data-page-node-id="QSnq0kws07owOE9CYZIfQv"/>
+  <text x="632" y="348" font-size="12.5" font-weight="bold" fill="#155e75" data-page-node-id="xyw8fDQtqz0Agv1xkKD2mX">src/dyn — dynamic channel</text>
+
+  <rect x="632" y="358" width="256" height="76" rx="5" fill="#ffffff" stroke="#67e8f9" stroke-width="1" data-page-node-id="BEbby9XVgiU7mKEl8QFEhF"/>
+  <text x="640" y="372" font-size="10" font-weight="bold" fill="#164e63" data-page-node-id="mHsQNgMB8EOa3iqkgNWOfs">runner.py</text>
+  <text x="640" y="386" font-size="9" fill="#475569" data-page-node-id="ZGzMxzFOT4k8fhCy2OiOy9">analyze_dynamic(dir, fuzz): per .c —</text>
+  <text x="640" y="399" font-size="9" fill="#475569" data-page-node-id="BC8woXrpUJCcoq2vACBxUb">sanitizer test oracle → .test.txt / .asan.txt</text>
+  <text x="640" y="412" font-size="9" fill="#475569" data-page-node-id="TOE0ykuZSp8A89ppd9uLWm">findings in file:line:col:severity:message</text>
+  <text x="640" y="425" font-size="9" fill="#475569" data-page-node-id="G3ngTHnAeZQ0iEJeFuqAM1">(empty report = never written)</text>
+  <rect x="632" y="442" width="256" height="76" rx="5" fill="#ffffff" stroke="#67e8f9" stroke-width="1" data-page-node-id="2yemDyRFCNsHbneytW4sAl"/>
+  <text x="640" y="456" font-size="10" font-weight="bold" fill="#164e63" data-page-node-id="fElVdUc6xvA7FGxNHauBBz">fuzzer.py</text>
+  <text x="640" y="470" font-size="9" fill="#475569" data-page-node-id="554aYD1PtFSyWw6GmRgQJr">fuzz_program: AFL++ 5.02c, two-binary design</text>
+  <text x="640" y="483" font-size="9" fill="#475569" data-page-node-id="a0Uv5YTYF5AgnESwDF8cA9">(UBSan fuzz build + ASan replay build for</text>
+  <text x="640" y="496" font-size="9" fill="#475569" data-page-node-id="PRZHlkCl4DLOHPNVAR7ewD">line attribution) → .fuzz.txt</text>
+  <text x="640" y="509" font-size="9" fill="#475569" data-page-node-id="Yxy3XHea1ihD9NAAhkjvmD">stdin/argv consumers only</text>
+  <rect x="632" y="526" width="256" height="50" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,3" data-page-node-id="7yS9427faaKVZqAbz9jN3F"/>
+  <text x="640" y="544" font-size="9" fill="#475569" data-page-node-id="5On0Mij87xF8tCFDO0cqD3">scratch (not durable):</text>
+  <text x="640" y="557" font-size="9" fill="#475569" data-page-node-id="UTAOJCG8jK0w6P9sDIvKUg">$TMPDIR/chatgpt-codesec-analysis/</text>
+  <text x="640" y="570" font-size="9" fill="#475569" data-page-node-id="WlmVrnt5huQIm3RbK13dZ9">{build,fuzz}/ — outside the repo</text>
+
+  <!-- arrow dyn -> harness -->
+  <line x1="620" y1="430" x2="602" y2="430" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow2)" data-page-node-id="VX5fb106Tc4uY1meU6EQ9b"/>
+  <text x="611" y="420" text-anchor="middle" font-size="9.5" fill="#64748b" data-page-node-id="EYlytAoIyf0BWros6UdmuW">run_one · fuzz builds</text>
+
+  <!-- ======== src/analysis ======== -->
+  <rect x="40" y="630" width="860" height="140" rx="10" fill="#f0fdfa" stroke="#99e5d4" stroke-width="1.5" data-page-node-id="7YI0eBaUpVpJmpMVvmQU4f"/>
+  <text x="56" y="654" font-size="13" font-weight="bold" fill="#0f766e" data-page-node-id="Tl6lZXUi6CUTJO14VRMdcb">src/analysis — offline, decoupled (never imported by the pipeline)</text>
+
+  <rect x="56" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1" data-page-node-id="m6gZ4G8MUjZjevf1WENggu"/>
+  <text x="66" y="682" font-size="11" font-weight="bold" fill="#134e4a" data-page-node-id="y6R6uIBuhE4BlzDzhEB5Hb">metrics.py</text>
+  <text x="66" y="697" font-size="9" fill="#475569" data-page-node-id="TC6y8arDJphAa66IDpy87L">scans manifests + cells →</text>
+  <text x="66" y="710" font-size="9" fill="#475569" data-page-node-id="Oh8GgNi6P4fJD3a3exH8dd">results/metrics.csv (tidy table:</text>
+  <text x="66" y="723" font-size="9" fill="#475569" data-page-node-id="MuBYDdMizFViDfDu2GYnOd">defect / repair / dynamic metrics)</text>
+
+  <rect x="266" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1" data-page-node-id="r0p4caHKeT0vS75jEJv0A7"/>
+  <text x="276" y="682" font-size="11" font-weight="bold" fill="#134e4a" data-page-node-id="amvbBu0K1WamzpEq6PkMtn">stats.py</text>
+  <text x="276" y="697" font-size="9" fill="#475569" data-page-node-id="NH6CBUUK60oVa0wuDXsc5A">Fisher/χ² + Cohen's h ·</text>
+  <text x="276" y="710" font-size="9" fill="#475569" data-page-node-id="mcboZGAy3iozRqEhytAOsy">Mann-Whitney U + Cliff's δ ·</text>
+  <text x="276" y="723" font-size="9" fill="#475569" data-page-node-id="iuNKyy4ADGjoC93brPJXqe">bootstrap CIs · Holm-Bonferroni</text>
+
+  <rect x="476" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1" data-page-node-id="vPhh11gqFKLvhM0b103oy7"/>
+  <text x="486" y="682" font-size="11" font-weight="bold" fill="#134e4a" data-page-node-id="w4C04HxBPHQvqpKBB5kIza">figures.py</text>
+  <text x="486" y="697" font-size="9" fill="#475569" data-page-node-id="0mvbDC3FLVGzYXPNoG3TNs">6 publication figures → PDF + SVG</text>
+  <text x="486" y="710" font-size="9" fill="#475569" data-page-node-id="IZBnchTQHp2kDHDpSSUIxt">(defect rate, survival, rounds,</text>
+  <text x="486" y="723" font-size="9" fill="#475569" data-page-node-id="vnM2iF5Zfxxk05GeAzUdtI">analyzers, CWE heatmap, ablation)</text>
+
+  <rect x="686" y="664" width="200" height="72" rx="6" fill="#ffffff" stroke="#5eead4" stroke-width="1" data-page-node-id="5UocIDTQ5WywYkyopLZKrT"/>
+  <text x="696" y="682" font-size="11" font-weight="bold" fill="#134e4a" data-page-node-id="uzIxfRNhkaYzdnmMCnTNJ8">cwe_map.py</text>
+  <text x="696" y="697" font-size="9" fill="#475569" data-page-node-id="MyPGUFDpQdPKQVUVpGmqa2">findings → CWE → pillar rollup</text>
+  <text x="696" y="710" font-size="9" fill="#475569" data-page-node-id="Lv3zxTVQDDZnlleC10q1Vf">(v1-compatible mapping + new</text>
+  <text x="696" y="723" font-size="9" fill="#475569" data-page-node-id="VRW2jahepkRTYJcAwG1XM9">ASan/UBSan kinds) → cwes_by_problem.csv</text>
+
+  <text x="470" y="758" text-anchor="middle" font-size="9.5" fill="#64748b" data-page-node-id="84twOthsoGIl9Cb7eAXkhF">input: results/*.manifest.json · collected_code_6/** · results/metrics.csv — regenerate metrics, stats and figures any time without touching the pipeline</text>
+</svg>
+<figcaption data-page-node-id="UUbhGx304cZUuFziIkRFGL">Module map</figcaption></figure></p>
+<p data-page-node-id="rmAstVoUJrzrXO3Ent8AcK"><strong data-page-node-id="U3rPsdB9sUGwMOUoWmaHoE">Figure 2</strong> shows the five packages under <code data-page-node-id="hIB2HzLECNlALFv9xmnOFN">src/</code> and their key functions. Call dependencies flow strictly downward: <code data-page-node-id="DspXyUVxHGTNitENd9ElFS">pipeline</code> is the only orchestrator; it calls <code data-page-node-id="ZTdQykFujrE1kGG517cZZ8">llm</code> for every model interaction and <code data-page-node-id="rnCfJhjluORRvfjCBi4LSD">dyn</code> for the dynamic channel; <code data-page-node-id="hemm0iiZxyemGgTSrnUHVi">dyn</code> delegates the actual compile-and-run work to <code data-page-node-id="89JBzkLdTVxBPiJeZ9i78B">harness</code>; <code data-page-node-id="w4JPQlrZOTczS9xcZLRZAD">analysis</code> is fully decoupled and only reads files.</p>
+<h3 id="51-srcpipeline-orchestration-indigo-top" data-page-node-id="0nFqtqk3tjoqN2aYzJtH5i">5.1 <code data-page-node-id="mLTKnJPl2uTtwYBfI7JwCs">src/pipeline</code> — orchestration (indigo, top)</h3>
+<p data-page-node-id="TQQyU5LLzzJyGXjAu31oNE">The only package you invoke directly.</p>
+<table data-page-node-id="MyXs5W7ieeRCDn1FivkQvh">
+<thead data-page-node-id="ws3OHyfzDL0P4KTlF9jOpi">
+<tr data-page-node-id="qw43QQXRdyuBXK3xZuzAG4">
+<th data-page-node-id="hfEaOQOpFFZGN6jK8VGt2n">Module</th>
+<th data-page-node-id="XSGR3nXJR27QAPXN9fpLno">Responsibility</th>
+<th data-page-node-id="RkbXK1iDJqfr2MCSFJ0prT">Key functions</th>
+</tr>
+</thead>
+<tbody data-page-node-id="d803V0eLflmldJJA7oT4GB">
+<tr data-page-node-id="ko5EQuGGQkOcLlzpumHJk7">
+<td data-page-node-id="bHEOBjCLFIS2gG2ok3O8PM"><code data-page-node-id="6WLh72PY65KI6fC7TNOaQQ">run_experiment.py</code></td>
+<td data-page-node-id="0DVWosODA1eMsd0qeND3nb">CLI, cell definition, the three phases, manifest writing</td>
+<td data-page-node-id="YCaFHNwSWq3ddJk3mlcz7Z"><code data-page-node-id="0cgYjdi0Ze3tkBFnlBPEMZ">ExperimentCell</code>, <code data-page-node-id="qIaNSZ7MjvA02KJcKOhlOg">cell_slug</code>, <code data-page-node-id="GfRYDD8LEMyYgA5Ldke7A7">run_cell</code>, <code data-page-node-id="NAtcXoJUZ0oUMW6kf8K05J">_run_analyze</code>, <code data-page-node-id="GJQNrbcEiXqNhX94Ose3Kn">_run_dynamic</code>, <code data-page-node-id="zQUBG3hCkK6uhdJVvCKM5h">_heal_batch</code>, <code data-page-node-id="qrtsDCGWmPN67zb7YgjIDv">_parse_tasks</code></td>
+</tr>
+<tr data-page-node-id="j5bC1QmBPDlqJDFGmx4kWf">
+<td data-page-node-id="ZsAHKVFEQoE211u7qFAYva"><code data-page-node-id="RDHrFzDBBZTDo1s2TFVHjt">generate.py</code></td>
+<td data-page-node-id="OXjNAoH9kw5sQ0WIkvx08Z">LLM code generation and repair with v1-verbatim prompts; batching and retry policy</td>
+<td data-page-node-id="BdzbcB0QJU0Dsfe2RUuIf0"><code data-page-node-id="IvwBMfRiUk1TQzxRH3Bk5P">generate_code</code>, <code data-page-node-id="THM6Xl1SApMbNF93Jx7FHE">heal_code</code>, <code data-page-node-id="BGA4HAcDIbIdxFk5JKijbn">run_batch</code>, <code data-page-node-id="c9vC19cQxkLHf35JHx2b4t">_safe</code></td>
+</tr>
+<tr data-page-node-id="Bf6MfGgqjmjxs5MyOzep7c">
+<td data-page-node-id="pqFeLDivykAUDykQtQySOy"><code data-page-node-id="cBMTAmApRWKhcfwaEV2OSU">comment_inject.py</code></td>
+<td data-page-node-id="ytKNEK9gOZpF4u0ejFvsi9">Turns analyzer reports into source comments; <strong data-page-node-id="mMzxgH8qpiPNp6zz07uRhW">owns the channel/suffix vocabulary</strong> shared by <code data-page-node-id="Jq10d91dWOReEDSCndsuHH">feedback</code> and <code data-page-node-id="5PzQCqtDYWLDL5FKFBi4Gy">measure</code></td>
+<td data-page-node-id="acMXNw9cTu7D6PGzyLBkXA"><code data-page-node-id="kWvdaDJGOk6kwzswaRmviB">CHANNEL_SUFFIXES</code>, <code data-page-node-id="qmsu9W85D9Q6Mf2RT53Cux">generate_commented_weak_code</code>, <code data-page-node-id="EHv88irtmS6JvxZ4TxGLth">get_problems_weaknesses</code>, <code data-page-node-id="1oXv8eofn13QCcLPxXSyW0">add_comments_to_weak_source</code>, <code data-page-node-id="VOxd49bi0k9XWgO198w9ny">extract_standard_messages</code></td>
+</tr>
+<tr data-page-node-id="Q96yLDE5fO3nrjG5sxXeMZ">
+<td data-page-node-id="xvwDuGvVlNk2XwpCLbRSyl"><code data-page-node-id="CtE0HUPFlEkdxsxnnTNDa4">static.py</code></td>
+<td data-page-node-id="Yel9871Ni46HchfVsxu2Ck">The 4-tool static gate + compile gate, driven by <code data-page-node-id="8GNfMzdgzs0llcjsa4IJqb">config/tools.yaml</code></td>
+<td data-page-node-id="CmkZoMHsrUt5bYSoDV60mR"><code data-page-node-id="buub2QX3DkMwgLE6c082dc">analyze</code>, <code data-page-node-id="SyG3T7FeRN9eg8fCAKK7gZ">_run_one</code>, <code data-page-node-id="mcOa9pf5HKxDN8oALASAhT">_compile_gate</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-srcllm-provider-agnostic-model-access-purple-left" data-page-node-id="P4PJ6eqbEH7ngndnUFEtbh">5.2 <code data-page-node-id="Mf7Ac3FKgvrBvhkuSwOkou">src/llm</code> — provider-agnostic model access (purple, left)</h3>
+<p data-page-node-id="hiXb2kk7nPpmjF4L8fUoKs">The rest of the pipeline never knows which provider it is talking to.</p>
+<table data-page-node-id="CoJmIbt6E0cITZBmVl1z2D">
+<thead data-page-node-id="qgAV83haWeqpMrbShnLaiU">
+<tr data-page-node-id="9RY5TtDImZxgv4YvaB3skK">
+<th data-page-node-id="7fIGYrphJiPiAu9ZsY5TDP">Module</th>
+<th data-page-node-id="X2RWKw5oa2WRb4DIervqwC">Responsibility</th>
+</tr>
+</thead>
+<tbody data-page-node-id="Fj9oZ4ROmBYHLUZmnyPzSw">
+<tr data-page-node-id="6gm29WnopEn7l0JHiguhFH">
+<td data-page-node-id="8TQZxPbqmCf4OQakcmsgVf"><code data-page-node-id="XpFSKDouX75VzlMnMKhiol">registry.py</code></td>
+<td data-page-node-id="45cxc8MslFNM9ZPra6j0hr">Loads <code data-page-node-id="oGFSaf38DgDiHqVDgZn3tV">config/models.yaml</code> into <code data-page-node-id="YZrUPlszBfnLCoUHdSD2xl">ModelConfig</code> objects; <code data-page-node-id="E3lFLK5S9KGfY9hOJgQzAH">get_client</code> picks the right client class. Also registers per-provider concurrency semaphores.</td>
+</tr>
+<tr data-page-node-id="yPWza3qucffDD1hp4TvM0F">
+<td data-page-node-id="OlYU4hb1UKgHZbCYJIUK2f"><code data-page-node-id="YIyW7DCDsc8Ahi9e2J5utP">client.py</code></td>
+<td data-page-node-id="1gttrGu5fbV771U27WKI2f">The <code data-page-node-id="l2T0lHEeHxwFm8zymo8Nfy">LLMClient</code> protocol every adapter implements, and the normalized <code data-page-node-id="zOGsMh6Qh5alnaQ4EG6kyt">LLMResponse</code> (text, optional reasoning trace, usage, raw response for audit).</td>
+</tr>
+<tr data-page-node-id="ThbBN7XJt74asD8vOT85jq">
+<td data-page-node-id="i3tKMSAbu1KzGckJOYN1V6"><code data-page-node-id="0WkhIe7EREto2c2wn2sA7Q">openai_compatible.py</code></td>
+<td data-page-node-id="MBELhSoZZLZa7hAf7yToh2">One client for OpenAI, DeepSeek, Qwen/DashScope, Kimi/Moonshot, GLM/Zhipu (all speak <code data-page-node-id="aKual4aZK7cCkXGT5y6bEF">/chat/completions</code>). Provider quirks go through the SDK's <code data-page-node-id="3I6IdVlfr4es3Px1X3HovU">extra_body=</code> parameter (unknown kwargs raise <code data-page-node-id="PKK4kPzvG5a7lpb3mrbhL4">TypeError</code>); hard guard: an <strong data-page-node-id="xFy7lHMMzWULKqhHb5YI3E">empty completion raises</strong> instead of returning "" (empty <code data-page-node-id="NOHIjVGwxXf3AslUQjLP7s">.c</code> files would pass every analyzer).</td>
+</tr>
+<tr data-page-node-id="xu5geXsY5FC5ymlvQia4L4">
+<td data-page-node-id="3HhxhHlAPiok460rLuX7OR"><code data-page-node-id="Ah0jB0GaJ0QSe8CvVemm5X">claude_adapter.py</code> / <code data-page-node-id="V8ay30MdzuwrmhG8Q4WYtv">gemini_adapter.py</code></td>
+<td data-page-node-id="TMHZ19zFHgAieGQbdqyFo0">Native-SDK clients for Anthropic and Google behind the same protocol, with thinking support.</td>
+</tr>
+<tr data-page-node-id="BapueH95pCl1in6TmHFyrZ">
+<td data-page-node-id="sCZ4dkIX7ydaHcnP7F7ZKW"><code data-page-node-id="CHs8bmyNMLZf9XHoBdCpsl">retry.py</code></td>
+<td data-page-node-id="cjgV9XHBLGxbz4JVyLFF74">Per-provider semaphores, transient-error retries with backoff, cost-cap guards — shared by all clients.</td>
+</tr>
+<tr data-page-node-id="sx0pzNWBLDZCWD1BSDW1qU">
+<td data-page-node-id="yisxBaCJipoVwYjKsX7lYd"><code data-page-node-id="rndelHFufIjpNfcyVyfthG">parse.py</code></td>
+<td data-page-node-id="61vJGSgHIcnPEVjj7IxsAW"><code data-page-node-id="XyEu0wi8zPqtgrOjpw1dZh">sanitize_llm_output</code>: extract compilable C from a raw answer (strip ``` fences, handle fence-less answers, drop trailing prose).</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="5qgALaf2cj7XdvGvoOIq67">Reasoning ("thinking") is modeled as a <strong data-page-node-id="kUyWNzudQYSrxE0SV6w1yG">variant selector</strong>, not a flag: a thinking model is a separate registry entry (e.g. <code data-page-node-id="k8Y0bO8ha3Eq2XjtQAPpbi">deepseek-v4-pro</code> vs <code data-page-node-id="KCgj7jwtcGGY7EaqXtF0eJ">deepseek-v4-pro-thinking</code>) with its own <code data-page-node-id="WnmCpcw4eMPuq7wvEffosH">max_tokens</code> and <code data-page-node-id="JbgHO8FjiP7ZBOrQ92nFXc">extra_body</code>, because that is how the providers actually expose it.</p>
+<h3 id="53-srcharness-compile-run-oracle-amber-middle" data-page-node-id="Ev0Pu7Z2smVaD5pjREM5mf">5.3 <code data-page-node-id="FAZyxRQcY6dZZlIMsWZyJP">src/harness</code> — compile &amp; run oracle (amber, middle)</h3>
+<p data-page-node-id="vkidIhajlC9NPKTa1k4181">The execution engine behind the dynamic channel.</p>
+<table data-page-node-id="Ct1RCOVMATDIARzhhbJWku">
+<thead data-page-node-id="hl61Oq8T5WhJMvML4uTs4p">
+<tr data-page-node-id="whDF05o2B5t0R6icyJCWD3">
+<th data-page-node-id="AOlig36ZiJoZOAgcVSWwUL">Module</th>
+<th data-page-node-id="xCm5d76T2rZ0vXzoBtlNcb">Responsibility</th>
+</tr>
+</thead>
+<tbody data-page-node-id="Eky6Ee5UFZ0EBSEh6GBuFR">
+<tr data-page-node-id="jzsiBVeb12JAXBUfcZkAmg">
+<td data-page-node-id="rRFpR1gDhuDEK6l47225iX"><code data-page-node-id="t7ENwnZUge5ySkV4850ePw">mbpp_loader.py</code></td>
+<td data-page-node-id="qKmlQx2CXW597o3U09sL5e">Builds a <code data-page-node-id="BKYHhVQwuTWGiPFkNpdc5K">HarnessSpec</code> per task from the MBPP record: candidate function names, canonicalized test cases. The oracle is the <strong data-page-node-id="KSXQhFJ47IyTIFN187Xk5Y">reference Python implementation</strong> — expected outputs are computed by executing it, then serialized canonically. No Python→C translation of the oracle is needed; the C side just has to produce the same serialization.</td>
+</tr>
+<tr data-page-node-id="fnDfyzhpWRJD8ffHBaVpVZ">
+<td data-page-node-id="WbP379h96laAgahrtnDoPb"><code data-page-node-id="KAMgcAF58Xt8N0VS6xx8UO">run.py</code></td>
+<td data-page-node-id="zxdgC9rFHqsPdohFwoZ9bf"><code data-page-node-id="0lrmmtwTEHj3k3mCt5DEU8">run_one(source, spec)</code> — the single compile-and-run entry point. Picks a testable interface: <strong data-page-node-id="yJHwSj2VSF0QFd2fPvoaOt">LINK</strong> (a fuzzy-matched target function exists → append a generated driver, compile as one translation unit, run, compare against the oracle) or <strong data-page-node-id="ZMc7cIUAbG37I7YCCVvV1A">CLI</strong> (program reads stdin/argv → compile as-is with sanitizers, run with a trivial input, catch startup crashes) or <strong data-page-node-id="AnuqqRk8m1jkYI9GMS3dht">none</strong>. Returns a <code data-page-node-id="ePbzEKExyNSdVoT4uhjRP4">RunOutcome</code> (mode, compiled, matched, ASan/UBSan findings, per-case failures).</td>
+</tr>
+<tr data-page-node-id="Ss7dQC35mRW0NQqEwH1cop">
+<td data-page-node-id="rUL9F43sJoe90iOWETAUW6"><code data-page-node-id="F47g1QePiWK7noPovO32uN">driver_gen.py</code></td>
+<td data-page-node-id="MxjvZLT3Lf763sW6qBujBG">Generates the C driver: the LLM's <code data-page-node-id="6pyVn0RnCqPYWXQ2cK1wDg">main</code> is renamed away with <code data-page-node-id="6qNP58jZSAyVOFuDfumzFB">-Dmain=__mbpp_disabled_main</code> so the real function definition is what the compiler sees; wrong call bindings fail at compile time (cheap) instead of silently producing garbage. Candidate bindings (out-length pointer vs. <code data-page-node-id="TAAGIlzYTm8kFedRCGwYsC">char **</code>, etc.) are tried most-likely-first.</td>
+</tr>
+<tr data-page-node-id="D0eO1yU56z7N4Fw7yGcHsB">
+<td data-page-node-id="iIE0BI56OwWfUv0KxdfsRQ"><code data-page-node-id="26ksZjznfL8taB35Nxem2A">find_function.py</code></td>
+<td data-page-node-id="FYhjIxvO09NYh4BRu68ZeE">Fuzzy-matches the function-under-test (LLM naming drift like <code data-page-node-id="8vB8IWaqw9RhAAzkeODJwL">extract_string</code> → <code data-page-node-id="UlWhrV6cpQRgJmG6aYDA6E">extractStrings</code>).</td>
+</tr>
+<tr data-page-node-id="OdzSCw7l3o4da25ieCBZof">
+<td data-page-node-id="B2HUt9NpLMJcxJ0ubAD0f8"><code data-page-node-id="lPyRS2IujoZNUlch96hBi7">translate.py</code></td>
+<td data-page-node-id="IOSgoADfJeAIFy2ouDLX24">Renders Python literals (int/float/str/bool, 1-D/2-D homogeneous lists) as C initializers for the driver.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-srcdyn-the-dynamic-channel-teal-right" data-page-node-id="7iUJF1VYFc511bckGqroMb">5.4 <code data-page-node-id="QYfgqCKBrt9XArWoyYsUfG">src/dyn</code> — the dynamic channel (teal, right)</h3>
+<table data-page-node-id="NuB4QhjoEilG7JcuBlmY2w">
+<thead data-page-node-id="saplIxIfmgmJJDBaKXZLnZ">
+<tr data-page-node-id="W5nDlObNCl075zpLxhkRPh">
+<th data-page-node-id="l212irHJEEx02O9s48ZnnT">Module</th>
+<th data-page-node-id="Ffjvuo7tqTWpXAPFpBunn0">Responsibility</th>
+</tr>
+</thead>
+<tbody data-page-node-id="3O26eTY3mwtXgRBA2ObQyP">
+<tr data-page-node-id="vJTXuq9xE6bELZzgUWy2jl">
+<td data-page-node-id="kS25v0GjUHptEDC2r78GX7"><code data-page-node-id="Or19lkrlI8BamkmSVDqqfk">runner.py</code></td>
+<td data-page-node-id="gRucLjYteMaZtCCQ1vZBVE"><code data-page-node-id="3HqmsGZLm8noKUq6BoK7ig">analyze_dynamic(dir, fuzz)</code>: per <code data-page-node-id="Kh5fWh2SH13f56Q7VOHErj">.c</code> — look up the task's <code data-page-node-id="hEc3cYjvwsjG34WW2eKtQ0">HarnessSpec</code>, call <code data-page-node-id="JusXKzpvD1EbbwE3xwDCAj">harness.run_one</code>, and write <code data-page-node-id="mFC7K0ZQojHDrj5tJ3KTv5">.test.txt</code> (functional pass/fail) and <code data-page-node-id="L4CPCLV88ZL9bvBiepd6cS">.asan.txt</code> (ASan+UBSan findings in the standard format). Empty reports are never written: <strong data-page-node-id="PgMHVjWMHVSHkFeGBONUan">absence of a file = clean</strong>.</td>
+</tr>
+<tr data-page-node-id="w9JtDG5RsvnDLFp4bW48L1">
+<td data-page-node-id="RA116gLKBCt6WV0LhoWzjI"><code data-page-node-id="r1IUlniP0BD68xSZejchSo">fuzzer.py</code></td>
+<td data-page-node-id="NB49x5bAVYdjiMKrDuy4La"><code data-page-node-id="CzaSBI5kdxt1hICMq031en">fuzz_program</code>: AFL++ 5.02c wrapper with the <strong data-page-node-id="ZOIqCWUphdPsIEod4sIRtp">two-binary design</strong> — the fuzz binary is built with <code data-page-node-id="3GAhwO21hOn1PGghT8KcXp">afl-clang-fast</code> + UBSan only (ASan-instrumented AFL builds are unstable on this host), while a second ASan+UBSan replay binary attributes crashes to source lines. Only stdin/argv-consuming programs are fuzzed; function-only programs are covered by the sanitizer oracle instead.</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="XPwPB3XmyfW3oQPVNKrpGg">All build scratch lives in <code data-page-node-id="RCmWZfpkIw8p3Hv3q02OOC">$TMPDIR/chatgpt-codesec-analysis/{build,fuzz}/</code> — deliberately <strong data-page-node-id="wwrlGMHTXFOetBTdBG3OCx">outside the repo</strong> (see §7.6).</p>
+<h3 id="55-srcanalysis-offline-decoupled-green-bottom" data-page-node-id="kE6AMzEY9Dwo1EGZruL0qx">5.5 <code data-page-node-id="3rrQVFbEygvjCdk6tFBhOQ">src/analysis</code> — offline, decoupled (green, bottom)</h3>
+<p data-page-node-id="KpPxKt99fqkTRbl4P99CJP">Never imported by the pipeline; reads only <code data-page-node-id="Am0lmF68mAqFHfsAMgnjxr">results/</code> and <code data-page-node-id="E9TkVrUbjFsnhjSdRzSPjn">collected_code_6/</code>. This means metrics, statistics and figures can be regenerated at any time without touching (or risking) a running sweep.</p>
+<table data-page-node-id="VzheCx6dfJD142e08c6fOD">
+<thead data-page-node-id="DrwE037L0aiqIZ6UIiSWbz">
+<tr data-page-node-id="qSGGPqEFhr2xpPAySw9vwJ">
+<th data-page-node-id="0GR2EWNiWtIIQ6CESzG2bZ">Module</th>
+<th data-page-node-id="zSIsk25JDZFtrgW2ilX6aO">Responsibility</th>
+</tr>
+</thead>
+<tbody data-page-node-id="ElWCSTFPUjqH7WSdWncsdQ">
+<tr data-page-node-id="EgB9jIBBuZ9GKnEXtC1tDj">
+<td data-page-node-id="BHRYYeu8p3GETq6nE2NhgA"><code data-page-node-id="GNgUBpX43wf4iyAeocnEea">metrics.py</code></td>
+<td data-page-node-id="doihf0dKSCBnRpWb1X9nVr">Scans every cell manifest + directory → tidy <code data-page-node-id="H1Q15TikwyTQbPX7wJMgja">results/metrics.csv</code>: generation metrics (n, compilable), defect metrics (initial flagged rate, per-tool), repair metrics (outcome shares, mean/median rounds-to-clean), dynamic metrics when present.</td>
+</tr>
+<tr data-page-node-id="HHKsTDWJprOtjDfDWuqyoI">
+<td data-page-node-id="AQJlEYwEc3tL4bN7lGjaYN"><code data-page-node-id="KAXTRA3DFSIF1QgsKqorTU">stats.py</code></td>
+<td data-page-node-id="3UxoY2CSJUJHnm55qw6lkn">The paper's tests: Fisher exact / χ² + Cohen's <em data-page-node-id="Y8F4fbVMWXQaxiqwUqyRX1">h</em> for rate contrasts; Mann–Whitney U + Cliff's δ for rounds-to-clean; bootstrap 95% CIs; Holm–Bonferroni correction over the model family. Emits <code data-page-node-id="E1AgHGOUmNEjNKDs3hizzf">results/stats_report.md</code> (per-model summary always; pairwise contrasts need ≥ 2 models).</td>
+</tr>
+<tr data-page-node-id="v1zOiG8bxCJVOOEdVF7iNr">
+<td data-page-node-id="wZUlO2Wz7Q33v4AdyhHmeC"><code data-page-node-id="nc1QHosAQFy9v33i7SWnyd">figures.py</code></td>
+<td data-page-node-id="fhFCCdzrJolHP5wzmGUrL0">Six publication figures to PDF + SVG: defect rate (bootstrap CI), survival across rounds, rounds-to-clean distribution, analyzer stacked bar, CWE heatmap, feedback-ablation contrast.</td>
+</tr>
+<tr data-page-node-id="RCrZFv9hz0tGVxuwsCLQaK">
+<td data-page-node-id="d05EuadmXCqs1XeYBqDmPc"><code data-page-node-id="MzvijnQsehRIKrsseQPwkx">cwe_map.py</code></td>
+<td data-page-node-id="OGIpT928mTQj3biFgeKuL3">Maps findings → CWE → pillar rollup (v1's token mapping kept verbatim, extended with ASan/UBSan error kinds) → <code data-page-node-id="K1ENY1vC6vymSSopWT80or">results/cwes_by_problem.csv</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr  data-page-node-id="ghCeyo5NS5YAnegDXFeEbW"/>
+<h2 id="6-data-on-disk" data-page-node-id="mv5P7GpuHfttoinMF8Krmw">6. Data on disk</h2>
+<pre data-page-node-id="L6lPb0oL03wwaNdZFV8HC8"><code data-page-node-id="DENuWABGl2KE5KBvCQidjX">chatgpt-codesec-analysis/
+├── bct.py                                  # the 974 tasks (Python literal)
+├── mbpp/mbpp.jsonl                         # MBPP records (oracle source)
+├── harnesses/&lt;task_id&gt;/spec.json           # per-task HarnessSpec (built once)
+├── config/
+│   ├── models.yaml                         # model registry (pinned 2026-08-31)
+│   ├── experiment.yaml                     # RQ1 model list, sampling grids, subset size
+│   └── tools.yaml                          # analyzer paths/flags + dynamic timeouts
+├── collected_code_6/                       # ALL durable artifacts
+│   └── {model}/
+│       └── {cell_slug}/                    # e.g. feedback-static-r0-t1.0-p1.0
+│           ├── heal_0/                     # initial generation
+│           │   ├── problem-5.c             #   sanitized code
+│           │   ├── problem-5.txt           #   raw LLM answer
+│           │   ├── problem-5-s2.c          #   sample 2, etc.
+│           │   ├── problem-5.gcc.txt       #   static reports (4 tools)
+│           │   ├── problem-5.o             #   compile gate artifact
+│           │   ├── problem-5.test.txt      #   dynamic: oracle pass/fail
+│           │   ├── problem-5.asan.txt      #   dynamic: sanitizer findings
+│           │   └── problem-5.fuzz.txt      #   dynamic: AFL++ findings
+│           ├── heal_1/
+│           │   ├── to_be_healed/           #   annotated (commented) sources
+│           │   └── healed/                 #   repairs + their reports
+│           └── heal_N/...                  #   one pair per round
+├── results/
+│   ├── {model}/{cell_slug}.manifest.json   # outcome per problem-sample
+│   ├── metrics.csv                         # tidy table (metrics.py)
+│   ├── stats_report.md                     # significance tests (stats.py)
+│   ├── cwes_by_problem.csv                 # CWE mapping (cwe_map.py)
+│   ├── figures/                            # PDF + SVG (figures.py)
+│   └── vulnerable_subset.csv               # 200-task ablation subset
+├── artifacts/                              # PERMANENT dynamic-analysis archives
+│   └── collected_code_6/{model}/{cell}/heal_N/{to_be_healed,healed}/
+│       └── problem-X/
+│           ├── build/                      #   sanitizer builds: combined_N.c
+│           │                               #   drivers, ASan/UBSan binaries
+│           └── fuzz/                       #   full AFL++ session: fuzz +
+│                                           #   replay binaries, seeds/, out/
+│                                           #   (queue, crashes, fuzzer_stats,
+│                                           #   plot_data)
+└── archive/validation-cells/               # retired cells (kept out of metrics scans)
+</code></pre>
+<p data-page-node-id="2qTP7HWwuDhYAvMojHTAor">Report suffix cheat sheet (one basename, seven possible reports):</p>
+<table data-page-node-id="OeSwTv6cNZptF9NzKqjWn5">
+<thead data-page-node-id="vqFA0X7rbwAy8Ia9j96LNs">
+<tr data-page-node-id="OJA0VuLMCUCEAZZODdmxCF">
+<th data-page-node-id="F3BFCZedBOjuAMEXtNKEU8">Suffix</th>
+<th data-page-node-id="BrRGPLhquFNfd4n1ZDdNS0">Channel</th>
+<th data-page-node-id="CjLdB2QqCccqV2R75CNMZB">Tool</th>
+<th data-page-node-id="GKvq5HsliCtbBb1UcbHk9z">Written when</th>
+</tr>
+</thead>
+<tbody data-page-node-id="N2Vkhq6UeJbN2W0qnsgE1o">
+<tr data-page-node-id="eFXYnllpReLnJYe0pVcyRO">
+<td data-page-node-id="0xO9kJcSOBRjnKcw5qPq8o"><code data-page-node-id="FfMilRKC4Y27corKzjF6kB">.gcc.txt</code></td>
+<td data-page-node-id="FyWl9ZgcBSZZdAOcy4G1rO">static</td>
+<td data-page-node-id="I7GscsyCWd8ELCmuyNocz8">gcc -fanalyzer</td>
+<td data-page-node-id="7DDkyPDdBl0hlBSkqTyAHk">findings only</td>
+</tr>
+<tr data-page-node-id="9ofDBwRklu9IQSPUCNjWR6">
+<td data-page-node-id="sLNZv3hHVLGCQblsDrH7xr"><code data-page-node-id="jCGzUI1xfmB8ePD0Vr5JKi">.clang.txt</code></td>
+<td data-page-node-id="kuXTviWZee8Me20WSSxVqy">static</td>
+<td data-page-node-id="6V6uGKk1Dh8MBV3ywzjHnq">clang --analyze + z3</td>
+<td data-page-node-id="uR2xWDB3sTIxRbFJHr2Xg2">findings only</td>
+</tr>
+<tr data-page-node-id="OdLaDDnNpnVc1F91FM9SLZ">
+<td data-page-node-id="45Yo6iCTSDMAygfzMWvz5C"><code data-page-node-id="MlDcrLIB3ScyXPYH8PJe8c">.cppcheck.txt</code></td>
+<td data-page-node-id="QCA47flTQxXDv6jzmPXLdB">static</td>
+<td data-page-node-id="EmKKWZmWJ0LZKczpzLxeCK">Cppcheck Premium</td>
+<td data-page-node-id="4B7J5pPSz5mZ6HBX6iWwb3">findings only</td>
+</tr>
+<tr data-page-node-id="msgV00OBxfy0YTVa7h5vr4">
+<td data-page-node-id="GnNKftUGlQ1UvY0RsXj1ha"><code data-page-node-id="uRhJICCuE4sZdianfzhzv3">.flawfinder.txt</code></td>
+<td data-page-node-id="wQeI5DTWEDkV4C7bib1FW8">static</td>
+<td data-page-node-id="wdA1TqDkfDK1yCwkgG8ivK">Flawfinder</td>
+<td data-page-node-id="idYHxo3SBHxZYZpHuenuLZ">findings only</td>
+</tr>
+<tr data-page-node-id="yafteZHroKYmuxoChEI9Gy">
+<td data-page-node-id="8Qcrxjp3eTI6EXPvCkZ2am"><code data-page-node-id="dtgRytpk4UQqOCWqzo1kj6">.o</code></td>
+<td data-page-node-id="t6WBx4JHWb64Q8LOJguYj5">static</td>
+<td data-page-node-id="SAi9QVb2Nx6jAqRuYw2AbG">compile gate</td>
+<td data-page-node-id="AVV3fLWzmyrOWqzLCqj97Q">compilable code only</td>
+</tr>
+<tr data-page-node-id="sZ5eRg0uMnHkh3x9bvnxEc">
+<td data-page-node-id="8Req5p5xAXqnQr9uqgseI4"><code data-page-node-id="el2W5CPKF59tKJ36CUwMDl">.test.txt</code></td>
+<td data-page-node-id="fBVv1iBxwM1ZhTBPfEPxKC">dynamic</td>
+<td data-page-node-id="6OMPIpI9LydpeFXi07wqym">test oracle</td>
+<td data-page-node-id="Iy2CEGcHnotmOoaTUXhM4A">always (info/error/pass/fail)</td>
+</tr>
+<tr data-page-node-id="J4kHg7pu0Uv5U5bOCKEFM2">
+<td data-page-node-id="EvrQ5mWtcJ8sGFssGCB9Ae"><code data-page-node-id="f3bpKQYAUEQjSikFUmtvcO">.asan.txt</code></td>
+<td data-page-node-id="WWPYirC2qPawJdW6pEbL0c">dynamic</td>
+<td data-page-node-id="6CRjyZ2LL5zvmLFOgKnpyh">ASan + UBSan</td>
+<td data-page-node-id="1z0lAa9rS1cQnAieraTiSr">findings only</td>
+</tr>
+<tr data-page-node-id="zsMpBHpzZ4jMlkE68zYwXj">
+<td data-page-node-id="OLNkZ7RTyd1a6lOWHkPxyx"><code data-page-node-id="MbH2MbN4KNeG4J8CiFZpgE">.fuzz.txt</code></td>
+<td data-page-node-id="Ri14HyGl8apB5LWW4p3nmi">dynamic</td>
+<td data-page-node-id="CSSNOjLsnVCqkBmg2SPCMN">AFL++</td>
+<td data-page-node-id="JeENROF3Y7MBwhlOh1zrH8">findings only</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="0pPKGRRsu3V4Zr7anFEjE1">Scratch (not durable, wiped by reboot): sanitizer builds and AFL++ sessions in <code data-page-node-id="DXP6DOyMwIfonJq8W2yX4o">$TMPDIR/chatgpt-codesec-analysis/{build,fuzz}/</code>.</p>
+<hr  data-page-node-id="2xJht5q5vztMm5UDjqEZPW"/>
+<h2 id="7-cross-cutting-design-decisions" data-page-node-id="Cb8CNFeAlaqFQsGp48Yhza">7. Cross-cutting design decisions</h2>
+<p data-page-node-id="2wFDutRUCMymL4gcGZHKCw"><strong data-page-node-id="7cB6RMJZvecaiW5xarwIz6">7.1 Prompt parity with v1.</strong> Both prompts are copied verbatim from v1's <code data-page-node-id="j1NEyTEPUeFAHNDEF9B4Dc">collect_code.py</code>. Any wording change would break comparability with the ISE 2026 numbers — healing behavior is highly sensitive to prompt phrasing.</p>
+<p data-page-node-id="lT5wmVtk0QeKFFFanhFVlJ"><strong data-page-node-id="XRmRE3BnLsNDADqvIwFQ2l">7.2 File-based state, not a database.</strong> There is no checkpoint file and no in-memory state that matters. <code data-page-node-id="1Fe9Bire8C5TDFrxr0nW6w">generate</code> skips existing <code data-page-node-id="l5BZWF5Lz684VBA4PKWzoU">.txt</code>s; <code data-page-node-id="izmQg9RFopP7MxU9Bm1QOx">static.analyze</code> skips existing reports; <code data-page-node-id="21Vf8dQsEwBNf5DAM4gZ9g">comment_inject</code> skips existing annotated copies; outcomes are recomputed from the directory tree at manifest time. Consequence: an interrupted sweep (host reboot, API outage) resumes with <strong data-page-node-id="5HvwHlnkYlhYhnozQtcXnS">zero duplicated API calls</strong> — verified in practice when both RQ1 sweeps were killed overnight and relaunched for free.</p>
+<p data-page-node-id="wIR1nZHQTn5V1FEkmLhkW5"><strong data-page-node-id="49MMBC9LVf8ShyESBpNeCA">7.3 Failure isolation everywhere.</strong> Three nested guards: the client raises on empty content; <code data-page-node-id="snCIZhbhGQxlUcj5dAt9rF">_safe</code> retries ≤ 5 times; the batch runners catch permanent per-task failures and continue. A single poisoned task degrades to a <code data-page-node-id="LyPVxI5h9ps85ID9TBqw57">heal_failed</code> outcome, never a crashed cell.</p>
+<p data-page-node-id="WGxGAPXPD2xizrXc2pG7Bt"><strong data-page-node-id="oUGtIk6xlx46PpInxcgykk">7.4 <code data-page-node-id="rGCBxfSjehNzNpzuvHJAQK">heal_failed</code> honesty.</strong> A missing repaired artifact is recorded as <code data-page-node-id="dFvQIpKeX2nRuGkIwlJsAA">heal_failed</code>, never as clean — because an empty/missing <code data-page-node-id="1jHnLugpu0OvqRRLuHBAkd">.c</code> would trivially "pass" all analyzers. (This outcome also lets us detect API outages post-hoc: e.g. the 2026-09-01 DeepSeek balance exhaustion shows up as exactly 109 <code data-page-node-id="Cja4xKryG1nnyC2CH9Ecwn">heal_failed</code> entries in rounds 6–7, cleanly separable from genuine repair failure.)</p>
+<p data-page-node-id="3Y7LuRHPbtHuJUfhBE7w85"><strong data-page-node-id="5uOOfjOgeOHChPxcJLmT5Q">7.5 Reasoning variants as registry entries.</strong> Thinking mode changes the API contract (reasoning tokens, higher <code data-page-node-id="Yk8qDSJvws8CZvDwgfHH4d">max_tokens</code>, provider-specific toggles), so each thinking variant is its own registry row with its own <code data-page-node-id="OJrCKyDbrxZ7ragqSClZse">extra_body</code> — the pipeline code stays identical.</p>
+<p data-page-node-id="vytapFRziBG7GlE4tXqFiq"><strong data-page-node-id="AMxoYAjMDhgUCHP7ceDRHV">7.6 Scratch outside the repo, archives inside.</strong> Sanitizer builds and AFL++ sessions produce/delete hundreds of scratch files per round; on this host, bulk deletes inside project paths are killed by a sandbox guard. Hence the <em data-page-node-id="qLXU41mLEqVNBP99AvnQyf">working</em> scratch (<code data-page-node-id="FbHUHfMvuK9SWZI5o7KlG3">BUILD_ROOT</code>/<code data-page-node-id="dHNwL7t5nRskNPebGsfxRc">FUZZ_ROOT</code>) lives under <code data-page-node-id="KILOXbEccIGgyEWOBlebTV">$TMPDIR</code> — but since 2026-09-01 every completed run is also <strong data-page-node-id="AmYaqHHSaN0OAmIgAponUD">copied</strong> into a permanent <code data-page-node-id="JpYDsKEq5saGwZm9BcVNP7">artifacts/</code> tree in the repo (<code data-page-node-id="RgHvIrJGjlUXsZETLwseYL">archive_scratch()</code> in <code data-page-node-id="KCLc5DuxfSDyoX2RfM2BK5">harness/run.py</code>): sanitizer builds under <code data-page-node-id="kWoFFt3IT398eykJKn3cvb">build/</code>, full AFL++ sessions under <code data-page-node-id="ZEEEg1v5tYQVbvI23pQPHf">fuzz/</code> (queue, crash inputs, <code data-page-node-id="rmzq1EivKHvzIko6QDvy4c">fuzzer_stats</code>, both binaries). The copy is merge-only (<code data-page-node-id="6afclTrTxm2adrmQqQO6Ig">dirs_exist_ok=True</code>) — the pipeline never deletes anything under <code data-page-node-id="AfBcGfLXglwGHwfyJbzYdX">artifacts/</code>, so the guard can never trigger there — and re-runs of the same source keep a union of all sessions. Archives are keyed by the source's repo-relative path, so they never collide and are trivially mappable back to the code they came from. <code data-page-node-id="vSn49eUqNEsl0hQ20m9U4G">DYN_ARCHIVE=none</code> disables archival for throwaway dry-runs; <code data-page-node-id="v8WduiyfWBIl9bFH9k8hsW">DYN_ARCHIVE_ROOT</code> relocates the tree. Note the analysis layer never <em data-page-node-id="VLCm2UTdSQzkFOGnIM9lDT">reads</em> the archives (the <code data-page-node-id="B8nQ7A3rHAMYyEWCCK6MPB">.test/.asan/.fuzz.txt</code> reports in <code data-page-node-id="wsdMiFmIAVp8Yr4y9pSvGS">collected_code_6</code> remain the single input to metrics) — they exist for post-hoc inspection, crash reproduction, and corpus mining. Also note <code data-page-node-id="gQuFpRfGaCMXGAC6pXlfdy">os.makedirs(exist_ok=True)</code> is used everywhere because the brokered <code data-page-node-id="MzySkgPTpGZktv7chT196u">os.mkdir</code> shim raises <code data-page-node-id="s0wL4NMqytGv4t4ZD9pxTz">PermissionError</code> on existing paths.</p>
+<p data-page-node-id="T4NXeFvaF73nYPb1qy6jNu"><strong data-page-node-id="m4flQPQ89h6Sk5dB4ko6Je">7.7 Toolchain pins (macOS, Intel).</strong> ASan runtime only works via Apple's <code data-page-node-id="ZxcdcG9e6u1GyJGXtjhYTv">/usr/bin/clang</code> (Homebrew LLVM 21's is broken on macOS 26.5); UBSan works on both. AFL++ 5.02c must be built <code data-page-node-id="iJHx97zoBuE9Jw2gP4PNw2">TEST_MMAP=1</code> (SysV shmget fails with EINVAL). Sanitizer set is overridable via <code data-page-node-id="P273FMvkWgp5F8G0MOSQVH">DYN_SANITIZERS</code> without code changes.</p>
+<hr  data-page-node-id="DyJNTS1HBMeGfCE8BOBvMS"/>
+<h2 id="8-running-it" data-page-node-id="P5gTXvcoLCxkkS82eSQY0E">8. Running it</h2>
+<pre data-page-node-id="NiSMI1ev7rBZasR8oG7icT"><code class="language-bash" data-page-node-id="9R7EcJEkBJhO8djlHrltys"># RQ1 main sweep for one model (974 tasks × 3 samples, static measure — v1-comparable)
+.venv/bin/python -m src.pipeline.run_experiment \
+    --model deepseek-v4-pro --feedback static --measure static \
+    --tasks all --samples 3 --max-rounds 7
+
+# Quick dry-run (1 task, all intermediate files inspectable)
+.venv/bin/python -m src.pipeline.run_experiment --model qwen-max \
+    --feedback static+dynamic --measure static+dynamic --tasks 2
+
+# Ablation cell on the 200-task vulnerable subset
+.venv/bin/python -m src.pipeline.run_experiment --model glm-5.1 \
+    --feedback static+dynamic --measure static+dynamic --tasks subset --samples 2
+
+# Regenerate the analysis layer (safe while sweeps run)
+.venv/bin/python -m src.analysis.metrics      # -&gt; results/metrics.csv
+.venv/bin/python -m src.analysis.stats        # -&gt; results/stats_report.md
+.venv/bin/python -m src.analysis.cwe_map      # -&gt; results/cwes_by_problem.csv
+.venv/bin/python -m src.analysis.figures      # -&gt; results/figures/
+</code></pre>
+<h3 id="status-at-document-time-2026-09-01-updated-after-both-sweeps-landed" data-page-node-id="hcjyr2NlpvLSgjMtSbqnIv">Status at document time (2026-09-01, updated after both sweeps landed)</h3>
+<ul data-page-node-id="xPd4j1JozbflBYOWCLtL3i">
+<li data-page-node-id="N8pf1Ka8hGBIUDxNaaNih9"><strong data-page-node-id="drawyOBXCh12r2b0Rz7SjO">deepseek-v4-pro RQ1 sweep: complete.</strong> Caveat: the DeepSeek API balance ran out during heal round 6 — 109/2922 samples are <code data-page-node-id="wqD2v7xmF0L71j2HvMEmLU">heal_failed</code> (26 in round 6, all 83 of round 7). Once the balance is topped up, re-running the identical command resumes only those 109 heals (everything else is skip-existing) and rewrites the manifest. <strong data-page-node-id="JdyDVHknzT7ArCBHaVxdCr">Do not quote the current deepseek manifest as final.</strong></li>
+<li data-page-node-id="t5vgmQRL47qCIEIEZmF0IA"><strong data-page-node-id="8haiuw3U1qgFMhRJMUtHSr">qwen-max RQ1 sweep: complete and clean</strong> (exit 0, zero <code data-page-node-id="3PnccCcAp768b70a3Any65">heal_failed</code>) — first fully trustworthy RQ1 cell.</li>
+<li data-page-node-id="LWhxSaUSjU3VvnlFFGGF00">Remaining 5 models: blocked on API keys (Anthropic, Gemini, Moonshot, Zhipu) and the OpenAI proxy; registry pins for all 7 were re-verified and updated on 2026-08-31.</li>
+</ul>
+<hr  data-page-node-id="JjTbkemHIyWhVJ4hDM5QIq"/>
+<h2 id="9-reading-the-first-results-through-the-architecture" data-page-node-id="cbCN60ldFEGhzFgOmSV5LL">9. Reading the first results through the architecture</h2>
+<p data-page-node-id="yvc9uRBuJZ71TGqfEzEL3m">The first two sweeps are a good exercise in connecting the machinery above to the numbers it produces. All figures below come from <code data-page-node-id="3V9kpiFiuA9jYvcfB6tJmT">results/metrics.csv</code> (regenerated 2026-09-01 after both sweeps finished; per-sample raw data in the two manifests).</p>
+<table data-page-node-id="Jz7QHX662nh10iLXh5RQYn">
+<thead data-page-node-id="8mAl5WbzwCZCjDx2WSdqj2">
+<tr data-page-node-id="zsLkI7sacen7zQAWUJ96ol">
+<th data-page-node-id="uu9QBK7227V7G8Dw924C7f">Metric (column)</th>
+<th data-page-node-id="oYcwpP46tWMg31Xeylp7sM">deepseek-v4-pro</th>
+<th data-page-node-id="GzvyZnFy7IBxF5lKyy3FUo">qwen-max</th>
+<th data-page-node-id="wfk8swmaGa5k3nWnfjaKG5">What pipeline stage decides it</th>
+</tr>
+</thead>
+<tbody data-page-node-id="VvbxjA92dxCp5Cg5ebzgAE">
+<tr data-page-node-id="dB0D8VDQmOk5mVlxK53p2N">
+<td data-page-node-id="oWY2yViy0bGpUOWjYqsdSn"><code data-page-node-id="qNj8llWXxwtxpZWABgkfp3">n_generated</code></td>
+<td data-page-node-id="YG8FjtkgEMUrtbgA4aGGAi">2922</td>
+<td data-page-node-id="mtoLOsM2jgIvEzOfzC4tjG">2922</td>
+<td data-page-node-id="avRuqCrO5ksjtjl0IDIzTr">Phase 1 generation: 974 tasks × 3 samples, all delivered</td>
+</tr>
+<tr data-page-node-id="G70toFtdRTndH1nRqGBPbG">
+<td data-page-node-id="VZFfFQQYNJmXYYAq6bq088"><code data-page-node-id="sACEFHSVWkAihkJrxvoFng">n_compilable</code> / <code data-page-node-id="OYWtUsIamYvsNPKC04hqGo">compile_rate</code></td>
+<td data-page-node-id="4AvzYvkXq57gqvzrGvWYAL">2862 / 97.95%</td>
+<td data-page-node-id="azGk0mWjYKGHC9DoNskUZu">2743 / 93.87%</td>
+<td data-page-node-id="2D9HfJnAgTbJXNvAOtbyoZ">The plain compile gate in <code data-page-node-id="Si6HomBVhdivsmF4qIUULA">static.analyze</code></td>
+</tr>
+<tr data-page-node-id="J3ut3u8o4iBRot4P8oI4Ap">
+<td data-page-node-id="NiYGxwpfSrHmFs8w491WtI"><code data-page-node-id="FTUDlj4ES5TVUhJJLLpaYP">flagged_gcc</code> / <code data-page-node-id="UNsIpShIMgJAMn5QdcCGNm">flagged_clang</code></td>
+<td data-page-node-id="ZknS2b7yOIa9HWn5EVzXvZ">60 / 71</td>
+<td data-page-node-id="fDwM2A8Kny6eL0OTz2hVR3">179 / 176</td>
+<td data-page-node-id="48OMxOMV1P6STgpgcgNyK4">GCC <code data-page-node-id="QFdzqsxd1erYcJeVQKqn2f">-fanalyzer</code> and Clang SA reports present in heal_0</td>
+</tr>
+<tr data-page-node-id="B4RFf3ICuHVbgeOk2ejxih">
+<td data-page-node-id="1GmYmuTjMdp1BEZUpNh6s9"><code data-page-node-id="pGt4FLDuiERnDHaaZVL2rK">flagged_cppcheck</code></td>
+<td data-page-node-id="ukENQm4zhx0KVK1AqFwqDO">968</td>
+<td data-page-node-id="INeoNoaKu5wjiyjSk5Qa7h">1007</td>
+<td data-page-node-id="UcMB2HsnTWdsItSAhHm5Xx">Cppcheck Premium reports (the dominant static detector)</td>
+</tr>
+<tr data-page-node-id="NJqPyyuxHuKbGYU2FvupvD">
+<td data-page-node-id="J3SoY0BkPCW3721oSvcRuh"><code data-page-node-id="3Bw4X0IjjM9ihHWjZdRwcY">initial_flagged</code> / <code data-page-node-id="FW74XBdRaaI8do3oJQyhxE">initial_defect_rate</code></td>
+<td data-page-node-id="JuNnBe5pN1NqVfOEPtLQln">1006 / <strong data-page-node-id="g4lwBf8VKrAVABhe8aDvfu">34.4%</strong></td>
+<td data-page-node-id="SVefc6DCEMLZhdTldJuwRi">1118 / <strong data-page-node-id="cTcYwbovHOsBqPrA0KsaGi">38.3%</strong></td>
+<td data-page-node-id="1hcjkWqlaKf9MBKYIGTZFZ">Union of all static findings in round 0 — the paper's "initial defect rate"</td>
+</tr>
+<tr data-page-node-id="7XbL1IqayyhDUdlKGRVAXj">
+<td data-page-node-id="6X2kN4EoKDLpLW0zHcULRB"><code data-page-node-id="DoglTfBjLhSxE6XiB96LME">clean_at_start</code></td>
+<td data-page-node-id="NA1ZzHQJaZLhGf4uDPuUwB">1916</td>
+<td data-page-node-id="QvriJ3B8sOT6YJMyugqmIo">1804</td>
+<td data-page-node-id="AWzDzdcyZ44gyv4xSJR2Mq">Heal-loop entry: zero findings → never enters the loop</td>
+</tr>
+<tr data-page-node-id="BrHc3qmDG0KBn42FIE9beb">
+<td data-page-node-id="7y4L5Vka62osY54YKGFxWI"><code data-page-node-id="rwdR9ZIkRvlIeD8xBZe4Al">cleaned</code></td>
+<td data-page-node-id="yEQ0Z9GUQ4uTB3smdz4Ukl">897</td>
+<td data-page-node-id="hbaOZGcdeBWWTALRdQugmE">1078</td>
+<td data-page-node-id="AXTo6TmHIZHURT6iyqqGZU">Healed to zero findings within ≤7 rounds</td>
+</tr>
+<tr data-page-node-id="YNmkFsdoKENVoXo5vrcrFG">
+<td data-page-node-id="yeY85dp43HII9Plzfi9ASP"><code data-page-node-id="DFtAISeSRs8qYI2sP6snks">not_cleaned</code></td>
+<td data-page-node-id="y5rJfPu7zTwk7EYzCho0zx">0</td>
+<td data-page-node-id="VjyRFL0H8PvoAc0EjoAWyh">40</td>
+<td data-page-node-id="cz9UbOf8R2W2szuLKeyTGz">Still flagged after round 7</td>
+</tr>
+<tr data-page-node-id="OQcX8O2fymOdCsDTRlkPPE">
+<td data-page-node-id="TAZ98M16Y5m22lAwfh7o2T"><code data-page-node-id="PxIp0EBPJGgB59iKfTHoiH">heal_failed</code></td>
+<td data-page-node-id="B2RVWkxePZT7KEToOZNDUw"><strong data-page-node-id="qexv0ZL8F3f0D2THWT9GCT">109</strong></td>
+<td data-page-node-id="SMTlshViUZFJkAtyhgBMug">0</td>
+<td data-page-node-id="H4E3PDGFKg03S4QAgf21Yj">Missing healed artifact (here: API 402 outage in rounds 6–7, not a model failure)</td>
+</tr>
+<tr data-page-node-id="MHhTq8dNLuSortFfX7LD3a">
+<td data-page-node-id="Hv15UCsDEGICNZfIs0iTPf"><code data-page-node-id="MdgJLk8lS4UdMeaZxlfZwq">mean_rounds_to_clean</code></td>
+<td data-page-node-id="62luep0me8SaaXqTV7GUUK">1.31</td>
+<td data-page-node-id="bFI0MCk1b2scHI24G0vUXW">1.22</td>
+<td data-page-node-id="VEGJyeIiAxjcvEhqPwQNGE">Averaged over healed samples — how fast feedback converges</td>
+</tr>
+<tr data-page-node-id="GIUQL9RVoV1GCvCMStq1X0">
+<td data-page-node-id="5s0qtfgTZnzhM1DydrpFSJ"><code data-page-node-id="L9ClDerx0VsVBHYAPvTgqu">final_clean_rate</code></td>
+<td data-page-node-id="uYoKCdBCfmp12LyJUphrRe">1.0000*</td>
+<td data-page-node-id="IpNdfHEEEuzxr16lDfy1MS">0.9863</td>
+<td data-page-node-id="Gq9H2hjXhJBpbM0YsJeRm9">(clean_at_start + cleaned) / (total − heal_failed); *deepseek's 1.0 is an artifact of excluding the outage victims — see below</td>
+</tr>
+</tbody>
+</table>
+<p data-page-node-id="aRYkAC1VGZJzj2yCCuSD6i"><strong data-page-node-id="x5QbBdEAB6WpJCPLRwAZ7C">The <code data-page-node-id="vYqX4satOfV92nEecOFdE5">survival_counts</code> column is the heal loop in miniature.</strong> For qwen-max:</p>
+<pre data-page-node-id="PdJsLA3q7KJBDNH1DCEGnT"><code data-page-node-id="AwajZN4I28AAifxdMOGkCR">round 0: 1118 flagged  →  round 1: 1118  →  198  →  74  →  60  →  54  →  47  →  43  →  40
+</code></pre>
+<p data-page-node-id="gXBdtiNWhiCp3pWIDUlt5m">That is exactly Figure 3's step-5 classification, counted: 920 of 1118 flagged samples (82%) are fixed by a <em data-page-node-id="Q1TXqpOstx6lohVxRRBxDF">single</em> round of static feedback — the comment injection + re-generation loop is highly effective on first contact. The remainder decays slowly (198 → 40 over six more rounds); the last ~3.5% are the hard residue where the model either cannot interpret the finding or keeps re-introducing the same pattern, which is precisely the population the RQ2 dynamic-feedback cells will target.</p>
+<p data-page-node-id="x89yBeBKEtwCMEgP25QAMq"><strong data-page-node-id="NbFzkmPC1y4HLpDGKBFkQH">Why deepseek's <code data-page-node-id="NnTWiqZ32hy6HJoGOaLAZ4">final_clean_rate = 1.0</code> must not be quoted.</strong> The rate excludes <code data-page-node-id="tXsyPGwRyQkKXkNwEcOoCs">heal_failed</code> from the denominator (correct for genuine heal crashes, designed so API noise never inflates <em data-page-node-id="1pgOGFS543Cs3R6FLcCEJw">defect</em> numbers), but here the 109 exclusions are outage victims that were mostly on their way to being cleaned (they survived to rounds 6–7 of healing, meaning earlier rounds had succeeded). After the balance top-up and the free resume-run, the manifest will be rewritten and this number becomes meaningful.</p>
+<p data-page-node-id="ySxvPli1od0MVH7b7s5d6M"><strong data-page-node-id="m5V9rz9yhPXAlpJMSMobfv">Two cross-model observations already possible:</strong></p>
+<ol data-page-node-id="mDXQY2EeFOhBLVDX5CAd1A">
+<li data-page-node-id="tDVyQ8qhB65unKv0mfQsHj"><strong data-page-node-id="BIX0L5vmEOHZRtDYD7kRac">qwen-max writes buggier initial code but heals almost as well</strong> — 38.3% vs 34.4% initial defect rate, yet mean rounds-to-clean differ by only 0.09. Defect <em data-page-node-id="EVkKAmfnJuUc4xXCYAzrsE">introduction</em> and defect <em data-page-node-id="6c8L41IQhm0964UWUfMv2V">repair-under-feedback</em> are visibly independent skills, which is the extension's core claim territory (v1 could not separate them).</li>
+<li data-page-node-id="ONMVrhf2xL82zi0hJPvhTG"><strong data-page-node-id="AInEBDYxNDRPNQuViimKyi">Cppcheck dominates detection volume</strong> (~968/1006 and 1007/1118 of flagged samples carry a Cppcheck finding) while gcc/clang-SA each flag only a few percent — an argument for keeping the multi-analyzer union gate rather than any single tool, and a caveat for CWE attribution (the <code data-page-node-id="1cPAPMh0yHKA1kg8ipXjj8">cwes_by_problem.csv</code> roll-up inherits Cppcheck's finding taxonomy).</li>
+</ol>
+<p data-page-node-id="UKqNjrU89HPe3AAsW6iWA9">Once the remaining 5 keys arrive, the same two rows extend to seven models, and <code data-page-node-id="szorJk7XzYB3yw3bxuDH59">stats_report.md</code> (Fisher exact tests, Cohen's h, Holm–Bonferroni) starts producing the pairwise contrasts the paper needs.</p>
+</body>
+</html>

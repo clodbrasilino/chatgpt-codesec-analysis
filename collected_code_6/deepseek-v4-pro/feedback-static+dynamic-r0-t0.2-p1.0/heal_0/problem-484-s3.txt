@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Tuple remove_matching_tuples(const Tuple *tuple1, const Tuple *tuple2) {
+    Tuple result;
+    result.data = NULL;
+    result.size = 0;
+
+    if (tuple1 == NULL || tuple2 == NULL || tuple1->data == NULL || tuple2->data == NULL) {
+        return result;
+    }
+
+    size_t max_size = tuple1->size + tuple2->size;
+    int *temp = (int *)malloc(max_size * sizeof(int));
+    if (temp == NULL) {
+        return result;
+    }
+
+    size_t result_size = 0;
+    size_t i, j;
+    int found;
+
+    for (i = 0; i < tuple1->size; i++) {
+        found = 0;
+        for (j = 0; j < tuple2->size; j++) {
+            if (tuple1->data[i] == tuple2->data[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            temp[result_size++] = tuple1->data[i];
+        }
+    }
+
+    for (i = 0; i < tuple2->size; i++) {
+        found = 0;
+        for (j = 0; j < tuple1->size; j++) {
+            if (tuple2->data[i] == tuple1->data[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            temp[result_size++] = tuple2->data[i];
+        }
+    }
+
+    if (result_size > 0) {
+        result.data = (int *)malloc(result_size * sizeof(int));
+        if (result.data == NULL) {
+            free(temp);
+            return result;
+        }
+        for (i = 0; i < result_size; i++) {
+            result.data[i] = temp[i];
+        }
+        result.size = result_size;
+    }
+
+    free(temp);
+    return result;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->data != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {3, 5, 6, 7};
+
+    Tuple tuple1 = {arr1, sizeof(arr1) / sizeof(arr1[0])};
+    Tuple tuple2 = {arr2, sizeof(arr2) / sizeof(arr2[0])};
+
+    Tuple result = remove_matching_tuples(&tuple1, &tuple2);
+
+    if (result.data != NULL) {
+        size_t i;
+        for (i = 0; i < result.size; i++) {
+            printf("%d ", result.data[i]);
+        }
+        printf("\n");
+    }
+
+    free_tuple(&result);
+
+    return 0;
+}
+```

@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'coins' can be declared as const array [constParameter]
+ */
+int count_coin_change(int coins[], int num_coins, int amount) {
+    if (amount < 0) return 0;
+    if (num_coins <= 0) return 0;
+    
+    int *dp = (int*)calloc(amount + 1, sizeof(int));
+    if (dp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    dp[0] = 1;
+    
+    for (int i = 0; i < num_coins; i++) {
+        if (coins[i] <= 0) continue;
+        for (int j = coins[i]; j <= amount; j++) {
+            dp[j] += dp[j - coins[i]];
+        }
+    }
+    
+    int result = dp[amount];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int coins[] = {1, 2, 5};
+    int num_coins = sizeof(coins) / sizeof(coins[0]);
+    int amount = 11;
+    
+    int ways = count_coin_change(coins, num_coins, amount);
+    printf("Number of ways to make change for %d: %d\n", amount, ways);
+    
+    return 0;
+}

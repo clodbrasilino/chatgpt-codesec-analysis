@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s2.c: In function 'check_decimal':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s2.c:14:18: error: implicit declaration of function 'isdigit' [-Wimplicit-function-declaration]
+   14 |             if (!isdigit(*str)) return 0;
+      |                  ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s2.c:3:1: note: include '<ctype.h>' or provide a declaration of 'isdigit'
+    2 | #include <stdlib.h>
+  +++ |+#include <ctype.h>
+    3 | 

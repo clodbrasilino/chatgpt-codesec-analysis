@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtEnd(Node** head, int newData) {
+    Node* newNode = createNode(newData);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
+Node* removeConsecutiveDuplicates(Node* head) {
+    Node* current = head;
+    while (current != NULL && current->next != NULL) {
+        if (current->data == current->next->data) {
+            Node* toDelete = current->next;
+            current->next = current->next->next;
+            free(toDelete);
+        } else {
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+int main() {
+    Node* head = NULL;
+    insertAtEnd(&head, 1);
+    insertAtEnd(&head, 1);
+    insertAtEnd(&head, 2);
+    insertAtEnd(&head, 2);
+    insertAtEnd(&head, 3);
+    insertAtEnd(&head, 4);
+    insertAtEnd(&head, 4);
+    insertAtEnd(&head, 5);
+
+    printf("Original List: ");
+    printList(head);
+
+    head = removeConsecutiveDuplicates(head);
+
+    printf("List after removing consecutive duplicates: ");
+    printList(head);
+
+    while (head != NULL) {
+        Node* toDelete = head;
+        head = head->next;
+        free(toDelete);
+    }
+
+    return 0;
+}

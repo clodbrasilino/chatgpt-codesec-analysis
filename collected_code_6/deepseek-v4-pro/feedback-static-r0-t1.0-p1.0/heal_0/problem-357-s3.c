@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int find_maximum_all_tuples(Tuple *tuples, size_t tuple_count) {
+    int global_max = INT_MIN;
+
+    for (size_t i = 0; i < tuple_count; i++) {
+        if (tuples[i].elements == NULL || tuples[i].size == 0) {
+            fprintf(stderr, "Invalid tuple at index %zu\n", i);
+            exit(EXIT_FAILURE);
+        }
+
+        for (size_t j = 0; j < tuples[i].size; j++) {
+            if (tuples[i].elements[j] > global_max) {
+                global_max = tuples[i].elements[j];
+            }
+        }
+    }
+
+    return global_max;
+}
+
+int main(void) {
+    int data1[] = {3, 7, 2, 9};
+    int data2[] = {12, 5, 8};
+    int data3[] = {1, 4, 6};
+
+    Tuple tuples[] = {
+        {data1, sizeof(data1) / sizeof(data1[0])},
+        {data2, sizeof(data2) / sizeof(data2[0])},
+        {data3, sizeof(data3) / sizeof(data3[0])}
+    };
+
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    int max_value = find_maximum_all_tuples(tuples, tuple_count);
+    printf("Maximum element: %d\n", max_value);
+
+    return 0;
+}

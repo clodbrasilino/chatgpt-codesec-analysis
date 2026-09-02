@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c:18:22: style: The comparison 'surface_type != 0' is always false. [knownConditionTrueFalse]
+    if (surface_type != 0 && surface_type != 1) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c:16:24: note: 'surface_type' is assigned value '0' here.
+    int surface_type = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c:18:22: note: The comparison 'surface_type != 0' is always false.
+    if (surface_type != 0 && surface_type != 1) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c:25:25: style: The comparison 'surface_type == 0' is always true. [knownConditionTrueFalse]
+           surface_type == 0 ? "top" : "bottom", area);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c:16:24: note: 'surface_type' is assigned value '0' here.
+    int surface_type = 0;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-535-s3.c:25:25: note: The comparison 'surface_type == 0' is always true.
+           surface_type == 0 ? "top" : "bottom", area);
+                        ^

@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* filter_even_numbers(const int* input, int input_size, int* output_size) {
+    if (output_size == NULL) {
+        return NULL;
+    }
+
+    if (input == NULL || input_size <= 0) {
+        *output_size = 0;
+        return NULL;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < input_size; i++) {
+        if (input[i] % 2 == 0) {
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        *output_size = 0;
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(count * sizeof(int));
+    if (result == NULL) {
+        *output_size = 0;
+        return NULL;
+    }
+    
+    int index = 0;
+    for (int i = 0; i < input_size; i++) {
+        if (input[i] % 2 == 0) {
+            result[index++] = input[i];
+        }
+    }
+    
+    *output_size = count;
+    return result;
+}
+
+int main(void) {
+    int input[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int input_size = sizeof(input) / sizeof(input[0]);
+    int output_size = 0;
+    
+    int* even_numbers = filter_even_numbers(input, input_size, &output_size);
+    
+    if (even_numbers != NULL) {
+        printf("Even numbers: ");
+        for (int i = 0; i < output_size; i++) {
+            printf("%d ", even_numbers[i]);
+        }
+        printf("\n");
+        free(even_numbers);
+    } else {
+        printf("No even numbers found or allocation failed.\n");
+    }
+    
+    return 0;
+}

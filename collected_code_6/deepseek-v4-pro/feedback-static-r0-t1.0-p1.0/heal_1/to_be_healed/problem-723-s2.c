@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    /* Possible weaknesses found:
+     *  struct member 'Node::data' is never used. [unusedStructMember]
+     */
+    int data;
+    /* Possible weaknesses found:
+     *  struct member 'Node::next' is never used. [unusedStructMember]
+     */
+    struct Node *next;
+} Node;
+
+typedef struct PairNode {
+    int first;
+    int second;
+    int count;
+    struct PairNode *next;
+} PairNode;
+
+unsigned int hash_pair(int a, int b, int table_size) {
+    unsigned int h = (unsigned int)a * 2654435761u + (unsigned int)b * 2246822519u;
+    return h % (unsigned int)table_size;
+}
+
+PairNode **create_map(int size) {
+    PairNode **map = (PairNode **)calloc((size_t)size, sizeof(PairNode *));
+    return map;
+}
+
+void free_map(PairNode **map, int size) {
+    if (map == NULL) {
+        return;
+    }
+    for (int i = 0; i < size; i++) {
+        PairNode *current = map[i];
+        while (current != NULL) {
+            PairNode *temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(map);
+}
+
+void map_insert(PairNode **map, int size, int a, int b, int count) {
+    unsigned int index = hash_pair(a, b, size);
+    PairNode *current = map[index];
+    while (current != NULL) {
+        if (current->first == a && current->second == b) {
+            current->count += count;
+            return;
+        }
+        current = current->next;
+    }
+    PairNode *new_node = (PairNode *)malloc(sizeof(PairNode));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->first = a;
+    new_node->second = b;
+    new_node->count = count;
+    new_node->next = map[index];
+    map[index] = new_node;
+}
+
+int map_get(PairNode **map, int size, int a, int b) {
+    unsigned int index = hash_pair(a, b, size);
+    PairNode *current = map[index];
+    while (current != NULL) {
+        if (current->first == a && current->second == b) {
+            return current->count;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+ */
+int count_same_pairs(int *list1, int size1, int *list2, int size2) {
+    if (list1 == NULL || list2 == NULL) {
+        return 0;
+    }
+    if (size1 <= 0 || size2 <= 0) {
+        return 0;
+    }
+
+    int min_size = size1 < size2 ? size1 : size2;
+    int table_size = min_size * 2 + 1;
+    if (table_size < 10) {
+        table_size = 10;
+    }
+
+    PairNode **map = create_map(table_size);
+    if (map == NULL) {
+        fprintf(stderr, "Failed to create hash map\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < size1 - 1; i++) {
+        for (int j = i + 1; j < size1; j++) {
+            map_insert(map, table_size, list1[i], list1[j], 1);
+            map_insert(map, table_size, list1[j], list1[i], 1);
+        }
+    }
+
+    int total_count = 0;
+    for (int i = 0; i < size2 - 1; i++) {
+        for (int j = i + 1; j < size2; j++) {
+            total_count += map_get(map, table_size, list2[i], list2[j]);
+        }
+    }
+
+    free_map(map, table_size);
+    return total_count;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {3, 1, 2, 5, 4};
+    int size1 = (int)(sizeof(list1) / sizeof(list1[0]));
+    int size2 = (int)(sizeof(list2) / sizeof(list2[0]));
+
+    int result = count_same_pairs(list1, size1, list2, size2);
+    printf("Number of same pairs: %d\n", result);
+
+    int list3[] = {1, 2, 3};
+    int list4[] = {1, 2, 3, 4};
+    int size3 = (int)(sizeof(list3) / sizeof(list3[0]));
+    int size4 = (int)(sizeof(list4) / sizeof(list4[0]));
+
+    int result2 = count_same_pairs(list3, size3, list4, size4);
+    printf("Number of same pairs (different sizes): %d\n", result2);
+
+    int list5[] = {7, 8, 9};
+    int list6[] = {10, 11, 12};
+    int size5 = (int)(sizeof(list5) / sizeof(list5[0]));
+    int size6 = (int)(sizeof(list6) / sizeof(list6[0]));
+
+    int result3 = count_same_pairs(list5, size5, list6, size6);
+    printf("Number of same pairs (no common): %d\n", result3);
+
+    return 0;
+}

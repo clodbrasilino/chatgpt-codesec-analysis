@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_distinct_prime_powers(int n) {
+    if (n <= 1)
+        return 0;
+
+    int count = 0;
+    int temp = n;
+
+    for (int p = 2; p * p <= temp; p++) {
+        if (temp % p == 0) {
+            count++;
+            while (temp % p == 0) {
+                temp /= p;
+            }
+        }
+    }
+
+    if (temp > 1) {
+        count++;
+    }
+
+    return count;
+}
+
+int main(void) {
+    int number;
+
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Negative numbers not supported\n");
+        return EXIT_FAILURE;
+    }
+
+    int result = count_distinct_prime_powers(number);
+    printf("Number of distinct prime factors: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

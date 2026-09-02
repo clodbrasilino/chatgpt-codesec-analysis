@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int isDivisibleByK(Tuple tuple, int k) {
+    for (int i = 0; i < tuple.size; ++i) {
+        if (tuple.elements[i] % k != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int data1[] = {2, 4, 6, 8};
+    int data2[] = {9, 15, 21};
+    int data3[] = {3, 7, 10};
+    int data4[] = {12, 18, 24, 30};
+
+    Tuple tuples[] = {
+        {data1, 4},
+        {data2, 3},
+        {data3, 3},
+        {data4, 4}
+    };
+
+    int numTuples = sizeof(tuples) / sizeof(tuples[0]);
+    int k = 3;
+
+    for (int i = 0; i < numTuples; ++i) {
+        if (isDivisibleByK(tuples[i], k)) {
+            for (int j = 0; j < tuples[i].size; ++j) {
+                printf("%d ", tuples[i].elements[j]);
+            }
+            printf("\n");
+        }
+    }
+
+    return 0;
+}

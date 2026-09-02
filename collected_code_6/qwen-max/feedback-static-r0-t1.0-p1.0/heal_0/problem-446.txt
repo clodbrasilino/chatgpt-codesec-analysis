@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} List;
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+void initializeList(List *list, size_t length) {
+    list->data = (int *)malloc(length * sizeof(int));
+    if (list->data == NULL) {
+        perror("Failed to allocate memory for list");
+        exit(EXIT_FAILURE);
+    }
+    list->length = length;
+}
+
+void initializeTuple(Tuple *tuple, size_t length) {
+    tuple->data = (int *)malloc(length * sizeof(int));
+    if (tuple->data == NULL) {
+        perror("Failed to allocate memory for tuple");
+        exit(EXIT_FAILURE);
+    }
+    tuple->length = length;
+}
+
+void freeResources(List *list, Tuple *tuple) {
+    free(list->data);
+    free(tuple->data);
+}
+
+int* countOccurrences(const List *list, const Tuple *tuple) {
+    int *counts = (int *)calloc(tuple->length, sizeof(int));
+    if (counts == NULL) {
+        perror("Failed to allocate memory for counts");
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i = 0; i < list->length; ++i) {
+        for (size_t j = 0; j < tuple->length; ++j) {
+            if (list->data[i] == tuple->data[j]) {
+                counts[j]++;
+                break;
+            }
+        }
+    }
+
+    return counts;
+}
+
+int main() {
+    List list;
+    Tuple tuple;
+
+    initializeList(&list, 6);
+    list.data[0] = 1;
+    list.data[1] = 2;
+    list.data[2] = 3;
+    list.data[3] = 4;
+    list.data[4] = 5;
+    list.data[5] = 3;
+
+    initializeTuple(&tuple, 4);
+    tuple.data[0] = 1;
+    tuple.data[1] = 3;
+    tuple.data[2] = 5;
+    tuple.data[3] = 6;
+
+    int *occurrences = countOccurrences(&list, &tuple);
+
+    for (size_t i = 0; i < tuple.length; ++i) {
+        printf("%d: %d\n", tuple.data[i], occurrences[i]);
+    }
+
+    free(occurrences);
+    freeResources(&list, &tuple);
+    return 0;
+}
+```

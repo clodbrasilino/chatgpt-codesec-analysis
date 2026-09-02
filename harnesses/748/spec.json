@@ -1,0 +1,44 @@
+{
+  "task_id": 748,
+  "text": "Write a C function to put spaces between words starting with capital letters in a given string by using regex.",
+  "fn_candidates": [
+    "capital_words_spaces",
+    "CapitalWordsSpaces",
+    "capitalWordsSpaces",
+    "capitalwordsspaces"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "capital_words_spaces",
+      "args": [
+        "Python"
+      ],
+      "expected": "Python",
+      "assert_src": "assert capital_words_spaces(\"Python\") == 'Python'"
+    },
+    {
+      "fn_name": "capital_words_spaces",
+      "args": [
+        "PythonProgrammingExamples"
+      ],
+      "expected": "Python Programming Examples",
+      "assert_src": "assert capital_words_spaces(\"PythonProgrammingExamples\") == 'Python Programming Examples'"
+    },
+    {
+      "fn_name": "capital_words_spaces",
+      "args": [
+        "GetReadyToBeCodingFreak"
+      ],
+      "expected": "Get Ready To Be Coding Freak",
+      "assert_src": "assert capital_words_spaces(\"GetReadyToBeCodingFreak\") == 'Get Ready To Be Coding Freak'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

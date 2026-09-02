@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int length;
+} List;
+
+List* findMaxLengthSublist(List **lists, int num_lists) {
+    if (num_lists == 0) return NULL;
+    
+    List *max_list = lists[0];
+    for (int i = 1; i < num_lists; ++i) {
+        if (lists[i]->length > max_list->length) {
+            max_list = lists[i];
+        }
+    }
+    return max_list;
+}
+
+int main() {
+    List *sublist1 = (List*) malloc(sizeof(List));
+    sublist1->elements = (int*) malloc(3 * sizeof(int));
+    sublist1->length = 3;
+    sublist1->elements[0] = 1;
+    sublist1->elements[1] = 2;
+    sublist1->elements[2] = 3;
+
+    List *sublist2 = (List*) malloc(sizeof(List));
+    sublist2->elements = (int*) malloc(5 * sizeof(int));
+    sublist2->length = 5;
+    for (int i = 0; i < 5; ++i) {
+        sublist2->elements[i] = i + 4;
+    }
+
+    List *sublist3 = (List*) malloc(sizeof(List));
+    sublist3->elements = (int*) malloc(2 * sizeof(int));
+    sublist3->length = 2;
+    sublist3->elements[0] = 9;
+    sublist3->elements[1] = 10;
+
+    List *lists[] = {sublist1, sublist2, sublist3};
+    List *max_length_sublist = findMaxLengthSublist(lists, 3);
+
+    if (max_length_sublist != NULL) {
+        printf("The sublist with maximum length has %d elements: ", max_length_sublist->length);
+        for (int i = 0; i < max_length_sublist->length; ++i) {
+            printf("%d ", max_length_sublist->elements[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No sublists provided.\n");
+    }
+
+    free(sublist1->elements);
+    free(sublist1);
+    free(sublist2->elements);
+    free(sublist2);
+    free(sublist3->elements);
+    free(sublist3);
+
+    return 0;
+}
+```

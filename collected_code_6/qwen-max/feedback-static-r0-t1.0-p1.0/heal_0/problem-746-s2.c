@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+double find_sector_area(double radius, double angle_degrees) {
+    const double pi = 3.14159265358979323846;
+    double angle_radians = (angle_degrees / 180.0) * pi;
+    double area = 0.5 * radius * radius * angle_radians;
+    return area;
+}
+
+int main() {
+    double radius, angle_degrees;
+    printf("Enter the radius of the circle: ");
+    if (scanf("%lf", &radius) != 1) return 1;
+
+    printf("Enter the angle in degrees: ");
+    if (scanf("%lf", &angle_degrees) != 1) return 1;
+
+    double area = find_sector_area(radius, angle_degrees);
+    printf("The area of the sector is: %lf\n", area);
+
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int countSetBits(uint64_t n) {
+    if (n == 0) return 0;
+    
+    uint64_t x = n;
+    int highestBit = 0;
+    while (x >>= 1) highestBit++;
+    
+    uint64_t power = 1ULL << highestBit;
+    uint64_t remainder = n - power;
+    
+    int count = (highestBit * (power >> 1)) + (int)remainder + 1 + countSetBits(remainder);
+    
+    return count;
+}
+
+int main(void) {
+    uint64_t n;
+    
+    printf("Enter a number: ");
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+     */
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    int result = countSetBits(n);
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+     */
+    printf("Total set bits from 1 to %llu: %d\n", n, result);
+    
+    return 0;
+}

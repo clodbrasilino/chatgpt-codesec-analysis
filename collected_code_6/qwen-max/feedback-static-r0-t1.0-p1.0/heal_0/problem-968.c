@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+
+double periodic_function(double x) {
+    return 2.0 * sin(x) + 3.0 * cos(2.0 * x);
+}
+
+double find_max_periodic_value(double start, double end, int steps) {
+    if (start >= end || steps <= 0) {
+        return -1.0; // Indicate error
+    }
+
+    double step_size = (end - start) / (steps - 1);
+    double max_value = periodic_function(start);
+    double x;
+
+    for (int i = 1; i < steps; ++i) {
+        x = start + i * step_size;
+        double value = periodic_function(x);
+        if (value > max_value) {
+            max_value = value;
+        }
+    }
+
+    return max_value;
+}
+
+int main() {
+    double start = 0.0;
+    double end = 2.0 * M_PI;
+    int steps = 1000;
+
+    double max_value = find_max_periodic_value(start, end, steps);
+
+    if (max_value != -1.0) {
+        printf("Maximum value: %f\n", max_value);
+    } else {
+        printf("Invalid input parameters.\n");
+    }
+
+    return 0;
+}

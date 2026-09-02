@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-40-s2.c: In function 'frequency_of_elements':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-40-s2.c:171:18: error: assignment to 'int *' from incompatible pointer type 'int **' [-Wincompatible-pointer-types]
+  171 |     *freq_counts = &result[1];
+      |                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-40-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-40-s2.c:191:59: error: passing argument 5 of 'frequency_of_elements' from incompatible pointer type [-Wincompatible-pointer-types]
+  191 |                                          &total_elements, &freq_values, &freq_counts);
+      |                                                           ^~~~~~~~~~~~
+      |                                                           |
+      |                                                           int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-40-s2.c:71:110: note: expected 'int ***' but argument is of type 'int **'
+   71 | int **frequency_of_elements(int **list_of_lists, int *list_sizes, int num_lists, int *total_elements, int ***freq_values, int **freq_counts) {
+      |                                                                                                       ~~~~~~~^~~~~~~~~~~

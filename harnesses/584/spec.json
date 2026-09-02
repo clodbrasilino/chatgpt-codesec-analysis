@@ -1,0 +1,44 @@
+{
+  "task_id": 584,
+  "text": "Write a C function to find all adverbs and their positions in a given sentence by using regex.",
+  "fn_candidates": [
+    "find_adverbs",
+    "FindAdverbs",
+    "findAdverbs",
+    "findadverbs"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_adverbs",
+      "args": [
+        "Clearly, he has no excuse for such behavior."
+      ],
+      "expected": "0-7: Clearly",
+      "assert_src": "assert find_adverbs(\"Clearly, he has no excuse for such behavior.\") == '0-7: Clearly'"
+    },
+    {
+      "fn_name": "find_adverbs",
+      "args": [
+        "Please handle the situation carefuly"
+      ],
+      "expected": "28-36: carefuly",
+      "assert_src": "assert find_adverbs(\"Please handle the situation carefuly\") == '28-36: carefuly'"
+    },
+    {
+      "fn_name": "find_adverbs",
+      "args": [
+        "Complete the task quickly"
+      ],
+      "expected": "18-25: quickly",
+      "assert_src": "assert find_adverbs(\"Complete the task quickly\") == '18-25: quickly'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 600,
+  "text": "Write a C function to check whether the given number is even or not using bitwise operator.",
+  "fn_candidates": [
+    "is_Even",
+    "IsEven",
+    "isEven",
+    "isEven"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_Even",
+      "args": [
+        1
+      ],
+      "expected": false,
+      "assert_src": "assert is_Even(1) == False"
+    },
+    {
+      "fn_name": "is_Even",
+      "args": [
+        2
+      ],
+      "expected": true,
+      "assert_src": "assert is_Even(2) == True"
+    },
+    {
+      "fn_name": "is_Even",
+      "args": [
+        3
+      ],
+      "expected": false,
+      "assert_src": "assert is_Even(3) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

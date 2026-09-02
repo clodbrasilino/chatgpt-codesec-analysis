@@ -1,0 +1,41 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:72:59: error: incompatible type for argument 3 of 'add_element'
+   72 |     add_element(&t, 0, (union { int i; float f; char c; }){ .i = 1 });
+      |                                                           ^~~~~~~~~~
+      |                                                           |
+      |                                                           union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:32:71: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   32 | int add_element(Tuple *t, int type, union { int i; float f; char c; } value) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:73:59: error: incompatible type for argument 3 of 'add_element'
+   73 |     add_element(&t, 1, (union { int i; float f; char c; }){ .f = 2.5f });
+      |                                                           ^~~~~~~~~~~~~
+      |                                                           |
+      |                                                           union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:32:71: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   32 | int add_element(Tuple *t, int type, union { int i; float f; char c; } value) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:74:59: error: incompatible type for argument 3 of 'add_element'
+   74 |     add_element(&t, 2, (union { int i; float f; char c; }){ .c = 'a' });
+      |                                                           ^~~~~~~~~~~~
+      |                                                           |
+      |                                                           union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:32:71: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   32 | int add_element(Tuple *t, int type, union { int i; float f; char c; } value) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:75:59: error: incompatible type for argument 3 of 'add_element'
+   75 |     add_element(&t, 0, (union { int i; float f; char c; }){ .i = 2 });
+      |                                                           ^~~~~~~~~~
+      |                                                           |
+      |                                                           union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:32:71: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   32 | int add_element(Tuple *t, int type, union { int i; float f; char c; } value) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:76:59: error: incompatible type for argument 3 of 'add_element'
+   76 |     add_element(&t, 1, (union { int i; float f; char c; }){ .f = 3.5f });
+      |                                                           ^~~~~~~~~~~~~
+      |                                                           |
+      |                                                           union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-533-s2.c:32:71: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   32 | int add_element(Tuple *t, int type, union { int i; float f; char c; } value) {
+      |                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~

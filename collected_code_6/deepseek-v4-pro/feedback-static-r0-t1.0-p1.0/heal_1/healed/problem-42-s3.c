@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int sum_repeated_elements(const int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < size; i++) {
+        temp[i] = arr[i];
+    }
+
+    qsort(temp, size, sizeof(int), compare);
+
+    int sum = 0;
+    int i = 0;
+
+    while (i < size) {
+        int j = i + 1;
+        while (j < size && temp[j] == temp[i]) {
+            j++;
+        }
+
+        if (j - i > 1) {
+            sum += temp[i];
+        }
+
+        i = j;
+    }
+
+    free(temp);
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 5, 3, 6, 7, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = sum_repeated_elements(arr, size);
+
+    printf("Sum of repeated elements: %d\n", result);
+
+    return 0;
+}

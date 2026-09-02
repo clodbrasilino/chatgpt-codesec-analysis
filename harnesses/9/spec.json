@@ -1,0 +1,44 @@
+{
+  "task_id": 9,
+  "text": "Write a C function to find the minimum number of rotations required to get the same string.",
+  "fn_candidates": [
+    "find_Rotations",
+    "FindRotations",
+    "findRotations",
+    "findRotations"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Rotations",
+      "args": [
+        "aaaa"
+      ],
+      "expected": 1,
+      "assert_src": "assert find_Rotations(\"aaaa\") == 1"
+    },
+    {
+      "fn_name": "find_Rotations",
+      "args": [
+        "ab"
+      ],
+      "expected": 2,
+      "assert_src": "assert find_Rotations(\"ab\") == 2"
+    },
+    {
+      "fn_name": "find_Rotations",
+      "args": [
+        "abc"
+      ],
+      "expected": 3,
+      "assert_src": "assert find_Rotations(\"abc\") == 3"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

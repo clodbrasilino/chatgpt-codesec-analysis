@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-760-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-760-s2.c:34:18: style: Condition 'size3<=1' is always true [knownConditionTrueFalse]
+           size3 <= 1 ? "Yes" :
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-760-s2.c:25:30: note: Assignment 'size3=sizeof(arr3)/sizeof(arr3[0])', assigned value is 1
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-760-s2.c:34:18: note: Condition 'size3<=1' is always true
+           size3 <= 1 ? "Yes" :
+                 ^

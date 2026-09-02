@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_tuples(const char *tuple[], size_t tuple_size, const char *delimiter) {
+    if (tuple == NULL || delimiter == NULL) return NULL;
+    
+    size_t delimiter_len = strlen(delimiter);
+    size_t total_len = 0;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        total_len += strlen(tuple[i]);
+    }
+    total_len += (tuple_size - 1) * delimiter_len + 1;
+
+    char *result = (char *)malloc(total_len * sizeof(char));
+    if (result == NULL) return NULL;
+
+    result[0] = '\0';
+    for (size_t i = 0; i < tuple_size; ++i) {
+        strcat(result, tuple[i]);
+        if (i < tuple_size - 1) {
+            strcat(result, delimiter);
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    const char *tuple[] = {"Hello", "World", "C"};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    const char *delimiter = ", ";
+
+    char *result = concatenate_tuples(tuple, tuple_size, delimiter);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        fprintf(stderr, "Failed to concatenate tuples.\n");
+    }
+
+    return 0;
+}

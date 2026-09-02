@@ -1,0 +1,44 @@
+{
+  "task_id": 685,
+  "text": "Write a C function to find sum of prime numbers between 1 to n.",
+  "fn_candidates": [
+    "sum_Of_Primes",
+    "SumOfPrimes",
+    "sumOfPrimes",
+    "sumOfPrimes"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_Of_Primes",
+      "args": [
+        10
+      ],
+      "expected": 17,
+      "assert_src": "assert sum_Of_Primes(10) == 17"
+    },
+    {
+      "fn_name": "sum_Of_Primes",
+      "args": [
+        20
+      ],
+      "expected": 77,
+      "assert_src": "assert sum_Of_Primes(20) == 77"
+    },
+    {
+      "fn_name": "sum_Of_Primes",
+      "args": [
+        5
+      ],
+      "expected": 10,
+      "assert_src": "assert sum_Of_Primes(5) == 10"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

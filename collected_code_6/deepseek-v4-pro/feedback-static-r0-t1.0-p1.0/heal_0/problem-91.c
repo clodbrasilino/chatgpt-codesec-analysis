@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int is_substring_present(char **strings, int count, const char *substring) {
+    if (strings == NULL || substring == NULL || count <= 0) {
+        return 0;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (strings[i] != NULL && strstr(strings[i], substring) != NULL) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    char *strings[] = {
+        "hello world",
+        "programming in C",
+        "string search example",
+        "test case"
+    };
+
+    int count = sizeof(strings) / sizeof(strings[0]);
+    const char *substring = "search";
+
+    if (is_substring_present(strings, count, substring)) {
+        printf("Substring found\n");
+    } else {
+        printf("Substring not found\n");
+    }
+
+    return 0;
+}

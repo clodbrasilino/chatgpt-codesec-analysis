@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void append_to_list(List *list, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+List** create_nested_list(int rows, int columns) {
+    List **nested_list = (List**)malloc(rows * sizeof(List*));
+    for (int i = 0; i < rows; ++i) {
+        nested_list[i] = create_list();
+        for (int j = 0; j < columns; ++j) {
+            append_to_list(nested_list[i], i * columns + j);
+        }
+    }
+    return nested_list;
+}
+
+List* extract_column(List **nested_list, int column, int rows) {
+    List *result = create_list();
+    for (int i = 0; i < rows; ++i) {
+        Node *current = nested_list[i]->head;
+        for (int j = 0; j < column && current != NULL; ++j) {
+            current = current->next;
+        }
+        if (current != NULL) {
+            append_to_list(result, current->value);
+        }
+    }
+    return result;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void free_nested_list(List **nested_list, int rows) {
+    for (int i = 0; i < rows; ++i) {
+        free_list(nested_list[i]);
+    }
+    free(nested_list);
+}
+
+int main() {
+    int rows = 5;
+    int columns = 4;
+    List **nested_list = create_nested_list(rows, columns);
+
+    int column_to_extract = 2;
+    List *extracted_column = extract_column(nested_list, column_to_extract, rows);
+    print_list(extracted_column);
+
+    free_list(extracted_column);
+    free_nested_list(nested_list, rows);
+
+    return 0;
+}

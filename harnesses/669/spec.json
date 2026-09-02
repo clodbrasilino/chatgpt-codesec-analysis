@@ -1,0 +1,44 @@
+{
+  "task_id": 669,
+  "text": "Write a C function to check whether the given ip address is valid or not using regex.",
+  "fn_candidates": [
+    "check_IP",
+    "CheckIp",
+    "checkIp",
+    "checkIP"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_IP",
+      "args": [
+        "192.168.0.1"
+      ],
+      "expected": "Valid IP address",
+      "assert_src": "assert check_IP(\"192.168.0.1\") == 'Valid IP address'"
+    },
+    {
+      "fn_name": "check_IP",
+      "args": [
+        "110.234.52.124"
+      ],
+      "expected": "Valid IP address",
+      "assert_src": "assert check_IP(\"110.234.52.124\") == 'Valid IP address'"
+    },
+    {
+      "fn_name": "check_IP",
+      "args": [
+        "366.1.2.2"
+      ],
+      "expected": "Invalid IP address",
+      "assert_src": "assert check_IP(\"366.1.2.2\") == 'Invalid IP address'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

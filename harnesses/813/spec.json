@@ -1,0 +1,44 @@
+{
+  "task_id": 813,
+  "text": "Write a C function to find length of the string.",
+  "fn_candidates": [
+    "string_length",
+    "StringLength",
+    "stringLength",
+    "stringlength"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "string_length",
+      "args": [
+        "python"
+      ],
+      "expected": 6,
+      "assert_src": "assert string_length('python')==6"
+    },
+    {
+      "fn_name": "string_length",
+      "args": [
+        "program"
+      ],
+      "expected": 7,
+      "assert_src": "assert string_length('program')==7"
+    },
+    {
+      "fn_name": "string_length",
+      "args": [
+        "language"
+      ],
+      "expected": 8,
+      "assert_src": "assert string_length('language')==8"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

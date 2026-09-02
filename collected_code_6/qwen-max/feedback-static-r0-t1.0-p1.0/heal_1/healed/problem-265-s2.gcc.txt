@@ -1,0 +1,29 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c: In function 'free_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:57:25: error: initialization of 'Node *' from incompatible pointer type 'Node ***' [-Wincompatible-pointer-types]
+   57 |         Node *current = *lists[i];
+      |                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:84:42: error: passing argument 3 of 'split_list_for_nth_element' from incompatible pointer type [-Wincompatible-pointer-types]
+   84 |     split_list_for_nth_element(&head, n, result, &size);
+      |                                          ^~~~~~
+      |                                          |
+      |                                          Node ****
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:33:61: note: expected 'Node ***' but argument is of type 'Node ****'
+   33 | void split_list_for_nth_element(Node **head, int n, Node ***result, int *size) {
+      |                                                     ~~~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:87:20: error: passing argument 1 of 'print_list' from incompatible pointer type [-Wincompatible-pointer-types]
+   87 |         print_list(*result[i]);
+      |                    ^~~~~~~~~~
+      |                    |
+      |                    Node **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:47:23: note: expected 'Node *' but argument is of type 'Node **'
+   47 | void print_list(Node *head) {
+      |                 ~~~~~~^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:90:16: error: passing argument 1 of 'free_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+   90 |     free_lists(result, size);
+      |                ^~~~~~
+      |                |
+      |                Node ****
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-265-s2.c:55:27: note: expected 'Node *****' but argument is of type 'Node ****'
+   55 | void free_lists(Node *****lists, int size) {
+      |                 ~~~~~~~~~~^~~~~

@@ -1,0 +1,104 @@
+{
+  "task_id": 505,
+  "text": "Write a C function to move all zeroes to the end of the given array.",
+  "fn_candidates": [
+    "re_order",
+    "ReOrder",
+    "reOrder",
+    "reorder"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "re_order",
+      "args": [
+        [
+          6,
+          0,
+          8,
+          2,
+          3,
+          0,
+          4,
+          0,
+          1
+        ]
+      ],
+      "expected": [
+        6,
+        8,
+        2,
+        3,
+        4,
+        1,
+        0,
+        0,
+        0
+      ],
+      "assert_src": "assert re_order([6, 0, 8, 2, 3, 0, 4, 0, 1]) == [6, 8, 2, 3, 4, 1, 0, 0, 0]"
+    },
+    {
+      "fn_name": "re_order",
+      "args": [
+        [
+          4,
+          0,
+          2,
+          7,
+          0,
+          9,
+          0,
+          12,
+          0
+        ]
+      ],
+      "expected": [
+        4,
+        2,
+        7,
+        9,
+        12,
+        0,
+        0,
+        0,
+        0
+      ],
+      "assert_src": "assert re_order([4, 0, 2, 7, 0, 9, 0, 12, 0]) == [4, 2, 7, 9, 12, 0, 0, 0, 0]"
+    },
+    {
+      "fn_name": "re_order",
+      "args": [
+        [
+          3,
+          11,
+          0,
+          74,
+          14,
+          0,
+          1,
+          0,
+          2
+        ]
+      ],
+      "expected": [
+        3,
+        11,
+        74,
+        14,
+        1,
+        2,
+        0,
+        0,
+        0
+      ],
+      "assert_src": "assert re_order([3, 11, 0, 74, 14, 0, 1, 0, 2]) == [3, 11, 74, 14, 1, 2, 0, 0, 0]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

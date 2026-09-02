@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long product_unique(const int *arr, int size) {
+    int *unique = (int *)calloc(size, sizeof(int));
+    if (!unique) return 0;
+
+    int unique_count = 0;
+    for (int i = 0; i < size; i++) {
+        int is_unique = 1;
+        for (int j = 0; j < unique_count; j++) {
+            if (arr[i] == unique[j]) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            unique[unique_count++] = arr[i];
+        }
+    }
+
+    unsigned long long product = 1;
+    for (int i = 0; i < unique_count; i++) {
+        product *= unique[i];
+    }
+
+    free(unique);
+    return product;
+}
+
+int main() {
+    int arr[] = {3, 1, 2, 2, 3, 4};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    unsigned long long result = product_unique(arr, size);
+    printf("Product of unique numbers: %llu\n", result);
+    return 0;
+}

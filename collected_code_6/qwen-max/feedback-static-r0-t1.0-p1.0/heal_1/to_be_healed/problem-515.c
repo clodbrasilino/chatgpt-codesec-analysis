@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+bool isSubsetDivisibleByM(int *arr, int n, int m) {
+    if (n == 0 || m <= 0) return false;
+    
+    bool dp[n + 1][m];
+    for (int i = 0; i <= n; i++) dp[i][0] = true;
+    for (int i = 1; i < m; i++) dp[0][i] = false;
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j < m; j++) {
+            dp[i][j] = dp[i - 1][j];
+            if (!dp[i][j] && (j >= arr[i - 1] || (j + m - arr[i - 1]) % m == 0)) {
+                dp[i][j] = dp[i - 1][(j - arr[i - 1] + m) % m];
+            }
+        }
+    }
+
+    return dp[n][0];
+}
+
+int main() {
+    int arr[] = {3, 3, 3, 3};
+    int n = 4;
+    int m = 6;
+    if (isSubsetDivisibleByM(arr, n, m)) {
+        printf("Found a subset with sum divisible by %d\n", m);
+    } else {
+        printf("No subset with sum divisible by %d\n", m);
+    }
+    return 0;
+}

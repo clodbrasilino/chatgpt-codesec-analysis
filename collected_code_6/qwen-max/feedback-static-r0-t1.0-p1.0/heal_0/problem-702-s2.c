@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int minRemovals(int *arr, int n, int k) {
+    qsort(arr, n, sizeof(int), compare);
+    int left = 0, right = 0, maxLen = 1;
+    for (right = 1; right < n; ++right) {
+        while (arr[right] - arr[left] > k) {
+            ++left;
+        }
+        if (right - left + 1 > maxLen) {
+            maxLen = right - left + 1;
+        }
+    }
+    return n - maxLen;
+}
+
+int main() {
+    int arr[] = {4, 6, 10, 5, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+    int result = minRemovals(arr, n, k);
+    printf("%d\n", result);
+    return 0;
+}

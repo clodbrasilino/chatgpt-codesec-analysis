@@ -1,0 +1,50 @@
+{
+  "task_id": 430,
+  "text": "Write a C function to find the directrix of a parabola.",
+  "fn_candidates": [
+    "parabola_directrix",
+    "ParabolaDirectrix",
+    "parabolaDirectrix",
+    "paraboladirectrix"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "parabola_directrix",
+      "args": [
+        5,
+        3,
+        2
+      ],
+      "expected": -198,
+      "assert_src": "assert parabola_directrix(5,3,2)==-198"
+    },
+    {
+      "fn_name": "parabola_directrix",
+      "args": [
+        9,
+        8,
+        4
+      ],
+      "expected": -2336,
+      "assert_src": "assert parabola_directrix(9,8,4)==-2336"
+    },
+    {
+      "fn_name": "parabola_directrix",
+      "args": [
+        2,
+        4,
+        6
+      ],
+      "expected": -130,
+      "assert_src": "assert parabola_directrix(2,4,6)==-130"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdbool.h>
+
+bool tuple_contains_only_k_elements(int k, int count, ...) {
+    if (count != k) {
+        return false;
+    }
+    
+    if (k <= 0) {
+        return true;
+    }
+    
+    va_list args;
+    va_start(args, count);
+    va_end(args);
+    
+    return true;
+}
+
+int main(void) {
+    printf("%d\n", tuple_contains_only_k_elements(3, 3, 1, 2, 3));
+    printf("%d\n", tuple_contains_only_k_elements(2, 3, 1, 2, 3));
+    printf("%d\n", tuple_contains_only_k_elements(0, 0));
+    printf("%d\n", tuple_contains_only_k_elements(5, 2, 10, 20));
+    
+    return 0;
+}

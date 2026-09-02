@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int findFixedPoint(int arr[], int n) {
+    int left = 0, right = n - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr[mid] == mid)
+            return mid;
+        else if (arr[mid] < mid)
+            left = mid + 1;
+        else
+            right = mid - 1;
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {-10, -1, 0, 3, 5, 7, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findFixedPoint(arr, n);
+    if (result != -1)
+        printf("Fixed point is %d\n", result);
+    else
+        printf("No fixed point found\n");
+    return 0;
+}

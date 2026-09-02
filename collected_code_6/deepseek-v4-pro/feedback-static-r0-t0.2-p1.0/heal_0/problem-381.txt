@@ -1,0 +1,137 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+Node *create_node(int *data, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->data = data;
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void list_append(List *list, int *data, int size) {
+    Node *node = create_node(data, size);
+    if (!node) return;
+    if (!list->head) {
+        list->head = node;
+        return;
+    }
+    Node *current = list->head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = node;
+}
+
+void list_free(List *list) {
+    Node *current = list->head;
+    while (current) {
+        Node *next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+}
+
+void sort_list_by_index(List *list, int index) {
+    if (!list || !list->head || !list->head->next) return;
+
+    int swapped;
+    Node *ptr1;
+    Node *lptr = NULL;
+
+    do {
+        swapped = 0;
+        ptr1 = list->head;
+
+        while (ptr1->next != lptr) {
+            if (index < ptr1->size && index < ptr1->next->size) {
+                if (ptr1->data[index] > ptr1->next->data[index]) {
+                    int *temp_data = ptr1->data;
+                    int temp_size = ptr1->size;
+                    ptr1->data = ptr1->next->data;
+                    ptr1->size = ptr1->next->size;
+                    ptr1->next->data = temp_data;
+                    ptr1->next->size = temp_size;
+                    swapped = 1;
+                }
+            }
+            ptr1 = ptr1->next;
+        }
+        lptr = ptr1;
+    } while (swapped);
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current) {
+        printf("[");
+        for (int i = 0; i < current->size; i++) {
+            printf("%d", current->data[i]);
+            if (i < current->size - 1) printf(", ");
+        }
+        printf("] ");
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    List list = {0};
+
+    int arr1[] = {3, 2, 1};
+    int arr2[] = {1, 5, 4};
+    int arr3[] = {2, 3, 6};
+    int arr4[] = {0, 9, 8};
+
+    int *data1 = (int *)malloc(sizeof(arr1));
+    int *data2 = (int *)malloc(sizeof(arr2));
+    int *data3 = (int *)malloc(sizeof(arr3));
+    int *data4 = (int *)malloc(sizeof(arr4));
+
+    if (!data1 || !data2 || !data3 || !data4) {
+        free(data1);
+        free(data2);
+        free(data3);
+        free(data4);
+        return 1;
+    }
+
+    for (int i = 0; i < 3; i++) {
+        data1[i] = arr1[i];
+        data2[i] = arr2[i];
+        data3[i] = arr3[i];
+        data4[i] = arr4[i];
+    }
+
+    list_append(&list, data1, 3);
+    list_append(&list, data2, 3);
+    list_append(&list, data3, 3);
+    list_append(&list, data4, 3);
+
+    printf("Before sorting by index 0:\n");
+    print_list(&list);
+
+    sort_list_by_index(&list, 0);
+
+    printf("After sorting by index 0:\n");
+    print_list(&list);
+
+    list_free(&list);
+
+    return 0;
+}
+```

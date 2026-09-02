@@ -1,0 +1,44 @@
+{
+  "task_id": 707,
+  "text": "Write a C function to count the total set bits from 1 to n.",
+  "fn_candidates": [
+    "count_Set_Bits",
+    "CountSetBits",
+    "countSetBits",
+    "countSetBits"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Set_Bits",
+      "args": [
+        16
+      ],
+      "expected": 33,
+      "assert_src": "assert count_Set_Bits(16) == 33"
+    },
+    {
+      "fn_name": "count_Set_Bits",
+      "args": [
+        2
+      ],
+      "expected": 2,
+      "assert_src": "assert count_Set_Bits(2) == 2"
+    },
+    {
+      "fn_name": "count_Set_Bits",
+      "args": [
+        14
+      ],
+      "expected": 28,
+      "assert_src": "assert count_Set_Bits(14) == 28"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

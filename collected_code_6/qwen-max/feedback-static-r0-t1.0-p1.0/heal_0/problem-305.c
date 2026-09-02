@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int match_words(char *word1, char *word2) {
+    return strcmp(word1, word2) == 0;
+}
+
+void find_matching_words(char **words, int count, char *target) {
+    for (int i = 0; i < count; ++i) {
+        if (words[i][0] == 'p' && match_words(words[i], target)) {
+            printf("Match found: %s\n", words[i]);
+        }
+    }
+}
+
+int main() {
+    char *words[] = {"apple", "pear", "peach", "plum", "orange", "pineapple"};
+    int count = sizeof(words) / sizeof(words[0]);
+    
+    char *target = "peach";
+    find_matching_words(words, count, target);
+    
+    return 0;
+}

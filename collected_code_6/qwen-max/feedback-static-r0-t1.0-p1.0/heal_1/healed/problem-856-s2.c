@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int minSwaps(const int arr[], int N) {
+    int count_1 = 0;
+    for (int i = 0; i < N; i++)
+        if (arr[i] == 1)
+            count_1++;
+
+    int out_of_place = 0, swaps = 0;
+    for (int i = 0; i < N; i++) {
+        if (i < count_1 && arr[i] != 1)
+            out_of_place++;
+        else if (i >= count_1 && arr[i] != 0)
+            out_of_place--;
+        if (out_of_place > 0)
+            swaps += out_of_place;
+    }
+    return swaps;
+}
+
+int main() {
+    const int arr[] = {1, 0, 1, 0, 1, 0, 0, 1};
+    const int N = sizeof(arr) / sizeof(arr[0]);
+    printf("Minimum number of swaps required: %d\n", minSwaps(arr, N));
+    return 0;
+}

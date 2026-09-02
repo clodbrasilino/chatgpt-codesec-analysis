@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+long sum_of_odds(long l, long r) {
+    long sum = 0;
+    for (long i = l; i <= r; i++) {
+        if (i % 2 != 0) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int main() {
+    long l = 1;
+    long r = 10;
+    printf("Sum of all odd numbers between %ld and %ld: %ld\n", l, r, sum_of_odds(l, r));
+    return 0;
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 364,
+  "text": "Write a C function to find the number of flips required to make the given binary string a sequence of alternate characters.",
+  "fn_candidates": [
+    "min_flip_to_make_string_alternate",
+    "MinFlipToMakeStringAlternate",
+    "minFlipToMakeStringAlternate",
+    "minfliptomakestringalternate"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_flip_to_make_string_alternate",
+      "args": [
+        "0001010111"
+      ],
+      "expected": 2,
+      "assert_src": "assert min_flip_to_make_string_alternate(\"0001010111\") == 2"
+    },
+    {
+      "fn_name": "min_flip_to_make_string_alternate",
+      "args": [
+        "001"
+      ],
+      "expected": 1,
+      "assert_src": "assert min_flip_to_make_string_alternate(\"001\") == 1"
+    },
+    {
+      "fn_name": "min_flip_to_make_string_alternate",
+      "args": [
+        "010111011"
+      ],
+      "expected": 2,
+      "assert_src": "assert min_flip_to_make_string_alternate(\"010111011\") == 2 "
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool matchesPattern(const int *nums, int numsSize, const int *pattern, int patternSize) {
+    if (numsSize < patternSize) return false;
+    for (int i = 0; i <= numsSize - patternSize; ++i) {
+        bool match = true;
+        for (int j = 0; j < patternSize; ++j) {
+            if (nums[i + j] != pattern[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return true;
+    }
+    return false;
+}
+
+int main() {
+    int nums[] = {1, 2, 3, 4, 5, 6, 7, 8};
+    int pattern[] = {3, 4, 5};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int patternSize = sizeof(pattern) / sizeof(pattern[0]);
+
+    if (matchesPattern(nums, numsSize, pattern, patternSize)) {
+        printf("Pattern matches.\n");
+    } else {
+        printf("Pattern does not match.\n");
+    }
+
+    return 0;
+}
+```

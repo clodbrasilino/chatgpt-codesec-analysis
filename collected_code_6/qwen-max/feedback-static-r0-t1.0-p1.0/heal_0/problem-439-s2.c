@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long combineIntegers(int *list, int size) {
+    long long result = 0;
+    for (int i = 0; i < size; ++i) {
+        result = result * 10 + list[i];
+    }
+    return result;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5};
+    int n = sizeof(array) / sizeof(array[0]);
+    long long combinedNumber = combineIntegers(array, n);
+    printf("%lld\n", combinedNumber);
+    return 0;
+}

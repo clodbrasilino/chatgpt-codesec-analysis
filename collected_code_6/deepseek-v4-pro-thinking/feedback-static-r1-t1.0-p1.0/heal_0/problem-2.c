@@ -1,0 +1,85 @@
+#include <stddef.h>
+#include <stdio.h>
+
+typedef struct Tuple {
+    int first;
+    int second;
+} Tuple;
+
+static int tuple_equal(Tuple a, Tuple b) {
+    return a.first == b.first && a.second == b.second;
+}
+
+static int tuple_contains(const Tuple *list, size_t length, Tuple value) {
+    size_t i;
+
+    for (i = 0; i < length; ++i) {
+        if (tuple_equal(list[i], value)) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int find_similar_elements(const Tuple *list1, size_t length1,
+                          const Tuple *list2, size_t length2,
+                          Tuple *result, size_t result_capacity,
+                          size_t *result_length) {
+    size_t i;
+
+    if (result_length == NULL) {
+        return -1;
+    }
+
+    *result_length = 0;
+
+    if (list1 == NULL || list2 == NULL) {
+        return -1;
+    }
+
+    if (result == NULL && result_capacity > 0) {
+        return -1;
+    }
+
+    for (i = 0; i < length1; ++i) {
+        if (tuple_contains(list2, length2, list1[i]) &&
+            !tuple_contains(result, *result_length, list1[i])) {
+            if (*result_length >= result_capacity) {
+                return -2;
+            }
+            result[*result_length] = list1[i];
+            ++*result_length;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}, {1, 2}};
+    Tuple list2[] = {{3, 4}, {5, 6}, {7, 8}};
+    Tuple result[3];
+    size_t result_length = 0;
+    int status;
+    size_t i;
+
+    status = find_similar_elements(list1,
+                                   sizeof(list1) / sizeof(list1[0]),
+                                   list2,
+                                   sizeof(list2) / sizeof(list2[0]),
+                                   result,
+                                   sizeof(result) / sizeof(result[0]),
+                                   &result_length);
+
+    if (status != 0) {
+        printf("Error occurred while finding similar elements.\n");
+        return status;
+    }
+
+    for (i = 0; i < result_length; ++i) {
+        printf("(%d, %d)\n", result[i].first, result[i].second);
+    }
+
+    return 0;
+}

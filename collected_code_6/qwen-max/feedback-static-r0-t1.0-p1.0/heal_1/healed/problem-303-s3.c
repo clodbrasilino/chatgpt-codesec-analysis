@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countInversions(const int *arr, int n, int type) {
+    int inv_count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if ((type == 1 && arr[i] > arr[j]) || (type == 2 && arr[i] < arr[j])) {
+                inv_count++;
+            }
+        }
+    }
+    return inv_count;
+}
+
+int checkInversionCount(const int *arr, int n, int typeA, int typeB) {
+    int inv_countA = countInversions(arr, n, typeA);
+    int inv_countB = countInversions(arr, n, typeB);
+    return inv_countA == inv_countB ? 1 : 0;
+}
+
+int main() {
+    int arr[] = {4, 3, 2, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = checkInversionCount(arr, n, 1, 2);
+    printf("%s\n", result ? "Same" : "Different");
+    return 0;
+}

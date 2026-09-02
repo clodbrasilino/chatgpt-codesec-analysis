@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *camel_to_snake(const char *input) {
+    char *output = malloc(strlen(input) * 2 + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+    int output_index = 0;
+    for (int i = 0; input[i] != '\0'; ++i) {
+        if (isupper(input[i]) && i > 0 && islower(input[i - 1])) {
+            output[output_index++] = '_';
+        }
+        output[output_index] = tolower(input[i]);
+        output_index++;
+    }
+    output[output_index] = '\0';
+    return output;
+}
+
+int main() {
+    const char *test_cases[] = {"GoogleAssistant", "ChromeCast", "QuadCore", "ThisIsCamelCase"};
+    for (int i = 0; i < 4; i++) {
+        char *result = camel_to_snake(test_cases[i]);
+        if (result != NULL) {
+            printf("%s\n", result);
+            free(result);
+        } else {
+            printf("Error converting string.\n");
+        }
+    }
+    return 0;
+}

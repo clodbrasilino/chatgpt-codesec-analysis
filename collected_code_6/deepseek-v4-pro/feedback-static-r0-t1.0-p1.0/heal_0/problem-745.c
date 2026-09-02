@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_divisible_by_digits(int num) {
+    if (num == 0) {
+        return false;
+    }
+    
+    int temp = num;
+    while (temp > 0) {
+        int digit = temp % 10;
+        if (digit == 0 || num % digit != 0) {
+            return false;
+        }
+        temp /= 10;
+    }
+    
+    return true;
+}
+
+void find_numbers_in_range(int start, int end) {
+    if (start > end) {
+        return;
+    }
+    
+    bool found = false;
+    for (int i = start; i <= end; i++) {
+        if (is_divisible_by_digits(i)) {
+            printf("%d ", i);
+            found = true;
+        }
+    }
+    
+    if (!found) {
+        printf("No numbers found");
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int start, end;
+    
+    printf("Enter start of range: ");
+    if (scanf("%d", &start) != 1) {
+        return 1;
+    }
+    
+    printf("Enter end of range: ");
+    if (scanf("%d", &end) != 1) {
+        return 1;
+    }
+    
+    find_numbers_in_range(start, end);
+    
+    return 0;
+}

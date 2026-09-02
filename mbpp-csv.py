@@ -1,5 +1,5 @@
 import csv
-from mbpp import problems
+from bct import problems
 
 mbpp_csv: list[dict] = []
 for problem in problems:

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool is_valid_password(const char *password) {
+    if (password == NULL || strlen(password) < 8) {
+        return false;
+    }
+
+    bool has_upper = false;
+    bool has_lower = false;
+    bool has_digit = false;
+
+    for (size_t i = 0; password[i] != '\0'; ++i) {
+        if (password[i] >= 'A' && password[i] <= 'Z') {
+            has_upper = true;
+        } else if (password[i] >= 'a' && password[i] <= 'z') {
+            has_lower = true;
+        } else if (password[i] >= '0' && password[i] <= '9') {
+            has_digit = true;
+        }
+    }
+
+    return has_upper && has_lower && has_digit;
+}
+
+int main() {
+    const char *password1 = "Password123";
+    const char *password2 = "pass";
+    const char *password3 = "PASSWORD123";
+    const char *password4 = "password123";
+
+    printf("Password1: %s\n", is_valid_password(password1) ? "Valid" : "Invalid");
+    printf("Password2: %s\n", is_valid_password(password2) ? "Valid" : "Invalid");
+    printf("Password3: %s\n", is_valid_password(password3) ? "Valid" : "Invalid");
+    printf("Password4: %s\n", is_valid_password(password4) ? "Valid" : "Invalid");
+
+    return 0;
+}

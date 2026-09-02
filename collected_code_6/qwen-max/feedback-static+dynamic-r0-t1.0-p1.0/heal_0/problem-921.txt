@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} TupleChunk;
+
+TupleChunk* chunkify(int* input, size_t total_length, size_t n) {
+    if (total_length == 0 || n <= 0) return NULL;
+
+    size_t num_chunks = (total_length + n - 1) / n;
+    TupleChunk* chunks = (TupleChunk*)malloc(num_chunks * sizeof(TupleChunk));
+    if (chunks == NULL) return NULL;
+
+    for (size_t i = 0; i < num_chunks; i++) {
+        size_t start_index = i * n;
+        size_t end_index = (i + 1) * n < total_length ? (i + 1) * n : total_length;
+        size_t chunk_size = end_index - start_index;
+
+        chunks[i].data = (int*)malloc(chunk_size * sizeof(int));
+        if (chunks[i].data == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(chunks[j].data);
+            }
+            free(chunks);
+            return NULL;
+        }
+
+        for (size_t j = 0; j < chunk_size; j++) {
+            chunks[i].data[j] = input[start_index + j];
+        }
+        chunks[i].length = chunk_size;
+    }
+
+    return chunks;
+}
+
+void free_chunks(TupleChunk* chunks, size_t num_chunks) {
+    for (size_t i = 0; i < num_chunks; i++) {
+        free(chunks[i].data);
+    }
+    free(chunks);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t arr_length = sizeof(arr) / sizeof(arr[0]);
+    size_t n = 3;
+
+    TupleChunk* chunks = chunkify(arr, arr_length, n);
+    if (chunks == NULL) {
+        fprintf(stderr, "Failed to chunkify array.\n");
+        return 1;
+    }
+
+    size_t num_chunks = (arr_length + n - 1) / n;
+    for (size_t i = 0; i < num_chunks; i++) {
+        for (size_t j = 0; j < chunks[i].length; j++) {
+            printf("%d ", chunks[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    free_chunks(chunks, num_chunks);
+
+    return 0;
+}
+```

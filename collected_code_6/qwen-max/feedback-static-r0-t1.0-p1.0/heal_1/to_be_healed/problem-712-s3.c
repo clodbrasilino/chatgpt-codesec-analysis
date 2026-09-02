@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int* data;
+    size_t size;
+    struct List* next;
+} List;
+
+/* Possible weaknesses found:
+ *  Parameter 'items' can be declared as pointer to const [constParameterPointer]
+ */
+List* create_list(int* items, size_t size) {
+    List* list = (List*)malloc(sizeof(List));
+    if (!list) return NULL;
+    list->data = (int*)malloc(size * sizeof(int));
+    if (!list->data) {
+        free(list);
+        return NULL;
+    }
+    for (size_t i = 0; i < size; ++i) {
+        list->data[i] = items[i];
+    }
+    list->size = size;
+    list->next = NULL;
+    return list;
+}
+
+void append_list(List** head, List* new_list) {
+    if (*head == NULL) {
+        *head = new_list;
+    } else {
+        List* current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_list;
+    }
+}
+
+int is_duplicate(List* head, List* check) {
+    while (head != NULL) {
+        if (head->size == check->size) {
+            int match = 1;
+            for (size_t i = 0; i < head->size; ++i) {
+                if (head->data[i] != check->data[i]) {
+                    match = 0;
+                    break;
+                }
+            }
+            if (match) return 1;
+        }
+        head = head->next;
+    }
+    return 0;
+}
+
+List* remove_duplicates(List* head) {
+    List* unique_head = NULL;
+    List* current = head;
+    while (current) {
+        if (!is_duplicate(unique_head, current)) {
+            append_list(&unique_head, current);
+        } else {
+            List* to_free = current;
+            current = current->next;
+            free(to_free->data);
+            free(to_free);
+            continue;
+        }
+        current = current->next;
+    }
+    return unique_head;
+}
+
+void print_list(List* head) {
+    while (head) {
+        for (size_t i = 0; i < head->size; ++i) {
+            printf("%d ", head->data[i]);
+        }
+        printf("\n");
+        head = head->next;
+    }
+}
+
+void free_list(List* head) {
+    while (head) {
+        List* temp = head;
+        head = head->next;
+        free(temp->data);
+        free(temp);
+    }
+}
+
+int main() {
+    int items1[] = {1, 2};
+    int items2[] = {3, 4};
+    int items3[] = {1, 2};
+
+    List* head = NULL;
+
+    append_list(&head, create_list(items1, 2));
+    append_list(&head, create_list(items2, 2));
+    append_list(&head, create_list(items3, 2));
+
+    printf("Original lists:\n");
+    print_list(head);
+
+    List* unique_head = remove_duplicates(head);
+
+    printf("Lists after removing duplicates:\n");
+    print_list(unique_head);
+
+    free_list(unique_head);
+    return 0;
+}

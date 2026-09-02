@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+void print_numbers_and_positions(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int i = 0;
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            int start = i;
+            while (isdigit((unsigned char)str[i])) {
+                i++;
+            }
+            int len = i - start;
+            char *number = (char *)malloc(len + 1);
+            if (number == NULL) {
+                return;
+            }
+            for (int j = 0; j < len; j++) {
+                number[j] = str[start + j];
+            }
+            number[len] = '\0';
+            printf("Number: %s, Position: %d\n", number, start);
+            free(number);
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    const char *input = "abc123def45gh6";
+    print_numbers_and_positions(input);
+    return 0;
+}
+```

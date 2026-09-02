@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_alternate_chains(int *arr, int n) {
+    if (n <= 0 || arr == NULL) return 0;
+
+    int sum = 0;
+    for (int i = 0; i < n; i += 4) {
+        sum += arr[i] + arr[i + 2];
+    }
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = sum_alternate_chains(arr, n);
+    printf("Sum of alternate chains: %d\n", result);
+
+    return 0;
+}

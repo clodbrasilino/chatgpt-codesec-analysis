@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool can_sort_by_corners(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return false;
+    }
+    
+    if (n == 1) {
+        return true;
+    }
+    
+    int left = 0;
+    int right = n - 1;
+    int last = -1;
+    bool has_last = false;
+    
+    while (left <= right) {
+        int chosen;
+        
+        if (!has_last) {
+            if (arr[left] <= arr[right]) {
+                chosen = arr[left];
+                left++;
+            } else {
+                chosen = arr[right];
+                right--;
+            }
+            last = chosen;
+            has_last = true;
+        } else {
+            bool left_valid = (arr[left] >= last);
+            bool right_valid = (arr[right] >= last);
+            
+            if (left == right) {
+                chosen = arr[left];
+                left_valid = (chosen >= last);
+                right_valid = left_valid;
+            }
+            
+            if (left_valid && right_valid) {
+                if (arr[left] <= arr[right]) {
+                    chosen = arr[left];
+                    left++;
+                } else {
+                    chosen = arr[right];
+                    right--;
+                }
+            } else if (left_valid) {
+                chosen = arr[left];
+                left++;
+            } else if (right_valid) {
+                chosen = arr[right];
+                right--;
+            } else {
+                return false;
+            }
+            
+            last = chosen;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'arr1' can be declared as const array [constVariable]
+     */
+    int arr1[] = {1, 2, 3, 4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'arr2' can be declared as const array [constVariable]
+     */
+    int arr2[] = {5, 4, 3, 2, 1};
+    /* Possible weaknesses found:
+     *  Variable 'arr3' can be declared as const array [constVariable]
+     */
+    int arr3[] = {2, 3, 1, 4};
+    /* Possible weaknesses found:
+     *  Variable 'arr4' can be declared as const array [constVariable]
+     */
+    int arr4[] = {3, 1, 2, 4};
+    /* Possible weaknesses found:
+     *  Variable 'arr5' can be declared as const array [constVariable]
+     */
+    int arr5[] = {1};
+    /* Possible weaknesses found:
+     *  Variable 'arr6' can be declared as const array [constVariable]
+     */
+    int arr6[] = {2, 1, 3};
+    
+    printf("%d\n", can_sort_by_corners(arr1, 5));
+    printf("%d\n", can_sort_by_corners(arr2, 5));
+    printf("%d\n", can_sort_by_corners(arr3, 4));
+    printf("%d\n", can_sort_by_corners(arr4, 4));
+    printf("%d\n", can_sort_by_corners(arr5, 1));
+    printf("%d\n", can_sort_by_corners(arr6, 3));
+    
+    return 0;
+}

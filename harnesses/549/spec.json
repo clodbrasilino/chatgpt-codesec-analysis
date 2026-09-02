@@ -1,0 +1,44 @@
+{
+  "task_id": 549,
+  "text": "Write a C function to find the sum of fifth power of first n odd natural numbers.",
+  "fn_candidates": [
+    "odd_Num_Sum",
+    "OddNumSum",
+    "oddNumSum",
+    "oddNumSum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_Num_Sum",
+      "args": [
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert odd_Num_Sum(1) == 1"
+    },
+    {
+      "fn_name": "odd_Num_Sum",
+      "args": [
+        2
+      ],
+      "expected": 244,
+      "assert_src": "assert odd_Num_Sum(2) == 244"
+    },
+    {
+      "fn_name": "odd_Num_Sum",
+      "args": [
+        3
+      ],
+      "expected": 3369,
+      "assert_src": "assert odd_Num_Sum(3) == 3369"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

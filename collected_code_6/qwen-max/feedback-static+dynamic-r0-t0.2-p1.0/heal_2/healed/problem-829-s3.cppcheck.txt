@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-829-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-829-s3.c:36:30: style: Condition '!found' is always true [knownConditionTrueFalse]
+    for (int i = 0; i < n && !found; i++) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-829-s3.c:35:17: note: Assignment 'found=0', assigned value is 0
+    int found = 0;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-829-s3.c:36:30: note: Condition '!found' is always true
+    for (int i = 0; i < n && !found; i++) {
+                             ^

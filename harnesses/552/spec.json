@@ -1,0 +1,59 @@
+{
+  "task_id": 552,
+  "text": "Write a C function to check whether a given sequence is linear or not.",
+  "fn_candidates": [
+    "Seq_Linear",
+    "SeqLinear",
+    "SeqLinear",
+    "SeqLinear"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Seq_Linear",
+      "args": [
+        [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10
+        ]
+      ],
+      "expected": "Linear Sequence",
+      "assert_src": "assert Seq_Linear([0,2,4,6,8,10]) == \"Linear Sequence\""
+    },
+    {
+      "fn_name": "Seq_Linear",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": "Linear Sequence",
+      "assert_src": "assert Seq_Linear([1,2,3]) == \"Linear Sequence\""
+    },
+    {
+      "fn_name": "Seq_Linear",
+      "args": [
+        [
+          1,
+          5,
+          2
+        ]
+      ],
+      "expected": "Non Linear Sequence",
+      "assert_src": "assert Seq_Linear([1,5,2]) == \"Non Linear Sequence\""
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

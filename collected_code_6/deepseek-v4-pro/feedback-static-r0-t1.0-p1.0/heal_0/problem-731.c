@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double lateral_surface_area(double radius, double slant_height) {
+    return PI * radius * slant_height;
+}
+
+int main(void) {
+    double radius, slant_height, area;
+
+    printf("Enter radius of cone: ");
+    if (scanf("%lf", &radius) != 1 || radius <= 0) {
+        fprintf(stderr, "Invalid input for radius\n");
+        return 1;
+    }
+
+    printf("Enter slant height of cone: ");
+    if (scanf("%lf", &slant_height) != 1 || slant_height <= 0) {
+        fprintf(stderr, "Invalid input for slant height\n");
+        return 1;
+    }
+
+    area = lateral_surface_area(radius, slant_height);
+    printf("Lateral surface area: %.2f\n", area);
+
+    return 0;
+}

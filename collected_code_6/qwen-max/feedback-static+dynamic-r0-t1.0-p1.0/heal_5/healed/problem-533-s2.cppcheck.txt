@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-533-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-533-s2.c:72:64: style: Variable 'i' is assigned a value that is never used. [unreadVariable]
+    add_element(&t, 0, (union { int i; float f; char c; }){ .i = 1 });
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-533-s2.c:73:64: style: Variable 'f' is assigned a value that is never used. [unreadVariable]
+    add_element(&t, 1, (union { int i; float f; char c; }){ .f = 2.5f });
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-533-s2.c:74:64: style: Variable 'c' is assigned a value that is never used. [unreadVariable]
+    add_element(&t, 2, (union { int i; float f; char c; }){ .c = 'a' });
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-533-s2.c:75:64: style: Variable 'i' is assigned a value that is never used. [unreadVariable]
+    add_element(&t, 0, (union { int i; float f; char c; }){ .i = 2 });
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-533-s2.c:76:64: style: Variable 'f' is assigned a value that is never used. [unreadVariable]
+    add_element(&t, 1, (union { int i; float f; char c; }){ .f = 3.5f });
+                                                               ^

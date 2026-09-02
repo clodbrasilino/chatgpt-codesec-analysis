@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <string.h>
+
+int match_string(const char *str) {
+    return strncmp(str, "abbb", 4) == 0;
+}
+
+int main() {
+    const char *test_str = "abbb";
+
+    if (match_string(test_str)) {
+        printf("Match found\n");
+    } else {
+        printf("No match found\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c:13:9: style: Same expression used in consecutive assignments of 'min_x' and 'max_x'. [duplicateAssignExpression]
+    int min_x = points[0].x;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c:14:9: note: Same expression used in consecutive assignments of 'min_x' and 'max_x'.
+    int max_x = points[0].x;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c:13:9: note: Same expression used in consecutive assignments of 'min_x' and 'max_x'.
+    int min_x = points[0].x;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c:15:9: style: Same expression used in consecutive assignments of 'min_y' and 'max_y'. [duplicateAssignExpression]
+    int min_y = points[0].y;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c:16:9: note: Same expression used in consecutive assignments of 'min_y' and 'max_y'.
+    int max_y = points[0].y;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-190-s2.c:15:9: note: Same expression used in consecutive assignments of 'min_y' and 'max_y'.
+    int min_y = points[0].y;
+        ^

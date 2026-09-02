@@ -1,0 +1,47 @@
+{
+  "task_id": 654,
+  "text": "Write a C function to find the perimeter of a rectangle.",
+  "fn_candidates": [
+    "rectangle_perimeter",
+    "RectanglePerimeter",
+    "rectanglePerimeter",
+    "rectangleperimeter"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "rectangle_perimeter",
+      "args": [
+        10,
+        20
+      ],
+      "expected": 60,
+      "assert_src": "assert rectangle_perimeter(10,20)==60"
+    },
+    {
+      "fn_name": "rectangle_perimeter",
+      "args": [
+        10,
+        5
+      ],
+      "expected": 30,
+      "assert_src": "assert rectangle_perimeter(10,5)==30"
+    },
+    {
+      "fn_name": "rectangle_perimeter",
+      "args": [
+        4,
+        2
+      ],
+      "expected": 12,
+      "assert_src": "assert rectangle_perimeter(4,2)==12"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

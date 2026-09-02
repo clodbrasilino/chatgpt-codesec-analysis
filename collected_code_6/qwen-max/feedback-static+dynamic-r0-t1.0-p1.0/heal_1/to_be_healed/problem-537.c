@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX_WORDS 1024
+#define MAX_WORD_LENGTH 64
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'None', got (null)
+  */
+
+char* findFirstRepeatedWord(const char* str) {
+    if (str == NULL) return NULL;
+
+    char words[MAX_WORDS][MAX_WORD_LENGTH] = {0};
+    int wordCount = 0;
+    
+    const char *token = strtok((char*)str, " .,;:!?-");
+    while (token != NULL && wordCount < MAX_WORDS) {
+        bool found = false;
+        for (int i = 0; i < wordCount; ++i) {
+            if (strcasecmp(words[i], token) == 0) {
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            return (char*)token;
+        } else {
+            strncpy(words[wordCount++], token, MAX_WORD_LENGTH - 1);
+        }
+        token = strtok(NULL, " .,;:!?-");
+    }
+
+    return NULL;
+}
+
+int main() {
+    const char* str = "This is a test. This is only a test.";
+    char* result = findFirstRepeatedWord(str);
+    if (result) {
+        printf("First repeated word: %s\n", result);
+    } else {
+        printf("No repeated word found.\n");
+    }
+    return 0;
+}

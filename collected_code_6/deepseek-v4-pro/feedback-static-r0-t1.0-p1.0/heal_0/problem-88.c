@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    int frequency;
+    struct Node *next;
+} Node;
+
+Node *create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->value = value;
+    new_node->frequency = 1;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void add_frequency(Node **head, int value) {
+    Node *current = *head;
+    Node *previous = NULL;
+
+    while (current != NULL) {
+        if (current->value == value) {
+            current->frequency++;
+            return;
+        }
+        previous = current;
+        current = current->next;
+    }
+
+    Node *new_node = create_node(value);
+    if (previous == NULL) {
+        *head = new_node;
+    } else {
+        previous->next = new_node;
+    }
+}
+
+void print_frequencies(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d: %d\n", current->value, current->frequency);
+        current = current->next;
+    }
+}
+
+void free_nodes(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 2, 1, 3, 3, 4, 5, 1};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    Node *head = NULL;
+
+    for (int i = 0; i < size; i++) {
+        add_frequency(&head, numbers[i]);
+    }
+
+    print_frequencies(head);
+    free_nodes(head);
+
+    return 0;
+}

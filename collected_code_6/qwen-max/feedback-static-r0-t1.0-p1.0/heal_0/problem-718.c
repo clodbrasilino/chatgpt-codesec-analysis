@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) return NULL;
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+Node* alternateElements(Node* head) {
+    Node* altHead = NULL;
+    Node* current = head;
+    int index = 0;
+    
+    while (current != NULL) {
+        if (index % 2 == 0) {
+            appendNode(&altHead, current->data);
+        }
+        current = current->next;
+        index++;
+    }
+    
+    return altHead;
+}
+
+void printList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d -> ", current->data);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    Node* list = NULL;
+    appendNode(&list, 1);
+    appendNode(&list, 2);
+    appendNode(&list, 3);
+    appendNode(&list, 4);
+    appendNode(&list, 5);
+    
+    printf("Original List: ");
+    printList(list);
+    
+    Node* altList = alternateElements(list);
+    printf("Alternate Elements List: ");
+    printList(altList);
+    
+    freeList(list);
+    freeList(altList);
+    
+    return 0;
+}

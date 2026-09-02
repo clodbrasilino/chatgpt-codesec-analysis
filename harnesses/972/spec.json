@@ -1,0 +1,80 @@
+{
+  "task_id": 972,
+  "text": "Write a C function to concatenate the given two tuples to a nested tuple.",
+  "fn_candidates": [
+    "concatenate_nested",
+    "ConcatenateNested",
+    "concatenateNested",
+    "concatenatenested"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "concatenate_nested",
+      "args": [
+        [
+          3,
+          4
+        ],
+        [
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "assert_src": "assert concatenate_nested((3, 4), (5, 6)) == (3, 4, 5, 6)"
+    },
+    {
+      "fn_name": "concatenate_nested",
+      "args": [
+        [
+          1,
+          2
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "assert_src": "assert concatenate_nested((1, 2), (3, 4)) == (1, 2, 3, 4)"
+    },
+    {
+      "fn_name": "concatenate_nested",
+      "args": [
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          8
+        ]
+      ],
+      "expected": [
+        4,
+        5,
+        6,
+        8
+      ],
+      "assert_src": "assert concatenate_nested((4, 5), (6, 8)) == (4, 5, 6, 8)"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

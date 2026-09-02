@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictEntry {
+    char *key;
+    int value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct {
+    DictEntry *head;
+} Dictionary;
+
+/* Possible weaknesses found:
+ *  'create_dictionary' declared here
+ */
+Dictionary *create_dictionary(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+int dict_insert(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 0;
+        }
+        current = current->next;
+    }
+    
+    DictEntry *new_entry = (DictEntry *)malloc(sizeof(DictEntry));
+    if (new_entry == NULL) {
+        return -1;
+    }
+    
+    new_entry->key = (char *)malloc(strlen(key) + 1);
+    if (new_entry->key == NULL) {
+        free(new_entry);
+        return -1;
+    }
+    
+    strcpy(new_entry->key, key);
+    new_entry->value = value;
+    new_entry->next = dict->head;
+    dict->head = new_entry;
+    return 0;
+}
+
+int dict_get(Dictionary *dict, const char *key, int *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            *value = current->value;
+            return 0;
+        }
+        current = current->next;
+    }
+    return -1;
+}
+
+Dictionary *combine_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    if (dict1 == NULL || dict2 == NULL) {
+        return NULL;
+    }
+    
+    Dictionary *result = create_dictionary();
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    DictEntry *current = dict1->head;
+    while (current != NULL) {
+        if (dict_insert(result, current->key, current->value) != 0) {
+            /* Possible weaknesses found:
+             *  call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+             *  implicit declaration of function 'free_dictionary'; did you mean 'create_dictionary'? [-Wimplicit-function-declaration]
+             *  previous implicit declaration is here
+             *  did you mean 'create_dictionary'?
+             */
+            free_dictionary(result);
+            return NULL;
+        }
+        current = current->next;
+    }
+    
+    current = dict2->head;
+    while (current != NULL) {
+        int existing_value;
+        if (dict_get(result, current->key, &existing_value) == 0) {
+            if (dict_insert(result, current->key, existing_value + current->value) != 0) {
+                /* Possible weaknesses found:
+                 *  call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+                 */
+                free_dictionary(result);
+                return NULL;
+            }
+        } else {
+            if (dict_insert(result, current->key, current->value) != 0) {
+                /* Possible weaknesses found:
+                 *  call to undeclared function 'free_dictionary'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+                 */
+                free_dictionary(result);
+                return NULL;
+            }
+        }
+        current = current->next;
+    }
+    
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  conflicting types for 'free_dictionary'
+ */
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        DictEntry *next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+void print_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        printf("%s: %d\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary();
+    Dictionary *dict2 = create_dictionary();
+    
+    if (dict1 == NULL || dict2 == NULL) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    dict_insert(dict1, "apple", 5);
+    dict_insert(dict1, "banana", 3);
+    dict_insert(dict1, "cherry", 8);
+    
+    dict_insert(dict2, "banana", 7);
+    dict_insert(dict2, "cherry", 2);
+    dict_insert(dict2, "date", 10);
+    
+    Dictionary *combined = combine_dictionaries(dict1, dict2);
+    if (combined == NULL) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    print_dictionary(combined);
+    
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(combined);
+    
+    return 0;
+}

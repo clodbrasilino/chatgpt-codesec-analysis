@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+    int size;
+} List;
+
+List* createList() {
+    List *list = (List*)malloc(sizeof(List));
+    if (list) {
+        list->head = NULL;
+        list->size = 0;
+    }
+    return list;
+}
+
+void addToList(List *list, int value) {
+    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
+    newNode->value = value;
+    newNode->next = list->head;
+    list->head = newNode;
+    list->size++;
+}
+
+int getMinSizeListIndex(List **lists, int totalLists) {
+    int minSize = lists[0]->size;
+    int minIndex = 0;
+    for (int i = 1; i < totalLists; i++) {
+        if (lists[i]->size < minSize) {
+            minSize = lists[i]->size;
+            minIndex = i;
+        }
+    }
+    return minIndex;
+}
+
+int main() {
+    int totalLists = 3;
+    List *l1 = createList();
+    List *l2 = createList();
+    List *l3 = createList();
+
+    addToList(l1, 1);
+    addToList(l1, 2);
+    
+    addToList(l2, 3);
+    addToList(l2, 4);
+    addToList(l2, 5);
+
+    addToList(l3, 6);
+
+    List *lists[] = {l1, l2, l3};
+    int minIndex = getMinSizeListIndex(lists, totalLists);
+
+    printf("The list with minimum length is at index: %d\n", minIndex);
+
+    // Free allocated memory
+    for (int i = 0; i < totalLists; i++) {
+        ListNode *current = lists[i]->head;
+        while (current) {
+            ListNode *temp = current;
+            current = current->next;
+            free(temp);
+        }
+        free(lists[i]);
+    }
+
+    return 0;
+}
+```

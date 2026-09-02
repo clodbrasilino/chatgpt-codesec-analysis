@@ -1,0 +1,44 @@
+{
+  "task_id": 387,
+  "text": "Write a C function to check whether the hexadecimal number is even or odd.",
+  "fn_candidates": [
+    "even_or_odd",
+    "EvenOrOdd",
+    "evenOrOdd",
+    "evenorodd"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "even_or_odd",
+      "args": [
+        "AB3454D"
+      ],
+      "expected": "Odd",
+      "assert_src": "assert even_or_odd(\"AB3454D\") ==\"Odd\""
+    },
+    {
+      "fn_name": "even_or_odd",
+      "args": [
+        "ABC"
+      ],
+      "expected": "Even",
+      "assert_src": "assert even_or_odd(\"ABC\") == \"Even\""
+    },
+    {
+      "fn_name": "even_or_odd",
+      "args": [
+        "AAD"
+      ],
+      "expected": "Odd",
+      "assert_src": "assert even_or_odd(\"AAD\") == \"Odd\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

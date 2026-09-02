@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_list(int *list, int n) {
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+}
+
+void map_print(int *list, int n, void (*print_func)(int*, int)) {
+    if (list && print_func) {
+        print_func(list, n);
+    }
+}
+
+int main() {
+    int n = 5;
+    int *list = malloc(n * sizeof(int));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        list[i] = i + 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        map_print(list, n, print_list);
+    }
+
+    free(list);
+    return EXIT_SUCCESS;
+}
+```

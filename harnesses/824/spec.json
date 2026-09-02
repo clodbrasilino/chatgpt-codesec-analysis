@@ -1,0 +1,68 @@
+{
+  "task_id": 824,
+  "text": "Write a C function to remove even numbers from a given list.",
+  "fn_candidates": [
+    "remove_even",
+    "RemoveEven",
+    "removeEven",
+    "removeeven"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_even",
+      "args": [
+        [
+          1,
+          3,
+          5,
+          2
+        ]
+      ],
+      "expected": [
+        1,
+        3,
+        5
+      ],
+      "assert_src": "assert remove_even([1,3,5,2]) == [1,3,5]"
+    },
+    {
+      "fn_name": "remove_even",
+      "args": [
+        [
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": [
+        5,
+        7
+      ],
+      "assert_src": "assert remove_even([5,6,7]) == [5,7]"
+    },
+    {
+      "fn_name": "remove_even",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "expected": [
+        1,
+        3
+      ],
+      "assert_src": "assert remove_even([1,2,3,4]) == [1,3]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

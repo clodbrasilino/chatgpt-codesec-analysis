@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-256-s3.c: In function 'count_primes':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-256-s3.c:7:29: error: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+    7 |     bool *is_prime = (bool*)malloc(n * sizeof(bool));
+      |                             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-256-s3.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+    2 | #include <stdbool.h>
+  +++ |+#include <stdlib.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-256-s3.c:27:5: error: implicit declaration of function 'free' [-Wimplicit-function-declaration]
+   27 |     free(is_prime);
+      |     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-256-s3.c:27:5: note: include '<stdlib.h>' or provide a declaration of 'free'

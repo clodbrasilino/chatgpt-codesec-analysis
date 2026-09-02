@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    int size;
+} List;
+
+void printList(const List *list) {
+    for (int i = 0; i < list->size; i++) {
+        printf("%d ", list->data[i]);
+    }
+    printf("\n");
+}
+
+void freeList(List *list) {
+    free(list->data);
+    free(list);
+}
+
+List* createSublist(const List *original, int start, int end) {
+    List *sublist = (List *)malloc(sizeof(List));
+    if (sublist == NULL) {
+        return NULL;
+    }
+    sublist->size = end - start;
+    sublist->data = (int *)malloc(sublist->size * sizeof(int));
+    if (sublist->data == NULL) {
+        free(sublist);
+        return NULL;
+    }
+    for (int i = 0; i < sublist->size; i++) {
+        sublist->data[i] = original->data[start + i];
+    }
+    return sublist;
+}
+
+void generateAllSublists(const List *original, List ***sublists, int *count) {
+    *count = 0;
+    for (int i = 0; i <= original->size; i++) {
+        *count += original->size - i + 1;
+    }
+    *sublists = (List **)malloc(*count * sizeof(List *));
+    if (*sublists == NULL) {
+        return;
+    }
+
+    int index = 0;
+    for (int i = 0; i < original->size; i++) {
+        for (int len = 1; len <= original->size - i; len++) {
+            (*sublists)[index] = createSublist(original, i, i + len);
+            index++;
+        }
+    }
+}
+
+int main() {
+    List *original = (List *)malloc(sizeof(List));
+    if (original == NULL) {
+        return 1;
+    }
+    original->size = 5;
+    original->data = (int *)malloc(original->size * sizeof(int));
+    if (original->data == NULL) {
+        free(original);
+        return 1;
+    }
+    original->data[0] = 1;
+    original->data[1] = 2;
+    original->data[2] = 3;
+    original->data[3] = 4;
+    original->data[4] = 5;
+
+    int count;
+    List **sublists;
+    generateAllSublists(original, &sublists, &count);
+
+    for (int i = 0; i < count; i++) {
+        printList(sublists[i]);
+        freeList(sublists[i]);
+    }
+    free(sublists);
+    freeList(original);
+
+    return 0;
+}

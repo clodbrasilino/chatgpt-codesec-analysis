@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected ['exercises'], got <no output>
+  *  test case 1 failed: expected ['Python'], got <no output>
+  *  test case 0 failed: expected ['practice', 'solution'], got ["Python","list","exercise","practice","solution"
+  */
+
+/* Possible weaknesses found:
+ *  Parameter 'source' can be declared as const array [constParameter]
+ */
+char **extract_strings(char *source[], int count, size_t size) {
+    char **result = (char **)malloc(count * sizeof(char *));
+    if (result == NULL) return NULL;
+    
+    for (int i = 0; i < count; i++) {
+        result[i] = (char *)malloc(size + 1);
+        if (result[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+        strncpy(result[i], source[i], size);
+        result[i][size] = '\0';
+    }
+    
+    return result;
+}
+
+void free_strings(char **strings, int count) {
+    for (int i = 0; i < count; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    char *source[] = {"Hello", "World", "This", "Is", "A", "Test"};
+    int count = 6;
+    size_t size = 3;
+
+    char **result = extract_strings(source, count, size);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_strings(result, count);
+
+    return 0;
+}

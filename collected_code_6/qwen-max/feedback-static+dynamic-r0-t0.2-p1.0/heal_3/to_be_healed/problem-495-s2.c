@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void remove_lowercase_substrings(char *str) {
+    regex_t regex;
+    regmatch_t match[1];
+    char *p = str;
+    int offset = 0;
+
+    if (regcomp(&regex, "[a-z]+", REG_EXTENDED | REG_NEWLINE)) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while (regexec(&regex, p, 1, match, 0) == 0) {
+        int len = match[0].rm_eo - match[0].rm_so;
+        /* Possible weaknesses found:
+         * ASan: stack-buffer-underflow
+         */
+        memmove(p + match[0].rm_so - offset, p + match[0].rm_eo, strlen(p + match[0].rm_eo) + 1);
+        offset += len;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "ThiS iS a TeSt StrinG";
+    remove_lowercase_substrings(str);
+    printf("%s\n", str);
+    return 0;
+}

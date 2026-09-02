@@ -1,0 +1,50 @@
+{
+  "task_id": 521,
+  "text": "Write a C function to print check if the triangle is scalene or not.",
+  "fn_candidates": [
+    "check_isosceles",
+    "CheckIsosceles",
+    "checkIsosceles",
+    "checkisosceles"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_isosceles",
+      "args": [
+        6,
+        8,
+        12
+      ],
+      "expected": true,
+      "assert_src": "assert check_isosceles(6,8,12)==True"
+    },
+    {
+      "fn_name": "check_isosceles",
+      "args": [
+        6,
+        6,
+        12
+      ],
+      "expected": false,
+      "assert_src": "assert check_isosceles(6,6,12)==False"
+    },
+    {
+      "fn_name": "check_isosceles",
+      "args": [
+        6,
+        15,
+        20
+      ],
+      "expected": true,
+      "assert_src": "assert check_isosceles(6,15,20)==True"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

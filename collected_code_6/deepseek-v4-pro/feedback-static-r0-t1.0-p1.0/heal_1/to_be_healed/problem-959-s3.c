@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_average(const int *numbers, size_t count) {
+    if (numbers == NULL || count == 0) {
+        return 0.0;
+    }
+    
+    long long sum = 0;
+    for (size_t i = 0; i < count; i++) {
+        sum += numbers[i];
+    }
+    
+    return (double)sum / count;
+}
+
+int main(void) {
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    
+    double avg = calculate_average(numbers, count);
+    printf("Average: %.2f\n", avg);
+    
+    /* Possible weaknesses found:
+     *  Variable 'empty' can be declared as const array [constVariable]
+     */
+    int empty[] = {0};
+    double empty_avg = calculate_average(empty, 0);
+    printf("Empty list average: %.2f\n", empty_avg);
+    
+    double null_avg = calculate_average(NULL, 5);
+    printf("NULL list average: %.2f\n", null_avg);
+    
+    return 0;
+}

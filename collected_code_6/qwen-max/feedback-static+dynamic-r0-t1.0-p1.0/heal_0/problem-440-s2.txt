@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_ADVERBS 100
+#define MAX_WORD_LENGTH 50
+
+typedef struct {
+    char word[MAX_WORD_LENGTH + 1];
+    int start;
+    int end;
+} AdverbInfo;
+
+int is_adverb(const char *word) {
+    if (strlen(word) < 4) return 0;
+    size_t len = strlen(word);
+    return (word[len - 2] == 'l' && word[len - 1] == 'y') || 
+           (word[len - 2] == 'w' && word[len - 1] == 'y');
+}
+
+void find_adverbs(const char *sentence, AdverbInfo adverbs[], int *adverb_count) {
+    const char *delimiters = " ,.!?;:()[]{}\"'";
+    char *token;
+    char *copy = strdup(sentence);
+    *adverb_count = 0;
+
+    token = strtok(copy, delimiters);
+    while (token != NULL && *adverb_count < MAX_ADVERBS) {
+        if (is_adverb(token)) {
+            strncpy(adverbs[*adverb_count].word, token, MAX_WORD_LENGTH + 1);
+            adverbs[*adverb_count].start = token - copy;
+            adverbs[*adverb_count].end = adverbs[*adverb_count].start + strlen(token) - 1;
+            (*adverb_count)++;
+        }
+        token = strtok(NULL, delimiters);
+    }
+
+    free(copy);
+}
+
+int main() {
+    char sentence[1000];
+    AdverbInfo adverbs[MAX_ADVERBS];
+    int adverb_count = 0;
+
+    printf("Enter a sentence: ");
+    fgets(sentence, sizeof(sentence), stdin);
+    sentence[strcspn(sentence, "\n")] = '\0';
+
+    find_adverbs(sentence, adverbs, &adverb_count);
+
+    for (int i = 0; i < adverb_count; i++) {
+        printf("Adverb: %s, Start: %d, End: %d\n", adverbs[i].word, adverbs[i].start, adverbs[i].end);
+    }
+
+    return 0;
+}
+```

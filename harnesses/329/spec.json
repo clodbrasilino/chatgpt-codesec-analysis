@@ -1,0 +1,60 @@
+{
+  "task_id": 329,
+  "text": "Write a C function to count negative numbers in a list.",
+  "fn_candidates": [
+    "neg_count",
+    "NegCount",
+    "negCount",
+    "negcount"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "neg_count",
+      "args": [
+        [
+          -1,
+          -2,
+          3,
+          -4,
+          -5
+        ]
+      ],
+      "expected": 4,
+      "assert_src": "assert neg_count([-1,-2,3,-4,-5]) == 4"
+    },
+    {
+      "fn_name": "neg_count",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": 0,
+      "assert_src": "assert neg_count([1,2,3]) == 0"
+    },
+    {
+      "fn_name": "neg_count",
+      "args": [
+        [
+          1,
+          2,
+          -3,
+          -10,
+          20
+        ]
+      ],
+      "expected": 2,
+      "assert_src": "assert neg_count([1,2,-3,-10,20]) == 2"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

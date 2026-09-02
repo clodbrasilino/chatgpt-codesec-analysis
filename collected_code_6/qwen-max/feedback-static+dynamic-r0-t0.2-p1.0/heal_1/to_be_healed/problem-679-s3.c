@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    void *value;
+} DictionaryElement;
+
+typedef struct {
+    DictionaryElement *elements;
+    int size;
+} Dictionary;
+
+Dictionary* createDictionary(int size) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->elements = (DictionaryElement*)calloc(size, sizeof(DictionaryElement));
+    if (dict->elements == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = size;
+    return dict;
+}
+
+void destroyDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        free(dict->elements[i].key);
+        free(dict->elements[i].value);
+    }
+    free(dict->elements);
+    free(dict);
+}
+
+void* getDictionaryValueByIndex(Dictionary *dict, int index) {
+    if (index < 0 || index >= dict->size) return NULL;
+    return dict->elements[index].value;
+}
+
+int main() {
+    Dictionary *dict = createDictionary(3);
+    if (dict == NULL) return -1;
+
+    /* Possible weaknesses found:
+     *  implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+     *  call to undeclared library function 'strdup' with type 'char *(const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strdup'
+     */
+    dict->elements[0].key = strdup("key1");
+    dict->elements[0].value = strdup("value1");
+
+    dict->elements[1].key = strdup("key2");
+    dict->elements[1].value = strdup("value2");
+
+    dict->elements[2].key = strdup("key3");
+    dict->elements[2].value = strdup("value3");
+
+    void *value = getDictionaryValueByIndex(dict, 1);
+    if (value != NULL) {
+        printf("%s\n", (char*)value);
+    }
+
+    destroyDictionary(dict);
+    return 0;
+}

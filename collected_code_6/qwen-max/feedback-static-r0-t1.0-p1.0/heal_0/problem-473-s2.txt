@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int tupleEqual(Tuple t1, Tuple t2) {
+    if (t1.size != t2.size) return 0;
+    qsort(t1.elements, t1.size, sizeof(int), compare);
+    qsort(t2.elements, t2.size, sizeof(int), compare);
+    for (int i = 0; i < t1.size; ++i) {
+        if (t1.elements[i] != t2.elements[i]) return 0;
+    }
+    return 1;
+}
+
+Tuple findIntersection(Tuple *tuples, int count) {
+    Tuple intersection;
+    intersection.size = tuples[0].size;
+    intersection.elements = (int *)malloc(intersection.size * sizeof(int));
+    for (int i = 0; i < intersection.size; ++i) {
+        intersection.elements[i] = tuples[0].elements[i];
+    }
+
+    for (int i = 1; i < count; ++i) {
+        int j = 0, k = 0;
+        while (j < intersection.size && k < tuples[i].size) {
+            if (intersection.elements[j] < tuples[i].elements[k]) {
+                intersection.elements[j] = 0;
+                j++;
+            } else if (intersection.elements[j] > tuples[i].elements[k]) {
+                k++;
+            } else {
+                j++;
+                k++;
+            }
+        }
+        while (j < intersection.size) {
+            intersection.elements[j++] = 0;
+        }
+    }
+
+    int newSize = 0;
+    for (int i = 0; i < intersection.size; ++i) {
+        if (intersection.elements[i] != 0) {
+            intersection.elements[newSize++] = intersection.elements[i];
+        }
+    }
+    intersection.size = newSize;
+
+    return intersection;
+}
+
+int main() {
+    Tuple tuples[] = {
+        { .elements = (int[]){3, 2, 1}, .size = 3 },
+        { .elements = (int[]){2, 1, 4}, .size = 3 },
+        { .elements = (int[]){1, 2, 5}, .size = 3 }
+    };
+    int count = 3;
+
+    Tuple result = findIntersection(tuples, count);
+
+    printf("Intersection: ");
+    for (int i = 0; i < result.size; ++i) {
+        printf("%d ", result.elements[i]);
+    }
+    printf("\n");
+
+    free(result.elements);
+
+    return 0;
+}
+```

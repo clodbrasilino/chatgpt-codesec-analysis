@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void split_and_add(int *arr, size_t n, size_t split_index) {
+    int *temp = (int *)malloc(split_index * sizeof(int));
+    if (temp == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < split_index; ++i) {
+        temp[i] = arr[i];
+    }
+    for (size_t i = split_index; i < n; ++i) {
+        arr[i - split_index] = arr[i];
+    }
+    for (size_t i = 0; i < split_index; ++i) {
+        arr[n - split_index + i] = temp[i];
+    }
+    free(temp);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t split_index = 2;
+
+    split_and_add(arr, n, split_index);
+
+    for (size_t i = 0; i < n; ++i) {
+        printf("%d ", arr[i]);
+    }
+
+    return 0;
+}

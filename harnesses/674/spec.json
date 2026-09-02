@@ -1,0 +1,44 @@
+{
+  "task_id": 674,
+  "text": "Write a C function to remove duplicate words from a given string using collections module.",
+  "fn_candidates": [
+    "remove_duplicate",
+    "RemoveDuplicate",
+    "removeDuplicate",
+    "removeduplicate"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_duplicate",
+      "args": [
+        "Python Exercises Practice Solution Exercises"
+      ],
+      "expected": "Python Exercises Practice Solution",
+      "assert_src": "assert remove_duplicate(\"Python Exercises Practice Solution Exercises\")==(\"Python Exercises Practice Solution\")"
+    },
+    {
+      "fn_name": "remove_duplicate",
+      "args": [
+        "Python Exercises Practice Solution Python"
+      ],
+      "expected": "Python Exercises Practice Solution",
+      "assert_src": "assert remove_duplicate(\"Python Exercises Practice Solution Python\")==(\"Python Exercises Practice Solution\")"
+    },
+    {
+      "fn_name": "remove_duplicate",
+      "args": [
+        "Python Exercises Practice Solution Practice"
+      ],
+      "expected": "Python Exercises Practice Solution",
+      "assert_src": "assert remove_duplicate(\"Python Exercises Practice Solution Practice\")==(\"Python Exercises Practice Solution\")"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdbool.h>
+
+bool is_valid_url(const char *url) {
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "^https?://[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(/[^\\s]*)?$", REG_EXTENDED);
+    if (ret) {
+        return false;
+    }
+
+    ret = regexec(&regex, url, 0, NULL, 0);
+    bool result = !ret;
+
+    regfree(&regex);
+
+    return result;
+}
+
+int main() {
+    const char *test_urls[] = {
+        "http://example.com",
+        "https://example.com/path/to/resource",
+        "ftp://example.com",
+        "http://invalid-.com",
+        "http://-invalid.com",
+        "http://invalid_com"
+    };
+
+    for (size_t i = 0; i < sizeof(test_urls) / sizeof(test_urls[0]); ++i) {
+        printf("%s: %s\n", test_urls[i], is_valid_url(test_urls[i]) ? "valid" : "invalid");
+    }
+
+    return 0;
+}

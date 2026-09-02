@@ -1,0 +1,73 @@
+{
+  "task_id": 133,
+  "text": "Write a C function to calculate the sum of the negative numbers of a given list of numbers.",
+  "fn_candidates": [
+    "sum_negativenum",
+    "SumNegativenum",
+    "sumNegativenum",
+    "sumnegativenum"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sum_negativenum",
+      "args": [
+        [
+          2,
+          4,
+          -6,
+          -9,
+          11,
+          -12,
+          14,
+          -5,
+          17
+        ]
+      ],
+      "expected": -32,
+      "assert_src": "assert sum_negativenum([2, 4, -6, -9, 11, -12, 14, -5, 17])==-32"
+    },
+    {
+      "fn_name": "sum_negativenum",
+      "args": [
+        [
+          10,
+          15,
+          -14,
+          13,
+          -18,
+          12,
+          -20
+        ]
+      ],
+      "expected": -52,
+      "assert_src": "assert sum_negativenum([10,15,-14,13,-18,12,-20])==-52"
+    },
+    {
+      "fn_name": "sum_negativenum",
+      "args": [
+        [
+          19,
+          -65,
+          57,
+          39,
+          152,
+          -639,
+          121,
+          44,
+          90,
+          -190
+        ]
+      ],
+      "expected": -894,
+      "assert_src": "assert sum_negativenum([19, -65, 57, 39, 152,-639, 121, 44, 90, -190])==-894"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

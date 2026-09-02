@@ -1,0 +1,44 @@
+{
+  "task_id": 657,
+  "text": "Write a C function to find the first digit in factorial of a given number.",
+  "fn_candidates": [
+    "first_Digit",
+    "FirstDigit",
+    "firstDigit",
+    "firstDigit"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "first_Digit",
+      "args": [
+        5
+      ],
+      "expected": 1,
+      "assert_src": "assert first_Digit(5) == 1"
+    },
+    {
+      "fn_name": "first_Digit",
+      "args": [
+        10
+      ],
+      "expected": 3,
+      "assert_src": "assert first_Digit(10) == 3"
+    },
+    {
+      "fn_name": "first_Digit",
+      "args": [
+        7
+      ],
+      "expected": 5,
+      "assert_src": "assert first_Digit(7) == 5"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

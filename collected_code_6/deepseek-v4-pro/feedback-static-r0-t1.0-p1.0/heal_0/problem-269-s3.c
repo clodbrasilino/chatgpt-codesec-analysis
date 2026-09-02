@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int ascii_value(char c) {
+    return (int)c;
+}
+
+int main(void) {
+    char ch;
+    
+    printf("Enter a character: ");
+    if (scanf("%c", &ch) == 1) {
+        printf("ASCII value of %c is %d\n", ch, ascii_value(ch));
+        return 0;
+    }
+    
+    return 1;
+}

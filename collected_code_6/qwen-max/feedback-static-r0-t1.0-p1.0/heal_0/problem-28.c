@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long binomial_coefficient(int n, int k) {
+    if (k > n) return 0;
+    if (k == 0 || k == n) return 1;
+
+    unsigned long long result = 1;
+    for (int i = 1; i <= k; ++i) {
+        result *= (n - i + 1);
+        result /= i;
+    }
+    return result;
+}
+
+int main() {
+    int n, k;
+    printf("Enter n and k: ");
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Input error\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long coeff = binomial_coefficient(n, k);
+    printf("Binomial coefficient C(%d, %d) is %llu\n", n, k, coeff);
+    return 0;
+}

@@ -1,0 +1,57 @@
+{
+  "task_id": 563,
+  "text": "Write a C function to extract values between quotation marks of a string.",
+  "fn_candidates": [
+    "extract_values",
+    "ExtractValues",
+    "extractValues",
+    "extractvalues"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "extract_values",
+      "args": [
+        "\"Python\", \"PHP\", \"Java\""
+      ],
+      "expected": [
+        "Python",
+        "PHP",
+        "Java"
+      ],
+      "assert_src": "assert extract_values('\"Python\", \"PHP\", \"Java\"')==['Python', 'PHP', 'Java']"
+    },
+    {
+      "fn_name": "extract_values",
+      "args": [
+        "\"python\",\"program\",\"language\""
+      ],
+      "expected": [
+        "python",
+        "program",
+        "language"
+      ],
+      "assert_src": "assert extract_values('\"python\",\"program\",\"language\"')==['python','program','language']"
+    },
+    {
+      "fn_name": "extract_values",
+      "args": [
+        "\"red\",\"blue\",\"green\",\"yellow\""
+      ],
+      "expected": [
+        "red",
+        "blue",
+        "green",
+        "yellow"
+      ],
+      "assert_src": "assert extract_values('\"red\",\"blue\",\"green\",\"yellow\"')==['red','blue','green','yellow']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

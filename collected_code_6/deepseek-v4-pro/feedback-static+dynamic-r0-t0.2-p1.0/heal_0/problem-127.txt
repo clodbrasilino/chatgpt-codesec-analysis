@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+int multiply(int a, int b) {
+    int result = 0;
+    int negative = 0;
+
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+
+    if ((a < 0 && b > 0) || (a > 0 && b < 0)) {
+        negative = 1;
+    }
+
+    unsigned int ua = (unsigned int)(a < 0 ? -a : a);
+    unsigned int ub = (unsigned int)(b < 0 ? -b : b);
+
+    while (ub > 0) {
+        if (ub & 1U) {
+            result += (int)ua;
+        }
+        ua <<= 1;
+        ub >>= 1;
+    }
+
+    return negative ? -result : result;
+}
+
+int main(void) {
+    int a = 7;
+    int b = -6;
+    printf("%d * %d = %d\n", a, b, multiply(a, b));
+
+    a = -12;
+    b = -5;
+    printf("%d * %d = %d\n", a, b, multiply(a, b));
+
+    a = 0;
+    b = 42;
+    printf("%d * %d = %d\n", a, b, multiply(a, b));
+
+    a = 123;
+    b = 456;
+    printf("%d * %d = %d\n", a, b, multiply(a, b));
+
+    return 0;
+}
+```

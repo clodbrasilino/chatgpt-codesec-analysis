@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_non_prime(int num) {
+    if (num < 2) {
+        return true;
+    }
+    if (num == 2) {
+        return false;
+    }
+    if (num % 2 == 0) {
+        return true;
+    }
+    for (int i = 3; i * i <= num; i += 2) {
+        if (num % i == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int test_cases[] = {0, 1, 2, 3, 4, 5, 16, 17, 25, 29, 97, 100};
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; ++i) {
+        if (is_non_prime(test_cases[i])) {
+            printf("%d is non-prime\n", test_cases[i]);
+        } else {
+            printf("%d is prime\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

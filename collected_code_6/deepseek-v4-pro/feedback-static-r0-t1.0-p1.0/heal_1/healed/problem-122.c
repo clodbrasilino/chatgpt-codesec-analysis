@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned long long *smart_numbers = NULL;
+static size_t smart_count = 0;
+static size_t smart_capacity = 0;
+
+static int ensure_capacity(size_t needed) {
+    if (needed > smart_capacity) {
+        size_t new_capacity = smart_capacity == 0 ? 16 : smart_capacity;
+        while (new_capacity < needed) {
+            if (new_capacity > SIZE_MAX / 2) {
+                return 0;
+            }
+            new_capacity *= 2;
+        }
+        unsigned long long *new_ptr = realloc(smart_numbers, new_capacity * sizeof(unsigned long long));
+        if (new_ptr == NULL) {
+            return 0;
+        }
+        smart_numbers = new_ptr;
+        smart_capacity = new_capacity;
+    }
+    return 1;
+}
+
+static int generate_smart_numbers(unsigned long long limit) {
+    if (!ensure_capacity(limit)) {
+        return 0;
+    }
+
+    while (smart_count < limit) {
+        unsigned long long i = smart_count + 1;
+        int is_smart = 0;
+        unsigned long long temp = i;
+        while (temp > 1) {
+            if (temp % 2 == 0) {
+                temp /= 2;
+            } else if (temp % 3 == 0) {
+                temp /= 3;
+            } else if (temp % 5 == 0) {
+                temp /= 5;
+            } else {
+                break;
+            }
+        }
+        if (temp == 1) {
+            is_smart = 1;
+        }
+        if (is_smart) {
+            if (smart_count >= smart_capacity) {
+                return 0;
+            }
+            smart_numbers[smart_count] = i;
+            smart_count++;
+        }
+    }
+    return 1;
+}
+
+unsigned long long get_nth_smart_number(int n) {
+    if (n < 1) {
+        return 0;
+    }
+    if (!generate_smart_numbers((unsigned long long)n)) {
+        return 0;
+    }
+    return smart_numbers[n - 1];
+}
+
+int main(void) {
+    int test_values[] = {1, 2, 5, 10, 20, 50, 100, 200, 500, 1000};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        unsigned long long result = get_nth_smart_number(test_values[i]);
+        if (result == 0 && test_values[i] > 0) {
+            printf("Error generating smart number for n=%d\n", test_values[i]);
+        } else {
+            printf("Smart number %d: %llu\n", test_values[i], result);
+        }
+    }
+
+    free(smart_numbers);
+    smart_numbers = NULL;
+    smart_count = 0;
+    smart_capacity = 0;
+
+    return 0;
+}

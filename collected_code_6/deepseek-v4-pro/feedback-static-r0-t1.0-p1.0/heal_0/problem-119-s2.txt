@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSingleElement(int arr[], int size) {
+    if (size <= 0 || arr == NULL) {
+        return -1;
+    }
+    
+    if (size == 1) {
+        return arr[0];
+    }
+    
+    int low = 0;
+    int high = size - 1;
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        
+        if (low == high) {
+            return arr[low];
+        }
+        
+        if (mid % 2 == 0) {
+            if (mid + 1 < size && arr[mid] == arr[mid + 1]) {
+                low = mid + 2;
+            } else {
+                high = mid;
+            }
+        } else {
+            if (mid - 1 >= 0 && arr[mid] == arr[mid - 1]) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+    }
+    
+    return arr[low];
+}
+
+int main(void) {
+    int arr1[] = {1, 1, 2, 2, 3, 4, 4, 5, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = findSingleElement(arr1, size1);
+    printf("Single element in arr1: %d\n", result1);
+    
+    int arr2[] = {1, 1, 3, 3, 4, 5, 5, 7, 7, 8, 8};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = findSingleElement(arr2, size2);
+    printf("Single element in arr2: %d\n", result2);
+    
+    int arr3[] = {1, 1, 2, 3, 3, 4, 4, 8, 8};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = findSingleElement(arr3, size3);
+    printf("Single element in arr3: %d\n", result3);
+    
+    int arr4[] = {3, 3, 7};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    int result4 = findSingleElement(arr4, size4);
+    printf("Single element in arr4: %d\n", result4);
+    
+    int arr5[] = {1, 1, 2};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    int result5 = findSingleElement(arr5, size5);
+    printf("Single element in arr5: %d\n", result5);
+    
+    int arr6[] = {2};
+    int size6 = sizeof(arr6) / sizeof(arr6[0]);
+    int result6 = findSingleElement(arr6, size6);
+    printf("Single element in arr6: %d\n", result6);
+    
+    return 0;
+}
+```

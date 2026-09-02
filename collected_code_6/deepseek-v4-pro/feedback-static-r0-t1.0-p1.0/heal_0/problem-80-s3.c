@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long tetrahedral_number(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    return (long long)n * (n + 1) * (n + 2) / 6;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return 1;
+    }
+
+    char *endptr;
+    long input = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Invalid input: must be an integer\n");
+        return 1;
+    }
+
+    if (input < 0 || input > 1000000) {
+        fprintf(stderr, "Input out of range: 0 <= n <= 1000000\n");
+        return 1;
+    }
+
+    long long result = tetrahedral_number((int)input);
+    printf("%lld\n", result);
+
+    return 0;
+}

@@ -1,0 +1,67 @@
+{
+  "task_id": 550,
+  "text": "Write a C function to find the maximum element in a sorted and rotated array.",
+  "fn_candidates": [
+    "find_Max",
+    "FindMax",
+    "findMax",
+    "findMax"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Max",
+      "args": [
+        [
+          2,
+          3,
+          5,
+          6,
+          9
+        ],
+        0,
+        4
+      ],
+      "expected": 9,
+      "assert_src": "assert find_Max([2,3,5,6,9],0,4) == 9"
+    },
+    {
+      "fn_name": "find_Max",
+      "args": [
+        [
+          3,
+          4,
+          5,
+          2,
+          1
+        ],
+        0,
+        4
+      ],
+      "expected": 5,
+      "assert_src": "assert find_Max([3,4,5,2,1],0,4) == 5"
+    },
+    {
+      "fn_name": "find_Max",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        0,
+        2
+      ],
+      "expected": 3,
+      "assert_src": "assert find_Max([1,2,3],0,2) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <ctype.h>
+
+void remove_multiple_spaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    char *src = str;
+    char *dst = str;
+    int prev_space = 0;
+    
+    while (*src) {
+        if (isspace((unsigned char)*src)) {
+            if (!prev_space) {
+                *dst++ = ' ';
+                prev_space = 1;
+            }
+            src++;
+        } else {
+            *dst++ = *src++;
+            prev_space = 0;
+        }
+    }
+    *dst = '\0';
+}
+
+int main(void) {
+    char str1[] = "This  is   a     test";
+    char str2[] = "No extra spaces";
+    char str3[] = "  Leading and trailing  spaces  ";
+    char str4[] = "   ";
+    char str5[] = "";
+    
+    remove_multiple_spaces(str1);
+    printf("'%s'\n", str1);
+    
+    remove_multiple_spaces(str2);
+    printf("'%s'\n", str2);
+    
+    remove_multiple_spaces(str3);
+    printf("'%s'\n", str3);
+    
+    remove_multiple_spaces(str4);
+    printf("'%s'\n", str4);
+    
+    remove_multiple_spaces(str5);
+    printf("'%s'\n", str5);
+    
+    return 0;
+}

@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_negative_numbers(const int *numbers, size_t size) {
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (numbers[i] < 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int numbers[] = {5, -3, 2, -8, 0, -1, 7};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    int negative_count = count_negative_numbers(numbers, size);
+    printf("Number of negative values: %d\n", negative_count);
+    
+    return 0;
+}

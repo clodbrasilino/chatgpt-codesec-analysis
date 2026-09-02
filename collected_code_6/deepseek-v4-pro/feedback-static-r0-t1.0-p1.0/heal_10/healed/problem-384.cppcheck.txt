@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-384.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-384.c:51:16: style: Condition 'result==-1' is always true [knownConditionTrueFalse]
+    if (result == -1) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-384.c:50:39: note: Calling function 'frequency_of_smallest' returns -1
+    int result = frequency_of_smallest(NULL, 0, NULL);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-384.c:50:39: note: Assignment 'result=frequency_of_smallest(NULL,0,NULL)', assigned value is -1
+    int result = frequency_of_smallest(NULL, 0, NULL);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-384.c:51:16: note: Condition 'result==-1' is always true
+    if (result == -1) {
+               ^

@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int equilibrium_index(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+
+    long long total_sum = 0;
+    long long left_sum = 0;
+
+    for (int i = 0; i < size; i++) {
+        total_sum += arr[i];
+    }
+
+    for (int i = 0; i < size; i++) {
+        total_sum -= arr[i];
+        if (left_sum == total_sum) {
+            return i;
+        }
+        left_sum += arr[i];
+    }
+
+    return -1;
+}
+
+int main(void) {
+    int arr1[] = {-7, 1, 5, 2, -4, 3, 0};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = equilibrium_index(arr1, size1);
+    printf("Equilibrium index for arr1: %d\n", result1);
+
+    int arr2[] = {1, 2, 3};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = equilibrium_index(arr2, size2);
+    printf("Equilibrium index for arr2: %d\n", result2);
+
+    int arr3[] = {0, 0, 0, 0};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = equilibrium_index(arr3, size3);
+    printf("Equilibrium index for arr3: %d\n", result3);
+
+    int arr4[] = {1};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    int result4 = equilibrium_index(arr4, size4);
+    printf("Equilibrium index for arr4: %d\n", result4);
+
+    int result5 = equilibrium_index(NULL, 5);
+    printf("Equilibrium index for NULL array: %d\n", result5);
+
+    int arr6[] = {10, 5, 5, -10, 5};
+    int size6 = sizeof(arr6) / sizeof(arr6[0]);
+    int result6 = equilibrium_index(arr6, size6);
+    printf("Equilibrium index for arr6: %d\n", result6);
+
+    return 0;
+}

@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int value;
+    int arrayIndex;
+    int elementIndex;
+} HeapNode;
+
+typedef struct {
+    HeapNode *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap *createMinHeap(int capacity) {
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (HeapNode *)malloc(capacity * sizeof(HeapNode));
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swapNodes(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].value < heap->data[smallest].value)
+        smallest = left;
+    if (right < heap->size && heap->data[right].value < heap->data[smallest].value)
+        smallest = right;
+
+    if (smallest != idx) {
+        swapNodes(&heap->data[smallest], &heap->data[idx]);
+        minHeapify(heap, smallest);
+    }
+}
+
+void insertMinHeap(MinHeap *heap, HeapNode node) {
+    if (heap->size >= heap->capacity) return;
+    int i = heap->size;
+    heap->data[i] = node;
+    heap->size++;
+
+    while (i != 0 && heap->data[(i - 1) / 2].value > heap->data[i].value) {
+        swapNodes(&heap->data[i], &heap->data[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+HeapNode extractMin(MinHeap *heap) {
+    HeapNode root = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    minHeapify(heap, 0);
+    return root;
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        if (heap->data) free(heap->data);
+        free(heap);
+    }
+}
+
+void findSmallestRange(int **arrays, const int *sizes, int numArrays, int *resultStart, int *resultEnd) {
+    if (numArrays <= 0 || arrays == NULL || sizes == NULL) {
+        *resultStart = 0;
+        *resultEnd = 0;
+        return;
+    }
+
+    int *indices = (int *)calloc(numArrays, sizeof(int));
+    if (!indices) {
+        *resultStart = 0;
+        *resultEnd = 0;
+        return;
+    }
+
+    MinHeap *heap = createMinHeap(numArrays);
+    if (!heap) {
+        free(indices);
+        *resultStart = 0;
+        *resultEnd = 0;
+        return;
+    }
+
+    int maxValue = INT_MIN;
+    int range = INT_MAX;
+    int start = 0, end = 0;
+
+    for (int i = 0; i < numArrays; i++) {
+        if (sizes[i] <= 0) {
+            free(indices);
+            freeMinHeap(heap);
+            *resultStart = 0;
+            *resultEnd = 0;
+            return;
+        }
+        HeapNode node;
+        node.value = arrays[i][0];
+        node.arrayIndex = i;
+        node.elementIndex = 0;
+        insertMinHeap(heap, node);
+        if (node.value > maxValue)
+            maxValue = node.value;
+    }
+
+    while (1) {
+        HeapNode minNode = extractMin(heap);
+        int minValue = minNode.value;
+
+        if (maxValue - minValue < range) {
+            range = maxValue - minValue;
+            start = minValue;
+            end = maxValue;
+        }
+
+        int nextIndex = minNode.elementIndex + 1;
+        if (nextIndex >= sizes[minNode.arrayIndex]) {
+            break;
+        }
+
+        HeapNode nextNode;
+        nextNode.value = arrays[minNode.arrayIndex][nextIndex];
+        nextNode.arrayIndex = minNode.arrayIndex;
+        nextNode.elementIndex = nextIndex;
+        insertMinHeap(heap, nextNode);
+
+        if (nextNode.value > maxValue)
+            maxValue = nextNode.value;
+    }
+
+    free(indices);
+    freeMinHeap(heap);
+    *resultStart = start;
+    *resultEnd = end;
+}
+
+int main() {
+    int arr1[] = {4, 10, 15, 24, 26};
+    int arr2[] = {0, 9, 12, 20};
+    int arr3[] = {5, 18, 22, 30};
+
+    int *arrays[] = {arr1, arr2, arr3};
+    const int sizes[] = {5, 4, 4};
+    int numArrays = 3;
+
+    int rangeStart, rangeEnd;
+    findSmallestRange(arrays, sizes, numArrays, &rangeStart, &rangeEnd);
+
+    printf("Smallest range is [%d, %d]\n", rangeStart, rangeEnd);
+
+    return 0;
+}

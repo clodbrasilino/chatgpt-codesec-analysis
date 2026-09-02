@@ -1,0 +1,47 @@
+{
+  "task_id": 838,
+  "text": "Write a C function to find minimum number swaps required to make two binary strings equal.",
+  "fn_candidates": [
+    "min_Swaps",
+    "MinSwaps",
+    "minSwaps",
+    "minSwaps"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "min_Swaps",
+      "args": [
+        "0011",
+        "1111"
+      ],
+      "expected": 1,
+      "assert_src": "assert min_Swaps(\"0011\",\"1111\") == 1"
+    },
+    {
+      "fn_name": "min_Swaps",
+      "args": [
+        "00011",
+        "01001"
+      ],
+      "expected": 2,
+      "assert_src": "assert min_Swaps(\"00011\",\"01001\") == 2"
+    },
+    {
+      "fn_name": "min_Swaps",
+      "args": [
+        "111",
+        "111"
+      ],
+      "expected": 0,
+      "assert_src": "assert min_Swaps(\"111\",\"111\") == 0"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

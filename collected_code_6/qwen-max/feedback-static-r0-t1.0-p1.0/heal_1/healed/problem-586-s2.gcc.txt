@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-586-s2.c: In function 'splitAndAdd':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-586-s2.c:10:16: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)i * 4))'
+   10 |         arr[i] = arr[i + k];
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-586-s2.c:13:24: error: assignment of read-only location '*(arr + (sizetype)((long unsigned int)(n - k + i) * 4))'
+   13 |         arr[n - k + i] = temp[i];
+      |                        ^

@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int count_digits(int num) {
+    int count = 0;
+    if (num == 0) return 1;
+    if (num < 0) num = -num;
+    while (num > 0) {
+        count++;
+        num /= 10;
+    }
+    return count;
+}
+
+int total_digits_in_tuple(const Tuple *tuple) {
+    if (tuple == NULL || tuple->data == NULL) return 0;
+    int total = 0;
+    for (int i = 0; i < tuple->size; i++) {
+        total += count_digits(tuple->data[i]);
+    }
+    return total;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) return;
+    if (list->tuples != NULL) {
+        for (int i = 0; i < list->count; i++) {
+            if (list->tuples[i].data != NULL) {
+                free(list->tuples[i].data);
+                list->tuples[i].data = NULL;
+            }
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+    }
+    list->count = 0;
+}
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+    return total_digits_in_tuple(tuple_a) - total_digits_in_tuple(tuple_b);
+}
+
+void sort_tuple_list(TupleList *list) {
+    if (list == NULL || list->tuples == NULL || list->count <= 1) return;
+    qsort(list->tuples, list->count, sizeof(Tuple), compare_tuples);
+}
+
+TupleList create_tuple_list(const int *sizes, int count, int *const *elements) {
+    TupleList list;
+    list.count = count;
+    list.tuples = NULL;
+    
+    if (count <= 0 || sizes == NULL || elements == NULL) {
+        return list;
+    }
+    
+    list.tuples = (Tuple *)malloc(count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        list.count = 0;
+        return list;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        list.tuples[i].size = sizes[i];
+        list.tuples[i].data = NULL;
+        if (sizes[i] <= 0 || elements[i] == NULL) {
+            list.tuples[i].size = 0;
+            continue;
+        }
+        list.tuples[i].data = (int *)malloc(sizes[i] * sizeof(int));
+        if (list.tuples[i].data == NULL) {
+            list.tuples[i].size = 0;
+            continue;
+        }
+        for (int j = 0; j < sizes[i]; j++) {
+            list.tuples[i].data[j] = elements[i][j];
+        }
+    }
+    
+    return list;
+}
+
+void print_tuple_list(const TupleList *list) {
+    if (list == NULL || list->tuples == NULL) return;
+    for (int i = 0; i < list->count; i++) {
+        printf("(");
+        for (int j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].data[j]);
+            if (j < list->tuples[i].size - 1) printf(", ");
+        }
+        printf(")");
+        if (i < list->count - 1) printf(" ");
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int sizes[] = {3, 2, 4};
+    int tuple1_data[] = {10, 2, 300};
+    int tuple2_data[] = {4, 56};
+    int tuple3_data[] = {1, 23, 456, 7};
+    int *elements[] = {tuple1_data, tuple2_data, tuple3_data};
+    
+    TupleList list = create_tuple_list(sizes, 3, elements);
+    
+    printf("Original list: ");
+    print_tuple_list(&list);
+    
+    sort_tuple_list(&list);
+    
+    printf("Sorted list by total digits: ");
+    print_tuple_list(&list);
+    
+    free_tuple_list(&list);
+    
+    return 0;
+}

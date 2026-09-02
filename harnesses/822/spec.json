@@ -1,0 +1,44 @@
+{
+  "task_id": 822,
+  "text": "Write a C function to return true if the password is valid.",
+  "fn_candidates": [
+    "pass_validity",
+    "PassValidity",
+    "passValidity",
+    "passvalidity"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "pass_validity",
+      "args": [
+        "password"
+      ],
+      "expected": false,
+      "assert_src": "assert pass_validity(\"password\")==False"
+    },
+    {
+      "fn_name": "pass_validity",
+      "args": [
+        "Password@10"
+      ],
+      "expected": true,
+      "assert_src": "assert pass_validity(\"Password@10\")==True"
+    },
+    {
+      "fn_name": "pass_validity",
+      "args": [
+        "password@10"
+      ],
+      "expected": false,
+      "assert_src": "assert pass_validity(\"password@10\")==False"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMin(const int *arr, int n) {
+    int min = arr[0];
+    for (int i = 1; i < n; ++i) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+    return min;
+}
+
+long long makeArrayEqual(int *arr, int n, int k) {
+    long long operations = 0;
+    int min = findMin(arr, n);
+    for (int i = 0; i < n; ++i) {
+        int diff = arr[i] - min;
+        if (diff > k) {
+            return -1;
+        }
+        operations += diff;
+    }
+    return operations / 2;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+
+    long long result = makeArrayEqual(arr, n, k);
+
+    if (result == -1) {
+        printf("Cannot make all elements equal with given k.\n");
+    } else {
+        printf("Number of operations required: %lld\n", result);
+    }
+
+    return 0;
+}

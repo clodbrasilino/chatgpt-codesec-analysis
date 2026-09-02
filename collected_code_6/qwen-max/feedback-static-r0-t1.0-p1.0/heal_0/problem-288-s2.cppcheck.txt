@@ -1,0 +1,52 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:12:19: error: Division by zero. [zerodiv]
+        int q = a / p;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:41:13: note: Assignment 'p=11', assigned value is 11
+    int p = 11;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:42:54: note: Calling function 'count_self_modular_inverses', 3rd argument 'p' value is 11
+    int result = count_self_modular_inverses(arr, n, p);
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:32:37: note: Calling function 'modular_inverse', 2nd argument 'p' value is 11
+        if (modular_inverse(arr[i], p) == arr[i])
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:13:17: note: Assignment 't=p', assigned value is 11
+        int t = p;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:16:13: note: Assignment 'a=t', assigned value is 11
+        a = t;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:15:15: note: Assignment 'p=a%p', assigned value is 0
+        p = a % p;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:12:19: note: Division by zero
+        int q = a / p;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:15:15: error: Division by zero. [zerodiv]
+        p = a % p;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:41:13: note: Assignment 'p=11', assigned value is 11
+    int p = 11;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:42:54: note: Calling function 'count_self_modular_inverses', 3rd argument 'p' value is 11
+    int result = count_self_modular_inverses(arr, n, p);
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:32:37: note: Calling function 'modular_inverse', 2nd argument 'p' value is 11
+        if (modular_inverse(arr[i], p) == arr[i])
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:13:17: note: Assignment 't=p', assigned value is 11
+        int t = p;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:16:13: note: Assignment 'a=t', assigned value is 11
+        a = t;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:15:15: note: Assignment 'p=a%p', assigned value is 0
+        p = a % p;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:15:15: note: Division by zero
+        p = a % p;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-288-s2.c:29:38: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int count_self_modular_inverses(int* arr, int n, int p) {
+                                     ^

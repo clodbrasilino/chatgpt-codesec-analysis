@@ -1,0 +1,44 @@
+{
+  "task_id": 226,
+  "text": "Write a C function to remove the characters which have odd index values of a given string.",
+  "fn_candidates": [
+    "odd_values_string",
+    "OddValuesString",
+    "oddValuesString",
+    "oddvaluesstring"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "odd_values_string",
+      "args": [
+        "abcdef"
+      ],
+      "expected": "ace",
+      "assert_src": "assert odd_values_string('abcdef') == 'ace'"
+    },
+    {
+      "fn_name": "odd_values_string",
+      "args": [
+        "python"
+      ],
+      "expected": "pto",
+      "assert_src": "assert odd_values_string('python') == 'pto'"
+    },
+    {
+      "fn_name": "odd_values_string",
+      "args": [
+        "data"
+      ],
+      "expected": "dt",
+      "assert_src": "assert odd_values_string('data') == 'dt'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

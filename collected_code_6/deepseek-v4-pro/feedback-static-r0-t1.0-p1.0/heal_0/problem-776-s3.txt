@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int is_vowel(char c) {
+    c = tolower(c);
+    return (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u');
+}
+
+int count_chars_with_vowel_neighbors(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    int len = strlen(str);
+    int count = 0;
+    
+    for (int i = 1; i < len - 1; i++) {
+        if (!isalpha(str[i])) {
+            continue;
+        }
+        if (is_vowel(str[i-1]) && is_vowel(str[i+1])) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    char str1[] = "cat";
+    char str2[] = "hello";
+    char str3[] = "education";
+    char str4[] = "a test string";
+    char str5[] = "";
+    
+    printf("Count in \"%s\": %d\n", str1, count_chars_with_vowel_neighbors(str1));
+    printf("Count in \"%s\": %d\n", str2, count_chars_with_vowel_neighbors(str2));
+    printf("Count in \"%s\": %d\n", str3, count_chars_with_vowel_neighbors(str3));
+    printf("Count in \"%s\": %d\n", str4, count_chars_with_vowel_neighbors(str4));
+    printf("Count in \"%s\": %d\n", str5, count_chars_with_vowel_neighbors(str5));
+    
+    return 0;
+}
+```

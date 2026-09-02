@@ -1,0 +1,35 @@
+{
+  "task_id": 317,
+  "text": "Write a C function to reflect the modified run-length encoding from a list.",
+  "fn_candidates": [
+    "modified_encode",
+    "ModifiedEncode",
+    "modifiedEncode",
+    "modifiedencode"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "modified_encode",
+      "args": [
+        "python"
+      ],
+      "expected": [
+        "p",
+        "y",
+        "t",
+        "h",
+        "o",
+        "n"
+      ],
+      "assert_src": "assert modified_encode('python')==['p', 'y', 't', 'h', 'o', 'n']"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-440.c: In function 'find_adverbs':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-440.c:20:60: error: passing argument 3 of 'strtok_r' from incompatible pointer type [-Wincompatible-pointer-types]
+   20 |     while ((token = strtok_r((char *)sentence, delimiters, &saveptr)) != NULL) {
+      |                                                            ^~~~~~~~
+      |                                                            |
+      |                                                            const char **
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-440.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:127:27: note: expected 'char **' but argument is of type 'const char **'
+  127 |         char *_LIBC_CSTR *__lasts);
+      |         ~~~~~~~~~~~~~~~~~~^~~~~~~

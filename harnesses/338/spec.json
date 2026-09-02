@@ -1,0 +1,44 @@
+{
+  "task_id": 338,
+  "text": "Write a C function to count the number of substrings with same first and last characters.",
+  "fn_candidates": [
+    "count_Substring_With_Equal_Ends",
+    "CountSubstringWithEqualEnds",
+    "countSubstringWithEqualEnds",
+    "countSubstringWithEqualEnds"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_Substring_With_Equal_Ends",
+      "args": [
+        "aba"
+      ],
+      "expected": 4,
+      "assert_src": "assert count_Substring_With_Equal_Ends('aba') == 4"
+    },
+    {
+      "fn_name": "count_Substring_With_Equal_Ends",
+      "args": [
+        "abcab"
+      ],
+      "expected": 7,
+      "assert_src": "assert count_Substring_With_Equal_Ends('abcab') == 7"
+    },
+    {
+      "fn_name": "count_Substring_With_Equal_Ends",
+      "args": [
+        "abc"
+      ],
+      "expected": 3,
+      "assert_src": "assert count_Substring_With_Equal_Ends('abc') == 3"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

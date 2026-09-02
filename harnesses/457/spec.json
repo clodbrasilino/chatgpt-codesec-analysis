@@ -1,0 +1,70 @@
+{
+  "task_id": 457,
+  "text": "Write a C function to find the sublist having minimum length.",
+  "fn_candidates": [
+    "Find_Min",
+    "FindMin",
+    "FindMin",
+    "FindMin"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "Find_Min",
+      "args": [
+        [
+          [
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            2,
+            3
+          ]
+        ]
+      ],
+      "expected": [
+        1
+      ],
+      "assert_src": "assert Find_Min([[1],[1,2],[1,2,3]]) == [1]"
+    },
+    {
+      "fn_name": "Find_Min",
+      "args": [
+        [
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            2,
+            7,
+            8
+          ]
+        ]
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "assert_src": "assert Find_Min([[1,1],[1,1,1],[1,2,7,8]]) == [1,1]"
+    }
+  ],
+  "arg_kinds": [
+    "2d-int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

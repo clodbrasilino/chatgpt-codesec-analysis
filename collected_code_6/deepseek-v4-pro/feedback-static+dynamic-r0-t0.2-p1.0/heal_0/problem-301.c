@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct dict_entry {
+    char *key;
+    void *value;
+    int is_dict;
+    struct dict_entry *next;
+} dict_entry;
+
+typedef struct {
+    dict_entry *head;
+} dict;
+
+dict *dict_create(void) {
+    dict *d = (dict *)malloc(sizeof(dict));
+    if (d == NULL) {
+        return NULL;
+    }
+    d->head = NULL;
+    return d;
+}
+
+void dict_set(dict *d, const char *key, void *value, int is_dict) {
+    if (d == NULL || key == NULL) {
+        return;
+    }
+    dict_entry *entry = (dict_entry *)malloc(sizeof(dict_entry));
+    if (entry == NULL) {
+        return;
+    }
+    entry->key = (char *)malloc(strlen(key) + 1);
+    if (entry->key == NULL) {
+        free(entry);
+        return;
+    }
+    strcpy(entry->key, key);
+    entry->value = value;
+    entry->is_dict = is_dict;
+    entry->next = d->head;
+    d->head = entry;
+}
+
+void *dict_get(dict *d, const char *key) {
+    if (d == NULL || key == NULL) {
+        return NULL;
+    }
+    dict_entry *current = d->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            return current->value;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+
+int dict_is_dict(dict *d, const char *key) {
+    if (d == NULL || key == NULL) {
+        return 0;
+    }
+    dict_entry *current = d->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            return current->is_dict;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+void dict_free(dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    dict_entry *current = d->head;
+    while (current != NULL) {
+        dict_entry *next = current->next;
+        free(current->key);
+        if (current->is_dict) {
+            dict_free((dict *)current->value);
+        }
+        free(current);
+        current = next;
+    }
+    free(d);
+}
+
+int dict_depth(dict *d) {
+    if (d == NULL) {
+        return 0;
+    }
+    int max_depth = 0;
+    dict_entry *current = d->head;
+    while (current != NULL) {
+        if (current->is_dict) {
+            int child_depth = dict_depth((dict *)current->value);
+            if (child_depth > max_depth) {
+                max_depth = child_depth;
+            }
+        }
+        current = current->next;
+    }
+    return max_depth + 1;
+}
+
+int main(void) {
+    dict *root = dict_create();
+    dict *level1 = dict_create();
+    dict *level2 = dict_create();
+    dict *level3 = dict_create();
+    
+    if (root == NULL || level1 == NULL || level2 == NULL || level3 == NULL) {
+        dict_free(root);
+        dict_free(level1);
+        dict_free(level2);
+        dict_free(level3);
+        return 1;
+    }
+    
+    dict_set(level3, "value", (void *)"deep", 0);
+    dict_set(level2, "nested", level3, 1);
+    dict_set(level1, "inner", level2, 1);
+    dict_set(root, "outer", level1, 1);
+    dict_set(root, "simple", (void *)"value", 0);
+    
+    int depth = dict_depth(root);
+    printf("Dictionary depth: %d\n", depth);
+    
+    dict_free(root);
+    
+    return 0;
+}

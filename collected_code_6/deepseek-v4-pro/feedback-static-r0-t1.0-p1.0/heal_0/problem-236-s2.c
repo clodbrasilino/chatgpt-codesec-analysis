@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countTriangles(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    int up = 0;
+    for (int i = 1; i <= n; i++) {
+        up += i * (i + 1) / 2;
+    }
+
+    int down = 0;
+    for (int i = n - 1; i > 0; i -= 2) {
+        down += i * (i + 1) / 2;
+    }
+
+    int both = 0;
+    if (n >= 4) {
+        for (int i = n - 3; i > 0; i -= 2) {
+            both += i * (i + 1) / 2;
+        }
+        both = both * 2;
+    }
+
+    return up + down + both;
+}
+
+int main(void) {
+    int n;
+
+    printf("Enter side length: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Side length must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum equilateral triangles: %d\n", countTriangles(n));
+
+    return EXIT_SUCCESS;
+}

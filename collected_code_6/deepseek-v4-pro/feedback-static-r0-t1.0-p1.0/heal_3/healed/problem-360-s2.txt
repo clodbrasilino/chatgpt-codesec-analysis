@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long carol_number(int n) {
+    if (n < 0) return 0;
+    unsigned long long base = (1ULL << n) - 1;
+    return base * base - 2;
+}
+
+int main(int argc, const char *argv[]) {
+    int n;
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || val < 0 || val > 31) {
+        fprintf(stderr, "Invalid input. Please provide an integer between 0 and 31.\n");
+        return EXIT_FAILURE;
+    }
+    n = (int)val;
+    printf("%llu\n", carol_number(n));
+    return EXIT_SUCCESS;
+}
+```

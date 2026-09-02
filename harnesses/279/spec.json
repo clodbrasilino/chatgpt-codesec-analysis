@@ -1,0 +1,44 @@
+{
+  "task_id": 279,
+  "text": "Write a C function to find the nth decagonal number.",
+  "fn_candidates": [
+    "is_num_decagonal",
+    "IsNumDecagonal",
+    "isNumDecagonal",
+    "isnumdecagonal"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "is_num_decagonal",
+      "args": [
+        3
+      ],
+      "expected": 27,
+      "assert_src": "assert is_num_decagonal(3) == 27"
+    },
+    {
+      "fn_name": "is_num_decagonal",
+      "args": [
+        7
+      ],
+      "expected": 175,
+      "assert_src": "assert is_num_decagonal(7) == 175"
+    },
+    {
+      "fn_name": "is_num_decagonal",
+      "args": [
+        10
+      ],
+      "expected": 370,
+      "assert_src": "assert is_num_decagonal(10) == 370"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

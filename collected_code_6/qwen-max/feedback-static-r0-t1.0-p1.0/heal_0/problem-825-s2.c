@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t count;
+} IntList;
+
+IntList* create_list(size_t initial_size) {
+    IntList *list = (IntList *)malloc(sizeof(IntList));
+    if (!list) return NULL;
+
+    list->data = (int *)calloc(initial_size, sizeof(int));
+    if (!list->data) {
+        free(list);
+        return NULL;
+    }
+
+    list->count = 0;
+    return list;
+}
+
+void append(IntList *list, int value) {
+    list->data[list->count++] = value;
+}
+
+int* get_elements(IntList *list, const int *indices, size_t num_indices, size_t *output_count) {
+    if (!list || !indices || num_indices == 0) {
+        *output_count = 0;
+        return NULL;
+    }
+
+    int *result = (int *)malloc(num_indices * sizeof(int));
+    if (!result) {
+        *output_count = 0;
+        return NULL;
+    }
+
+    *output_count = 0;
+    for (size_t i = 0; i < num_indices; ++i) {
+        if (indices[i] >= 0 && indices[i] < list->count) {
+            result[(*output_count)++] = list->data[indices[i]];
+        }
+    }
+
+    return result;
+}
+
+void free_list(IntList *list) {
+    if (list) {
+        free(list->data);
+        free(list);
+    }
+}
+
+int main() {
+    IntList *list = create_list(10);
+    if (!list) return 1;
+
+    for (int i = 0; i < 10; ++i) {
+        append(list, i * 10);
+    }
+
+    int indices[] = {2, 4, 6};
+    size_t num_indices = sizeof(indices) / sizeof(indices[0]);
+
+    size_t output_count;
+    int *results = get_elements(list, indices, num_indices, &output_count);
+
+    for (size_t i = 0; i < output_count; ++i) {
+        printf("%d ", results[i]);
+    }
+    printf("\n");
+
+    free(results);
+    free_list(list);
+    return 0;
+}

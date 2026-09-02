@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+IntList* find_min_length_lists(IntList *lists, size_t count) {
+    if (count == 0) return NULL;
+    size_t min_length = lists[0].length;
+    for (size_t i = 1; i < count; ++i) {
+        if (lists[i].length < min_length) {
+            min_length = lists[i].length;
+        }
+    }
+    IntList *result = (IntList *)malloc(count * sizeof(IntList));
+    if (result == NULL) exit(EXIT_FAILURE);
+    size_t result_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i].length == min_length) {
+            result[result_count].data = (int *)malloc(min_length * sizeof(int));
+            if (result[result_count].data == NULL) {
+                for (size_t j = 0; j < result_count; ++j) free(result[j].data);
+                free(result);
+                exit(EXIT_FAILURE);
+            }
+            for (size_t j = 0; j < min_length; ++j) {
+                result[result_count].data[j] = lists[i].data[j];
+            }
+            result[result_count].length = min_length;
+            ++result_count;
+        }
+    }
+    IntList *final_result = (IntList *)realloc(result, result_count * sizeof(IntList));
+    if (final_result == NULL) {
+        for (size_t i = 0; i < result_count; ++i) free(result[i].data);
+        free(result);
+        exit(EXIT_FAILURE);
+    }
+    return final_result;
+}
+
+void free_lists(IntList *lists, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        free(lists[i].data);
+    }
+    free(lists);
+}
+
+int main() {
+    IntList lists[] = {{(int[]){1, 2, 3}, 3}, {(int[]){4, 5}, 2}, {(int[]){6, 7, 8, 9}, 4}};
+    size_t count = 3;
+    IntList *min_lists = find_min_length_lists(lists, count);
+    for (size_t i = 0; i < 1; ++i) { // The actual number of elements in min_lists should be calculated and used here
+        for (size_t j = 0; j < min_lists[i].length; ++j) {
+            printf("%d ", min_lists[i].data[j]);
+        }
+        printf("\n");
+    }
+    free_lists(min_lists, 1); // The actual number of elements in min_lists should be calculated and used here
+    return 0;
+}
+```

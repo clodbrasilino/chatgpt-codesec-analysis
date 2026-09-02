@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple max_tuples(Tuple t1, Tuple t2) {
+    return (t1.a > t2.a || (t1.a == t2.a && t1.b >= t2.b)) ? t1 : t2;
+}
+
+int main() {
+    Tuple t1 = {5, 3};
+    Tuple t2 = {4, 7};
+
+    Tuple result = max_tuples(t1, t2);
+
+    printf("Max Tuple: (%d, %d)\n", result.a, result.b);
+
+    return 0;
+}
+```

@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+double power(double base, int exponent) {
+    double result = 1.0;
+    if (exponent == 0) return 1.0;
+    if (exponent < 0) {
+        base = 1 / base;
+        exponent = -exponent;
+    }
+    while (exponent > 0) {
+        if (exponent % 2 == 1) {
+            result *= base;
+        }
+        base *= base;
+        exponent /= 2;
+    }
+    return result;
+}
+
+int main() {
+    double a;
+    int b;
+    printf("Enter the base: ");
+    scanf("%lf", &a);
+    printf("Enter the exponent: ");
+    scanf("%d", &b);
+    double result = power(a, b);
+    printf("%.2f to the power of %d is %.2f\n", a, b, result);
+    return 0;
+}

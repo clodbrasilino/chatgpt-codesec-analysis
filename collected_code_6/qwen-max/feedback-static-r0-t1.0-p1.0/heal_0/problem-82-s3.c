@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculateSphereVolume(double radius) {
+    return (4.0 / 3.0) * M_PI * pow(radius, 3);
+}
+
+int main() {
+    double radius;
+    printf("Enter the radius of the sphere: ");
+    if (scanf("%lf", &radius) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (radius < 0) {
+        printf("Radius cannot be negative\n");
+        return 1;
+    }
+    double volume = calculateSphereVolume(radius);
+    printf("Volume of the sphere: %f\n", volume);
+    return 0;
+}

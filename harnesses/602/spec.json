@@ -1,0 +1,44 @@
+{
+  "task_id": 602,
+  "text": "Write a C function to find the first repeated character in a given string.",
+  "fn_candidates": [
+    "first_repeated_char",
+    "FirstRepeatedChar",
+    "firstRepeatedChar",
+    "firstrepeatedchar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "first_repeated_char",
+      "args": [
+        "abcabc"
+      ],
+      "expected": "a",
+      "assert_src": "assert first_repeated_char(\"abcabc\") == \"a\""
+    },
+    {
+      "fn_name": "first_repeated_char",
+      "args": [
+        "abc"
+      ],
+      "expected": "None",
+      "assert_src": "assert first_repeated_char(\"abc\") == \"None\""
+    },
+    {
+      "fn_name": "first_repeated_char",
+      "args": [
+        "123123"
+      ],
+      "expected": "1",
+      "assert_src": "assert first_repeated_char(\"123123\") == \"1\""
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

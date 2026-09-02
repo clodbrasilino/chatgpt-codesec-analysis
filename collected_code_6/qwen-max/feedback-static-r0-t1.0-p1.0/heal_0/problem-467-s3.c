@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void decimalToOctal(int n) {
+    int octalNumber[100], i = 0;
+    while (n != 0) {
+        octalNumber[i] = n % 8;
+        n = n / 8;
+        i++;
+    }
+    for (int j = i - 1; j >= 0; j--) {
+        printf("%d", octalNumber[j]);
+    }
+}
+
+int main() {
+    int num;
+    printf("Enter a decimal number: ");
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    printf("Octal number is: ");
+    decimalToOctal(num);
+    printf("\n");
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
+
+bool contains_z_word(const char *text) {
+    if (text == NULL) {
+        return false;
+    }
+
+    const char *p = text;
+    while (*p != '\0') {
+        while (*p != '\0' && !isalpha((unsigned char)*p)) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+        const char *word_start = p;
+        while (*p != '\0' && isalpha((unsigned char)*p)) {
+            p++;
+        }
+        size_t word_len = (size_t)(p - word_start);
+        if (word_len > 0) {
+            for (size_t i = 0; i < word_len; i++) {
+                if (tolower((unsigned char)word_start[i]) == 'z') {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+void print_result(const char *label, const char *test) {
+    if (test == NULL) {
+        printf("%s: false\n", label);
+    } else {
+        printf("%s: %s\n", label, contains_z_word(test) ? "true" : "false");
+    }
+}
+
+int main(void) {
+    const char *test1 = "The quick brown fox jumps over the lazy dog";
+    const char *test2 = "Hello world";
+    const char *test3 = "Zebra";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    print_result("Test1", test1);
+    print_result("Test2", test2);
+    print_result("Test3", test3);
+    print_result("Test4", test4);
+    print_result("Test5", test5);
+
+    return 0;
+}

@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:14:42: error: call to undeclared function 'regsub'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |         snprintf(tmp, sizeof(tmp), "%s", regsub(&space_regex, str, "_"));
+      |                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:19:42: error: call to undeclared function 'regsub'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |         snprintf(tmp, sizeof(tmp), "%s", regsub(&underscore_regex, str, " "));
+      |                                          ^
+2 errors generated.

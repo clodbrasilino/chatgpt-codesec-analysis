@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void append_to_list(List *list, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+List* extract_column(List *nested_list, int column_index) {
+    List *result = create_list();
+    if (nested_list == NULL || nested_list->head == NULL) {
+        return result;
+    }
+
+    Node *current = nested_list->head;
+    while (current != NULL) {
+        List *sublist = (List*)current->value;
+        if (sublist != NULL && sublist->head != NULL) {
+            Node *sub_current = sublist->head;
+            for (int i = 0; i < column_index && sub_current != NULL; ++i) {
+                sub_current = sub_current->next;
+            }
+            if (sub_current != NULL) {
+                append_to_list(result, sub_current->value);
+            }
+        }
+        current = current->next;
+    }
+    return result;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *nested_list = create_list();
+    List *sublist1 = create_list();
+    append_to_list(sublist1, 1);
+    append_to_list(sublist1, 2);
+    append_to_list(sublist1, 3);
+    append_to_list(nested_list, (int)sublist1);
+
+    List *sublist2 = create_list();
+    append_to_list(sublist2, 4);
+    append_to_list(sublist2, 5);
+    append_to_list(sublist2, 6);
+    append_to_list(nested_list, (int)sublist2);
+
+    List *sublist3 = create_list();
+    append_to_list(sublist3, 7);
+    append_to_list(sublist3, 8);
+    append_to_list(sublist3, 9);
+    append_to_list(nested_list, (int)sublist3);
+
+    List *column = extract_column(nested_list, 1);
+    print_list(column);
+
+    free_list(nested_list);
+    free_list(column);
+
+    return 0;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-330.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-330.c:18:21: error: Uninitialized variable: match [uninitvar]
+                if (match[j].rm_so == -1 || match[j].rm_eo == -1)
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-330.c:18:29: error: Uninitialized variable: match[j].rm_so [legacyUninitvar]
+                if (match[j].rm_so == -1 || match[j].rm_eo == -1)
+                            ^

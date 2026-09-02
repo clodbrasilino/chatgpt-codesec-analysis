@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1064" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="1064" fill="#ffffff"/>
+  <text x="450" y="28" text-anchor="middle" font-size="17" font-weight="bold" fill="#0f172a">Main script flow — src/pipeline/run_experiment.py</text>
+  <text x="450" y="46" text-anchor="middle" font-size="11.5" fill="#64748b">one CLI entry point · cell = model × feedback × measure × temp × top_p × samples × fuzz</text>
+
+  <!-- CLI box -->
+  <rect x="80" y="62" width="740" height="70" rx="8" fill="#0f172a"/>
+  <text x="98" y="86" font-size="11" fill="#e2e8f0" font-family="Menlo, SFMono-Regular, Consolas, monospace">$ python -m src.pipeline.run_experiment \</text>
+  <text x="98" y="103" font-size="11" fill="#e2e8f0" font-family="Menlo, SFMono-Regular, Consolas, monospace">  --model deepseek-v4-pro --feedback static --measure static \</text>
+  <text x="98" y="120" font-size="11" fill="#e2e8f0" font-family="Menlo, SFMono-Regular, Consolas, monospace">  --tasks all --samples 3 --max-rounds 7 --temp 1.0 --top-p 1.0 [--fuzz]</text>
+
+  <line x1="450" y1="132" x2="450" y2="154" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Setup -->
+  <rect x="80" y="158" width="740" height="70" rx="8" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="98" y="180" font-size="13" font-weight="bold" fill="#1f2937">run_cell(cell) — setup</text>
+  <text x="98" y="199" font-size="11" fill="#475569">load_registry(config/models.yaml) → ModelConfig (model_id, base_url, extra_body, concurrency, max_tokens)</text>
+  <text x="98" y="215" font-size="11" fill="#475569">_load_tasks() → 974 BCT problems parsed out of bct.py via ast.literal_eval</text>
+
+  <line x1="450" y1="228" x2="450" y2="250" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PHASE 1 -->
+  <rect x="50" y="254" width="800" height="236" rx="10" fill="#eef4ff" stroke="#b9c9ee" stroke-width="1.5"/>
+  <text x="66" y="280" font-size="13" font-weight="bold" fill="#3730a3">PHASE 1 — heal_0 · initial generation, then first analysis</text>
+
+  <rect x="80" y="296" width="740" height="66" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1"/>
+  <text x="95" y="317" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace">for sample in 1..samples:  gen.run_batch(cfg, tasks, heal_0/, sample, temp, top_p)</text>
+  <text x="95" y="336" font-size="10.5" fill="#475569">ThreadPool(cfg.concurrency) · _safe caps retries at 5 · tasks with an existing .txt are skipped (free resume)</text>
+  <text x="95" y="352" font-size="10.5" fill="#475569">prompt = v1 GENERATION_PROMPT verbatim (incl. the CWE-664/703/710 avoidance suffix)</text>
+
+  <text x="95" y="383" font-size="11" fill="#312e81" font-family="Menlo, SFMono-Regular, Consolas, monospace">writes: problem-{id}[-s{k}].txt (raw LLM answer)  +  problem-{id}[-s{k}].c (sanitize_llm_output → C)</text>
+
+  <rect x="80" y="398" width="740" height="76" rx="6" fill="#ffffff" stroke="#a5b4fc" stroke-width="1"/>
+  <text x="95" y="419" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace">_run_analyze(heal_0, measure, fuzz)</text>
+  <rect x="95" y="430" width="345" height="36" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1"/>
+  <text x="103" y="444" font-size="10" fill="#334155">static gate — gcc -fanalyzer · clang+z3 · cppcheck · flawfinder</text>
+  <text x="103" y="458" font-size="10" fill="#334155">+ compile gate (-c → .o) → .gcc/.clang/.cppcheck/.flawfinder.txt</text>
+  <rect x="450" y="430" width="355" height="36" rx="5" fill="#f8fafc" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="458" y="444" font-size="10" fill="#334155">dynamic — dyn.runner.analyze_dynamic: sanitizer oracle + AFL++</text>
+  <text x="458" y="458" font-size="10" fill="#64748b">→ .test/.asan/.fuzz.txt — only if measure includes "dynamic"</text>
+
+  <line x1="450" y1="490" x2="450" y2="512" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PHASE 2 -->
+  <rect x="50" y="516" width="800" height="390" rx="10" fill="#fdf6e7" stroke="#e8d5a0" stroke-width="1.5"/>
+  <text x="66" y="542" font-size="13" font-weight="bold" fill="#92400e">PHASE 2 — heal loop · round N = 1 … max_rounds</text>
+
+  <rect x="80" y="558" width="700" height="64" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1"/>
+  <text x="95" y="578" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace">① comment_inject.generate_commented_weak_code(prev_healed/ → heal_N/to_be_healed/)</text>
+  <text x="95" y="597" font-size="10.5" fill="#475569">feedback picks the report suffixes consumed (static / dynamic / both / none);</text>
+  <text x="95" y="611" font-size="10.5" fill="#475569">findings (file:line:col:severity:message) become /* Possible weaknesses found: … */ blocks above flagged lines</text>
+
+  <rect x="80" y="630" width="700" height="44" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1"/>
+  <text x="95" y="648" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace">② flagged = to_be_healed/*.c   →   if empty: loop ends</text>
+  <text x="95" y="665" font-size="10.5" fill="#475569">ever_flagged ∪= flagged  (remembers everyone who ever needed repair)</text>
+
+  <rect x="80" y="682" width="700" height="64" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1"/>
+  <text x="95" y="702" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace">③ _heal_batch(flagged) → gen.heal_code per file → heal_N/healed/</text>
+  <text x="95" y="721" font-size="10.5" fill="#475569">HEALING_PROMPT (v1-verbatim): "Re-write the source-code, paying attention to the comments…"</text>
+  <text x="95" y="735" font-size="10.5" fill="#475569">ThreadPool + _safe; one permanent failure is isolated (warn), never kills the cell</text>
+
+  <rect x="80" y="754" width="700" height="88" rx="6" fill="#ffffff" stroke="#e3c47a" stroke-width="1"/>
+  <text x="95" y="774" font-size="11.5" fill="#1f2937" font-family="Menlo, SFMono-Regular, Consolas, monospace">④ _run_analyze(healed/)  then  pre-build heal_{N+1}/to_be_healed/ from healed/</text>
+  <text x="95" y="793" font-size="10.5" fill="#475569">classification per file (does it reappear in the next round's to_be_healed?):</text>
+  <rect x="95" y="802" width="215" height="30" rx="5" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="202" y="821" text-anchor="middle" font-size="10" fill="#92400e">still flagged → next round</text>
+  <rect x="320" y="802" width="235" height="30" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="437" y="821" text-anchor="middle" font-size="10" fill="#065f46">unflagged + artifact → clean @ round N</text>
+  <text x="565" y="821" text-anchor="middle" font-size="10" fill="#991b1b" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-weight="normal"></text>
+  <rect x="565" y="802" width="205" height="30" rx="5" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="667" y="821" text-anchor="middle" font-size="10" fill="#991b1b">unflagged, artifact missing → heal_failed</text>
+
+  <path d="M 800 798 C 828 798, 828 590, 804 590" fill="none" stroke="#b45309" stroke-width="1.6" marker-end="url(#arrow)"/>
+  <text x="843" y="700" font-size="10" fill="#b45309" transform="rotate(90 843 700)" text-anchor="middle">still-flagged files carry into round N+1</text>
+
+  <line x1="450" y1="906" x2="450" y2="928" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- PHASE 3 -->
+  <rect x="50" y="932" width="800" height="112" rx="10" fill="#ecf9f2" stroke="#a9d8c0" stroke-width="1.5"/>
+  <text x="66" y="958" font-size="13" font-weight="bold" fill="#065f46">PHASE 3 — outcome accounting + manifest</text>
+
+  <rect x="66" y="970" width="170" height="38" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="151" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#065f46">clean_at_start</text>
+  <text x="151" y="999" text-anchor="middle" font-size="9.5" fill="#64748b">rounds_to_clean = 0</text>
+  <rect x="248" y="970" width="170" height="38" rx="5" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="333" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#065f46">clean</text>
+  <text x="333" y="999" text-anchor="middle" font-size="9.5" fill="#64748b">rounds_to_clean = r</text>
+  <rect x="430" y="970" width="170" height="38" rx="5" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="515" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#991b1b">heal_failed</text>
+  <text x="515" y="999" text-anchor="middle" font-size="9.5" fill="#64748b">repair call failed, no artifact</text>
+  <rect x="612" y="970" width="170" height="38" rx="5" fill="#fffbeb" stroke="#fde68a" stroke-width="1"/>
+  <text x="697" y="985" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#92400e">not_cleaned</text>
+  <text x="697" y="999" text-anchor="middle" font-size="9.5" fill="#64748b">still flagged after max_rounds</text>
+
+  <text x="450" y="1032" text-anchor="middle" font-size="11" fill="#312e81" font-family="Menlo, SFMono-Regular, Consolas, monospace">results/{model}/feedback-{fb}-r{reasoning}-t{temp}-p{top_p}.manifest.json   (read later by src.analysis.metrics)</text>
+</svg>

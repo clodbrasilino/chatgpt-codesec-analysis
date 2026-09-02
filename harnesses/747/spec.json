@@ -1,0 +1,60 @@
+{
+  "task_id": 747,
+  "text": "Write a C function to find the longest common subsequence for the given three string sequence.",
+  "fn_candidates": [
+    "lcs_of_three",
+    "LcsOfThree",
+    "lcsOfThree",
+    "lcsofthree"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "lcs_of_three",
+      "args": [
+        "AGGT12",
+        "12TXAYB",
+        "12XBA",
+        6,
+        7,
+        5
+      ],
+      "expected": 2,
+      "assert_src": "assert lcs_of_three('AGGT12', '12TXAYB', '12XBA', 6, 7, 5) == 2"
+    },
+    {
+      "fn_name": "lcs_of_three",
+      "args": [
+        "Reels",
+        "Reelsfor",
+        "ReelsforReels",
+        5,
+        8,
+        13
+      ],
+      "expected": 5,
+      "assert_src": "assert lcs_of_three('Reels', 'Reelsfor', 'ReelsforReels', 5, 8, 13) == 5 "
+    },
+    {
+      "fn_name": "lcs_of_three",
+      "args": [
+        "abcd1e2",
+        "bc12ea",
+        "bd1ea",
+        7,
+        6,
+        5
+      ],
+      "expected": 3,
+      "assert_src": "assert lcs_of_three('abcd1e2', 'bc12ea', 'bd1ea', 7, 6, 5) == 3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,78 @@
+{
+  "task_id": 700,
+  "text": "Write a C function to count the number of elements in a list which are within a specific range.",
+  "fn_candidates": [
+    "count_range_in_list",
+    "CountRangeInList",
+    "countRangeInList",
+    "countrangeinlist"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "count_range_in_list",
+      "args": [
+        [
+          10,
+          20,
+          30,
+          40,
+          40,
+          40,
+          70,
+          80,
+          99
+        ],
+        40,
+        100
+      ],
+      "expected": 6,
+      "assert_src": "assert count_range_in_list([10,20,30,40,40,40,70,80,99],40,100)==6"
+    },
+    {
+      "fn_name": "count_range_in_list",
+      "args": [
+        [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f"
+        ],
+        "a",
+        "e"
+      ],
+      "expected": 5,
+      "assert_src": "assert count_range_in_list(['a','b','c','d','e','f'],'a','e')==5"
+    },
+    {
+      "fn_name": "count_range_in_list",
+      "args": [
+        [
+          7,
+          8,
+          9,
+          15,
+          17,
+          19,
+          45
+        ],
+        15,
+        20
+      ],
+      "expected": 3,
+      "assert_src": "assert count_range_in_list([7,8,9,15,17,19,45],15,20)==3"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "int-list",
+    "str",
+    "str-list"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

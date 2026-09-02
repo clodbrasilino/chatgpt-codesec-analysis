@@ -1,0 +1,60 @@
+{
+  "task_id": 472,
+  "text": "Write a C function to check whether the given list contains consecutive numbers or not.",
+  "fn_candidates": [
+    "check_Consecutive",
+    "CheckConsecutive",
+    "checkConsecutive",
+    "checkConsecutive"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_Consecutive",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_Consecutive([1,2,3,4,5]) == True"
+    },
+    {
+      "fn_name": "check_Consecutive",
+      "args": [
+        [
+          1,
+          2,
+          3,
+          5,
+          6
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_Consecutive([1,2,3,5,6]) == False"
+    },
+    {
+      "fn_name": "check_Consecutive",
+      "args": [
+        [
+          1,
+          2,
+          1
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_Consecutive([1,2,1]) == False"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

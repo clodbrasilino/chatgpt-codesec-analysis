@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t length;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+Tuple createUnion(Tuple t1, Tuple t2) {
+    int n1 = t1.length;
+    int n2 = t2.length;
+    int* result = (int*)malloc((n1 + n2) * sizeof(int));
+    if (!result) return (Tuple){NULL, 0};
+    size_t i = 0, j = 0, k = 0;
+    
+    while (i < n1 && j < n2) {
+        if (t1.data[i] < t2.data[j]) {
+            result[k++] = t1.data[i++];
+        } else if (t1.data[i] > t2.data[j]) {
+            result[k++] = t2.data[j++];
+        } else {
+            result[k++] = t1.data[i++];
+            j++;
+        }
+    }
+    
+    while (i < n1) {
+        result[k++] = t1.data[i++];
+    }
+    while (j < n2) {
+        result[k++] = t2.data[j++];
+    }
+
+    qsort(result, k, sizeof(int), compare);
+
+    int* unionData = (int*)malloc(k * sizeof(int));
+    if (!unionData) {
+        free(result);
+        return (Tuple){NULL, 0};
+    }
+    
+    unionData[0] = result[0];
+    size_t ulen = 1;
+    for (size_t p = 1; p < k; p++) {
+        if (result[p] != result[p-1]) {
+            unionData[ulen++] = result[p];
+        }
+    }
+    
+    free(result);
+    return (Tuple){unionData, ulen};
+}
+
+void printTuple(Tuple t) {
+    for (size_t i = 0; i < t.length; ++i) {
+        printf("%d ", t.data[i]);
+    }
+    puts("");
+}
+
+int main() {
+    int arr1[] = {1, 2, 2, 3, 4};
+    int arr2[] = {2, 3, 5, 6};
+    Tuple t1 = {arr1, 5};
+    Tuple t2 = {arr2, 4};
+    
+    Tuple unionT = createUnion(t1, t2);
+    printTuple(unionT);
+    
+    free(unionT.data);
+    return 0;
+}
+```

@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+int min_of_three(int a, int b, int c) {
+    int min = a;
+    if (b < min) {
+        min = b;
+    }
+    if (c < min) {
+        min = c;
+    }
+    return min;
+}
+
+int main(void) {
+    int num1, num2, num3;
+    
+    printf("Enter three numbers: ");
+    if (scanf("%d %d %d", &num1, &num2, &num3) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    int result = min_of_three(num1, num2, num3);
+    printf("Minimum: %d\n", result);
+    
+    return 0;
+}

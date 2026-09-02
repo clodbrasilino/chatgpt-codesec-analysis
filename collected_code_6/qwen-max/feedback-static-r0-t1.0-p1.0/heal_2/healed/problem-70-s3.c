@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_tuples_equal_length(const int *lengths, int n) {
+    for (int i = 0; i < n - 1; i++) {
+        if (lengths[i] != lengths[i + 1]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int n = 3;
+    const int lengths[] = {4, 4, 4};
+    int **tuples = (int **)malloc(n * sizeof(int *));
+    
+    tuples[0] = (int[]){1, 2, 3, 4};
+    tuples[1] = (int[]){5, 6, 7, 8};
+    tuples[2] = (int[]){9, 10, 11, 12};
+
+    int all_equal = check_tuples_equal_length(lengths, n);
+    
+    if (all_equal) {
+        printf("All tuples have equal length.\n");
+    } else {
+        printf("Not all tuples have equal length.\n");
+    }
+
+    free(tuples);
+    return 0;
+}

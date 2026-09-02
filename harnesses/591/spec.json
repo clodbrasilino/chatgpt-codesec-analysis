@@ -1,0 +1,72 @@
+{
+  "task_id": 591,
+  "text": "Write a C function to interchange the first and last elements in a list.",
+  "fn_candidates": [
+    "swap_List",
+    "SwapList",
+    "swapList",
+    "swapList"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "swap_List",
+      "args": [
+        [
+          12,
+          35,
+          9,
+          56,
+          24
+        ]
+      ],
+      "expected": [
+        24,
+        35,
+        9,
+        56,
+        12
+      ],
+      "assert_src": "assert swap_List([12, 35, 9, 56, 24]) == [24, 35, 9, 56, 12]"
+    },
+    {
+      "fn_name": "swap_List",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ]
+      ],
+      "expected": [
+        3,
+        2,
+        1
+      ],
+      "assert_src": "assert swap_List([1, 2, 3]) == [3, 2, 1]"
+    },
+    {
+      "fn_name": "swap_List",
+      "args": [
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "expected": [
+        6,
+        5,
+        4
+      ],
+      "assert_src": "assert swap_List([4, 5, 6]) == [6, 5, 4]"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

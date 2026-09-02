@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool is_product_of_two_squares(int n) {
+    if (n < 0) {
+        return false;
+    }
+    if (n == 0) {
+        return true;
+    }
+
+    int temp = n;
+    for (int p = 2; p * p <= temp; p++) {
+        if (temp % p == 0) {
+            int count = 0;
+            while (temp % p == 0) {
+                temp /= p;
+                count++;
+            }
+            if (p % 4 == 3 && count % 2 != 0) {
+                return false;
+            }
+        }
+    }
+
+    if (temp > 1 && temp % 4 == 3) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    int test_values[] = {0, 1, 2, 4, 9, 16, 25, 36, 49, 64, 81, 100, 12, 18, 20, 45, 90, 144, -4, 7, 15};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        int value = test_values[i];
+        bool result = is_product_of_two_squares(value);
+        printf("%d: %s\n", value, result ? "True" : "False");
+    }
+
+    return 0;
+}

@@ -1,0 +1,30 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c: In function 'dict_insert':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:33:23: error: 'Dict' has no member named 'next'
+   33 |         while (current->next != NULL) {
+      |                       ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:34:30: error: 'Dict' has no member named 'next'
+   34 |             current = current->next;
+      |                              ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:36:16: error: 'Dict' has no member named 'next'
+   36 |         current->next = new_child;
+      |                ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c: In function 'lists_to_nested_dict':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:53:68: error: 'Dict' has no member named 'next'
+   53 |         while (current_dict && current_dict->parent && current_dict->next == NULL) {
+      |                                                                    ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:56:41: error: 'Dict' has no member named 'next'
+   56 |         if (current_dict && current_dict->next) {
+      |                                         ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:57:40: error: 'Dict' has no member named 'next'
+   57 |             current_dict = current_dict->next;
+      |                                        ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:111:26: error: 'Dict' has no member named 'next'
+  111 |             child = child->next;
+      |                          ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:117:26: error: 'Dict' has no member named 'next'
+  117 |             child = child->next;
+      |                          ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-391.c:120:34: error: 'Dict' has no member named 'next'
+  120 |         nested_dict = nested_dict->next;
+      |                                  ^~

@@ -1,0 +1,56 @@
+{
+  "task_id": 257,
+  "text": "Write a C function to swap two numbers.",
+  "fn_candidates": [
+    "swap_numbers",
+    "SwapNumbers",
+    "swapNumbers",
+    "swapnumbers"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "swap_numbers",
+      "args": [
+        10,
+        20
+      ],
+      "expected": [
+        20,
+        10
+      ],
+      "assert_src": "assert swap_numbers(10,20)==(20,10)"
+    },
+    {
+      "fn_name": "swap_numbers",
+      "args": [
+        15,
+        17
+      ],
+      "expected": [
+        17,
+        15
+      ],
+      "assert_src": "assert swap_numbers(15,17)==(17,15)"
+    },
+    {
+      "fn_name": "swap_numbers",
+      "args": [
+        100,
+        200
+      ],
+      "expected": [
+        200,
+        100
+      ],
+      "assert_src": "assert swap_numbers(100,200)==(200,100)"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int-list",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

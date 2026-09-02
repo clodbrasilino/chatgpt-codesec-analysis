@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr3' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'arr2' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'arr1' can be declared as pointer to const [constParameterPointer]
+ */
+int find_common_indices(int *arr1, int size1, int *arr2, int size2, int *arr3, int size3, int **result) {
+    if (arr1 == NULL || arr2 == NULL || arr3 == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (size1 <= 0 || size2 <= 0 || size3 <= 0) {
+        return -1;
+    }
+    
+    int min_size = size1;
+    if (size2 < min_size) min_size = size2;
+    if (size3 < min_size) min_size = size3;
+    
+    int *common = (int *)malloc(min_size * sizeof(int));
+    if (common == NULL) {
+        return -1;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < min_size; i++) {
+        if (arr1[i] == arr2[i] && arr2[i] == arr3[i]) {
+            common[count] = i;
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        free(common);
+        *result = NULL;
+        return 0;
+    }
+    
+    int *resized = (int *)realloc(common, count * sizeof(int));
+    if (resized == NULL) {
+        free(common);
+        return -1;
+    }
+    
+    *result = resized;
+    return count;
+}
+
+int main(void) {
+    int arr1[] = {10, 20, 30, 40, 50};
+    int arr2[] = {10, 25, 30, 45, 50};
+    int arr3[] = {10, 20, 30, 40, 50};
+    
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    int *result = NULL;
+    int count = find_common_indices(arr1, size1, arr2, size2, arr3, size3, &result);
+    
+    if (count < 0) {
+        printf("Error occurred\n");
+        return 1;
+    }
+    
+    if (count == 0) {
+        printf("No common indices found\n");
+        return 0;
+    }
+    
+    printf("Common indices: ");
+    for (int i = 0; i < count; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    return 0;
+}

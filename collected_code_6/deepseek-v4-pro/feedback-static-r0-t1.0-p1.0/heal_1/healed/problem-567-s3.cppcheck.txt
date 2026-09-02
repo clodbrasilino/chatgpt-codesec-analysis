@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-567-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-567-s3.c:29:42: style: Condition 'is_sorted(NULL,0)' is always false [knownConditionTrueFalse]
+    printf("NULL sorted: %s\n", is_sorted(NULL, 0) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-567-s3.c:29:42: note: Calling function 'is_sorted' returns 0
+    printf("NULL sorted: %s\n", is_sorted(NULL, 0) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-567-s3.c:29:42: note: Condition 'is_sorted(NULL,0)' is always false
+    printf("NULL sorted: %s\n", is_sorted(NULL, 0) ? "true" : "false");
+                                         ^

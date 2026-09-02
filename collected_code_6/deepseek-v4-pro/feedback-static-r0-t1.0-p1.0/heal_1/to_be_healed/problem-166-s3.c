@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int count_even_xor_pairs(int arr[], int n) {
+    int even_count = 0;
+    int odd_count = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (arr[i] % 2 == 0) {
+            even_count++;
+        } else {
+            odd_count++;
+        }
+    }
+    
+    return (even_count * (even_count - 1)) / 2 + (odd_count * (odd_count - 1)) / 2;
+}
+
+int main() {
+    int n;
+    int *arr;
+    int result;
+    
+    printf("Enter the number of elements: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter %d elements: ", n);
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            printf("Invalid input\n");
+            free(arr);
+            return 1;
+        }
+    }
+    
+    result = count_even_xor_pairs(arr, n);
+    printf("Number of pairs with even XOR: %d\n", result);
+    
+    free(arr);
+    return 0;
+}

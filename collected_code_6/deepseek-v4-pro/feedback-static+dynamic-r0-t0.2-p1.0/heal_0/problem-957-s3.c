@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int get_rightmost_set_bit_position(int n) {
+    if (n == 0) {
+        return -1;
+    }
+    
+    int position = 1;
+    while ((n & 1) == 0) {
+        n >>= 1;
+        position++;
+    }
+    
+    return position;
+}
+
+int main(void) {
+    int test_values[] = {0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864, 134217728, 268435456, 536870912, 1073741824};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        int pos = get_rightmost_set_bit_position(test_values[i]);
+        if (pos != -1) {
+            printf("Number: %d, Rightmost set bit position: %d\n", test_values[i], pos);
+        } else {
+            printf("Number: %d, No set bits found\n", test_values[i]);
+        }
+    }
+    
+    return 0;
+}

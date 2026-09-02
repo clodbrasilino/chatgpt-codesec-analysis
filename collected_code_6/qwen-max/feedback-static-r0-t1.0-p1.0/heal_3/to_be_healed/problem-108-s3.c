@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef int (*Comparator)(const void *, const void *);
+
+typedef struct Node {
+    void *value;
+    struct Node *next;
+} Node;
+
+typedef struct Iterator {
+    Node *(*next)(Node **);
+    int has_next;
+} Iterator;
+
+typedef struct PriorityQueue {
+    Node **nodes;
+    int size;
+    int capacity;
+    Comparator cmp;
+} PriorityQueue;
+
+Iterator create_iterator(Node *head) {
+    Iterator it = {0};
+    it.has_next = head != NULL;
+    it.next = (Node *(*)(Node **))(&head);
+    return it;
+}
+
+PriorityQueue *create_pqueue(Comparator cmp, int initial_capacity) {
+    PriorityQueue *pq = malloc(sizeof(PriorityQueue));
+    pq->nodes = calloc(initial_capacity, sizeof(Node *));
+    pq->size = 0;
+    pq->capacity = initial_capacity;
+    pq->cmp = cmp;
+    return pq;
+}
+
+void insert(PriorityQueue *pq, Node *node) {
+    if (pq->size >= pq->capacity) {
+        pq->nodes = realloc(pq->nodes, 2 * pq->capacity * sizeof(Node *));
+        pq->capacity *= 2;
+    }
+    pq->nodes[pq->size++] = node;
+    int i = pq->size - 1;
+    while (i > 0 && pq->cmp(pq->nodes[i]->value, pq->nodes[(i - 1) / 2]->value) < 0) {
+        Node *temp = pq->nodes[i];
+        pq->nodes[i] = pq->nodes[(i - 1) / 2];
+        pq->nodes[(i - 1) / 2] = temp;
+        i = (i - 1) / 2;
+    }
+}
+
+Node *extract_min(PriorityQueue *pq) {
+    if (pq->size == 0) {
+        return NULL;
+    }
+    Node *min_node = pq->nodes[0];
+    pq->nodes[0] = pq->nodes[--pq->size];
+    int i = 0;
+    while (2 * i + 1 < pq->size) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+        int j = left;
+        if (right < pq->size && pq->cmp(pq->nodes[right]->value, pq->nodes[left]->value) < 0) {
+            j = right;
+        }
+        if (pq->cmp(pq->nodes[i]->value, pq->nodes[j]->value) <= 0) {
+            break;
+        }
+        Node *temp = pq->nodes[i];
+        pq->nodes[i] = pq->nodes[j];
+        pq->nodes[j] = temp;
+        i = j;
+    }
+    pq->nodes[pq->size] = NULL;
+    return min_node;
+}
+
+void free_pqueue(PriorityQueue *pq) {
+    free(pq->nodes);
+    free(pq);
+}
+
+int compare_int(const void *a, const void *b) {
+    return (*(int *)a) - (*(int *)b);
+}
+
+Node *merge_sorted_iterators(Iterator *iterators, int count) {
+    PriorityQueue *pq = create_pqueue((Comparator)compare_int, count);
+    for (int i = 0; i < count; i++) {
+        if (iterators[i].has_next) {
+            /* Possible weaknesses found:
+             *  initialization of 'Node **' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+             */
+            Node **ptr = &iterators[i].has_next;
+            Node *node = iterators[i].next(ptr);
+            insert(pq, node);
+        }
+    }
+
+    Node *head = NULL;
+    Node **tail = &head;
+    while (pq->size > 0) {
+        Node *min_node = extract_min(pq);
+        *tail = min_node;
+        tail = &(*tail)->next;
+
+        for (int i = 0; i < count; i++) {
+            if (iterators[i].has_next) {
+                /* Possible weaknesses found:
+                 *  initialization of 'Node **' from incompatible pointer type 'int *' [-Wincompatible-pointer-types]
+                 */
+                Node **ptr = &iterators[i].has_next;
+                Node *next_node = iterators[i].next(ptr);
+                if (next_node != NULL) {
+                    insert(pq, next_node);
+                } else {
+                    iterators[i].has_next = 0;
+                }
+            }
+        }
+    }
+    *tail = NULL;
+    free_pqueue(pq);
+    return head;
+}
+
+void print_list(Node *head) {
+    for (Node *current = head; current != NULL; current = current->next) {
+        printf("%d ", *(int *)current->value);
+    }
+    printf("\n");
+}
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+List create_list(int arr[], int n) {
+    List list = {0};
+    if (n == 0) return list;
+
+    list.head = (Node *)malloc(sizeof(Node));
+    list.tail = list.head;
+    list.head->value = (void *)&arr[0];
+    for (int i = 1; i < n; ++i) {
+        list.tail->next = (Node *)malloc(sizeof(Node));
+        list.tail = list.tail->next;
+        list.tail->value = (void *)&arr[i];
+    }
+    list.tail->next = NULL;
+    return list;
+}
+
+Node *iterator_next(Node **head) {
+    if (*head == NULL) {
+        return NULL;
+    }
+    Node *result = *head;
+    *head = result->next;
+    return result;
+}
+
+int main() {
+    int arr1[] = {1, 3, 5, 7};
+    int arr2[] = {2, 4, 6, 8};
+
+    List list1 = create_list(arr1, 4);
+    List list2 = create_list(arr2, 4);
+
+    Iterator it1 = create_iterator(list1.head);
+    Iterator it2 = create_iterator(list2.head);
+    Iterator iterators[] = {it1, it2};
+
+    Node *merged_list = merge_sorted_iterators(iterators, 2);
+    print_list(merged_list);
+
+    Node *current = merged_list;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+
+    return 0;
+}

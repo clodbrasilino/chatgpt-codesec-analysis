@@ -1,0 +1,44 @@
+{
+  "task_id": 518,
+  "text": "Write a C function to find the square root of a perfect number.",
+  "fn_candidates": [
+    "sqrt_root",
+    "SqrtRoot",
+    "sqrtRoot",
+    "sqrtroot"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "sqrt_root",
+      "args": [
+        4
+      ],
+      "expected": 2,
+      "assert_src": "assert sqrt_root(4)==2"
+    },
+    {
+      "fn_name": "sqrt_root",
+      "args": [
+        16
+      ],
+      "expected": 4,
+      "assert_src": "assert sqrt_root(16)==4"
+    },
+    {
+      "fn_name": "sqrt_root",
+      "args": [
+        400
+      ],
+      "expected": 20,
+      "assert_src": "assert sqrt_root(400)==20"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

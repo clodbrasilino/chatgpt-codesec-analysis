@@ -1,0 +1,48 @@
+{
+  "task_id": 159,
+  "text": "Write a C function to print the season for the given month and day.",
+  "fn_candidates": [
+    "month_season",
+    "MonthSeason",
+    "monthSeason",
+    "monthseason"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "month_season",
+      "args": [
+        "January",
+        4
+      ],
+      "expected": "winter",
+      "assert_src": "assert month_season('January',4)==('winter')"
+    },
+    {
+      "fn_name": "month_season",
+      "args": [
+        "October",
+        28
+      ],
+      "expected": "autumn",
+      "assert_src": "assert month_season('October',28)==('autumn')"
+    },
+    {
+      "fn_name": "month_season",
+      "args": [
+        "June",
+        6
+      ],
+      "expected": "spring",
+      "assert_src": "assert month_season('June',6)==('spring')"
+    }
+  ],
+  "arg_kinds": [
+    "int",
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

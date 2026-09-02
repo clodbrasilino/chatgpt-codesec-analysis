@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+
+enum TriangleType {
+    NOT_TRIANGLE,
+    EQUILATERAL,
+    ISOSCELES,
+    SCALENE
+};
+
+enum TriangleType classifyTriangle(int a, int b, int c) {
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return NOT_TRIANGLE;
+    }
+    if (a + b <= c || a + c <= b || b + c <= a) {
+        return NOT_TRIANGLE;
+    }
+    if (a == b && b == c) {
+        return EQUILATERAL;
+    }
+    if (a == b || a == c || b == c) {
+        return ISOSCELES;
+    }
+    return SCALENE;
+}
+
+int main() {
+    int a, b, c;
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%d %d %d", &a, &b, &c) != 3) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    enum TriangleType type = classifyTriangle(a, b, c);
+
+    switch (type) {
+        case NOT_TRIANGLE:
+            printf("The given sides do not form a triangle.\n");
+            break;
+        case EQUILATERAL:
+            printf("The triangle is equilateral.\n");
+            break;
+        case ISOSCELES:
+            printf("The triangle is isosceles.\n");
+            break;
+        case SCALENE:
+            printf("The triangle is scalene.\n");
+            break;
+    }
+
+    return 0;
+}
+```

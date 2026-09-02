@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int count;
+    int capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(int capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->capacity = capacity;
+    dict->count = 0;
+    dict->entries = (DictionaryEntry *)malloc(capacity * sizeof(DictionaryEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int add_entry(Dictionary *dict, const char *key, const char *value) {
+    if (dict->count >= dict->capacity) return -1;
+    dict->entries[dict->count].key = strdup(key);
+    dict->entries[dict->count].value = strdup(value);
+    if (dict->entries[dict->count].key == NULL || dict->entries[dict->count].value == NULL) {
+        free(dict->entries[dict->count].key);
+        free(dict->entries[dict->count].value);
+        return -1;
+    }
+    dict->count++;
+    return 0;
+}
+
+int contains_key(Dictionary *dict, const char *key) {
+    for (int i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(5);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return 1;
+    }
+
+    add_entry(dict, "apple", "fruit");
+    add_entry(dict, "carrot", "vegetable");
+
+    if (contains_key(dict, "apple")) {
+        printf("Key 'apple' is present in the dictionary.\n");
+    } else {
+        printf("Key 'apple' is not present in the dictionary.\n");
+    }
+
+    if (contains_key(dict, "banana")) {
+        printf("Key 'banana' is present in the dictionary.\n");
+    } else {
+        printf("Key 'banana' is not present in the dictionary.\n");
+    }
+
+    destroy_dictionary(dict);
+    return 0;
+}

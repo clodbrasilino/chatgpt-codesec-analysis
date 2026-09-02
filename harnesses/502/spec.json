@@ -1,0 +1,47 @@
+{
+  "task_id": 502,
+  "text": "Write a C function to find remainder of two numbers.",
+  "fn_candidates": [
+    "find",
+    "Find",
+    "find",
+    "find"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find",
+      "args": [
+        3,
+        3
+      ],
+      "expected": 0,
+      "assert_src": "assert find(3,3) == 0"
+    },
+    {
+      "fn_name": "find",
+      "args": [
+        10,
+        3
+      ],
+      "expected": 1,
+      "assert_src": "assert find(10,3) == 1"
+    },
+    {
+      "fn_name": "find",
+      "args": [
+        16,
+        5
+      ],
+      "expected": 1,
+      "assert_src": "assert find(16,5) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

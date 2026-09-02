@@ -1,0 +1,71 @@
+{
+  "task_id": 695,
+  "text": "Write a C function to check if each element of the second tuple is greater than its corresponding index in the first tuple.",
+  "fn_candidates": [
+    "check_greater",
+    "CheckGreater",
+    "checkGreater",
+    "checkgreater"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "check_greater",
+      "args": [
+        [
+          10,
+          4,
+          5
+        ],
+        [
+          13,
+          5,
+          18
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_greater((10, 4, 5), (13, 5, 18)) == True"
+    },
+    {
+      "fn_name": "check_greater",
+      "args": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          2,
+          1,
+          4
+        ]
+      ],
+      "expected": false,
+      "assert_src": "assert check_greater((1, 2, 3), (2, 1, 4)) == False"
+    },
+    {
+      "fn_name": "check_greater",
+      "args": [
+        [
+          4,
+          5,
+          6
+        ],
+        [
+          5,
+          6,
+          7
+        ]
+      ],
+      "expected": true,
+      "assert_src": "assert check_greater((4, 5, 6), (5, 6, 7)) == True"
+    }
+  ],
+  "arg_kinds": [
+    "int-list"
+  ],
+  "return_kind": "bool",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

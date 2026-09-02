@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long derangement(long n) {
+    long d[n+1];
+    d[0] = 1;
+    if (n == 0) return 1;
+    d[1] = 0;
+    for (long i = 2; i <= n; i++) {
+        d[i] = (i - 1) * (d[i-1] + d[i-2]);
+    }
+    return d[n];
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    scanf("%ld", &n);
+    if (n < 0) {
+        fprintf(stderr, "Value must be a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+    long result = derangement(n);
+    printf("The %ld-th Rencontres number is: %ld\n", n, result);
+    return EXIT_SUCCESS;
+}

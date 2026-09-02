@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-294.c: In function 'findMaxValue':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-294.c:14:30: error: 'INFINITY' undeclared (first use in this function); did you mean 'RLIM_INFINITY'?
+   14 |     if (length == 0) return -INFINITY;
+      |                              ^~~~~~~~
+      |                              RLIM_INFINITY
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-294.c:14:30: note: each undeclared identifier is reported only once for each function it appears in

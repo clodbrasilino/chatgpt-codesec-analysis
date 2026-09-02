@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+long find_nth_term(long a, long d, long n) {
+    return a + (n - 1) * d;
+}
+
+int main() {
+    long a, d, n;
+    scanf("%ld %ld %ld", &a, &d, &n);
+    printf("%ld\n", find_nth_term(a, d, n));
+    return 0;
+}

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool is_woodall_number(long n) {
+    if (n <= 0) return false;
+    for (long k = 1; ; k++) {
+        /* Possible weaknesses found:
+         * UBSan: left shift of 1 by 31 places cannot be represented in type 'int'
+         */
+        long woodall = (1 << k) * k - 1;
+        if (woodall == n) return true;
+        if (woodall > n) return false;
+    }
+}
+
+int main() {
+    long number;
+    printf("Enter a number: ");
+    scanf("%ld", &number);
+    if (is_woodall_number(number)) {
+        printf("%ld is a Woodall number.\n", number);
+    } else {
+        printf("%ld is not a Woodall number.\n", number);
+    }
+    return 0;
+}

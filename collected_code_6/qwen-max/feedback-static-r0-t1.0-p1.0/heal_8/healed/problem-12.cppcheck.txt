@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:18:28: portability: Assigning an integer to a pointer is not portable. [AssignmentIntegerToAddress]
+        (*matrix[i])[cols] = cols;
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:17:16: warning: The address of local variable 'matrix' might be accessed at non-zero index. [objectIndex]
+        *matrix[i] = (int *)realloc(*matrix[i], (cols + 1) * sizeof(int));
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:44:17: note: Address of variable taken here.
+    sort_matrix(&matrix, rows, cols);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:44:17: note: Calling function 'sort_matrix', 1st argument '&matrix' value is lifetime=matrix
+    sort_matrix(&matrix, rows, cols);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:17:16: note: The address of local variable 'matrix' might be accessed at non-zero index.
+        *matrix[i] = (int *)realloc(*matrix[i], (cols + 1) * sizeof(int));
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:18:17: warning: The address of local variable 'matrix' might be accessed at non-zero index. [objectIndex]
+        (*matrix[i])[cols] = cols;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:44:17: note: Address of variable taken here.
+    sort_matrix(&matrix, rows, cols);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:44:17: note: Calling function 'sort_matrix', 1st argument '&matrix' value is lifetime=matrix
+    sort_matrix(&matrix, rows, cols);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-12.c:18:17: note: The address of local variable 'matrix' might be accessed at non-zero index.
+        (*matrix[i])[cols] = cols;
+                ^

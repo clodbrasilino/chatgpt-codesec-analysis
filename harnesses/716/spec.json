@@ -1,0 +1,44 @@
+{
+  "task_id": 716,
+  "text": "Write a C function to find the perimeter of a rombus.",
+  "fn_candidates": [
+    "rombus_perimeter",
+    "RombusPerimeter",
+    "rombusPerimeter",
+    "rombusperimeter"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "rombus_perimeter",
+      "args": [
+        10
+      ],
+      "expected": 40,
+      "assert_src": "assert rombus_perimeter(10)==40"
+    },
+    {
+      "fn_name": "rombus_perimeter",
+      "args": [
+        5
+      ],
+      "expected": 20,
+      "assert_src": "assert rombus_perimeter(5)==20"
+    },
+    {
+      "fn_name": "rombus_perimeter",
+      "args": [
+        4
+      ],
+      "expected": 16,
+      "assert_src": "assert rombus_perimeter(4)==16"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "int",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long entringer_number(unsigned int n, unsigned int k) {
+    if (k == 0 && n > 0) return 1;
+    if (n == 0 && k == 0) return 1;
+    if (k > n || n == 0) return 0;
+
+    unsigned long dp[n+1][k+1];
+    for (unsigned int i = 0; i <= n; ++i)
+        for (unsigned int j = 0; j <= k; ++j)
+            dp[i][j] = 0;
+
+    dp[0][0] = 1;
+
+    for (unsigned int i = 1; i <= n; ++i) {
+        for (unsigned int j = 0; j <= k; ++j) {
+            if (j == 0)
+                dp[i][j] = 1;
+            else
+                dp[i][j] = (j + 1) * dp[i-1][j] + (i - j) * dp[i-1][j-1];
+        }
+    }
+
+    return dp[n][k];
+}
+
+int main() {
+    unsigned int n = 3, k = 2;
+    /* Possible weaknesses found:
+     *  %d in format string (no. 2) requires 'int' but the argument type is 'unsigned int'. [invalidPrintfArgType_sint]
+     *  %d in format string (no. 1) requires 'int' but the argument type is 'unsigned int'. [invalidPrintfArgType_sint]
+     */
+    printf("E(%d, %d) = %lu\n", n, k, entringer_number(n, k));
+    return 0;
+}

@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_consecutive(const int *list, size_t length) {
+    if (length == 0) return 0;
+    int sum = 0;
+    for (size_t i = 0; i < length; ++i) {
+        sum += list[i];
+    }
+    return sum;
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    int result = sum_consecutive(numbers, length);
+    printf("Sum of consecutive numbers: %d\n", result);
+    return 0;
+}

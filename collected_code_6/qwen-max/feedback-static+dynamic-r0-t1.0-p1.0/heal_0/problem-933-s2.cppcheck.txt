@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-933-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-933-s2.c:33:27: error: Array 'matches[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
+        } else if (matches[3].rm_so != -1 && matches[4].rm_so != -1) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-933-s2.c:33:53: error: Array 'matches[3]' accessed at index 4, which is out of bounds. [arrayIndexOutOfBounds]
+        } else if (matches[3].rm_so != -1 && matches[4].rm_so != -1) {
+                                                    ^

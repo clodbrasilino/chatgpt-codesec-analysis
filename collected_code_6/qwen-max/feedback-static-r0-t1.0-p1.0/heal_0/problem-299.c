@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int maxAggregate(Tuple *arr, int n) {
+    if (n <= 0 || arr == NULL) return 0;
+    int sum = 0;
+    for (int i = 0; i < n; ++i) {
+        sum += arr[i].first + arr[i].second;
+    }
+    return sum;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int result = maxAggregate(tuples, n);
+    printf("%d\n", result);
+    return 0;
+}

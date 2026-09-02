@@ -1,0 +1,44 @@
+{
+  "task_id": 422,
+  "text": "Write a C function to find the average of cubes of first n natural numbers.",
+  "fn_candidates": [
+    "find_Average_Of_Cube",
+    "FindAverageOfCube",
+    "findAverageOfCube",
+    "findAverageOfCube"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "find_Average_Of_Cube",
+      "args": [
+        2
+      ],
+      "expected": 4.5,
+      "assert_src": "assert find_Average_Of_Cube(2) == 4.5"
+    },
+    {
+      "fn_name": "find_Average_Of_Cube",
+      "args": [
+        3
+      ],
+      "expected": 12,
+      "assert_src": "assert find_Average_Of_Cube(3) == 12"
+    },
+    {
+      "fn_name": "find_Average_Of_Cube",
+      "args": [
+        1
+      ],
+      "expected": 1,
+      "assert_src": "assert find_Average_Of_Cube(1) == 1"
+    }
+  ],
+  "arg_kinds": [
+    "int"
+  ],
+  "return_kind": "float",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

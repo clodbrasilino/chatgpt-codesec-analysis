@@ -1,0 +1,44 @@
+{
+  "task_id": 643,
+  "text": "Write a C function that matches a word containing 'z', not at the start or end of the word.",
+  "fn_candidates": [
+    "text_match_wordz_middle",
+    "TextMatchWordzMiddle",
+    "textMatchWordzMiddle",
+    "textmatchwordzmiddle"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "text_match_wordz_middle",
+      "args": [
+        "pythonzabc."
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_wordz_middle(\"pythonzabc.\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match_wordz_middle",
+      "args": [
+        "xyzabc."
+      ],
+      "expected": "Found a match!",
+      "assert_src": "assert text_match_wordz_middle(\"xyzabc.\")==('Found a match!')"
+    },
+    {
+      "fn_name": "text_match_wordz_middle",
+      "args": [
+        "  lang  ."
+      ],
+      "expected": "Not matched!",
+      "assert_src": "assert text_match_wordz_middle(\"  lang  .\")==('Not matched!')"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

@@ -1,0 +1,44 @@
+{
+  "task_id": 676,
+  "text": "Write a C function to remove everything except alphanumeric characters from the given string by using regex.",
+  "fn_candidates": [
+    "remove_extra_char",
+    "RemoveExtraChar",
+    "removeExtraChar",
+    "removeextrachar"
+  ],
+  "test_cases": [
+    {
+      "fn_name": "remove_extra_char",
+      "args": [
+        "**//Google Android// - 12. "
+      ],
+      "expected": "GoogleAndroid12",
+      "assert_src": "assert remove_extra_char('**//Google Android// - 12. ') == 'GoogleAndroid12'"
+    },
+    {
+      "fn_name": "remove_extra_char",
+      "args": [
+        "****//Google Flutter//*** - 36. "
+      ],
+      "expected": "GoogleFlutter36",
+      "assert_src": "assert remove_extra_char('****//Google Flutter//*** - 36. ') == 'GoogleFlutter36'"
+    },
+    {
+      "fn_name": "remove_extra_char",
+      "args": [
+        "**//Google Firebase// - 478. "
+      ],
+      "expected": "GoogleFirebase478",
+      "assert_src": "assert remove_extra_char('**//Google Firebase// - 478. ') == 'GoogleFirebase478'"
+    }
+  ],
+  "arg_kinds": [
+    "str"
+  ],
+  "return_kind": "str",
+  "mode_hint": "link",
+  "test_setup_code": "",
+  "parseable": true,
+  "parse_note": ""
+}

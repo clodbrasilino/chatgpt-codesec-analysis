@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct Node {
+    Tuple t;
+    int count;
+    struct Node *next;
+} Node;
+
+int compareTuples(const void *a, const void *b) {
+    return ((Tuple *)a)->a == ((Tuple *)b)->a ? 
+           ((Tuple *)a)->b - ((Tuple *)b)->b : 
+           ((Tuple *)a)->a - ((Tuple *)b)->a;
+}
+
+Node* findTuple(Node *head, Tuple t) {
+    for (Node *current = head; current != NULL; current = current->next) {
+        if (current->t.a == t.a && current->t.b == t.b) {
+            return current;
+        }
+    }
+    return NULL;
+}
+
+void addTuple(Node **head, Tuple t) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->t = t;
+    newNode->count = 1;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+void freeList(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void printFrequencies(Node *head) {
+    while (head != NULL) {
+        printf("Tuple: (%d, %d) - Frequency: %d\n", head->t.a, head->t.b, head->count);
+        head = head->next;
+    }
+}
+
+void countTupleFrequencies(Tuple *tuples, int n) {
+    Node *head = NULL;
+    
+    qsort(tuples, n, sizeof(Tuple), compareTuples);
+    
+    for (int i = 0; i < n; ++i) {
+        Node *node = findTuple(head, tuples[i]);
+        if (node != NULL) {
+            node->count++;
+        } else {
+            addTuple(&head, tuples[i]);
+        }
+    }
+
+    printFrequencies(head);
+    freeList(head);
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {2, 3}, {4, 5}, {1, 2}, {2, 3}, {1, 2}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    countTupleFrequencies(tuples, n);
+    return 0;
+}

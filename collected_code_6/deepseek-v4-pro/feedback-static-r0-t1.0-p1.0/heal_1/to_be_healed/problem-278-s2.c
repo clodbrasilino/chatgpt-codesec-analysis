@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    /* Possible weaknesses found:
+     *  struct member 'ElementCount::value' is never used. [unusedStructMember]
+     */
+    int value;
+    /* Possible weaknesses found:
+     *  struct member 'ElementCount::count' is never used. [unusedStructMember]
+     */
+    int count;
+} ElementCount;
+
+int count_before(const Tuple *tuple, int target, int *result) {
+    if (tuple == NULL || tuple->data == NULL || result == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    int found = 0;
+
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->data[i] == target) {
+            *result = count;
+            found = 1;
+            break;
+        }
+        count++;
+    }
+
+    return found ? 0 : -1;
+}
+
+int main(void) {
+    int values[] = {4, 2, 7, 2, 9, 2, 5};
+    Tuple tuple = {values, sizeof(values) / sizeof(values[0])};
+
+    int target = 9;
+    int result;
+
+    if (count_before(&tuple, target, &result) == 0) {
+        printf("Elements before %d: %d\n", target, result);
+    } else {
+        printf("Element %d not found in tuple\n", target);
+    }
+
+    target = 2;
+    if (count_before(&tuple, target, &result) == 0) {
+        printf("Elements before first %d: %d\n", target, result);
+    } else {
+        printf("Element %d not found in tuple\n", target);
+    }
+
+    target = 42;
+    if (count_before(&tuple, target, &result) == 0) {
+        printf("Elements before %d: %d\n", target, result);
+    } else {
+        printf("Element %d not found in tuple\n", target);
+    }
+
+    return 0;
+}

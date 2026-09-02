@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    uint32_t a;
+    uint32_t b;
+} Tuple;
+
+uint32_t xor_tuple(Tuple t) {
+    return t.a ^ t.b;
+}
+
+uint32_t xor_all_tuples(const Tuple *tuples, size_t count) {
+    uint32_t result = 0;
+    for (size_t i = 0; i < count; i++) {
+        result ^= xor_tuple(tuples[i]);
+    }
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {0x0F0F0F0F, 0xF0F0F0F0},
+        {0x12345678, 0x9ABCDEF0},
+        {0x00000000, 0xFFFFFFFF},
+        {0xABCDEF01, 0x12345678}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    for (size_t i = 0; i < count; i++) {
+        uint32_t res = xor_tuple(tuples[i]);
+        printf("Tuple %zu: 0x%08X ^ 0x%08X = 0x%08X\n",
+               i, tuples[i].a, tuples[i].b, res);
+    }
+
+    uint32_t total = xor_all_tuples(tuples, count);
+    printf("Total XOR of all tuples: 0x%08X\n", total);
+
+    return 0;
+}

@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:28:13: error: use of undeclared identifier 'new'
+   28 |             new
+      |             ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:28:16: error: expected '}'
+   28 |             new
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:22:39: note: to match this '{'
+   22 |         while (new_capacity < needed) {
+      |                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:28:16: error: expected '}'
+   28 |             new
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:20:29: note: to match this '{'
+   20 |     if (needed > *capacity) {
+      |                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:28:16: error: expected '}'
+   28 |             new
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-544-s2.c:12:109: note: to match this '{'
+   12 | static bool append_text(char **result, size_t *length, size_t *capacity, const char *text, size_t text_len) {
+      |                                                                                                             ^
+4 errors generated.

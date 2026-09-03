@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRINGS 1000
+#define MAX_LENGTH 100
+
+typedef struct {
+    char str[MAX_LENGTH];
+    int count;
+} StringCount;
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'abc', got <no output>
+  *  test case 2 failed: expected 'gsm', got <no output>
+  *  test case 0 failed: expected 'bbb', got <no output>
+  */
+
+char* second_most_frequent(const char strings[][MAX_LENGTH], int n) {
+    if (n <= 0) return NULL;
+    
+    StringCount *counts = (StringCount*)malloc(n * sizeof(StringCount));
+    if (counts == NULL) return NULL;
+    
+    int unique_count = 0;
+    
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (strcmp(counts[j].str, strings[i]) == 0) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            strcpy(counts[unique_count].str, strings[i]);
+            counts[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+    
+    if (unique_count < 2) {
+        free(counts);
+        return NULL;
+    }
+    
+    int max_idx = 0;
+    for (int i = 1; i < unique_count; i++) {
+        if (counts[i].count > counts[max_idx].count) {
+            max_idx = i;
+        }
+    }
+    
+    int second_max_idx = -1;
+    
+    for (int i = 0; i < unique_count; i++) {
+        if (i == max_idx) continue;
+        if (second_max_idx == -1) {
+            second_max_idx = i;
+        } else if (counts[i].count > counts[second_max_idx].count) {
+            second_max_idx = i;
+        } else if (counts[i].count == counts[second_max_idx].count) {
+            if (strcmp(counts[i].str, counts[second_max_idx].str) < 0) {
+                second_max_idx = i;
+            }
+        }
+    }
+    
+    if (second_max_idx == -1) {
+        free(counts);
+        return NULL;
+    }
+    
+    char *result = (char*)malloc((strlen(counts[second_max_idx].str) + 1) * sizeof(char));
+    if (result == NULL) {
+        free(counts);
+        return NULL;
+    }
+    
+    strcpy(result, counts[second_max_idx].str);
+    free(counts);
+    return result;
+}
+
+int main() {
+    char strings[][MAX_LENGTH] = {
+        "apple", "banana", "apple", "orange", "banana", "banana", "grape"
+    };
+    int n = 7;
+    
+    char *result = second_most_frequent(strings, n);
+    
+    if (result != NULL) {
+        printf("Second most frequent string: %s\n", result);
+        free(result);
+    } else {
+        printf("No second most frequent string found\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,47 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c: In function 'insert_sorted':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:27:20: error: 'List' has no member named 'next'
+   27 |         insert_list->next = *lists;
+      |                    ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:31:23: error: 'List' has no member named 'next'
+   31 |         while (current->next && !list_cmp(insert_list->head, current->next->head)) {
+      |                       ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:31:69: error: 'List' has no member named 'next'
+   31 |         while (current->next && !list_cmp(insert_list->head, current->next->head)) {
+      |                                                                     ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:32:30: error: 'List' has no member named 'next'
+   32 |             current = current->next;
+      |                              ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:35:24: error: 'List' has no member named 'next'
+   35 |             insert_list->next = current->next;
+      |                        ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:35:40: error: 'List' has no member named 'next'
+   35 |             insert_list->next = current->next;
+      |                                        ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:36:20: error: 'List' has no member named 'next'
+   36 |             current->next = insert_list;
+      |                    ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c: In function 'remove_duplicates':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:49:22: error: 'List' has no member named 'next'
+   49 |         lists = lists->next;
+      |                      ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c: In function 'create_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:74:9: error: 'List' has no member named 'next'
+   74 |     list->next = NULL;
+      |         ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c: In function 'free_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:103:22: error: 'List' has no member named 'next'
+  103 |         lists = lists->next;
+      |                      ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:132:7: error: 'List' has no member named 'next'
+  132 |     l1->next = l2;
+      |       ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:133:7: error: 'List' has no member named 'next'
+  133 |     l2->next = l3;
+      |       ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:134:7: error: 'List' has no member named 'next'
+  134 |     l3->next = l4;
+      |       ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:140:24: error: 'List' has no member named 'next'
+  140 |         result = result->next;
+      |                        ^~

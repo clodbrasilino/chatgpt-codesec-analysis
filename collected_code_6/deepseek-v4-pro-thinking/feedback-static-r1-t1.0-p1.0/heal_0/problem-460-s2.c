@@ -1,0 +1,59 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int *get_first_elements(int **sublists, const size_t *lengths, size_t count, size_t *out_count)
+{
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+
+    if (count == 0) {
+        return NULL;
+    }
+    if (sublists == NULL || lengths == NULL) {
+        return NULL;
+    }
+
+    int *result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (sublists[i] == NULL || lengths[i] == 0) {
+            free(result);
+            return NULL;
+        }
+        result[i] = sublists[i][0];
+    }
+
+    *out_count = count;
+    return result;
+}
+
+int main(void)
+{
+    int a[] = { 1, 2, 3 };
+    int b[] = { 4, 5 };
+    int c[] = { 6 };
+
+    int *lists[] = { a, b, c };
+    size_t lengths[] = { 3, 2, 1 };
+    size_t count = 3;
+    size_t out_count = 0;
+
+    int *firsts = get_first_elements(lists, lengths, count, &out_count);
+
+    if (firsts == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < out_count; ++i) {
+        printf("%d\n", firsts[i]);
+    }
+
+    free(firsts);
+    return 0;
+}

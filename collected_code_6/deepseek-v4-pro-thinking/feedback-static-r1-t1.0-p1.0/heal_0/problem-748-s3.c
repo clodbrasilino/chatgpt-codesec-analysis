@@ -1,0 +1,106 @@
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *add_spaces(const char *input)
+{
+    if (input == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret;
+    regmatch_t match;
+    size_t len;
+    size_t extra_spaces;
+    size_t src;
+    size_t dst;
+    size_t remaining;
+    const char *p;
+    char *result;
+
+    ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    extra_spaces = 0;
+    p = input;
+
+    while ((ret = regexec(&regex, p, 1, &match, 0)) == 0) {
+        if (match.rm_so < 0) {
+            break;
+        }
+        if ((size_t)(p - input) + (size_t)match.rm_so > 0) {
+            extra_spaces++;
+        }
+        p += match.rm_so + 1;
+    }
+
+    if (ret != REG_NOMATCH) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    result = malloc(len + extra_spaces + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    src = 0;
+    dst = 0;
+    p = input;
+
+    while ((ret = regexec(&regex, p, 1, &match, 0)) == 0) {
+        size_t pos;
+
+        if (match.rm_so < 0) {
+            break;
+        }
+
+        pos = (size_t)(p - input) + (size_t)match.rm_so;
+        if (pos > 0) {
+            size_t copy_len = pos - src;
+
+            memcpy(result + dst, input + src, copy_len);
+            dst += copy_len;
+            result[dst++] = ' ';
+            src = pos;
+        }
+
+        p += match.rm_so + 1;
+    }
+
+    if (ret != REG_NOMATCH) {
+        free(result);
+        regfree(&regex);
+        return NULL;
+    }
+
+    remaining = len - src;
+    memcpy(result + dst, input + src, remaining);
+    dst += remaining;
+    result[dst] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "HelloWorldThisIsATest";
+    char *spaced = add_spaces(input);
+
+    if (spaced == NULL) {
+        fprintf(stderr, "Error processing input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", spaced);
+    free(spaced);
+    return EXIT_SUCCESS;
+}

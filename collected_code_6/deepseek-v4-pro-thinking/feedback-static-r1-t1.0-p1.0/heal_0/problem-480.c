@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <limits.h>
+
+char max_occurring_char(const char *str)
+{
+    if (str == NULL)
+        return '\0';
+
+    unsigned int count[UCHAR_MAX + 1] = {0};
+    const unsigned char *p = (const unsigned char *)str;
+
+    while (*p != '\0') {
+        count[*p]++;
+        p++;
+    }
+
+    unsigned int max_count = 0;
+    unsigned int max_char = 0;
+
+    for (unsigned int i = 0; i <= UCHAR_MAX; i++) {
+        if (count[i] > max_count) {
+            max_count = count[i];
+            max_char = i;
+        }
+    }
+
+    return (char)max_char;
+}
+
+int main(void)
+{
+    const char *text = "hello world";
+    char result = max_occurring_char(text);
+
+    printf("Maximum occurring character: %c\n", result);
+
+    return 0;
+}

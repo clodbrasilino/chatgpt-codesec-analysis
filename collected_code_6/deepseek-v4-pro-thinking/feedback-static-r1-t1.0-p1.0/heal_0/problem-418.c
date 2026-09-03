@@ -1,0 +1,72 @@
+#include <stddef.h>
+#include <stdio.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+} Sublist;
+
+const Sublist *find_max_length_sublist(const Sublist *sublists, size_t count, size_t *out_length)
+{
+    const Sublist *max_sublist = NULL;
+    size_t max_length = 0;
+    size_t i;
+
+    if (sublists == NULL || count == 0) {
+        if (out_length != NULL) {
+            *out_length = 0;
+        }
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (sublists[i].data != NULL) {
+            if (max_sublist == NULL || sublists[i].length > max_length) {
+                max_sublist = &sublists[i];
+                max_length = sublists[i].length;
+            }
+        }
+    }
+
+    if (out_length != NULL) {
+        *out_length = max_length;
+    }
+
+    return max_sublist;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+    int arr3[] = {6, 7, 8, 9};
+    int arr4[] = {10};
+    Sublist sublists[4];
+    size_t sublist_count = sizeof(sublists) / sizeof(sublists[0]);
+    const Sublist *max_sublist = NULL;
+    size_t max_length = 0;
+    size_t i;
+
+    sublists[0].data = arr1;
+    sublists[0].length = sizeof(arr1) / sizeof(arr1[0]);
+    sublists[1].data = arr2;
+    sublists[1].length = sizeof(arr2) / sizeof(arr2[0]);
+    sublists[2].data = arr3;
+    sublists[2].length = sizeof(arr3) / sizeof(arr3[0]);
+    sublists[3].data = arr4;
+    sublists[3].length = sizeof(arr4) / sizeof(arr4[0]);
+
+    max_sublist = find_max_length_sublist(sublists, sublist_count, &max_length);
+
+    if (max_sublist != NULL) {
+        printf("Maximum sublist length: %lu\n", (unsigned long)max_length);
+        for (i = 0; i < max_sublist->length; i++) {
+            printf("%d ", max_sublist->data[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No sublist found.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    char data;
+    struct ListNode *next;
+} ListNode;
+
+ListNode *string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    ListNode *head = NULL;
+    ListNode *tail = NULL;
+
+    for (const char *p = str; *p != '\0'; ++p) {
+        ListNode *node = malloc(sizeof(ListNode));
+        if (node == NULL) {
+            while (head != NULL) {
+                ListNode *tmp = head;
+                head = head->next;
+                free(tmp);
+            }
+            return NULL;
+        }
+
+        node->data = *p;
+        node->next = NULL;
+
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+
+    return head;
+}
+
+void free_list(ListNode *head) {
+    while (head != NULL) {
+        ListNode *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int main(void) {
+    const char *str = "hello";
+    ListNode *list = string_to_list(str);
+
+    if (list == NULL && *str != '\0') {
+        return EXIT_FAILURE;
+    }
+
+    for (ListNode *node = list; node != NULL; node = node->next) {
+        putchar(node->data);
+    }
+    putchar('\n');
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}
+```

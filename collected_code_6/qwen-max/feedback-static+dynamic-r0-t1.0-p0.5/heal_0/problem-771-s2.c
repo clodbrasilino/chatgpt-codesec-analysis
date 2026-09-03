@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool isBalanced(const char *expression) {
+    int stack[100];
+    int top = -1;
+    for (int i = 0; expression[i] != '\0'; i++) {
+        if (expression[i] == '(' || expression[i] == '[' || expression[i] == '{') {
+            if (top >= 99) return false;
+            stack[++top] = expression[i];
+        } else if (expression[i] == ')' || expression[i] == ']' || expression[i] == '}') {
+            if (top == -1) return false;
+            if ((expression[i] == ')' && stack[top] != '(') ||
+                (expression[i] == ']' && stack[top] != '[') ||
+                (expression[i] == '}' && stack[top] != '{')) {
+                return false;
+            }
+            top--;
+        }
+    }
+    return top == -1;
+}
+
+int main() {
+    const char *expressions[] = {"([]{})", "([)]", "((()))", "{[()]}", "({[})"};
+    for (int i = 0; i < 5; i++) {
+        printf("%s: %s\n", expressions[i], isBalanced(expressions[i]) ? "Balanced" : "Not Balanced");
+    }
+    return 0;
+}

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(char *snake_str) {
+    char *p = snake_str;
+    int capitalize_next = 0;
+    char *result = p;
+
+    while (*p) {
+        if (capitalize_next || p == snake_str) {
+            *p = toupper((unsigned char)*p);
+            capitalize_next = 0;
+        }
+        if (*p == '_') {
+            *p = '\0';
+            p++;
+            capitalize_next = 1;
+            continue;
+        }
+        if (p > snake_str && *(p - 1) == '_') {
+            *p = toupper((unsigned char)*p);
+        }
+        p++;
+    }
+
+    return result;
+}
+
+int main() {
+    char snake_case[] = "this_is_a_snake_case_string";
+    printf("%s\n", snake_to_camel(snake_case));
+
+    char test_case_0[] = "python_program";
+    printf("%s\n", snake_to_camel(test_case_0));
+
+    char test_case_1[] = "python_language";
+    printf("%s\n", snake_to_camel(test_case_1));
+
+    char test_case_2[] = "programming_language";
+    printf("%s\n", snake_to_camel(test_case_2));
+
+    return 0;
+}

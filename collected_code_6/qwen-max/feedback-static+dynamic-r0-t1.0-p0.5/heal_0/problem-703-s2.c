@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int size;
+    int capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(int capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->entries = (DictionaryEntry*)calloc(capacity, sizeof(DictionaryEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int add_entry(Dictionary *dict, const char *key, const char *value) {
+    if (dict->size >= dict->capacity) return -1;
+    dict->entries[dict->size].key = strdup(key);
+    dict->entries[dict->size].value = strdup(value);
+    if (dict->entries[dict->size].key == NULL || dict->entries[dict->size].value == NULL) {
+        free(dict->entries[dict->size].key);
+        free(dict->entries[dict->size].value);
+        return -1;
+    }
+    dict->size++;
+    return 0;
+}
+
+int contains_key(const Dictionary *dict, const char *key) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(10);
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return 1;
+    }
+
+    add_entry(dict, "one", "1");
+    add_entry(dict, "two", "2");
+    add_entry(dict, "three", "3");
+
+    if (contains_key(dict, "two")) {
+        printf("Key 'two' is present in the dictionary.\n");
+    } else {
+        printf("Key 'two' is not present in the dictionary.\n");
+    }
+
+    if (contains_key(dict, "four")) {
+        printf("Key 'four' is present in the dictionary.\n");
+    } else {
+        printf("Key 'four' is not present in the dictionary.\n");
+    }
+
+    free_dictionary(dict);
+    return 0;
+}

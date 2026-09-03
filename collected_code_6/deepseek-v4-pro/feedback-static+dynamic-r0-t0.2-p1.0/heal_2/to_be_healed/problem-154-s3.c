@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** extract_elements(int** list, int rows, int cols, const int* indices, int indices_count, int* result_rows, int* result_cols) {
+    if (list == NULL || indices == NULL || rows <= 0 || cols <= 0 || indices_count <= 0 || result_rows == NULL || result_cols == NULL) {
+        if (result_rows != NULL) *result_rows = 0;
+        if (result_cols != NULL) *result_cols = 0;
+        return NULL;
+    }
+
+    int** result = (int**)malloc(indices_count * sizeof(int*));
+    if (result == NULL) {
+        *result_rows = 0;
+        *result_cols = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < indices_count; i++) {
+        result[i] = (int*)malloc(2 * sizeof(int));
+        if (result[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *result_rows = 0;
+            *result_cols = 0;
+            return NULL;
+        }
+    }
+
+    int count = 0;
+    for (int i = 0; i < indices_count; i++) {
+        int index = indices[i];
+        if (index < 0 || index >= rows * cols) {
+            for (int j = 0; j < indices_count; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *result_rows = 0;
+            *result_cols = 0;
+            return NULL;
+        }
+        int row = index / cols;
+        int col = index % cols;
+        result[count][0] = list[row][col];
+        result[count][1] = index;
+        count++;
+    }
+
+    *result_rows = count;
+    *result_cols = 2;
+    return result;
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    int** list = (int**)malloc(rows * sizeof(int*));
+    if (list == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < rows; i++) {
+        list[i] = (int*)malloc(cols * sizeof(int));
+        if (list[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return 1;
+        }
+    }
+
+    int value = 1;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            list[i][j] = value++;
+        }
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'indices' can be declared as const array [constVariable]
+     */
+    int indices[] = {0, 5, 10, 7};
+    int indices_count = 4;
+    int result_rows = 0;
+    int result_cols = 0;
+
+    int** result = extract_elements(list, rows, cols, indices, indices_count, &result_rows, &result_cols);
+
+    if (result != NULL) {
+        for (int i = 0; i < result_rows; i++) {
+            printf("Value: %d, Index: %d\n", result[i][0], result[i][1]);
+            free(result[i]);
+        }
+        free(result);
+    }
+
+    for (int i = 0; i < rows; i++) {
+        free(list[i]);
+    }
+    free(list);
+
+    return 0;
+}

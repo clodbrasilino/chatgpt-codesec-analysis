@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int min_tuple_difference(Tuple tuples[], int size) {
+    if (size <= 0) {
+        return -1;
+    }
+    int min_diff = abs(tuples[0].first - tuples[0].second);
+    for (int i = 1; i < size; i++) {
+        int diff = abs(tuples[i].first - tuples[i].second);
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+    return min_diff;
+}
+
+int main(void) {
+    Tuple tuples[] = {{5, 8}, {10, 2}, {6, 6}, {1, 9}};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    int min_diff = min_tuple_difference(tuples, size);
+    if (min_diff == -1) {
+        printf("Invalid input\n");
+    } else {
+        printf("Minimum difference: %d\n", min_diff);
+    }
+    return 0;
+}
+```

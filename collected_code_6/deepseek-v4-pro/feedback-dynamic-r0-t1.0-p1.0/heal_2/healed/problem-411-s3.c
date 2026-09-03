@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+    int capitalize_next = 0;
+    int first_char = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        if (input[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (first_char) {
+                result[result_index++] = toupper((unsigned char)input[i]);
+                first_char = 0;
+                capitalize_next = 0;
+            } else if (capitalize_next) {
+                result[result_index++] = toupper((unsigned char)input[i]);
+                capitalize_next = 0;
+            } else {
+                result[result_index++] = input[i];
+            }
+        }
+    }
+
+    result[result_index] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "hello_world",
+        "snake_case_string",
+        "alreadyCamel",
+        "multiple__underscores",
+        "_leading_underscore",
+        "trailing_underscore_",
+        "",
+        "no_underscores_here",
+        "a_b_c_d_e",
+        "android_tv",
+        "google_pixel",
+        "apple_watch"
+    };
+
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char *converted = snake_to_camel(test_cases[i]);
+        if (converted != NULL) {
+            printf("\"%s\" -> \"%s\"\n", test_cases[i], converted);
+            free(converted);
+        } else {
+            printf("\"%s\" -> NULL\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

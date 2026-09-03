@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NestedList {
+    int is_integer;
+    int value;
+    struct NestedList *list;
+    struct NestedList *next;
+} NestedList;
+
+typedef struct {
+    int *data;
+    int size;
+    int capacity;
+} FlatList;
+
+void flat_list_init(FlatList *flat) {
+    flat->data = NULL;
+    flat->size = 0;
+    flat->capacity = 0;
+}
+
+int flat_list_append(FlatList *flat, int value) {
+    if (flat->size >= flat->capacity) {
+        int new_capacity = flat->capacity == 0 ? 8 : flat->capacity * 2;
+        int *new_data = (int *)realloc(flat->data, new_capacity * sizeof(int));
+        if (new_data == NULL) {
+            return 0;
+        }
+        flat->data = new_data;
+        flat->capacity = new_capacity;
+    }
+    flat->data[flat->size++] = value;
+    return 1;
+}
+
+void flat_list_free(FlatList *flat) {
+    free(flat->data);
+    flat->data = NULL;
+    flat->size = 0;
+    flat->capacity = 0;
+}
+
+int flatten_recursive(NestedList *node, FlatList *flat) {
+    if (node == NULL) {
+        return 1;
+    }
+    
+    NestedList *current = node;
+    while (current != NULL) {
+        if (current->is_integer) {
+            if (!flat_list_append(flat, current->value)) {
+                return 0;
+            }
+        } else {
+            if (!flatten_recursive(current->list, flat)) {
+                return 0;
+            }
+        }
+        current = current->next;
+    }
+    return 1;
+}
+
+int flatten(NestedList *nested, FlatList *flat) {
+    flat_list_init(flat);
+    if (nested == NULL) {
+        return 1;
+    }
+    return flatten_recursive(nested, flat);
+}
+
+NestedList *create_integer_node(int value) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = 1;
+    node->value = value;
+    node->list = NULL;
+    node->next = NULL;
+    return node;
+}
+
+NestedList *create_list_node(NestedList *list) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = 0;
+    node->value = 0;
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+void free_nested_list(NestedList *node) {
+    while (node != NULL) {
+        NestedList *next = node->next;
+        if (!node->is_integer) {
+            free_nested_list(node->list);
+        }
+        free(node);
+        node = next;
+    }
+}
+
+int main(void) {
+    NestedList *inner1 = create_integer_node(1);
+    NestedList *inner2 = create_integer_node(2);
+    inner1->next = inner2;
+    
+    NestedList *inner_list = create_list_node(inner1);
+    
+    NestedList *outer1 = create_integer_node(3);
+    NestedList *outer2 = create_list_node(inner_list);
+    NestedList *outer3 = create_integer_node(4);
+    
+    outer1->next = outer2;
+    outer2->next = outer3;
+    
+    FlatList flat;
+    if (flatten(outer1, &flat)) {
+        for (int i = 0; i < flat.size; i++) {
+            printf("%d ", flat.data[i]);
+        }
+        printf("\n");
+    } else {
+        printf("Failed to flatten list\n");
+    }
+    
+    flat_list_free(&flat);
+    free_nested_list(outer1);
+    
+    return 0;
+}

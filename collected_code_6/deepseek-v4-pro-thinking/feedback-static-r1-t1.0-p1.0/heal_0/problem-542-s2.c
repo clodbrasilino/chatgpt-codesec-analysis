@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <sys/types.h>
+#include <regex.h>
+
+int replace_spaces_commas_or_dots_with_colon(char *str)
+{
+    regex_t regex;
+    regmatch_t match;
+    size_t offset;
+    int ret;
+
+    if (str == NULL)
+        return -1;
+
+    ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0)
+        return ret;
+
+    offset = 0;
+    while ((ret = regexec(&regex, str + offset, 1, &match, 0)) == 0)
+    {
+        str[offset + match.rm_so] = ':';
+        offset += match.rm_so + 1;
+    }
+
+    regfree(&regex);
+
+    if (ret != REG_NOMATCH)
+        return ret;
+
+    return 0;
+}
+
+int main(void)
+{
+    char text[] = "Hello, world. This is a test.";
+    int ret;
+
+    ret = replace_spaces_commas_or_dots_with_colon(text);
+    if (ret != 0)
+    {
+        fprintf(stderr, "Regex processing failed\n");
+        return 1;
+    }
+
+    printf("%s\n", text);
+
+    return 0;
+}

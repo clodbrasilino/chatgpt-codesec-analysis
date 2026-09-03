@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-551.c: In function 'add_sublist':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-551.c:39:9: error: 'Node' has no member named 'sublist'
+   39 |     node->sublist = sublist;
+      |         ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-551.c: In function 'extract_column':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-551.c:52:27: error: 'Node' has no member named 'sublist'
+   52 |         } else if (current->sublist != NULL) {
+      |                           ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-551.c:53:54: error: 'Node' has no member named 'sublist'
+   53 |             List *sub_result = extract_column(current->sublist, column_index - 1);
+      |                                                      ^~

@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} TupleChunk;
+
+TupleChunk* create_tuple_chunk(size_t n, size_t chunk_size) {
+    TupleChunk *chunk = (TupleChunk*)malloc(sizeof(TupleChunk));
+    if (!chunk) return NULL;
+    chunk->size = chunk_size;
+    chunk->data = (int*)calloc(n * chunk_size, sizeof(int));
+    if (!chunk->data) {
+        free(chunk);
+        return NULL;
+    }
+    return chunk;
+}
+
+void destroy_tuple_chunk(TupleChunk *chunk) {
+    if (chunk) {
+        free(chunk->data);
+        free(chunk);
+    }
+}
+
+int main() {
+    size_t n = 3;
+    size_t chunk_size = 2;
+    TupleChunk *chunk = create_tuple_chunk(n, chunk_size);
+
+    if (chunk) {
+        for (size_t i = 0; i < n * chunk_size; ++i) {
+            chunk->data[i] = i;
+        }
+
+        for (size_t i = 0; i < chunk_size; ++i) {
+            for (size_t j = 0; j < n; ++j) {
+                printf("%d ", chunk->data[i * n + j]);
+            }
+            printf("\n");
+        }
+
+        destroy_tuple_chunk(chunk);
+    }
+
+    return 0;
+}
+```

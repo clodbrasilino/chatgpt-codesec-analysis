@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_digit(int numerator, int denominator, int n) {
+    if (n <= 0 || denominator == 0) return -1;
+    long long remainder = numerator % denominator;
+    for (int i = 1; i < n; ++i) {
+        remainder = (remainder * 10) % denominator;
+    }
+    return (remainder * 10) / denominator;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 'test_cases' can be declared as const array [constVariable]
+     */
+    int test_cases[] = {5, 6};
+    /* Possible weaknesses found:
+     *  Variable 'expected_results' can be declared as const array [constVariable]
+     */
+    int expected_results[] = {5, 6};
+    int numerator = 1;
+    int denominator = 7;
+
+    for (int i = 0; i < 2; ++i) {
+        int n = test_cases[i];
+        int result = find_nth_digit(numerator, denominator, n);
+        if (result == expected_results[i]) {
+            printf("Test case %d passed: The %dth digit is: %d\n", i, n, result);
+        } else {
+            printf("Test case %d failed: expected %d, got %d\n", i, expected_results[i], result);
+        }
+    }
+
+    return 0;
+}

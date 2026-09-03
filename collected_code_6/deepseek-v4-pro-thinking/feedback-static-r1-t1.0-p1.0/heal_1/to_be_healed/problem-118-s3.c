@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+Node *string_to_list(const char *str) {
+    Node *head = NULL;
+    Node **current = &head;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    for (const char *p = str; *p != '\0'; ++p) {
+        Node *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            /* Possible weaknesses found:
+             *  The scope of the variable 'temp' can be reduced. [variableScope]
+             */
+            Node *temp;
+            while (head != NULL) {
+                temp = head;
+                head = head->next;
+                free(temp);
+            }
+            return NULL;
+        }
+        new_node->data = *p;
+        new_node->next = NULL;
+        *current = new_node;
+        current = &new_node->next;
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    const char *s = "hello";
+    Node *list = string_to_list(s);
+
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (Node *n = list; n != NULL; n = n->next) {
+        putchar(n->data);
+    }
+    putchar('\n');
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *camel_to_snake(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+    if (input_len == 0) {
+        return strdup("");
+    }
+
+    size_t max_output_len = input_len * 2 + 1;
+    char *result = (char *)malloc(max_output_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t src_pos = 0;
+    size_t dst_pos = 0;
+
+    for (size_t i = 0; i < input_len; i++) {
+        if (i > 0 && 
+            ((input[i] >= 'A' && input[i] <= 'Z') && 
+             ((input[i-1] >= 'a' && input[i-1] <= 'z') || 
+              (input[i-1] >= '0' && input[i-1] <= '9')))) {
+            result[dst_pos++] = '_';
+        }
+        
+        if (input[i] >= 'A' && input[i] <= 'Z') {
+            result[dst_pos++] = input[i] + 32;
+        } else {
+            result[dst_pos++] = input[i];
+        }
+    }
+
+    result[dst_pos] = '\0';
+
+    char *final_result = realloc(result, dst_pos + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "camelCase",
+        "snake_case",
+        "myVariableName",
+        "HTTPResponseCode",
+        "test123Case",
+        "already_snake",
+        "A",
+        "",
+        "ABC",
+        "convertJSONToXML",
+        "chromeCast",
+        "googleAssistant",
+        "quadCore"
+    };
+
+    size_t test_count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < test_count; i++) {
+        char *converted = camel_to_snake(test_strings[i]);
+        if (converted != NULL) {
+            printf("\"%s\" -> \"%s\"\n", test_strings[i], converted);
+            free(converted);
+        } else {
+            printf("\"%s\" -> conversion failed\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

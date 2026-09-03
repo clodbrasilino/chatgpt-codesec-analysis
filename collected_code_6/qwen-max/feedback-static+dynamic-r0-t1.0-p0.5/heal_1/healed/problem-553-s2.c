@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double tuple_to_float(const char *tuple) {
+    double result;
+    if (sscanf(tuple, "(%lf)", &result) != 1) {
+        fprintf(stderr, "Error: Invalid input format\n");
+        exit(EXIT_FAILURE);
+    }
+    return result;
+}
+
+int main() {
+    const char *inputs[] = {"(4.56)", "(7.256)", "(8.123)"};
+    for (size_t i = 0; i < 3; ++i) {
+        double output = tuple_to_float(inputs[i]);
+        printf("Converted float: %f\n", output);
+    }
+    return 0;
+}

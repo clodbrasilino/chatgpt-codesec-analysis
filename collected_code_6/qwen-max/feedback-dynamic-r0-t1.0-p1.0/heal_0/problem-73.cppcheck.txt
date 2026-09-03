@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73.c:9:32: style: The scope of the variable 'len' can be reduced. [variableScope]
+    int match_count = 0, i, j, len, m;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73.c:40:11: style: Variable 'input' can be declared as pointer to const [constVariablePointer]
+    char *input = "apple,banana;orange:lemon";
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73.c:41:11: style: Variable 'delimiters' can be declared as pointer to const [constVariablePointer]
+    char *delimiters = ",;:";
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73.c:9:21: style: Variable 'match_count' is assigned a value that is never used. [unreadVariable]
+    int match_count = 0, i, j, len, m;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73.c:9:29: style: Unused variable: j [unusedVariable]
+    int match_count = 0, i, j, len, m;
+                            ^

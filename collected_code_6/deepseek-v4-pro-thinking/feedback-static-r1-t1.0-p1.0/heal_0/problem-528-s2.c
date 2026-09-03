@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stddef.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct List {
+    struct Node *head;
+    struct List *next;
+};
+
+size_t list_length(const struct Node *head)
+{
+    size_t length = 0;
+
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+
+    return length;
+}
+
+struct Node *find_minimum_length_list(const struct List *lists)
+{
+    const struct List *current;
+    struct Node *min_head;
+    size_t min_length;
+
+    if (lists == NULL) {
+        return NULL;
+    }
+
+    current = lists;
+    min_head = current->head;
+    min_length = list_length(current->head);
+
+    while (current->next != NULL) {
+        size_t current_length;
+
+        current = current->next;
+        current_length = list_length(current->head);
+
+        if (current_length < min_length) {
+            min_length = current_length;
+            min_head = current->head;
+        }
+    }
+
+    return min_head;
+}
+
+int main(void)
+{
+    struct Node n1 = {1, NULL};
+    struct Node n2 = {2, NULL};
+    struct Node n3 = {3, NULL};
+    struct Node n4 = {4, NULL};
+    struct Node n5 = {5, NULL};
+    struct Node n6 = {6, NULL};
+
+    struct List l1 = {NULL, NULL};
+    struct List l2 = {NULL, NULL};
+    struct List l3 = {NULL, NULL};
+
+    struct Node *min_list;
+
+    n1.next = &n2;
+    n2.next = &n3;
+
+    n5.next = &n6;
+
+    l1.head = &n1;
+    l1.next = &l2;
+
+    l2.head = &n4;
+    l2.next = &l3;
+
+    l3.head = &n5;
+    l3.next = NULL;
+
+    min_list = find_minimum_length_list(&l1);
+
+    if (min_list != NULL) {
+        printf("%d\n", min_list->data);
+    }
+
+    return 0;
+}

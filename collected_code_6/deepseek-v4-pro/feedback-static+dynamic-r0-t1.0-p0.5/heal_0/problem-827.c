@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int *data;
+    int size;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} ListOfLists;
+
+int sum_column(ListOfLists *list, int col) {
+    if (list == NULL || col < 0) {
+        return 0;
+    }
+
+    int sum = 0;
+    Node *current = list->head;
+
+    while (current != NULL) {
+        if (current->data != NULL && col < current->size) {
+            sum += current->data[col];
+        }
+        current = current->next;
+    }
+
+    return sum;
+}
+
+Node *create_node(int *data, int size) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->size = size;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(ListOfLists *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp->data);
+        free(temp);
+    }
+    free(list);
+}
+
+int main(void) {
+    int row1[] = {1, 2, 3};
+    int row2[] = {4, 5, 6};
+    int row3[] = {7, 8, 9};
+
+    ListOfLists *list = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (list == NULL) {
+        return 1;
+    }
+    list->head = NULL;
+
+    Node *node1 = create_node(row1, 3);
+    Node *node2 = create_node(row2, 3);
+    Node *node3 = create_node(row3, 3);
+
+    if (node1 == NULL || node2 == NULL || node3 == NULL) {
+        free(node1);
+        free(node2);
+        free(node3);
+        free(list);
+        return 1;
+    }
+
+    list->head = node1;
+    node1->next = node2;
+    node2->next = node3;
+
+    int result = sum_column(list, 1);
+    printf("%d\n", result);
+
+    free_list(list);
+    return 0;
+}

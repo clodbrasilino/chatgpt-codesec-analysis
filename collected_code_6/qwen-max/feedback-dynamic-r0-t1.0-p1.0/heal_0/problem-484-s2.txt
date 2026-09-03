@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+void remove_matching_tuples(Tuple *dest, int *dest_size, const Tuple *src, int src_size) {
+    int i, j, k;
+    for (i = 0; i < *dest_size; i++) {
+        for (j = 0; j < src_size; j++) {
+            if (dest[i].a == src[j].a && dest[i].b == src[j].b) {
+                for (k = i; k < *dest_size - 1; k++) {
+                    dest[k] = dest[k + 1];
+                }
+                (*dest_size)--;
+                i--;  // Recheck the current index after removal
+                break;
+            }
+        }
+    }
+}
+
+int main() {
+    Tuple dest[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    int dest_size = sizeof(dest) / sizeof(dest[0]);
+
+    Tuple src[] = {{3, 4}, {7, 8}};
+    int src_size = sizeof(src) / sizeof(src[0]);
+
+    remove_matching_tuples(dest, &dest_size, src, src_size);
+
+    for (int i = 0; i < dest_size; i++) {
+        printf("(%d, %d) ", dest[i].a, dest[i].b);
+    }
+
+    return 0;
+}
+```

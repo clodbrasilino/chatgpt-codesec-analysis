@@ -1,0 +1,101 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+int add_spaces_before_capitals(const char *input, char *output, size_t output_size) {
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    int result = 0;
+    size_t in_pos = 0;
+    size_t out_pos = 0;
+    size_t input_len;
+
+    if (input == NULL || output == NULL || output_size == 0) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, "[A-Z]", 0);
+    if (ret != 0) {
+        return 0;
+    }
+
+    input_len = strlen(input);
+
+    while (in_pos < input_len) {
+        ret = regexec(&regex, input + in_pos, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            goto cleanup;
+        }
+
+        if (match.rm_so < 0 || match.rm_eo <= match.rm_so) {
+            goto cleanup;
+        }
+
+        size_t prefix_len = (size_t)match.rm_so;
+        size_t match_len = (size_t)(match.rm_eo - match.rm_so);
+
+        if (prefix_len > 0) {
+            if (prefix_len >= output_size - out_pos) {
+                goto cleanup;
+            }
+            memcpy(output + out_pos, input + in_pos, prefix_len);
+            out_pos += prefix_len;
+        }
+
+        if (in_pos + prefix_len > 0 && (out_pos == 0 || !isspace((unsigned char)output[out_pos - 1]))) {
+            if (out_pos + 1 >= output_size) {
+                goto cleanup;
+            }
+            output[out_pos++] = ' ';
+        }
+
+        if (match_len >= output_size - out_pos) {
+            goto cleanup;
+        }
+        memcpy(output + out_pos, input + in_pos + prefix_len, match_len);
+        out_pos += match_len;
+
+        in_pos += (size_t)match.rm_eo;
+    }
+
+    if (in_pos < input_len) {
+        size_t remaining = input_len - in_pos;
+        if (remaining >= output_size - out_pos) {
+            goto cleanup;
+        }
+        memcpy(output + out_pos, input + in_pos, remaining);
+        out_pos += remaining;
+    }
+
+    if (out_pos >= output_size) {
+        goto cleanup;
+    }
+    output[out_pos] = '\0';
+    result = 1;
+
+cleanup:
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *input = "HelloWorldThisIsATest";
+    char output[128];
+
+    if (add_spaces_before_capitals(input, output, sizeof(output))) {
+        puts(output);
+        return EXIT_SUCCESS;
+    }
+
+    fputs("Error processing input\n", stderr);
+    return EXIT_FAILURE;
+}
+```

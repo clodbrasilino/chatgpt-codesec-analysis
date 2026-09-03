@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:26: style: Condition 'test7' is always false [knownConditionTrueFalse]
+    printf("%s -> %s\n", test7 ? test7 : "(null)", result7 ? result7 : "(null)");
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:43:25: note: Assignment 'test7=NULL', assigned value is 0
+    const char *test7 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:26: note: Condition 'test7' is always false
+    printf("%s -> %s\n", test7 ? test7 : "(null)", result7 ? result7 : "(null)");
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:52: style: Condition 'result7' is always false [knownConditionTrueFalse]
+    printf("%s -> %s\n", test7 ? test7 : "(null)", result7 ? result7 : "(null)");
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:51:36: note: Calling function 'abbreviate_road' returns 0
+    char *result7 = abbreviate_road(test7);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:51:36: note: Assignment 'result7=abbreviate_road(test7)', assigned value is 0
+    char *result7 = abbreviate_road(test7);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-812.c:59:52: note: Condition 'result7' is always false
+    printf("%s -> %s\n", test7 ? test7 : "(null)", result7 ? result7 : "(null)");
+                                                   ^

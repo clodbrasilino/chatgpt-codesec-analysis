@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    int count;
+} Dictionary;
+
+Dictionary *createDictionary(int capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->items = (KeyValuePair *)calloc(capacity, sizeof(KeyValuePair));
+    dict->count = 0;
+    return dict;
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; i++) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+int addKeyValuePair(Dictionary *dict, const char *key, const char *value) {
+    if (dict->count >= dict->items) {
+        return -1;
+    }
+    dict->items[dict->count].key = strdup(key);
+    dict->items[dict->count].value = strdup(value);
+    dict->count++;
+    return 0;
+}
+
+Dictionary *tupleToDictionary(const char *tuple[], int length) {
+    if (length % 2 != 0) {
+        return NULL;
+    }
+
+    Dictionary *dict = createDictionary(length / 2);
+    for (int i = 0; i < length; i += 2) {
+        addKeyValuePair(dict, tuple[i], tuple[i + 1]);
+    }
+    return dict;
+}
+
+int main() {
+    const char *tuple[] = {"key1", "value1", "key2", "value2", "key3", "value3"};
+    int length = 6;
+
+    Dictionary *dictionary = tupleToDictionary(tuple, length);
+
+    if (dictionary == NULL) {
+        printf("Failed to create dictionary\n");
+        return 1;
+    }
+
+    for (int i = 0; i < dictionary->count; i++) {
+        printf("%s: %s\n", dictionary->items[i].key, dictionary->items[i].value);
+    }
+
+    freeDictionary(dictionary);
+    return 0;
+}
+```

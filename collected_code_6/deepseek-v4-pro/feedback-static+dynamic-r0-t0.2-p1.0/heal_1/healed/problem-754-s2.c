@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_common_indices(const int *arr1, int len1, const int *arr2, int len2, const int *arr3, int len3, int **result) {
+    if (arr1 == NULL || arr2 == NULL || arr3 == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (len1 <= 0 || len2 <= 0 || len3 <= 0) {
+        return -1;
+    }
+    
+    int min_len = len1;
+    if (len2 < min_len) min_len = len2;
+    if (len3 < min_len) min_len = len3;
+    
+    int *common = (int *)malloc(min_len * sizeof(int));
+    if (common == NULL) {
+        return -1;
+    }
+    
+    int count = 0;
+    for (int i = 0; i < min_len; i++) {
+        if (arr1[i] == arr2[i] && arr2[i] == arr3[i]) {
+            common[count] = i;
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        free(common);
+        *result = NULL;
+        return 0;
+    }
+    
+    int *resized = (int *)realloc(common, count * sizeof(int));
+    if (resized == NULL) {
+        free(common);
+        return -1;
+    }
+    
+    *result = resized;
+    return count;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5, 6, 7, 8};
+    int arr2[] = {1, 2, 3, 9, 5, 6, 7, 10};
+    int arr3[] = {1, 2, 3, 11, 5, 12, 7, 13};
+    
+    int len1 = sizeof(arr1) / sizeof(arr1[0]);
+    int len2 = sizeof(arr2) / sizeof(arr2[0]);
+    int len3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    int *result = NULL;
+    int count = find_common_indices(arr1, len1, arr2, len2, arr3, len3, &result);
+    
+    if (count < 0) {
+        printf("Error occurred\n");
+        return 1;
+    }
+    
+    if (count == 0) {
+        printf("No common indices found\n");
+        return 0;
+    }
+    
+    printf("Common indices: ");
+    for (int i = 0; i < count; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *str;
+    size_t len;
+} StringTuple;
+
+StringTuple* string_to_tuple(const char *input) {
+    if (input == NULL) return NULL;
+    
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
+    if (tuple == NULL) return NULL;
+
+    tuple->len = strlen(input);
+    tuple->str = (char *)malloc((tuple->len + 1) * sizeof(char));
+    if (tuple->str == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    strcpy(tuple->str, input);
+    return tuple;
+}
+
+void free_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->str);
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *inputs[] = {"python 3.0", "15.10", "item1"};
+    int num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (int i = 0; i < num_inputs; i++) {
+        StringTuple *tuple = string_to_tuple(inputs[i]);
+        if (tuple != NULL) {
+            printf("Converted to tuple: ");
+            for (size_t j = 0; j < tuple->len; j++) {
+                putchar('\'');
+                putchar(tuple->str[j]);
+                putchar('\'');
+                /* Possible weaknesses found:
+                 *  incompatible pointer to integer conversion passing 'char[3]' to parameter of type 'int' [-Wint-conversion]
+                 *  passing argument 1 of 'putchar' makes integer from pointer without a cast [-Wint-conversion]
+                 */
+                if (j < tuple->len - 1) putchar(", ");
+            }
+            putchar('\n');
+            free_tuple(tuple);
+        } else {
+            printf("Failed to convert to tuple for input: %s\n", inputs[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int price;
+    int index;
+} Item;
+
+int compare(const void *a, const void *b) {
+    return ((Item *)a)->price - ((Item *)b)->price;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'prices' can be declared as pointer to const [constParameterPointer]
+ */
+void find_n_expensive_items(int *prices, int n, int size, int *result) {
+    Item *items = (Item *)malloc(size * sizeof(Item));
+    if (items == NULL) {
+        return;
+    }
+    for (int i = 0; i < size; ++i) {
+        items[i].price = prices[i];
+        items[i].index = i;
+    }
+    qsort(items, size, sizeof(Item), compare);
+    for (int i = 0; i < n; ++i) {
+        result[i] = items[size - 1 - i].price;
+    }
+    free(items);
+}
+
+int main() {
+    int prices[] = {100, 200, 300, 400, 500, 600, 700, 800, 900, 1000};
+    int n = 3;
+    int size = sizeof(prices) / sizeof(prices[0]);
+    int *result = (int *)malloc(n * sizeof(int));
+    if (result == NULL) {
+        return 1;
+    }
+    find_n_expensive_items(prices, n, size, result);
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", result[i]);
+    }
+    free(result);
+    return 0;
+}

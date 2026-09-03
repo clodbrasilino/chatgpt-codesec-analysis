@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *first_repeated_word(char *str)
+{
+    char **seen = NULL;
+    size_t count = 0;
+    char *p = NULL;
+    char *start = NULL;
+    char **tmp = NULL;
+    size_t i;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    p = str;
+    while (*p != '\0') {
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            ++p;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        start = p;
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            ++p;
+        }
+        if (*p != '\0') {
+            *p = '\0';
+            ++p;
+        }
+
+        for (i = 0; i < count; ++i) {
+            if (strcmp(seen[i], start) == 0) {
+                free(seen);
+                return start;
+            }
+        }
+
+        tmp = realloc(seen, (count + 1) * sizeof(*seen));
+        if (tmp == NULL) {
+            free(seen);
+            return NULL;
+        }
+        seen = tmp;
+        seen[count] = start;
+        ++count;
+    }
+
+    free(seen);
+    return NULL;
+}
+
+int main(void)
+{
+    char text[] = "apple banana apple orange banana";
+    char *word = first_repeated_word(text);
+
+    if (word != NULL) {
+        printf("%s\n", word);
+    }
+
+    return 0;
+}

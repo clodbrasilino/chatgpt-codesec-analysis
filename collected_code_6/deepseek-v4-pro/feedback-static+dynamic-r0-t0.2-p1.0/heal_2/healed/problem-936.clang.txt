@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-936.c:67:65: error: incompatible function pointer types passing 'int (const void *, const void *, void *)' to parameter of type 'int (* _Nonnull)(void *, const void *, const void *)' [-Wincompatible-function-pointer-types]
+   67 |     qsort_r(list->tuples, list->count, sizeof(Tuple), &context, compare_tuples_bsd);
+      |                                                                 ^~~~~~~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdlib.h:372:22: note: passing argument to parameter '__compar' here
+  372 |             int (* _Nonnull __compar)(void *, const void *, const void *));
+      |                             ^
+1 error generated.

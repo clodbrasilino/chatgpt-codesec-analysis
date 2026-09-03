@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:35:13: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+            result = realloc(result, (i + 2) * sizeof(char *));
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:60:9: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+        result = realloc(result, (i + 2) * sizeof(char *));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:83:5: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+    result = realloc(result, (i + 1) * sizeof(char *));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:38:26: warning: Either the condition '!result' is redundant or there is possible null pointer dereference: result. [nullPointerRedundantCheck]
+                    free(result[j]);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:36:17: note: Assuming that condition '!result' is not redundant
+            if (!result) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:38:26: note: Null pointer dereference
+                    free(result[j]);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:63:22: warning: Either the condition '!result' is redundant or there is possible null pointer dereference: result. [nullPointerRedundantCheck]
+                free(result[j]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:61:13: note: Assuming that condition '!result' is not redundant
+        if (!result) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:63:22: note: Null pointer dereference
+                free(result[j]);
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:86:18: warning: Either the condition '!result' is redundant or there is possible null pointer dereference: result. [nullPointerRedundantCheck]
+            free(result[j]);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:84:9: note: Assuming that condition '!result' is not redundant
+    if (!result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-73-s3.c:86:18: note: Null pointer dereference
+            free(result[j]);
+                 ^

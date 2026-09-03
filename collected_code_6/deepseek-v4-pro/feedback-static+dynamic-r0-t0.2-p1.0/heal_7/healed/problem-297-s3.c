@@ -1,0 +1,198 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct NestedList {
+    int is_integer;
+    int value;
+    struct NestedList **list;
+    int list_size;
+} NestedList;
+
+typedef struct {
+    int *data;
+    int size;
+    int capacity;
+} FlatList;
+
+void init_flat_list(FlatList *flat) {
+    flat->data = NULL;
+    flat->size = 0;
+    flat->capacity = 0;
+}
+
+int append_to_flat_list(FlatList *flat, int value) {
+    if (flat->size >= flat->capacity) {
+        int new_capacity = flat->capacity == 0 ? 8 : flat->capacity * 2;
+        int *new_data = (int *)realloc(flat->data, new_capacity * sizeof(int));
+        if (new_data == NULL) {
+            return 0;
+        }
+        flat->data = new_data;
+        flat->capacity = new_capacity;
+    }
+    flat->data[flat->size++] = value;
+    return 1;
+}
+
+void free_flat_list(FlatList *flat) {
+    free(flat->data);
+    flat->data = NULL;
+    flat->size = 0;
+    flat->capacity = 0;
+}
+
+NestedList *create_integer(int value) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = 1;
+    node->value = value;
+    node->list = NULL;
+    node->list_size = 0;
+    return node;
+}
+
+NestedList *create_list(NestedList **items, int size) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = 0;
+    node->value = 0;
+    node->list = items;
+    node->list_size = size;
+    return node;
+}
+
+void free_nested_list(NestedList *node) {
+    if (node == NULL) {
+        return;
+    }
+    if (!node->is_integer && node->list != NULL) {
+        for (int i = 0; i < node->list_size; i++) {
+            free_nested_list(node->list[i]);
+        }
+        free(node->list);
+        node->list = NULL;
+    }
+    free(node);
+}
+
+int flatten_recursive(NestedList *node, FlatList *flat) {
+    if (node == NULL) {
+        return 0;
+    }
+    if (node->is_integer) {
+        return append_to_flat_list(flat, node->value);
+    }
+    for (int i = 0; i < node->list_size; i++) {
+        if (!flatten_recursive(node->list[i], flat)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int *flatten(NestedList *nested, int *result_size) {
+    if (nested == NULL || result_size == NULL) {
+        return NULL;
+    }
+    FlatList flat;
+    init_flat_list(&flat);
+    if (!flatten_recursive(nested, &flat)) {
+        free_flat_list(&flat);
+        return NULL;
+    }
+    *result_size = flat.size;
+    return flat.data;
+}
+
+int main(void) {
+    NestedList *n1 = create_integer(1);
+    NestedList *n2 = create_integer(2);
+    NestedList *n3 = create_integer(3);
+    NestedList *n4 = create_integer(4);
+    NestedList *n5 = create_integer(5);
+    NestedList *n6 = create_integer(6);
+
+    if (!n1 || !n2 || !n3 || !n4 || !n5 || !n6) {
+        free_nested_list(n1);
+        free_nested_list(n2);
+        free_nested_list(n3);
+        free_nested_list(n4);
+        free_nested_list(n5);
+        free_nested_list(n6);
+        return 1;
+    }
+
+    NestedList *inner1_items[] = {n2, n3};
+    NestedList *inner1 = create_list(inner1_items, 2);
+    if (!inner1) {
+        free_nested_list(n1);
+        free_nested_list(n2);
+        free_nested_list(n3);
+        free_nested_list(n4);
+        free_nested_list(n5);
+        free_nested_list(n6);
+        return 1;
+    }
+
+    NestedList *inner2_items[] = {n4};
+    NestedList *inner2 = create_list(inner2_items, 1);
+    if (!inner2) {
+        free_nested_list(n1);
+        free_nested_list(n2);
+        free_nested_list(n3);
+        free_nested_list(n4);
+        free_nested_list(n5);
+        free_nested_list(n6);
+        free_nested_list(inner1);
+        return 1;
+    }
+
+    NestedList *inner3_items[] = {n5, n6};
+    NestedList *inner3 = create_list(inner3_items, 2);
+    if (!inner3) {
+        free_nested_list(n1);
+        free_nested_list(n2);
+        free_nested_list(n3);
+        free_nested_list(n4);
+        free_nested_list(n5);
+        free_nested_list(n6);
+        free_nested_list(inner1);
+        free_nested_list(inner2);
+        return 1;
+    }
+
+    NestedList *root_items[] = {n1, inner1, inner2, inner3};
+    NestedList *root = create_list(root_items, 4);
+    if (!root) {
+        free_nested_list(n1);
+        free_nested_list(n2);
+        free_nested_list(n3);
+        free_nested_list(n4);
+        free_nested_list(n5);
+        free_nested_list(n6);
+        free_nested_list(inner1);
+        free_nested_list(inner2);
+        free_nested_list(inner3);
+        return 1;
+    }
+
+    int result_size = 0;
+    int *result = flatten(root, &result_size);
+    if (!result) {
+        free_nested_list(root);
+        return 1;
+    }
+
+    for (int i = 0; i < result_size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    free_nested_list(root);
+    return 0;
+}

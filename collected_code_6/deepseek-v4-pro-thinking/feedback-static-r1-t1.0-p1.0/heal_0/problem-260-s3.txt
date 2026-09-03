@@ -1,0 +1,91 @@
+```c
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+static bool is_prime(unsigned long long n)
+{
+    if (n < 2ULL) {
+        return false;
+    }
+    if ((n % 2ULL) == 0ULL) {
+        return n == 2ULL;
+    }
+    if ((n % 3ULL) == 0ULL) {
+        return n == 3ULL;
+    }
+
+    for (unsigned long long i = 5ULL; i <= n / i; i += 6ULL) {
+        if ((n % i) == 0ULL || (n % (i + 2ULL)) == 0ULL) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+unsigned long long nth_nsw_prime(unsigned int n)
+{
+    unsigned long long a = 1ULL;
+    unsigned long long b = 1ULL;
+    unsigned int count = 0U;
+
+    if (n == 0U) {
+        return 0ULL;
+    }
+
+    for (;;) {
+        unsigned long long next;
+
+        if (b > (ULLONG_MAX - a) / 2ULL) {
+            return 0ULL;
+        }
+
+        next = (2ULL * b) + a;
+
+        if (is_prime(next)) {
+            ++count;
+            if (count == n) {
+                return next;
+            }
+        }
+
+        a = b;
+        b = next;
+    }
+}
+
+int main(int argc, char **argv)
+{
+    unsigned long value;
+    unsigned long long result;
+    char *end = NULL;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtoul(argv[1], &end, 10);
+
+    if ((errno == ERANGE) || (end == argv[1]) || (*end != '\0') ||
+        (value == 0UL) || (value > (unsigned long)UINT_MAX)) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = nth_nsw_prime((unsigned int)value);
+
+    if (result == 0ULL) {
+        fprintf(stderr, "Error: result out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

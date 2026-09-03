@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <float.h>
+
+typedef struct {
+    char *str;
+} ListElement;
+
+void convert_to_float(ListElement *list, size_t len) {
+    for (size_t i = 0; i < len; ++i) {
+        char *endptr;
+        float value = strtof(list[i].str, &endptr);
+        if (endptr != list[i].str && *endptr == '\0') {
+            free(list[i].str);
+            list[i].str = malloc(32 * sizeof(char));
+            if (list[i].str == NULL) {
+                perror("malloc");
+                exit(EXIT_FAILURE);
+            }
+            snprintf(list[i].str, 32, "%f", value);
+        }
+    }
+}
+
+int main() {
+    ListElement list[] = {{"123"}, {"45.67"}, {"abc"}, {"-89.10"}};
+    size_t len = sizeof(list) / sizeof(list[0]);
+
+    convert_to_float(list, len);
+
+    for (size_t i = 0; i < len; ++i) {
+        printf("%s\n", list[i].str);
+        free(list[i].str);
+    }
+
+    return 0;
+}
+```

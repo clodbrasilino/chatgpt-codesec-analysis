@@ -1,0 +1,43 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:27:22: error: no member named 'next' in 'struct List'
+   27 |         insert_list->next = *lists;
+      |         ~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:31:25: error: no member named 'next' in 'struct List'
+   31 |         while (current->next && !list_cmp(insert_list->head, current->next->head)) {
+      |                ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:31:71: error: no member named 'next' in 'struct List'
+   31 |         while (current->next && !list_cmp(insert_list->head, current->next->head)) {
+      |                                                              ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:32:32: error: no member named 'next' in 'struct List'
+   32 |             current = current->next;
+      |                       ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:35:26: error: no member named 'next' in 'struct List'
+   35 |             insert_list->next = current->next;
+      |             ~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:35:42: error: no member named 'next' in 'struct List'
+   35 |             insert_list->next = current->next;
+      |                                 ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:36:22: error: no member named 'next' in 'struct List'
+   36 |             current->next = insert_list;
+      |             ~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:49:24: error: no member named 'next' in 'struct List'
+   49 |         lists = lists->next;
+      |                 ~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:74:11: error: no member named 'next' in 'struct List'
+   74 |     list->next = NULL;
+      |     ~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:103:24: error: no member named 'next' in 'struct List'
+  103 |         lists = lists->next;
+      |                 ~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:132:9: error: no member named 'next' in 'struct List'
+  132 |     l1->next = l2;
+      |     ~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:133:9: error: no member named 'next' in 'struct List'
+  133 |     l2->next = l3;
+      |     ~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:134:9: error: no member named 'next' in 'struct List'
+  134 |     l3->next = l4;
+      |     ~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-712-s2.c:140:26: error: no member named 'next' in 'struct List'
+  140 |         result = result->next;
+      |                  ~~~~~~  ^
+14 errors generated.

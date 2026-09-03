@@ -1,0 +1,159 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Dict Dict;
+typedef struct Entry Entry;
+typedef struct Value Value;
+
+typedef enum ValueType {
+    VALUE_INT,
+    VALUE_DICT
+} ValueType;
+
+struct Value {
+    ValueType type;
+    union {
+        int int_value;
+        Dict *dict_value;
+    } data;
+};
+
+struct Entry {
+    char *key;
+    Value value;
+};
+
+struct Dict {
+    Entry *entries;
+    size_t count;
+    size_t capacity;
+};
+
+static int dict_reserve(Dict *dict, size_t needed) {
+    if (needed <= dict->capacity) {
+        return 0;
+    }
+    size_t new_capacity = dict->capacity == 0 ? 4 : dict->capacity * 2;
+    while (new_capacity < needed) {
+        new_capacity *= 2;
+    }
+    Entry *new_entries = realloc(dict->entries, new_capacity * sizeof(*new_entries));
+    if (!new_entries) {
+        return -1;
+    }
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    return 0;
+}
+
+static Dict *dict_create(void) {
+    Dict *dict = malloc(sizeof(*dict));
+    if (!dict) {
+        return NULL;
+    }
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+    return dict;
+}
+
+static void dict_destroy(Dict *dict) {
+    if (!dict) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+        if (dict->entries[i].value.type == VALUE_DICT) {
+            dict_destroy(dict->entries[i].value.data.dict_value);
+        }
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+static int dict_add_int(Dict *dict, const char *key, int value) {
+    if (!dict || !key) {
+        return -1;
+    }
+    if (dict_reserve(dict, dict->count + 1) != 0) {
+        return -1;
+    }
+    char *key_copy = malloc(strlen(key) + 1);
+    if (!key_copy) {
+        return -1;
+    }
+    strcpy(key_copy, key);
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value.type = VALUE_INT;
+    dict->entries[dict->count].value.data.int_value = value;
+    ++dict->count;
+    return 0;
+}
+
+static int dict_add_dict(Dict *dict, const char *key, Dict *value) {
+    if (!dict || !key || !value) {
+        return -1;
+    }
+    if (dict_reserve(dict, dict->count + 1) != 0) {
+        return -1;
+    }
+    char *key_copy = malloc(strlen(key) + 1);
+    if (!key_copy) {
+        return -1;
+    }
+    strcpy(key_copy, key);
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value.type = VALUE_DICT;
+    dict->entries[dict->count].value.data.dict_value = value;
+    ++dict->count;
+    return 0;
+}
+
+static int dict_depth(const Dict *dict) {
+    if (!dict) {
+        return 0;
+    }
+    int max_child_depth = 0;
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (dict->entries[i].value.type == VALUE_DICT) {
+            int child_depth = dict_depth(dict->entries[i].value.data.dict_value);
+            if (child_depth > max_child_depth) {
+                max_child_depth = child_depth;
+            }
+        }
+    }
+    return max_child_depth + 1;
+}
+
+int main(void) {
+    Dict *root = dict_create();
+    if (!root) {
+        return 1;
+    }
+    Dict *child = dict_create();
+    if (!child) {
+        dict_destroy(root);
+        return 1;
+    }
+    if (dict_add_int(child, "x", 10) != 0) {
+        dict_destroy(child);
+        dict_destroy(root);
+        return 1;
+    }
+    if (dict_add_dict(root, "a", child) != 0) {
+        dict_destroy(child);
+        dict_destroy(root);
+        return 1;
+    }
+    if (dict_add_int(root, "b", 20) != 0) {
+        dict_destroy(root);
+        return 1;
+    }
+    printf("%d\n", dict_depth(root));
+    dict_destroy(root);
+    return 0;
+}
+```

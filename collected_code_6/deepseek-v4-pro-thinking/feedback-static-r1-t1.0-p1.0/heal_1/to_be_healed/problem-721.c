@@ -1,0 +1,176 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double maxAveragePath(int **matrix, int n, int **pathRows, int **pathCols, int *pathLen) {
+    if (matrix == NULL || n <= 0 || pathRows == NULL || pathCols == NULL || pathLen == NULL) {
+        return -1.0;
+    }
+
+    *pathRows = NULL;
+    *pathCols = NULL;
+    *pathLen = 0;
+
+    long long **dp = malloc((size_t)n * sizeof(long long *));
+    if (dp == NULL) {
+        return -1.0;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        dp[i] = malloc((size_t)n * sizeof(long long));
+        if (dp[i] == NULL) {
+            for (int k = 0; k < i; ++k) {
+                free(dp[k]);
+            }
+            free(dp);
+            return -1.0;
+        }
+    }
+
+    dp[0][0] = matrix[0][0];
+
+    for (int j = 1; j < n; ++j) {
+        dp[0][j] = dp[0][j - 1] + matrix[0][j];
+    }
+
+    for (int i = 1; i < n; ++i) {
+        dp[i][0] = dp[i - 1][0] + matrix[i][0];
+    }
+
+    for (int i = 1; i < n; ++i) {
+        for (int j = 1; j < n; ++j) {
+            long long fromTop = dp[i - 1][j];
+            long long fromLeft = dp[i][j - 1];
+            dp[i][j] = matrix[i][j] + (fromTop > fromLeft ? fromTop : fromLeft);
+        }
+    }
+
+    int len = 2 * n - 1;
+    *pathRows = malloc((size_t)len * sizeof(int));
+    *pathCols = malloc((size_t)len * sizeof(int));
+
+    if (*pathRows == NULL || *pathCols == NULL) {
+        free(*pathRows);
+        free(*pathCols);
+        *pathRows = NULL;
+        *pathCols = NULL;
+        *pathLen = 0;
+
+        for (int i = 0; i < n; ++i) {
+            free(dp[i]);
+        }
+        free(dp);
+        return -1.0;
+    }
+
+    /* Possible weaknesses found:
+     *  Shadowed declaration
+     *  Same expression used in consecutive assignments of 'i' and 'j'.
+     *  Same expression used in consecutive assignments of 'i' and 'j'. [duplicateAssignExpression]
+     */
+    int i = n - 1;
+    /* Possible weaknesses found:
+     *  Same expression used in consecutive assignments of 'i' and 'j'.
+     */
+    int j = n - 1;
+
+    for (int k = len - 1; k >= 0; --k) {
+        (*pathRows)[k] = i;
+        (*pathCols)[k] = j;
+
+        if (i > 0 && j > 0) {
+            if (dp[i - 1][j] > dp[i][j - 1]) {
+                --i;
+            } else {
+                --j;
+            }
+        } else if (i > 0) {
+            --i;
+        } else if (j > 0) {
+            --j;
+        }
+    }
+
+    long long maxSum = dp[n - 1][n - 1];
+
+    /* Possible weaknesses found:
+     *  Local variable 'i' shadows outer variable [shadowVariable]
+     *  Shadow variable
+     */
+    for (int i = 0; i < n; ++i) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    *pathLen = len;
+    return (double)maxSum / len;
+}
+
+int main(void) {
+    int n;
+
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid matrix size\n");
+        return 1;
+    }
+
+    int **matrix = malloc((size_t)n * sizeof(int *));
+    if (matrix == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = malloc((size_t)n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int k = 0; k < i; ++k) {
+                free(matrix[k]);
+            }
+            free(matrix);
+            fprintf(stderr, "Memory allocation failed\n");
+            return 1;
+        }
+
+        for (int j = 0; j < n; ++j) {
+            if (scanf("%d", &matrix[i][j]) != 1) {
+                for (int k = 0; k <= i; ++k) {
+                    free(matrix[k]);
+                }
+                free(matrix);
+                fprintf(stderr, "Invalid matrix element\n");
+                return 1;
+            }
+        }
+    }
+
+    int *pathRows = NULL;
+    int *pathCols = NULL;
+    int pathLen = 0;
+
+    double average = maxAveragePath(matrix, n, &pathRows, &pathCols, &pathLen);
+
+    if (pathLen == 0 || pathRows == NULL || pathCols == NULL) {
+        for (int i = 0; i < n; ++i) {
+            free(matrix[i]);
+        }
+        free(matrix);
+        fprintf(stderr, "Path computation failed\n");
+        return 1;
+    }
+
+    printf("Maximum average: %.6f\n", average);
+    printf("Path:\n");
+
+    for (int i = 0; i < pathLen; ++i) {
+        printf("(%d, %d)\n", pathRows[i], pathCols[i]);
+    }
+
+    free(pathRows);
+    free(pathCols);
+
+    for (int i = 0; i < n; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

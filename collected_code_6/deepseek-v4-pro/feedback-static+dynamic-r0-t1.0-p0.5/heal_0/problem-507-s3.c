@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct WordNode {
+    char *word;
+    struct WordNode *next;
+} WordNode;
+
+typedef struct {
+    WordNode *head;
+} WordList;
+
+void wordlist_init(WordList *list) {
+    if (list == NULL) return;
+    list->head = NULL;
+}
+
+int wordlist_add(WordList *list, const char *word) {
+    if (list == NULL || word == NULL) return -1;
+    
+    WordNode *new_node = (WordNode *)malloc(sizeof(WordNode));
+    if (new_node == NULL) return -1;
+    
+    new_node->word = (char *)malloc(strlen(word) + 1);
+    if (new_node->word == NULL) {
+        free(new_node);
+        return -1;
+    }
+    
+    strcpy(new_node->word, word);
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        WordNode *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    
+    return 0;
+}
+
+void wordlist_remove(WordList *list, const char *word) {
+    if (list == NULL || word == NULL || list->head == NULL) return;
+    
+    WordNode *current = list->head;
+    WordNode *previous = NULL;
+    
+    while (current != NULL) {
+        if (strcmp(current->word, word) == 0) {
+            if (previous == NULL) {
+                list->head = current->next;
+            } else {
+                previous->next = current->next;
+            }
+            free(current->word);
+            free(current);
+            return;
+        }
+        previous = current;
+        current = current->next;
+    }
+}
+
+void wordlist_remove_all(WordList *list, const char *word) {
+    if (list == NULL || word == NULL || list->head == NULL) return;
+    
+    WordNode *current = list->head;
+    WordNode *previous = NULL;
+    
+    while (current != NULL) {
+        if (strcmp(current->word, word) == 0) {
+            WordNode *to_delete = current;
+            if (previous == NULL) {
+                list->head = current->next;
+                current = list->head;
+            } else {
+                previous->next = current->next;
+                current = current->next;
+            }
+            free(to_delete->word);
+            free(to_delete);
+        } else {
+            previous = current;
+            current = current->next;
+        }
+    }
+}
+
+void wordlist_print(const WordList *list) {
+    if (list == NULL) return;
+    
+    WordNode *current = list->head;
+    while (current != NULL) {
+        printf("%s ", current->word);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void wordlist_free(WordList *list) {
+    if (list == NULL) return;
+    
+    WordNode *current = list->head;
+    while (current != NULL) {
+        WordNode *next = current->next;
+        free(current->word);
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+}
+
+int main(void) {
+    WordList list;
+    wordlist_init(&list);
+    
+    wordlist_add(&list, "apple");
+    wordlist_add(&list, "banana");
+    wordlist_add(&list, "apple");
+    wordlist_add(&list, "cherry");
+    wordlist_add(&list, "apple");
+    wordlist_add(&list, "date");
+    
+    printf("Original list: ");
+    wordlist_print(&list);
+    
+    wordlist_remove(&list, "banana");
+    printf("After removing 'banana': ");
+    wordlist_print(&list);
+    
+    wordlist_remove_all(&list, "apple");
+    printf("After removing all 'apple': ");
+    wordlist_print(&list);
+    
+    wordlist_free(&list);
+    
+    return 0;
+}

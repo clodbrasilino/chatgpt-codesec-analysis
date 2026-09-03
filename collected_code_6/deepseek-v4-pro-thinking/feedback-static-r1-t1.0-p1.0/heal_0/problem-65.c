@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+int list_sum(const Node *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    return head->value + list_sum(head->next);
+}
+
+int main(void) {
+    Node *head = malloc(sizeof(*head));
+    if (head == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    Node *second = malloc(sizeof(*second));
+    if (second == NULL) {
+        free(head);
+        return EXIT_FAILURE;
+    }
+
+    Node *third = malloc(sizeof(*third));
+    if (third == NULL) {
+        free(head);
+        free(second);
+        return EXIT_FAILURE;
+    }
+
+    head->value = 1;
+    head->next = second;
+    second->value = 2;
+    second->next = third;
+    third->value = 3;
+    third->next = NULL;
+
+    printf("%d\n", list_sum(head));
+
+    free(head);
+    free(second);
+    free(third);
+    return EXIT_SUCCESS;
+}

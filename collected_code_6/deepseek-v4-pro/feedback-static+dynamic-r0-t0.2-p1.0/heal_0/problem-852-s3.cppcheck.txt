@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852-s3.c:6:10: warning: Either the condition 'new_size==NULL' is redundant or there is possible null pointer dereference: new_size. [nullPointerRedundantCheck]
+        *new_size = 0;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852-s3.c:5:47: note: Assuming that condition 'new_size==NULL' is not redundant
+    if (list == NULL || size <= 0 || new_size == NULL) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852-s3.c:6:10: note: Null pointer dereference
+        *new_size = 0;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-852-s3.c:4:27: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+int *remove_negative(int *list, int size, int *new_size) {
+                          ^

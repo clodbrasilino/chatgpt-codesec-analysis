@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int tuple_compare(const void *a, const void *b) {
+    const Tuple *tupleA = (const Tuple *)a;
+    const Tuple *tupleB = (const Tuple *)b;
+    if (tupleA->a != tupleB->a) return tupleA->a - tupleB->a;
+    return tupleA->b - tupleB->b;
+}
+
+void count_unique_tuples(Tuple *tuples, int n, int *unique_count, int *frequencies) {
+    qsort(tuples, n, sizeof(Tuple), tuple_compare);
+    int count = 1;
+    for (int i = 1; i < n; i++) {
+        if (tuples[i].a == tuples[i-1].a && tuples[i].b == tuples[i-1].b) {
+            count++;
+        } else {
+            frequencies[*unique_count] = count;
+            (*unique_count)++;
+            count = 1;
+        }
+    }
+    frequencies[*unique_count] = count;
+    (*unique_count)++;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {3, 4}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int unique_count = 0;
+    int *frequencies = (int *)malloc(n * sizeof(int));
+    if (frequencies == NULL) {
+        return 1;
+    }
+    count_unique_tuples(tuples, n, &unique_count, frequencies);
+    for (int i = 0; i < unique_count; i++) {
+        printf("Frequency of tuple %d: %d\n", i + 1, frequencies[i]);
+    }
+    free(frequencies);
+    return 0;
+}

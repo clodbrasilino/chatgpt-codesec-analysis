@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *minimize_string(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        char *empty = (char *)malloc(1);
+        if (empty != NULL) {
+            empty[0] = '\0';
+        }
+        return empty;
+    }
+
+    int freq[256] = {0};
+    for (size_t i = 0; i < len; i++) {
+        freq[(unsigned char)str[i]]++;
+    }
+
+    char char_to_remove = str[0];
+    int max_freq = freq[(unsigned char)str[0]];
+    for (int i = 1; i < 256; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            char_to_remove = (char)i;
+        }
+    }
+
+    size_t new_len = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != char_to_remove) {
+            new_len++;
+        }
+    }
+
+    char *result = (char *)malloc(new_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] != char_to_remove) {
+            result[j++] = str[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "aabbbcc";
+    const char *test2 = "aaaa";
+    const char *test3 = "abc";
+    const char *test4 = "";
+    const char *test5 = NULL;
+
+    char *result1 = minimize_string(test1);
+    char *result2 = minimize_string(test2);
+    char *result3 = minimize_string(test3);
+    char *result4 = minimize_string(test4);
+    /* Possible weaknesses found:
+     *  Calling function 'minimize_string' returns 0
+     *  Assignment 'result5=minimize_string(test5)', assigned value is 0
+     */
+    char *result5 = minimize_string(test5);
+
+    printf("Original: %s, Minimized: %s\n", test1, result1 ? result1 : "NULL");
+    printf("Original: %s, Minimized: %s\n", test2, result2 ? result2 : "NULL");
+    printf("Original: %s, Minimized: %s\n", test3, result3 ? result3 : "NULL");
+    printf("Original: \"%s\", Minimized: \"%s\"\n", test4, result4 ? result4 : "NULL");
+    /* Possible weaknesses found:
+     *  Condition 'result5' is always false
+     *  Condition 'result5' is always false [knownConditionTrueFalse]
+     */
+    printf("Original: NULL, Minimized: %s\n", result5 ? result5 : "NULL");
+
+    free(result1);
+    free(result2);
+    free(result3);
+    free(result4);
+    free(result5);
+
+    return 0;
+}

@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    int size;
+} LinkedList;
+
+LinkedList *create_list(void) {
+    LinkedList *list = (LinkedList *)malloc(sizeof(LinkedList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->size = 0;
+    return list;
+}
+
+int append(LinkedList *list, int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->size++;
+    return 0;
+}
+
+void free_list(LinkedList *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int count_sublists_with_element(LinkedList *list, int element) {
+    if (list == NULL || list->head == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    int n = list->size;
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return -1;
+    }
+    
+    Node *current = list->head;
+    for (int i = 0; i < n; i++) {
+        arr[i] = current->data;
+        current = current->next;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        for (int j = i; j < n; j++) {
+            for (int k = i; k <= j; k++) {
+                if (arr[k] == element) {
+                    count++;
+                    break;
+                }
+            }
+        }
+    }
+    
+    free(arr);
+    return count;
+}
+
+int main(void) {
+    LinkedList *list = create_list();
+    if (list == NULL) {
+        return 1;
+    }
+    
+    int values[] = {1, 2, 3, 2, 4, 2};
+    int num_values = sizeof(values) / sizeof(values[0]);
+    
+    for (int i = 0; i < num_values; i++) {
+        if (append(list, values[i]) != 0) {
+            free_list(list);
+            return 1;
+        }
+    }
+    
+    int element = 2;
+    int result = count_sublists_with_element(list, element);
+    
+    if (result >= 0) {
+        printf("Number of sublists containing %d: %d\n", element, result);
+    }
+    
+    free_list(list);
+    return 0;
+}

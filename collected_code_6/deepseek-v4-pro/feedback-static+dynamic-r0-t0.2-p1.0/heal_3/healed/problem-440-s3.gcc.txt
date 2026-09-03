@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-440-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-440-s3.c:231:5: error: expected expression at end of input
+  231 |     if (fgets(text,
+      |     ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-440-s3.c:231:9: error: too few arguments to function 'fgets'; expected 3, have 2
+  231 |     if (fgets(text,
+      |         ^~~~~
+In file included from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-440-s3.c:1:
+/usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:248:25: note: declared here
+  248 | char *_LIBC_CSTR        fgets(char * __restrict _LIBC_COUNT(__size), int __size, FILE *);
+      |                         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-440-s3.c:231:5: error: expected declaration or statement at end of input
+  231 |     if (fgets(text,
+      |     ^~

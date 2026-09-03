@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+Node* remove_even_numbers(Node *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node dummy;
+    dummy.next = head;
+    Node *prev = &dummy;
+    Node *curr = head;
+
+    while (curr != NULL) {
+        if (curr->data % 2 == 0) {
+            prev->next = curr->next;
+            free(curr);
+            curr = prev->next;
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    return dummy.next;
+}
+
+int main() {
+    Node *head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+    head->next->next->next = create_node(4);
+
+    head = remove_even_numbers(head);
+
+    for (Node *current = head; current != NULL; current = current->next) {
+        printf("%d ", current->data);
+    }
+
+    free_list(head);
+    return 0;
+}

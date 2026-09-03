@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:18:11: error: call to undeclared library function 'strdup' with type 'char *(const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   18 |     str = strdup(input);
+      |           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:18:11: note: include the header <string.h> or explicitly provide a declaration for 'strdup'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:36:31: error: call to undeclared library function 'strndup' with type 'char *(const char *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   36 |             parts[part_idx] = strndup(str, match[0].rm_so);
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-73-s2.c:36:31: note: include the header <string.h> or explicitly provide a declaration for 'strndup'
+2 errors generated.

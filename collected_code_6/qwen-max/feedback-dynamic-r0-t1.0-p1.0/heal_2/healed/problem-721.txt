@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+
+double max(double a, double b) {
+    return (a > b) ? a : b;
+}
+
+double findMaxAveragePath(int **grid, int n) {
+    double maxAvg = DBL_MIN;
+    for (int i = 0; i < n; i++) {
+        double sum = 0.0;
+        int count = 0;
+        for (int j = 0; j < n; j++) {
+            sum += grid[i][j];
+            count++;
+        }
+        if (count > 0) {
+            maxAvg = max(maxAvg, sum / count);
+        }
+    }
+
+    for (int j = 0; j < n; j++) {
+        double sum = 0.0;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            sum += grid[i][j];
+            count++;
+        }
+        if (count > 0) {
+            maxAvg = max(maxAvg, sum / count);
+        }
+    }
+
+    double diag1Sum = 0.0, diag2Sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        diag1Sum += grid[i][i];
+        diag2Sum += grid[i][n - 1 - i];
+    }
+    if (n > 0) {
+        maxAvg = max(maxAvg, diag1Sum / n);
+        maxAvg = max(maxAvg, diag2Sum / n);
+    }
+
+    return maxAvg;
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int **grid = malloc(n * sizeof(int *));
+    for (int i = 0; i < n; i++) {
+        grid[i] = malloc(n * sizeof(int));
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &grid[i][j]);
+        }
+    }
+
+    double result = findMaxAveragePath(grid, n);
+    printf("%.2f\n", result);
+
+    for (int i = 0; i < n; i++) {
+        free(grid[i]);
+    }
+    free(grid);
+
+    return 0;
+}
+```

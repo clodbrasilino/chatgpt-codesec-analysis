@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int item;
+    int count;
+} ItemCount;
+
+int compare(const void *a, const void *b) {
+    ItemCount *itemCountA = (ItemCount *)a;
+    ItemCount *itemCountB = (ItemCount *)b;
+    return (itemCountB->count - itemCountA->count);
+}
+
+int findMaxFrequencyItem(int *list, int length, int *maxItem) {
+    if (length <= 0) {
+        return -1;
+    }
+
+    ItemCount *itemCounts = (ItemCount *)malloc(length * sizeof(ItemCount));
+    if (itemCounts == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < length; ++i) {
+        int found = 0;
+        for (int j = 0; j < length && !found; ++j) {
+            if (itemCounts[j].item == list[i]) {
+                itemCounts[j].count++;
+                found = 1;
+            }
+        }
+        if (!found) {
+            int idx = 0;
+            while (idx < length && itemCounts[idx].item != 0) {
+                idx++;
+            }
+            /* Possible weaknesses found:
+             * ASan: heap-buffer-overflow
+             */
+            itemCounts[idx].item = list[i];
+            itemCounts[idx].count = 1;
+        }
+    }
+
+    qsort(itemCounts, length, sizeof(ItemCount), compare);
+
+    *maxItem = itemCounts[0].item;
+    int maxCount = itemCounts[0].count;
+
+    free(itemCounts);
+    return maxCount;
+}
+
+int main() {
+    int list[] = {1, 2, 3, 2, 4, 1, 2, 3, 4, 4};
+    int length = sizeof(list) / sizeof(list[0]);
+    int maxItem;
+    int maxCount = findMaxFrequencyItem(list, length, &maxItem);
+    if (maxCount != -1) {
+        printf("Item: %d, Frequency: %d\n", maxItem, maxCount);
+    } else {
+        printf("Failed to find the maximum frequency item.\n");
+    }
+    return 0;
+}

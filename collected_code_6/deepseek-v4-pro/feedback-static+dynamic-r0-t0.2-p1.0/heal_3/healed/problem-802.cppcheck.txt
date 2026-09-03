@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-802.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-802.c:23:50: style: Condition 'arr[mid]==arr[high]' is always true [knownConditionTrueFalse]
+            if (arr[low] == arr[mid] && arr[mid] == arr[high]) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-802.c:18:22: note: Assuming that condition 'arr[mid]>arr[high]' is not redundant
+        if (arr[mid] > arr[high]) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-802.c:20:29: note: Assuming that condition 'arr[mid]<arr[high]' is not redundant
+        } else if (arr[mid] < arr[high]) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-802.c:23:50: note: Condition 'arr[mid]==arr[high]' is always true
+            if (arr[low] == arr[mid] && arr[mid] == arr[high]) {
+                                                 ^

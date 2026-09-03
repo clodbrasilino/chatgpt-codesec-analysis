@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-936-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-936-s3.c:15:65: style: Parameter 'ctx' can be declared as pointer to const. However it seems that 'compare_by_order' is a callback function, if 'ctx' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+static int compare_by_order(const void *a, const void *b, void *ctx) {
+                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-936-s3.c:48:55: note: You might need to cast the function pointer here
+    qsort_r(list->tuples, list->count, sizeof(Tuple), compare_by_order, order_ctx);
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-936-s3.c:15:65: note: Parameter 'ctx' can be declared as pointer to const
+static int compare_by_order(const void *a, const void *b, void *ctx) {
+                                                                ^

@@ -1,0 +1,54 @@
+#include <stddef.h>
+#include <stdio.h>
+
+void remove_parenthesis_area(char *str) {
+    size_t i = 0;
+    size_t j = 0;
+    size_t k;
+    int depth;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[i] != '\0') {
+        if (str[i] == '(') {
+            k = i + 1;
+            depth = 1;
+
+            while (str[k] != '\0' && depth > 0) {
+                if (str[k] == '(') {
+                    depth++;
+                } else if (str[k] == ')') {
+                    depth--;
+                }
+                k++;
+            }
+
+            if (depth == 0) {
+                i = k;
+                continue;
+            }
+        }
+
+        str[j++] = str[i++];
+    }
+
+    str[j] = '\0';
+}
+
+int main(void) {
+    char text1[] = "Hello (world)";
+    char text2[] = "abc(def(ghi)jkl)mno";
+    char text3[] = "unmatched (abc";
+
+    remove_parenthesis_area(text1);
+    remove_parenthesis_area(text2);
+    remove_parenthesis_area(text3);
+
+    printf("%s\n", text1);
+    printf("%s\n", text2);
+    printf("%s\n", text3);
+
+    return 0;
+}

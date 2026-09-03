@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-154-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-154-s3.c:14:9: style: Condition 'result' is always false [knownConditionTrueFalse]
+    if (result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-154-s3.c:12:36: note: Calling function 'extract_elements' returns 0
+    int **result = extract_elements((int *)matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-154-s3.c:12:36: note: Assignment 'result=extract_elements((int*)matrix,rows,cols,step)', assigned value is 0
+    int **result = extract_elements((int *)matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-154-s3.c:14:9: note: Condition 'result' is always false
+    if (result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-154-s3.c:31:29: style: Parameter 'matrix' can be declared as pointer to const [constParameterPointer]
+int **extract_elements(int *matrix, int rows, int cols, int step) {
+                            ^

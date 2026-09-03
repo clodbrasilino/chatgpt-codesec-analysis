@@ -1,0 +1,189 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+List* create_list() {
+    List* new_list = (List*)malloc(sizeof(List));
+    if (!new_list) {
+        return NULL;
+    }
+    new_list->head = NULL;
+    new_list->next = NULL;
+    return new_list;
+}
+
+void append_node(List* list, int data) {
+    if (!list) return;
+    Node* new_node = create_node(data);
+    if (!new_node) return;
+    
+    if (!list->head) {
+        list->head = new_node;
+        return;
+    }
+    
+    Node* current = list->head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void append_list(List** head, List* new_list) {
+    if (!head || !new_list) return;
+    
+    if (!*head) {
+        *head = new_list;
+        return;
+    }
+    
+    List* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_list;
+}
+
+int list_sum(List* list) {
+    if (!list || !list->head) return 0;
+    
+    int sum = 0;
+    Node* current = list->head;
+    while (current) {
+        sum += current->data;
+        current = current->next;
+    }
+    return sum;
+}
+
+void free_list(List* list) {
+    if (!list) return;
+    
+    Node* current = list->head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+void free_all_lists(List* head) {
+    List* current = head;
+    while (current) {
+        List* temp = current;
+        current = current->next;
+        free_list(temp);
+    }
+}
+
+List* remove_sublists_outside_range(List* head, int min_val, int max_val) {
+    if (!head) return NULL;
+    
+    List* dummy = create_list();
+    if (!dummy) return NULL;
+    
+    List* tail = dummy;
+    List* current = head;
+    
+    while (current) {
+        List* next_list = current->next;
+        int sum = list_sum(current);
+        
+        if (sum >= min_val && sum <= max_val) {
+            tail->next = current;
+            tail = current;
+            tail->next = NULL;
+        } else {
+            free_list(current);
+        }
+        
+        current = next_list;
+    }
+    
+    List* result = dummy->next;
+    free(dummy);
+    return result;
+}
+
+void print_lists(List* head) {
+    List* current = head;
+    int list_index = 0;
+    
+    while (current) {
+        printf("List %d: ", list_index++);
+        Node* node = current->head;
+        while (node) {
+            printf("%d ", node->data);
+            node = node->next;
+        }
+        printf("(sum: %d)\n", list_sum(current));
+        current = current->next;
+    }
+}
+
+int main() {
+    List* head = NULL;
+    
+    List* list1 = create_list();
+    append_node(list1, 1);
+    append_node(list1, 2);
+    append_node(list1, 3);
+    append_list(&head, list1);
+    
+    List* list2 = create_list();
+    append_node(list2, 10);
+    append_node(list2, 20);
+    append_list(&head, list2);
+    
+    List* list3 = create_list();
+    append_node(list3, 5);
+    append_node(list3, 5);
+    append_node(list3, 5);
+    append_list(&head, list3);
+    
+    List* list4 = create_list();
+    append_node(list4, 100);
+    append_list(&head, list4);
+    
+    List* list5 = create_list();
+    append_node(list5, 7);
+    append_node(list5, 8);
+    append_list(&head, list5);
+    
+    printf("Original lists:\n");
+    print_lists(head);
+    
+    int min_range = 10;
+    int max_range = 20;
+    
+    head = remove_sublists_outside_range(head, min_range, max_range);
+    
+    printf("\nLists with sum in range [%d, %d]:\n", min_range, max_range);
+    print_lists(head);
+    
+    free_all_lists(head);
+    
+    return 0;
+}
+```

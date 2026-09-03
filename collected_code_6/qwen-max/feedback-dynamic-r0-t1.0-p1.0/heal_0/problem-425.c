@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *list, int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (!newNode) exit(EXIT_FAILURE);
+    newNode->value = value;
+    newNode->next = list->head;
+    list->head = newNode;
+}
+
+int countSublistsContaining(List *list, int target) {
+    int count = 0;
+    for (Node *current = list->head; current != NULL; current = current->next) {
+        if (current->value == target) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    List myList = {NULL};
+    addNode(&myList, 5);
+    addNode(&myList, 10);
+    addNode(&myList, 5);
+    addNode(&myList, 15);
+
+    int result = countSublistsContaining(&myList, 5);
+
+    printf("Number of sublists containing 5: %d\n", result);
+
+    // Clean up memory
+    while (myList.head != NULL) {
+        Node *temp = myList.head;
+        myList.head = myList.head->next;
+        free(temp);
+    }
+
+    return 0;
+}

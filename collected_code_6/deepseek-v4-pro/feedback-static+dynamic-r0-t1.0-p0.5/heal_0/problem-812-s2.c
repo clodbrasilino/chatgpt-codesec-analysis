@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *abbreviate_road(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(input);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    while (i < len) {
+        if (i + 3 < len && 
+            tolower(input[i]) == 'r' &&
+            tolower(input[i + 1]) == 'o' &&
+            tolower(input[i + 2]) == 'a' &&
+            tolower(input[i + 3]) == 'd') {
+            
+            if ((i == 0 || !isalpha(input[i - 1])) &&
+                (i + 4 >= len || !isalpha(input[i + 4]))) {
+                result[j++] = 'r';
+                result[j++] = 'd';
+                result[j++] = '.';
+                i += 4;
+                continue;
+            }
+        }
+        result[j++] = input[i++];
+    }
+    result[j] = '\0';
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "123 Main Road";
+    const char *test2 = "Road to nowhere";
+    const char *test3 = "Broadway road";
+    const char *test4 = "No abbreviation here";
+    const char *test5 = "road";
+    const char *test6 = "Roads and roads";
+    
+    char *result1 = abbreviate_road(test1);
+    char *result2 = abbreviate_road(test2);
+    char *result3 = abbreviate_road(test3);
+    char *result4 = abbreviate_road(test4);
+    char *result5 = abbreviate_road(test5);
+    char *result6 = abbreviate_road(test6);
+    
+    printf("%s -> %s\n", test1, result1);
+    printf("%s -> %s\n", test2, result2);
+    printf("%s -> %s\n", test3, result3);
+    printf("%s -> %s\n", test4, result4);
+    printf("%s -> %s\n", test5, result5);
+    printf("%s -> %s\n", test6, result6);
+    
+    free(result1);
+    free(result2);
+    free(result3);
+    free(result4);
+    free(result5);
+    free(result6);
+    
+    return 0;
+}

@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+int append(Node **head, int data) {
+    Node *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return -1;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+void split_list(Node *head, int length, Node **first, Node **second) {
+    if (length <= 0) {
+        *first = NULL;
+        *second = head;
+        return;
+    }
+
+    Node *current = head;
+    for (int i = 1; current != NULL && i < length; i++) {
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        *first = head;
+        *second = NULL;
+        return;
+    }
+
+    *first = head;
+    *second = current->next;
+    current->next = NULL;
+}
+
+void print_list(const Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void) {
+    Node *list = NULL;
+
+    for (int i = 1; i <= 10; i++) {
+        if (append(&list, i) != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    Node *first = NULL;
+    Node *second = NULL;
+
+    split_list(list, 4, &first, &second);
+
+    print_list(first);
+    print_list(second);
+
+    free_list(first);
+    free_list(second);
+
+    return EXIT_SUCCESS;
+}
+```

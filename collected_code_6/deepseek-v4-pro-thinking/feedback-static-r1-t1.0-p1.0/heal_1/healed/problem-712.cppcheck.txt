@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-712.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-712.c:159:14: style: Condition 'list==NULL' is always true [knownConditionTrueFalse]
+    if (list == NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-712.c:158:44: note: Calling function 'inner_list_from_array' returns 0
+    InnerNode *list = inner_list_from_array(values, length);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-712.c:158:44: note: Assignment 'list=inner_list_from_array(values,length)', assigned value is 0
+    InnerNode *list = inner_list_from_array(values, length);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-712.c:159:14: note: Condition 'list==NULL' is always true
+    if (list == NULL) {
+             ^

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-904.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-904.c:10:12: style: Condition 'result' is always true [knownConditionTrueFalse]
+    return result ? 0 : 1;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-904.c:8:23: note: Assignment 'test_number=10', assigned value is 10
+    int test_number = 10;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-904.c:9:26: note: Calling function 'is_even' returns 1
+    bool result = is_even(test_number);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-904.c:9:26: note: Assignment 'result=is_even(test_number)', assigned value is 1
+    bool result = is_even(test_number);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-904.c:10:12: note: Condition 'result' is always true
+    return result ? 0 : 1;
+           ^

@@ -1,0 +1,192 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define INITIAL_CAPACITY 1024
+#define LOAD_FACTOR 70
+
+typedef struct {
+    unsigned long long key;
+    unsigned long long value;
+    int used;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t capacity;
+    size_t size;
+} Table;
+
+static unsigned long long hash_key(unsigned long long key) {
+    key ^= key >> 33;
+    key *= 0xff51afd7ed558ccdULL;
+    key ^= key >> 33;
+    key *= 0xc4ceb9fe1a85ec53ULL;
+    key ^= key >> 33;
+    return key;
+}
+
+static int table_init(Table *table, size_t capacity) {
+    table->entries = calloc(capacity, sizeof(Entry));
+    if (table->entries == NULL) {
+        return 0;
+    }
+    table->capacity = capacity;
+    table->size = 0;
+    return 1;
+}
+
+static void table_destroy(Table *table) {
+    free(table->entries);
+    table->entries = NULL;
+    table->capacity = 0;
+    table->size = 0;
+}
+
+static int table_get(Table *table, unsigned long long key, unsigned long long *value) {
+    size_t index = hash_key(key) % table->capacity;
+    size_t i;
+
+    for (i = 0; i < table->capacity; i++) {
+        size_t pos = (index + i) % table->capacity;
+
+        if (!table->entries[pos].used) {
+            return 0;
+        }
+
+        if (table->entries[pos].key == key) {
+            *value = table->entries[pos].value;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int table_put(Table *table, unsigned long long key, unsigned long long value) {
+    if ((table->size + 1) * 100 >= table->capacity * LOAD_FACTOR) {
+        size_t new_capacity = table->capacity * 2;
+        Entry *new_entries = calloc(new_capacity, sizeof(Entry));
+        size_t i;
+
+        if (new_entries == NULL) {
+            return 0;
+        }
+
+        for (i = 0; i < table->capacity; i++) {
+            if (table->entries[i].used) {
+                size_t index = hash_key(table->entries[i].key) % new_capacity;
+                size_t j = 0;
+
+                while (j < new_capacity) {
+                    size_t pos = (index + j) % new_capacity;
+
+                    if (!new_entries[pos].used) {
+                        new_entries[pos] = table->entries[i];
+                        break;
+                    }
+
+                    j++;
+                }
+            }
+        }
+
+        free(table->entries);
+        table->entries = new_entries;
+        table->capacity = new_capacity;
+    }
+
+    {
+        size_t index = hash_key(key) % table->capacity;
+        size_t i;
+
+        for (i = 0; i < table->capacity; i++) {
+            size_t pos = (index + i) % table->capacity;
+
+            if (!table->entries[pos].used) {
+                table->entries[pos].key = key;
+                table->entries[pos].value = value;
+                table->entries[pos].used = 1;
+                table->size++;
+                return 1;
+            }
+
+            if (table->entries[pos].key == key) {
+                table->entries[pos].value = value;
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+static int solve(Table *table, unsigned long long n, unsigned long long *result) {
+    unsigned long long cached;
+    unsigned long long a;
+    unsigned long long b;
+    unsigned long long c;
+    unsigned long long d;
+    unsigned long long sum;
+
+    if (n == 0) {
+        *result = 0;
+        return 1;
+    }
+
+    if (table_get(table, n, &cached)) {
+        *result = cached;
+        return 1;
+    }
+
+    if (!solve(table, n / 2, &a) ||
+        !solve(table, n / 3, &b) ||
+        !solve(table, n / 4, &c) ||
+        !solve(table, n / 5, &d)) {
+        return 0;
+    }
+
+    sum = a + b + c + d;
+    *result = sum > n ? sum : n;
+
+    if (!table_put(table, n, *result)) {
+        return 0;
+    }
+
+    return 1;
+}
+
+unsigned long long f(unsigned long long n) {
+    Table table;
+    unsigned long long result;
+
+    if (n == 0) {
+        return 0;
+    }
+
+    if (!table_init(&table, INITIAL_CAPACITY)) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (!solve(&table, n, &result)) {
+        table_destroy(&table);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    table_destroy(&table);
+    return result;
+}
+
+int main(void) {
+    unsigned long long n;
+
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", f(n));
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntTuple;
+
+IntTuple stringToIntTuple(const char *str) {
+    if (str == NULL || *str == '\0') return (IntTuple){NULL, 0};
+
+    char *strCopy = strdup(str);
+    char *token = strtok(strCopy, " ");
+    if (token == NULL) {
+        free(strCopy);
+        return (IntTuple){NULL, 0};
+    }
+
+    IntTuple result = {NULL, 0};
+    result.data = (int *)malloc(sizeof(int));
+    if (result.data == NULL) {
+        free(strCopy);
+        return (IntTuple){NULL, 0};
+    }
+
+    result.length = 1;
+    result.data[0] = atoi(token);
+
+    while ((token = strtok(NULL, " ")) != NULL) {
+        result.length++;
+        int *temp = (int *)realloc(result.data, result.length * sizeof(int));
+        if (temp == NULL) {
+            free(result.data);
+            free(strCopy);
+            return (IntTuple){NULL, 0};
+        }
+        result.data = temp;
+        result.data[result.length - 1] = atoi(token);
+    }
+
+    free(strCopy);
+    return result;
+}
+
+void freeIntTuple(IntTuple *tuple) {
+    if (tuple->data != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->length = 0;
+    }
+}
+
+int main() {
+    const char *input = "1 2 3 4 5";
+    IntTuple tuple = stringToIntTuple(input);
+
+    for (size_t i = 0; i < tuple.length; ++i) {
+        printf("%d ", tuple.data[i]);
+    }
+    printf("\n");
+
+    freeIntTuple(&tuple);
+    return 0;
+}

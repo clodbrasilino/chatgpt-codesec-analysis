@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(ListNode *head) {
+    while (head) {
+        ListNode *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int getLength(ListNode *head) {
+    int length = 0;
+    while (head) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+ListNode* findMaxLengthSublist(ListNode **lists, int n) {
+    if (n <= 0) return NULL;
+
+    ListNode *maxHead = lists[0];
+    int maxLength = getLength(maxHead);
+
+    for (int i = 1; i < n; i++) {
+        int currentLength = getLength(lists[i]);
+        if (currentLength > maxLength) {
+            maxLength = currentLength;
+            maxHead = lists[i];
+        }
+    }
+
+    return maxHead;
+}
+
+int main() {
+    ListNode *list1 = createNode(1);
+    list1->next = createNode(2);
+    list1->next->next = createNode(3);
+
+    ListNode *list2 = createNode(4);
+    list2->next = createNode(5);
+
+    ListNode *list3 = createNode(6);
+
+    ListNode *lists[] = {list1, list2, list3};
+    int n = 3;
+
+    ListNode *maxHead = findMaxLengthSublist(lists, n);
+
+    while (maxHead) {
+        printf("%d -> ", maxHead->value);
+        maxHead = maxHead->next;
+    }
+    printf("NULL\n");
+
+    freeList(list1);
+    freeList(list2);
+    freeList(list3);
+
+    return 0;
+}
+```

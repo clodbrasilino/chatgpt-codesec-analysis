@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node **buckets;
+    size_t size;
+} Map;
+
+static unsigned long hash(const char *str, size_t size) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c;
+    }
+    return hash % size;
+}
+
+static Node *create_node(const char *key, int value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (!node) {
+        return NULL;
+    }
+    node->key = strdup(key);
+    if (!node->key) {
+        free(node);
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static void free_node(Node *node) {
+    if (node) {
+        free(node->key);
+        free(node);
+    }
+}
+
+static void free_list(Node *head) {
+    Node *current = head;
+    while (current) {
+        Node *next = current->next;
+        free_node(current);
+        current = next;
+    }
+}
+
+Map *create_map(size_t size) {
+    Map *map = (Map *)malloc(sizeof(Map));
+    if (!map) {
+        return NULL;
+    }
+    map->buckets = (Node **)calloc(size, sizeof(Node *));
+    if (!map->buckets) {
+        free(map);
+        return NULL;
+    }
+    map->size = size;
+    return map;
+}
+
+void free_map(Map *map) {
+    if (!map) {
+        return;
+    }
+    for (size_t i = 0; i < map->size; i++) {
+        free_list(map->buckets[i]);
+    }
+    free(map->buckets);
+    free(map);
+}
+
+int insert_pair(Map *map, const char *key, int value) {
+    if (!map || !key) {
+        return -1;
+    }
+    unsigned long index = hash(key, map->size);
+    Node *node = create_node(key, value);
+    if (!node) {
+        return -1;
+    }
+    node->next = map->buckets[index];
+    map->buckets[index] = node;
+    return 0;
+}
+
+Node *get_list(Map *map, const char *key) {
+    if (!map || !key) {
+        return NULL;
+    }
+    unsigned long index = hash(key, map->size);
+    return map->buckets[index];
+}
+
+int main(void) {
+    Map *map = create_map(16);
+    if (!map) {
+        fprintf(stderr, "Failed to create map\n");
+        return 1;
+    }
+
+    insert_pair(map, "apple", 1);
+    insert_pair(map, "banana", 2);
+    insert_pair(map, "apple", 3);
+    insert_pair(map, "cherry", 4);
+    insert_pair(map, "banana", 5);
+
+    const char *keys[] = {"apple", "banana", "cherry", "date"};
+    for (size_t i = 0; i < sizeof(keys) / sizeof(keys[0]); i++) {
+        Node *list = get_list(map, keys[i]);
+        printf("%s:", keys[i]);
+        Node *current = list;
+        while (current) {
+            printf(" %d", current->value);
+            current = current->next;
+        }
+        printf("\n");
+    }
+
+    free_map(map);
+    return 0;
+}
+```

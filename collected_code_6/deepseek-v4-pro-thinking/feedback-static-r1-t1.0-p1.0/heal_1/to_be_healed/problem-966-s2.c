@@ -1,0 +1,174 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple **tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+static Tuple *tuple_create(const int *values, size_t size) {
+    Tuple *tuple = malloc(sizeof(*tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->size = size;
+    tuple->data = NULL;
+    if (size > 0) {
+        if (values == NULL) {
+            free(tuple);
+            return NULL;
+        }
+        if (size > SIZE_MAX / sizeof(*tuple->data)) {
+            free(tuple);
+            return NULL;
+        }
+        tuple->data = malloc(size * sizeof(*tuple->data));
+        if (tuple->data == NULL) {
+            free(tuple);
+            return NULL;
+        }
+        for (size_t i = 0; i < size; i++) {
+            tuple->data[i] = values[i];
+        }
+    }
+    return tuple;
+}
+
+static void tuple_free(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    free(tuple->data);
+    tuple->data = NULL;
+    tuple->size = 0;
+    free(tuple);
+}
+
+static int tuple_list_add(TupleList *list, const int *values, size_t size) {
+    if (list == NULL) {
+        return 0;
+    }
+    Tuple *tuple = tuple_create(values, size);
+    if (tuple == NULL) {
+        return 0;
+    }
+    if (list->count == list->capacity) {
+        size_t new_capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+        if (new_capacity <= list->capacity) {
+            tuple_free(tuple);
+            return 0;
+        }
+        if (new_capacity > SIZE_MAX / sizeof(*list->tuples)) {
+            tuple_free(tuple);
+            return 0;
+        }
+        Tuple **new_tuples = realloc(list->tuples, new_capacity * sizeof(*list->tuples));
+        if (new_tuples == NULL) {
+            tuple_free(tuple);
+            return 0;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    list->tuples[list->count] = tuple;
+    list->count++;
+    return 1;
+}
+
+static void tuple_list_free(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        tuple_free(list->tuples[i]);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+static void tuple_list_print(const TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < list->count; i++) {
+        printf("(");
+        for (size_t j = 0; j < list->tuples[i]->size; j++) {
+            printf("%d", list->tuples[i]->data[j]);
+            if (j + 1 < list->tuples[i]->size) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1 < list->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int remove_empty_tuple(TupleList *list) {
+    if (list == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i] != NULL && list->tuples[i]->size == 0) {
+            tuple_free(list->tuples[i]);
+            for (size_t j = i; j + 1 < list->count; j++) {
+                list->tuples[j] = list->tuples[j + 1];
+            }
+            list->tuples[list->count - 1] = NULL;
+            list->count--;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    TupleList list = {0};
+    /* Possible weaknesses found:
+     *  Variable 'a' can be declared as const array [constVariable]
+     */
+    int a[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {4, 5};
+
+    if (!tuple_list_add(&list, a, 3)) {
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+    if (!tuple_list_add(&list, NULL, 0)) {
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+    if (!tuple_list_add(&list, b, 2)) {
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before removal:\n");
+    tuple_list_print(&list);
+
+    if (remove_empty_tuple(&list)) {
+        printf("After removal:\n");
+        tuple_list_print(&list);
+    } else {
+        printf("No empty tuple found.\n");
+    }
+
+    tuple_list_free(&list);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* remove_negatives(int *arr, int n, int *new_size) {
+    int *result = (int*)malloc(n * sizeof(int));
+    if (result == NULL) {
+        *new_size = 0;
+        return NULL;
+    }
+    int j = 0;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] >= 0) {
+            result[j++] = arr[i];
+        }
+    }
+    *new_size = j;
+    result = (int*)realloc(result, (*new_size) * sizeof(int));
+    if (result == NULL && *new_size > 0) {
+        *new_size = 0;
+        return NULL;
+    }
+    return result;
+}
+
+int main() {
+    int arr[] = {-2, 3, -5, 6, -8, 9, 0, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int new_size;
+    int *filtered_arr = remove_negatives(arr, n, &new_size);
+    if (filtered_arr != NULL) {
+        for (int i = 0; i < new_size; ++i) {
+            printf("%d ", filtered_arr[i]);
+        }
+        free(filtered_arr);
+    } else {
+        printf("Failed to allocate memory.\n");
+    }
+    return 0;
+}

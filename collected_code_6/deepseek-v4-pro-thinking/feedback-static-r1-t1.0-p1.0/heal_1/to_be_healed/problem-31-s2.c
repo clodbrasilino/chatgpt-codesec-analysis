@@ -1,0 +1,275 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int list_index;
+    int position;
+} MergeNode;
+
+typedef struct {
+    MergeNode *data;
+    int size;
+    int capacity;
+} MergeHeap;
+
+typedef struct {
+    int value;
+    int frequency;
+} FreqNode;
+
+typedef struct {
+    FreqNode *data;
+    int size;
+    int capacity;
+} FreqHeap;
+
+static MergeHeap *merge_heap_create(int capacity)
+{
+    MergeHeap *heap = malloc(sizeof(MergeHeap));
+    if (!heap) return NULL;
+    heap->data = malloc(sizeof(MergeNode) * (capacity > 0 ? capacity : 1));
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity > 0 ? capacity : 1;
+    return heap;
+}
+
+static void merge_heap_destroy(MergeHeap *heap)
+{
+    if (!heap) return;
+    free(heap->data);
+    free(heap);
+}
+
+static void merge_heap_sift_up(MergeHeap *heap, int index)
+{
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[index].value < heap->data[parent].value) {
+            MergeNode tmp = heap->data[index];
+            heap->data[index] = heap->data[parent];
+            heap->data[parent] = tmp;
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void merge_heap_sift_down(MergeHeap *heap, int index)
+{
+    while (1) {
+        int left = index * 2 + 1;
+        int right = index * 2 + 2;
+        int smallest = index;
+        if (left < heap->size && heap->data[left].value < heap->data[smallest].value) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right].value < heap->data[smallest].value) {
+            smallest = right;
+        }
+        if (smallest == index) break;
+        MergeNode tmp = heap->data[index];
+        heap->data[index] = heap->data[smallest];
+        heap->data[smallest] = tmp;
+        index = smallest;
+    }
+}
+
+static int merge_heap_push(MergeHeap *heap, MergeNode node)
+{
+    if (heap->size >= heap->capacity) return 0;
+    heap->data[heap->size] = node;
+    merge_heap_sift_up(heap, heap->size);
+    heap->size++;
+    return 1;
+}
+
+static int merge_heap_pop(MergeHeap *heap, MergeNode *out)
+{
+    if (heap->size <= 0) return 0;
+    *out = heap->data[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        merge_heap_sift_down(heap, 0);
+    }
+    return 1;
+}
+
+static FreqHeap *freq_heap_create(int capacity)
+{
+    FreqHeap *heap = malloc(sizeof(FreqHeap));
+    if (!heap) return NULL;
+    heap->data = malloc(sizeof(FreqNode) * (capacity > 0 ? capacity : 1));
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity > 0 ? capacity : 1;
+    return heap;
+}
+
+static void freq_heap_destroy(FreqHeap *heap)
+{
+    if (!heap) return;
+    free(heap->data);
+    free(heap);
+}
+
+static void freq_heap_sift_up(FreqHeap *heap, int index)
+{
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[index].frequency < heap->data[parent].frequency) {
+            FreqNode tmp = heap->data[index];
+            heap->data[index] = heap->data[parent];
+            heap->data[parent] = tmp;
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+static void freq_heap_sift_down(FreqHeap *heap, int index)
+{
+    while (1) {
+        int left = index * 2 + 1;
+        int right = index * 2 + 2;
+        int smallest = index;
+        if (left < heap->size && heap->data[left].frequency < heap->data[smallest].frequency) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right].frequency < heap->data[smallest].frequency) {
+            smallest = right;
+        }
+        if (smallest == index) break;
+        FreqNode tmp = heap->data[index];
+        heap->data[index] = heap->data[smallest];
+        heap->data[smallest] = tmp;
+        index = smallest;
+    }
+}
+
+static void freq_heap_push(FreqHeap *heap, FreqNode node)
+{
+    if (heap->size >= heap->capacity) return;
+    heap->data[heap->size] = node;
+    freq_heap_sift_up(heap, heap->size);
+    heap->size++;
+}
+
+static void add_frequency(FreqHeap *heap, int value, int frequency)
+{
+    FreqNode node;
+    node.value = value;
+    node.frequency = frequency;
+    if (heap->size < heap->capacity) {
+        freq_heap_push(heap, node);
+    } else if (frequency > heap->data[0].frequency) {
+        heap->data[0] = node;
+        freq_heap_sift_down(heap, 0);
+    }
+}
+
+static int freq_comparator(const void *a, const void *b)
+{
+    const FreqNode *fa = (const FreqNode *)a;
+    const FreqNode *fb = (const FreqNode *)b;
+    if (fa->frequency > fb->frequency) return -1;
+    if (fa->frequency < fb->frequency) return 1;
+    if (fa->value < fb->value) return -1;
+    if (fa->value > fb->value) return 1;
+    return 0;
+}
+
+int top_k_frequent(const int * const *lists, const int *lengths, int list_count, int k,
+                   int *out_values, int *out_freqs)
+/* Possible weaknesses found:
+ *  to match this '{'
+ */
+{
+    if (!lists || !lengths || !out_values || !out_freqs || k <= 0 || list_count < 0) return -1;
+    for (int i = 0; i < list_count; ++i) {
+        if (lengths[i] < 0) return -1;
+        if (lengths[i] > 0 && !lists[i]) return -1;
+    }
+    if (list_count == 0) return 0;
+
+    MergeHeap *merge_heap = merge_heap_create(list_count);
+    if (!merge_heap) return -1;
+
+    FreqHeap *freq_heap = freq_heap_create(k);
+    if (!freq_heap) {
+        merge_heap_destroy(merge_heap);
+        return -1;
+    }
+
+    for (int i = 0; i < list_count; ++i) {
+        if (lengths[i] > 0) {
+            MergeNode node;
+            node.value = lists[i][0];
+            node.list_index = i;
+            node.position = 0;
+            if (!merge_heap_push(merge_heap, node)) {
+                freq_heap_destroy(freq_heap);
+                merge_heap_destroy(merge_heap);
+                return -1;
+            }
+        }
+    }
+
+    int current_value = 0;
+    int current_frequency = 0;
+    MergeNode node;
+
+    while (merge_heap_pop(merge_heap, &node)) {
+        if (current_frequency == 0 || node.value == current_value) {
+            current_value = node.value;
+            current_frequency++;
+        } else {
+            add_frequency(freq_heap, current_value, current_frequency);
+            current_value = node.value;
+            current_frequency = 1;
+        }
+
+        if (node.position + 1 < lengths[node.list_index]) {
+            MergeNode next;
+            next.value = lists[node.list_index][node.position + 1];
+            next.list_index = node.list_index;
+            next.position = node.position + 1;
+            if (!merge_heap_push(merge_heap, next)) {
+                freq_heap_destroy(freq_heap);
+                merge_heap_destroy(merge_heap);
+                return -1;
+            }
+        }
+    }
+
+    if (current_frequency > 0) {
+        add_frequency(freq_heap, current_value, current_frequency);
+    }
+
+    int result_count = freq_heap->size;
+    /* Possible weaknesses found:
+     *  to match this '{'
+     *  Unmatched '{'. Configuration: ''. [syntaxError]
+     */
+    if (result_count > 0) {
+        qsort(freq_heap->data, (size_t)result_count, sizeof(FreqNode), freq_comparator);
+        /* Possible weaknesses found:
+         *  expected ';' in 'for' statement specifier
+         *  expected ',' or ';' at end of input
+         *  expected expression
+         *  expected declaration or statement at end of input
+         *  expected '}'
+         *  expected ')'
+         *  to match this '('
+         */
+        for (int i = 0

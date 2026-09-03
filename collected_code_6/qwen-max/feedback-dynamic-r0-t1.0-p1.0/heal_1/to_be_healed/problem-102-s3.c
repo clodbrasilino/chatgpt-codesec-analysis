@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'ProgrammingLanguage', got programmingLanguage
+  *  test case 0 failed: expected 'PythonProgram', got pythonProgram
+  *  test case 1 failed: expected 'PythonLanguage', got pythonLanguage
+  */
+
+char* snake_to_camel(char *snake_str) {
+    int i, j = 0;
+    for (i = 0; snake_str[i]; i++) {
+        if (snake_str[i] == '_') {
+            i++;
+            if (snake_str[i]) {
+                snake_str[j++] = toupper(snake_str[i]);
+            }
+        } else {
+            snake_str[j++] = snake_str[i];
+        }
+    }
+    snake_str[j] = '\0';
+    return snake_str;
+}
+
+int main() {
+    char snake_case_str[] = "this_is_a_snake_case_string";
+    char *camel_case_str = snake_to_camel(snake_case_str);
+    printf("%s\n", camel_case_str);
+    return 0;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-661-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-661-s2.c:15:50: error: Array 'dp[2147483648]' accessed at index -1, which is out of bounds. [negativeIndex]
+        dp[i] = arr[i] + ((dp[i-2] > dp[i-3] + dp[i-4]) ? dp[i-2] : dp[i-3]);
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-661-s2.c:14:18: note: Assignment 'i=3', assigned value is 3
+    for (int i = 3; i < n; i++) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-661-s2.c:15:50: note: Negative array index
+        dp[i] = arr[i] + ((dp[i-2] > dp[i-3] + dp[i-4]) ? dp[i-2] : dp[i-3]);
+                                                 ^

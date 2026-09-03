@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+typedef struct {
+    Tuple *items;
+    int size;
+    int capacity;
+} TupleList;
+
+void initTupleList(TupleList *list) {
+    list->size = 0;
+    list->capacity = 4;
+    list->items = (Tuple *)malloc(list->capacity * sizeof(Tuple));
+    if (list->items == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void appendTuple(TupleList *list, Tuple tuple) {
+    if (list->size == list->capacity) {
+        list->capacity *= 2;
+        Tuple *new_items = (Tuple *)realloc(list->items, list->capacity * sizeof(Tuple));
+        if (new_items == NULL) {
+            fprintf(stderr, "Memory reallocation failed\n");
+            free(list->items);
+            exit(EXIT_FAILURE);
+        }
+        list->items = new_items;
+    }
+    list->items[list->size++] = tuple;
+}
+
+void freeTupleList(TupleList *list) {
+    free(list->items);
+    list->items = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+TupleList joinTuples(Tuple *tuples, int count) {
+    TupleList result;
+    initTupleList(&result);
+    
+    if (tuples == NULL || count <= 0) {
+        return result;
+    }
+    
+    int *used = (int *)calloc(count, sizeof(int));
+    if (used == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        freeTupleList(&result);
+        exit(EXIT_FAILURE);
+    }
+    
+    for (int i = 0; i < count; i++) {
+        if (used[i]) {
+            continue;
+        }
+        
+        int sum = tuples[i].value;
+        used[i] = 1;
+        
+        for (int j = i + 1; j < count; j++) {
+            if (!used[j] && tuples[j].key == tuples[i].key) {
+                sum += tuples[j].value;
+                used[j] = 1;
+            }
+        }
+        
+        Tuple joined = {tuples[i].key, sum};
+        appendTuple(&result, joined);
+    }
+    
+    free(used);
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 10},
+        {2, 20},
+        {1, 30},
+        {3, 40},
+        {2, 50},
+        {1, 60}
+    };
+    int count = sizeof(tuples) / sizeof(tuples[0]);
+    
+    TupleList result = joinTuples(tuples, count);
+    
+    for (int i = 0; i < result.size; i++) {
+        printf("(%d, %d)\n", result.items[i].key, result.items[i].value);
+    }
+    
+    freeTupleList(&result);
+    return 0;
+}
+```

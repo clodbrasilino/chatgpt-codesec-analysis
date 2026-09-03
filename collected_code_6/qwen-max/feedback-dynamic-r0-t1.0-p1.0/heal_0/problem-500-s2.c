@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* concatenate_elements(char **list, int length) {
+    if (length <= 0) return NULL;
+
+    char *result = malloc(1);
+    if (result == NULL) return NULL;
+    result[0] = '\0';
+
+    for (int i = 0; i < length; ++i) {
+        const size_t len_result = strlen(result);
+        const size_t len_next = strlen(list[i]);
+        const size_t new_len = len_result + len_next + 1;
+        char *new_result = realloc(result, new_len);
+        if (new_result == NULL) {
+            free(result);
+            return NULL;
+        }
+        result = new_result;
+        strcat(result + len_result, list[i]);
+    }
+
+    return result;
+}
+
+int main() {
+    char *elements[] = {"Hello", " ", "World", "!"};
+    int num_elements = 4;
+
+    char *concatenated = concatenate_elements(elements, num_elements);
+    if (concatenated != NULL) {
+        printf("%s\n", concatenated);
+        free(concatenated);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

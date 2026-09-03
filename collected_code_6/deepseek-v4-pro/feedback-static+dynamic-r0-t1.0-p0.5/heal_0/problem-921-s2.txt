@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **data;
+    size_t count;
+    size_t capacity;
+} Chunk;
+
+typedef struct {
+    Chunk *chunks;
+    size_t count;
+    size_t capacity;
+} ChunkList;
+
+void chunk_init(Chunk *chunk, size_t capacity) {
+    chunk->data = (void **)malloc(capacity * sizeof(void *));
+    if (chunk->data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    chunk->count = 0;
+    chunk->capacity = capacity;
+}
+
+void chunk_add(Chunk *chunk, void *item) {
+    if (chunk->count >= chunk->capacity) {
+        fprintf(stderr, "Chunk capacity exceeded\n");
+        exit(EXIT_FAILURE);
+    }
+    chunk->data[chunk->count++] = item;
+}
+
+void chunk_free(Chunk *chunk) {
+    free(chunk->data);
+    chunk->data = NULL;
+    chunk->count = 0;
+    chunk->capacity = 0;
+}
+
+void chunklist_init(ChunkList *list, size_t capacity) {
+    list->chunks = (Chunk *)malloc(capacity * sizeof(Chunk));
+    if (list->chunks == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    list->count = 0;
+    list->capacity = capacity;
+}
+
+void chunklist_add(ChunkList *list, Chunk *chunk) {
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Chunk *new_chunks = (Chunk *)realloc(list->chunks, new_capacity * sizeof(Chunk));
+        if (new_chunks == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+        list->chunks = new_chunks;
+        list->capacity = new_capacity;
+    }
+    list->chunks[list->count++] = *chunk;
+}
+
+void chunklist_free(ChunkList *list) {
+    for (size_t i = 0; i < list->count; i++) {
+        chunk_free(&list->chunks[i]);
+    }
+    free(list->chunks);
+    list->chunks = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+ChunkList chunk_tuples(void **tuples, size_t tuple_count, size_t chunk_size) {
+    ChunkList result;
+    chunklist_init(&result, 1);
+
+    if (chunk_size == 0) {
+        fprintf(stderr, "Chunk size must be greater than zero\n");
+        chunklist_free(&result);
+        exit(EXIT_FAILURE);
+    }
+
+    size_t num_chunks = (tuple_count + chunk_size - 1) / chunk_size;
+
+    for (size_t i = 0; i < num_chunks; i++) {
+        Chunk chunk;
+        chunk_init(&chunk, chunk_size);
+
+        size_t start = i * chunk_size;
+        size_t end = start + chunk_size;
+        if (end > tuple_count) {
+            end = tuple_count;
+        }
+
+        for (size_t j = start; j < end; j++) {
+            chunk_add(&chunk, tuples[j]);
+        }
+
+        chunklist_add(&result, &chunk);
+        chunk_free(&chunk);
+    }
+
+    return result;
+}
+
+int main(void) {
+    int values[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t value_count = sizeof(values) / sizeof(values[0]);
+    void **tuples = (void **)malloc(value_count * sizeof(void *));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < value_count; i++) {
+        tuples[i] = &values[i];
+    }
+
+    ChunkList chunks = chunk_tuples(tuples, value_count, 3);
+
+    for (size_t i = 0; i < chunks.count; i++) {
+        printf("Chunk %zu: ", i);
+        for (size_t j = 0; j < chunks.chunks[i].count; j++) {
+            printf("%d ", *(int *)chunks.chunks[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    chunklist_free(&chunks);
+    free(tuples);
+
+    return 0;
+}
+```

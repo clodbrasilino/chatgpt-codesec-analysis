@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:16:27: error: Null pointer dereference: result [nullPointer]
+            printf("%d ", result[i][j]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:12:36: note: Calling function 'extract_elements' returns 0
+    int **result = extract_elements(matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:12:36: note: Assignment 'result=extract_elements(matrix,rows,cols,step)', assigned value is 0
+    int **result = extract_elements(matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:16:27: note: Null pointer dereference
+            printf("%d ", result[i][j]);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:22:14: error: Null pointer dereference: result [nullPointer]
+        free(result[i]);
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:12:36: note: Calling function 'extract_elements' returns 0
+    int **result = extract_elements(matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:12:36: note: Assignment 'result=extract_elements(matrix,rows,cols,step)', assigned value is 0
+    int **result = extract_elements(matrix, rows, cols, step);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-154-s3.c:22:14: note: Null pointer dereference
+        free(result[i]);
+             ^

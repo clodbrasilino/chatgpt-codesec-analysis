@@ -1,0 +1,153 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int array_index;
+    int element_index;
+} HeapNode;
+
+typedef struct {
+    int **arrays;
+    int *sizes;
+    int num_arrays;
+    HeapNode *heap;
+    int heap_size;
+} MergeIterator;
+
+void swap_nodes(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify_down(MergeIterator *iter, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < iter->heap_size && 
+        iter->heap[left].value < iter->heap[smallest].value) {
+        smallest = left;
+    }
+
+    if (right < iter->heap_size && 
+        iter->heap[right].value < iter->heap[smallest].value) {
+        smallest = right;
+    }
+
+    if (smallest != index) {
+        swap_nodes(&iter->heap[index], &iter->heap[smallest]);
+        heapify_down(iter, smallest);
+    }
+}
+
+void heapify_up(MergeIterator *iter, int index) {
+    int parent = (index - 1) / 2;
+
+    if (index > 0 && iter->heap[parent].value > iter->heap[index].value) {
+        swap_nodes(&iter->heap[parent], &iter->heap[index]);
+        heapify_up(iter, parent);
+    }
+}
+
+MergeIterator *merge_iterator_create(int **arrays, int *sizes, int num_arrays) {
+    if (arrays == NULL || sizes == NULL || num_arrays <= 0) {
+        return NULL;
+    }
+
+    MergeIterator *iter = (MergeIterator *)malloc(sizeof(MergeIterator));
+    if (iter == NULL) {
+        return NULL;
+    }
+
+    iter->arrays = arrays;
+    iter->sizes = sizes;
+    iter->num_arrays = num_arrays;
+    iter->heap_size = 0;
+    iter->heap = (HeapNode *)malloc(num_arrays * sizeof(HeapNode));
+
+    if (iter->heap == NULL) {
+        free(iter);
+        return NULL;
+    }
+
+    for (int i = 0; i < num_arrays; i++) {
+        if (sizes[i] > 0) {
+            iter->heap[iter->heap_size].value = arrays[i][0];
+            iter->heap[iter->heap_size].array_index = i;
+            iter->heap[iter->heap_size].element_index = 0;
+            iter->heap_size++;
+        }
+    }
+
+    for (int i = iter->heap_size / 2 - 1; i >= 0; i--) {
+        heapify_down(iter, i);
+    }
+
+    return iter;
+}
+
+int merge_iterator_next(MergeIterator *iter, int *value) {
+    if (iter == NULL || value == NULL || iter->heap_size == 0) {
+        return 0;
+    }
+
+    *value = iter->heap[0].value;
+    int array_index = iter->heap[0].array_index;
+    int element_index = iter->heap[0].element_index;
+
+    if (element_index + 1 < iter->sizes[array_index]) {
+        iter->heap[0].value = iter->arrays[array_index][element_index + 1];
+        iter->heap[0].element_index = element_index + 1;
+        heapify_down(iter, 0);
+    } else {
+        iter->heap_size--;
+        if (iter->heap_size > 0) {
+            iter->heap[0] = iter->heap[iter->heap_size];
+            heapify_down(iter, 0);
+        }
+    }
+
+    return 1;
+}
+
+int merge_iterator_has_next(const MergeIterator *iter) {
+    return iter != NULL && iter->heap_size > 0;
+}
+
+void merge_iterator_destroy(MergeIterator *iter) {
+    if (iter != NULL) {
+        free(iter->heap);
+        free(iter);
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 4, 7, 10};
+    int arr2[] = {2, 5, 8, 11};
+    int arr3[] = {3, 6, 9, 12};
+
+    int *arrays[] = {arr1, arr2, arr3};
+    int sizes[] = {4, 4, 4};
+
+    MergeIterator *iter = merge_iterator_create(arrays, sizes, 3);
+    if (iter == NULL) {
+        fprintf(stderr, "Failed to create iterator\n");
+        return 1;
+    }
+
+    int value;
+    while (merge_iterator_has_next(iter)) {
+        if (merge_iterator_next(iter, &value)) {
+            printf("%d ", value);
+        }
+    }
+    printf("\n");
+
+    merge_iterator_destroy(iter);
+
+    return 0;
+}
+```

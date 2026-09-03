@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+char **remove_duplicates(char **words, int *size) {
+    if (*size <= 1) return words;
+
+    qsort(words, *size, sizeof(char *), compare_strings);
+
+    int unique_index = 0;
+    for (int i = 1; i < *size; ++i) {
+        if (strcmp(words[unique_index], words[i]) != 0) {
+            words[++unique_index] = words[i];
+        }
+    }
+
+    *size = unique_index + 1;
+    return words;
+}
+
+int main() {
+    char *words[] = {"apple", "banana", "apple", "orange", "banana", "grape"};
+    int size = 6;
+
+    /* Possible weaknesses found:
+     *  array type 'char *[6]' is not assignable
+     *  assignment to expression with array type
+     */
+    words = remove_duplicates(words, &size);
+
+    for (int i = 0; i < size; ++i) {
+        printf("%s\n", words[i]);
+    }
+
+    return 0;
+}

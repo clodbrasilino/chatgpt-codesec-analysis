@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:65:9: style: Same expression used in consecutive assignments of 'i' and 'j'. [duplicateAssignExpression]
+    int i = n - 1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:66:9: note: Same expression used in consecutive assignments of 'i' and 'j'.
+    int j = n - 1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:65:9: note: Same expression used in consecutive assignments of 'i' and 'j'.
+    int i = n - 1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:87:14: style: Local variable 'i' shadows outer variable [shadowVariable]
+    for (int i = 0; i < n; ++i) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:65:9: note: Shadowed declaration
+    int i = n - 1;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-721.c:87:14: note: Shadow variable
+    for (int i = 0; i < n; ++i) {
+             ^

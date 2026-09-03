@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-418.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-418.c:47:11: style: The scope of the variable 'temp_end' can be reduced. [variableScope]
+    Node *temp_end = head;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-418.c:47:20: style: Variable 'temp_end' is assigned a value that is never used. [unreadVariable]
+    Node *temp_end = head;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-418.c:52:22: style: Variable 'temp_end' is assigned a value that is never used. [unreadVariable]
+            temp_end = current->next;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-418.c:60:22: style: Variable 'temp_end' is assigned a value that is never used. [unreadVariable]
+            temp_end = current->next;
+                     ^

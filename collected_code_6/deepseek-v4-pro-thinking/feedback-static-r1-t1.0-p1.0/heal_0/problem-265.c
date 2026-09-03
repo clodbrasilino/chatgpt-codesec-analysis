@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+void free_list(Node *head) {
+    while (head) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+Node *append(Node *head, int data) {
+    Node *new_node = malloc(sizeof(*new_node));
+    if (!new_node) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    if (!head) {
+        return new_node;
+    }
+    Node *tail = head;
+    while (tail->next) {
+        tail = tail->next;
+    }
+    tail->next = new_node;
+    return head;
+}
+
+Node **split_list(Node *head, int n, size_t *out_count) {
+    if (!out_count || n <= 0) {
+        if (out_count) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+    if (!head) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    size_t node_count = 0;
+    for (Node *p = head; p; p = p->next) {
+        node_count++;
+    }
+
+    size_t n_size = (size_t)n;
+    size_t chunk_count = node_count / n_size + (node_count % n_size != 0);
+
+    Node **chunks = malloc(chunk_count * sizeof(*chunks));
+    if (!chunks) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    Node *current = head;
+    for (size_t i = 0; i < chunk_count; i++) {
+        chunks[i] = current;
+        Node *prev = NULL;
+        for (size_t j = 0; j < n_size && current; j++) {
+            prev = current;
+            current = current->next;
+        }
+        if (prev) {
+            prev->next = NULL;
+        }
+    }
+
+    *out_count = chunk_count;
+    return chunks;
+}
+
+int main(void) {
+    Node *head = NULL;
+    for (int i = 1; i <= 10; i++) {
+        Node *new_head = append(head, i);
+        if (!new_head) {
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+        head = new_head;
+    }
+
+    size_t count = 0;
+    Node **chunks = split_list(head, 3, &count);
+
+    if (chunks) {
+        for (size_t i = 0; i < count; i++) {
+            for (Node *p = chunks[i]; p; p = p->next) {
+                printf("%d ", p->data);
+            }
+            printf("\n");
+        }
+        for (size_t i = 0; i < count; i++) {
+            free_list(chunks[i]);
+        }
+        free(chunks);
+    } else {
+        free_list(head);
+    }
+
+    return 0;
+}

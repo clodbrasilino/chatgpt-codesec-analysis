@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = malloc(sizeof(*node));
+    if (node != NULL) {
+        node->data = data;
+        node->next = NULL;
+    }
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int count_in_range(const Node *head, int lower, int upper) {
+    int count = 0;
+    const Node *current = head;
+
+    while (current != NULL) {
+        if (current->data >= lower && current->data <= upper) {
+            count++;
+        }
+        current = current->next;
+    }
+
+    return count;
+}
+
+int main(void) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    int values[] = {5, 12, 7, 20, 3, 15, 10};
+    size_t n = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < n; i++) {
+        Node *node = create_node(values[i]);
+        if (node == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+
+    int lower = 5;
+    int upper = 15;
+    printf("Count in range [%d, %d]: %d\n", lower, upper, count_in_range(head, lower, upper));
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

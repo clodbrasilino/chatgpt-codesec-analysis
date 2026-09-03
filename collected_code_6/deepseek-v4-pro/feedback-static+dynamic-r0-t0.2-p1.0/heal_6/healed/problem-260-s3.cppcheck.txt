@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c:22:12: style: The comparison 'a0 > 1' is always false. [knownConditionTrueFalse]
+    if (a0 > 1 && is_prime(a0)) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c:18:20: note: 'a0' is assigned value '1' here.
+    long long a0 = 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c:22:12: note: The comparison 'a0 > 1' is always false.
+    if (a0 > 1 && is_prime(a0)) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c:27:12: style: The comparison 'a1 > 1' is always false. [knownConditionTrueFalse]
+    if (a1 > 1 && is_prime(a1)) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c:19:20: note: 'a1' is assigned value '1' here.
+    long long a1 = 1;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-260-s3.c:27:12: note: The comparison 'a1 > 1' is always false.
+    if (a1 > 1 && is_prime(a1)) {
+           ^

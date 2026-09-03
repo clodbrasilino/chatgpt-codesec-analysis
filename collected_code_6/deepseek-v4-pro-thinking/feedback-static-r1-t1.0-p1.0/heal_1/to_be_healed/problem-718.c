@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *append(Node *head, int data);
+Node *createAlternateList(Node *head);
+void printList(Node *head);
+void freeList(Node *head);
+
+int main(void) {
+    Node *head = NULL;
+    Node *temp = NULL;
+    Node *alt = NULL;
+    int values[] = {1, 2, 3, 4, 5, 6};
+    size_t i;
+
+    for (i = 0; i < sizeof(values) / sizeof(values[0]); ++i) {
+        temp = append(head, values[i]);
+        if (temp == NULL) {
+            freeList(head);
+            return EXIT_FAILURE;
+        }
+        head = temp;
+    }
+
+    alt = createAlternateList(head);
+    if (alt == NULL) {
+        freeList(head);
+        return EXIT_FAILURE;
+    }
+
+    printList(head);
+    printList(alt);
+
+    freeList(head);
+    freeList(alt);
+
+    return EXIT_SUCCESS;
+}
+
+Node *append(Node *head, int data) {
+    Node *newNode = malloc(sizeof(*newNode));
+    Node *current;
+
+    if (newNode == NULL) {
+        return NULL;
+    }
+
+    newNode->data = data;
+    newNode->next = NULL;
+
+    if (head == NULL) {
+        return newNode;
+    }
+
+    current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+
+    return head;
+}
+
+Node *createAlternateList(Node *head) {
+    Node *newHead = NULL;
+    Node *tail = NULL;
+    Node *newNode = NULL;
+    int count = 0;
+
+    while (head != NULL) {
+        if (count % 2 == 0) {
+            newNode = malloc(sizeof(*newNode));
+            if (newNode == NULL) {
+                freeList(newHead);
+                return NULL;
+            }
+            newNode->data = head->data;
+            newNode->next = NULL;
+
+            if (newHead == NULL) {
+                newHead = newNode;
+                tail = newNode;
+            } else {
+                tail->next = newNode;
+                tail = newNode;
+            }
+        }
+        head = head->next;
+        ++count;
+    }
+
+    return newHead;
+}
+
+void printList(Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void freeList(Node *head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}

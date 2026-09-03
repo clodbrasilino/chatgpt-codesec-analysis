@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int size;
+    int capacity;
+} TupleList;
+
+void initTupleList(TupleList *list) {
+    list->size = 0;
+    list->capacity = 4;
+    list->tuples = (Tuple *)malloc(list->capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void addTuple(TupleList *list, int key, int value) {
+    if (list->size == list->capacity) {
+        list->capacity *= 2;
+        Tuple *temp = (Tuple *)realloc(list->tuples, list->capacity * sizeof(Tuple));
+        if (temp == NULL) {
+            fprintf(stderr, "Memory reallocation failed\n");
+            free(list->tuples);
+            exit(EXIT_FAILURE);
+        }
+        list->tuples = temp;
+    }
+    list->tuples[list->size].key = key;
+    list->tuples[list->size].value = value;
+    list->size++;
+}
+
+void freeTupleList(TupleList *list) {
+    free(list->tuples);
+    list->tuples = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+int compareTuples(const void *a, const void *b) {
+    const Tuple *tupleA = (const Tuple *)a;
+    const Tuple *tupleB = (const Tuple *)b;
+    return tupleA->key - tupleB->key;
+}
+
+TupleList joinTuples(const Tuple *input, int inputSize) {
+    TupleList result;
+    initTupleList(&result);
+    
+    if (inputSize <= 0) {
+        return result;
+    }
+    
+    Tuple *sorted = (Tuple *)malloc(inputSize * sizeof(Tuple));
+    if (sorted == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        freeTupleList(&result);
+        exit(EXIT_FAILURE);
+    }
+    
+    for (int i = 0; i < inputSize; i++) {
+        sorted[i] = input[i];
+    }
+    
+    qsort(sorted, inputSize, sizeof(Tuple), compareTuples);
+    
+    int i = 0;
+    while (i < inputSize) {
+        int currentKey = sorted[i].key;
+        int sum = 0;
+        int j = i;
+        
+        while (j < inputSize && sorted[j].key == currentKey) {
+            sum += sorted[j].value;
+            j++;
+        }
+        
+        addTuple(&result, currentKey, sum);
+        i = j;
+    }
+    
+    free(sorted);
+    return result;
+}
+
+int main(void) {
+    Tuple input[] = {
+        {1, 10},
+        {2, 20},
+        {1, 30},
+        {3, 40},
+        {2, 50},
+        {1, 60}
+    };
+    int inputSize = sizeof(input) / sizeof(input[0]);
+    
+    TupleList result = joinTuples(input, inputSize);
+    
+    printf("Joined tuples:\n");
+    for (int i = 0; i < result.size; i++) {
+        printf("(%d, %d)\n", result.tuples[i].key, result.tuples[i].value);
+    }
+    
+    freeTupleList(&result);
+    
+    return 0;
+}
+```

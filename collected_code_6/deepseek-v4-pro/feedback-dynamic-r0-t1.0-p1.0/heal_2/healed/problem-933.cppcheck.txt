@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-933.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-933.c:33:12: style: Redundant initialization for 'cursor'. The initialized value is overwritten before it is read. [redundantInitialization]
+    cursor = input;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-933.c:13:24: note: cursor is initialized
+    const char *cursor = input;
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-933.c:33:12: note: cursor is overwritten
+    cursor = input;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-dynamic-r0-t1.0-p1.0/heal_2/healed/problem-933.c:37:28: style: Variable 'match_start' is assigned a value that is never used. [unreadVariable]
+        size_t match_start = matches[0].rm_so;
+                           ^

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    void *value;
+} DictionaryElement;
+
+typedef struct {
+    DictionaryElement *elements;
+    size_t count;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->elements = (DictionaryElement *)calloc(initial_capacity, sizeof(DictionaryElement));
+    if (dict->elements == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->elements[i].key);
+        free(dict->elements[i].value);
+    }
+    free(dict->elements);
+    free(dict);
+}
+
+int add_element(Dictionary *dict, const char *key, void *value) {
+    if (dict->count >= (sizeof(dict->elements) / sizeof(dict->elements[0]))) {
+        return -1;
+    }
+    /* Possible weaknesses found:
+     *  include the header <string.h> or explicitly provide a declaration for 'strdup'
+     *  implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+     *  call to undeclared library function 'strdup' with type 'char *(const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     */
+    dict->elements[dict->count].key = strdup(key);
+    if (dict->elements[dict->count].key == NULL) return -1;
+    dict->elements[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+void* get_value_by_index(const Dictionary *dict, size_t index) {
+    if (index >= dict->count) return NULL;
+    return dict->elements[index].value;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(5);
+    if (dict == NULL) return 1;
+
+    int a = 10;
+    int b = 20;
+    int c = 30;
+
+    if (add_element(dict, "one", &a) != 0) return 1;
+    if (add_element(dict, "two", &b) != 0) return 1;
+    if (add_element(dict, "three", &c) != 0) return 1;
+
+    void *value = get_value_by_index(dict, 1);
+    if (value != NULL) {
+        printf("Value: %d\n", *(int *)value);
+    } else {
+        printf("Index out of bounds\n");
+    }
+
+    destroy_dictionary(dict);
+    return 0;
+}

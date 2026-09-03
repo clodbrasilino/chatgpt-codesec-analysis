@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 'alpha', got  c�
+  *  test case 0 failed: expected 'python', got �b�
+  *  test case 1 failed: expected 'string', got �b�
+  */
+
+char *remove_parenthesis_area(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int depth = 0;
+
+    while (str[i] != '\0') {
+        if (str[i] == '(') {
+            depth++;
+            i++;
+            continue;
+        }
+        if (str[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            } else {
+                result[j++] = str[i];
+            }
+            i++;
+            continue;
+        }
+        if (depth == 0) {
+            result[j++] = str[i];
+        }
+        i++;
+    }
+
+    result[j] = '\0';
+
+    char *final_result = (char *)realloc(result, j + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char *test1 = "string";
+    const char *test2 = "alpha";
+    const char *test3 = "python";
+    
+    char *results[] = {
+        remove_parenthesis_area(test1),
+        remove_parenthesis_area(test2),
+        remove_parenthesis_area(test3)
+    };
+
+    const char *tests[] = {test1, test2, test3};
+
+    for (int i = 0; i < 3; i++) {
+        printf("Input:    \"%s\"\n", tests[i]);
+        printf("Output:   \"%s\"\n\n", results[i] ? results[i] : "NULL");
+        free(results[i]);
+    }
+
+    return 0;
+}

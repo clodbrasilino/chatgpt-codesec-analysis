@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int price;
+    int index;
+} Item;
+
+int compare(const void *a, const void *b) {
+    return ((Item *)a)->price - ((Item *)b)->price;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'prices' can be declared as pointer to const [constParameterPointer]
+ */
+void find_n_cheapest(int *prices, int size, int n, int *result) {
+    Item *items = (Item *)malloc(size * sizeof(Item));
+    if (items == NULL) {
+        return;
+    }
+    for (int i = 0; i < size; ++i) {
+        items[i].price = prices[i];
+        items[i].index = i;
+    }
+    qsort(items, size, sizeof(Item), compare);
+    for (int i = 0; i < n; ++i) {
+        result[i] = items[i].price;
+    }
+    free(items);
+}
+
+int main() {
+    int prices[] = {10, 5, 8, 2, 3, 7, 9, 1};
+    int size = sizeof(prices) / sizeof(prices[0]);
+    int n = 4;
+    int result[n];
+    find_n_cheapest(prices, size, n, result);
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", result[i]);
+    }
+    return 0;
+}

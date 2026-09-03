@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-391-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-391-s2.c:147:41: error: passing argument 1 of 'lists_to_nested_dict' from incompatible pointer type [-Wincompatible-pointer-types]
+  147 |     Dict *result = lists_to_nested_dict(keys, lengths, 4);
+      |                                         ^~~~
+      |                                         |
+      |                                         char ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-391-s2.c:75:50: note: expected 'char * const* const*' but argument is of type 'char ***'
+   75 | Dict *lists_to_nested_dict(char * const * const *keys, const int *list_lengths, int num_lists) {
+      |                            ~~~~~~~~~~~~~~~~~~~~~~^~~~

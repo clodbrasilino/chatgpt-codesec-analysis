@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-933.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-933.c:35:38: error: Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+        size_t group2_start = matches[2].rm_so;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-933.c:36:36: error: Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+        size_t group2_end = matches[2].rm_eo;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-933.c:43:26: style: Unsigned expression 'group1_start' can't be negative so it is unnecessary to test it. [unsignedPositive]
+        if (group1_start >= 0 && group1_end > group1_start) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-933.c:50:26: style: Unsigned expression 'group2_start' can't be negative so it is unnecessary to test it. [unsignedPositive]
+        if (group2_start >= 0 && group2_end > group2_start) {
+                         ^

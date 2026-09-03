@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-358-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-358-s2.c:4:24: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+int* modulo_lists(int *list1, int len1, int *list2, int len2, int *result_len) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-358-s2.c:4:46: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+int* modulo_lists(int *list1, int len1, int *list2, int len2, int *result_len) {
+                                             ^

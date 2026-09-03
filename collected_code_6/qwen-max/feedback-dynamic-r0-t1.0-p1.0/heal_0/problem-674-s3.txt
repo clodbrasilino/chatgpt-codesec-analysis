@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORDS 1000
+#define MAX_WORD_LENGTH 50
+
+char** split_string(const char* str, int* word_count) {
+    char** words = (char**)malloc(MAX_WORDS * sizeof(char*));
+    if (!words) return NULL;
+    
+    *word_count = 0;
+    char temp_str[strlen(str) + 1];
+    strcpy(temp_str, str);
+    
+    char* token = strtok(temp_str, " ");
+    while (token && *word_count < MAX_WORDS) {
+        words[*word_count] = (char*)malloc((strlen(token) + 1) * sizeof(char));
+        if (!words[*word_count]) {
+            while (*word_count > 0) free(words[--*word_count]);
+            free(words);
+            return NULL;
+        }
+        strcpy(words[*word_count], token);
+        (*word_count)++;
+        token = strtok(NULL, " ");
+    }
+    
+    return words;
+}
+
+void free_words(char** words, int word_count) {
+    for (int i = 0; i < word_count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+char* remove_duplicates(const char* str) {
+    int word_count = 0;
+    char** words = split_string(str, &word_count);
+    if (!words) return NULL;
+    
+    int unique_count = 0;
+    for (int i = 0; i < word_count; i++) {
+        int is_duplicate = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (strcmp(words[i], words[j]) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            words[unique_count++] = words[i];
+        }
+    }
+    
+    char* result = (char*)malloc((strlen(str) + 1) * sizeof(char));
+    if (!result) {
+        free_words(words, word_count);
+        return NULL;
+    }
+    result[0] = '\0';
+    
+    for (int i = 0; i < unique_count; i++) {
+        strcat(result, words[i]);
+        if (i < unique_count - 1) {
+            strcat(result, " ");
+        }
+    }
+    
+    free_words(words, word_count);
+    return result;
+}
+
+int main() {
+    const char* input = "this this is a test test string string";
+    char* result = remove_duplicates(input);
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("Error: Not enough memory\n");
+    }
+    return 0;
+}
+```

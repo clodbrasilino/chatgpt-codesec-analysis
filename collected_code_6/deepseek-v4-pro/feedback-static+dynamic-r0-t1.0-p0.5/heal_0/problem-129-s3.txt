@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int **generate_magic_square(int n) {
+    if (n <= 0 || n % 2 == 0) {
+        return NULL;
+    }
+
+    int **square = (int **)malloc(n * sizeof(int *));
+    if (square == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        square[i] = (int *)calloc(n, sizeof(int));
+        if (square[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(square[j]);
+            }
+            free(square);
+            return NULL;
+        }
+    }
+
+    int row = 0;
+    int col = n / 2;
+    int num = 1;
+
+    while (num <= n * n) {
+        square[row][col] = num;
+        num++;
+
+        int new_row = (row - 1 + n) % n;
+        int new_col = (col + 1) % n;
+
+        if (square[new_row][new_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = new_row;
+            col = new_col;
+        }
+    }
+
+    return square;
+}
+
+void free_magic_square(int **square, int n) {
+    if (square == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        free(square[i]);
+    }
+    free(square);
+}
+
+void print_magic_square(int **square, int n) {
+    if (square == NULL) {
+        printf("Invalid magic square\n");
+        return;
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%4d ", square[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int n;
+    printf("Enter odd number for magic square size: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (n <= 0 || n % 2 == 0) {
+        printf("Please enter a positive odd number\n");
+        return 1;
+    }
+
+    int **magic_square = generate_magic_square(n);
+    if (magic_square == NULL) {
+        printf("Failed to generate magic square\n");
+        return 1;
+    }
+
+    print_magic_square(magic_square, n);
+    free_magic_square(magic_square, n);
+
+    return 0;
+}
+```

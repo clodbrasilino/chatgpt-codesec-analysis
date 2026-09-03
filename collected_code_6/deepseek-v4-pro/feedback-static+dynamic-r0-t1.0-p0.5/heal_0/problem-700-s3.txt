@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int count_in_range(Node *head, int lower, int upper) {
+    int count = 0;
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data >= lower && current->data <= upper) {
+            count++;
+        }
+        current = current->next;
+    }
+    return count;
+}
+
+int main(void) {
+    Node *list = NULL;
+    int lower = 10;
+    int upper = 30;
+    int result;
+
+    append_node(&list, 5);
+    append_node(&list, 15);
+    append_node(&list, 25);
+    append_node(&list, 35);
+    append_node(&list, 10);
+    append_node(&list, 30);
+
+    result = count_in_range(list, lower, upper);
+    printf("Number of elements in range [%d, %d]: %d\n", lower, upper, result);
+
+    free_list(list);
+    return 0;
+}
+```

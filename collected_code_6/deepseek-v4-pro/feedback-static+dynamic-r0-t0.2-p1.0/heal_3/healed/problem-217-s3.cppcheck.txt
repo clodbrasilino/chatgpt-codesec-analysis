@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-217-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-217-s3.c:40:44: style: Condition 'result5' is always false [knownConditionTrueFalse]
+    printf("First repeated in NULL: %c\n", result5 ? result5 : '-');
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-217-s3.c:34:39: note: Calling function 'first_repeated_char' returns 0
+    char result5 = first_repeated_char(test5);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-217-s3.c:34:39: note: Assignment 'result5=first_repeated_char(test5)', assigned value is 0
+    char result5 = first_repeated_char(test5);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_3/healed/problem-217-s3.c:40:44: note: Condition 'result5' is always false
+    printf("First repeated in NULL: %c\n", result5 ? result5 : '-');
+                                           ^

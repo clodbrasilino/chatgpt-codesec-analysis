@@ -1,0 +1,95 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+void free_chunks(int **chunks, size_t chunk_count)
+{
+    if (chunks == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        free(chunks[i]);
+    }
+
+    free(chunks);
+}
+
+int **chunk_tuple(const int *tuple, size_t tuple_len, size_t n, size_t *num_chunks)
+{
+    if (tuple == NULL || n == 0 || num_chunks == NULL) {
+        return NULL;
+    }
+
+    if (tuple_len == 0) {
+        *num_chunks = 0;
+        return NULL;
+    }
+
+    size_t chunk_count = tuple_len / n;
+    if (tuple_len % n != 0) {
+        chunk_count++;
+    }
+
+    int **chunks = malloc(chunk_count * sizeof(*chunks));
+    if (chunks == NULL) {
+        *num_chunks = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        size_t start = i * n;
+        size_t remaining = tuple_len - start;
+        size_t chunk_len = remaining < n ? remaining : n;
+
+        chunks[i] = malloc(chunk_len * sizeof(*chunks[i]));
+        if (chunks[i] == NULL) {
+            free_chunks(chunks, i);
+            *num_chunks = 0;
+            return NULL;
+        }
+
+        for (size_t j = 0; j < chunk_len; j++) {
+            chunks[i][j] = tuple[start + j];
+        }
+    }
+
+    *num_chunks = chunk_count;
+    return chunks;
+}
+
+int main(void)
+{
+    int tuple[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    /* Possible weaknesses found:
+     *  Assignment 'tuple_len=sizeof(tuple)/sizeof(tuple[0])', assigned value is 10
+     */
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+    size_t chunk_size = 4;
+    size_t chunk_count = 0;
+
+    int **chunks = chunk_tuple(tuple, tuple_len, chunk_size, &chunk_count);
+
+    /* Possible weaknesses found:
+     *  Condition 'tuple_len!=0' is always true
+     *  Condition 'tuple_len!=0' is always true [knownConditionTrueFalse]
+     */
+    if (chunks == NULL && tuple_len != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        size_t start = i * chunk_size;
+        size_t remaining = tuple_len - start;
+        size_t chunk_len = remaining < chunk_size ? remaining : chunk_size;
+
+        for (size_t j = 0; j < chunk_len; j++) {
+            printf("%d ", chunks[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_chunks(chunks, chunk_count);
+
+    return EXIT_SUCCESS;
+}

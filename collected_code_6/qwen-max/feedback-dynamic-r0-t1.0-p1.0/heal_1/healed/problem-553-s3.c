@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double tuple_to_float(int *tuple, int size) {
+    if (size != 2) {
+        return 0.0;
+    }
+    double result = (double)tuple[0] + (double)tuple[1] / 100.0;
+    return result;
+}
+
+int main() {
+    int tuple[] = {3, 50};
+    int size = 2;
+    double float_value = tuple_to_float(tuple, size);
+    printf("%.3f\n", float_value);
+    return 0;
+}

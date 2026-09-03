@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int is_all_none(Tuple t) {
+    return t.a == 0 && t.b == 0;
+}
+
+Tuple* remove_all_none(Tuple *tuples, int n, int *new_size) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (!is_all_none(tuples[i])) {
+            tuples[count++] = tuples[i];
+        }
+    }
+    *new_size = count;
+    return tuples;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {0, 0}, {3, 4}, {0, 0}, {5, 6}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int new_size;
+
+    Tuple *filtered_tuples = remove_all_none(tuples, n, &new_size);
+
+    for (int i = 0; i < new_size; i++) {
+        printf("(%d, %d)\n", filtered_tuples[i].a, filtered_tuples[i].b);
+    }
+
+    return 0;
+}

@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char *value;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+static int find_tuple_index(const TupleList *list, int id) {
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->tuples[i].id == id) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+static void swap_tuples(Tuple *a, Tuple *b) {
+    Tuple temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int rearrange_tuples(TupleList *list, const int *order, size_t order_count) {
+    if (list == NULL || order == NULL || list->tuples == NULL) {
+        return -1;
+    }
+    if (order_count != list->count) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < order_count; i++) {
+        int target_index = find_tuple_index(list, order[i]);
+        if (target_index == -1) {
+            return -1;
+        }
+        if ((size_t)target_index != i) {
+            swap_tuples(&list->tuples[i], &list->tuples[target_index]);
+        }
+    }
+
+    return 0;
+}
+
+static void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        free(list->tuples[i].value);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int main(void) {
+    TupleList list;
+    list.count = 4;
+    list.tuples = malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    const char *values[] = {"alpha", "beta", "gamma", "delta"};
+    /* Possible weaknesses found:
+     *  Variable 'ids' can be declared as const array [constVariable]
+     */
+    int ids[] = {3, 1, 4, 2};
+
+    for (size_t i = 0; i < list.count; i++) {
+        list.tuples[i].id = ids[i];
+        list.tuples[i].value = malloc(strlen(values[i]) + 1);
+        if (list.tuples[i].value == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(list.tuples[j].value);
+            }
+            free(list.tuples);
+            return 1;
+        }
+        strcpy(list.tuples[i].value, values[i]);
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'order' can be declared as const array [constVariable]
+     */
+    int order[] = {1, 2, 3, 4};
+
+    if (rearrange_tuples(&list, order, 4) != 0) {
+        free_tuple_list(&list);
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.count; i++) {
+        printf("%d: %s\n", list.tuples[i].id, list.tuples[i].value);
+    }
+
+    free_tuple_list(&list);
+    return 0;
+}

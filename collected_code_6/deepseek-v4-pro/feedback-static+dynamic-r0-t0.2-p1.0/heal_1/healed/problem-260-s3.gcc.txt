@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c: In function 'nsw_prime':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:35:22: error: 'LLONG_MAX' undeclared (first use in this function)
+   35 |         if (prev1 > (LLONG_MAX - prev2) / 2) return -1;
+      |                      ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:4:1: note: 'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    3 | #include <stdbool.h>
+  +++ |+#include <limits.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-260-s3.c:35:22: note: each undeclared identifier is reported only once for each function it appears in
+   35 |         if (prev1 > (LLONG_MAX - prev2) / 2) return -1;
+      |                      ^~~~~~~~~

@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
+
+typedef struct {
+    int x;
+    int y;
+    size_t frequency;
+} Tuple;
+
+static int compare_tuples(const void *lhs, const void *rhs) {
+    const Tuple *a = *(Tuple * const *)lhs;
+    const Tuple *b = *(Tuple * const *)rhs;
+
+    if (a->x != b->x) {
+        return a->x < b->x ? -1 : 1;
+    }
+    if (a->y != b->y) {
+        return a->y < b->y ? -1 : 1;
+    }
+    return 0;
+}
+
+int assign_frequencies(Tuple *tuples, size_t count) {
+    if (tuples == NULL && count > 0) {
+        return -1;
+    }
+    if (count == 0) {
+        return 0;
+    }
+    if (count > SIZE_MAX / sizeof(Tuple *)) {
+        return -1;
+    }
+
+    Tuple **sorted = malloc(count * sizeof(*sorted));
+    if (sorted == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        sorted[i] = &tuples[i];
+    }
+
+    qsort(sorted, count, sizeof(*sorted), compare_tuples);
+
+    size_t i = 0;
+    while (i < count) {
+        size_t j = i + 1;
+        while (j < count && sorted[i]->x == sorted[j]->x && sorted[i]->y == sorted[j]->y) {
+            ++j;
+        }
+
+        for (size_t k = i; k < j; ++k) {
+            sorted[k]->frequency = j - i;
+        }
+
+        i = j;
+    }
+
+    free(sorted);
+    return 0;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 2, 0},
+        {3, 4, 0},
+        {1, 2, 0},
+        {5, 6, 0},
+        {3, 4, 0},
+        {3, 4, 0}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (assign_frequencies(tuples, count) != 0) {
+        fprintf(stderr, "Failed to assign frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("(%d, %d): %zu\n", tuples[i].x, tuples[i].y, tuples[i].frequency);
+    }
+
+    return EXIT_SUCCESS;
+}

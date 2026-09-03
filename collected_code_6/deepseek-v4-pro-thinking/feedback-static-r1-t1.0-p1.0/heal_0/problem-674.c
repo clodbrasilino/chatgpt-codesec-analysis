@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_duplicate_words(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t input_len = strlen(input);
+    char *result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    result[0] = '\0';
+
+    size_t result_len = 0;
+    size_t seen_count = 0;
+    char **seen = NULL;
+
+    const char *p = input;
+
+    while (*p != '\0') {
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        if (*p == '\0') {
+            break;
+        }
+
+        const char *start = p;
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        size_t word_len = (size_t)(p - start);
+
+        char *word = malloc(word_len + 1);
+        if (word == NULL) {
+            for (size_t i = 0; i < seen_count; i++) {
+                free(seen[i]);
+            }
+            free(seen);
+            free(result);
+            return NULL;
+        }
+
+        memcpy(word, start, word_len);
+        word[word_len] = '\0';
+
+        int found = 0;
+        for (size_t i = 0; i < seen_count; i++) {
+            if (strcmp(seen[i], word) == 0) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            char **new_seen = realloc(seen, (seen_count + 1) * sizeof(*seen));
+            if (new_seen == NULL) {
+                free(word);
+                for (size_t i = 0; i < seen_count; i++) {
+                    free(seen[i]);
+                }
+                free(seen);
+                free(result);
+                return NULL;
+            }
+
+            seen = new_seen;
+            seen[seen_count] = word;
+            seen_count++;
+
+            if (result_len > 0) {
+                result[result_len] = ' ';
+                result_len++;
+                result[result_len] = '\0';
+            }
+
+            memcpy(result + result_len, word, word_len);
+            result_len += word_len;
+            result[result_len] = '\0';
+        } else {
+            free(word);
+        }
+    }
+
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen[i]);
+    }
+    free(seen);
+
+    return result;
+}
+
+int main(void) {
+    const char input[] = "apple banana apple cherry banana";
+    char *result = remove_duplicate_words(input);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

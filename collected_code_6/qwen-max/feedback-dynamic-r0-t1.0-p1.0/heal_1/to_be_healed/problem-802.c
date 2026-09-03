@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 3, got 1
+  *  test case 1 failed: expected 2, got 1
+  */
+
+int countRotations(int arr[], int n) {
+    int min_index = 0;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < arr[min_index]) {
+            min_index = i;
+        }
+    }
+    return min_index;
+}
+
+int main() {
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int rotations = countRotations(arr, n);
+    printf("Number of rotations: %d\n", rotations);
+    return 0;
+}

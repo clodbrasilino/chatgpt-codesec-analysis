@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    int key;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Group;
+
+static int append_value(Group *group, int value) {
+    if (group->count == group->capacity) {
+        size_t new_capacity;
+        int *new_values;
+
+        if (group->capacity == 0) {
+            new_capacity = 4;
+        } else {
+            if (group->capacity > SIZE_MAX / 2) {
+                return 0;
+            }
+            new_capacity = group->capacity * 2;
+        }
+
+        if (new_capacity > SIZE_MAX / sizeof(int)) {
+            return 0;
+        }
+
+        new_values = realloc(group->values, new_capacity * sizeof(int));
+        if (new_values == NULL) {
+            return 0;
+        }
+
+        group->values = new_values;
+        group->capacity = new_capacity;
+    }
+
+    group->values[group->count++] = value;
+    return 1;
+}
+
+static int add_group(Group **groups, size_t *count, size_t *capacity, int key, int value) {
+    Group *group;
+
+    if (*count == *capacity) {
+        size_t new_capacity;
+        Group *new_groups;
+
+        if (*capacity == 0) {
+            new_capacity = 4;
+        } else {
+            if (*capacity > SIZE_MAX / 2) {
+                return 0;
+            }
+            new_capacity = *capacity * 2;
+        }
+
+        if (new_capacity > SIZE_MAX / sizeof(Group)) {
+            return 0;
+        }
+
+        new_groups = realloc(*groups, new_capacity * sizeof(Group));
+        if (new_groups == NULL) {
+            return 0;
+        }
+
+        *groups = new_groups;
+        *capacity = new_capacity;
+    }
+
+    group = &(*groups)[*count];
+    group->key = key;
+    group->values = NULL;
+    group->count = 0;
+    group->capacity = 0;
+
+    if (!append_value(group, value)) {
+        return 0;
+    }
+
+    (*count)++;
+    return 1;
+}
+
+int group_by_second(const Tuple *tuples, size_t n, Group **out_groups, size_t *out_count) {
+    Group *groups = NULL;
+    size_t count = 0;
+    size_t capacity = 0;
+    size_t i;
+
+    if (out_groups == NULL || out_count == NULL) {
+        return -1;
+    }
+
+    *out_groups = NULL;
+    *out_count = 0;
+
+    if (tuples == NULL && n != 0) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        int found = 0;
+        size_t j;
+
+        for (j = 0; j < count; j++) {
+            if (groups[j].key == tuples[i].second) {
+                if (!append_value(&groups[j], tuples[i].first)) {
+                    goto cleanup;
+                }
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            if (!add_group(&groups, &count, &capacity, tuples[i].second, tuples[i].first)) {
+                goto cleanup;
+            }
+        }
+    }
+
+    *out_groups = groups;
+    *out_count = count;
+    return 0;
+
+cleanup:
+    for (i = 0; i < count; i++) {
+        free(groups[i].values);
+    }
+    free(groups);
+    return -1;
+}
+
+void free_groups(Group *groups, size_t group_count) {
+    size_t i;
+
+    if (groups == NULL) {
+        return;
+    }
+
+    for (i = 0; i < group_count; i++) {
+        free(groups[i].values);
+    }
+
+    free(groups);
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 10},
+        {2, 20},
+        {3, 10},
+        {4, 30},
+        {5, 20},
+        {6, 10}
+    };
+    size_t n = sizeof(tuples) / sizeof(tuples[0]);
+    Group *groups = NULL;
+    size_t group_count = 0;
+    size_t i;
+    size_t j;
+
+    if (group_by_second(tuples, n, &groups, &group_count) != 0) {
+        fprintf(stderr, "Failed to group tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < group_count; i++) {
+        printf("Second %d: ", groups[i].key);
+        for (j = 0; j < groups[i].count; j++) {
+            if (j > 0) {
+                printf(", ");
+            }
+            printf("%d", groups[i].values[j]);
+        }
+        printf("\n");
+    }
+
+    free_groups(groups, group_count);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-413-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-413-s2.c:46:10: style: Variable 'result1' can be declared as pointer to const [constVariablePointer]
+    int *result1 = (int *)extract_nth_element(&list, 0, 1);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-413-s2.c:56:13: style: Variable 'result3' can be declared as pointer to const [constVariablePointer]
+    double *result3 = (double *)extract_nth_element(&list, 1, 2);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-413-s2.c:61:11: style: Variable 'result4' can be declared as pointer to const [constVariablePointer]
+    void *result4 = extract_nth_element(&list, 5, 0);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-413-s2.c:66:11: style: Variable 'result5' can be declared as pointer to const [constVariablePointer]
+    void *result5 = extract_nth_element(&list, 0, 10);
+          ^

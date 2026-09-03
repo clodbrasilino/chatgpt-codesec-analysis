@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    return (arg1 > arg2) - (arg1 < arg2);
+}
+
+int largest_divisible_subset(int *nums, int nums_size, int *result) {
+    if (nums_size == 0) {
+        return 0;
+    }
+
+    qsort(nums, nums_size, sizeof(int), compare_ints);
+
+    int *dp = (int *)malloc(nums_size * sizeof(int));
+    int *prev = (int *)malloc(nums_size * sizeof(int));
+    if (dp == NULL || prev == NULL) {
+        free(dp);
+        free(prev);
+        return -1;
+    }
+
+    for (int i = 0; i < nums_size; i++) {
+        dp[i] = 1;
+        prev[i] = -1;
+    }
+
+    int max_idx = 0;
+    int max_len = 1;
+
+    for (int i = 1; i < nums_size; i++) {
+        for (int j = 0; j < i; j++) {
+            if (nums[i] % nums[j] == 0 && dp[j] + 1 > dp[i]) {
+                dp[i] = dp[j] + 1;
+                prev[i] = j;
+            }
+        }
+        if (dp[i] > max_len) {
+            max_len = dp[i];
+            max_idx = i;
+        }
+    }
+
+    int idx = max_idx;
+    int *temp = (int *)malloc(max_len * sizeof(int));
+    if (temp == NULL) {
+        free(dp);
+        free(prev);
+        return -1;
+    }
+
+    for (int i = max_len - 1; i >= 0; i--) {
+        temp[i] = nums[idx];
+        idx = prev[idx];
+    }
+
+    for (int i = 0; i < max_len; i++) {
+        result[i] = temp[i];
+    }
+
+    free(temp);
+    free(dp);
+    free(prev);
+    return max_len;
+}
+
+int main(void) {
+    int nums[] = {1, 2, 4, 8};
+    int size = sizeof(nums) / sizeof(nums[0]);
+    int *result = (int *)malloc(size * sizeof(int));
+    if (result == NULL) {
+        return 1;
+    }
+
+    int len = largest_divisible_subset(nums, size, result);
+    if (len < 0) {
+        free(result);
+        return 1;
+    }
+
+    for (int i = 0; i < len; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

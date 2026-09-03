@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stddef.h>
+
+#define TABLE_SIZE 256
+
+char find_first_repeated_char(const char *str);
+
+char find_first_repeated_char(const char *str)
+{
+    unsigned int count[TABLE_SIZE] = {0};
+    const unsigned char *p = (const unsigned char *)str;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    while (p[i] != '\0') {
+        count[p[i]]++;
+        i++;
+    }
+
+    i = 0;
+    while (p[i] != '\0') {
+        if (count[p[i]] > 1) {
+            return (char)p[i];
+        }
+        i++;
+    }
+
+    return '\0';
+}
+
+int main(void)
+{
+    const char *str = "geeksforgeeks";
+    char repeated = find_first_repeated_char(str);
+
+    if (repeated != '\0') {
+        printf("First repeated character: %c\n", repeated);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    return 0;
+}

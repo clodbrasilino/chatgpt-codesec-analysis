@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:15:9: style: The scope of the variable 'match_len' can be reduced. [variableScope]
+    int match_len;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-495.c:19:19: style: Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+        match_len = end - start;
+                  ^

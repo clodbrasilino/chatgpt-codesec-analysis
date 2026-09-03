@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+int find_common_indices(const int *a, size_t na,
+                        const int *b, size_t nb,
+                        const int *c, size_t nc,
+                        size_t *out, size_t out_capacity)
+{
+    size_t min_len = na < nb ? na : nb;
+    if (nc < min_len) min_len = nc;
+    if (min_len == 0) return 0;
+    if (a == NULL || b == NULL || c == NULL || out == NULL) return -1;
+    if (out_capacity < min_len) return -2;
+
+    size_t count = 0;
+    for (size_t i = 0; i < min_len; ++i) {
+        if (a[i] == b[i] && b[i] == c[i]) {
+            out[count++] = i;
+        }
+    }
+    return (int)count;
+}
+
+int main(void)
+{
+    const int a[] = {10, 20, 30, 40, 50};
+    const int b[] = {10, 25, 30, 45, 50};
+    const int c[] = {10, 20, 30, 40, 55};
+    size_t common[5];
+
+    int count = find_common_indices(a, 5, b, 5, c, 5, common, 5);
+
+    if (count < 0) {
+        if (count == -1) {
+            printf("Invalid input\n");
+        } else if (count == -2) {
+            printf("Output capacity too small\n");
+        }
+        return 1;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        size_t idx = common[i];
+        printf("%zu: %d\n", idx, a[idx]);
+    }
+
+    return 0;
+}
+```

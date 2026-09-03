@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Tuple {
+    int id;
+    char name[50];
+    double value;
+    struct Tuple *next;
+} Tuple;
+
+typedef struct {
+    Tuple *head;
+    Tuple *tail;
+    size_t size;
+} TupleList;
+
+TupleList *tuple_list_create(void) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    return list;
+}
+
+int tuple_list_append(TupleList *list, int id, const char *name, double value) {
+    if (list == NULL || name == NULL) {
+        return -1;
+    }
+    Tuple *new_tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (new_tuple == NULL) {
+        return -1;
+    }
+    new_tuple->id = id;
+    strncpy(new_tuple->name, name, sizeof(new_tuple->name) - 1);
+    new_tuple->name[sizeof(new_tuple->name) - 1] = '\0';
+    new_tuple->value = value;
+    new_tuple->next = NULL;
+    if (list->tail == NULL) {
+        list->head = new_tuple;
+        list->tail = new_tuple;
+    } else {
+        list->tail->next = new_tuple;
+        list->tail = new_tuple;
+    }
+    list->size++;
+    return 0;
+}
+
+Tuple *tuple_list_extract_rear(TupleList *list) {
+    if (list == NULL || list->head == NULL) {
+        return NULL;
+    }
+    if (list->head == list->tail) {
+        Tuple *extracted = list->head;
+        list->head = NULL;
+        list->tail = NULL;
+        list->size = 0;
+        return extracted;
+    }
+    Tuple *current = list->head;
+    while (current->next != list->tail) {
+        current = current->next;
+    }
+    Tuple *extracted = list->tail;
+    current->next = NULL;
+    list->tail = current;
+    list->size--;
+    return extracted;
+}
+
+void tuple_list_destroy(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    Tuple *current = list->head;
+    while (current != NULL) {
+        Tuple *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void tuple_print(const Tuple *tuple) {
+    if (tuple == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    printf("(%d, %s, %.2f)\n", tuple->id, tuple->name, tuple->value);
+}
+
+int main(void) {
+    TupleList *list = tuple_list_create();
+    if (list == NULL) {
+        return 1;
+    }
+    tuple_list_append(list, 1, "Alice", 95.5);
+    tuple_list_append(list, 2, "Bob", 87.3);
+    tuple_list_append(list, 3, "Charlie", 91.8);
+    tuple_list_append(list, 4, "Diana", 78.9);
+
+    printf("List size: %zu\n", list->size);
+    Tuple *rear = tuple_list_extract_rear(list);
+    printf("Extracted rear: ");
+    tuple_print(rear);
+    free(rear);
+
+    printf("List size after extraction: %zu\n", list->size);
+    rear = tuple_list_extract_rear(list);
+    printf("Extracted rear: ");
+    tuple_print(rear);
+    free(rear);
+
+    rear = tuple_list_extract_rear(list);
+    printf("Extracted rear: ");
+    tuple_print(rear);
+    free(rear);
+
+    rear = tuple_list_extract_rear(list);
+    printf("Extracted rear: ");
+    tuple_print(rear);
+    free(rear);
+
+    rear = tuple_list_extract_rear(list);
+    printf("Extracted rear from empty list: ");
+    tuple_print(rear);
+
+    tuple_list_destroy(list);
+    return 0;
+}

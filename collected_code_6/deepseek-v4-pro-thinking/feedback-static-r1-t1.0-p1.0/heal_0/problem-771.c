@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int isBalanced(const char *expr) {
+    if (expr == NULL) {
+        return 0;
+    }
+
+    size_t length = strlen(expr);
+    char *stack = malloc(length + 1);
+    if (stack == NULL) {
+        return -1;
+    }
+
+    size_t top = 0;
+
+    for (size_t i = 0; expr[i] != '\0'; ++i) {
+        char ch = expr[i];
+
+        if (ch == '(' || ch == '[' || ch == '{') {
+            stack[top] = ch;
+            ++top;
+        } else if (ch == ')' || ch == ']' || ch == '}') {
+            if (top == 0) {
+                free(stack);
+                return 0;
+            }
+
+            --top;
+            char open = stack[top];
+
+            if ((ch == ')' && open != '(') ||
+                (ch == ']' && open != '[') ||
+                (ch == '}' && open != '{')) {
+                free(stack);
+                return 0;
+            }
+        }
+    }
+
+    int balanced = (top == 0) ? 1 : 0;
+    free(stack);
+    return balanced;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "",
+        "()",
+        "()[]{}",
+        "(]",
+        "([{}])",
+        "({[})",
+        "(((",
+        ")))",
+        "a+b*(c-d)",
+        NULL
+    };
+
+    for (size_t i = 0; tests[i] != NULL; ++i) {
+        int result = isBalanced(tests[i]);
+
+        if (result == -1) {
+            printf("\"%s\": memory allocation failed\n", tests[i]);
+        } else {
+            printf("\"%s\": %s\n", tests[i], result == 1 ? "balanced" : "not balanced");
+        }
+    }
+
+    return 0;
+}

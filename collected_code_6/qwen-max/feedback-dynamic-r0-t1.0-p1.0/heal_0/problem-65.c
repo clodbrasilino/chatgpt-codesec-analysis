@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+int list_sum(Node *head) {
+    if (head == NULL) return 0;
+    return head->value + list_sum(head->next);
+}
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    Node *head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+
+    printf("List sum: %d\n", list_sum(head));
+
+    free_list(head);
+
+    return 0;
+}

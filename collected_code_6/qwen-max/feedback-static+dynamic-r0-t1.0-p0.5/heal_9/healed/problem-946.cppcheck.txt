@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-946.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-946.c:28:11: warning: Uninitialized variable: words [uninitvar]
+    qsort(words, wordCount, sizeof(char*), (int(*)(const void*, const void*))compare);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-946.c:22:12: note: Assuming condition is false
+    while (token) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_9/healed/problem-946.c:28:11: note: Uninitialized variable: words
+    qsort(words, wordCount, sizeof(char*), (int(*)(const void*, const void*))compare);
+          ^

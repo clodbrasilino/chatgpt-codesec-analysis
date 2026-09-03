@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_sequences(const int *values, int values_count, int length) {
+    if (values == NULL || values_count <= 0 || length <= 0) {
+        return 0;
+    }
+
+    long long *dp = (long long *)calloc((size_t)length + 1, sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    long long *prefix = (long long *)calloc((size_t)length + 1, sizeof(long long));
+    if (prefix == NULL) {
+        free(dp);
+        return -1;
+    }
+
+    dp[0] = 1;
+    prefix[0] = 1;
+
+    for (int i = 1; i <= length; i++) {
+        long long total = 0;
+        for (int j = 0; j < values_count; j++) {
+            int v = values[j];
+            if (v > 0) {
+                if (i - v >= 0) {
+                    total += prefix[i - v];
+                }
+            } else if (v < 0) {
+                int need = -v;
+                if (i >= need) {
+                    total += dp[i - need];
+                }
+            }
+        }
+        dp[i] = total;
+        prefix[i] = prefix[i - 1] + dp[i];
+    }
+
+    long long result = dp[length];
+    free(dp);
+    free(prefix);
+    return result;
+}
+
+int main(void) {
+    const int values[] = {1, -1, 2};
+    int length = 5;
+    long long result = count_sequences(values, 3, length);
+    printf("%lld\n", result);
+    return 0;
+}
+```

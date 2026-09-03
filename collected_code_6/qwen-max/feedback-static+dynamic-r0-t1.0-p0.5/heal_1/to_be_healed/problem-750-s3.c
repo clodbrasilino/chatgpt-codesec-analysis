@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void add_tuple_to_list(List *list, Tuple tuple) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = tuple;
+    new_node->next = list->head;
+    list->head = new_node;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("(%d, %d) -> ", current->data.a, current->data.b);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+    while (current != NULL) {
+        temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *list = create_list();
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+
+    add_tuple_to_list(list, t1);
+    add_tuple_to_list(list, t2);
+
+    print_list(list);
+
+    free_list(list);
+    return 0;
+}

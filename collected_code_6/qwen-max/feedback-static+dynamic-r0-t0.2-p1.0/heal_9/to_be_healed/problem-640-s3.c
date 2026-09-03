@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'string', got ��^
+  *  test case 0 failed: expected 'python', got ��^
+  *  test case 2 failed: expected 'alpha', got 
+  */
+
+char* remove_parenthesis_area(const char *input) {
+    int len = strlen(input);
+    int result_len = 0;
+    int depth = 0;
+
+    for (int i = 0; i < len; ++i) {
+        /* Possible weaknesses found:
+         *  Assuming condition 'input[i]=='('' is false
+         */
+        if (input[i] == '(') {
+            depth++;
+        /* Possible weaknesses found:
+         *  Assuming condition 'input[i]==')'' is false
+         */
+        } else if (input[i] == ')') {
+            depth--;
+        /* Possible weaknesses found:
+         *  Condition 'input[i]!='('' is always true
+         *  Condition 'input[i]!=')'' is always true [knownConditionTrueFalse]
+         *  Condition 'input[i]!=')'' is always true
+         *  Condition 'input[i]!='('' is always true [knownConditionTrueFalse]
+         */
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+            result_len++;
+        }
+    }
+
+    char *result = (char *)malloc((result_len + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int result_index = 0;
+    depth = 0;
+
+    for (int i = 0; i < len; ++i) {
+        /* Possible weaknesses found:
+         *  Assuming condition 'input[i]=='('' is false
+         */
+        if (input[i] == '(') {
+            depth++;
+        /* Possible weaknesses found:
+         *  Assuming condition 'input[i]==')'' is false
+         */
+        } else if (input[i] == ')') {
+            depth--;
+        /* Possible weaknesses found:
+         *  Condition 'input[i]!='('' is always true
+         *  Condition 'input[i]!=')'' is always true [knownConditionTrueFalse]
+         *  Condition 'input[i]!=')'' is always true
+         *  Condition 'input[i]!='('' is always true [knownConditionTrueFalse]
+         */
+        } else if (depth == 0 && input[i] != '(' && input[i] != ')') {
+            result[result_index++] = input[i];
+        }
+    }
+
+    result[result_index] = '\0';
+    return result;
+}
+
+int main() {
+    const char *input1 = "python";
+    const char *input2 = "string";
+    const char *input3 = "alpha";
+    const char *input4 = "This is a (test string with) some (parentheses)";
+
+    char *output1 = remove_parenthesis_area(input1);
+    if (output1 != NULL) {
+        printf("%s\n", output1);
+        free(output1);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    char *output2 = remove_parenthesis_area(input2);
+    if (output2 != NULL) {
+        printf("%s\n", output2);
+        free(output2);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    char *output3 = remove_parenthesis_area(input3);
+    if (output3 != NULL) {
+        printf("%s\n", output3);
+        free(output3);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    char *output4 = remove_parenthesis_area(input4);
+    if (output4 != NULL) {
+        printf("%s\n", output4);
+        free(output4);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+    }
+
+    return 0;
+}

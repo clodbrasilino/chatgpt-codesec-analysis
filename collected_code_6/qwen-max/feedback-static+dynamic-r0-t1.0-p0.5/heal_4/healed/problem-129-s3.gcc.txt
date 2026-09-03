@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-129-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-129-s3.c:39:30: error: passing argument 2 of 'generate_magic_square' from incompatible pointer type [-Wincompatible-pointer-types]
+   39 |     generate_magic_square(n, magic_square);
+      |                              ^~~~~~~~~~~~
+      |                              |
+      |                              int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-129-s3.c:4:39: note: expected 'int (*)[n]' but argument is of type 'int **'
+    4 | void generate_magic_square(int n, int magic_square[n][n]) {
+      |                                   ~~~~^~~~~~~~~~~~~~~~~~

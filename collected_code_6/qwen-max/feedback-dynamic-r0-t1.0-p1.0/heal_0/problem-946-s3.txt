@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_FREQUENCY 128
+
+void findMostCommonElements(const char *text, int *counts) {
+    for (int i = 0; i < MAX_FREQUENCY; ++i) {
+        counts[i] = 0;
+    }
+
+    while (*text) {
+        if (isprint(*text)) {
+            counts[(unsigned char)*text]++;
+        }
+        text++;
+    }
+}
+
+int main() {
+    const char *exampleText = "Hello, World! 123";
+    int counts[MAX_FREQUENCY] = {0};
+    findMostCommonElements(exampleText, counts);
+
+    int maxCount = 0;
+    for (int i = 0; i < MAX_FREQUENCY; ++i) {
+        if (counts[i] > maxCount) {
+            maxCount = counts[i];
+        }
+    }
+
+    printf("Most common elements and their counts:\n");
+    for (int i = 0; i < MAX_FREQUENCY; ++i) {
+        if (counts[i] == maxCount && maxCount != 0) {
+            printf("%c: %d\n", i, counts[i]);
+        }
+    }
+
+    return 0;
+}
+```

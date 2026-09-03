@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+typedef struct {
+    Item *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+MinHeap *create_min_heap(int capacity) {
+    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
+    if (heap == NULL) {
+        return NULL;
+    }
+    heap->data = (Item *)malloc(sizeof(Item) * capacity);
+    if (heap->data == NULL) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroy_min_heap(MinHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+void min_heapify(MinHeap *heap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left].price < heap->data[smallest].price) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->data[right].price < heap->data[smallest].price) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        swap(&heap->data[index], &heap->data[smallest]);
+        min_heapify(heap, smallest);
+    }
+}
+
+void build_min_heap(MinHeap *heap) {
+    for (int i = heap->size / 2 - 1; i >= 0; i--) {
+        min_heapify(heap, i);
+    }
+}
+
+void heap_push(MinHeap *heap, Item item) {
+    if (heap->size >= heap->capacity) {
+        return;
+    }
+    heap->data[heap->size] = item;
+    int current = heap->size;
+    heap->size++;
+
+    while (current > 0 && heap->data[(current - 1) / 2].price > heap->data[current].price) {
+        swap(&heap->data[(current - 1) / 2], &heap->data[current]);
+        current = (current - 1) / 2;
+    }
+}
+
+Item heap_pop(MinHeap *heap) {
+    Item root = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    min_heapify(heap, 0);
+    return root;
+}
+
+Item heap_peek(MinHeap *heap) {
+    return heap->data[0];
+}
+
+Item *find_n_expensive_items(Item *items, int total_items, int n, int *result_count) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'result_count==NULL' is not redundant
+     */
+    if (items == NULL || total_items <= 0 || n <= 0 || result_count == NULL) {
+        /* Possible weaknesses found:
+         *  Null pointer dereference
+         *  Either the condition 'result_count==NULL' is redundant or there is possible null pointer dereference: result_count. [nullPointerRedundantCheck]
+         */
+        *result_count = 0;
+        return NULL;
+    }
+
+    if (n > total_items) {
+        n = total_items;
+    }
+
+    MinHeap *heap = create_min_heap(n);
+    if (heap == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        heap_push(heap, items[i]);
+    }
+
+    for (int i = n; i < total_items; i++) {
+        if (items[i].price > heap_peek(heap).price) {
+            heap_pop(heap);
+            heap_push(heap, items[i]);
+        }
+    }
+
+    Item *result = (Item *)malloc(sizeof(Item) * n);
+    if (result == NULL) {
+        destroy_min_heap(heap);
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        result[i] = heap_pop(heap);
+    }
+
+    destroy_min_heap(heap);
+    *result_count = n;
+    return result;
+}
+
+int main(void) {
+    Item items[] = {
+        {1, 10.5},
+        {2, 20.0},
+        {3, 5.25},
+        {4, 15.75},
+        {5, 30.0},
+        {6, 25.5},
+        {7, 8.0},
+        {8, 12.0}
+    };
+    int total_items = sizeof(items) / sizeof(items[0]);
+    int n = 3;
+    int result_count = 0;
+
+    Item *expensive_items = find_n_expensive_items(items, total_items, n, &result_count);
+
+    if (expensive_items != NULL) {
+        printf("Top %d expensive items:\n", result_count);
+        for (int i = 0; i < result_count; i++) {
+            printf("ID: %d, Price: %.2f\n", expensive_items[i].id, expensive_items[i].price);
+        }
+        free(expensive_items);
+    } else {
+        printf("Failed to find expensive items.\n");
+    }
+
+    return 0;
+}

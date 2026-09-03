@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int length;
+} Tuple;
+
+int trim_tuple_by_k(Tuple *tuple, int k) {
+    if (tuple == NULL || k < 0) {
+        return -1;
+    }
+
+    if (tuple->length == 0) {
+        free(tuple->data);
+        tuple->data = NULL;
+        return 0;
+    }
+
+    if (tuple->data == NULL) {
+        return -1;
+    }
+
+    if (k > tuple->length / 2) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->length = 0;
+        return 0;
+    }
+
+    int new_length = tuple->length - 2 * k;
+
+    if (new_length == 0) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->length = 0;
+        return 0;
+    }
+
+    int *new_data = malloc((size_t)new_length * sizeof(*new_data));
+    if (new_data == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < new_length; i++) {
+        new_data[i] = tuple->data[i + k];
+    }
+
+    free(tuple->data);
+    tuple->data = new_data;
+    tuple->length = new_length;
+
+    return 0;
+}
+
+int trim_tuples(Tuple *tuples, int count, int k) {
+    if (tuples == NULL || count < 0) {
+        return -1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (trim_tuple_by_k(&tuples[i], k) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+void print_tuples(const Tuple *tuples, int count) {
+    for (int i = 0; i < count; i++) {
+        printf("(");
+        for (int j = 0; j < tuples[i].length; j++) {
+            printf("%d", tuples[i].data[j]);
+            if (j < tuples[i].length - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void) {
+    int count = 3;
+    int lengths[] = {4, 5, 3};
+    int values0[] = {1, 2, 3, 4};
+    int values1[] = {5, 6, 7, 8, 9};
+    int values2[] = {10, 11, 12};
+    int *all_values[] = {values0, values1, values2};
+
+    Tuple *tuples = malloc((size_t)count * sizeof(*tuples));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < count; i++) {
+        tuples[i].length = lengths[i];
+        tuples[i].data = malloc((size_t)lengths[i] * sizeof(*tuples[i].data));
+        if (tuples[i].data == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(tuples[j].data);
+            }
+            free(tuples);
+            return 1;
+        }
+
+        for (int j = 0; j < lengths[i]; j++) {
+            tuples[i].data[j] = all_values[i][j];
+        }
+    }
+
+    printf("Before:\n");
+    print_tuples(tuples, count);
+
+    int k = 1;
+    if (trim_tuples(tuples, count, k) != 0) {
+        for (int i = 0; i < count; i++) {
+            free(tuples[i].data);
+        }
+        free(tuples);
+        return 1;
+    }
+
+    printf("After trimming by %d:\n", k);
+    print_tuples(tuples, count);
+
+    for (int i = 0; i < count; i++) {
+        free(tuples[i].data);
+    }
+    free(tuples);
+
+    return 0;
+}

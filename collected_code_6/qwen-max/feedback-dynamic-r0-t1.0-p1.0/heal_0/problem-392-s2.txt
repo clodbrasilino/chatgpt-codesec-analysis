@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max_sum(int n) {
+    if (n <= 0) return 0;
+    int a = find_max_sum(n / 2);
+    int b = find_max_sum(n / 3);
+    int c = find_max_sum(n / 4);
+    int d = find_max_sum(n / 5);
+    return (a + b + c + d > n) ? a + b + c + d : n;
+}
+
+int main() {
+    int n = 0;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum sum is: %d\n", find_max_sum(n));
+    return EXIT_SUCCESS;
+}
+```

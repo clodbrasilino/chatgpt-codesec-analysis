@@ -1,0 +1,68 @@
+```c
+#include <ctype.h>
+#include <errno.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    const char *data;
+    float value;
+    int is_float;
+    struct Node *next;
+} Node;
+
+size_t convert_list_to_float(Node *head) {
+    size_t converted = 0;
+
+    while (head != NULL) {
+        head->is_float = 0;
+        head->value = 0.0f;
+
+        if (head->data != NULL) {
+            char *endptr = NULL;
+            errno = 0;
+            float result = strtof(head->data, &endptr);
+
+            if (endptr != head->data) {
+                while (*endptr != '\0' && isspace((unsigned char)*endptr)) {
+                    endptr++;
+                }
+
+                if (*endptr == '\0' && errno != ERANGE) {
+                    head->value = result;
+                    head->is_float = 1;
+                    converted++;
+                }
+            }
+        }
+
+        head = head->next;
+    }
+
+    return converted;
+}
+
+int main(void) {
+    Node nodes[4] = {
+        { "3.14", 0.0f, 0, &nodes[1] },
+        { "abc", 0.0f, 0, &nodes[2] },
+        { "  2.5 ", 0.0f, 0, &nodes[3] },
+        { "1e3", 0.0f, 0, NULL }
+    };
+
+    size_t converted = convert_list_to_float(nodes);
+
+    for (Node *node = nodes; node != NULL; node = node->next) {
+        if (node->is_float) {
+            printf("%s -> %.6f\n", node->data, (double)node->value);
+        } else {
+            printf("%s -> not convertible\n", node->data);
+        }
+    }
+
+    printf("Converted: %zu\n", converted);
+
+    return 0;
+}
+```

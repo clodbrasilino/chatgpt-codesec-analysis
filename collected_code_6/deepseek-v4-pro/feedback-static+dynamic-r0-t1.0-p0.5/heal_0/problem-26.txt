@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+bool has_all_k_elements(TupleList *list, int k) {
+    if (list == NULL || k <= 0) {
+        return false;
+    }
+
+    bool *found = (bool *)calloc(k, sizeof(bool));
+    if (found == NULL) {
+        return false;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        for (int j = 0; j < list->tuples[i].size; j++) {
+            int element = list->tuples[i].elements[j];
+            if (element >= 0 && element < k) {
+                found[element] = true;
+            }
+        }
+    }
+
+    for (int i = 0; i < k; i++) {
+        if (!found[i]) {
+            free(found);
+            return false;
+        }
+    }
+
+    free(found);
+    return true;
+}
+
+int main(void) {
+    int elements1[] = {0, 1, 2};
+    int elements2[] = {3, 4};
+    int elements3[] = {5};
+
+    Tuple tuple1 = {elements1, 3};
+    Tuple tuple2 = {elements2, 2};
+    Tuple tuple3 = {elements3, 1};
+
+    Tuple tuples[] = {tuple1, tuple2, tuple3};
+    TupleList list = {tuples, 3};
+
+    if (has_all_k_elements(&list, 6)) {
+        printf("All elements present\n");
+    } else {
+        printf("Not all elements present\n");
+    }
+
+    int elements4[] = {0, 1, 2};
+    int elements5[] = {2, 3};
+
+    Tuple tuple4 = {elements4, 3};
+    Tuple tuple5 = {elements5, 2};
+
+    Tuple tuples2[] = {tuple4, tuple5};
+    TupleList list2 = {tuples2, 2};
+
+    if (has_all_k_elements(&list2, 4)) {
+        printf("All elements present\n");
+    } else {
+        printf("Not all elements present\n");
+    }
+
+    return 0;
+}
+```

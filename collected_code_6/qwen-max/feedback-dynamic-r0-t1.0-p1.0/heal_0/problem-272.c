@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+    size_t size;
+} TupleList;
+
+TupleList* create_tuple_list() {
+    TupleList* list = (TupleList*)malloc(sizeof(TupleList));
+    if (list) {
+        list->head = NULL;
+        list->tail = NULL;
+        list->size = 0;
+    }
+    return list;
+}
+
+int add_tuple_to_list(TupleList* list, Tuple t) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) return -1;
+    new_node->data = t;
+    new_node->next = NULL;
+
+    if (list->tail) {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    } else {
+        list->head = new_node;
+        list->tail = new_node;
+    }
+    list->size++;
+    return 0;
+}
+
+int get_rear_element(TupleList* list, Tuple* result) {
+    if (list->size == 0 || !result) return -1;
+    *result = list->tail->data;
+    return 0;
+}
+
+void free_tuple_list(TupleList* list) {
+    Node* current = list->head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    TupleList* list = create_tuple_list();
+    if (!list) return -1;
+
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+    add_tuple_to_list(list, t1);
+    add_tuple_to_list(list, t2);
+
+    Tuple result;
+    if (get_rear_element(list, &result) == 0) {
+        printf("(%d, %d)\n", result.first, result.second);
+    }
+
+    free_tuple_list(list);
+    return 0;
+}

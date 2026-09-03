@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-582-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-582-s2.c:20:9: error: implicit declaration of function 'printf' [-Wimplicit-function-declaration]
+   20 |         printf("Dictionary is empty.\n");
+      |         ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-582-s2.c:3:1: note: include '<stdio.h>' or provide a declaration of 'printf'
+    2 | #include <stdlib.h>
+  +++ |+#include <stdio.h>
+    3 | 

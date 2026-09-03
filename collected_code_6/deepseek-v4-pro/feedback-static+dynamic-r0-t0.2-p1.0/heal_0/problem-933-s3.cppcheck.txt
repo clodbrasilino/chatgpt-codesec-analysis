@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c:35:38: error: Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+        size_t group2_start = matches[2].rm_so;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c:36:36: error: Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+        size_t group2_end = matches[2].rm_eo;
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c:41:26: style: Condition 'group1_start!=-1' is always true [knownConditionTrueFalse]
+        if (group1_start != -1 && group1_end != -1) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c:41:46: style: Condition 'group1_end!=-1' is always true [knownConditionTrueFalse]
+        if (group1_start != -1 && group1_end != -1) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c:48:26: style: Condition 'group2_start!=-1' is always true [knownConditionTrueFalse]
+        if (group2_start != -1 && group2_end != -1) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-933-s3.c:48:46: style: Condition 'group2_end!=-1' is always true [knownConditionTrueFalse]
+        if (group2_start != -1 && group2_end != -1) {
+                                             ^

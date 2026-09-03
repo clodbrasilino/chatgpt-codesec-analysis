@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *array;
+    int size;
+    int capacity;
+} MinHeap;
+
+void swap(int *x, int *y) {
+    int temp = *x;
+    *x = *y;
+    *y = temp;
+}
+
+void minHeapify(MinHeap *heap, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->array[left] < heap->array[smallest])
+        smallest = left;
+
+    if (right < heap->size && heap->array[right] < heap->array[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap->array[i], &heap->array[smallest]);
+        minHeapify(heap, smallest);
+    }
+}
+
+void insert(MinHeap *heap, int value) {
+    if (heap->size == heap->capacity) {
+        heap->capacity *= 2;
+        heap->array = (int *)realloc(heap->array, heap->capacity * sizeof(int));
+    }
+
+    int i = heap->size;
+    heap->array[i] = value;
+    heap->size++;
+
+    while (i != 0 && heap->array[(i - 1) / 2] > heap->array[i]) {
+        swap(&heap->array[i], &heap->array[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+int extractMin(MinHeap *heap) {
+    if (heap->size <= 0)
+        return INT_MAX;
+
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->array[0];
+    }
+
+    int root = heap->array[0];
+    heap->array[0] = heap->array[heap->size - 1];
+    heap->size--;
+    minHeapify(heap, 0);
+
+    return root;
+}
+
+void buildMinHeap(MinHeap *heap, int *arr, int n) {
+    heap->size = n;
+    for (int i = (n / 2) - 1; i >= 0; i--)
+        minHeapify(heap, i);
+}
+
+int main() {
+    int arr[] = {3, 5, 2, 6, 7, 1, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    MinHeap heap;
+    heap.array = (int *)malloc(n * sizeof(int));
+    heap.capacity = n;
+    heap.size = 0;
+
+    for (int i = 0; i < n; i++)
+        insert(&heap, arr[i]);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", extractMin(&heap));
+    }
+
+    free(heap.array);
+    return 0;
+}
+```

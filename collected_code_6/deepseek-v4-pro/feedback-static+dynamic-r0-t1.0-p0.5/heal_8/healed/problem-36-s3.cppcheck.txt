@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:15:48: warning: Either the condition 'remainder==0' is redundant or there is division by zero at line 15. [zerodivcond]
+    long long remainder = (long long)numerator % denominator;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:28:23: note: Assuming that condition 'remainder==0' is not redundant
+        if (remainder == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:23:22: note: Assignment to 'remainder%=denominator'
+        remainder %= denominator;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:15:48: note: Division by zero
+    long long remainder = (long long)numerator % denominator;
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:22:37: warning: Either the condition 'remainder==0' is redundant or there is division by zero at line 22. [zerodivcond]
+        int digit = (int)(remainder / denominator);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:28:23: note: Assuming that condition 'remainder==0' is not redundant
+        if (remainder == 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:23:22: note: Assignment to 'remainder%=denominator'
+        remainder %= denominator;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-36-s3.c:22:37: note: Division by zero
+        int digit = (int)(remainder / denominator);
+                                    ^

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-792-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-792-s3.c:11:16: style: Condition 'result!=-1' is always true [knownConditionTrueFalse]
+    if (result != -1) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-792-s3.c:9:21: note: Assignment 'num_lists=5', assigned value is 5
+    int num_lists = 5;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-792-s3.c:10:29: note: Calling function 'count_lists' returns 5
+    int result = count_lists(num_lists);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-792-s3.c:10:29: note: Assignment 'result=count_lists(num_lists)', assigned value is 5
+    int result = count_lists(num_lists);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-792-s3.c:11:16: note: Condition 'result!=-1' is always true
+    if (result != -1) {
+               ^

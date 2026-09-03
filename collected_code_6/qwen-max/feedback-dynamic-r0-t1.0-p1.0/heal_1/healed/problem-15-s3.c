@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+
+char **split_at_lowercase(const char *input, int *count) {
+    *count = 0;
+    if (input == NULL || *input == '\0') return NULL;
+
+    int capacity = 10;
+    char **result = (char **)malloc(capacity * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    const char *start = input;
+    while (*input != '\0') {
+        if (islower((unsigned char)*input)) {
+            size_t len = input - start;
+            if (*count >= capacity) {
+                capacity *= 2;
+                result = (char **)realloc(result, capacity * sizeof(char *));
+                if (result == NULL) return NULL;
+            }
+            result[*count] = (char *)malloc((len + 1) * sizeof(char));
+            if (result[*count] == NULL) {
+                for (int i = 0; i < *count; i++) free(result[i]);
+                free(result);
+                return NULL;
+            }
+            memcpy(result[*count], start, len);
+            result[*count][len] = '\0';
+            (*count)++;
+            start = input + 1;
+        }
+        input++;
+    }
+
+    size_t len = input - start;
+    if (*count >= capacity) {
+        capacity = *count + 1;
+        result = (char **)realloc(result, capacity * sizeof(char *));
+        if (result == NULL) return NULL;
+    }
+    result[*count] = (char *)malloc((len + 1) * sizeof(char));
+    if (result[*count] == NULL) {
+        for (int i = 0; i < *count; i++) free(result[i]);
+        free(result);
+        return NULL;
+    }
+    memcpy(result[*count], start, len);
+    result[*count][len] = '\0';
+    (*count)++;
+
+    return result;
+}
+
+void free_result(char **result, int count) {
+    if (result == NULL) return;
+    for (int i = 0; i < count; ++i)
+        free(result[i]);
+    free(result);
+}
+
+int main() {
+    const char *input = "HelloWorldExample";
+    int count = 0;
+    char **result = split_at_lowercase(input, &count);
+
+    if (result != NULL) {
+        for (int i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_result(result, count);
+    }
+
+    return 0;
+}

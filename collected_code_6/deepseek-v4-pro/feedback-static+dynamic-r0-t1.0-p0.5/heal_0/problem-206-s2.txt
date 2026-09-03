@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    int length;
+} Tuple;
+
+typedef struct {
+    char **items;
+    int length;
+} TupleList;
+
+char *concatenate_strings(const char *str1, const char *str2) {
+    size_t len1 = strlen(str1);
+    size_t len2 = strlen(str2);
+    char *result = (char *)malloc(len1 + len2 + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+    memcpy(result, str1, len1);
+    memcpy(result + len1, str2, len2);
+    result[len1 + len2] = '\0';
+    return result;
+}
+
+TupleList *adjacent_concatenation(Tuple *tuples, int tuple_count) {
+    if (tuples == NULL || tuple_count <= 0) {
+        return NULL;
+    }
+
+    TupleList *result = (TupleList *)malloc(sizeof(TupleList));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int total_pairs = 0;
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].length > 1) {
+            total_pairs += tuples[i].length - 1;
+        }
+    }
+
+    result->items = (char **)malloc(total_pairs * sizeof(char *));
+    if (result->items == NULL) {
+        free(result);
+        return NULL;
+    }
+    result->length = total_pairs;
+
+    int index = 0;
+    for (int i = 0; i < tuple_count; i++) {
+        for (int j = 0; j < tuples[i].length - 1; j++) {
+            result->items[index] = concatenate_strings(tuples[i].items[j], tuples[i].items[j + 1]);
+            if (result->items[index] == NULL) {
+                for (int k = 0; k < index; k++) {
+                    free(result->items[k]);
+                }
+                free(result->items);
+                free(result);
+                return NULL;
+            }
+            index++;
+        }
+    }
+
+    return result;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (int i = 0; i < list->length; i++) {
+        free(list->items[i]);
+    }
+    free(list->items);
+    free(list);
+}
+
+int main(void) {
+    char *tuple1_items[] = {"abc", "def", "ghi"};
+    char *tuple2_items[] = {"hello", "world"};
+    char *tuple3_items[] = {"single"};
+
+    Tuple tuples[] = {
+        {tuple1_items, 3},
+        {tuple2_items, 2},
+        {tuple3_items, 1}
+    };
+
+    TupleList *result = adjacent_concatenation(tuples, 3);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < result->length; i++) {
+        printf("%s\n", result->items[i]);
+    }
+
+    free_tuple_list(result);
+    return 0;
+}
+```

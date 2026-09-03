@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double tuple_to_float(const int *tuple, size_t len) {
+    if (len != 2) {
+        return -1.0;
+    }
+    double result = (double)tuple[0] + (double)tuple[1] / 1000.0;
+    return result;
+}
+
+int main() {
+    int test_cases[][2] = {{7, 256}, {8, 123}, {4, 560}};
+    size_t num_test_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+    for (size_t i = 0; i < num_test_cases; ++i) {
+        double float_value = (double)test_cases[i][0] + (double)test_cases[i][1] / 1000.0;
+        double expected = tuple_to_float(test_cases[i], 2);
+        printf("%.3f\n", expected);
+    }
+    return 0;
+}

@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-661.c: In function 'max_sum_no_three_consecutive':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-661.c:11:23: error: 'std' undeclared (first use in this function); did you mean 'stdin'?
+   11 |         int notPick = std::max(prev1, prev2);
+      |                       ^~~
+      |                       stdin
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-661.c:11:23: note: each undeclared identifier is reported only once for each function it appears in
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-661.c:11:26: error: expected ',' or ';' before '::' token
+   11 |         int notPick = std::max(prev1, prev2);
+      |                          ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-661.c:12:20: error: expected ';' before '::' token
+   12 |         prev1 = std::max(pick, notPick);
+      |                    ^~
+      |                    ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_6/healed/problem-661.c:16:15: error: expected ';' before '::' token
+   16 |     return std::max(prev1, prev2);
+      |               ^~
+      |               ;

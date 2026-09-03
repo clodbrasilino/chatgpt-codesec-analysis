@@ -1,0 +1,156 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define DICT_INITIAL_CAPACITY 4U
+#define DICT_GROWTH_FACTOR 2U
+
+typedef struct Pair {
+    char *key;
+    int value;
+} Pair;
+
+typedef struct Dict {
+    Pair *entries;
+    size_t len;
+    size_t cap;
+} Dict;
+
+void dict_init(Dict *d);
+void dict_free(Dict *d);
+int dict_set(Dict *d, const char *key, int value);
+Dict dict_merge(const Dict *a, const Dict *b);
+void dict_print(const Dict *d);
+
+int main(void) {
+    Dict a, b, merged;
+    dict_init(&a);
+    dict_init(&b);
+
+    if (dict_set(&a, "apple", 1) != 0 ||
+        dict_set(&a, "banana", 2) != 0 ||
+        dict_set(&b, "banana", 20) != 0 ||
+        dict_set(&b, "cherry", 3) != 0) {
+        dict_free(&a);
+        dict_free(&b);
+        return 1;
+    }
+
+    merged = dict_merge(&a, &b);
+    if (merged.entries == NULL && (a.len > 0 || b.len > 0)) {
+        dict_free(&a);
+        dict_free(&b);
+        dict_free(&merged);
+        return 1;
+    }
+
+    dict_print(&merged);
+
+    dict_free(&a);
+    dict_free(&b);
+    dict_free(&merged);
+    return 0;
+}
+
+void dict_init(Dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    d->entries = NULL;
+    d->len = 0;
+    d->cap = 0;
+}
+
+void dict_free(Dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < d->len; i++) {
+        free(d->entries[i].key);
+    }
+    free(d->entries);
+    d->entries = NULL;
+    d->len = 0;
+    d->cap = 0;
+}
+
+int dict_set(Dict *d, const char *key, int value) {
+    if (d == NULL || key == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < d->len; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            d->entries[i].value = value;
+            return 0;
+        }
+    }
+
+    size_t key_len = strlen(key);
+    char *key_copy = malloc(key_len + 1);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    memcpy(key_copy, key, key_len + 1);
+
+    if (d->len == d->cap) {
+        size_t new_cap;
+        if (d->cap > 0 && d->cap > (size_t)-1 / DICT_GROWTH_FACTOR) {
+            free(key_copy);
+            return -1;
+        }
+        new_cap = d->cap == 0 ? DICT_INITIAL_CAPACITY : d->cap * DICT_GROWTH_FACTOR;
+        if (new_cap > (size_t)-1 / sizeof(*d->entries)) {
+            free(key_copy);
+            return -1;
+        }
+
+        Pair *new_entries = realloc(d->entries, new_cap * sizeof(*d->entries));
+        if (new_entries == NULL) {
+            free(key_copy);
+            return -1;
+        }
+        d->entries = new_entries;
+        d->cap = new_cap;
+    }
+
+    d->entries[d->len].key = key_copy;
+    d->entries[d->len].value = value;
+    d->len++;
+    return 0;
+}
+
+Dict dict_merge(const Dict *a, const Dict *b) {
+    Dict result;
+    dict_init(&result);
+
+    if (a == NULL || b == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < a->len; i++) {
+        if (dict_set(&result, a->entries[i].key, a->entries[i].value) != 0) {
+            dict_free(&result);
+            return result;
+        }
+    }
+
+    for (size_t i = 0; i < b->len; i++) {
+        if (dict_set(&result, b->entries[i].key, b->entries[i].value) != 0) {
+            dict_free(&result);
+            return result;
+        }
+    }
+
+    return result;
+}
+
+void dict_print(const Dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < d->len; i++) {
+        printf("%s: %d\n", d->entries[i].key, d->entries[i].value);
+    }
+}

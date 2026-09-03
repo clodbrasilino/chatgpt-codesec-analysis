@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct WordNode {
+    char *word;
+    struct WordNode *next;
+} WordNode;
+
+typedef struct {
+    WordNode *head;
+    size_t size;
+} WordList;
+
+static void wordlist_init(WordList *list) {
+    if (list == NULL) return;
+    list->head = NULL;
+    list->size = 0;
+}
+
+static int wordlist_add(WordList *list, const char *word) {
+    WordNode *new_node;
+    WordNode *current;
+    char *word_copy;
+    
+    if (list == NULL || word == NULL) return -1;
+    
+    word_copy = strdup(word);
+    if (word_copy == NULL) return -1;
+    
+    new_node = (WordNode *)malloc(sizeof(WordNode));
+    if (new_node == NULL) {
+        free(word_copy);
+        return -1;
+    }
+    
+    new_node->word = word_copy;
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    
+    list->size++;
+    return 0;
+}
+
+static void wordlist_destroy(WordList *list) {
+    WordNode *current;
+    WordNode *next;
+    
+    if (list == NULL) return;
+    
+    current = list->head;
+    while (current != NULL) {
+        next = current->next;
+        free(current->word);
+        free(current);
+        current = next;
+    }
+    
+    list->head = NULL;
+    list->size = 0;
+}
+
+static int wordlist_remove_words(WordList *list, const char **words_to_remove, size_t remove_count) {
+    WordNode *current;
+    WordNode *prev;
+    WordNode *temp;
+    size_t i;
+    int found;
+    
+    if (list == NULL || words_to_remove == NULL || remove_count == 0) return -1;
+    
+    current = list->head;
+    prev = NULL;
+    
+    while (current != NULL) {
+        found = 0;
+        for (i = 0; i < remove_count; i++) {
+            if (words_to_remove[i] != NULL && strcmp(current->word, words_to_remove[i]) == 0) {
+                found = 1;
+                break;
+            }
+        }
+        
+        if (found) {
+            if (prev == NULL) {
+                list->head = current->next;
+                free(current->word);
+                free(current);
+                current = list->head;
+            } else {
+                prev->next = current->next;
+                free(current->word);
+                free(current);
+                current = prev->next;
+            }
+            list->size--;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    
+    return 0;
+}
+
+static void wordlist_print(const WordList *list) {
+    const WordNode *current;
+    
+    if (list == NULL) return;
+    
+    current = list->head;
+    while (current != NULL) {
+        printf("%s", current->word);
+        if (current->next != NULL) {
+            printf(" ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    WordList list;
+    const char *words_to_remove[] = {"apple", "banana", "cherry"};
+    size_t remove_count = sizeof(words_to_remove) / sizeof(words_to_remove[0]);
+    
+    wordlist_init(&list);
+    
+    wordlist_add(&list, "apple");
+    wordlist_add(&list, "orange");
+    wordlist_add(&list, "banana");
+    wordlist_add(&list, "grape");
+    wordlist_add(&list, "cherry");
+    wordlist_add(&list, "melon");
+    
+    printf("Original list: ");
+    wordlist_print(&list);
+    
+    wordlist_remove_words(&list, words_to_remove, remove_count);
+    
+    printf("After removal: ");
+    wordlist_print(&list);
+    
+    wordlist_destroy(&list);
+    
+    return 0;
+}

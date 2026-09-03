@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    void *value;
+} DictionaryElement;
+
+typedef struct {
+    DictionaryElement *elements;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+    dict->elements = (DictionaryElement *)calloc(initial_capacity, sizeof(DictionaryElement));
+    if (dict->elements == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->elements[i].key);
+        free(dict->elements[i].value);
+    }
+    free(dict->elements);
+    free(dict);
+}
+
+int add_element(Dictionary *dict, const char *key, void *value) {
+    if (dict->count >= dict->capacity) {
+        return -1;
+    }
+    dict->elements[dict->count].key = strdup(key);
+    if (dict->elements[dict->count].key == NULL) return -1;
+    dict->elements[dict->count].value = value;
+    dict->count++;
+    return 0;
+}
+
+void* get_value_by_index(const Dictionary *dict, size_t index) {
+    if (index >= dict->count) return NULL;
+    return dict->elements[index].value;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(5);
+    if (dict == NULL) return 1;
+
+    int a = 10;
+    int b = 20;
+    int c = 30;
+
+    if (add_element(dict, "one", &a) != 0) return 1;
+    if (add_element(dict, "two", &b) != 0) return 1;
+    if (add_element(dict, "three", &c) != 0) return 1;
+
+    void *value = get_value_by_index(dict, 1);
+    if (value != NULL) {
+        printf("Value: %d\n", *(int *)value);
+    } else {
+        printf("Index out of bounds\n");
+    }
+
+    destroy_dictionary(dict);
+    return 0;
+}
+```

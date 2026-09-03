@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-748-s3.c:18:28: error: call to undeclared library function 'islower' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   18 |         if (i + 1 < len && islower(str[i]) && isupper(str[i + 1])) {
+      |                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-748-s3.c:18:28: note: include the header <ctype.h> or explicitly provide a declaration for 'islower'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-748-s3.c:18:47: error: call to undeclared library function 'isupper' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   18 |         if (i + 1 < len && islower(str[i]) && isupper(str[i + 1])) {
+      |                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_3/healed/problem-748-s3.c:18:47: note: include the header <ctype.h> or explicitly provide a declaration for 'isupper'
+2 errors generated.

@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int get_rightmost_set_bit_position(uint32_t n) {
+    int position = 0;
+    while (n > 0 && (n & 1) == 0) {
+        n >>= 1;
+        position++;
+    }
+    return position;
+}
+
+int main() {
+    uint32_t number = 0x0000000A; // Example number
+    int position = get_rightmost_set_bit_position(number);
+    printf("The position of the rightmost set bit is: %d\n", position);
+    return 0;
+}

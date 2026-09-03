@@ -1,0 +1,215 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+typedef struct {
+    int *elements;
+    int size;
+    int capacity;
+} IntSet;
+
+static void initIntSet(IntSet *set) {
+    set->elements = NULL;
+    set->size = 0;
+    set->capacity = 0;
+}
+
+static void freeIntSet(IntSet *set) {
+    free(set->elements);
+    set->elements = NULL;
+    set->size = 0;
+    set->capacity = 0;
+}
+
+static int containsInt(IntSet *set, int value) {
+    int i;
+    for (i = 0; i < set->size; i++) {
+        if (set->elements[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int addInt(IntSet *set, int value) {
+    if (containsInt(set, value)) {
+        return 1;
+    }
+    if (set->size == set->capacity) {
+        int new_capacity = set->capacity == 0 ? 8 : set->capacity * 2;
+        int *new_elements = (int *)realloc(set->elements, new_capacity * sizeof(int));
+        if (new_elements == NULL) {
+            return 0;
+        }
+        set->elements = new_elements;
+        set->capacity = new_capacity;
+    }
+    set->elements[set->size++] = value;
+    return 1;
+}
+
+static int compareInts(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    return (int_a > int_b) - (int_a < int_b);
+}
+
+static int tupleContains(Tuple *tuple, int value) {
+    int i;
+    for (i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static int allTuplesContain(TupleList *list, int value) {
+    int i;
+    for (i = 0; i < list->count; i++) {
+        if (!tupleContains(&list->tuples[i], value)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+Tuple tupleIntersection(TupleList *list) {
+    Tuple result;
+    IntSet seen;
+    int i, j;
+
+    result.elements = NULL;
+    result.size = 0;
+
+    if (list == NULL || list->count == 0) {
+        return result;
+    }
+
+    initIntSet(&seen);
+
+    for (i = 0; i < list->tuples[0].size; i++) {
+        int candidate = list->tuples[0].elements[i];
+        if (!containsInt(&seen, candidate)) {
+            if (!addInt(&seen, candidate)) {
+                freeIntSet(&seen);
+                free(result.elements);
+                result.elements = NULL;
+                result.size = 0;
+                return result;
+            }
+            if (allTuplesContain(list, candidate)) {
+                int *new_elements = (int *)realloc(result.elements, (result.size + 1) * sizeof(int));
+                if (new_elements == NULL) {
+                    freeIntSet(&seen);
+                    free(result.elements);
+                    result.elements = NULL;
+                    result.size = 0;
+                    return result;
+                }
+                result.elements = new_elements;
+                result.elements[result.size++] = candidate;
+            }
+        }
+    }
+
+    freeIntSet(&seen);
+
+    if (result.size > 1) {
+        qsort(result.elements, result.size, sizeof(int), compareInts);
+    }
+
+    return result;
+}
+
+static void freeTuple(Tuple *tuple) {
+    free(tuple->elements);
+    tuple->elements = NULL;
+    tuple->size = 0;
+}
+
+static void freeTupleList(TupleList *list) {
+    int i;
+    for (i = 0; i < list->count; i++) {
+        freeTuple(&list->tuples[i]);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+}
+
+int main(void) {
+    TupleList list;
+    Tuple result;
+    int i, j;
+
+    list.count = 3;
+    list.tuples = (Tuple *)malloc(list.count * sizeof(Tuple));
+    if (list.tuples == NULL) {
+        return 1;
+    }
+
+    list.tuples[0].size = 4;
+    list.tuples[0].elements = (int *)malloc(list.tuples[0].size * sizeof(int));
+    if (list.tuples[0].elements == NULL) {
+        free(list.tuples);
+        return 1;
+    }
+    list.tuples[0].elements[0] = 3;
+    list.tuples[0].elements[1] = 1;
+    list.tuples[0].elements[2] = 2;
+    list.tuples[0].elements[3] = 4;
+
+    list.tuples[1].size = 3;
+    list.tuples[1].elements = (int *)malloc(list.tuples[1].size * sizeof(int));
+    if (list.tuples[1].elements == NULL) {
+        freeTuple(&list.tuples[0]);
+        free(list.tuples);
+        return 1;
+    }
+    list.tuples[1].elements[0] = 2;
+    list.tuples[1].elements[1] = 5;
+    list.tuples[1].elements[2] = 3;
+
+    list.tuples[2].size = 5;
+    list.tuples[2].elements = (int *)malloc(list.tuples[2].size * sizeof(int));
+    if (list.tuples[2].elements == NULL) {
+        freeTuple(&list.tuples[0]);
+        freeTuple(&list.tuples[1]);
+        free(list.tuples);
+        return 1;
+    }
+    list.tuples[2].elements[0] = 6;
+    list.tuples[2].elements[1] = 3;
+    list.tuples[2].elements[2] = 2;
+    list.tuples[2].elements[3] = 7;
+    list.tuples[2].elements[4] = 1;
+
+    result = tupleIntersection(&list);
+
+    printf("Intersection: ");
+    for (i = 0; i < result.size; i++) {
+        printf("%d", result.elements[i]);
+        if (i < result.size - 1) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+
+    free(result.elements);
+    freeTupleList(&list);
+
+    return 0;
+}
+```

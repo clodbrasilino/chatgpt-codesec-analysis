@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c:22:17: style: Condition 'is_prime(a0)' is always false [knownConditionTrueFalse]
+    if (is_prime(a0)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c:22:17: note: Calling function 'is_prime' returns 0
+    if (is_prime(a0)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c:22:17: note: Condition 'is_prime(a0)' is always false
+    if (is_prime(a0)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c:27:17: style: Condition 'is_prime(a1)' is always false [knownConditionTrueFalse]
+    if (is_prime(a1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c:27:17: note: Calling function 'is_prime' returns 0
+    if (is_prime(a1)) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_7/healed/problem-260-s3.c:27:17: note: Condition 'is_prime(a1)' is always false
+    if (is_prime(a1)) {
+                ^

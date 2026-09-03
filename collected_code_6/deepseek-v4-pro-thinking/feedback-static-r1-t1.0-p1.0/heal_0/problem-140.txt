@@ -1,0 +1,152 @@
+```c
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    const int *items;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    int value;
+    size_t count;
+} Entry;
+
+int extract_single_occurrences(const Tuple *tuples, size_t tuple_count, int **out, size_t *out_count) {
+    if (out == NULL || out_count == NULL) {
+        return -1;
+    }
+
+    *out = NULL;
+    *out_count = 0;
+
+    if (tuple_count == 0) {
+        return 0;
+    }
+
+    if (tuples == NULL) {
+        return -1;
+    }
+
+    Entry *entries = NULL;
+    size_t unique_count = 0;
+    size_t capacity = 0;
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        if (tuples[i].length > 0 && tuples[i].items == NULL) {
+            free(entries);
+            return -1;
+        }
+
+        for (size_t j = 0; j < tuples[i].length; ++j) {
+            int value = tuples[i].items[j];
+            int found = 0;
+
+            for (size_t k = 0; k < unique_count; ++k) {
+                if (entries[k].value == value) {
+                    entries[k].count++;
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found) {
+                if (unique_count == capacity) {
+                    if (capacity > SIZE_MAX / 2) {
+                        free(entries);
+                        return -1;
+                    }
+
+                    size_t new_capacity = capacity == 0 ? 4 : capacity * 2;
+
+                    if (new_capacity > SIZE_MAX / sizeof(*new_entries)) {
+                        free(entries);
+                        return -1;
+                    }
+
+                    Entry *new_entries = realloc(entries, new_capacity * sizeof(*new_entries));
+                    if (new_entries == NULL) {
+                        free(entries);
+                        return -1;
+                    }
+
+                    entries = new_entries;
+                    capacity = new_capacity;
+                }
+
+                entries[unique_count].value = value;
+                entries[unique_count].count = 1;
+                unique_count++;
+            }
+        }
+    }
+
+    size_t result_count = 0;
+
+    for (size_t i = 0; i < unique_count; ++i) {
+        if (entries[i].count == 1) {
+            result_count++;
+        }
+    }
+
+    int *result = NULL;
+
+    if (result_count > 0) {
+        if (result_count > SIZE_MAX / sizeof(*result)) {
+            free(entries);
+            return -1;
+        }
+
+        result = malloc(result_count * sizeof(*result));
+        if (result == NULL) {
+            free(entries);
+            return -1;
+        }
+
+        size_t index = 0;
+
+        for (size_t i = 0; i < unique_count; ++i) {
+            if (entries[i].count == 1) {
+                result[index++] = entries[i].value;
+            }
+        }
+    }
+
+    free(entries);
+
+    *out = result;
+    *out_count = result_count;
+
+    return 0;
+}
+
+int main(void) {
+    int tuple1[] = {3, 4, 5};
+    int tuple2[] = {5, 6, 7};
+    int tuple3[] = {1, 4, 2};
+
+    Tuple tuples[] = {
+        {tuple1, 3},
+        {tuple2, 3},
+        {tuple3, 3}
+    };
+
+    int *result = NULL;
+    size_t result_count = 0;
+
+    if (extract_single_occurrences(tuples, 3, &result, &result_count) != 0) {
+        fprintf(stderr, "Error\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < result_count; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+
+    return 0;
+}
+```

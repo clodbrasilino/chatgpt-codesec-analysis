@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:62:38: style: Condition 'result6!=NULL' is always false [knownConditionTrueFalse]
+    printf("Result 6: %s\n", result6 != NULL ? result6 : "(null)");
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:53:21: note: Assignment 'result6=NULL', assigned value is 0
+    char *result6 = NULL;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:62:38: note: Condition 'result6!=NULL' is always false
+    printf("Result 6: %s\n", result6 != NULL ? result6 : "(null)");
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:63:38: style: Condition 'result7!=NULL' is always false [knownConditionTrueFalse]
+    printf("Result 7: %s\n", result7 != NULL ? result7 : "(null)");
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:54:21: note: Assignment 'result7=NULL', assigned value is 0
+    char *result7 = NULL;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:63:38: note: Condition 'result7!=NULL' is always false
+    printf("Result 7: %s\n", result7 != NULL ? result7 : "(null)");
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:64:38: style: Condition 'result8!=NULL' is always false [knownConditionTrueFalse]
+    printf("Result 8: %s\n", result8 != NULL ? result8 : "(null)");
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:55:21: note: Assignment 'result8=NULL', assigned value is 0
+    char *result8 = NULL;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_6/healed/problem-421-s3.c:64:38: note: Condition 'result8!=NULL' is always false
+    printf("Result 8: %s\n", result8 != NULL ? result8 : "(null)");
+                                     ^

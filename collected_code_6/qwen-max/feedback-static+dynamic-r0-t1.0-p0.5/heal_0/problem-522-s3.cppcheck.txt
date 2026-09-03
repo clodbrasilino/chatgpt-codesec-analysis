@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-522-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-522-s3.c:4:14: style: Parameter 'arr' can be declared as const array [constParameter]
+int *lis(int arr[], int n) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-522-s3.c:20:14: style: Parameter 'arr' can be declared as const array [constParameter]
+int *lds(int arr[], int n) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-522-s3.c:5:25: style: Variable 'max' is assigned a value that is never used. [unreadVariable]
+    int *lis, i, j, max = 0;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-522-s3.c:21:25: style: Variable 'max' is assigned a value that is never used. [unreadVariable]
+    int *lds, i, j, max = 0;
+                        ^

@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_even(int number) {
+    return number % 2 == 0;
+}
+
+int main(void) {
+    int test_values[] = {4, 7, 0, -3, 10, -8};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        if (is_even(test_values[i])) {
+            printf("%d is even\n", test_values[i]);
+        } else {
+            printf("%d is odd\n", test_values[i]);
+        }
+    }
+    
+    return 0;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-421-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-421-s2.c:85:17: style: Condition 'result5!=NULL' is always false [knownConditionTrueFalse]
+    if (result5 != NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-421-s2.c:62:33: note: Calling function 'concat_tuple' returns 0
+    char *result5 = concat_tuple(NULL, 3, "-");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-421-s2.c:62:33: note: Assignment 'result5=concat_tuple(NULL,3,"-")', assigned value is 0
+    char *result5 = concat_tuple(NULL, 3, "-");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-421-s2.c:85:17: note: Condition 'result5!=NULL' is always false
+    if (result5 != NULL) {
+                ^

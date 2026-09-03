@@ -1,0 +1,156 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node **children;
+    int child_count;
+} Node;
+
+int *extract_column(Node *root, int column_index, int *result_size) {
+    if (root == NULL || column_index < 0) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int capacity = 16;
+    int size = 0;
+    int *result = (int *)malloc(capacity * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    Node **queue = (Node **)malloc(sizeof(Node *) * 1024);
+    if (queue == NULL) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int queue_capacity = 1024;
+    int front = 0;
+    int rear = 0;
+    int level = 0;
+    int nodes_in_current_level = 1;
+
+    queue[rear++] = root;
+
+    while (front < rear) {
+        if (level == column_index) {
+            for (int i = front; i < rear; i++) {
+                if (size >= capacity) {
+                    capacity *= 2;
+                    int *new_result = (int *)realloc(result, capacity * sizeof(int));
+                    if (new_result == NULL) {
+                        free(result);
+                        free(queue);
+                        *result_size = 0;
+                        return NULL;
+                    }
+                    result = new_result;
+                }
+                result[size++] = queue[i]->value;
+            }
+            free(queue);
+            *result_size = size;
+            return result;
+        }
+
+        int current_level_nodes = 0;
+        for (int i = 0; i < nodes_in_current_level && front < rear; i++) {
+            Node *current = queue[front++];
+            for (int j = 0; j < current->child_count; j++) {
+                if (rear >= queue_capacity) {
+                    queue_capacity *= 2;
+                    Node **new_queue = (Node **)realloc(queue, queue_capacity * sizeof(Node *));
+                    if (new_queue == NULL) {
+                        free(result);
+                        free(queue);
+                        *result_size = 0;
+                        return NULL;
+                    }
+                    queue = new_queue;
+                }
+                queue[rear++] = current->children[j];
+                current_level_nodes++;
+            }
+        }
+
+        nodes_in_current_level = current_level_nodes;
+        level++;
+    }
+
+    free(queue);
+    free(result);
+    *result_size = 0;
+    return NULL;
+}
+
+Node *create_node(int value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->children = NULL;
+    node->child_count = 0;
+    return node;
+}
+
+void add_child(Node *parent, Node *child) {
+    if (parent == NULL || child == NULL) {
+        return;
+    }
+    Node **new_children = (Node **)realloc(parent->children, (parent->child_count + 1) * sizeof(Node *));
+    if (new_children == NULL) {
+        return;
+    }
+    parent->children = new_children;
+    parent->children[parent->child_count] = child;
+    parent->child_count++;
+}
+
+void free_tree(Node *root) {
+    if (root == NULL) {
+        return;
+    }
+    for (int i = 0; i < root->child_count; i++) {
+        free_tree(root->children[i]);
+    }
+    free(root->children);
+    free(root);
+}
+
+int main() {
+    Node *root = create_node(1);
+    Node *child1 = create_node(2);
+    Node *child2 = create_node(3);
+    Node *child3 = create_node(4);
+    Node *grandchild1 = create_node(5);
+    Node *grandchild2 = create_node(6);
+    Node *grandchild3 = create_node(7);
+
+    add_child(root, child1);
+    add_child(root, child2);
+    add_child(root, child3);
+    add_child(child1, grandchild1);
+    add_child(child1, grandchild2);
+    add_child(child2, grandchild3);
+
+    int result_size = 0;
+    int *column = extract_column(root, 1, &result_size);
+
+    if (column != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", column[i]);
+        }
+        printf("\n");
+        free(column);
+    }
+
+    free_tree(root);
+    return 0;
+}
+```

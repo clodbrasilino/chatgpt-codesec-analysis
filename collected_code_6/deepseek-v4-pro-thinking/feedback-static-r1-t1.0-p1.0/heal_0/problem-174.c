@@ -1,0 +1,206 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct DictEntry {
+    char *key;
+    Node *values_head;
+    Node *values_tail;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct {
+    DictEntry **buckets;
+    size_t capacity;
+} Dict;
+
+typedef struct {
+    const char *key;
+    int value;
+} Pair;
+
+static size_t hash(const char *key) {
+    size_t hash = 5381;
+    int c;
+
+    while ((c = *key++)) {
+        hash = ((hash << 5) + hash) + (unsigned char)c;
+    }
+
+    return hash;
+}
+
+int dict_init(Dict *dict, size_t capacity) {
+    if (!dict || capacity == 0) {
+        return 0;
+    }
+
+    dict->buckets = calloc(capacity, sizeof(*dict->buckets));
+    if (!dict->buckets) {
+        return 0;
+    }
+
+    dict->capacity = capacity;
+    return 1;
+}
+
+int dict_insert(Dict *dict, const char *key, int value) {
+    size_t index;
+    DictEntry *entry;
+
+    if (!dict || !key || !dict->buckets || dict->capacity == 0) {
+        return 0;
+    }
+
+    index = hash(key) % dict->capacity;
+    entry = dict->buckets[index];
+
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            Node *node = malloc(sizeof(*node));
+            if (!node) {
+                return 0;
+            }
+
+            node->value = value;
+            node->next = NULL;
+            entry->values_tail->next = node;
+            entry->values_tail = node;
+            return 1;
+        }
+        entry = entry->next;
+    }
+
+    Node *node = malloc(sizeof(*node));
+    if (!node) {
+        return 0;
+    }
+    node->value = value;
+    node->next = NULL;
+
+    char *key_copy = malloc(strlen(key) + 1);
+    if (!key_copy) {
+        free(node);
+        return 0;
+    }
+    strcpy(key_copy, key);
+
+    DictEntry *new_entry = malloc(sizeof(*new_entry));
+    if (!new_entry) {
+        free(key_copy);
+        free(node);
+        return 0;
+    }
+
+    new_entry->key = key_copy;
+    new_entry->values_head = node;
+    new_entry->values_tail = node;
+    new_entry->next = dict->buckets[index];
+    dict->buckets[index] = new_entry;
+
+    return 1;
+}
+
+int group_pairs(const Pair *pairs, size_t count, Dict *dict) {
+    size_t i;
+
+    if (!dict || (!pairs && count > 0)) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (!dict_insert(dict, pairs[i].key, pairs[i].value)) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void dict_free(Dict *dict) {
+    size_t i;
+
+    if (!dict || !dict->buckets) {
+        return;
+    }
+
+    for (i = 0; i < dict->capacity; i++) {
+        DictEntry *entry = dict->buckets[i];
+
+        while (entry) {
+            DictEntry *next_entry = entry->next;
+            Node *node = entry->values_head;
+
+            while (node) {
+                Node *next_node = node->next;
+                free(node);
+                node = next_node;
+            }
+
+            free(entry->key);
+            free(entry);
+            entry = next_entry;
+        }
+    }
+
+    free(dict->buckets);
+    dict->buckets = NULL;
+    dict->capacity = 0;
+}
+
+void dict_print(const Dict *dict) {
+    size_t i;
+
+    if (!dict || !dict->buckets) {
+        return;
+    }
+
+    for (i = 0; i < dict->capacity; i++) {
+        DictEntry *entry = dict->buckets[i];
+
+        while (entry) {
+            Node *node = entry->values_head;
+
+            printf("%s:", entry->key);
+            while (node) {
+                printf(" %d", node->value);
+                node = node->next;
+            }
+            printf("\n");
+
+            entry = entry->next;
+        }
+    }
+}
+
+int main(void) {
+    Pair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"banana", 4},
+        {"apple", 5},
+        {"cherry", 6}
+    };
+
+    Dict dict;
+
+    if (!dict_init(&dict, 8)) {
+        return 1;
+    }
+
+    if (!group_pairs(pairs, sizeof(pairs) / sizeof(pairs[0]), &dict)) {
+        dict_free(&dict);
+        return 1;
+    }
+
+    dict_print(&dict);
+    dict_free(&dict);
+
+    return 0;
+}

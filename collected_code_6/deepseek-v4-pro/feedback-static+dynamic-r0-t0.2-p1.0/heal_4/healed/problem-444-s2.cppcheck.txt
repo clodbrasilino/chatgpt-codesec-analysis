@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:90:37: style: Parameter 'values' can be declared as pointer to const [constParameterPointer]
+TupleList* create_single_tuple(int *values, int size) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:153:9: style: Variable 'values2' can be declared as const array [constVariable]
+    int values2[] = {3, 2, 1};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:154:9: style: Variable 'values3' can be declared as const array [constVariable]
+    int values3[] = {4, 9, 2};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:155:9: style: Variable 'values4' can be declared as const array [constVariable]
+    int values4[] = {1, 2, 3};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:156:9: style: Variable 'values5' can be declared as const array [constVariable]
+    int values5[] = {8, 2, 1};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:204:9: style: Variable 'values6' can be declared as const array [constVariable]
+    int values6[] = {8, 4};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:205:9: style: Variable 'values7' can be declared as const array [constVariable]
+    int values7[] = {8, 12};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:206:9: style: Variable 'values8' can be declared as const array [constVariable]
+    int values8[] = {1, 7};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-444-s2.c:207:9: style: Variable 'values9' can be declared as const array [constVariable]
+    int values9[] = {6, 9};
+        ^

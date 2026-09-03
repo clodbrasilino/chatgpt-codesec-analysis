@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+long long min_tuple_difference(const Tuple *tuples, size_t count, size_t *min_index)
+{
+    if (tuples == NULL || count == 0 || min_index == NULL) {
+        return -1;
+    }
+
+    long long min_diff = llabs((long long)tuples[0].first - (long long)tuples[0].second);
+    *min_index = 0;
+
+    for (size_t i = 1; i < count; ++i) {
+        long long diff = llabs((long long)tuples[i].first - (long long)tuples[i].second);
+        if (diff < min_diff) {
+            min_diff = diff;
+            *min_index = i;
+        }
+    }
+
+    return min_diff;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {10, 5},
+        {8, 3},
+        {6, -2},
+        {101, 100}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t min_index = 0;
+    long long min_diff = min_tuple_difference(tuples, count, &min_index);
+
+    if (min_diff < 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Minimum difference: %lld at tuple index %zu\n", min_diff, min_index);
+    return 0;
+}
+```

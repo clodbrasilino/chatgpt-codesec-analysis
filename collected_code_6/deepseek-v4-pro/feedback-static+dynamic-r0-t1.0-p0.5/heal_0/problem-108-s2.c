@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int input_index;
+} HeapNode;
+
+typedef struct {
+    int **inputs;
+    int *lengths;
+    int *positions;
+    int num_inputs;
+    HeapNode *heap;
+    int heap_size;
+} MergeIterator;
+
+static void heap_swap(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static void heapify_down(MergeIterator *iter, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < iter->heap_size && iter->heap[left].value < iter->heap[smallest].value)
+        smallest = left;
+    if (right < iter->heap_size && iter->heap[right].value < iter->heap[smallest].value)
+        smallest = right;
+
+    if (smallest != idx) {
+        heap_swap(&iter->heap[idx], &iter->heap[smallest]);
+        heapify_down(iter, smallest);
+    }
+}
+
+static void heapify_up(MergeIterator *iter, int idx) {
+    while (idx > 0) {
+        int parent = (idx - 1) / 2;
+        if (iter->heap[idx].value < iter->heap[parent].value) {
+            heap_swap(&iter->heap[idx], &iter->heap[parent]);
+            idx = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+MergeIterator *merge_iterator_create(int **inputs, int *lengths, int num_inputs) {
+    if (inputs == NULL || lengths == NULL || num_inputs <= 0)
+        return NULL;
+
+    MergeIterator *iter = (MergeIterator *)malloc(sizeof(MergeIterator));
+    if (iter == NULL)
+        return NULL;
+
+    iter->inputs = inputs;
+    iter->lengths = lengths;
+    iter->num_inputs = num_inputs;
+    iter->positions = (int *)calloc(num_inputs, sizeof(int));
+    iter->heap = (HeapNode *)malloc(num_inputs * sizeof(HeapNode));
+    iter->heap_size = 0;
+
+    if (iter->positions == NULL || iter->heap == NULL) {
+        free(iter->positions);
+        free(iter->heap);
+        free(iter);
+        return NULL;
+    }
+
+    for (int i = 0; i < num_inputs; i++) {
+        if (lengths[i] > 0) {
+            iter->heap[iter->heap_size].value = inputs[i][0];
+            iter->heap[iter->heap_size].input_index = i;
+            iter->heap_size++;
+            iter->positions[i] = 1;
+        }
+    }
+
+    for (int i = iter->heap_size / 2 - 1; i >= 0; i--)
+        heapify_down(iter, i);
+
+    return iter;
+}
+
+int merge_iterator_next(MergeIterator *iter, int *value) {
+    if (iter == NULL || value == NULL || iter->heap_size == 0)
+        return 0;
+
+    *value = iter->heap[0].value;
+    int input_idx = iter->heap[0].input_index;
+
+    if (iter->positions[input_idx] < iter->lengths[input_idx]) {
+        iter->heap[0].value = iter->inputs[input_idx][iter->positions[input_idx]];
+        iter->positions[input_idx]++;
+        heapify_down(iter, 0);
+    } else {
+        iter->heap_size--;
+        if (iter->heap_size > 0) {
+            iter->heap[0] = iter->heap[iter->heap_size];
+            heapify_down(iter, 0);
+        }
+    }
+
+    return 1;
+}
+
+int merge_iterator_has_next(MergeIterator *iter) {
+    return iter != NULL && iter->heap_size > 0;
+}
+
+void merge_iterator_destroy(MergeIterator *iter) {
+    if (iter == NULL)
+        return;
+    free(iter->positions);
+    free(iter->heap);
+    free(iter);
+}
+
+int main(void) {
+    int arr1[] = {1, 3, 5, 7};
+    int arr2[] = {2, 4, 6, 8, 10};
+    int arr3[] = {0, 9, 11};
+
+    int *inputs[] = {arr1, arr2, arr3};
+    int lengths[] = {4, 5, 3};
+
+    MergeIterator *iter = merge_iterator_create(inputs, lengths, 3);
+    if (iter == NULL) {
+        fprintf(stderr, "Failed to create iterator\n");
+        return 1;
+    }
+
+    int value;
+    while (merge_iterator_has_next(iter)) {
+        if (merge_iterator_next(iter, &value)) {
+            printf("%d ", value);
+        }
+    }
+    printf("\n");
+
+    merge_iterator_destroy(iter);
+    return 0;
+}

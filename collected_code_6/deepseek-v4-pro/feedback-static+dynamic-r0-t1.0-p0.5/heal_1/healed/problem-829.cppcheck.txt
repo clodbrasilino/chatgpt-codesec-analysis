@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-829.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-829.c:52:36: style: Condition 'counts[i].count==counts[first_max].count' is always true [knownConditionTrueFalse]
+        } else if (counts[i].count == counts[first_max].count) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-829.c:45:29: note: Assuming that condition 'counts[i].count>counts[first_max].count' is not redundant
+        if (counts[i].count > counts[first_max].count) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-829.c:48:36: note: Assuming that condition 'counts[i].count<counts[first_max].count' is not redundant
+        } else if (counts[i].count < counts[first_max].count) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-829.c:52:36: note: Condition 'counts[i].count==counts[first_max].count' is always true
+        } else if (counts[i].count == counts[first_max].count) {
+                                   ^

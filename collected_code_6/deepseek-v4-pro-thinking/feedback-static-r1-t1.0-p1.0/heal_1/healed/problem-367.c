@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct Node {
+    struct Node *left;
+    struct Node *right;
+} Node;
+
+static int check_height(Node *node) {
+    if (node == NULL) {
+        return 0;
+    }
+    int left_height = check_height(node->left);
+    if (left_height == -1) {
+        return -1;
+    }
+    int right_height = check_height(node->right);
+    if (right_height == -1) {
+        return -1;
+    }
+    if (abs(left_height - right_height) > 1) {
+        return -1;
+    }
+    return (left_height > right_height ? left_height : right_height) + 1;
+}
+
+int is_balanced(Node *root) {
+    return check_height(root) != -1;
+}
+
+int main(void) {
+    Node n1 = {NULL, NULL};
+    Node n2 = {NULL, NULL};
+    Node n3 = {NULL, NULL};
+    Node n4 = {NULL, NULL};
+    Node n5 = {NULL, NULL};
+    Node n6 = {NULL, NULL};
+    Node n7 = {NULL, NULL};
+
+    n1.left = &n2;
+    n1.right = &n3;
+    n2.left = &n4;
+    n2.right = &n5;
+    n3.left = &n6;
+    n3.right = &n7;
+
+    printf("%d\n", is_balanced(&n1));
+
+    Node m1 = {NULL, NULL};
+    Node m2 = {NULL, NULL};
+    Node m3 = {NULL, NULL};
+    Node m4 = {NULL, NULL};
+    Node m5 = {NULL, NULL};
+
+    m1.left = &m2;
+    m2.left = &m3;
+    m3.left = &m4;
+    m4.left = &m5;
+
+    printf("%d\n", is_balanced(&m1));
+
+    return 0;
+}

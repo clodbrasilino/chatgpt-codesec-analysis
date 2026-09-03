@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct TreeNode {
+    int value;
+    struct TreeNode *left;
+    struct TreeNode *right;
+} TreeNode;
+
+TreeNode* createNode(int value) {
+    TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->value = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+int checkHeight(TreeNode* node) {
+    if (node == NULL) {
+        return 0;
+    }
+
+    int leftHeight = checkHeight(node->left);
+    int rightHeight = checkHeight(node->right);
+
+    if (leftHeight == -1 || rightHeight == -1) {
+        return -1;
+    }
+
+    if (abs(leftHeight - rightHeight) > 1) {
+        return -1;
+    }
+
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+}
+
+int isBalanced(TreeNode* root) {
+    return checkHeight(root) != -1;
+}
+
+int main() {
+    TreeNode* root = createNode(1);
+    root->left = createNode(2);
+    root->right = createNode(3);
+    root->left->left = createNode(4);
+    root->left->right = createNode(5);
+
+    if (isBalanced(root)) {
+        printf("The tree is balanced.\n");
+    } else {
+        printf("The tree is not balanced.\n");
+    }
+
+    return 0;
+}

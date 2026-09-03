@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct {
+    int start;
+    int end;
+} Sublist;
+
+int findMinSublist(int arr[], int n, Sublist *result) {
+    if (n <= 0) return 1;
+    
+    int min_len = INT_MAX;
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (j - i < min_len) {
+                result->start = i;
+                result->end = j;
+                min_len = j - i;
+            }
+        }
+    }
+    return 0;
+}
+
+int main() {
+    int arr[] = {3, 4, 1, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    Sublist result = {-1, -1};
+
+    if (findMinSublist(arr, n, &result) == 0) {
+        printf("Sublist with minimum length is from index %d to %d\n", result.start, result.end);
+    } else {
+        printf("Error: Invalid input.\n");
+    }
+
+    return 0;
+}

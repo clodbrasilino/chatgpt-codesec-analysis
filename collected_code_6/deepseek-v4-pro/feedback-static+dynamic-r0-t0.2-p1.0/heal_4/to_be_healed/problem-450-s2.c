@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['practice', 'solution'], got ["exercise","practice","solution"]
+  *  test case 1 failed: expected ['Python'], got ["Python","exerci","practi","soluti"]
+  */
+
+char **extract_strings(char **input, int count, int size, int *out_count) {
+    if (input == NULL || count <= 0 || size <= 0 || out_count == NULL) {
+        if (out_count != NULL) {
+            *out_count = 0;
+        }
+        return NULL;
+    }
+
+    int total = 0;
+    for (int i = 0; i < count; i++) {
+        if (input[i] != NULL) {
+            total++;
+        }
+    }
+
+    if (total == 0) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    char **result = (char **)malloc((size_t)total * sizeof(char *));
+    if (result == NULL) {
+        *out_count = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < count; i++) {
+        if (input[i] == NULL) {
+            continue;
+        }
+        size_t len = strlen(input[i]);
+        if (len < (size_t)size) {
+            continue;
+        }
+        result[index] = (char *)malloc(((size_t)size + 1) * sizeof(char));
+        if (result[index] == NULL) {
+            for (int j = 0; j < index; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *out_count = 0;
+            return NULL;
+        }
+        memcpy(result[index], input[i], (size_t)size);
+        result[index][size] = '\0';
+        index++;
+    }
+
+    *out_count = index;
+    return result;
+}
+
+int main(void) {
+    char *strings[] = {"hello", "world", "C", "programming", "language", NULL, "test"};
+    int count = sizeof(strings) / sizeof(strings[0]);
+    int out_count = 0;
+    int extract_size = 3;
+
+    char **extracted = extract_strings(strings, count, extract_size, &out_count);
+    if (extracted == NULL) {
+        printf("No strings extracted or error occurred.\n");
+        return 1;
+    }
+
+    printf("Extracted %d strings of size %d:\n", out_count, extract_size);
+    for (int i = 0; i < out_count; i++) {
+        printf("%s\n", extracted[i]);
+        free(extracted[i]);
+    }
+    free(extracted);
+
+    return 0;
+}

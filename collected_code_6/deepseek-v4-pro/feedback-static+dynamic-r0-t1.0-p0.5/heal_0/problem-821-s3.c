@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictEntry {
+    char *key;
+    char *value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct {
+    DictEntry *head;
+} Dictionary;
+
+Dictionary *create_dictionary(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+void destroy_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        DictEntry *next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int dictionary_insert(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            char *new_value = (char *)malloc(strlen(value) + 1);
+            if (new_value == NULL) {
+                return -1;
+            }
+            strcpy(new_value, value);
+            free(current->value);
+            current->value = new_value;
+            return 0;
+        }
+        current = current->next;
+    }
+    
+    DictEntry *new_entry = (DictEntry *)malloc(sizeof(DictEntry));
+    if (new_entry == NULL) {
+        return -1;
+    }
+    
+    new_entry->key = (char *)malloc(strlen(key) + 1);
+    if (new_entry->key == NULL) {
+        free(new_entry);
+        return -1;
+    }
+    strcpy(new_entry->key, key);
+    
+    new_entry->value = (char *)malloc(strlen(value) + 1);
+    if (new_entry->value == NULL) {
+        free(new_entry->key);
+        free(new_entry);
+        return -1;
+    }
+    strcpy(new_entry->value, value);
+    
+    new_entry->next = dict->head;
+    dict->head = new_entry;
+    return 0;
+}
+
+Dictionary *merge_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    if (dict1 == NULL || dict2 == NULL) {
+        return NULL;
+    }
+    
+    Dictionary *merged = create_dictionary();
+    if (merged == NULL) {
+        return NULL;
+    }
+    
+    DictEntry *current = dict1->head;
+    while (current != NULL) {
+        if (dictionary_insert(merged, current->key, current->value) != 0) {
+            destroy_dictionary(merged);
+            return NULL;
+        }
+        current = current->next;
+    }
+    
+    current = dict2->head;
+    while (current != NULL) {
+        if (dictionary_insert(merged, current->key, current->value) != 0) {
+            destroy_dictionary(merged);
+            return NULL;
+        }
+        current = current->next;
+    }
+    
+    return merged;
+}
+
+void print_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    DictEntry *current = dict->head;
+    while (current != NULL) {
+        printf("%s: %s\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary();
+    Dictionary *dict2 = create_dictionary();
+    Dictionary *merged = NULL;
+    
+    if (dict1 == NULL || dict2 == NULL) {
+        destroy_dictionary(dict1);
+        destroy_dictionary(dict2);
+        return 1;
+    }
+    
+    if (dictionary_insert(dict1, "name", "Alice") != 0 ||
+        dictionary_insert(dict1, "age", "30") != 0 ||
+        dictionary_insert(dict1, "city", "New York") != 0) {
+        destroy_dictionary(dict1);
+        destroy_dictionary(dict2);
+        return 1;
+    }
+    
+    if (dictionary_insert(dict2, "country", "USA") != 0 ||
+        dictionary_insert(dict2, "age", "31") != 0 ||
+        dictionary_insert(dict2, "occupation", "Engineer") != 0) {
+        destroy_dictionary(dict1);
+        destroy_dictionary(dict2);
+        return 1;
+    }
+    
+    merged = merge_dictionaries(dict1, dict2);
+    if (merged == NULL) {
+        destroy_dictionary(dict1);
+        destroy_dictionary(dict2);
+        return 1;
+    }
+    
+    print_dictionary(merged);
+    
+    destroy_dictionary(dict1);
+    destroy_dictionary(dict2);
+    destroy_dictionary(merged);
+    
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **filter_strings(char *strings[], int count, const char *to_remove) {
+    int new_count = 0;
+    for (int i = 0; i < count; ++i) {
+        if (strstr(strings[i], to_remove) == NULL) {
+            ++new_count;
+        }
+    }
+
+    char **filtered = (char **)malloc(new_count * sizeof(char *));
+    if (filtered == NULL) {
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < count; ++i) {
+        if (strstr(strings[i], to_remove) == NULL) {
+            filtered[index] = strdup(strings[i]);
+            if (filtered[index] == NULL) {
+                for (int j = 0; j < index; ++j) {
+                    free(filtered[j]);
+                }
+                free(filtered);
+                return NULL;
+            }
+            ++index;
+        }
+    }
+
+    return filtered;
+}
+
+void free_strings(char **strings, int count) {
+    for (int i = 0; i < count; ++i) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    char *strings[] = {"hello", "world", "test", "remove", "this"};
+    int count = 5;
+    const char *to_remove = "re";
+
+    char **filtered = filter_strings(strings, count, to_remove);
+    if (filtered != NULL) {
+        int new_count = 0;
+        for (int i = 0; filtered[i] != NULL; ++i) {
+            printf("%s\n", filtered[i]);
+            ++new_count;
+        }
+        free_strings(filtered, new_count);
+    } else {
+        fprintf(stderr, "Memory allocation failed.\n");
+    }
+
+    return 0;
+}

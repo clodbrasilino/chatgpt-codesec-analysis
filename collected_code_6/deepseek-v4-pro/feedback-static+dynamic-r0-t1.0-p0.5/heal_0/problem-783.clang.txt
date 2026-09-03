@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-783.c:40:30: error: call to undeclared library function 'fmodf' with type 'float (float, float)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   40 |             hsv.h = 60.0f * (fmodf(((rgb.g - rgb.b) / delta), 6.0f));
+      |                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-783.c:40:30: note: include the header <math.h> or explicitly provide a declaration for 'fmodf'
+1 error generated.

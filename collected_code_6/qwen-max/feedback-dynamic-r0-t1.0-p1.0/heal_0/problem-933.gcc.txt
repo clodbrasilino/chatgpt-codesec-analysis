@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-933.c: In function 'camel_to_snake':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-933.c:19:48: error: implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+   19 |         output[offset + pmatch[0].rm_eo + 1] = tolower(input[offset + pmatch[0].rm_eo]);
+      |                                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-933.c:4:1: note: include '<ctype.h>' or provide a declaration of 'tolower'
+    3 | #include <regex.h>
+  +++ |+#include <ctype.h>
+    4 | 

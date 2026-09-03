@@ -1,0 +1,176 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} HeapNode;
+
+typedef struct {
+    HeapNode *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (HeapNode*)malloc(sizeof(HeapNode) * capacity);
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swap(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyDown(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].count < heap->data[smallest].count)
+        smallest = left;
+    if (right < heap->size && heap->data[right].count < heap->data[smallest].count)
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+void heapifyUp(MinHeap *heap, int idx) {
+    int parent = (idx - 1) / 2;
+    if (idx > 0 && heap->data[idx].count < heap->data[parent].count) {
+        swap(&heap->data[idx], &heap->data[parent]);
+        heapifyUp(heap, parent);
+    }
+}
+
+void insertHeap(MinHeap *heap, int value, int count) {
+    if (heap->size < heap->capacity) {
+        heap->data[heap->size].value = value;
+        heap->data[heap->size].count = count;
+        heap->size++;
+        heapifyUp(heap, heap->size - 1);
+    } else if (count > heap->data[0].count) {
+        heap->data[0].value = value;
+        heap->data[0].count = count;
+        heapifyDown(heap, 0);
+    }
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+int* topKFrequent(int** lists, int listsSize, const int* listsColSize, int k, int* returnSize) {
+    if (listsSize == 0 || k <= 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    MinHeap *heap = createMinHeap(k);
+    if (!heap) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int *indices = (int*)calloc(listsSize, sizeof(int));
+    if (!indices) {
+        freeMinHeap(heap);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int prevValue = 0;
+    int currentCount = 0;
+    int hasPrev = 0;
+
+    while (1) {
+        int minVal = -1;
+        int minListIdx = -1;
+        int found = 0;
+
+        for (int i = 0; i < listsSize; i++) {
+            if (indices[i] < listsColSize[i]) {
+                if (!found || lists[i][indices[i]] < minVal) {
+                    minVal = lists[i][indices[i]];
+                    minListIdx = i;
+                    found = 1;
+                }
+            }
+        }
+
+        if (!found) break;
+
+        indices[minListIdx]++;
+
+        if (!hasPrev) {
+            prevValue = minVal;
+            currentCount = 1;
+            hasPrev = 1;
+        } else if (minVal == prevValue) {
+            currentCount++;
+        } else {
+            insertHeap(heap, prevValue, currentCount);
+            prevValue = minVal;
+            currentCount = 1;
+        }
+    }
+
+    if (hasPrev) {
+        insertHeap(heap, prevValue, currentCount);
+    }
+
+    free(indices);
+
+    int *result = (int*)malloc(sizeof(int) * heap->size);
+    if (!result) {
+        freeMinHeap(heap);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < heap->size; i++) {
+        result[i] = heap->data[i].value;
+    }
+
+    *returnSize = heap->size;
+    freeMinHeap(heap);
+    return result;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 3, 5, 7};
+    int list3[] = {3, 5, 8, 9};
+    
+    int *lists[] = {list1, list2, list3};
+    const int listsColSize[] = {5, 4, 4};
+    int listsSize = 3;
+    int k = 3;
+    int returnSize = 0;
+
+    int *result = topKFrequent(lists, listsSize, listsColSize, k, &returnSize);
+
+    printf("Top %d frequent elements: ", k);
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

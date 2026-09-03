@@ -1,0 +1,66 @@
+```c
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+int *interleave_lists(const int **lists, size_t list_count, size_t length)
+{
+    int *result = NULL;
+
+    if (lists == NULL || list_count == 0 || length == 0) {
+        return NULL;
+    }
+
+    for (size_t j = 0; j < list_count; ++j) {
+        if (lists[j] == NULL) {
+            return NULL;
+        }
+    }
+
+    if (list_count > SIZE_MAX / length) {
+        return NULL;
+    }
+
+    size_t total = list_count * length;
+
+    if (total > SIZE_MAX / sizeof(*result)) {
+        return NULL;
+    }
+
+    result = malloc(total * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        for (size_t j = 0; j < list_count; ++j) {
+            result[i * list_count + j] = lists[j][i];
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const int a[] = {1, 3, 5};
+    const int b[] = {2, 4, 6};
+    const int *lists[] = {a, b};
+    size_t length = sizeof(a) / sizeof(a[0]);
+    size_t list_count = sizeof(lists) / sizeof(lists[0]);
+    int *result = interleave_lists(lists, list_count, length);
+
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    size_t total = length * list_count;
+    for (size_t i = 0; i < total; ++i) {
+        printf("%d%c", result[i], (i + 1 < total) ? ' ' : '\n');
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

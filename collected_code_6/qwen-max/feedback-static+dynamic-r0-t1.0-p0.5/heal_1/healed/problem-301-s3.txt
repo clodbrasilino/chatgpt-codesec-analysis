@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node **buckets;
+    int size;
+} Dictionary;
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int dictionary_depth(Dictionary *dict) {
+    if (!dict || !dict->buckets) return 0;
+    int depth = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        Node *current = dict->buckets[i];
+        int current_depth = 0;
+        while (current) {
+            current_depth++;
+            current = current->next;
+        }
+        depth = max(depth, current_depth);
+    }
+    return depth;
+}
+
+int main() {
+    Dictionary dict = { .buckets = NULL, .size = 0 };
+    printf("Depth: %d\n", dictionary_depth(&dict));
+    return 0;
+}
+```

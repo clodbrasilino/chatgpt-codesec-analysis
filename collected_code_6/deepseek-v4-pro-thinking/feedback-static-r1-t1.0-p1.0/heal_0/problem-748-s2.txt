@@ -1,0 +1,83 @@
+```c
+#include <ctype.h>
+#include <regex.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *insert_spaces(const char *str) {
+    regex_t regex;
+    regmatch_t match;
+    char *output;
+    const char *src;
+    char *dst;
+    size_t offset;
+    int status;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    status = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (status != 0) {
+        return NULL;
+    }
+
+    output = malloc(strlen(str) * 2 + 1);
+    if (output == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    src = str;
+    dst = output;
+    offset = 0;
+
+    while ((status = regexec(&regex, src + offset, 1, &match, 0)) == 0) {
+        size_t match_start = offset + match.rm_so;
+        size_t match_end = offset + match.rm_eo;
+        size_t seg_len = match_start - offset;
+
+        memcpy(dst, src + offset, seg_len);
+        dst += seg_len;
+
+        if (match_start > 0 && !isspace((unsigned char)src[match_start - 1])) {
+            *dst++ = ' ';
+        }
+
+        memcpy(dst, src + match_start, match_end - match_start);
+        dst += match_end - match_start;
+        offset = match_end;
+    }
+
+    if (status != REG_NOMATCH) {
+        regfree(&regex);
+        free(output);
+        return NULL;
+    }
+
+    strcpy(dst, src + offset);
+    regfree(&regex);
+    return output;
+}
+
+int main(void) {
+    char input[1024];
+    char *result;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    input[strcspn(input, "\n")] = '\0';
+
+    result = insert_spaces(input);
+    if (result == NULL) {
+        fputs("Error processing string\n", stderr);
+        return 1;
+    }
+
+    puts(result);
+    free(result);
+    return 0;
+}
+```

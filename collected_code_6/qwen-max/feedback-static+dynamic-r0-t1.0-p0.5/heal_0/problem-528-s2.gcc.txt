@@ -1,0 +1,20 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c: In function 'find_min_length_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:45:31: error: incompatible types when assigning to type 'List' from type 'List *'
+   45 |             result[count++] = lists[i];
+      |                               ^~~~~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_types.h:27,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/_stdio.h:82,
+                 from /usr/local/Cellar/gcc/15.2.0/lib/gcc/current/gcc/x86_64-apple-darwin24/15/include-fixed/stdio.h:75,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:1:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:48:21: error: incompatible types when assigning to type 'List' from type 'void *'
+   48 |     result[count] = NULL;
+      |                     ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:63:37: error: invalid operands to binary != (have 'List' and 'void *')
+   63 |     for (size_t i = 0; min_lists[i] != NULL; ++i) {
+      |                        ~~~~~~~~~~~~ ^~
+      |                                 |
+      |                                 List
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-528-s2.c:64:63: error: invalid type argument of '->' (have 'List')
+   64 |         printf("List with minimum length: %zu\n", min_lists[i]->length);
+      |                                                               ^~

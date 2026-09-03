@@ -1,0 +1,31 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c: In function 'append_to_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:40:21: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   40 |             current = current->next;
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:42:23: error: assignment to 'struct Node *' from incompatible pointer type 'Node *' [-Wincompatible-pointer-types]
+   42 |         current->next = node;
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c: In function 'add_to_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:54:20: error: assignment to 'struct Dictionary *' from incompatible pointer type 'Dictionary *' [-Wincompatible-pointer-types]
+   54 |     dict->children = create_dictionary();
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c: In function 'convert_lists_to_nested_dict':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:66:30: error: assignment to 'Dictionary *' from incompatible pointer type 'struct Dictionary *' [-Wincompatible-pointer-types]
+   66 |                 current_dict = current_dict->children;
+      |                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:68:21: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   68 |             current = current->next;
+      |                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c: In function 'free_list':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:85:18: error: assignment to 'Node *' from incompatible pointer type 'struct Node *' [-Wincompatible-pointer-types]
+   85 |             next = current->next;
+      |                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c: In function 'free_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:95:29: error: passing argument 1 of 'free_dictionary' from incompatible pointer type [-Wincompatible-pointer-types]
+   95 |         free_dictionary(dict->children);
+      |                         ~~~~^~~~~~~~~~
+      |                             |
+      |                             struct Dictionary *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-391-s3.c:93:34: note: expected 'Dictionary *' but argument is of type 'struct Dictionary *'
+   93 | void free_dictionary(Dictionary *dict) {
+      |                      ~~~~~~~~~~~~^~~~

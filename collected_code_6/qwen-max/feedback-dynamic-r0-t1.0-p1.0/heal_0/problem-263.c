@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry **entries;
+    int count;
+    int capacity;
+} Dictionary;
+
+void add_entry(Dictionary *dict, const char *key, int value) {
+    if (dict->count == dict->capacity) {
+        dict->capacity = (dict->capacity == 0) ? 1 : dict->capacity * 2;
+        dict->entries = realloc(dict->entries, dict->capacity * sizeof(DictionaryEntry *));
+    }
+    dict->entries[dict->count] = malloc(sizeof(DictionaryEntry));
+    dict->entries[dict->count]->key = strdup(key);
+    dict->entries[dict->count]->value = value;
+    dict->count++;
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; i++) {
+        free(dict->entries[i]->key);
+        free(dict->entries[i]);
+    }
+    free(dict->entries);
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+Dictionary *merge_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    Dictionary *merged = malloc(sizeof(Dictionary));
+    merged->entries = NULL;
+    merged->count = 0;
+    merged->capacity = 0;
+
+    for (int i = 0; i < dict1->count; i++) {
+        add_entry(merged, dict1->entries[i]->key, dict1->entries[i]->value);
+    }
+
+    for (int i = 0; i < dict2->count; i++) {
+        int found = 0;
+        for (int j = 0; j < dict1->count; j++) {
+            if (strcmp(dict2->entries[i]->key, dict1->entries[j]->key) == 0) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            add_entry(merged, dict2->entries[i]->key, dict2->entries[i]->value);
+        }
+    }
+    return merged;
+}
+
+void print_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->count; i++) {
+        printf("%s: %d\n", dict->entries[i]->key, dict->entries[i]->value);
+    }
+}
+
+int main() {
+    Dictionary dict1 = {NULL, 0, 0};
+    Dictionary dict2 = {NULL, 0, 0};
+
+    add_entry(&dict1, "apple", 10);
+    add_entry(&dict1, "banana", 20);
+    add_entry(&dict2, "orange", 30);
+    add_entry(&dict2, "banana", 25);
+
+    Dictionary *merged_dict = merge_dictionaries(&dict1, &dict2);
+    print_dictionary(merged_dict);
+
+    free_dictionary(&dict1);
+    free_dictionary(&dict2);
+    free_dictionary(merged_dict);
+
+    return 0;
+}

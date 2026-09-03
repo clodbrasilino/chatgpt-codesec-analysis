@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:34:42: style: Condition 'all_dictionaries_empty(NULL,0)' is always true [knownConditionTrueFalse]
+    printf("%s\n", all_dictionaries_empty(NULL, 0) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:34:42: note: Calling function 'all_dictionaries_empty' returns 1
+    printf("%s\n", all_dictionaries_empty(NULL, 0) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:34:42: note: Condition 'all_dictionaries_empty(NULL,0)' is always true
+    printf("%s\n", all_dictionaries_empty(NULL, 0) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:35:42: style: Condition 'all_dictionaries_empty(NULL,1)' is always false [knownConditionTrueFalse]
+    printf("%s\n", all_dictionaries_empty(NULL, 1) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:35:42: note: Calling function 'all_dictionaries_empty' returns 0
+    printf("%s\n", all_dictionaries_empty(NULL, 1) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:35:42: note: Condition 'all_dictionaries_empty(NULL,1)' is always false
+    printf("%s\n", all_dictionaries_empty(NULL, 1) ? "true" : "false");
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:6:12: style: struct member 'Dictionary::keys' is never used. [unusedStructMember]
+    char **keys;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-115-s2.c:7:12: style: struct member 'Dictionary::values' is never used. [unusedStructMember]
+    char **values;
+           ^

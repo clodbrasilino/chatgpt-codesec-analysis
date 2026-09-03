@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    struct List *down;
+} List;
+
+List* createNode(int value) {
+    List *newNode = (List*)malloc(sizeof(List));
+    newNode->head = (Node*)malloc(sizeof(Node));
+    newNode->head->value = value;
+    newNode->head->next = NULL;
+    newNode->down = NULL;
+    return newNode;
+}
+
+void append(List *list, int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = newNode;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+void addColumn(List **head, int value) {
+    List *newCol = createNode(value);
+    if (*head == NULL) {
+        *head = newCol;
+    } else {
+        List *current = *head;
+        while (current->down != NULL) {
+            current = current->down;
+        }
+        current->down = newCol;
+    }
+}
+
+void removeColumn(List **head, int colIndex) {
+    if (head == NULL || *head == NULL) return;
+
+    List *current = *head;
+    List *prev = NULL;
+    int index = 0;
+
+    while (current != NULL && index < colIndex) {
+        prev = current;
+        current = current->down;
+        index++;
+    }
+
+    if (current == NULL) return;
+
+    if (prev == NULL) {
+        *head = current->down;
+    } else {
+        prev->down = current->down;
+    }
+
+    while (current != NULL) {
+        Node *temp = current->head;
+        current->head = current->head->next;
+        free(temp);
+        temp = current;
+        current = current->down;
+        free(temp);
+    }
+}
+
+void printList(List *head) {
+    List *current = head;
+    while (current != NULL) {
+        Node *node = current->head;
+        while (node != NULL) {
+            printf("%d ", node->value);
+            node = node->next;
+        }
+        printf("\n");
+        current = current->down;
+    }
+}
+
+int main() {
+    List *head = NULL;
+    addColumn(&head, 1);
+    append(head, 2);
+    append(head, 3);
+    addColumn(&head, 4);
+    append(head->down, 5);
+    append(head->down, 6);
+    addColumn(&head, 7);
+    append(head->down->down, 8);
+    append(head->down->down, 9);
+
+    printf("Before removing column:\n");
+    printList(head);
+
+    removeColumn(&head, 1);
+
+    printf("After removing column:\n");
+    printList(head);
+
+    return 0;
+}

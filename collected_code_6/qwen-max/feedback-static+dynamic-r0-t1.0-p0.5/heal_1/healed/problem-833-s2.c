@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int count;
+    int capacity;
+} Dictionary;
+
+void dictionary_init(Dictionary *dict, int capacity) {
+    dict->entries = (DictionaryEntry *)malloc(capacity * sizeof(DictionaryEntry));
+    dict->count = 0;
+    dict->capacity = capacity;
+}
+
+void dictionary_add(Dictionary *dict, const char *key, const char *value) {
+    if (dict->count >= dict->capacity) {
+        return;
+    }
+    dict->entries[dict->count].key = strdup(key);
+    dict->entries[dict->count].value = strdup(value);
+    dict->count++;
+}
+
+char **dictionary_keys(Dictionary *dict, int *keys_count) {
+    *keys_count = dict->count;
+    char **keys = (char **)malloc(dict->count * sizeof(char *));
+    for (int i = 0; i < dict->count; i++) {
+        keys[i] = dict->entries[i].key;
+    }
+    return keys;
+}
+
+void dictionary_free(Dictionary *dict) {
+    for (int i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+}
+
+int main() {
+    Dictionary dict;
+    dictionary_init(&dict, 3);
+
+    dictionary_add(&dict, "one", "1");
+    dictionary_add(&dict, "two", "2");
+    dictionary_add(&dict, "three", "3");
+
+    int keys_count;
+    char **keys = dictionary_keys(&dict, &keys_count);
+
+    for (int i = 0; i < keys_count; i++) {
+        printf("%s\n", keys[i]);
+    }
+
+    free(keys);
+
+    dictionary_free(&dict);
+
+    return 0;
+}

@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:34:13: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+            result = realloc(result, (i + 2) * sizeof(char *));
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:57:9: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+        result = realloc(result, (i + 2) * sizeof(char *));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:77:5: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+    result = realloc(result, (i + 1) * sizeof(char *));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:80:18: warning: Either the condition '!result' is redundant or there is possible null pointer dereference: result. [nullPointerRedundantCheck]
+            free(result[j]);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:78:9: note: Assuming that condition '!result' is not redundant
+    if (!result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:80:18: note: Null pointer dereference
+            free(result[j]);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:8:17: style: The scope of the variable 'p' can be reduced. [variableScope]
+    char *str, *p, *saveptr;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:32:11: style: Variable 'p' is assigned a value that is never used. [unreadVariable]
+        p = str + offset + matches[0].rm_eo;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-73-s3.c:8:21: style: Unused variable: saveptr [unusedVariable]
+    char *str, *p, *saveptr;
+                    ^

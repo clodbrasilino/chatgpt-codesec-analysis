@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int find_sequences(const char *input) {
+    regex_t regex;
+    int reti;
+    int match_counter = 0;
+
+    if (regcomp(&regex, "[A-Z][a-z]+", REG_EXTENDED) != 0) {
+        return -1;
+    }
+
+    regmatch_t matches[2];
+
+    while (1) {
+        reti = regexec(&regex, input, 2, matches, 0);
+        if (reti == REG_NOMATCH)
+            break;
+        else if (reti != 0) {
+            regfree(&regex);
+            return -1;
+        }
+        for (int i = 0; i < 1 && matches[i].rm_so != -1; ++i) {
+            int start = matches[i].rm_so;
+            int end = matches[i].rm_eo;
+            printf("Match: %.*s\n", end - start, input + start);
+            match_counter++;
+            input += end;
+        }
+    }
+
+    regfree(&regex);
+    return match_counter;
+}
+
+int main() {
+    const char *test_string = "HelloWorld IsAnExample withSeveralCases AndSomeMore";
+    int result = find_sequences(test_string);
+    if (result == -1) {
+        fprintf(stderr, "Regex error occurred.\n");
+        return 1;
+    }
+    printf("%d sequences found.\n", result);
+    return 0;
+}
+```

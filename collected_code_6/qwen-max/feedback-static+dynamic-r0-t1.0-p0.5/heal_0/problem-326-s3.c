@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+int compare(const void *a, const void *b) {
+    return ((WordCount *)b)->count - ((WordCount *)a)->count;
+}
+
+char* getMostFrequentWord(char *strings[], int n) {
+    if (n == 0) return NULL;
+
+    WordCount *counts = (WordCount *)malloc(n * sizeof(WordCount));
+    if (counts == NULL) return NULL;
+
+    for (int i = 0; i < n; ++i) {
+        counts[i].word = strings[i];
+        counts[i].count = 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (strcmp(counts[i].word, counts[j].word) == 0) {
+                counts[i].count++;
+                counts[j].count = 0;
+            }
+        }
+    }
+
+    qsort(counts, n, sizeof(WordCount), compare);
+
+    char *mostFrequent = counts[0].word;
+    free(counts);
+    return mostFrequent;
+}
+
+int main() {
+    char *strings[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
+    int n = sizeof(strings) / sizeof(strings[0]);
+
+    char *mostFrequent = getMostFrequentWord(strings, n);
+    if (mostFrequent != NULL) {
+        printf("Most frequent word: %s\n", mostFrequent);
+    } else {
+        printf("No words provided.\n");
+    }
+
+    return 0;
+}

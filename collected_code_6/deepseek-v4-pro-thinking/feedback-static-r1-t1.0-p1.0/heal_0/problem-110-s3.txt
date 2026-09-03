@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+static int compare_ranges(const void *a, const void *b)
+{
+    const Range *ra = (const Range *)a;
+    const Range *rb = (const Range *)b;
+    if (ra->start < rb->start) return -1;
+    if (ra->start > rb->start) return 1;
+    if (ra->end < rb->end) return -1;
+    if (ra->end > rb->end) return 1;
+    return 0;
+}
+
+int extract_missing_ranges(const Range *ranges, size_t count, int start, int end, Range **missing, size_t *missing_count)
+{
+    if (missing == NULL || missing_count == NULL) {
+        return -1;
+    }
+    *missing = NULL;
+    *missing_count = 0;
+
+    if (start > end || (count > 0 && ranges == NULL)) {
+        return -1;
+    }
+
+    Range *copy = NULL;
+    size_t merged_count = 0;
+
+    if (count > 0) {
+        if (count > ((size_t)-1) / sizeof(Range)) {
+            return -1;
+        }
+        copy = malloc(count * sizeof(Range));
+        if (copy == NULL) {
+            return -1;
+        }
+        for (size_t i = 0; i < count; i++) {
+            if (ranges[i].start > ranges[i].end) {
+                free(copy);
+                return -1;
+            }
+            copy[i] = ranges[i];
+        }
+
+        qsort(copy, count, sizeof(Range), compare_ranges);
+
+        for (size_t i = 0; i < count; i++) {
+            if (merged_count > 0 && (long long)copy[i].start <= (long long)copy[merged_count - 1].end + 1) {
+                if (copy[i].end > copy[merged_count - 1].end) {
+                    copy[merged_count - 1].end = copy[i].end;
+                }
+            } else {
+                copy[merged_count++] = copy[i];
+            }
+        }
+    }
+
+    if (merged_count >= ((size_t)-1) / sizeof(Range)) {
+        free(copy);
+        return -1;
+    }
+
+    Range *temp = malloc((merged_count + 1) * sizeof(Range));
+    if (temp == NULL) {
+        free(copy);
+        return -1;
+    }
+
+    size_t out_count = 0;
+    long long cursor = start;
+
+    for (size_t i = 0; i < merged_count; i++) {
+        if (copy[i].end < start) {
+            continue;
+        }
+        if (copy[i].start > end) {
+            break;
+        }
+
+        int rs = copy[i].start;
+        int re = copy[i].end;
+        if (rs < start) {
+            rs = start;
+        }
+        if (re > end) {
+            re = end;
+        }
+
+        if ((long long)rs > cursor) {
+            temp[out_count].start = (int)cursor;
+            temp[out_count].end = (int)((long long)rs - 1);
+            out_count++;
+        }
+
+        if ((long long)re >= cursor) {
+            cursor = (long long)re + 1;
+        }
+
+        if (cursor > end) {
+            break;
+        }
+    }
+
+    if (cursor <= end) {
+        temp[out_count].start = (int)cursor;
+        temp[out_count].end = end;
+        out_count++;
+    }
+
+    if (out_count == 0) {
+        free(temp);
+        *missing = NULL;
+    } else {
+        Range *shrunk = realloc(temp, out_count * sizeof(Range));
+        if (shrunk != NULL) {
+            temp = shrunk;
+        }
+        *missing = temp;
+    }
+
+    *missing_count = out_count;
+    free(copy);
+    return 0;
+}
+
+int main(void)
+{
+    Range ranges[] = {
+        {2, 4},
+        {8, 10},
+        {12, 14}
+    };
+    size_t range_count = sizeof(ranges) / sizeof(ranges[0]);
+    Range *missing = NULL;
+    size_t missing_count = 0;
+
+    if (extract_missing_ranges(ranges, range_count, 0, 20, &missing, &missing_count) != 0) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < missing_count; i++) {
+        printf("[%d, %d]\n", missing[i].start, missing[i].end);
+    }
+
+    free(missing);
+    return 0;
+}
+```

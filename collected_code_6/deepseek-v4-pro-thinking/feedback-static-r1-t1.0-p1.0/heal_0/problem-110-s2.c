@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+static int compare_ints(const void *a, const void *b) {
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    return (ia > ib) - (ia < ib);
+}
+
+Range *find_missing_ranges(const int *nums, size_t nums_size, int lower, int upper, size_t *out_count) {
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+
+    if (lower > upper) {
+        return NULL;
+    }
+
+    if (nums == NULL && nums_size > 0) {
+        return NULL;
+    }
+
+    if (nums_size == 0) {
+        Range *result = malloc(sizeof(*result));
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0].start = lower;
+        result[0].end = upper;
+        *out_count = 1;
+        return result;
+    }
+
+    int *sorted = malloc(nums_size * sizeof(*sorted));
+    if (sorted == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < nums_size; ++i) {
+        sorted[i] = nums[i];
+    }
+
+    qsort(sorted, nums_size, sizeof(*sorted), compare_ints);
+
+    Range *result = malloc((nums_size + 1) * sizeof(*result));
+    if (result == NULL) {
+        free(sorted);
+        return NULL;
+    }
+
+    size_t count = 0;
+    long long current = lower;
+    size_t i = 0;
+
+    while (i < nums_size && current <= upper) {
+        long long value = sorted[i];
+
+        if (value < current) {
+            ++i;
+            continue;
+        }
+
+        if (value > upper) {
+            break;
+        }
+
+        if (value > current) {
+            long long end = value - 1;
+            if (end > upper) {
+                end = upper;
+            }
+            result[count].start = (int)current;
+            result[count].end = (int)end;
+            ++count;
+            current = value + 1;
+            ++i;
+        } else {
+            current = value + 1;
+            ++i;
+        }
+    }
+
+    if (current <= upper) {
+        result[count].start = (int)current;
+        result[count].end = upper;
+        ++count;
+    }
+
+    free(sorted);
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    Range *resized = realloc(result, count * sizeof(*resized));
+    if (resized != NULL) {
+        result = resized;
+    }
+
+    *out_count = count;
+    return result;
+}
+
+int main(void) {
+    int nums[] = {1, 3, 5, 7};
+    size_t count = 0;
+    Range *missing = find_missing_ranges(nums, sizeof(nums) / sizeof(nums[0]), 0, 10, &count);
+
+    if (missing != NULL) {
+        for (size_t i = 0; i < count; ++i) {
+            if (missing[i].start == missing[i].end) {
+                printf("%d\n", missing[i].start);
+            } else {
+                printf("%d->%d\n", missing[i].start, missing[i].end);
+            }
+        }
+        free(missing);
+    } else {
+        printf("No missing ranges\n");
+    }
+
+    return 0;
+}

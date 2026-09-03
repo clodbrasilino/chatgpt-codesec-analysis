@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    size_t count;
+    int value;
+} RLEPair;
+
+int decode_rle(const RLEPair *encoded, size_t encoded_length, int **decoded, size_t *decoded_length) {
+    if (decoded == NULL || decoded_length == NULL) {
+        return -1;
+    }
+
+    if (encoded == NULL && encoded_length != 0) {
+        return -1;
+    }
+
+    if (encoded_length == 0) {
+        *decoded = NULL;
+        *decoded_length = 0;
+        return 0;
+    }
+
+    size_t total = 0;
+    for (size_t i = 0; i < encoded_length; ++i) {
+        if (encoded[i].count > SIZE_MAX - total) {
+            return -1;
+        }
+        total += encoded[i].count;
+    }
+
+    if (total == 0) {
+        *decoded = NULL;
+        *decoded_length = 0;
+        return 0;
+    }
+
+    if (total > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    int *output = (int *)malloc(total * sizeof(int));
+    if (output == NULL) {
+        return -2;
+    }
+
+    size_t pos = 0;
+    for (size_t i = 0; i < encoded_length; ++i) {
+        for (size_t j = 0; j < encoded[i].count; ++j) {
+            output[pos++] = encoded[i].value;
+        }
+    }
+
+    *decoded = output;
+    *decoded_length = total;
+    return 0;
+}
+
+int main(void) {
+    RLEPair encoded[] = {
+        {3, 1},
+        {2, 0},
+        {4, 7}
+    };
+    size_t encoded_length = sizeof(encoded) / sizeof(encoded[0]);
+    int *decoded = NULL;
+    size_t decoded_length = 0;
+
+    int status = decode_rle(encoded, encoded_length, &decoded, &decoded_length);
+    if (status != 0) {
+        fprintf(stderr, "Decoding failed with status %d\n", status);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < decoded_length; ++i) {
+        printf("%d ", decoded[i]);
+    }
+    printf("\n");
+
+    free(decoded);
+    return EXIT_SUCCESS;
+}

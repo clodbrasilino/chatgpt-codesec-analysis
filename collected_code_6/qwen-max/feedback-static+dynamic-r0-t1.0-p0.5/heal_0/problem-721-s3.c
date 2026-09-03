@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+
+double max(double a, double b) {
+    return (a > b) ? a : b;
+}
+
+double findMaxAveragePath(int** matrix, int n) {
+    double dp[n][n];
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            dp[i][j] = 0.0;
+        }
+    }
+    dp[0][0] = (double)matrix[0][0];
+
+    for (int i = 1; i < n; ++i) {
+        dp[i][0] = dp[i-1][0] + (double)matrix[i][0];
+        dp[0][i] = dp[0][i-1] + (double)matrix[0][i];
+    }
+
+    for (int i = 1; i < n; ++i) {
+        for (int j = 1; j < n; ++j) {
+            dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + (double)matrix[i][j];
+        }
+    }
+
+    return dp[n-1][n-1] / (2 * n - 1);
+}
+
+int main() {
+    int n;
+    printf("Enter the size of the matrix: ");
+    scanf("%d", &n);
+
+    int** matrix = (int**)malloc(n * sizeof(int*));
+    if (matrix == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = (int*)malloc(n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; ++j) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+    }
+
+    printf("Enter the elements of the matrix:\n");
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+
+    double maxAverage = findMaxAveragePath(matrix, n);
+    printf("Maximum average path: %.2f\n", maxAverage);
+
+    for (int i = 0; i < n; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

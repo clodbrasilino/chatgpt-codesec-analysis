@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:19:31: error: initialization of flexible array member is not allowed
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:6:9: note: initialized flexible array member 'elements' is here
+    6 |     int elements[];
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:19:45: error: initialization of flexible array member is not allowed
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:6:9: note: initialized flexible array member 'elements' is here
+    6 |     int elements[];
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:19:59: error: initialization of flexible array member is not allowed
+   19 |     Tuple tuple_list[] = {{3, 1, 2, 3}, {3, 3, 1, 2}, {3, 2, 3, 1}};
+      |                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:6:9: note: initialized flexible array member 'elements' is here
+    6 |     int elements[];
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-26.c:20:26: error: invalid application of 'sizeof' to an incomplete type 'Tuple[]'
+   20 |     size_t count = sizeof(tuple_list) / sizeof(tuple_list[0]);
+      |                          ^~~~~~~~~~~~
+4 errors generated.

@@ -1,0 +1,271 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int data;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct IntList {
+    IntNode *head;
+    IntNode *tail;
+} IntList;
+
+typedef struct ListListNode {
+    IntList *list;
+    struct ListListNode *next;
+} ListListNode;
+
+typedef struct ListList {
+    ListListNode *head;
+    ListListNode *tail;
+} ListList;
+
+static IntNode *int_node_create(int data) {
+    IntNode *node = (IntNode *)malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static IntList *int_list_create(void) {
+    IntList *list = (IntList *)malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+static int int_list_append(IntList *list, int data) {
+    if (list == NULL) {
+        return 0;
+    }
+    IntNode *node = int_node_create(data);
+    if (node == NULL) {
+        return 0;
+    }
+    if (list->tail == NULL) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+    return 1;
+}
+
+static void int_list_free(IntList *list) {
+    if (list == NULL) {
+        return;
+    }
+    IntNode *current = list->head;
+    while (current != NULL) {
+        IntNode *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+static ListListNode *list_list_node_create(IntList *list) {
+    ListListNode *node = (ListListNode *)malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+static ListList *list_list_create(void) {
+    ListList *list = (ListList *)malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+static int list_list_append_owned(ListList *list, IntList *inner) {
+    if (list == NULL || inner == NULL) {
+        return 0;
+    }
+    ListListNode *node = list_list_node_create(inner);
+    if (node == NULL) {
+        return 0;
+    }
+    if (list->tail == NULL) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+    return 1;
+}
+
+static void list_list_free(ListList *list) {
+    if (list == NULL) {
+        return;
+    }
+    ListListNode *current = list->head;
+    while (current != NULL) {
+        ListListNode *next = current->next;
+        int_list_free(current->list);
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+static IntList *int_list_combine(const IntList *first, const IntList *second) {
+    if (first == NULL || second == NULL) {
+        return NULL;
+    }
+    IntList *combined = int_list_create();
+    if (combined == NULL) {
+        return NULL;
+    }
+
+    const IntNode *current = first->head;
+    while (current != NULL) {
+        if (!int_list_append(combined, current->data)) {
+            int_list_free(combined);
+            return NULL;
+        }
+        current = current->next;
+    }
+
+    current = second->head;
+    while (current != NULL) {
+        if (!int_list_append(combined, current->data)) {
+            int_list_free(combined);
+            return NULL;
+        }
+        current = current->next;
+    }
+
+    return combined;
+}
+
+ListList *zip_lists(ListList *first, ListList *second) {
+    if (first == NULL || second == NULL) {
+        return NULL;
+    }
+
+    ListList *result = list_list_create();
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ListListNode *first_node = first->head;
+    ListListNode *second_node = second->head;
+
+    while (first_node != NULL && second_node != NULL) {
+        IntList *combined = int_list_combine(first_node->list, second_node->list);
+        if (combined == NULL) {
+            list_list_free(result);
+            return NULL;
+        }
+
+        if (!list_list_append_owned(result, combined)) {
+            int_list_free(combined);
+            list_list_free(result);
+            return NULL;
+        }
+
+        first_node = first_node->next;
+        second_node = second_node->next;
+    }
+
+    return result;
+}
+
+static ListList *make_list_list(int **values, const size_t *counts, size_t inner_count) {
+    ListList *outer = list_list_create();
+    if (outer == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < inner_count; i++) {
+        IntList *inner = int_list_create();
+        if (inner == NULL) {
+            list_list_free(outer);
+            return NULL;
+        }
+
+        for (size_t j = 0; j < counts[i]; j++) {
+            if (!int_list_append(inner, values[i][j])) {
+                int_list_free(inner);
+                list_list_free(outer);
+                return NULL;
+            }
+        }
+
+        if (!list_list_append_owned(outer, inner)) {
+            int_list_free(inner);
+            list_list_free(outer);
+            return NULL;
+        }
+    }
+
+    return outer;
+}
+
+int main(void) {
+    int first_values_1[] = {1, 2, 3};
+    int first_values_2[] = {4, 5};
+    int second_values_1[] = {10, 20};
+    int second_values_2[] = {30, 40, 50};
+
+    int *first_values[] = {first_values_1, first_values_2};
+    int *second_values[] = {second_values_1, second_values_2};
+
+    /* Possible weaknesses found:
+     *  Variable 'first_counts' can be declared as const array [constVariable]
+     */
+    size_t first_counts[] = {3, 2};
+    /* Possible weaknesses found:
+     *  Variable 'second_counts' can be declared as const array [constVariable]
+     */
+    size_t second_counts[] = {2, 3};
+
+    ListList *first_list = make_list_list(first_values, first_counts, 2);
+    ListList *second_list = make_list_list(second_values, second_counts, 2);
+
+    if (first_list == NULL || second_list == NULL) {
+        list_list_free(first_list);
+        list_list_free(second_list);
+        return 1;
+    }
+
+    ListList *zipped = zip_lists(first_list, second_list);
+    if (zipped == NULL) {
+        list_list_free(first_list);
+        list_list_free(second_list);
+        return 1;
+    }
+
+    ListListNode *outer = zipped->head;
+    while (outer != NULL) {
+        IntNode *inner = outer->list->head;
+        while (inner != NULL) {
+            printf("%d ", inner->data);
+            inner = inner->next;
+        }
+        printf("\n");
+        outer = outer->next;
+    }
+
+    list_list_free(first_list);
+    list_list_free(second_list);
+    list_list_free(zipped);
+
+    return 0;
+}

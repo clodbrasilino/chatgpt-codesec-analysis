@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *interleave(const int *list1, const int *list2, int length) {
+    if (list1 == NULL || list2 == NULL || length <= 0) {
+        return NULL;
+    }
+
+    int *result = (int *)malloc((size_t)length * 2 * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < length; i++) {
+        result[2 * i] = list1[i];
+        result[2 * i + 1] = list2[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {6, 7, 8, 9, 10};
+    int length = 5;
+
+    int *interleaved = interleave(list1, list2, length);
+    if (interleaved == NULL) {
+        fprintf(stderr, "Failed to interleave lists\n");
+        return 1;
+    }
+
+    for (int i = 0; i < length * 2; i++) {
+        printf("%d ", interleaved[i]);
+    }
+    printf("\n");
+
+    free(interleaved);
+    return 0;
+}

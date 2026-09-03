@@ -1,0 +1,62 @@
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+} SubList;
+
+int *get_last_elements(const SubList *sublists, size_t count) {
+    int *last_elements = NULL;
+
+    if (sublists == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(*last_elements)) {
+        return NULL;
+    }
+
+    last_elements = malloc(count * sizeof(*last_elements));
+    if (last_elements == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (sublists[i].data == NULL || sublists[i].length == 0) {
+            free(last_elements);
+            return NULL;
+        }
+        last_elements[i] = sublists[i].data[sublists[i].length - 1];
+    }
+
+    return last_elements;
+}
+
+int main(void) {
+    int list1[] = { 10, 20, 30 };
+    int list2[] = { 40, 50 };
+    int list3[] = { 60, 70, 80, 90 };
+
+    SubList sublists[] = {
+        { list1, sizeof(list1) / sizeof(list1[0]) },
+        { list2, sizeof(list2) / sizeof(list2[0]) },
+        { list3, sizeof(list3) / sizeof(list3[0]) }
+    };
+
+    size_t count = sizeof(sublists) / sizeof(sublists[0]);
+    int *last_elements = get_last_elements(sublists, count);
+
+    if (last_elements == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%d\n", last_elements[i]);
+    }
+
+    free(last_elements);
+    return 0;
+}

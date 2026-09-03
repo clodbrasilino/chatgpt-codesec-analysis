@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntTuple;
+
+IntTuple parseStringToIntTuple(const char *str) {
+    IntTuple tuple = {NULL, 0};
+    if (str == NULL) return tuple;
+
+    char *token;
+    const char *delim = " ,";
+    char *copy = strdup(str);
+    if (copy == NULL) return tuple;
+
+    token = strtok(copy, delim);
+    while (token != NULL) {
+        tuple.length++;
+        token = strtok(NULL, delim);
+    }
+
+    tuple.data = (int *)malloc(tuple.length * sizeof(int));
+    if (tuple.data == NULL) {
+        free(copy);
+        return tuple;
+    }
+
+    token = strtok(copy, delim);
+    for (size_t i = 0; i < tuple.length; i++) {
+        tuple.data[i] = atoi(token);
+        token = strtok(NULL, delim);
+    }
+
+    free(copy);
+    return tuple;
+}
+
+void freeIntTuple(IntTuple *tuple) {
+    if (tuple->data != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+    }
+    tuple->length = 0;
+}
+
+int main() {
+    const char *input = "1, 2, 3, 4, 5";
+    IntTuple tuple = parseStringToIntTuple(input);
+
+    for (size_t i = 0; i < tuple.length; i++) {
+        printf("%d ", tuple.data[i]);
+    }
+    printf("\n");
+
+    freeIntTuple(&tuple);
+    return 0;
+}
+```

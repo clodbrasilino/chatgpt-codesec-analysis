@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-413-s3.c:21:14: error: passing 'Tuple' to parameter of incompatible type 'void *'
+   21 |         free(tuples[i]);
+      |              ^~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-413-s3.c:28:16: error: returning 'Tuple' from a function with incompatible result type 'Tuple *'; take the address with &
+   28 |         return tuples[n];
+      |                ^~~~~~~~~
+      |                &
+2 errors generated.

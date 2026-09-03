@@ -1,0 +1,74 @@
+#include <ctype.h>
+#include <stddef.h>
+#include <stdio.h>
+
+#define MAX_ADVERBS 128
+
+int find_adverbs(const char *sentence, size_t positions[], size_t max_positions) {
+    size_t count = 0;
+    size_t i = 0;
+
+    if (sentence == NULL || (max_positions > 0 && positions == NULL)) {
+        return -1;
+    }
+
+    while (sentence[i] != '\0') {
+        while (sentence[i] != '\0' && !isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+
+        if (sentence[i] == '\0') {
+            break;
+        }
+
+        size_t start = i;
+
+        while (sentence[i] != '\0' && isalpha((unsigned char)sentence[i])) {
+            i++;
+        }
+
+        size_t length = i - start;
+
+        if (length >= 3 &&
+            tolower((unsigned char)sentence[i - 2]) == 'l' &&
+            tolower((unsigned char)sentence[i - 1]) == 'y') {
+            if (count < max_positions) {
+                positions[count] = start;
+            }
+            count++;
+        }
+    }
+
+    return (int)count;
+}
+
+int main(void) {
+    const char sentence[] = "She quickly and happily left.";
+    size_t positions[MAX_ADVERBS];
+    int total = find_adverbs(sentence, positions, MAX_ADVERBS);
+
+    if (total < 0) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Found %d adverb(s)\n", total);
+
+    if (total > 0) {
+        size_t printed = (size_t)total < MAX_ADVERBS ? (size_t)total : MAX_ADVERBS;
+
+        for (size_t i = 0; i < printed; i++) {
+            size_t pos = positions[i];
+            printf("%zu: ", pos);
+
+            while (sentence[pos] != '\0' && isalpha((unsigned char)sentence[pos])) {
+                putchar(sentence[pos]);
+                pos++;
+            }
+
+            putchar('\n');
+        }
+    }
+
+    return 0;
+}

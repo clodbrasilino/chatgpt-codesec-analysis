@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+TupleList* trim_tuples(TupleList *list, int k) {
+    if (list == NULL || k < 0) {
+        return NULL;
+    }
+
+    TupleList *result = (TupleList*)malloc(sizeof(TupleList));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->count = list->count;
+    result->tuples = (Tuple*)malloc(sizeof(Tuple) * list->count);
+    if (result->tuples == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        if (list->tuples[i].elements == NULL && list->tuples[i].size != 0) {
+            for (int j = 0; j < i; j++) {
+                free(result->tuples[j].elements);
+            }
+            free(result->tuples);
+            free(result);
+            return NULL;
+        }
+
+        if (list->tuples[i].size < 0) {
+            for (int j = 0; j < i; j++) {
+                free(result->tuples[j].elements);
+            }
+            free(result->tuples);
+            free(result);
+            return NULL;
+        }
+
+        int new_size = list->tuples[i].size - k;
+        if (new_size < 0) {
+            new_size = 0;
+        }
+
+        result->tuples[i].size = new_size;
+        if (new_size == 0) {
+            result->tuples[i].elements = NULL;
+            continue;
+        }
+
+        result->tuples[i].elements = (int*)malloc(sizeof(int) * new_size);
+        if (result->tuples[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result->tuples[j].elements);
+            }
+            free(result->tuples);
+            free(result);
+            return NULL;
+        }
+
+        for (int j = 0; j < new_size; j++) {
+            result->tuples[i].elements[j] = list->tuples[i].elements[j];
+        }
+    }
+
+    return result;
+}
+
+void print_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        printf("[]\n");
+        return;
+    }
+
+    printf("[");
+    for (int i = 0; i < list->count; i++) {
+        printf("(");
+        for (int j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].elements[j]);
+            if (j < list->tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i < list->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < list->count; i++) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return 1;
+    }
+
+    list->count = 4;
+    list->tuples = (Tuple*)malloc(sizeof(Tuple) * list->count);
+    if (list->tuples == NULL) {
+        free(list);
+        return 1;
+    }
+
+    int tuple1[] = {3, 2, 1};
+    int tuple2[] = {4, 9, 2};
+    int tuple3[] = {1, 2, 3};
+    int tuple4[] = {8, 2, 1};
+
+    list->tuples[0].elements = tuple1;
+    list->tuples[0].size = 3;
+    list->tuples[1].elements = tuple2;
+    list->tuples[1].size = 3;
+    list->tuples[2].elements = tuple3;
+    list->tuples[2].size = 3;
+    list->tuples[3].elements = tuple4;
+    list->tuples[3].size = 3;
+
+    TupleList *trimmed = trim_tuples(list, 1);
+    if (trimmed == NULL) {
+        free(list->tuples);
+        free(list);
+        return 1;
+    }
+
+    print_tuple_list(trimmed);
+
+    free_tuple_list(trimmed);
+    free(list->tuples);
+    free(list);
+
+    return 0;
+}

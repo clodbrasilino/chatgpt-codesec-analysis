@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int start;
+    int end;
+} Range;
+
+static int compare_ranges(const void *a, const void *b) {
+    const Range *ra = (const Range *)a;
+    const Range *rb = (const Range *)b;
+    if (ra->start < rb->start) return -1;
+    if (ra->start > rb->start) return 1;
+    if (ra->end < rb->end) return -1;
+    if (ra->end > rb->end) return 1;
+    return 0;
+}
+
+int extract_missing_ranges(const Range *ranges, int count, int start, int end, Range **missing, int *missing_count) {
+    if (missing == NULL || missing_count == NULL || start > end || count < 0 || (count > 0 && ranges == NULL)) {
+        return -1;
+    }
+
+    *missing = NULL;
+    *missing_count = 0;
+
+    if (count > 0) {
+        for (int i = 0; i < count; ++i) {
+            if (ranges[i].start > ranges[i].end) {
+                return -1;
+            }
+        }
+    }
+
+    Range *sorted = NULL;
+    if (count > 0) {
+        sorted = (Range *)malloc((size_t)count * sizeof(Range));
+        if (sorted == NULL) {
+            return -1;
+        }
+        for (int i = 0; i < count; ++i) {
+            sorted[i] = ranges[i];
+        }
+        qsort(sorted, (size_t)count, sizeof(Range), compare_ranges);
+    }
+
+    long long current = start;
+    int needed = 0;
+
+    for (int i = 0; i < count && current <= end; ++i) {
+        long long rs = sorted[i].start;
+        long long re = sorted[i].end;
+
+        /* Possible weaknesses found:
+         *  Assuming condition 're<current' is false
+         */
+        if (re < current) {
+            continue;
+        }
+
+        if (rs > current) {
+            if (rs > end) {
+                ++needed;
+                current = (long long)end + 1;
+                break;
+            }
+            ++needed;
+            current = re + 1;
+        /* Possible weaknesses found:
+         *  Condition 're>=current' is always true [knownConditionTrueFalse]
+         *  Condition 're>=current' is always true
+         */
+        } else if (re >= current) {
+            current = re + 1;
+        }
+    }
+
+    if (current <= end) {
+        ++needed;
+    }
+
+    if (needed == 0) {
+        free(sorted);
+        return 0;
+    }
+
+    Range *result = (Range *)malloc((size_t)needed * sizeof(Range));
+    if (result == NULL) {
+        free(sorted);
+        return -1;
+    }
+
+    current = start;
+    int index = 0;
+
+    for (int i = 0; i < count && current <= end; ++i) {
+        long long rs = sorted[i].start;
+        long long re = sorted[i].end;
+
+        /* Possible weaknesses found:
+         *  Assuming condition 're<current' is false
+         */
+        if (re < current) {
+            continue;
+        }
+
+        if (rs > current) {
+            if (rs > end) {
+                result[index].start = (int)current;
+                result[index].end = end;
+                ++index;
+                current = (long long)end + 1;
+                break;
+            }
+            result[index].start = (int)current;
+            result[index].end = (int)(rs - 1);
+            ++index;
+            current = re + 1;
+        /* Possible weaknesses found:
+         *  Condition 're>=current' is always true [knownConditionTrueFalse]
+         *  Condition 're>=current' is always true
+         */
+        } else if (re >= current) {
+            current = re + 1;
+        }
+    }
+
+    if (current <= end) {
+        result[index].start = (int)current;
+        result[index].end = end;
+        ++index;
+    }
+
+    free(sorted);
+    *missing = result;
+    *missing_count = index;
+    return 0;
+}
+
+int main(void) {
+    Range input[] = { { 10, 15 }, { 20, 25 }, { 5, 7 } };
+    int input_count = (int)(sizeof(input) / sizeof(input[0]));
+    Range *missing = NULL;
+    int missing_count = 0;
+
+    int status = extract_missing_ranges(input, input_count, 1, 30, &missing, &missing_count);
+    if (status != 0) {
+        printf("Error\n");
+        return 1;
+    }
+
+    for (int i = 0; i < missing_count; ++i) {
+        printf("[%d, %d]\n", missing[i].start, missing[i].end);
+    }
+
+    free(missing);
+    return 0;
+}

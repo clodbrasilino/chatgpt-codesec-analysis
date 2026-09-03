@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake) {
+    if (snake == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake);
+    char *camel = malloc(len + 1);
+
+    if (camel == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 0;
+    int first_char = 1;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char c = (unsigned char)snake[i];
+
+        if (c == '_') {
+            if (j > 0) {
+                capitalize_next = 1;
+            }
+            continue;
+        }
+
+        if (capitalize_next) {
+            camel[j++] = toupper(c);
+            capitalize_next = 0;
+        } else if (first_char) {
+            camel[j++] = tolower(c);
+            first_char = 0;
+        } else {
+            camel[j++] = c;
+        }
+    }
+
+    camel[j] = '\0';
+    return camel;
+}
+
+int main(void) {
+    const char *snake = "hello_world";
+    char *camel = snake_to_camel(snake);
+
+    if (camel == NULL) {
+        return 1;
+    }
+
+    printf("%s\n", camel);
+    free(camel);
+
+    return 0;
+}

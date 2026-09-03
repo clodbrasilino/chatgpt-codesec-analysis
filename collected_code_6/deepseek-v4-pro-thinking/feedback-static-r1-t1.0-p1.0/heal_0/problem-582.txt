@@ -1,0 +1,99 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char **keys;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary dictionary_create(void) {
+    Dictionary dict;
+    dict.keys = NULL;
+    dict.values = NULL;
+    dict.count = 0;
+    dict.capacity = 0;
+    return dict;
+}
+
+void dictionary_destroy(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->keys[i]);
+    }
+    free(dict->keys);
+    free(dict->values);
+    dict->keys = NULL;
+    dict->values = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+bool dictionary_is_empty(const Dictionary *dict) {
+    return dict != NULL && dict->count == 0;
+}
+
+bool dictionary_add(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return false;
+    }
+
+    if (dict->count == dict->capacity) {
+        size_t new_capacity = dict->capacity == 0 ? 8 : dict->capacity * 2;
+        char **new_keys = malloc(new_capacity * sizeof(*new_keys));
+        int *new_values = malloc(new_capacity * sizeof(*new_values));
+        if (new_keys == NULL || new_values == NULL) {
+            free(new_keys);
+            free(new_values);
+            return false;
+        }
+        for (size_t i = 0; i < dict->count; ++i) {
+            new_keys[i] = dict->keys[i];
+            new_values[i] = dict->values[i];
+        }
+        free(dict->keys);
+        free(dict->values);
+        dict->keys = new_keys;
+        dict->values = new_values;
+        dict->capacity = new_capacity;
+    }
+
+    char *key_copy = malloc(strlen(key) + 1);
+    if (key_copy == NULL) {
+        return false;
+    }
+    strcpy(key_copy, key);
+    dict->keys[dict->count] = key_copy;
+    dict->values[dict->count] = value;
+    ++dict->count;
+    return true;
+}
+
+int main(void) {
+    Dictionary dict = dictionary_create();
+
+    if (dictionary_is_empty(&dict)) {
+        printf("Dictionary is empty.\n");
+    }
+
+    if (!dictionary_add(&dict, "apple", 1) || !dictionary_add(&dict, "banana", 2)) {
+        fprintf(stderr, "Failed to add entry.\n");
+        dictionary_destroy(&dict);
+        return 1;
+    }
+
+    if (!dictionary_is_empty(&dict)) {
+        printf("Dictionary is not empty.\n");
+    }
+
+    dictionary_destroy(&dict);
+    return 0;
+}
+```

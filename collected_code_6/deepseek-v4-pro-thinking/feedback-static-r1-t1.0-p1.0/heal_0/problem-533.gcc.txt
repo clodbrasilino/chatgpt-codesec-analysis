@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-533.c: In function 'tuple_reserve':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-533.c:63:42: error: invalid type argument of unary '*' (have 'size_t' {aka 'long unsigned int'})
+   63 |     if (new_capacity > SIZE_MAX / sizeof(*new_capacity)) return -1;
+      |                                          ^~~~~~~~~~~~~

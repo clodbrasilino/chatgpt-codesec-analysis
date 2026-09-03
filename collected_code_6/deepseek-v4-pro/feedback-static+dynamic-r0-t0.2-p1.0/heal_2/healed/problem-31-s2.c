@@ -1,0 +1,180 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int freq;
+} Pair;
+
+typedef struct {
+    Pair *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (Pair*)malloc(sizeof(Pair) * capacity);
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swapPairs(Pair *a, Pair *b) {
+    Pair temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapifyDown(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].freq < heap->data[smallest].freq)
+        smallest = left;
+    if (right < heap->size && heap->data[right].freq < heap->data[smallest].freq)
+        smallest = right;
+
+    if (smallest != idx) {
+        swapPairs(&heap->data[idx], &heap->data[smallest]);
+        heapifyDown(heap, smallest);
+    }
+}
+
+void heapifyUp(MinHeap *heap, int idx) {
+    int parent = (idx - 1) / 2;
+    while (idx > 0 && heap->data[idx].freq < heap->data[parent].freq) {
+        swapPairs(&heap->data[idx], &heap->data[parent]);
+        idx = parent;
+        parent = (idx - 1) / 2;
+    }
+}
+
+void insertHeap(MinHeap *heap, int value, int freq) {
+    if (heap->size < heap->capacity) {
+        heap->data[heap->size].value = value;
+        heap->data[heap->size].freq = freq;
+        heap->size++;
+        heapifyUp(heap, heap->size - 1);
+    } else if (freq > heap->data[0].freq) {
+        heap->data[0].value = value;
+        heap->data[0].freq = freq;
+        heapifyDown(heap, 0);
+    }
+}
+
+Pair extractMin(MinHeap *heap) {
+    Pair min = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapifyDown(heap, 0);
+    return min;
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        free(heap->data);
+        free(heap);
+    }
+}
+
+int* topKFrequent(int* const* lists, int listsSize, const int* listsColSize, int k, int* returnSize) {
+    if (listsSize == 0 || k <= 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int totalElements = 0;
+    for (int i = 0; i < listsSize; i++) {
+        totalElements += listsColSize[i];
+    }
+
+    int *allValues = (int*)malloc(sizeof(int) * totalElements);
+    if (!allValues) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int idx = 0;
+    for (int i = 0; i < listsSize; i++) {
+        for (int j = 0; j < listsColSize[i]; j++) {
+            allValues[idx++] = lists[i][j];
+        }
+    }
+
+    for (int i = 0; i < totalElements - 1; i++) {
+        for (int j = 0; j < totalElements - i - 1; j++) {
+            if (allValues[j] > allValues[j + 1]) {
+                int temp = allValues[j];
+                allValues[j] = allValues[j + 1];
+                allValues[j + 1] = temp;
+            }
+        }
+    }
+
+    MinHeap *heap = createMinHeap(k);
+    if (!heap) {
+        free(allValues);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int i = 0;
+    while (i < totalElements) {
+        int current = allValues[i];
+        int count = 0;
+        while (i < totalElements && allValues[i] == current) {
+            count++;
+            i++;
+        }
+        insertHeap(heap, current, count);
+    }
+
+    int *result = (int*)malloc(sizeof(int) * k);
+    if (!result) {
+        free(allValues);
+        freeMinHeap(heap);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int resultSize = heap->size;
+    for (int j = resultSize - 1; j >= 0; j--) {
+        Pair p = extractMin(heap);
+        result[j] = p.value;
+    }
+
+    *returnSize = resultSize;
+    free(allValues);
+    freeMinHeap(heap);
+    return result;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4};
+    int list2[] = {2, 3, 5};
+    int list3[] = {1, 2, 3, 4, 5, 6};
+
+    int *lists[] = {list1, list2, list3};
+    const int listsColSize[] = {4, 3, 6};
+    int listsSize = 3;
+    int k = 3;
+    int returnSize = 0;
+
+    int *result = topKFrequent(lists, listsSize, listsColSize, k, &returnSize);
+
+    printf("Top %d frequent elements: ", k);
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

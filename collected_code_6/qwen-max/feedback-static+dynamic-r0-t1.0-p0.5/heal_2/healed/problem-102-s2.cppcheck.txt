@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-102-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-102-s2.c:8:9: style: The scope of the variable 'capitalize_next' can be reduced. [variableScope]
+    int capitalize_next = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-102-s2.c:23:22: style: Parameter 'str' can be declared as pointer to const [constParameterPointer]
+int count_char(char *str, char c) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-102-s2.c:8:25: style: Variable 'capitalize_next' is assigned a value that is never used. [unreadVariable]
+    int capitalize_next = 0;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p0.5/heal_2/healed/problem-102-s2.c:14:29: style: Variable 'capitalize_next' is assigned a value that is never used. [unreadVariable]
+            capitalize_next = 0;
+                            ^

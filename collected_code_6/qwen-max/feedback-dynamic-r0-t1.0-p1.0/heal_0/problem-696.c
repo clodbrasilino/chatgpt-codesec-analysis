@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    Node *tail;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
+void append_to_list(List *list, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    if (list->head == NULL) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+}
+
+List* zip_lists(List *list1, List *list2) {
+    List *zipped_list = create_list();
+    Node *current1 = list1->head;
+    Node *current2 = list2->head;
+
+    while (current1 != NULL && current2 != NULL) {
+        append_to_list(zipped_list, current1->value);
+        append_to_list(zipped_list, current2->value);
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+
+    while (current1 != NULL) {
+        append_to_list(zipped_list, current1->value);
+        current1 = current1->next;
+    }
+
+    while (current2 != NULL) {
+        append_to_list(zipped_list, current2->value);
+        current2 = current2->next;
+    }
+
+    return zipped_list;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
+int main() {
+    List *list1 = create_list();
+    append_to_list(list1, 1);
+    append_to_list(list1, 2);
+    append_to_list(list1, 3);
+
+    List *list2 = create_list();
+    append_to_list(list2, 4);
+    append_to_list(list2, 5);
+    append_to_list(list2, 6);
+    append_to_list(list2, 7);
+
+    List *zipped_list = zip_lists(list1, list2);
+    print_list(zipped_list);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(zipped_list);
+
+    return 0;
+}

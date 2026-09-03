@@ -10,6 +10,7 @@ import yaml
 from .claude_adapter import ClaudeClient
 from .gemini_adapter import GeminiClient
 from .openai_compatible import OpenAICompatibleClient
+from .replicate_adapter import ReplicateClient
 from .retry import set_concurrency
 
 
@@ -22,6 +23,7 @@ class ModelConfig:
     base_url: str | None = None  # OpenAI-compatible base URL (chat providers)
     reasoning: bool = False  # True = this entry is the reasoning variant
     disable_thinking: bool = False  # force thinking OFF for a reasoning-capable model
+    no_sampling: bool = False  # host rejects temperature/top_p (e.g. kimi-k3 on DashScope)
     max_tokens: int = 4096
     default_temp: float = 1.0
     default_top_p: float = 1.0
@@ -54,6 +56,8 @@ def get_client(cfg: ModelConfig):
         return ClaudeClient(cfg)
     if cfg.provider in ("gemini",):
         return GeminiClient(cfg)
+    if cfg.provider == "replicate":
+        return ReplicateClient(cfg)
     if cfg.provider in ("openai", "deepseek", "dashscope", "moonshot", "zhipu"):
         return OpenAICompatibleClient(cfg)
     raise ValueError(f"unknown provider: {cfg.provider}")

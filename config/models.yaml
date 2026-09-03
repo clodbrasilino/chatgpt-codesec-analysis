@@ -3,60 +3,68 @@
 # retrieval dates for the paper's artifact). These are sensible initial pins.
 # api_key_env references an environment variable; keys never live in this file.
 models:
-  # ---- OpenAI (lineup verified 2026-08-31 via platform.openai.com/docs/models;
-  #      current flagships are GPT-5.6 Sol/Terra/Luna; gpt-4o and o3-mini are
-  #      deprecated. Reasoning is controlled by reasoning_effort: none..max.
-  #      NOTE: endpoint is region-blocked from mainland China — needs proxy.) ----
+  # ---- OpenAI via Replicate (route decided 2026-09-03: api.openai.com is
+  #      region-blocked and no proxy is available; Replicate hosts the exact
+  #      same flagship. Verified via GET /v1/collections/language-models:
+  #      openai/gpt-5.6-{sol,terra,luna}. Input params: prompt,
+  #      system_prompt, max_completion_tokens, reasoning_effort, verbosity —
+  #      NO temperature/top_p (host does not expose sampling); the adapter
+  #      drops and records them. reasoning_effort maps from extra_body.) ----
   - id: openai-gpt56-sol
-    provider: openai
-    model_id: gpt-5.6-sol
-    api_key_env: OPENAI_API_KEY
+    provider: replicate
+    model_id: openai/gpt-5.6-sol
+    api_key_env: REPLICATE_API_TOKEN
+    concurrency: 1  # Replicate account throttled to 6 predictions/min (2026-09-03)
     reasoning: false
     extra_body:
       reasoning_effort: "none"
   - id: openai-gpt56-sol-thinking
-    provider: openai
-    model_id: gpt-5.6-sol
-    api_key_env: OPENAI_API_KEY
+    provider: replicate
+    model_id: openai/gpt-5.6-sol
+    api_key_env: REPLICATE_API_TOKEN
+    concurrency: 1  # Replicate account throttled to 6 predictions/min (2026-09-03)
     reasoning: true
     extra_body:
       reasoning_effort: high
     max_tokens: 16384
 
-  # ---- Anthropic (lineup verified 2026-08-31: current models are Fable 5 /
-  #      Opus 5 / Sonnet 5 / Opus 4.6-4.8 / Sonnet 4.5-4.6; the old
-  #      claude-sonnet-4-20250514 pin is outdated. Claude 4.6+ uses ADAPTIVE
-  #      thinking with effort levels instead of manual budget_tokens —
-  #      claude_adapter.py must be updated for the thinking variant when the
-  #      key arrives; verify exact params against the SDK of that date.) ----
-  - id: claude-sonnet-5
-    provider: anthropic
-    model_id: claude-sonnet-5
-    api_key_env: ANTHROPIC_API_KEY
+  # ---- Anthropic Claude Fable 5 via Replicate (user-selected flagship,
+  #      2026-09-03; verified anthropic/claude-fable-5 exists via
+  #      GET /v1/models/anthropic/claude-fable-5). Input params: prompt,
+  #      system_prompt, max_tokens (MINIMUM 1024 — adapter clamps) — no
+  #      sampling params, no thinking toggle: Fable 5 uses ADAPTIVE thinking,
+  #      so the base/thinking ablation is NOT separable on this host; only
+  #      the base entry is registered. Token counts come from
+  #      prediction.metrics (input/output_token_count).) ----
+  - id: claude-fable-5
+    provider: replicate
+    model_id: anthropic/claude-fable-5
+    api_key_env: REPLICATE_API_TOKEN
+    concurrency: 1  # Replicate account throttled to 6 predictions/min (2026-09-03)
     reasoning: false
-  - id: claude-sonnet-5-thinking
-    provider: anthropic
-    model_id: claude-sonnet-5
-    api_key_env: ANTHROPIC_API_KEY
-    reasoning: true
-    max_tokens: 16384
 
-  # ---- Google Gemini (lineup verified 2026-08-31 via Firebase model docs.
-  #      Gemini 2.5 Pro shuts down 2026-10-16. The 3.x Pro line is only
-  #      available as preview: gemini-3.1-pro-preview (2026-02-19); stable
-  #      3.x exists only for Flash/Flash-Lite. Fallback alias to try if the
-  #      preview 404s: gemini-3-pro-latest. Verify via models.list at key
-  #      time.) ----
+  # ---- Google Gemini 3.1 Pro via Replicate (verified google/gemini-3.1-pro,
+  #      2026-09-03). Input params: prompt, system_instruction,
+  #      max_output_tokens, temperature, top_p (the ONLY host exposing
+  #      sampling), thinking_level enum {low, medium, high} — there is NO
+  #      "off": the "base" variant runs thinking_level=low, the thinking
+  #      variant high. Document this asymmetry in the paper.) ----
   - id: gemini-3-pro
-    provider: gemini
-    model_id: gemini-3.1-pro-preview
-    api_key_env: GEMINI_API_KEY
+    provider: replicate
+    model_id: google/gemini-3.1-pro
+    api_key_env: REPLICATE_API_TOKEN
+    concurrency: 1  # Replicate account throttled to 6 predictions/min (2026-09-03)
     reasoning: false
+    extra_body:
+      thinking_level: low
   - id: gemini-3-pro-thinking
-    provider: gemini
-    model_id: gemini-3.1-pro-preview
-    api_key_env: GEMINI_API_KEY
+    provider: replicate
+    model_id: google/gemini-3.1-pro
+    api_key_env: REPLICATE_API_TOKEN
+    concurrency: 1  # Replicate account throttled to 6 predictions/min (2026-09-03)
     reasoning: true
+    extra_body:
+      thinking_level: high
     max_tokens: 16384
 
   # ---- DeepSeek (V4 lineup; verified via GET /v1/models on 2026-08-31.
@@ -103,52 +111,53 @@ models:
     reasoning: true
     max_tokens: 8192
 
-  # ---- Kimi (Moonshot) (lineup verified 2026-08-31 via platform.moonshot.cn:
-  #      the ENTIRE kimi-k2 series incl. kimi-k2-0711-preview and
-  #      kimi-k2-thinking was retired 2026-05-25. Current flagship is kimi-k3
-  #      (1M ctx); kimi-k2.6 is the general K2-family model (thinking
-  #      toggleable), kimi-k2.7-code always thinks. Thinking-toggle mechanism
-  #      for k3 (extra_body thinking.type) needs verification at key time.) ----
+  # ---- Kimi (Moonshot) via DashScope (route decided 2026-09-03: user routes
+  #      kimi/glm through the Alibaba Bailian (DashScope) account. Verified
+  #      via probes on 2026-09-03: 'kimi-k3' present; the host REJECTS
+  #      temperature/top_p on ALL paths (thinking-first model — the temp/
+  #      top_p grid is NOT runnable for kimi); base/thinking split via
+  #      extra_body enable_thinking (verified: false -> no reasoning_content,
+  #      true -> reasoning_content present).) ----
   - id: kimi-k3
-    provider: moonshot
+    provider: dashscope
     model_id: kimi-k3
-    api_key_env: MOONSHOT_API_KEY
-    base_url: https://api.moonshot.cn/v1
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     reasoning: false
+    no_sampling: true
     extra_body:
-      thinking:
-        type: disabled
+      enable_thinking: false
   - id: kimi-k3-thinking
-    provider: moonshot
+    provider: dashscope
     model_id: kimi-k3
-    api_key_env: MOONSHOT_API_KEY
-    base_url: https://api.moonshot.cn/v1
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     reasoning: true
     extra_body:
-      thinking:
-        type: enabled
+      enable_thinking: true
     max_tokens: 16384
 
-  # ---- GLM (Zhipu) (lineup verified 2026-08-31: current flagships are
-  #      glm-5.1 (2026-04-07, 203K ctx, 128K out) and glm-5 (2026-02-11);
-  #      glm-4.6 is mid-tier now. GLM-4.5+ used the thinking.type toggle,
-  #      expected to carry over to GLM-5.x — verify at key time.) ----
+  # ---- GLM (Zhipu) via DashScope (route decided 2026-09-03. Verified on
+  #      2026-09-03: glm-5.1 (pinned), glm-5.2, glm-5.2-fast-preview,
+  #      ZHIPU/GLM-5.3, ZHIPU/GLM-5.3-Flash, glm-5, glm-4.7 — NOTE: newer
+  #      GLM-5.2/5.3 exist; pin kept at glm-5.1 per the 2026-08-31 lineup.
+  #      Sampling params ARE accepted; the model thinks BY DEFAULT, so the
+  #      base entry must pass enable_thinking: false (verified: reasoning
+  #      off/on works).) ----
   - id: glm-5.1
-    provider: zhipu
+    provider: dashscope
     model_id: glm-5.1
-    api_key_env: ZHIPU_API_KEY
-    base_url: https://open.bigmodel.cn/api/paas/v4
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     reasoning: false
     extra_body:
-      thinking:
-        type: disabled
+      enable_thinking: false
   - id: glm-5.1-thinking
-    provider: zhipu
+    provider: dashscope
     model_id: glm-5.1
-    api_key_env: ZHIPU_API_KEY
-    base_url: https://open.bigmodel.cn/api/paas/v4
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     reasoning: true
     extra_body:
-      thinking:
-        type: enabled
+      enable_thinking: true
     max_tokens: 16384

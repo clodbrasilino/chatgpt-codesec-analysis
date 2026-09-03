@@ -33,9 +33,11 @@ class OpenAICompatibleClient:
         # extra_body= parameter — unknown kwargs raise TypeError.
         if self.cfg.extra_body:
             kwargs["extra_body"] = dict(self.cfg.extra_body)
-        if self.cfg.reasoning or reasoning:
+        if self.cfg.reasoning or reasoning or self.cfg.no_sampling:
             # Reasoning variants across providers reject temperature/top_p
-            # (e.g. DeepSeek-R1, o-series). o-series needs max_completion_tokens.
+            # (e.g. DeepSeek-R1, o-series). kimi-k3 on DashScope rejects
+            # sampling params even on its non-thinking path (no_sampling).
+            # o-series needs max_completion_tokens.
             if self.cfg.provider == "openai":
                 kwargs["max_completion_tokens"] = max_tokens
             else:

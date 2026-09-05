@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+void print_duplicates(int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return;
+    }
+
+    int *seen = (int *)calloc(size, sizeof(int));
+    int *printed = (int *)calloc(size, sizeof(int));
+
+    if (seen == NULL || printed == NULL) {
+        free(seen);
+        free(printed);
+        return;
+    }
+
+    for (int i = 0; i < size; i++) {
+        int is_duplicate = 0;
+        /* Possible weaknesses found:
+         *  The scope of the variable 'already_printed' can be reduced. [variableScope]
+         */
+        int already_printed = 0;
+
+        for (int j = 0; j < i; j++) {
+            if (arr[j] == arr[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (is_duplicate) {
+            for (int k = 0; k < i; k++) {
+                if (printed[k] == arr[i]) {
+                    already_printed = 1;
+                    break;
+                }
+            }
+
+            if (!already_printed) {
+                printf("%d ", arr[i]);
+                printed[i] = arr[i];
+            }
+        }
+    }
+
+    printf("\n");
+
+    free(seen);
+    free(printed);
+}
+
+int main(void) {
+    int arr[] = {4, 3, 2, 7, 8, 2, 3, 1, 4, 4};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    print_duplicates(arr, size);
+
+    return 0;
+}

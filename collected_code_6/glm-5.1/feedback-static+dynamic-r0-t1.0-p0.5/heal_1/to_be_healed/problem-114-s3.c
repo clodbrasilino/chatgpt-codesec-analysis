@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int frequency;
+} TupleFrequency;
+
+int compare_tuples(const void *x, const void *y) {
+    const Tuple *t1 = (const Tuple *)x;
+    const Tuple *t2 = (const Tuple *)y;
+    if (t1->a != t2->a) {
+        return t1->a - t2->a;
+    }
+    return t1->b - t2->b;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'tuples' can be declared as pointer to const [constParameterPointer]
+ */
+TupleFrequency *assign_frequencies(Tuple *tuples, size_t count, size_t *unique_count) {
+    if (tuples == NULL || unique_count == NULL || count == 0) {
+        if (unique_count != NULL) {
+            *unique_count = 0;
+        }
+        return NULL;
+    }
+
+    Tuple *sorted = (Tuple *)malloc(count * sizeof(Tuple));
+    if (sorted == NULL) {
+        *unique_count = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        sorted[i] = tuples[i];
+    }
+
+    qsort(sorted, count, sizeof(Tuple), compare_tuples);
+
+    size_t capacity = 16;
+    TupleFrequency *result = (TupleFrequency *)malloc(capacity * sizeof(TupleFrequency));
+    if (result == NULL) {
+        free(sorted);
+        *unique_count = 0;
+        return NULL;
+    }
+
+    size_t u_count = 0;
+    size_t i = 0;
+
+    while (i < count) {
+        size_t freq = 1;
+        while (i + freq < count && compare_tuples(&sorted[i], &sorted[i + freq]) == 0) {
+            freq++;
+        }
+
+        if (u_count >= capacity) {
+            size_t new_capacity = capacity * 2;
+            TupleFrequency *temp = (TupleFrequency *)realloc(result, new_capacity * sizeof(TupleFrequency));
+            if (temp == NULL) {
+                free(sorted);
+                free(result);
+                *unique_count = 0;
+                return NULL;
+            }
+            result = temp;
+            capacity = new_capacity;
+        }
+
+        result[u_count].tuple = sorted[i];
+        result[u_count].frequency = freq;
+        u_count++;
+
+        i += freq;
+    }
+
+    free(sorted);
+
+    TupleFrequency *final_result = (TupleFrequency *)realloc(result, u_count * sizeof(TupleFrequency));
+    if (final_result != NULL) {
+        result = final_result;
+    }
+
+    *unique_count = u_count;
+    return result;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {1, 2},
+        {5, 6},
+        {3, 4},
+        {1, 2}
+    };
+
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t unique_count = 0;
+
+    TupleFrequency *frequencies = assign_frequencies(tuples, count, &unique_count);
+
+    if (frequencies != NULL) {
+        for (size_t i = 0; i < unique_count; ++i) {
+            printf("(%d, %d): %d\n", frequencies[i].tuple.a, frequencies[i].tuple.b, frequencies[i].frequency);
+        }
+        free(frequencies);
+    }
+
+    return 0;
+}

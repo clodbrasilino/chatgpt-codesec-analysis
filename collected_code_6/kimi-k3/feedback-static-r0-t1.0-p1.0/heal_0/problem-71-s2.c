@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_next_gap(int gap)
+{
+    gap = (gap * 10) / 13;
+    if (gap < 1)
+        return 1;
+    return gap;
+}
+
+void comb_sort(int *arr, size_t n)
+{
+    if (arr == NULL || n == 0)
+        return;
+
+    int gap = (int)n;
+    int swapped = 1;
+
+    while (gap != 1 || swapped)
+    {
+        gap = get_next_gap(gap);
+        swapped = 0;
+
+        for (size_t i = 0; i + (size_t)gap < n; i++)
+        {
+            if (arr[i] > arr[i + (size_t)gap])
+            {
+                int temp = arr[i];
+                arr[i] = arr[i + (size_t)gap];
+                arr[i + (size_t)gap] = temp;
+                swapped = 1;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    int arr[] = {64, 34, 25, 12, 22, 11, 90, 88, 45, 50};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t i;
+
+    printf("Original array:\n");
+    for (i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+
+    comb_sort(arr, n);
+
+    printf("Sorted array:\n");
+    for (i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+
+    return 0;
+}

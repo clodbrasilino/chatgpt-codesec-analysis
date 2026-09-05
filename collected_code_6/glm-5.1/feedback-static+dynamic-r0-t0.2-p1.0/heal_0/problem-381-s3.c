@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    int count;
+} InnerList;
+
+typedef struct {
+    InnerList *lists;
+    int count;
+} OuterList;
+
+int sort_index;
+
+int compare_lists(const void *a, const void *b) {
+    const InnerList *list_a = (const InnerList *)a;
+    const InnerList *list_b = (const InnerList *)b;
+
+    if (list_a->count <= sort_index || list_b->count <= sort_index) {
+        return 0;
+    }
+
+    if (list_a->elements[sort_index] < list_b->elements[sort_index]) {
+        return -1;
+    }
+    if (list_a->elements[sort_index] > list_b->elements[sort_index]) {
+        return 1;
+    }
+    return 0;
+}
+
+void sort_list_of_lists(OuterList *outer, int index) {
+    if (outer == NULL || outer->lists == NULL || outer->count == 0) {
+        return;
+    }
+
+    for (int i = 0; i < outer->count; i++) {
+        if (outer->lists[i].elements == NULL) {
+            return;
+        }
+    }
+
+    sort_index = index;
+    qsort(outer->lists, outer->count, sizeof(InnerList), compare_lists);
+}
+
+int main(void) {
+    int a[] = {3, 2, 1};
+    int b[] = {1, 5, 9};
+    int c[] = {2, 8, 3};
+
+    InnerList lists[] = {
+        {a, 3},
+        {b, 3},
+        {c, 3}
+    };
+
+    OuterList outer = {lists, 3};
+
+    sort_list_of_lists(&outer, 1);
+
+    for (int i = 0; i < outer.count; i++) {
+        for (int j = 0; j < outer.lists[i].count; j++) {
+            printf("%d ", outer.lists[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

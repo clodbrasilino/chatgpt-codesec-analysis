@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long cube_sum_odd(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    unsigned long long sum = 0;
+    int count = 0;
+    int num = 1;
+
+    while (count < n) {
+        sum += (unsigned long long)num * num * num;
+        num += 2;
+        count++;
+    }
+
+    return sum;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (endptr == argv[1] || *endptr != '\0' || val <= 0 || val > 10000) {
+        fprintf(stderr, "Error: n must be a positive integer within safe limits.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = cube_sum_odd((int)val);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

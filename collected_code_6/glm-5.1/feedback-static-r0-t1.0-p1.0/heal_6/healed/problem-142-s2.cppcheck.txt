@@ -1,0 +1,55 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:38:9: style: Condition '!size_a' is always false [knownConditionTrueFalse]
+    if (!size_a || !size_b || !size_c) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:34:24: note: Assignment 'size_a=sizeof(a)/sizeof(a[0])', assigned value is 3
+    size_a = sizeof(a) / sizeof(a[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:38:9: note: Condition '!size_a' is always false
+    if (!size_a || !size_b || !size_c) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:38:20: style: Condition '!size_b' is always false [knownConditionTrueFalse]
+    if (!size_a || !size_b || !size_c) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:35:24: note: Assignment 'size_b=sizeof(b)/sizeof(b[0])', assigned value is 3
+    size_b = sizeof(b) / sizeof(b[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:38:20: note: Condition '!size_b' is always false
+    if (!size_a || !size_b || !size_c) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:38:31: style: Condition '!size_c' is always false [knownConditionTrueFalse]
+    if (!size_a || !size_b || !size_c) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:36:24: note: Assignment 'size_c=sizeof(c)/sizeof(c[0])', assigned value is 3
+    size_c = sizeof(c) / sizeof(c[0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:38:31: note: Condition '!size_c' is always false
+    if (!size_a || !size_b || !size_c) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:34:12: style: Redundant initialization for 'size_a'. The initialized value is overwritten before it is read. [redundantInitialization]
+    size_a = sizeof(a) / sizeof(a[0]);
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:26:19: note: size_a is initialized
+    size_t size_a = sizeof(a) / sizeof(a[0]);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:34:12: note: size_a is overwritten
+    size_a = sizeof(a) / sizeof(a[0]);
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:35:12: style: Redundant initialization for 'size_b'. The initialized value is overwritten before it is read. [redundantInitialization]
+    size_b = sizeof(b) / sizeof(b[0]);
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:27:19: note: size_b is initialized
+    size_t size_b = sizeof(b) / sizeof(b[0]);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:35:12: note: size_b is overwritten
+    size_b = sizeof(b) / sizeof(b[0]);
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:36:12: style: Redundant initialization for 'size_c'. The initialized value is overwritten before it is read. [redundantInitialization]
+    size_c = sizeof(c) / sizeof(c[0]);
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:28:19: note: size_c is initialized
+    size_t size_c = sizeof(c) / sizeof(c[0]);
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-142-s2.c:36:12: note: size_c is overwritten
+    size_c = sizeof(c) / sizeof(c[0]);
+           ^

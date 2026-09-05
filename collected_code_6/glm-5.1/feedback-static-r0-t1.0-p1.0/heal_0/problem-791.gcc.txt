@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-791.c: In function 'remove_nested_record':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-791.c:110:38: error: passing argument 1 of 'create_tuple' from incompatible pointer type [-Wincompatible-pointer-types]
+  110 |     Record *new_tuple = create_tuple(new_elements, new_size);
+      |                                      ^~~~~~~~~~~~
+      |                                      |
+      |                                      Record *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-791.c:50:31: note: expected 'Record **' but argument is of type 'Record *'
+   50 | Record *create_tuple(Record **elements, size_t size) {
+      |                      ~~~~~~~~~^~~~~~~~

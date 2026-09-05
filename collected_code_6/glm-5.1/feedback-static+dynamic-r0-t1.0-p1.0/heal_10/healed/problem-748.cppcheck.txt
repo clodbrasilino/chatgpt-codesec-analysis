@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-748.c:120:14: style: Condition 'res4!=NULL' is always false [knownConditionTrueFalse]
+    if (res4 != NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-748.c:119:36: note: Calling function 'space_out_capitals' returns 0
+    char *res4 = space_out_capitals(NULL);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-748.c:119:36: note: Assignment 'res4=space_out_capitals(NULL)', assigned value is 0
+    char *res4 = space_out_capitals(NULL);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-748.c:120:14: note: Condition 'res4!=NULL' is always false
+    if (res4 != NULL) {
+             ^

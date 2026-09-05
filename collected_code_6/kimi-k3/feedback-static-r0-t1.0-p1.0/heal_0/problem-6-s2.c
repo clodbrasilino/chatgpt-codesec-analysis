@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool differAtOneBitPosition(unsigned int num1, unsigned int num2)
+{
+    unsigned int xorResult = num1 ^ num2;
+    return (xorResult != 0) && ((xorResult & (xorResult - 1)) == 0);
+}
+
+int main(void)
+{
+    unsigned int num1, num2;
+
+    printf("Enter two unsigned integers: ");
+    if (scanf("%u %u", &num1, &num2) != 2)
+    {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    if (differAtOneBitPosition(num1, num2))
+    {
+        printf("The numbers differ at exactly one bit position.\n");
+    }
+    else
+    {
+        printf("The numbers do not differ at exactly one bit position.\n");
+    }
+
+    return 0;
+}

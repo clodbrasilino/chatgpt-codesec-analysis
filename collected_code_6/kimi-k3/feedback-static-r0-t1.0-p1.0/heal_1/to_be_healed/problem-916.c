@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+    if (x < y) return -1;
+    if (x > y) return 1;
+    return 0;
+}
+
+int findTriplet(int arr[], int n, int sum)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'l' can be reduced. [variableScope]
+     *  The scope of the variable 'r' can be reduced. [variableScope]
+     */
+    int l, r;
+    if (arr == NULL || n < 3) {
+        return 0;
+    }
+    qsort(arr, n, sizeof(int), compare);
+    for (int i = 0; i < n - 2; i++) {
+        l = i + 1;
+        r = n - 1;
+        while (l < r) {
+            if (arr[i] + arr[l] + arr[r] == sum) {
+                return 1;
+            } else if (arr[i] + arr[l] + arr[r] < sum) {
+                l++;
+            } else {
+                r--;
+            }
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 4, 45, 6, 10, 8};
+    int sum = 22;
+    int n = sizeof(arr) / sizeof(arr[0]);
+    if (findTriplet(arr, n, sum)) {
+        printf("Triplet exists\n");
+    } else {
+        printf("No triplet found\n");
+    }
+    return 0;
+}

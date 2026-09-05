@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} NestedTuple;
+
+NestedTuple add_nested_tuples(NestedTuple a, NestedTuple b) {
+    NestedTuple result;
+    if (a.count != b.count) {
+        result.count = 0;
+        result.tuples = NULL;
+        return result;
+    }
+    result.count = a.count;
+    result.tuples = (Tuple *)malloc(a.count * sizeof(Tuple));
+    if (result.tuples == NULL) {
+        result.count = 0;
+        return result;
+    }
+    for (int i = 0; i < a.count; i++) {
+        if (a.tuples[i].size != b.tuples[i].size) {
+            for (int j = 0; j < i; j++) {
+                free(result.tuples[j].elements);
+            }
+            free(result.tuples);
+            result.tuples = NULL;
+            result.count = 0;
+            return result;
+        }
+        result.tuples[i].size = a.tuples[i].size;
+        result.tuples[i].elements = (int *)malloc(a.tuples[i].size * sizeof(int));
+        if (result.tuples[i].elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result.tuples[j].elements);
+            }
+            free(result.tuples);
+            result.tuples = NULL;
+            result.count = 0;
+            return result;
+        }
+        for (int k = 0; k < a.tuples[i].size; k++) {
+            result.tuples[i].elements[k] = a.tuples[i].elements[k] + b.tuples[i].elements[k];
+        }
+    }
+    return result;
+}
+
+void free_nested_tuple(NestedTuple nt) {
+    if (nt.tuples != NULL) {
+        for (int i = 0; i < nt.count; i++) {
+            free(nt.tuples[i].elements);
+        }
+        free(nt.tuples);
+    }
+}
+
+int main() {
+    Tuple t1[] = {{(int[]){1, 2}, 2}, {(int[]){3, 4, 5}, 3}};
+    Tuple t2[] = {{(int[]){6, 7}, 2}, {(int[]){8, 9, 10}, 3}};
+    
+    NestedTuple a = {t1, 2};
+    NestedTuple b = {t2, 2};
+    
+    NestedTuple c = add_nested_tuples(a, b);
+    
+    if (c.tuples != NULL) {
+        for (int i = 0; i < c.count; i++) {
+            printf("(");
+            for (int j = 0; j < c.tuples[i].size; j++) {
+                printf("%d", c.tuples[i].elements[j]);
+                if (j < c.tuples[i].size - 1) {
+                    printf(", ");
+                }
+            }
+            printf(")\n");
+        }
+    }
+    
+    free_nested_tuple(c);
+    
+    return 0;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:15:24: warning: Either the condition 'grid[0]==NULL' is redundant or there is possible null pointer dereference: grid[0]. [nullPointerRedundantCheck]
+    int incl = max(grid[0][0], grid[1][0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:19:21: note: Assuming that condition 'grid[0]==NULL' is not redundant
+        if (grid[0] == NULL || grid[1] == NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:15:24: note: Null pointer dereference
+    int incl = max(grid[0][0], grid[1][0]);
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:15:36: warning: Either the condition 'grid[1]==NULL' is redundant or there is possible null pointer dereference: grid[1]. [nullPointerRedundantCheck]
+    int incl = max(grid[0][0], grid[1][0]);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:19:40: note: Assuming that condition 'grid[1]==NULL' is not redundant
+        if (grid[0] == NULL || grid[1] == NULL) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:15:36: note: Null pointer dereference
+    int incl = max(grid[0][0], grid[1][0]);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-314-s2.c:17:9: style: The scope of the variable 'excl_new' can be reduced. [variableScope]
+    int excl_new;
+        ^

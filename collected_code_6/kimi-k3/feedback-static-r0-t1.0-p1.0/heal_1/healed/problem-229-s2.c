@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void rearrange(int arr[], int n)
+{
+    int i = 0;
+    int j = n - 1;
+    int temp;
+
+    while (i < j)
+    {
+        while (i < j && arr[i] < 0)
+            i++;
+        while (i < j && arr[j] >= 0)
+            j--;
+
+        if (i < j)
+        {
+            temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
+    }
+}
+
+void printArray(const int arr[], int n)
+{
+    int i;
+    for (i = 0; i < n; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int arr[] = {-12, 11, -13, -5, 6, -7, 5, -3, -6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: ");
+    printArray(arr, n);
+
+    rearrange(arr, n);
+
+    printf("Rearranged array: ");
+    printArray(arr, n);
+
+    return 0;
+}

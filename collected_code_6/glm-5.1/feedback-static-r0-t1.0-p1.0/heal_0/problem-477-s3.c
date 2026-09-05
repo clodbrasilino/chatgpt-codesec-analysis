@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+char *str_tolower(const char *src) {
+    if (src == NULL) {
+        return NULL;
+    }
+
+    size_t len = 0;
+    while (src[len] != '\0') {
+        len++;
+    }
+
+    char *dest = malloc(len + 1);
+    if (dest == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        dest[i] = (char)tolower((unsigned char)src[i]);
+    }
+    dest[len] = '\0';
+
+    return dest;
+}
+
+int main(void) {
+    const char *original = "HELLO World 123!";
+    char *lowered = str_tolower(original);
+
+    if (lowered != NULL) {
+        printf("Original: %s\n", original);
+        printf("Lowered: %s\n", lowered);
+        free(lowered);
+    }
+
+    return 0;
+}

@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+
+#define RADIX_BITS 8u
+#define RADIX_SIZE (1u << RADIX_BITS)
+#define RADIX_MASK (RADIX_SIZE - 1u)
+
+int radix_sort(int *arr, size_t n);
+static int uint_to_int(unsigned int u);
+static void print_array(const int *arr, size_t n);
+
+static int uint_to_int(unsigned int u)
+{
+    if (u <= (unsigned int)INT_MAX) {
+        return (int)u;
+    }
+    return -1 - (int)(~u);
+}
+
+int radix_sort(int *arr, size_t n)
+{
+    if (arr == NULL) {
+        return -1;
+    }
+    if (n < 2u) {
+        return 0;
+    }
+    if (n > SIZE_MAX / sizeof(unsigned int)) {
+        return -1;
+    }
+
+    unsigned int *keys = malloc(n * sizeof *keys);
+    unsigned int *tmp = malloc(n * sizeof *tmp);
+    if (keys == NULL || tmp == NULL) {
+        free(keys);
+        free(tmp);
+        return -1;
+    }
+
+    const unsigned int sign_bit = 1u << (sizeof(unsigned int) * CHAR_BIT - 1u);
+    for (size_t i = 0; i < n; i++) {
+        keys[i] = (unsigned int)arr[i] ^ sign_bit;
+    }
+
+    const unsigned int total_bits = (unsigned int)(sizeof(unsigned int) * CHAR_BIT);
+    const unsigned int passes = (total_bits + RADIX_BITS - 1u) / RADIX_BITS;
+
+    for (unsigned int p = 0u; p < passes; p++) {
+        const unsigned int shift = p * RADIX_BITS;
+        size_t count[RADIX_SIZE] = {0};
+
+        for (size_t i = 0; i < n; i++) {
+            count[(keys[i] >> shift) & RADIX_MASK]++;
+        }
+
+        size_t sum = 0;
+        for (size_t i = 0; i < RADIX_SIZE; i++) {
+            size_t c = count[i];
+            count[i] = sum;
+            sum += c;
+        }
+
+        for (size_t i = 0; i < n; i++) {
+            tmp[count[(keys[i] >> shift) & RADIX_MASK]++] = keys[i];
+        }
+
+        unsigned int *swap = keys;
+        keys = tmp;
+        tmp = swap;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        arr[i] = uint_to_int(keys[i] ^ sign_bit);
+    }
+
+    free(keys);
+    free(tmp);
+    return 0;
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    if (arr == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < n; i++) {
+        printf("%d%c", arr[i], (i + 1u < n) ? ' ' : '\n');
+    }
+}
+
+int main(void)
+{
+    int arr[] = {170, -45, 75, -90, 802, 24, 2, 66, -1, 0, INT_MAX, INT_MIN};
+    const size_t n = sizeof arr / sizeof arr[0];
+
+    printf("Original: ");
+    print_array(arr, n);
+
+    if (radix_sort(arr, n) != 0) {
+        fprintf(stderr, "Error: radix_sort failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted:   ");
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}

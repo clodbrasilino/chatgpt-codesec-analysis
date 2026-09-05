@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-255.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-255.c:22:16: style: Condition 'choose<=0' is always false [knownConditionTrueFalse]
+    if (choose <= 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-255.c:20:18: note: Assignment 'choose=2', assigned value is 2
+    int choose = 2;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-255.c:22:16: note: Condition 'choose<=0' is always false
+    if (choose <= 0) {
+               ^

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-300-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-300-s3.c:23:37: style: Condition 'i<=n' is always true [knownConditionTrueFalse]
+        if (ways == 0 && n > 0 && i <= n) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-300-s3.c:21:23: note: Assuming that condition 'i<=n' is not redundant
+    for (int i = 0; i <= n; i++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-300-s3.c:23:37: note: Condition 'i<=n' is always true
+        if (ways == 0 && n > 0 && i <= n) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-300-s3.c:36:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *argv[]) {
+                         ^

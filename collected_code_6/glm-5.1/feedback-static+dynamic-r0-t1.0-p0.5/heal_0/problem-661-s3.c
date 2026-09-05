@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum_no_three_consecutive(int arr[], int n) {
+    if (n == 0) return 0;
+    if (n == 1) return arr[0] > 0 ? arr[0] : 0;
+    if (n == 2) {
+        int sum = arr[0] + arr[1];
+        int max_single = arr[0] > arr[1] ? arr[0] : arr[1];
+        int res = sum > max_single ? sum : max_single;
+        return res > 0 ? res : 0;
+    }
+
+    int *dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) return 0;
+
+    dp[0] = arr[0] > 0 ? arr[0] : 0;
+    
+    int sum1 = arr[0] + arr[1];
+    int max1 = arr[0] > arr[1] ? arr[0] : arr[1];
+    dp[1] = sum1 > max1 ? sum1 : max1;
+    if (dp[1] < 0) dp[1] = 0;
+
+    int sum2 = arr[1] + arr[2];
+    int max2 = arr[2] > dp[1] ? arr[2] : dp[1];
+    dp[2] = sum2 > max2 ? sum2 : max2;
+    if (dp[2] < 0) dp[2] = 0;
+
+    for (int i = 3; i < n; i++) {
+        int val = arr[i] > 0 ? arr[i] : 0;
+        int opt1 = dp[i - 1];
+        int opt2 = dp[i - 2] + val;
+        int opt3 = dp[i - 3] + (arr[i - 1] > 0 ? arr[i - 1] : 0) + val;
+        
+        int max_opt = opt1 > opt2 ? opt1 : opt2;
+        max_opt = max_opt > opt3 ? max_opt : opt3;
+        
+        dp[i] = max_opt;
+    }
+
+    int result = dp[n - 1];
+    free(dp);
+    return result;
+}
+
+int main() {
+    int arr[] = {100, 1000, 100, 1000, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = max_sum_no_three_consecutive(arr, n);
+    printf("%d\n", result);
+    return 0;
+}

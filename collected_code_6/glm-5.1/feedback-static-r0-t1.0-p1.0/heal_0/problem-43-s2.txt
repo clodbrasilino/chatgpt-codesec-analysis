@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int find_sequences(const char *str, char ***matches, size_t *count) {
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+    size_t capacity = 10;
+    size_t num_matches = 0;
+    char **results = malloc(capacity * sizeof(char *));
+    if (!results) return -1;
+
+    ret = regcomp(&regex, "[a-z]+_[a-z]+", REG_EXTENDED);
+    if (ret) {
+        free(results);
+        return -1;
+    }
+
+    const char *p = str;
+    while (regexec(&regex, p, 1, &match, 0) == 0) {
+        if (num_matches >= capacity) {
+            capacity *= 2;
+            char **temp = realloc(results, capacity * sizeof(char *));
+            if (!temp) {
+                for (size_t i = 0; i < num_matches; i++) free(results[i]);
+                free(results);
+                regfree(&regex);
+                return -1;
+            }
+            results = temp;
+        }
+
+        size_t len = match.rm_eo - match.rm_so;
+        char *substr = malloc(len + 1);
+        if (!substr) {
+            for (size_t i = 0; i < num_matches; i++) free(results[i]);
+            free(results);
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(substr, p + match.rm_so, len);
+        substr[len] = '\0';
+        results[num_matches++] = substr;
+
+        if (match.rm_eo == 0) break;
+        p += match.rm_eo;
+    }
+
+    regfree(&regex);
+    *matches = results;
+    *count = num_matches;
+    return 0;
+}
+
+int main(void) {
+    const char *text = "hello_world abc test_case foo_bar_baz 123 invalid_  _valid";
+    char **matches = NULL;
+    size_t count = 0;
+
+    if (find_sequences(text, &matches, &count) == 0) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", matches[i]);
+            free(matches[i]);
+        }
+        free(matches);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+size_t count_lowercase(const char *str) {
+    size_t count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    const char *text = "Hello World!";
+    size_t result = count_lowercase(text);
+    printf("%zu\n", result);
+    return 0;
+}

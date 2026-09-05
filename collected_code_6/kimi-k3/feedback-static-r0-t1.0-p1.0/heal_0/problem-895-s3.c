@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSumNoAdjacent(const int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return arr[0] > 0 ? arr[0] : 0;
+    }
+
+    int incl = arr[0] > 0 ? arr[0] : 0;
+    int excl = 0;
+
+    for (int i = 1; i < n; i++) {
+        int new_excl = (incl > excl) ? incl : excl;
+        int new_incl = excl + arr[i];
+
+        if (new_incl < 0) {
+            new_incl = 0;
+        }
+
+        incl = new_incl;
+        excl = new_excl;
+    }
+
+    return (incl > excl) ? incl : excl;
+}
+
+int main(void) {
+    int n;
+    int result;
+
+    printf("Enter number of elements: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int *arr = malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %d elements: ", n);
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = maxSumNoAdjacent(arr, n);
+    printf("Maximum sum of non-adjacent subsequence: %d\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

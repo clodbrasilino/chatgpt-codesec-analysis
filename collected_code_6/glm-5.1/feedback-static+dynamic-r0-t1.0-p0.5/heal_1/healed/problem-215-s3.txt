@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* decode(const int* encoded, int encodedSize, int* returnSize) {
+    if (encoded == NULL || returnSize == NULL || encodedSize < 0) {
+        if (returnSize != NULL) {
+            *returnSize = 0;
+        }
+        return NULL;
+    }
+
+    int totalElements = 0;
+    for (int i = 0; i < encodedSize; i += 2) {
+        totalElements += encoded[i];
+    }
+
+    int* decoded = (int*)malloc(totalElements * sizeof(int));
+    if (decoded == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < encodedSize; i += 2) {
+        int count = encoded[i];
+        int value = encoded[i + 1];
+        for (int j = 0; j < count; j++) {
+            decoded[index++] = value;
+        }
+    }
+
+    *returnSize = totalElements;
+    return decoded;
+}
+
+int main() {
+    int encoded[] = {3, 1, 2, 4, 1, 5};
+    int encodedSize = sizeof(encoded) / sizeof(encoded[0]);
+    int returnSize = 0;
+
+    int* decoded = decode(encoded, encodedSize, &returnSize);
+
+    if (decoded != NULL) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", decoded[i]);
+        }
+        printf("\n");
+        free(decoded);
+    }
+
+    return 0;
+}

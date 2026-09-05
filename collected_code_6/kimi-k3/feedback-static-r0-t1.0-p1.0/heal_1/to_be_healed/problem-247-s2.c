@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* longestPalindromicSubsequence(const char* str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    size_t n = strlen(str);
+    if (n == 0) {
+        char* result = (char*)malloc(1);
+        if (result != NULL) {
+            result[0] = '\0';
+        }
+        return result;
+    }
+    
+    int** dp = (int**)malloc(n * sizeof(int*));
+    if (dp == NULL) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        dp[i] = (int*)calloc(n, sizeof(int));
+        if (dp[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return NULL;
+        }
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        dp[i][i] = 1;
+    }
+    
+    for (size_t len = 2; len <= n; len++) {
+        for (size_t i = 0; i <= n - len; i++) {
+            size_t j = i + len - 1;
+            if (str[i] == str[j]) {
+                dp[i][j] = dp[i + 1][j - 1] + 2;
+            } else {
+                dp[i][j] = (dp[i + 1][j] > dp[i][j - 1]) ? dp[i + 1][j] : dp[i][j - 1];
+            }
+        }
+    }
+    
+    int maxLen = dp[0][n - 1];
+    char* result = (char*)malloc((size_t)(maxLen + 1) * sizeof(char));
+    if (result == NULL) {
+        for (size_t i = 0; i < n; i++) {
+            free(dp[i]);
+        }
+        free(dp);
+        return NULL;
+    }
+    
+    /* Possible weaknesses found:
+     *  Shadowed declaration
+     */
+    size_t i = 0, j = n - 1;
+    int idx = 0;
+    
+    while (i <= j) {
+        if (i == j) {
+            result[idx++] = str[i];
+            break;
+        }
+        if (str[i] == str[j]) {
+            result[idx++] = str[i];
+            i++;
+            j--;
+        } else if (dp[i + 1][j] > dp[i][j - 1]) {
+            i++;
+        } else {
+            j--;
+        }
+    }
+    
+    /* Possible weaknesses found:
+     *  Local variable 'i' shadows outer variable [shadowVariable]
+     *  Shadow variable
+     */
+    for (size_t i = 0; i < n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    result[idx] = '\0';
+    return result;
+}
+
+int main(void) {
+    char input[1024];
+    
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+    
+    char* result = longestPalindromicSubsequence(input);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Longest palindromic subsequence: %s\n", result);
+    printf("Length: %zu\n", strlen(result));
+    
+    free(result);
+    return EXIT_SUCCESS;
+}

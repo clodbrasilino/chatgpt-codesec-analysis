@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* intersection(const int* nums1, int nums1Size, const int* nums2, int nums2Size, int* returnSize) {
+    if (nums1 == NULL || nums2 == NULL || returnSize == NULL || nums1Size < 0 || nums2Size < 0) {
+        if (returnSize != NULL) {
+            *returnSize = 0;
+        }
+        return NULL;
+    }
+    
+    if (nums1Size == 0 || nums2Size == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    int minSize = (nums1Size < nums2Size) ? nums1Size : nums2Size;
+    int* result = (int*)malloc(minSize * sizeof(int));
+    if (result == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    int count = 0;
+    int* used = (int*)calloc(nums2Size, sizeof(int));
+    if (used == NULL) {
+        free(result);
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    for (int i = 0; i < nums1Size; i++) {
+        for (int j = 0; j < nums2Size; j++) {
+            if (nums1[i] == nums2[j] && used[j] == 0) {
+                result[count] = nums1[i];
+                count++;
+                used[j] = 1;
+                break;
+            }
+        }
+    }
+    
+    free(used);
+    
+    if (count == 0) {
+        free(result);
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    int* finalResult = (int*)realloc(result, count * sizeof(int));
+    if (finalResult == NULL) {
+        *returnSize = count;
+        return result;
+    }
+    
+    *returnSize = count;
+    return finalResult;
+}
+
+int main() {
+    int nums1[] = {1, 2, 2, 1};
+    int nums2[] = {2, 2};
+    int returnSize = 0;
+    
+    int* result = intersection(nums1, 4, nums2, 2, &returnSize);
+    
+    if (result != NULL) {
+        printf("Intersection: ");
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No intersection found or error occurred.\n");
+    }
+    
+    return 0;
+}

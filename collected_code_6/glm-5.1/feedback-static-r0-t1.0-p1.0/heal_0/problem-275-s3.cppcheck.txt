@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-275-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-275-s3.c:4:37: style: Parameter 'original_array' can be declared as pointer to const [constParameterPointer]
+int find_last_removed_position(int *original_array, int original_size, int *modified_array, int modified_size) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-275-s3.c:4:77: style: Parameter 'modified_array' can be declared as pointer to const [constParameterPointer]
+int find_last_removed_position(int *original_array, int original_size, int *modified_array, int modified_size) {
+                                                                            ^

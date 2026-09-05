@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+typedef struct {
+    double *elements;
+    size_t size;
+} Tuple;
+
+int tuple_exponentiation(const Tuple *base, const Tuple *exponent, Tuple *result) {
+    if (base == NULL || exponent == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (base->size != exponent->size) {
+        return -2;
+    }
+    
+    if (base->size == 0) {
+        return -3;
+    }
+    
+    result->elements = (double *)malloc(base->size * sizeof(double));
+    if (result->elements == NULL) {
+        return -4;
+    }
+    
+    result->size = base->size;
+    
+    for (size_t i = 0; i < base->size; i++) {
+        errno = 0;
+        double power_result = pow(base->elements[i], exponent->elements[i]);
+        
+        if (errno == EDOM || errno == ERANGE) {
+            free(result->elements);
+            result->elements = NULL;
+            result->size = 0;
+            return -5;
+        }
+        
+        result->elements[i] = power_result;
+    }
+    
+    return 0;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL && tuple->elements != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    Tuple base, exponent, result;
+    double base_data[] = {2.0, 3.0, 4.0, 5.0};
+    double exp_data[] = {3.0, 2.0, 0.5, 1.0};
+    size_t size = 4;
+    int status;
+    
+    base.elements = base_data;
+    base.size = size;
+    
+    exponent.elements = exp_data;
+    exponent.size = size;
+    
+    result.elements = NULL;
+    result.size = 0;
+    
+    status = tuple_exponentiation(&base, &exponent, &result);
+    
+    if (status == 0) {
+        printf("Result: (");
+        for (size_t i = 0; i < result.size; i++) {
+            printf("%.2f", result.elements[i]);
+            if (i < result.size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+        
+        free_tuple(&result);
+    } else {
+        fprintf(stderr, "Error: tuple_exponentiation failed with code %d\n", status);
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

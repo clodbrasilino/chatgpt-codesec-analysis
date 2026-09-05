@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-751.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-751.c:56:20: style: Condition 'is_min_heap(null_array,null_n)' is always true [knownConditionTrueFalse]
+    if (is_min_heap(null_array, null_n)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-751.c:36:21: note: Assignment 'null_n=0', assigned value is 0
+    size_t null_n = 0;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-751.c:56:20: note: Calling function 'is_min_heap' returns 1
+    if (is_min_heap(null_array, null_n)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-751.c:56:20: note: Condition 'is_min_heap(null_array,null_n)' is always true
+    if (is_min_heap(null_array, null_n)) {
+                   ^

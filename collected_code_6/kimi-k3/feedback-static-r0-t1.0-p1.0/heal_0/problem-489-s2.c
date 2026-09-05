@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_max_frequency(const int arr[], size_t size, int *frequency) {
+    if (arr == NULL || frequency == NULL || size == 0) {
+        return -1;
+    }
+
+    int max_value = arr[0];
+    size_t i;
+
+    for (i = 1; i < size; i++) {
+        if (arr[i] > max_value) {
+            max_value = arr[i];
+        }
+    }
+
+    int count = 0;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == max_value) {
+            count++;
+        }
+    }
+
+    *frequency = count;
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {4, 7, 2, 7, 9, 7, 9, 9, 1};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int frequency = 0;
+
+    if (find_max_frequency(arr, size, &frequency) == 0) {
+        printf("Frequency of the largest value: %d\n", frequency);
+    } else {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+
+    return 0;
+}

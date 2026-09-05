@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+static long long gcd(long long a, long long b) {
+    while (b != 0) {
+        long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+static long long lcm(long long a, long long b, int *error) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    
+    long long g = gcd(a, b);
+    long long quotient = a / g;
+    
+    if (b > 0 && quotient > 0 && b > LLONG_MAX / quotient) {
+        *error = 1;
+        return 0;
+    }
+    
+    return quotient * b;
+}
+
+long long smallest_multiple(int n, int *error) {
+    if (n < 1) {
+        *error = 1;
+        return 0;
+    }
+    
+    long long result = 1;
+    *error = 0;
+    
+    for (int i = 2; i <= n; i++) {
+        result = lcm(result, (long long)i, error);
+        if (*error != 0) {
+            return 0;
+        }
+    }
+    
+    return result;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    errno = 0;
+    long val = strtol(argv[1], &endptr, 10);
+    
+    if (errno != 0 || endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Invalid input: not a valid integer\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (val < 1 || val > INT_MAX) {
+        fprintf(stderr, "Input out of valid range\n");
+        return EXIT_FAILURE;
+    }
+    
+    int n = (int)val;
+    int error = 0;
+    long long result = smallest_multiple(n, &error);
+    
+    if (error != 0) {
+        fprintf(stderr, "Error: result would overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

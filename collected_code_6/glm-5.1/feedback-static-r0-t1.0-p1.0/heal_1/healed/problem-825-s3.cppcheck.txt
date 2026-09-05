@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-825-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-825-s3.c:61:46: style: Condition 'indices_size>0' is always true [knownConditionTrueFalse]
+        if (result_size == 0 && indices_size > 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-825-s3.c:49:43: note: Assignment 'indices_size=sizeof(indices)/sizeof(indices[0])', assigned value is 5
+    size_t indices_size = sizeof(indices) / sizeof(indices[0]);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-825-s3.c:61:46: note: Condition 'indices_size>0' is always true
+        if (result_size == 0 && indices_size > 0) {
+                                             ^

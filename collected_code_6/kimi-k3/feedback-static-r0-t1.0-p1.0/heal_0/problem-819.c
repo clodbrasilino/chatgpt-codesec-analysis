@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void count_consecutive_duplicates(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        printf("No elements to process.\n");
+        return;
+    }
+
+    size_t i = 0;
+    while (i < size) {
+        size_t count = 1;
+        while (i + count < size && arr[i + count] == arr[i]) {
+            count++;
+        }
+        printf("Element %d appears %zu time(s) consecutively.\n", arr[i], count);
+        i += count;
+    }
+}
+
+int main(void) {
+    int numbers[] = {1, 1, 2, 2, 2, 3, 4, 4, 5};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+
+    count_consecutive_duplicates(numbers, size);
+
+    return 0;
+}

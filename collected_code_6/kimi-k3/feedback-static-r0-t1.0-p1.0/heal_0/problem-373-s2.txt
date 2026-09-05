@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+
+double volume_of_cuboid(double length, double width, double height);
+
+int main(void) {
+    double length, width, height;
+    
+    printf("Enter length, width, and height: ");
+    if (scanf("%lf %lf %lf", &length, &width, &height) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (length < 0 || width < 0 || height < 0) {
+        fprintf(stderr, "Dimensions must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Volume: %.2f\n", volume_of_cuboid(length, width, height));
+    return 0;
+}
+
+double volume_of_cuboid(double length, double width, double height) {
+    return length * width * height;
+}
+```

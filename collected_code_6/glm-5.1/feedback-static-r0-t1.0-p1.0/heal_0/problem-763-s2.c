@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int compare(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    if (int_a < int_b) return -1;
+    if (int_a > int_b) return 1;
+    return 0;
+}
+
+int find_min_difference(int *array, size_t size) {
+    if (array == NULL || size < 2) {
+        return -1;
+    }
+
+    qsort(array, size, sizeof(int), compare);
+
+    int min_diff = INT_MAX;
+    for (size_t i = 1; i < size; i++) {
+        int diff = array[i] - array[i - 1];
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+
+    return min_diff;
+}
+
+int main(void) {
+    int array[] = {1, 5, 3, 19, 18, 25};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    int result = find_min_difference(array, size);
+
+    printf("%d\n", result);
+
+    return 0;
+}

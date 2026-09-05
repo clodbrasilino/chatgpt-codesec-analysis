@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-751.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-751.c:47:34: style: The comparison 'empty_n > 0' is always false. [knownConditionTrueFalse]
+    bool empty_result = (empty_n > 0) ? is_min_heap(empty_data, empty_n) : true;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-751.c:32:22: note: 'empty_n' is assigned value '0' here.
+    size_t empty_n = 0;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-751.c:47:34: note: The comparison 'empty_n > 0' is always false.
+    bool empty_result = (empty_n > 0) ? is_min_heap(empty_data, empty_n) : true;
+                                 ^

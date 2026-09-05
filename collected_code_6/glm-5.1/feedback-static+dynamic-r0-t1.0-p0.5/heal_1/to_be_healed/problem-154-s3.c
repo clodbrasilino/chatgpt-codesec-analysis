@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+ */
+int* extract_elements(int** matrix, int rows, int cols, int* indices, int num_indices, int* out_size) {
+    if (!matrix || !indices || !out_size) {
+        if (out_size) *out_size = 0;
+        return NULL;
+    }
+
+    int* result = (int*)malloc(num_indices * sizeof(int));
+    if (!result) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int count = 0;
+    for (int i = 0; i < num_indices; ++i) {
+        int idx = indices[i];
+        if (idx < 0) {
+            continue;
+        }
+
+        int r = idx / cols;
+        int c = idx % cols;
+
+        if (r < rows && c < cols) {
+            result[count++] = matrix[r][c];
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        *out_size = 0;
+        return NULL;
+    }
+
+    int* trimmed = (int*)realloc(result, count * sizeof(int));
+    if (trimmed) {
+        result = trimmed;
+    }
+
+    *out_size = count;
+    return result;
+}
+
+int main(void) {
+    int row0[] = {10, 20, 30};
+    int row1[] = {40, 50, 60};
+    int row2[] = {70, 80, 90};
+    int* matrix[] = {row0, row1, row2};
+    int rows = 3;
+    int cols = 3;
+
+    int indices[] = {0, 4, 8, 2, 5, -1, 15};
+    int num_indices = sizeof(indices) / sizeof(indices[0]);
+    int out_size = 0;
+
+    int* extracted = extract_elements(matrix, rows, cols, indices, num_indices, &out_size);
+
+    if (extracted) {
+        for (int i = 0; i < out_size; ++i) {
+            printf("%d ", extracted[i]);
+        }
+        printf("\n");
+        free(extracted);
+    }
+
+    return 0;
+}

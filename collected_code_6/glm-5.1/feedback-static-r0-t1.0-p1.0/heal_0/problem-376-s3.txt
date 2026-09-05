@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} Tuple;
+
+Tuple remove_duplicates(Tuple t, int custom_value) {
+    if (t.data == NULL || t.len == 0) {
+        Tuple empty = {0};
+        return empty;
+    }
+
+    size_t *counts = calloc(t.len, sizeof(size_t));
+    if (counts == NULL) {
+        Tuple empty = {0};
+        return empty;
+    }
+
+    for (size_t i = 0; i < t.len; i++) {
+        for (size_t j = 0; j < t.len; j++) {
+            if (t.data[i] == t.data[j]) {
+                counts[i]++;
+            }
+        }
+    }
+
+    int *new_data = malloc(t.len * sizeof(int));
+    if (new_data == NULL) {
+        free(counts);
+        Tuple empty = {0};
+        return empty;
+    }
+
+    for (size_t i = 0; i < t.len; i++) {
+        if (counts[i] > 1) {
+            new_data[i] = custom_value;
+        } else {
+            new_data[i] = t.data[i];
+        }
+    }
+
+    free(counts);
+
+    Tuple result;
+    result.data = new_data;
+    result.len = t.len;
+    return result;
+}
+
+int main(void) {
+    int original_arr[] = {1, 2, 3, 2, 4, 1, 5};
+    size_t arr_len = sizeof(original_arr) / sizeof(original_arr[0]);
+
+    Tuple original;
+    original.data = original_arr;
+    original.len = arr_len;
+
+    Tuple modified = remove_duplicates(original, -99);
+
+    if (modified.data != NULL) {
+        for (size_t i = 0; i < modified.len; i++) {
+            printf("%d ", modified.data[i]);
+        }
+        printf("\n");
+        free(modified.data);
+    }
+
+    return 0;
+}
+```

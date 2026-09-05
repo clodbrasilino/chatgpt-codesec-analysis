@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool isMinHeap(const int arr[], int n)
+{
+    if (arr == NULL || n <= 0) {
+        return false;
+    }
+
+    for (int i = 0; i <= (n - 2) / 2; i++) {
+        int left = 2 * i + 1;
+        int right = 2 * i + 2;
+
+        if (left < n && arr[i] > arr[left]) {
+            return false;
+        }
+        if (right < n && arr[i] > arr[right]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 3, 5, 7, 9, 11};
+    int arr2[] = {1, 10, 5, 7, 9, 11};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+
+    if (isMinHeap(arr1, n1)) {
+        printf("Array 1 is a min heap\n");
+    } else {
+        printf("Array 1 is not a min heap\n");
+    }
+
+    if (isMinHeap(arr2, n2)) {
+        printf("Array 2 is a min heap\n");
+    } else {
+        printf("Array 2 is not a min heap\n");
+    }
+
+    return EXIT_SUCCESS;
+}

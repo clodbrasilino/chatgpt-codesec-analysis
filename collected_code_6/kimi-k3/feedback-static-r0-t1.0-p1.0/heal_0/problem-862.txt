@@ -1,0 +1,162 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 256
+#define INITIAL_CAPACITY 16
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+typedef struct {
+    WordCount *entries;
+    size_t size;
+    size_t capacity;
+} WordTable;
+
+static void init_table(WordTable *table) {
+    table->entries = NULL;
+    table->size = 0;
+    table->capacity = 0;
+}
+
+static void free_table(WordTable *table) {
+    if (table->entries != NULL) {
+        for (size_t i = 0; i < table->size; i++) {
+            free(table->entries[i].word);
+        }
+        free(table->entries);
+    }
+    table->entries = NULL;
+    table->size = 0;
+    table->capacity = 0;
+}
+
+static int resize_table(WordTable *table) {
+    size_t new_capacity = (table->capacity == 0) ? INITIAL_CAPACITY : table->capacity * 2;
+    WordCount *new_entries = realloc(table->entries, new_capacity * sizeof(WordCount));
+    if (new_entries == NULL) {
+        return -1;
+    }
+    table->entries = new_entries;
+    table->capacity = new_capacity;
+    return 0;
+}
+
+static int add_word(WordTable *table, const char *word) {
+    for (size_t i = 0; i < table->size; i++) {
+        if (strcmp(table->entries[i].word, word) == 0) {
+            table->entries[i].count++;
+            return 0;
+        }
+    }
+    
+    if (table->size >= table->capacity) {
+        if (resize_table(table) != 0) {
+            return -1;
+        }
+    }
+    
+    char *word_copy = malloc(strlen(word) + 1);
+    if (word_copy == NULL) {
+        return -1;
+    }
+    strcpy(word_copy, word);
+    
+    table->entries[table->size].word = word_copy;
+    table->entries[table->size].count = 1;
+    table->size++;
+    return 0;
+}
+
+static int compare_counts(const void *a, const void *b) {
+    const WordCount *wa = (const WordCount *)a;
+    const WordCount *wb = (const WordCount *)b;
+    return wb->count - wa->count;
+}
+
+static void to_lower(char *str) {
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        str[i] = (char)tolower((unsigned char)str[i]);
+    }
+}
+
+static int process_text(WordTable *table, const char *text) {
+    char buffer[MAX_WORD_LEN];
+    size_t buf_idx = 0;
+    
+    for (size_t i = 0; text[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)text[i];
+        
+        if (isalnum(c)) {
+            if (buf_idx < MAX_WORD_LEN - 1) {
+                buffer[buf_idx++] = (char)c;
+            }
+        } else {
+            if (buf_idx > 0) {
+                buffer[buf_idx] = '\0';
+                to_lower(buffer);
+                if (add_word(table, buffer) != 0) {
+                    return -1;
+                }
+                buf_idx = 0;
+            }
+        }
+    }
+    
+    if (buf_idx > 0) {
+        buffer[buf_idx] = '\0';
+        to_lower(buffer);
+        if (add_word(table, buffer) != 0) {
+            return -1;
+        }
+    }
+    
+    return 0;
+}
+
+int find_most_common_words(const char *text, int n) {
+    if (text == NULL || n <= 0) {
+        return -1;
+    }
+    
+    WordTable table;
+    init_table(&table);
+    
+    if (process_text(&table, text) != 0) {
+        free_table(&table);
+        return -1;
+    }
+    
+    if (table.size == 0) {
+        free_table(&table);
+        return 0;
+    }
+    
+    qsort(table.entries, table.size, sizeof(WordCount), compare_counts);
+    
+    int limit = (n < (int)table.size) ? n : (int)table.size;
+    for (int i = 0; i < limit; i++) {
+        printf("%s: %d\n", table.entries[i].word, table.entries[i].count);
+    }
+    
+    free_table(&table);
+    return 0;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The dog was not amused by the fox.";
+    int n = 3;
+    
+    if (find_most_common_words(text, n) != 0) {
+        fprintf(stderr, "Error processing text\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

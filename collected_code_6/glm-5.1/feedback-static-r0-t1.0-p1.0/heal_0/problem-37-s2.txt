@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define TYPE_INT 1
+#define TYPE_STR 2
+
+typedef struct {
+    int type;
+    union {
+        int ival;
+        char *sval;
+    } data;
+} MixedItem;
+
+typedef struct {
+    MixedItem *items;
+    size_t size;
+} MixedList;
+
+void mixed_list_init(MixedList *list, size_t capacity) {
+    list->items = (MixedItem *)malloc(capacity * sizeof(MixedItem));
+    list->size = 0;
+}
+
+void mixed_list_add_int(MixedList *list, int val) {
+    list->items[list->size].type = TYPE_INT;
+    list->items[list->size].data.ival = val;
+    list->size++;
+}
+
+void mixed_list_add_str(MixedList *list, const char *val) {
+    list->items[list->size].type = TYPE_STR;
+    list->items[list->size].data.sval = strdup(val);
+    list->size++;
+}
+
+void mixed_list_free(MixedList *list) {
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->items[i].type == TYPE_STR) {
+            free(list->items[i].data.sval);
+        }
+    }
+    free(list->items);
+    list->items = NULL;
+    list->size = 0;
+}
+
+int compare_mixed(const void *a, const void *b) {
+    const MixedItem *ia = (const MixedItem *)a;
+    const MixedItem *ib = (const MixedItem *)b;
+
+    if (ia->type == TYPE_INT && ib->type == TYPE_INT) {
+        return (ia->data.ival > ib->data.ival) - (ia->data.ival < ib->data.ival);
+    }
+    if (ia->type == TYPE_STR && ib->type == TYPE_STR) {
+        return strcmp(ia->data.sval, ib->data.sval);
+    }
+    if (ia->type == TYPE_INT) {
+        return -1;
+    }
+    return 1;
+}
+
+void sort_mixed_list(MixedList *list) {
+    if (list == NULL || list->size < 2) {
+        return;
+    }
+    qsort(list->items, list->size, sizeof(MixedItem), compare_mixed);
+}
+
+void print_mixed_list(const MixedList *list) {
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->items[i].type == TYPE_INT) {
+            printf("%d ", list->items[i].data.ival);
+        } else {
+            printf("%s ", list->items[i].data.sval);
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    MixedList list;
+    size_t capacity = 10;
+    
+    mixed_list_init(&list, capacity);
+    
+    mixed_list_add_int(&list, 42);
+    mixed_list_add_str(&list, "hello");
+    mixed_list_add_int(&list, 7);
+    mixed_list_add_str(&list, "world");
+    mixed_list_add_str(&list, "apple");
+    mixed_list_add_int(&list, 100);
+    mixed_list_add_int(&list, -5);
+    mixed_list_add_str(&list, "zebra");
+
+    print_mixed_list(&list);
+    sort_mixed_list(&list);
+    print_mixed_list(&list);
+
+    mixed_list_free(&list);
+    return 0;
+}
+```

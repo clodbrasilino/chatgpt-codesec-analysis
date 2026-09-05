@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_alternating(const char *str) {
+    size_t len = strlen(str);
+    if (len < 2) {
+        return false;
+    }
+
+    char a = str[0];
+    char b = str[1];
+
+    if (a == b) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        if (i % 2 == 0) {
+            if (str[i] != a) {
+                return false;
+            }
+        } else {
+            if (str[i] != b) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    char str[256];
+    if (scanf("%255s", str) == 1) {
+        if (is_alternating(str)) {
+            printf("true\n");
+        } else {
+            printf("false\n");
+        }
+    }
+    return 0;
+}
+```

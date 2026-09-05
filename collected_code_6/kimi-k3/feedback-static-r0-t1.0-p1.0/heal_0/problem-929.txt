@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int value;
+    size_t count;
+} ItemCount;
+
+int count_repeated_items(const Tuple *tuple, ItemCount **counts, size_t *num_counts) {
+    if (tuple == NULL || counts == NULL || num_counts == NULL) {
+        return -1;
+    }
+    
+    if (tuple->size == 0 || tuple->data == NULL) {
+        *counts = NULL;
+        *num_counts = 0;
+        return 0;
+    }
+    
+    ItemCount *temp_counts = malloc(tuple->size * sizeof(ItemCount));
+    if (temp_counts == NULL) {
+        return -1;
+    }
+    
+    size_t unique_count = 0;
+    
+    for (size_t i = 0; i < tuple->size; i++) {
+        int found = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (temp_counts[j].value == tuple->data[i]) {
+                temp_counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            temp_counts[unique_count].value = tuple->data[i];
+            temp_counts[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+    
+    size_t repeated_count = 0;
+    for (size_t i = 0; i < unique_count; i++) {
+        if (temp_counts[i].count > 1) {
+            repeated_count++;
+        }
+    }
+    
+    if (repeated_count == 0) {
+        free(temp_counts);
+        *counts = NULL;
+        *num_counts = 0;
+        return 0;
+    }
+    
+    ItemCount *result = malloc(repeated_count * sizeof(ItemCount));
+    if (result == NULL) {
+        free(temp_counts);
+        return -1;
+    }
+    
+    size_t idx = 0;
+    for (size_t i = 0; i < unique_count; i++) {
+        if (temp_counts[i].count > 1) {
+            result[idx] = temp_counts[i];
+            idx++;
+        }
+    }
+    
+    free(temp_counts);
+    *counts = result;
+    *num_counts = repeated_count;
+    return 0;
+}
+
+int main(void) {
+    int data[] = {1, 2, 3, 2, 4, 1, 5, 2};
+    Tuple tuple = {data, sizeof(data) / sizeof(data[0])};
+    ItemCount *counts = NULL;
+    size_t num_counts = 0;
+    
+    if (count_repeated_items(&tuple, &counts, &num_counts) == 0) {
+        printf("Repeated items:\n");
+        for (size_t i = 0; i < num_counts; i++) {
+            printf("Value %d: %zu times\n", counts[i].value, counts[i].count);
+        }
+        free(counts);
+    } else {
+        fprintf(stderr, "Error counting repeated items\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

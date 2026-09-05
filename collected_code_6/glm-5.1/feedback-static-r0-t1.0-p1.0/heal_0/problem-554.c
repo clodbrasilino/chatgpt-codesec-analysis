@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_odd_numbers(const int *list, size_t size, size_t *odd_count) {
+    *odd_count = 0;
+    if (list == NULL || odd_count == NULL || size == 0) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 != 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    int *odd_list = malloc(count * sizeof(int));
+    if (odd_list == NULL) {
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 != 0) {
+            odd_list[index++] = list[i];
+        }
+    }
+
+    *odd_count = count;
+    return odd_list;
+}
+
+int main(void) {
+    int mixed_list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(mixed_list) / sizeof(mixed_list[0]);
+    size_t odd_count = 0;
+
+    int *odd_numbers = find_odd_numbers(mixed_list, size, &odd_count);
+
+    if (odd_numbers != NULL) {
+        for (size_t i = 0; i < odd_count; i++) {
+            printf("%d ", odd_numbers[i]);
+        }
+        printf("\n");
+        free(odd_numbers);
+    }
+
+    return 0;
+}

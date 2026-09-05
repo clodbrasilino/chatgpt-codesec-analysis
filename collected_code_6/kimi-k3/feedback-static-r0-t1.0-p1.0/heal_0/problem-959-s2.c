@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+double calculate_average(const double *list, size_t size, int *error) {
+    double sum = 0.0;
+    size_t i;
+    
+    if (error == NULL) {
+        return 0.0;
+    }
+    
+    if (list == NULL || size == 0) {
+        *error = EINVAL;
+        return 0.0;
+    }
+    
+    *error = 0;
+    
+    for (i = 0; i < size; i++) {
+        sum += list[i];
+    }
+    
+    return sum / (double)size;
+}
+
+int main(void) {
+    double numbers[] = {1.5, 2.5, 3.5, 4.5, 5.5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int error = 0;
+    double average;
+    
+    average = calculate_average(numbers, count, &error);
+    
+    if (error != 0) {
+        fprintf(stderr, "Error calculating average: invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Average: %.2f\n", average);
+    
+    return EXIT_SUCCESS;
+}

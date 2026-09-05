@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+
+double calculate_cone_surface_area(double radius, double slant_height) {
+    if (radius < 0.0 || slant_height < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    double base_area = M_PI * radius * radius;
+    double lateral_area = M_PI * radius * slant_height;
+    
+    return base_area + lateral_area;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double slant_height = 0.0;
+    double surface_area = 0.0;
+    
+    printf("Enter the radius of the cone: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the slant height of the cone: ");
+    if (scanf("%lf", &slant_height) != 1) {
+        fprintf(stderr, "Error: Invalid input for slant height\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    surface_area = calculate_cone_surface_area(radius, slant_height);
+    
+    if (errno == EDOM || surface_area < 0.0) {
+        fprintf(stderr, "Error: Radius and slant height must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Surface area of the cone: %.2f\n", surface_area);
+    
+    return EXIT_SUCCESS;
+}
+```

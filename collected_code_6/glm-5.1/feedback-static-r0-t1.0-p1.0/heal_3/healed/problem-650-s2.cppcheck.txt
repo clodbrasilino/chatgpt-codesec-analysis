@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-650-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-650-s2.c:42:21: style: Condition 'arrays_equal(NULL,0,NULL,0)' is always false [knownConditionTrueFalse]
+    if (arrays_equal(NULL, 0, NULL, 0)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-650-s2.c:42:21: note: Calling function 'arrays_equal' returns 0
+    if (arrays_equal(NULL, 0, NULL, 0)) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-650-s2.c:42:21: note: Condition 'arrays_equal(NULL,0,NULL,0)' is always false
+    if (arrays_equal(NULL, 0, NULL, 0)) {
+                    ^

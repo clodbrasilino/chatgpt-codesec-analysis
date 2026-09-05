@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SLAB1_LIMIT 100
+#define SLAB2_LIMIT 200
+#define SLAB3_LIMIT 300
+#define RATE1 1.50
+#define RATE2 2.50
+#define RATE3 4.00
+#define RATE4 6.00
+
+double calculate_bill(double units) {
+    double bill = 0.0;
+
+    if (units < 0) {
+        return -1.0;
+    }
+
+    if (units <= SLAB1_LIMIT) {
+        bill = units * RATE1;
+    } else if (units <= SLAB2_LIMIT) {
+        bill = (SLAB1_LIMIT * RATE1) + ((units - SLAB1_LIMIT) * RATE2);
+    } else if (units <= SLAB3_LIMIT) {
+        bill = (SLAB1_LIMIT * RATE1) + ((SLAB2_LIMIT - SLAB1_LIMIT) * RATE2) +
+               ((units - SLAB2_LIMIT) * RATE3);
+    } else {
+        bill = (SLAB1_LIMIT * RATE1) + ((SLAB2_LIMIT - SLAB1_LIMIT) * RATE2) +
+               ((SLAB3_LIMIT - SLAB2_LIMIT) * RATE3) + ((units - SLAB3_LIMIT) * RATE4);
+    }
+
+    return bill;
+}
+
+int main(void) {
+    double units;
+    double bill;
+
+    printf("Enter the number of units consumed: ");
+    if (scanf("%lf", &units) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    bill = calculate_bill(units);
+
+    if (bill < 0) {
+        fprintf(stderr, "Units cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Electricity Bill: %.2f\n", bill);
+
+    return EXIT_SUCCESS;
+}

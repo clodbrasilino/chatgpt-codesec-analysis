@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int val1;
+    int val2;
+    int val3;
+    int is_none1;
+    int is_none2;
+    int is_none3;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+    size_t capacity;
+} TupleList;
+
+TupleList* tuple_list_create(size_t initial_capacity) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (!list) return NULL;
+    list->data = (Tuple*)malloc(initial_capacity * sizeof(Tuple));
+    if (!list->data) {
+        free(list);
+        return NULL;
+    }
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+int tuple_list_push(TupleList *list, Tuple t) {
+    if (!list || !list->data) return 0;
+    if (list->size == list->capacity) {
+        size_t new_capacity = list->capacity == 0 ? 1 : list->capacity * 2;
+        Tuple *new_data = (Tuple*)realloc(list->data, new_capacity * sizeof(Tuple));
+        if (!new_data) return 0;
+        list->data = new_data;
+        list->capacity = new_capacity;
+    }
+    list->data[list->size++] = t;
+    return 1;
+}
+
+void tuple_list_destroy(TupleList *list) {
+    if (list) {
+        free(list->data);
+        free(list);
+    }
+}
+
+TupleList* remove_all_none_tuples(TupleList *list) {
+    if (!list || !list->data) {
+        return NULL;
+    }
+    TupleList *new_list = tuple_list_create(list->capacity);
+    if (!new_list) {
+        return NULL;
+    }
+    for (size_t i = 0; i < list->size; i++) {
+        Tuple current = list->data[i];
+        if (!(current.is_none1 && current.is_none2 && current.is_none3)) {
+            if (!tuple_list_push(new_list, current)) {
+                tuple_list_destroy(new_list);
+                return NULL;
+            }
+        }
+    }
+    return new_list;
+}
+
+int main(void) {
+    TupleList *list = tuple_list_create(4);
+    if (!list) {
+        return 1;
+    }
+    
+    Tuple t1 = {1, 2, 3, 0, 0, 0};
+    Tuple t2 = {0, 0, 0, 1, 1, 1};
+    Tuple t3 = {4, 0, 5, 0, 1, 0};
+    Tuple t4 = {0, 0, 0, 1, 1, 1};
+    
+    if (!tuple_list_push(list, t1) || !tuple_list_push(list, t2) ||
+        !tuple_list_push(list, t3) || !tuple_list_push(list, t4)) {
+        tuple_list_destroy(list);
+        return 1;
+    }
+    
+    TupleList *filtered_list = remove_all_none_tuples(list);
+    if (!filtered_list) {
+        tuple_list_destroy(list);
+        return 1;
+    }
+    
+    for (size_t i = 0; i < filtered_list->size; i++) {
+        Tuple t = filtered_list->data[i];
+        printf("Tuple: val1=%d, val2=%d, val3=%d\n", t.val1, t.val2, t.val3);
+    }
+    
+    tuple_list_destroy(list);
+    tuple_list_destroy(filtered_list);
+    
+    return 0;
+}
+```

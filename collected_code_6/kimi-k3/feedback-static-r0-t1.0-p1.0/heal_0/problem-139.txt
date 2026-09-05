@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double circumference(double radius) {
+    return 2 * M_PI * radius;
+}
+
+int main(void) {
+    double radius;
+    
+    printf("Enter the radius of the circle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (radius < 0) {
+        fprintf(stderr, "Radius cannot be negative\n");
+        return 1;
+    }
+    
+    printf("Circumference: %f\n", circumference(radius));
+    
+    return 0;
+}
+```

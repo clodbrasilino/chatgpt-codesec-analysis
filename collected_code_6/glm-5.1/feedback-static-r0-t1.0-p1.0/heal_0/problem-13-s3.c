@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+int compare_words(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+int compare_counts(const void *a, const void *b) {
+    const WordCount *wc_a = (const WordCount *)a;
+    const WordCount *wc_b = (const WordCount *)b;
+    if (wc_a->count < wc_b->count) return 1;
+    if (wc_a->count > wc_b->count) return -1;
+    return 0;
+}
+
+WordCount *count_most_common_words(char **dictionary, int size, int *result_size) {
+    if (dictionary == NULL || size <= 0 || result_size == NULL) {
+        if (result_size != NULL) *result_size = 0;
+        return NULL;
+    }
+
+    char **sorted = malloc(size * sizeof(char *));
+    if (sorted == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < size; i++) {
+        sorted[i] = dictionary[i];
+    }
+
+    qsort(sorted, size, sizeof(char *), compare_words);
+
+    int unique_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (i == 0 || strcmp(sorted[i], sorted[i - 1]) != 0) {
+            unique_count++;
+        }
+    }
+
+    WordCount *counts = malloc(unique_count * sizeof(WordCount));
+    if (counts == NULL) {
+        free(sorted);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int idx = 0;
+    for (int i = 0; i < size; i++) {
+        if (i == 0 || strcmp(sorted[i], sorted[i - 1]) != 0) {
+            counts[idx].word = sorted[i];
+            counts[idx].count = 1;
+            idx++;
+        } else {
+            counts[idx - 1].count++;
+        }
+    }
+
+    free(sorted);
+
+    qsort(counts, unique_count, sizeof(WordCount), compare_counts);
+
+    *result_size = unique_count;
+    return counts;
+}
+
+int main(void) {
+    char *dictionary[] = {
+        "apple", "banana", "apple", "orange", "banana", "apple", "grape",
+        "orange", "banana", "apple", "grape", "grape", "grape"
+    };
+    int size = sizeof(dictionary) / sizeof(dictionary[0]);
+    int result_size = 0;
+
+    WordCount *counts = count_most_common_words(dictionary, size, &result_size);
+    if (counts != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%s: %d\n", counts[i].word, counts[i].count);
+        }
+        free(counts);
+    }
+
+    return 0;
+}

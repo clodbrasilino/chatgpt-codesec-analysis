@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int sum_even_index_binomial_coefficients(int n, unsigned long long *result)
+{
+    unsigned long long sum;
+    int i;
+
+    if (result == NULL)
+    {
+        return -1;
+    }
+
+    if (n < 0)
+    {
+        return -1;
+    }
+
+    if (n == 0)
+    {
+        *result = 1;
+        return 0;
+    }
+
+    if (n >= 64)
+    {
+        return -1;
+    }
+
+    sum = 1ULL << (n - 1);
+    *result = sum;
+
+    return 0;
+}
+
+int main(void)
+{
+    int n;
+    unsigned long long result;
+    int status;
+
+    printf("Enter the value of n: ");
+    
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    status = sum_even_index_binomial_coefficients(n, &result);
+
+    if (status != 0)
+    {
+        fprintf(stderr, "Error: Invalid input or overflow condition\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of even index binomial coefficients: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** remove_duplicate_words(char** words, int count, int* out_count) {
+    if (words == NULL || out_count == NULL) {
+        return NULL;
+    }
+
+    char** result = (char**)malloc(count * sizeof(char*));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    *out_count = 0;
+
+    for (int i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        int is_duplicate = 0;
+        for (int j = 0; j < *out_count; j++) {
+            if (strcmp(words[i], result[j]) == 0) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+
+        if (!is_duplicate) {
+            result[*out_count] = words[i];
+            (*out_count)++;
+        }
+    }
+
+    char** shrunk_result = (char**)realloc(result, (*out_count) * sizeof(char*));
+    if (shrunk_result != NULL) {
+        return shrunk_result;
+    }
+    
+    return result;
+}
+
+int main() {
+    char* words[] = {"apple", "banana", "apple", "orange", "banana", "grape"};
+    int count = sizeof(words) / sizeof(words[0]);
+    int out_count = 0;
+
+    char** unique_words = remove_duplicate_words(words, count, &out_count);
+    if (unique_words == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < out_count; i++) {
+        printf("%s\n", unique_words[i]);
+    }
+
+    free(unique_words);
+
+    return EXIT_SUCCESS;
+}

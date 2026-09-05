@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compare_tuples(const void *p1, const void *p2) {
+    const Tuple *t1 = (const Tuple *)p1;
+    const Tuple *t2 = (const Tuple *)p2;
+    if (t1->a != t2->a) return t1->a - t2->a;
+    return t1->b - t2->b;
+}
+
+void remove_matching_tuples(Tuple **arr1, size_t *size1, Tuple **arr2, size_t *size2) {
+    if (arr1 == NULL || size1 == NULL || arr2 == NULL || size2 == NULL) return;
+    if (*arr1 == NULL || *arr2 == NULL) return;
+
+    qsort(*arr1, *size1, sizeof(Tuple), compare_tuples);
+    qsort(*arr2, *size2, sizeof(Tuple), compare_tuples);
+
+    Tuple *res1 = (Tuple *)malloc(*size1 * sizeof(Tuple));
+    Tuple *res2 = (Tuple *)malloc(*size2 * sizeof(Tuple));
+
+    if (res1 == NULL || res2 == NULL) {
+        free(res1);
+        free(res2);
+        return;
+    }
+
+    size_t i = 0, j = 0, r1 = 0, r2 = 0;
+
+    while (i < *size1 && j < *size2) {
+        int cmp = compare_tuples(&(*arr1)[i], &(*arr2)[j]);
+        if (cmp == 0) {
+            i++;
+            j++;
+        } else if (cmp < 0) {
+            res1[r1++] = (*arr1)[i++];
+        } else {
+            res2[r2++] = (*arr2)[j++];
+        }
+    }
+
+    while (i < *size1) {
+        res1[r1++] = (*arr1)[i++];
+    }
+
+    while (j < *size2) {
+        res2[r2++] = (*arr2)[j++];
+    }
+
+    free(*arr1);
+    free(*arr2);
+
+    if (r1 > 0) {
+        Tuple *temp1 = (Tuple *)realloc(res1, r1 * sizeof(Tuple));
+        if (temp1 != NULL) res1 = temp1;
+        *arr1 = res1;
+    } else {
+        free(res1);
+        *arr1 = NULL;
+    }
+
+    if (r2 > 0) {
+        Tuple *temp2 = (Tuple *)realloc(res2, r2 * sizeof(Tuple));
+        if (temp2 != NULL) res2 = temp2;
+        *arr2 = res2;
+    } else {
+        free(res2);
+        *arr2 = NULL;
+    }
+
+    *size1 = r1;
+    *size2 = r2;
+}
+
+int main(void) {
+    size_t size1 = 5;
+    size_t size2 = 4;
+    Tuple *arr1 = (Tuple *)malloc(size1 * sizeof(Tuple));
+    Tuple *arr2 = (Tuple *)malloc(size2 * sizeof(Tuple));
+
+    if (arr1 == NULL || arr2 == NULL) {
+        free(arr1);
+        free(arr2);
+        return 1;
+    }
+
+    arr1[0] = (Tuple){1, 2};
+    arr1[1] = (Tuple){3, 4};
+    arr1[2] = (Tuple){5, 6};
+    arr1[3] = (Tuple){7, 8};
+    arr1[4] = (Tuple){9, 10};
+
+    arr2[0] = (Tuple){3, 4};
+    arr2[1] = (Tuple){5, 6};
+    arr2[2] = (Tuple){11, 12};
+    arr2[3] = (Tuple){13, 14};
+
+    remove_matching_tuples(&arr1, &size1, &arr2, &size2);
+
+    for (size_t i = 0; i < size1; i++) {
+        printf("(%d, %d) ", arr1[i].a, arr1[i].b);
+    }
+    printf("\n");
+
+    for (size_t i = 0; i < size2; i++) {
+        printf("(%d, %d) ", arr2[i].a, arr2[i].b);
+    }
+    printf("\n");
+
+    free(arr1);
+    free(arr2);
+
+    return 0;
+}

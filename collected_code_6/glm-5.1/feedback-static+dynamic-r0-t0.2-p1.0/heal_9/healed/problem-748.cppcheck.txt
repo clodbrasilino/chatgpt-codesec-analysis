@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-748.c:103:26: style: Condition 'add_spaces(NULL)!=NULL' is always false [knownConditionTrueFalse]
+    if (add_spaces(NULL) != NULL) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-748.c:103:19: note: Calling function 'add_spaces' returns 0
+    if (add_spaces(NULL) != NULL) {
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_9/healed/problem-748.c:103:26: note: Condition 'add_spaces(NULL)!=NULL' is always false
+    if (add_spaces(NULL) != NULL) {
+                         ^

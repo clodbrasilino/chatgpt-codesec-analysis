@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int find_minimum(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
+int main(void)
+{
+    int num1 = 0;
+    int num2 = 0;
+    int result = 0;
+    
+    printf("Enter two integers: ");
+    
+    if (scanf("%d %d", &num1, &num2) != 2)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    result = find_minimum(num1, num2);
+    printf("Minimum: %d\n", result);
+    
+    return 0;
+}

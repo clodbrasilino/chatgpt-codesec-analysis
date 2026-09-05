@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 3
+#define COLS 3
+
+typedef struct {
+    int data[ROWS][COLS];
+} NestedTuple;
+
+NestedTuple add_nested_tuples(NestedTuple *t1, NestedTuple *t2) {
+    NestedTuple result;
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            result.data[i][j] = t1->data[i][j] + t2->data[i][j];
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    NestedTuple t1 = {{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}};
+    NestedTuple t2 = {{{9, 8, 7}, {6, 5, 4}, {3, 2, 1}}};
+    
+    NestedTuple result = add_nested_tuples(&t1, &t2);
+    
+    printf("Result:\n");
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            printf("%d ", result.data[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
+```

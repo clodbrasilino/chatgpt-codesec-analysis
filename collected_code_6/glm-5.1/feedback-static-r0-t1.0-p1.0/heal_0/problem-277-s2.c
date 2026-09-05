@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary *dict_create(size_t capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = malloc(capacity * sizeof(DictEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (!dict || dict->size >= dict->capacity) return -1;
+    dict->entries[dict->size].key = strdup(key);
+    if (!dict->entries[dict->size].key) return -1;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+void dict_destroy(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+Dictionary *dict_filter_by_value(Dictionary *source, int target_value) {
+    if (!source) return NULL;
+
+    Dictionary *filtered = dict_create(source->capacity);
+    if (!filtered) return NULL;
+
+    for (size_t i = 0; i < source->size; i++) {
+        if (source->entries[i].value == target_value) {
+            if (dict_add(filtered, source->entries[i].key, source->entries[i].value) != 0) {
+                dict_destroy(filtered);
+                return NULL;
+            }
+        }
+    }
+
+    return filtered;
+}
+
+int main(void) {
+    Dictionary *original = dict_create(10);
+    if (!original) return EXIT_FAILURE;
+
+    dict_add(original, "apple", 10);
+    dict_add(original, "banana", 20);
+    dict_add(original, "cherry", 10);
+    dict_add(original, "date", 30);
+
+    Dictionary *filtered = dict_filter_by_value(original, 10);
+    if (!filtered) {
+        dict_destroy(original);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < filtered->size; i++) {
+        printf("Key: %s, Value: %d\n", filtered->entries[i].key, filtered->entries[i].value);
+    }
+
+    dict_destroy(filtered);
+    dict_destroy(original);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:65:34: style: Condition 'remove_parenthesis(NULL)==NULL' is always true [knownConditionTrueFalse]
+    if (remove_parenthesis(NULL) == NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:65:27: note: Calling function 'remove_parenthesis' returns 0
+    if (remove_parenthesis(NULL) == NULL) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_10/healed/problem-640-s2.c:65:34: note: Condition 'remove_parenthesis(NULL)==NULL' is always true
+    if (remove_parenthesis(NULL) == NULL) {
+                                 ^

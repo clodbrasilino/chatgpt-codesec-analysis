@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+
+typedef struct {
+    double x;
+    double y;
+} Vertex;
+
+Vertex find_parabola_vertex(double a, double b, double c) {
+    Vertex v;
+    
+    if (a == 0.0) {
+        v.x = 0.0;
+        v.y = 0.0;
+        return v;
+    }
+    
+    v.x = -b / (2.0 * a);
+    v.y = c - (b * b) / (4.0 * a);
+    
+    return v;
+}
+
+int main(void) {
+    double a, b, c;
+    Vertex vertex;
+    
+    printf("Enter coefficients a, b, and c for ax^2 + bx + c: ");
+    
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (a == 0.0) {
+        fprintf(stderr, "Error: Coefficient 'a' cannot be zero (not a parabola)\n");
+        return 1;
+    }
+    
+    vertex = find_parabola_vertex(a, b, c);
+    
+    printf("Vertex: (%.2f, %.2f)\n", vertex.x, vertex.y);
+    
+    return 0;
+}
+```

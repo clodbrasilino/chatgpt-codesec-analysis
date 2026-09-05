@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+double power(double a, double b)
+{
+    double result;
+    
+    errno = 0;
+    
+    if (a == 0.0 && b < 0.0) {
+        fprintf(stderr, "Error: Division by zero (0 raised to negative power)\n");
+        return 0.0;
+    }
+    
+    result = pow(a, b);
+    
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Domain error in power calculation\n");
+        return 0.0;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Range error in power calculation\n");
+        return 0.0;
+    }
+    
+    return result;
+}
+
+int main(void)
+{
+    double base, exponent, result;
+    
+    printf("Enter base: ");
+    if (scanf("%lf", &base) != 1) {
+        fprintf(stderr, "Error: Invalid input for base\n");
+        return 1;
+    }
+    
+    printf("Enter exponent: ");
+    if (scanf("%lf", &exponent) != 1) {
+        fprintf(stderr, "Error: Invalid input for exponent\n");
+        return 1;
+    }
+    
+    result = power(base, exponent);
+    
+    printf("Result: %lf\n", result);
+    
+    return 0;
+}

@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int is_valid_email(const char *email) {
+    if (email == NULL) {
+        return 0;
+    }
+
+    size_t len = strlen(email);
+    if (len == 0 || len > 254) {
+        return 0;
+    }
+
+    regex_t regex;
+    int ret;
+    const char *pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, email, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int main(int argc, char const * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <email_address>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_email(argv[1])) {
+        printf("Valid\n");
+    } else {
+        printf("Invalid\n");
+    }
+
+    return EXIT_SUCCESS;
+}

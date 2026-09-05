@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int count_uppercase(const char *str) {
+    int count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test_string = "Hello World! This Is A Test String.";
+    int result = count_uppercase(test_string);
+    
+    printf("Number of uppercase characters: %d\n", result);
+    
+    return 0;
+}
+```

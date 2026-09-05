@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:111:70: style: Condition 'original_set_size>0' is always true [knownConditionTrueFalse]
+        if (tuple_count == 0 && tuple_size == 2 && original_set_size > 0) {
+                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:97:35: note: Assignment 'set_size=sizeof(set)/sizeof(set[0])', assigned value is 8
+    size_t set_size = sizeof(set) / sizeof(set[0]);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:98:32: note: Assignment 'original_set_size=set_size', assigned value is 8
+    size_t original_set_size = set_size;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:111:70: note: Condition 'original_set_size>0' is always true
+        if (tuple_count == 0 && tuple_size == 2 && original_set_size > 0) {
+                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:113:38: style: Condition 'original_set_size==0' is always false [knownConditionTrueFalse]
+        } else if (original_set_size == 0) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:97:35: note: Assignment 'set_size=sizeof(set)/sizeof(set[0])', assigned value is 8
+    size_t set_size = sizeof(set) / sizeof(set[0]);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:98:32: note: Assignment 'original_set_size=set_size', assigned value is 8
+    size_t original_set_size = set_size;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-341.c:113:38: note: Condition 'original_set_size==0' is always false
+        } else if (original_set_size == 0) {
+                                     ^

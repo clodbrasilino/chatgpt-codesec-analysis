@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-572-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_4/healed/problem-572-s3.c:4:39: style: Parameter 'lists' can be declared as const array [constParameter]
+int* remove_two_duplicates(int* const lists[], const int list_sizes[], int num_lists, int result_size, int* result_len) {
+                                      ^

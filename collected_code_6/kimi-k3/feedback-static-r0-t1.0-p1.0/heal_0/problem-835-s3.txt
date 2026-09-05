@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+
+double find_slope(double x1, double y1, double x2, double y2, int *error) {
+    if (error == NULL) {
+        return NAN;
+    }
+    
+    *error = 0;
+    
+    if (fabs(x2 - x1) < DBL_EPSILON) {
+        *error = 1;
+        return NAN;
+    }
+    
+    return (y2 - y1) / (x2 - x1);
+}
+
+int main(void) {
+    double x1, y1, x2, y2;
+    int error;
+    
+    printf("Enter coordinates of first point (x1 y1): ");
+    if (scanf("%lf %lf", &x1, &y1) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter coordinates of second point (x2 y2): ");
+    if (scanf("%lf %lf", &x2, &y2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    double slope = find_slope(x1, y1, x2, y2, &error);
+    
+    if (error != 0) {
+        fprintf(stderr, "Error: Vertical line has undefined slope\n");
+        return 1;
+    }
+    
+    printf("Slope: %.6f\n", slope);
+    
+    return 0;
+}
+```

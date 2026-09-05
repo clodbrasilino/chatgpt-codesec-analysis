@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int find_first_even_odd_sum(const int *arr, size_t size, long *result)
+{
+    size_t i;
+    int first_even = 0;
+    int first_odd = 0;
+    int even_found = 0;
+    int odd_found = 0;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (!even_found && arr[i] % 2 == 0) {
+            first_even = arr[i];
+            even_found = 1;
+        } else if (!odd_found && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+            odd_found = 1;
+        }
+
+        if (even_found && odd_found) {
+            break;
+        }
+    }
+
+    if (!even_found || !odd_found) {
+        return -1;
+    }
+
+    if ((first_odd > 0 && first_even > LONG_MAX - first_odd) ||
+        (first_odd < 0 && first_even < LONG_MIN - first_odd)) {
+        return -1;
+    }
+
+    *result = (long)first_even + (long)first_odd;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 3, 5, 2, 4, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    long result = 0;
+    int status;
+
+    status = find_first_even_odd_sum(arr, size, &result);
+    if (status != 0) {
+        fprintf(stderr, "Error: Unable to find both even and odd numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of first even and first odd: %ld\n", result);
+    return EXIT_SUCCESS;
+}

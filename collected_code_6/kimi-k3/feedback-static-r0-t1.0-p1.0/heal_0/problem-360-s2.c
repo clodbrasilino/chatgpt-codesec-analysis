@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+
+uint64_t carol_number(uint64_t n) {
+    if (n == 0 || n > 31) {
+        return UINT64_MAX;
+    }
+    
+    uint64_t power = 1ULL << n;
+    uint64_t temp = power - 1;
+    
+    if (temp > UINT64_MAX / temp) {
+        return UINT64_MAX;
+    }
+    
+    return temp * temp - 2;
+}
+
+int main(void) {
+    char input[32];
+    char *endptr;
+    uint64_t n;
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    n = strtoull(input, &endptr, 10);
+    
+    if (errno != 0 || endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    uint64_t result = carol_number(n);
+    
+    if (result == UINT64_MAX && n != 0 && n <= 31) {
+        fprintf(stderr, "Overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n == 0 || n > 31) {
+        fprintf(stderr, "Input out of valid range\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%" PRIu64 "\n", result);
+    
+    return EXIT_SUCCESS;
+}

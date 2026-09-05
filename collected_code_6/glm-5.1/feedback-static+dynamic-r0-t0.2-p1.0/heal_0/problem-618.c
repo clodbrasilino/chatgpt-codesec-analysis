@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+Node *divide_lists(Node *dividend_head, Node *divisor_head) {
+    if (dividend_head == NULL || divisor_head == NULL) {
+        return NULL;
+    }
+
+    Node *result_head = NULL;
+    Node *result_tail = NULL;
+
+    Node *d1 = dividend_head;
+    Node *d2 = divisor_head;
+
+    while (d1 != NULL && d2 != NULL) {
+        if (d2->data == 0) {
+            free_list(result_head);
+            return NULL;
+        }
+
+        Node *new_node = create_node(d1->data / d2->data);
+
+        if (result_head == NULL) {
+            result_head = new_node;
+            result_tail = new_node;
+        } else {
+            result_tail->next = new_node;
+            result_tail = new_node;
+        }
+
+        d1 = d1->next;
+        d2 = d2->next;
+    }
+
+    return result_head;
+}
+
+int main(void) {
+    Node *list1 = create_node(10);
+    list1->next = create_node(20);
+    list1->next->next = create_node(30);
+
+    Node *list2 = create_node(2);
+    list2->next = create_node(5);
+    list2->next->next = create_node(3);
+
+    Node *result = divide_lists(list1, list2);
+
+    if (result != NULL) {
+        Node *curr = result;
+        while (curr != NULL) {
+            printf("%d ", curr->data);
+            curr = curr->next;
+        }
+        printf("\n");
+    }
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}

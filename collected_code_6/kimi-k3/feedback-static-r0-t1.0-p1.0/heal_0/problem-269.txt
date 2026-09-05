@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+
+int get_ascii_value(char c);
+
+int get_ascii_value(char c) {
+    return (int)c;
+}
+
+int main(void) {
+    char character;
+    
+    printf("Enter a character: ");
+    
+    if (scanf("%c", &character) != 1) {
+        fprintf(stderr, "Error: Failed to read character\n");
+        return 1;
+    }
+    
+    int ascii_value = get_ascii_value(character);
+    printf("ASCII value of '%c' is %d\n", character, ascii_value);
+    
+    return 0;
+}
+```

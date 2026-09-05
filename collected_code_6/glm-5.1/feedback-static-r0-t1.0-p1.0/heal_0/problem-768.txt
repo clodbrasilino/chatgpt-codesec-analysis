@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_odd_parity(unsigned int num) {
+    bool parity = false;
+    while (num) {
+        parity = !parity;
+        num = num & (num - 1);
+    }
+    return parity;
+}
+
+int main(void) {
+    unsigned int val = 0;
+    if (scanf("%u", &val) == 1) {
+        if (has_odd_parity(val)) {
+            printf("Odd Parity\n");
+        } else {
+            printf("Even Parity\n");
+        }
+    }
+    return 0;
+}
+```

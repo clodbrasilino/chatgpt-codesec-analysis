@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:16:34: warning: Invalid test for overflow 'current_sum+arr[i]>arr[i]'; signed integer overflow is undefined behavior. Some mainstream compilers removes handling of overflows when optimising the code and change the code to 'current_sum>0'. [invalidTestForOverflow]
+        if (current_sum + arr[i] > arr[i]) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:5:30: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int max_subarray_length(int *arr, int n) {
+                             ^

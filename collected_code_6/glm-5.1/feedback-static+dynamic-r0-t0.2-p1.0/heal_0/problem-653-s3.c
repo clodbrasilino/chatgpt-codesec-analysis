@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct MapEntry {
+    char *key;
+    Node *head;
+    struct MapEntry *next;
+} MapEntry;
+
+typedef struct {
+    MapEntry *head;
+} Map;
+
+Map *map_create() {
+    Map *m = malloc(sizeof(Map));
+    if (!m) return NULL;
+    m->head = NULL;
+    return m;
+}
+
+void list_add(Node **head, const char *value) {
+    Node *new_node = malloc(sizeof(Node));
+    if (!new_node) return;
+    new_node->value = strdup(value);
+    if (!new_node->value) {
+        free(new_node);
+        return;
+    }
+    new_node->next = *head;
+    *head = new_node;
+}
+
+void map_add(Map *m, const char *key, const char *value) {
+    MapEntry *entry = m->head;
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            list_add(&entry->head, value);
+            return;
+        }
+        entry = entry->next;
+    }
+    MapEntry *new_entry = malloc(sizeof(MapEntry));
+    if (!new_entry) return;
+    new_entry->key = strdup(key);
+    if (!new_entry->key) {
+        free(new_entry);
+        return;
+    }
+    new_entry->head = NULL;
+    list_add(&new_entry->head, value);
+    new_entry->next = m->head;
+    m->head = new_entry;
+}
+
+void list_free(Node *head) {
+    Node *current = head;
+    while (current) {
+        Node *next = current->next;
+        free(current->value);
+        free(current);
+        current = next;
+    }
+}
+
+void map_free(Map *m) {
+    MapEntry *entry = m->head;
+    while (entry) {
+        MapEntry *next_entry = entry->next;
+        free(entry->key);
+        list_free(entry->head);
+        free(entry);
+        entry = next_entry;
+    }
+    free(m);
+}
+
+void map_print(Map *m) {
+    MapEntry *entry = m->head;
+    while (entry) {
+        printf("%s: [", entry->key);
+        Node *n = entry->head;
+        while (n) {
+            printf("\"%s\"", n->value);
+            if (n->next) printf(", ");
+            n = n->next;
+        }
+        printf("]\n");
+        entry = entry->next;
+    }
+}
+
+int main() {
+    Map *m = map_create();
+    if (!m) return 1;
+
+    map_add(m, "fruit", "apple");
+    map_add(m, "color", "red");
+    map_add(m, "fruit", "banana");
+    map_add(m, "color", "green");
+    map_add(m, "fruit", "cherry");
+
+    map_print(m);
+    map_free(m);
+
+    return 0;
+}

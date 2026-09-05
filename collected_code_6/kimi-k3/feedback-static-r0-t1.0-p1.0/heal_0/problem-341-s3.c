@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Set;
+
+typedef struct {
+    int *elements;
+    size_t size;
+} OrderedTuple;
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+OrderedTuple* set_to_ordered_tuple(const Set *set) {
+    OrderedTuple *tuple;
+    
+    if (set == NULL || set->elements == NULL || set->size == 0) {
+        return NULL;
+    }
+    
+    tuple = (OrderedTuple *)malloc(sizeof(OrderedTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->elements = (int *)malloc(set->size * sizeof(int));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = set->size;
+    
+    for (size_t i = 0; i < set->size; i++) {
+        tuple->elements[i] = set->elements[i];
+    }
+    
+    qsort(tuple->elements, tuple->size, sizeof(int), compare_ints);
+    
+    return tuple;
+}
+
+void free_ordered_tuple(OrderedTuple *tuple) {
+    if (tuple != NULL) {
+        if (tuple->elements != NULL) {
+            free(tuple->elements);
+        }
+        free(tuple);
+    }
+}
+
+void free_set(Set *set) {
+    if (set != NULL) {
+        if (set->elements != NULL) {
+            free(set->elements);
+        }
+        free(set);
+    }
+}
+
+int main(void) {
+    Set *set = (Set *)malloc(sizeof(Set));
+    if (set == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    set->size = 5;
+    set->elements = (int *)malloc(set->size * sizeof(int));
+    if (set->elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(set);
+        return EXIT_FAILURE;
+    }
+    
+    set->elements[0] = 42;
+    set->elements[1] = 7;
+    set->elements[2] = 19;
+    set->elements[3] = 3;
+    set->elements[4] = 88;
+    
+    OrderedTuple *tuple = set_to_ordered_tuple(set);
+    if (tuple == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        free_set(set);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original set: ");
+    for (size_t i = 0; i < set->size; i++) {
+        printf("%d ", set->elements[i]);
+    }
+    printf("\n");
+    
+    printf("Ordered tuple: ");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d ", tuple->elements[i]);
+    }
+    printf("\n");
+    
+    free_ordered_tuple(tuple);
+    free_set(set);
+    
+    return EXIT_SUCCESS;
+}

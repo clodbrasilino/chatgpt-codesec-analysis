@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+int starts_with_regex(const char *str, const char *pattern) {
+    regex_t regex;
+    int ret;
+
+    if (str == NULL || pattern == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string> <pattern>\n", argv[0]);
+        return 1;
+    }
+
+    if (starts_with_regex(argv[1], argv[2])) {
+        printf("Match\n");
+    } else {
+        printf("No match\n");
+    }
+
+    return 0;
+}

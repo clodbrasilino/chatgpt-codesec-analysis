@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *element;
+    int count;
+} ElementCount;
+
+void iterate_repeated_elements(ElementCount *elements, size_t num_elements) {
+    size_t i;
+    int j;
+
+    if (elements == NULL) {
+        fprintf(stderr, "Error: elements array is NULL\n");
+        return;
+    }
+
+    for (i = 0; i < num_elements; i++) {
+        if (elements[i].element == NULL) {
+            fprintf(stderr, "Error: element at index %zu is NULL\n", i);
+            continue;
+        }
+
+        if (elements[i].count < 0) {
+            fprintf(stderr, "Error: count at index %zu is negative\n", i);
+            continue;
+        }
+
+        for (j = 0; j < elements[i].count; j++) {
+            printf("%s\n", elements[i].element);
+        }
+    }
+}
+
+int main(void) {
+    ElementCount elements[] = {
+        {"apple", 3},
+        {"banana", 2},
+        {"cherry", 1},
+        {"date", 4}
+    };
+    size_t num_elements = sizeof(elements) / sizeof(elements[0]);
+
+    iterate_repeated_elements(elements, num_elements);
+
+    return 0;
+}
+```

@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+
+double calculate_pentagon_area(double side_length) {
+    if (side_length <= 0.0) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    
+    double area = 0.25 * sqrt(5.0 * (5.0 + 2.0 * sqrt(5.0))) * side_length * side_length;
+    return area;
+}
+
+int main(void) {
+    double side_length;
+    double area;
+    
+    printf("Enter the side length of the pentagon: ");
+    
+    if (scanf("%lf", &side_length) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    area = calculate_pentagon_area(side_length);
+    
+    if (area < 0.0) {
+        fprintf(stderr, "Error: Invalid side length\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Area of the pentagon: %.2f\n", area);
+    
+    return EXIT_SUCCESS;
+}
+```

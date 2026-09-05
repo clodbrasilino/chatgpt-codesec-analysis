@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+
+int maxProduct(const int* nums, size_t numsSize) {
+    if (nums == NULL || numsSize == 0) {
+        return INT_MIN;
+    }
+    
+    int maxProd = nums[0];
+    int minProd = nums[0];
+    int result = nums[0];
+    
+    for (size_t i = 1; i < numsSize; i++) {
+        if (nums[i] < 0) {
+            int temp = maxProd;
+            maxProd = minProd;
+            minProd = temp;
+        }
+        
+        maxProd = (nums[i] > maxProd * nums[i]) ? nums[i] : maxProd * nums[i];
+        minProd = (nums[i] < minProd * nums[i]) ? nums[i] : minProd * nums[i];
+        
+        result = (result > maxProd) ? result : maxProd;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {2, 3, -2, 4};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = maxProduct(arr1, size1);
+    printf("Maximum product subarray: %d\n", result1);
+    
+    int arr2[] = {-2, 0, -1};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = maxProduct(arr2, size2);
+    printf("Maximum product subarray: %d\n", result2);
+    
+    int arr3[] = {-2, 3, -4};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = maxProduct(arr3, size3);
+    printf("Maximum product subarray: %d\n", result3);
+    
+    int arr4[] = {0, 2};
+    size_t size4 = sizeof(arr4) / sizeof(arr4[0]);
+    int result4 = maxProduct(arr4, size4);
+    printf("Maximum product subarray: %d\n", result4);
+    
+    return 0;
+}
+```

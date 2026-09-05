@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findFixedPoint(const int arr[], int n) {
+    int low = 0;
+    int high = n - 1;
+    int result = -1;
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        
+        if (arr[mid] == mid) {
+            result = mid;
+            high = mid - 1;
+        } else if (arr[mid] < mid) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int arr[] = {-10, -5, 0, 3, 7};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    if (n == 0) {
+        fprintf(stderr, "Invalid array size\n");
+        return EXIT_FAILURE;
+    }
+    
+    int fixedPoint = findFixedPoint(arr, (int)n);
+    
+    if (fixedPoint != -1) {
+        printf("Fixed point is %d\n", fixedPoint);
+    } else {
+        printf("No fixed point found\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

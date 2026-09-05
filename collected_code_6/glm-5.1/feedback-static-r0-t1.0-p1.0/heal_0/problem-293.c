@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double find_third_side(double a, double b, int is_hypotenuse) {
+    if (a <= 0.0 || b <= 0.0 || is_hypotenuse < 0 || is_hypotenuse > 1) {
+        return -1.0;
+    }
+
+    if (is_hypotenuse) {
+        if (b > a) {
+            double temp = a;
+            a = b;
+            b = temp;
+        }
+        if (a <= b) {
+            return -1.0;
+        }
+        return sqrt((a * a) - (b * b));
+    } else {
+        return sqrt((a * a) + (b * b));
+    }
+}
+
+int main(void) {
+    double side1 = 5.0;
+    double side2 = 4.0;
+    int finding_hypotenuse = 0;
+
+    double result = find_third_side(side1, side2, finding_hypotenuse);
+
+    if (result < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", result);
+
+    return EXIT_SUCCESS;
+}

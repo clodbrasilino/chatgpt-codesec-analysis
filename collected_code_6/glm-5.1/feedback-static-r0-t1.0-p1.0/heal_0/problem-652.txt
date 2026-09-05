@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple* data;
+    int rows;
+    int cols;
+} TupleMatrix;
+
+typedef struct {
+    Tuple* data;
+    int size;
+} TupleList;
+
+TupleList flatten_matrix(TupleMatrix matrix) {
+    TupleList list;
+    list.size = matrix.rows * matrix.cols;
+    list.data = (Tuple*)malloc(list.size * sizeof(Tuple));
+    if (!list.data) {
+        list.size = 0;
+        return list;
+    }
+
+    int index = 0;
+    for (int c = 0; c < matrix.cols; c++) {
+        for (int r = 0; r < matrix.rows; r++) {
+            list.data[index] = matrix.data[r * matrix.cols + c];
+            index++;
+        }
+    }
+
+    return list;
+}
+
+int main() {
+    int rows = 3;
+    int cols = 2;
+    TupleMatrix matrix;
+    matrix.rows = rows;
+    matrix.cols = cols;
+    matrix.data = (Tuple*)malloc(rows * cols * sizeof(Tuple));
+    if (!matrix.data) {
+        return 1;
+    }
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            matrix.data[r * cols + c].a = r * cols + c + 1;
+            matrix.data[r * cols + c].b = (r * cols + c + 1) * 10;
+        }
+    }
+
+    TupleList list = flatten_matrix(matrix);
+
+    for (int i = 0; i < list.size; i++) {
+        printf("(%d, %d) ", list.data[i].a, list.data[i].b);
+    }
+    printf("\n");
+
+    free(matrix.data);
+    free(list.data);
+
+    return 0;
+}
+```

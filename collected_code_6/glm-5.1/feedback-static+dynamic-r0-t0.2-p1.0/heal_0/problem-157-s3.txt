@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RLE;
+
+int reflect_rle(const RLE *input, size_t input_size, int **output, size_t *output_size) {
+    if (input == NULL || output == NULL || output_size == NULL) {
+        return -1;
+    }
+
+    size_t total_elements = 0;
+    for (size_t i = 0; i < input_size; i++) {
+        if (input[i].count == 0) {
+            return -1;
+        }
+        if (total_elements > SIZE_MAX - input[i].count) {
+            return -1;
+        }
+        total_elements += input[i].count;
+    }
+
+    if (total_elements == 0) {
+        *output = NULL;
+        *output_size = 0;
+        return 0;
+    }
+
+    *output = (int *)malloc(total_elements * sizeof(int));
+    if (*output == NULL) {
+        return -1;
+    }
+
+    *output_size = total_elements;
+    size_t current_index = 0;
+
+    for (size_t i = 0; i < input_size; i++) {
+        for (size_t j = 0; j < input[i].count; j++) {
+            (*output)[current_index++] = input[i].value;
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    RLE rle_list[] = {
+        {10, 3},
+        {20, 1},
+        {30, 4},
+        {40, 2}
+    };
+    size_t rle_size = sizeof(rle_list) / sizeof(rle_list[0]);
+
+    int *decoded_list = NULL;
+    size_t decoded_size = 0;
+
+    int result = reflect_rle(rle_list, rle_size, &decoded_list, &decoded_size);
+
+    if (result == 0) {
+        for (size_t i = 0; i < decoded_size; i++) {
+            printf("%d ", decoded_list[i]);
+        }
+        printf("\n");
+        free(decoded_list);
+    } else {
+        printf("Error during RLE reflection.\n");
+    }
+
+    return 0;
+}
+```

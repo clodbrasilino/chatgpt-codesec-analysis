@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void decimalToBinary(int n) {
+    if (n == 0) {
+        printf("0");
+        return;
+    }
+    
+    unsigned int num = (unsigned int)n;
+    int binary[32];
+    int i = 0;
+    
+    while (num > 0) {
+        binary[i] = num % 2;
+        num = num / 2;
+        i++;
+    }
+    
+    for (int j = i - 1; j >= 0; j--) {
+        printf("%d", binary[j]);
+    }
+}
+
+int main() {
+    int decimal;
+    
+    printf("Enter a decimal number: ");
+    if (scanf("%d", &decimal) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Binary equivalent: ");
+    decimalToBinary(decimal);
+    printf("\n");
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int list_contains(const int *list, size_t length, int target)
+{
+    size_t i;
+
+    if (list == NULL)
+    {
+        return 0;
+    }
+
+    for (i = 0U; i < length; i++)
+    {
+        if (list[i] == target)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+size_t count_sublists_containing(const int *const *sublists,
+                                 const size_t *lengths,
+                                 size_t sublist_count,
+                                 int target)
+{
+    size_t i;
+    size_t count = 0U;
+
+    if (sublists == NULL || lengths == NULL)
+    {
+        return 0U;
+    }
+
+    for (i = 0U; i < sublist_count; i++)
+    {
+        if (list_contains(sublists[i], lengths[i], target) != 0)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const size_t sublist_count = 4U;
+    const size_t template_lengths[4] = {3U, 2U, 4U, 1U};
+    const int template_values[4][4] = {
+        {1, 2, 3, 0},
+        {4, 5, 0, 0},
+        {2, 7, 8, 9},
+        {10, 0, 0, 0}
+    };
+    int **sublists = NULL;
+    size_t *lengths = NULL;
+    size_t i;
+    size_t j;
+    size_t result;
+    const int target = 2;
+
+    sublists = malloc(sublist_count * sizeof(*sublists));
+    if (sublists == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    lengths = malloc(sublist_count * sizeof(*lengths));
+    if (lengths == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(sublists);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < sublist_count; i++)
+    {
+        sublists[i] = NULL;
+    }
+
+    for (i = 0U; i < sublist_count; i++)
+    {
+        lengths[i] = template_lengths[i];
+        sublists[i] = malloc(lengths[i] * sizeof(*sublists[i]));
+        if (sublists[i] == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (j = 0U; j < sublist_count; j++)
+            {
+                free(sublists[j]);
+            }
+            free(sublists);
+            free(lengths);
+            return EXIT_FAILURE;
+        }
+        memcpy(sublists[i], template_values[i], lengths[i] * sizeof(*sublists[i]));
+    }
+
+    result = count_sublists_containing((const int *const *)sublists,
+                                       lengths,
+                                       sublist_count,
+                                       target);
+
+    printf("Number of sublists containing %d: %zu\n", target, result);
+
+    for (i = 0U; i < sublist_count; i++)
+    {
+        free(sublists[i]);
+    }
+    free(sublists);
+    free(lengths);
+
+    return EXIT_SUCCESS;
+}

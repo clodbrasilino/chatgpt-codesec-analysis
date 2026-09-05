@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:48:30: style: Condition 'result4' is always true [knownConditionTrueFalse]
+    printf("Result 4: %s\n", result4 ? "true" : "false");
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:39:36: note: Calling function 'contains_sublist' returns 1
+    bool result4 = contains_sublist(list, 9, (const int[]){0}, 0);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:39:36: note: Assignment 'result4=contains_sublist(list,9,(const int[]){0},0)', assigned value is 1
+    bool result4 = contains_sublist(list, 9, (const int[]){0}, 0);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:48:30: note: Condition 'result4' is always true
+    printf("Result 4: %s\n", result4 ? "true" : "false");
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:49:30: style: Condition 'result5' is always false [knownConditionTrueFalse]
+    printf("Result 5: %s\n", result5 ? "true" : "false");
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:40:36: note: Calling function 'contains_sublist' returns 0
+    bool result5 = contains_sublist(NULL, 0, sublist1, 3);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:40:36: note: Assignment 'result5=contains_sublist(NULL,0,sublist1,3)', assigned value is 0
+    bool result5 = contains_sublist(NULL, 0, sublist1, 3);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-69-s2.c:49:30: note: Condition 'result5' is always false
+    printf("Result 5: %s\n", result5 ? "true" : "false");
+                             ^

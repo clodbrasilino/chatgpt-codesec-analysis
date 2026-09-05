@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_rombus_area(double diagonal1, double diagonal2) {
+    if (diagonal1 < 0.0 || diagonal2 < 0.0) {
+        return -1.0;
+    }
+
+    return (diagonal1 * diagonal2) / 2.0;
+}
+
+int main(void) {
+    double d1 = 10.0;
+    double d2 = 15.0;
+
+    double area = calculate_rombus_area(d1, d2);
+
+    if (area < 0.0) {
+        fprintf(stderr, "Invalid input for diagonals.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Area: %f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```

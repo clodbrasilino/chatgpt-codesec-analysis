@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+double perimeter_of_pentagon(double side1, double side2, double side3, double side4, double side5);
+
+int main(void) {
+    double side1, side2, side3, side4, side5;
+    
+    if (scanf("%lf %lf %lf %lf %lf", &side1, &side2, &side3, &side4, &side5) != 5) {
+        return 1;
+    }
+    
+    if (side1 < 0 || side2 < 0 || side3 < 0 || side4 < 0 || side5 < 0) {
+        return 1;
+    }
+    
+    double perimeter = perimeter_of_pentagon(side1, side2, side3, side4, side5);
+    printf("%lf\n", perimeter);
+    
+    return 0;
+}
+
+double perimeter_of_pentagon(double side1, double side2, double side3, double side4, double side5) {
+    return side1 + side2 + side3 + side4 + side5;
+}

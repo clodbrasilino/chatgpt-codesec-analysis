@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c:70:11: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+    if (n > 0 && sizeof(arr2) / sizeof(arr2[0]) == n) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c:68:26: note: Assignment 'n=sizeof(arr1)/sizeof(arr1[0])', assigned value is 5
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c:70:11: note: Condition 'n>0' is always true
+    if (n > 0 && sizeof(arr2) / sizeof(arr2[0]) == n) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c:12:22: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int find_median(int *arr, int n) {
+                     ^

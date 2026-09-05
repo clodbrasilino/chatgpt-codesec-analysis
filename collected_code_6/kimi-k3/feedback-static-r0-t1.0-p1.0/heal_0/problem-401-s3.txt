@@ -1,0 +1,222 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+typedef struct {
+    IntTuple *tuples;
+    size_t count;
+} NestedTuple;
+
+static int add_nested_tuples(const NestedTuple *a, const NestedTuple *b, NestedTuple *result)
+{
+    size_t i;
+    size_t j;
+
+    if (a == NULL || b == NULL || result == NULL) {
+        return 0;
+    }
+
+    if (a->count != b->count) {
+        return 0;
+    }
+
+    result->tuples = NULL;
+    result->count = 0;
+
+    if (a->count == 0) {
+        return 1;
+    }
+
+    result->tuples = (IntTuple *)calloc(a->count, sizeof(IntTuple));
+    if (result->tuples == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < a->count; ++i) {
+        if (a->tuples[i].size != b->tuples[i].size) {
+            goto cleanup;
+        }
+
+        result->tuples[i].data = NULL;
+        result->tuples[i].size = 0;
+
+        if (a->tuples[i].size == 0) {
+            continue;
+        }
+
+        result->tuples[i].data = (int *)malloc(a->tuples[i].size * sizeof(int));
+        if (result->tuples[i].data == NULL) {
+            goto cleanup;
+        }
+
+        result->tuples[i].size = a->tuples[i].size;
+
+        for (j = 0; j < a->tuples[i].size; ++j) {
+            result->tuples[i].data[j] = a->tuples[i].data[j] + b->tuples[i].data[j];
+        }
+    }
+
+    result->count = a->count;
+    return 1;
+
+cleanup:
+    for (i = 0; i < a->count; ++i) {
+        free(result->tuples[i].data);
+        result->tuples[i].data = NULL;
+        result->tuples[i].size = 0;
+    }
+    free(result->tuples);
+    result->tuples = NULL;
+    result->count = 0;
+    return 0;
+}
+
+static void free_nested_tuple(NestedTuple *t)
+{
+    size_t i;
+
+    if (t == NULL) {
+        return;
+    }
+
+    for (i = 0; i < t->count; ++i) {
+        free(t->tuples[i].data);
+        t->tuples[i].data = NULL;
+        t->tuples[i].size = 0;
+    }
+
+    free(t->tuples);
+    t->tuples = NULL;
+    t->count = 0;
+}
+
+static int init_nested_tuple(NestedTuple *t, const int *values, const size_t *sizes, size_t count)
+{
+    size_t i;
+    size_t j;
+    size_t offset;
+
+    if (t == NULL || values == NULL || sizes == NULL) {
+        return 0;
+    }
+
+    t->tuples = NULL;
+    t->count = 0;
+
+    if (count == 0) {
+        return 1;
+    }
+
+    t->tuples = (IntTuple *)calloc(count, sizeof(IntTuple));
+    if (t->tuples == NULL) {
+        return 0;
+    }
+
+    offset = 0;
+
+    for (i = 0; i < count; ++i) {
+        t->tuples[i].data = NULL;
+        t->tuples[i].size = 0;
+
+        if (sizes[i] == 0) {
+            continue;
+        }
+
+        t->tuples[i].data = (int *)malloc(sizes[i] * sizeof(int));
+        if (t->tuples[i].data == NULL) {
+            goto cleanup;
+        }
+
+        t->tuples[i].size = sizes[i];
+
+        for (j = 0; j < sizes[i]; ++j) {
+            t->tuples[i].data[j] = values[offset + j];
+        }
+
+        offset += sizes[i];
+    }
+
+    t->count = count;
+    return 1;
+
+cleanup:
+    for (i = 0; i < count; ++i) {
+        free(t->tuples[i].data);
+        t->tuples[i].data = NULL;
+        t->tuples[i].size = 0;
+    }
+    free(t->tuples);
+    t->tuples = NULL;
+    t->count = 0;
+    return 0;
+}
+
+static void print_nested_tuple(const NestedTuple *t)
+{
+    size_t i;
+    size_t j;
+
+    if (t == NULL) {
+        return;
+    }
+
+    printf("(");
+    for (i = 0; i < t->count; ++i) {
+        printf("(");
+        for (j = 0; j < t->tuples[i].size; ++j) {
+            printf("%d", t->tuples[i].data[j]);
+            if (j + 1 < t->tuples[i].size) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    const int values_a[] = {1, 2, 3, 4, 5, 6};
+    const int values_b[] = {10, 20, 30, 40, 50, 60};
+    const size_t sizes[] = {2, 1, 3};
+    const size_t count = 3;
+
+    NestedTuple a = {NULL, 0};
+    NestedTuple b = {NULL, 0};
+    NestedTuple result = {NULL, 0};
+
+    if (!init_nested_tuple(&a, values_a, sizes, count)) {
+        free_nested_tuple(&a);
+        return EXIT_FAILURE;
+    }
+
+    if (!init_nested_tuple(&b, values_b, sizes, count)) {
+        free_nested_tuple(&a);
+        free_nested_tuple(&b);
+        return EXIT_FAILURE;
+    }
+
+    if (!add_nested_tuples(&a, &b, &result)) {
+        free_nested_tuple(&a);
+        free_nested_tuple(&b);
+        free_nested_tuple(&result);
+        return EXIT_FAILURE;
+    }
+
+    print_nested_tuple(&result);
+
+    free_nested_tuple(&a);
+    free_nested_tuple(&b);
+    free_nested_tuple(&result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void rearrange(int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return;
+    }
+
+    size_t left = 0;
+    size_t right = size - 1;
+
+    while (left < right) {
+        while (left < size && array[left] < 0) {
+            left++;
+        }
+
+        while (right > 0 && array[right] >= 0) {
+            right--;
+        }
+
+        if (left < right) {
+            int temp = array[left];
+            array[left] = array[right];
+            array[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main(void) {
+    size_t size = 9;
+    int *array = malloc(size * sizeof(int));
+    if (array == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    array[0] = -1;
+    array[1] = 2;
+    array[2] = -3;
+    array[3] = 4;
+    array[4] = 5;
+    array[5] = 6;
+    array[6] = -7;
+    array[7] = 8;
+    array[8] = -9;
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+
+    rearrange(array, size);
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+
+    free(array);
+    array = NULL;
+
+    return EXIT_SUCCESS;
+}

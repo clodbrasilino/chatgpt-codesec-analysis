@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int value;
+    size_t count;
+} ElementCount;
+
+typedef struct {
+    ElementCount *entries;
+    size_t size;
+} CountResult;
+
+CountResult count_occurrences(const Tuple *tuple, const Tuple *list) {
+    CountResult result;
+    result.entries = NULL;
+    result.size = 0;
+
+    if (tuple == NULL || list == NULL || list->size == 0) {
+        return result;
+    }
+
+    result.entries = (ElementCount *)malloc(list->size * sizeof(ElementCount));
+    if (result.entries == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        result.entries[i].value = list->elements[i];
+        result.entries[i].count = 0;
+
+        for (size_t j = 0; j < tuple->size; j++) {
+            if (tuple->elements[j] == list->elements[i]) {
+                result.entries[i].count++;
+            }
+        }
+    }
+    result.size = list->size;
+
+    return result;
+}
+
+int main(void) {
+    int tuple_arr[] = {1, 2, 3, 2, 4, 1, 2, 5};
+    int list_arr[] = {1, 2, 9};
+
+    Tuple tuple = {tuple_arr, sizeof(tuple_arr) / sizeof(tuple_arr[0])};
+    Tuple list = {list_arr, sizeof(list_arr) / sizeof(list_arr[0])};
+
+    CountResult result = count_occurrences(&tuple, &list);
+
+    if (result.entries != NULL) {
+        for (size_t i = 0; i < result.size; i++) {
+            printf("%d: %zu\n", result.entries[i].value, result.entries[i].count);
+        }
+        free(result.entries);
+    }
+
+    return 0;
+}
+```

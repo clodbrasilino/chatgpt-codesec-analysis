@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictEntry {
+    char *key;
+    void *value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct Dictionary {
+    DictEntry **entries;
+    size_t size;
+    size_t count;
+} Dictionary;
+
+Dictionary *dict_create(size_t size) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = calloc(size, sizeof(DictEntry *));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = size;
+    dict->count = 0;
+    return dict;
+}
+
+void dict_destroy(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        DictEntry *entry = dict->entries[i];
+        while (entry) {
+            DictEntry *next = entry->next;
+            free(entry->key);
+            free(entry);
+            entry = next;
+        }
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int dict_insert(Dictionary *dict, const char *key, void *value) {
+    if (!dict || !key) return 0;
+    size_t index = 0;
+    for (size_t i = 0; key[i]; i++) {
+        index = (index * 31 + key[i]) % dict->size;
+    }
+    DictEntry *entry = dict->entries[index];
+    while (entry) {
+        if (strcmp(entry->key, key) == 0) {
+            entry->value = value;
+            return 1;
+        }
+        entry = entry->next;
+    }
+    DictEntry *new_entry = malloc(sizeof(DictEntry));
+    if (!new_entry) return 0;
+    new_entry->key = strdup(key);
+    if (!new_entry->key) {
+        free(new_entry);
+        return 0;
+    }
+    new_entry->value = value;
+    new_entry->next = dict->entries[index];
+    dict->entries[index] = new_entry;
+    dict->count++;
+    return 1;
+}
+
+int dict_is_empty(const Dictionary *dict) {
+    if (!dict) return 1;
+    return dict->count == 0;
+}
+
+int main(void) {
+    Dictionary *dict = dict_create(16);
+    if (!dict) {
+        fprintf(stderr, "Failed to allocate memory for dictionary\n");
+        return 1;
+    }
+
+    if (dict_is_empty(dict)) {
+        printf("Dictionary is empty\n");
+    } else {
+        printf("Dictionary is not empty\n");
+    }
+
+    if (dict_insert(dict, "key1", "value1")) {
+        printf("Inserted key1\n");
+    } else {
+        fprintf(stderr, "Failed to insert key1\n");
+        dict_destroy(dict);
+        return 1;
+    }
+
+    if (dict_is_empty(dict)) {
+        printf("Dictionary is empty\n");
+    } else {
+        printf("Dictionary is not empty\n");
+    }
+
+    dict_destroy(dict);
+    return 0;
+}
+```

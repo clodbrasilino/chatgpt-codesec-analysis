@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+
+double calculate_lateral_surface_area(double radius, double slant_height)
+{
+    if (radius < 0.0 || slant_height < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    return M_PI * radius * slant_height;
+}
+
+int main(void)
+{
+    double radius, slant_height, result;
+    
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input for radius\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter slant height: ");
+    if (scanf("%lf", &slant_height) != 1) {
+        fprintf(stderr, "Invalid input for slant height\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    result = calculate_lateral_surface_area(radius, slant_height);
+    
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Negative values not allowed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Lateral Surface Area: %.2f\n", result);
+    return EXIT_SUCCESS;
+}

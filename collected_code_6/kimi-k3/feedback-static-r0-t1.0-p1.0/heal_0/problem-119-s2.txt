@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_single(const int *arr, size_t n, int *result)
+{
+    size_t i;
+
+    if (arr == NULL || result == NULL || n == 0 || n % 2 == 0) {
+        return -1;
+    }
+
+    for (i = 0; i + 1 < n; i += 2) {
+        if (arr[i] != arr[i + 1]) {
+            *result = arr[i];
+            return 0;
+        }
+    }
+
+    *result = arr[n - 1];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 1, 2, 2, 3, 4, 4, 5, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int single;
+
+    if (find_single(arr, n, &single) == 0) {
+        printf("%d\n", single);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

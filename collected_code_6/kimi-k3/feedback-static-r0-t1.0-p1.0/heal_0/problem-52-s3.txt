@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+double calculate_parallelogram_area(double base, double height) {
+    if (base < 0.0 || height < 0.0) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    return base * height;
+}
+
+int main(void) {
+    double base, height, area;
+    
+    printf("Enter base: ");
+    if (scanf("%lf", &base) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    area = calculate_parallelogram_area(base, height);
+    if (area < 0.0) {
+        fprintf(stderr, "Invalid dimensions\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Area: %.2f\n", area);
+    return EXIT_SUCCESS;
+}
+```

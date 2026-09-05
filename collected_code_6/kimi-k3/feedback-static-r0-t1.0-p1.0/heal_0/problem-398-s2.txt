@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int sum_of_digits(int number)
+{
+    int sum = 0;
+    unsigned int n;
+
+    if (number < 0) {
+        n = (unsigned int)(-(number + 1)) + 1U;
+    } else {
+        n = (unsigned int)number;
+    }
+
+    while (n > 0U) {
+        sum += (int)(n % 10U);
+        n /= 10U;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    const int numbers[] = {123, 456, -789, 0, 1001};
+    const size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = sum_of_digits(numbers[i]);
+        if (printf("Sum of digits of %d is %d\n", numbers[i], result) < 0) {
+            fprintf(stderr, "Error writing to stdout\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (fflush(stdout) == EOF) {
+        fprintf(stderr, "Error flushing stdout\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

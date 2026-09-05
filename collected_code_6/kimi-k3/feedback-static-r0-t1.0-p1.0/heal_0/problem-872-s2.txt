@@ -1,0 +1,236 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct NestedList {
+    int is_integer;
+    int integer;
+    struct NestedList **list;
+    int size;
+    int capacity;
+} NestedList;
+
+NestedList* create_integer(int value) {
+    NestedList *node = (NestedList*)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = 1;
+    node->integer = value;
+    node->list = NULL;
+    node->size = 0;
+    node->capacity = 0;
+    return node;
+}
+
+NestedList* create_list(void) {
+    NestedList *node = (NestedList*)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = 0;
+    node->integer = 0;
+    node->list = NULL;
+    node->size = 0;
+    node->capacity = 0;
+    return node;
+}
+
+int add_to_list(NestedList *parent, NestedList *child) {
+    if (parent == NULL || child == NULL || parent->is_integer) {
+        return 0;
+    }
+    
+    if (parent->size >= parent->capacity) {
+        int new_capacity = parent->capacity == 0 ? 4 : parent->capacity * 2;
+        NestedList **new_list = (NestedList**)realloc(parent->list, 
+                                                       new_capacity * sizeof(NestedList*));
+        if (new_list == NULL) {
+            return 0;
+        }
+        parent->list = new_list;
+        parent->capacity = new_capacity;
+    }
+    
+    parent->list[parent->size] = child;
+    parent->size++;
+    return 1;
+}
+
+int is_equal(NestedList *a, NestedList *b) {
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+    
+    if (a->is_integer != b->is_integer) {
+        return 0;
+    }
+    
+    if (a->is_integer) {
+        return a->integer == b->integer;
+    }
+    
+    if (a->size != b->size) {
+        return 0;
+    }
+    
+    for (int i = 0; i < a->size; i++) {
+        if (!is_equal(a->list[i], b->list[i])) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int is_subset(NestedList *subset, NestedList *superset) {
+    if (subset == NULL || superset == NULL) {
+        return 0;
+    }
+    
+    if (subset->is_integer && superset->is_integer) {
+        return subset->integer == superset->integer;
+    }
+    
+    if (subset->is_integer) {
+        return 0;
+    }
+    
+    if (!superset->is_integer) {
+        for (int i = 0; i < subset->size; i++) {
+            int found = 0;
+            for (int j = 0; j < superset->size; j++) {
+                if (is_equal(subset->list[i], superset->list[j]) ||
+                    is_subset(subset->list[i], superset->list[j])) {
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                return 0;
+            }
+        }
+        return 1;
+    }
+    
+    return 0;
+}
+
+void free_nested_list(NestedList *node) {
+    if (node == NULL) {
+        return;
+    }
+    
+    if (!node->is_integer && node->list != NULL) {
+        for (int i = 0; i < node->size; i++) {
+            free_nested_list(node->list[i]);
+        }
+        free(node->list);
+    }
+    
+    free(node);
+}
+
+int main(void) {
+    NestedList *list1 = create_list();
+    NestedList *list2 = create_list();
+    NestedList *sublist1 = create_list();
+    NestedList *sublist2 = create_list();
+    
+    if (list1 == NULL || list2 == NULL || sublist1 == NULL || sublist2 == NULL) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist1);
+        free_nested_list(sublist2);
+        return 1;
+    }
+    
+    NestedList *int1 = create_integer(1);
+    NestedList *int2 = create_integer(2);
+    NestedList *int3 = create_integer(3);
+    NestedList *int4 = create_integer(4);
+    
+    if (int1 == NULL || int2 == NULL || int3 == NULL || int4 == NULL) {
+        free_nested_list(int1);
+        free_nested_list(int2);
+        free_nested_list(int3);
+        free_nested_list(int4);
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist1);
+        free_nested_list(sublist2);
+        return 1;
+    }
+    
+    if (!add_to_list(sublist1, int1) || !add_to_list(sublist1, int2)) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist1);
+        free_nested_list(sublist2);
+        free_nested_list(int1);
+        free_nested_list(int2);
+        free_nested_list(int3);
+        free_nested_list(int4);
+        return 1;
+    }
+    
+    if (!add_to_list(sublist2, int3) || !add_to_list(sublist2, int4)) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist1);
+        free_nested_list(sublist2);
+        free_nested_list(int3);
+        free_nested_list(int4);
+        return 1;
+    }
+    
+    if (!add_to_list(list1, sublist1) || !add_to_list(list1, sublist2)) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist1);
+        free_nested_list(sublist2);
+        return 1;
+    }
+    
+    NestedList *int5 = create_integer(1);
+    NestedList *int6 = create_integer(2);
+    NestedList *sublist3 = create_list();
+    
+    if (int5 == NULL || int6 == NULL || sublist3 == NULL) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(int5);
+        free_nested_list(int6);
+        free_nested_list(sublist3);
+        return 1;
+    }
+    
+    if (!add_to_list(sublist3, int5) || !add_to_list(sublist3, int6)) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist3);
+        free_nested_list(int5);
+        free_nested_list(int6);
+        return 1;
+    }
+    
+    if (!add_to_list(list2, sublist3)) {
+        free_nested_list(list1);
+        free_nested_list(list2);
+        free_nested_list(sublist3);
+        return 1;
+    }
+    
+    if (is_subset(list2, list1)) {
+        printf("list2 is a subset of list1\n");
+    } else {
+        printf("list2 is not a subset of list1\n");
+    }
+    
+    free_nested_list(list1);
+    free_nested_list(list2);
+    
+    return 0;
+}
+```

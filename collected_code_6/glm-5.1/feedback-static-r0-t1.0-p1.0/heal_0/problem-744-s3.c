@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *items;
+    size_t len;
+} Tuple;
+
+bool has_none(const Tuple *t) {
+    if (t == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < t->len; i++) {
+        if (t->items[i] == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int data1[] = {1, 2, 3, 4};
+    Tuple t1 = {data1, 4};
+
+    int data2[] = {1, 0, 3, 4};
+    Tuple t2 = {data2, 4};
+
+    int data3[] = {0, 0, 0};
+    Tuple t3 = {data3, 3};
+
+    Tuple t4 = {NULL, 0};
+
+    printf("%d\n", has_none(&t1));
+    printf("%d\n", has_none(&t2));
+    printf("%d\n", has_none(&t3));
+    printf("%d\n", has_none(&t4));
+    printf("%d\n", has_none(NULL));
+
+    return 0;
+}

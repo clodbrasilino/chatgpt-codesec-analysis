@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool are_elements_unique(const int *arr, size_t size) {
+    if (size <= 1) {
+        return true;
+    }
+    
+    if (arr == NULL) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < size - 1; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {1, 2, 3, 2, 5};
+    int arr3[] = {1};
+    const int *arr4 = NULL;
+    
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    printf("Array 1 (1,2,3,4,5): %s\n", are_elements_unique(arr1, size1) ? "Unique" : "Not Unique");
+    printf("Array 2 (1,2,3,2,5): %s\n", are_elements_unique(arr2, size2) ? "Unique" : "Not Unique");
+    printf("Array 3 (single element): %s\n", are_elements_unique(arr3, size3) ? "Unique" : "Not Unique");
+    printf("Array 4 (NULL): %s\n", are_elements_unique(arr4, 0) ? "Unique" : "Not Unique");
+    
+    return 0;
+}

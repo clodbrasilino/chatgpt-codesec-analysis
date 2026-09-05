@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    bool is_list;
+    union {
+        int value;
+        struct {
+            struct Node *head;
+            struct Node *tail;
+        } list;
+    } data;
+} Node;
+
+Node *make_int(int val) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (n == NULL) exit(EXIT_FAILURE);
+    n->is_list = false;
+    n->data.value = val;
+    return n;
+}
+
+Node *make_list(Node *head, Node *tail) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (n == NULL) exit(EXIT_FAILURE);
+    n->is_list = true;
+    n->data.list.head = head;
+    n->data.list.tail = tail;
+    return n;
+}
+
+bool node_equal(Node *a, Node *b) {
+    if (a == NULL && b == NULL) return true;
+    if (a == NULL || b == NULL) return false;
+    if (a->is_list != b->is_list) return false;
+    if (!a->is_list) return a->data.value == b->data.value;
+    return node_equal(a->data.list.head, b->data.list.head) &&
+           node_equal(a->data.list.tail, b->data.list.tail);
+}
+
+bool is_subset(Node *a, Node *b) {
+    if (a == NULL) return true;
+    Node *curr = b;
+    while (curr != NULL) {
+        if (node_equal(a, curr)) return true;
+        curr = curr->data.list.tail;
+    }
+    return false;
+}
+
+bool check_nested_list_subset(Node *subset, Node *superset) {
+    if (subset == NULL) return true;
+    if (superset == NULL) return false;
+    if (subset->is_list && superset->is_list) {
+        Node *curr = subset;
+        while (curr != NULL) {
+            if (!is_subset(curr->data.list.head, superset)) return false;
+            curr = curr->data.list.tail;
+        }
+        return true;
+    }
+    return node_equal(subset, superset);
+}
+
+void free_list(Node *n) {
+    if (n == NULL) return;
+    if (n->is_list) {
+        free_list(n->data.list.head);
+        free_list(n->data.list.tail);
+    }
+    free(n);
+}
+
+int main() {
+    Node *int1 = make_int(1);
+    Node *int2 = make_int(2);
+    Node *int3 = make_int(3);
+    Node *int4 = make_int(4);
+    Node *int5 = make_int(5);
+
+    Node *subset_inner1 = make_list(int1, NULL);
+    Node *subset_inner2 = make_list(int2, make_list(int3, NULL));
+    Node *subset_list = make_list(subset_inner1, make_list(subset_inner2, NULL));
+
+    Node *superset_inner1 = make_list(int1, make_list(int5, NULL));
+    Node *superset_inner2 = make_list(int2, make_list(int3, make_list(int4, NULL)));
+    Node *superset_list = make_list(superset_inner1, make_list(superset_inner2, NULL));
+
+    bool result = check_nested_list_subset(subset_list, superset_list);
+
+    printf("Is subset: %s\n", result ? "true" : "false");
+
+    free_list(subset_list);
+    free_list(superset_list);
+
+    return 0;
+}
+```

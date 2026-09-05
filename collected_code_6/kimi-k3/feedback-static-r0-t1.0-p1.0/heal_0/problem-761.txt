@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double calculate_arc_length(double radius, double angle_degrees)
+{
+    double angle_radians;
+    double arc_length;
+    
+    if (radius < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    if (angle_degrees < -360.0 || angle_degrees > 360.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    angle_radians = angle_degrees * (M_PI / 180.0);
+    arc_length = radius * fabs(angle_radians);
+    
+    if (arc_length > DBL_MAX) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    
+    return arc_length;
+}
+
+int main(void)
+{
+    double radius;
+    double angle;
+    double arc_length;
+    
+    printf("Enter the radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter the angle in degrees: ");
+    if (scanf("%lf", &angle) != 1) {
+        fprintf(stderr, "Error: Invalid input for angle\n");
+        return 1;
+    }
+    
+    errno = 0;
+    arc_length = calculate_arc_length(radius, angle);
+    
+    if (errno != 0) {
+        fprintf(stderr, "Error: Invalid parameters for arc length calculation\n");
+        return 1;
+    }
+    
+    printf("Arc length: %.6f\n", arc_length);
+    
+    return 0;
+}
+```

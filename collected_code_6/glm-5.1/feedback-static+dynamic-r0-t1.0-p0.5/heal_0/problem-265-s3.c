@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** split_list(const int* list, size_t length, size_t n, size_t* out_num_chunks, size_t** out_chunk_lengths) {
+    if (list == NULL || n == 0 || out_num_chunks == NULL || out_chunk_lengths == NULL) {
+        return NULL;
+    }
+
+    size_t num_chunks = (length + n - 1) / n;
+    *out_num_chunks = num_chunks;
+
+    int** chunks = (int**)malloc(num_chunks * sizeof(int*));
+    if (chunks == NULL) {
+        return NULL;
+    }
+
+    size_t* chunk_lengths = (size_t*)malloc(num_chunks * sizeof(size_t));
+    if (chunk_lengths == NULL) {
+        free(chunks);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_chunks; i++) {
+        size_t start = i * n;
+        size_t current_chunk_length = (length - start >= n) ? n : (length - start);
+        chunk_lengths[i] = current_chunk_length;
+
+        chunks[i] = (int*)malloc(current_chunk_length * sizeof(int));
+        if (chunks[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(chunks[j]);
+            }
+            free(chunks);
+            free(chunk_lengths);
+            return NULL;
+        }
+
+        for (size_t k = 0; k < current_chunk_length; k++) {
+            chunks[i][k] = list[start + k];
+        }
+    }
+
+    *out_chunk_lengths = chunk_lengths;
+    return chunks;
+}
+
+void free_split_list(int** chunks, size_t num_chunks, size_t* chunk_lengths) {
+    if (chunks == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < num_chunks; i++) {
+        free(chunks[i]);
+    }
+    free(chunks);
+    free(chunk_lengths);
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    size_t n = 3;
+    size_t num_chunks = 0;
+    size_t* chunk_lengths = NULL;
+
+    int** chunks = split_list(list, length, n, &num_chunks, &chunk_lengths);
+
+    if (chunks == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_chunks; i++) {
+        for (size_t j = 0; j < chunk_lengths[i]; j++) {
+            printf("%d ", chunks[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_split_list(chunks, num_chunks, chunk_lengths);
+
+    return EXIT_SUCCESS;
+}

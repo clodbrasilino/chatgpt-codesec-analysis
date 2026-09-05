@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} InnerList;
+
+typedef struct {
+    InnerList *lists;
+    size_t size;
+} OuterList;
+
+int compare_inner_lists(const void *a, const void *b) {
+    const InnerList *list_a = (const InnerList *)a;
+    const InnerList *list_b = (const InnerList *)b;
+    
+    if (list_a->size == 0 && list_b->size == 0) return 0;
+    if (list_a->size == 0) return -1;
+    if (list_b->size == 0) return 1;
+    
+    if (list_a->data[0] < list_b->data[0]) return -1;
+    if (list_a->data[0] > list_b->data[0]) return 1;
+    return 0;
+}
+
+void sort_list_of_lists(OuterList *outer, size_t index) {
+    if (outer == NULL || outer->lists == NULL || outer->size == 0) {
+        return;
+    }
+
+    for (size_t i = 0; i < outer->size; i++) {
+        if (outer->lists[i].size > 0 && index < outer->lists[i].size) {
+            int temp = outer->lists[i].data[index];
+            outer->lists[i].data[index] = outer->lists[i].data[0];
+            outer->lists[i].data[0] = temp;
+        }
+    }
+
+    qsort(outer->lists, outer->size, sizeof(InnerList), compare_inner_lists);
+
+    for (size_t i = 0; i < outer->size; i++) {
+        if (outer->lists[i].size > 0 && index < outer->lists[i].size) {
+            int temp = outer->lists[i].data[index];
+            outer->lists[i].data[index] = outer->lists[i].data[0];
+            outer->lists[i].data[0] = temp;
+        }
+    }
+}
+
+int main(void) {
+    InnerList lists_data[4];
+    
+    lists_data[0].data = (int[]){3, 1, 4};
+    lists_data[0].size = 3;
+    
+    lists_data[1].data = (int[]){1, 5, 9};
+    lists_data[1].size = 3;
+    
+    lists_data[2].data = (int[]){2, 6, 5};
+    lists_data[2].size = 3;
+    
+    lists_data[3].data = (int[]){4, 2, 8};
+    lists_data[3].size = 3;
+
+    OuterList outer;
+    outer.lists = lists_data;
+    outer.size = 4;
+
+    sort_list_of_lists(&outer, 1);
+
+    for (size_t i = 0; i < outer.size; i++) {
+        for (size_t j = 0; j < outer.lists[i].size; j++) {
+            printf("%d ", outer.lists[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_inversions(const Tuple *tuples, size_t size, Tuple **inversions) {
+    size_t count = 0;
+    size_t i, j;
+    
+    if (tuples == NULL || inversions == NULL) {
+        return -1;
+    }
+    
+    if (size == 0) {
+        *inversions = NULL;
+        return 0;
+    }
+    
+    for (i = 0; i < size; i++) {
+        if (tuples[i].first > tuples[i].second) {
+            count++;
+        }
+    }
+    
+    if (count == 0) {
+        *inversions = NULL;
+        return 0;
+    }
+    
+    *inversions = (Tuple *)malloc(count * sizeof(Tuple));
+    if (*inversions == NULL) {
+        return -1;
+    }
+    
+    j = 0;
+    for (i = 0; i < size; i++) {
+        if (tuples[i].first > tuples[i].second) {
+            (*inversions)[j].first = tuples[i].first;
+            (*inversions)[j].second = tuples[i].second;
+            j++;
+        }
+    }
+    
+    return (int)count;
+}
+
+int main(void) {
+    Tuple tuples[] = {{1, 3}, {5, 2}, {4, 8}, {9, 1}, {3, 3}, {7, 4}};
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    Tuple *inversions = NULL;
+    int count;
+    int i;
+    
+    count = find_inversions(tuples, size, &inversions);
+    
+    if (count < 0) {
+        fprintf(stderr, "Error: Failed to find inversions\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original tuples:\n");
+    for (i = 0; i < (int)size; i++) {
+        printf("(%d, %d) ", tuples[i].first, tuples[i].second);
+    }
+    printf("\n\n");
+    
+    printf("Inversions found: %d\n", count);
+    if (inversions != NULL) {
+        printf("Inverted tuples:\n");
+        for (i = 0; i < count; i++) {
+            printf("(%d, %d) ", inversions[i].first, inversions[i].second);
+        }
+        printf("\n");
+        
+        free(inversions);
+        inversions = NULL;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

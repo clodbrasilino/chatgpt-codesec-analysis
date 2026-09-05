@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:25:21: style: Same expression on both sides of '||' because 'size_a==0' and 'size_b==0' represent the same value. [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:21:27: note: 'size_a' is assigned value '3' here.
+    const size_t size_a = 3;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:22:27: note: 'size_b' is assigned value '3' here.
+    const size_t size_b = 3;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:25:21: note: Same expression on both sides of '||' because 'size_a==0' and 'size_b==0' represent the same value.
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:25:36: style: Same expression on both sides of '||' because 'size_c==0' and 'size_b==0' represent the same value. [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:21:27: note: 'size_a' is assigned value '3' here.
+    const size_t size_a = 3;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:23:27: note: 'size_c' is assigned value '3' here.
+    const size_t size_c = 3;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:22:27: note: 'size_b' is assigned value '3' here.
+    const size_t size_b = 3;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_4/healed/problem-142-s2.c:25:36: note: Same expression on both sides of '||' because 'size_c==0' and 'size_b==0' represent the same value.
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                   ^

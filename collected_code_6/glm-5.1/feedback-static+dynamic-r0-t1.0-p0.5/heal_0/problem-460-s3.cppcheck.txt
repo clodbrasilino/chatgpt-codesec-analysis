@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-460-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-460-s3.c:6:18: style: struct member 'Node::next' is never used. [unusedStructMember]
+    struct Node *next;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-460-s3.c:45:13: style: Variable 'n2' is assigned a value that is never used. [unreadVariable]
+    Node n2 = {2, NULL};
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-460-s3.c:47:13: style: Variable 'n4' is assigned a value that is never used. [unreadVariable]
+    Node n4 = {4, NULL};
+            ^

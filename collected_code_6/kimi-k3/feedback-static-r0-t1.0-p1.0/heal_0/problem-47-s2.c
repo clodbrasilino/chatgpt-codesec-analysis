@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_last_digit(unsigned long long a, unsigned long long b) {
+    unsigned long long result = 1;
+    unsigned long long i;
+    
+    if (a < b) {
+        return -1;
+    }
+    
+    if (a - b >= 5) {
+        return 0;
+    }
+    
+    for (i = b + 1; i <= a; i++) {
+        result = (result * (i % 10)) % 10;
+        if (result == 0) {
+            break;
+        }
+    }
+    
+    return (int)result;
+}
+
+int main(void) {
+    unsigned long long a, b;
+    int status;
+    int last_digit;
+    
+    status = scanf("%llu %llu", &a, &b);
+    
+    if (status != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    last_digit = find_last_digit(a, b);
+    
+    if (last_digit == -1) {
+        fprintf(stderr, "Invalid input: a must be >= b\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", last_digit);
+    
+    return EXIT_SUCCESS;
+}

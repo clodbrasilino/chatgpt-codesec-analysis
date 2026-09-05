@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:67:25: error: subscripted value is not an array, pointer, or vector
+   67 |             result[i][0][j] = list1[i][0][j];
+      |             ~~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:67:42: error: subscripted value is not an array, pointer, or vector
+   67 |             result[i][0][j] = list1[i][0][j];
+      |                               ~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:70:25: error: subscripted value is not an array, pointer, or vector
+   70 |             result[i][0][inner_len1 + j] = list2[i][0][j];
+      |             ~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:70:55: error: subscripted value is not an array, pointer, or vector
+   70 |             result[i][0][inner_len1 + j] = list2[i][0][j];
+      |                                            ~~~~~~~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:108:42: error: invalid operands to binary expression ('int *' and 'int *')
+  108 |             int total_len = sizes1[i][0] + sizes2[i][0];
+      |                             ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:110:43: error: subscripted value is not an array, pointer, or vector
+  110 |                 printf("%d ", zipped[i][0][j]);
+      |                               ~~~~~~~~~~~~^~
+6 errors generated.

@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    return n | (n + 1);
+}
+
+int main(void)
+{
+    unsigned int test_values[] = {0, 1, 5, 10, 15, 21};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        unsigned int original = test_values[i];
+        unsigned int result = set_rightmost_unset_bit(original);
+        printf("Input: %u (0x%X) -> Output: %u (0x%X)\n",
+               original, original, result, result);
+    }
+
+    return 0;
+}
+```

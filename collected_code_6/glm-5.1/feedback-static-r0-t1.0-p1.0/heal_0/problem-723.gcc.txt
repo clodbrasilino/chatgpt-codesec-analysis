@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c:125:63: error: passing argument 5 of 'count_same_pairs' from incompatible pointer type [-Wincompatible-pointer-types]
+  125 |     int result = count_same_pairs(list1, size1, list2, size2, map_int);
+      |                                                               ^~~~~~~
+      |                                                               |
+      |                                                               int * (*)(void *)
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c:79:86: note: expected 'MapFunc' {aka 'void * (*)(void *)'} but argument is of type 'int * (*)(void *)'
+   79 | int count_same_pairs(void** list1, size_t size1, void** list2, size_t size2, MapFunc map) {
+      |                                                                              ~~~~~~~~^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c:75:6: note: 'map_int' declared here
+   75 | int* map_int(void* item) {
+      |      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-723.c:4:17: note: 'MapFunc' declared here
+    4 | typedef void* (*MapFunc)(void*);
+      |                 ^~~~~~~

@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-691-s3.c:108:13: error: call to undeclared function 'freeGroupList'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  108 |             freeGroupList(result);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-691-s3.c:108:13: note: did you mean 'initGroupList'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-691-s3.c:23:5: note: 'initGroupList' declared here
+   23 | int initGroupList(GroupList *list, size_t initial_capacity) {
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-691-s3.c:112:13: error: call to undeclared function 'freeGroupList'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  112 |             freeGroupList(result);
+      |             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-691-s3.c:120:6: error: conflicting types for 'freeGroupList'
+  120 | void freeGroupList(GroupList *list) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-691-s3.c:108:13: note: previous implicit declaration is here
+  108 |             freeGroupList(result);
+      |             ^
+3 errors generated.

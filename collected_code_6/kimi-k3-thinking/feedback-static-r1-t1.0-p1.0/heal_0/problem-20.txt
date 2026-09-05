@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int is_woodall(long long num)
+{
+    long long n;
+    long long power;
+    long long woodall;
+
+    if (num < 1)
+    {
+        return 0;
+    }
+
+    n = 1;
+    power = 2;
+
+    while (1)
+    {
+        if (power > LLONG_MAX / n)
+        {
+            break;
+        }
+
+        woodall = n * power - 1;
+
+        if (woodall == num)
+        {
+            return 1;
+        }
+
+        if (woodall > num)
+        {
+            break;
+        }
+
+        if (power > LLONG_MAX / 2)
+        {
+            break;
+        }
+
+        power = power * 2;
+        n = n + 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[64];
+    char *endptr;
+    long long num;
+
+    printf("Enter a number: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    errno = 0;
+    num = strtoll(buffer, &endptr, 10);
+
+    if (errno == ERANGE || endptr == buffer)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (*endptr != '\n' && *endptr != '\0')
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (is_woodall(num))
+    {
+        printf("%lld is a Woodall number.\n", num);
+    }
+    else
+    {
+        printf("%lld is not a Woodall number.\n", num);
+    }
+
+    return 0;
+}
+```

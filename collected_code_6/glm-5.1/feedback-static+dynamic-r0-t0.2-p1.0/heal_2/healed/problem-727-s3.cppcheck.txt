@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:70:21: style: Condition 'result1!=NULL' is always true [knownConditionTrueFalse]
+        if (result1 != NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:78:21: style: Condition 'result2!=NULL' is always true [knownConditionTrueFalse]
+        if (result2 != NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:86:21: style: Condition 'result3!=NULL' is always true [knownConditionTrueFalse]
+        if (result3 != NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:92:17: style: Condition 'result4==NULL' is always true [knownConditionTrueFalse]
+    if (result4 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:91:43: note: Calling function 'remove_non_alnum' returns 0
+    const char *result4 = remove_non_alnum(NULL);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:91:43: note: Assignment 'result4=remove_non_alnum(NULL)', assigned value is 0
+    const char *result4 = remove_non_alnum(NULL);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-727-s3.c:92:17: note: Condition 'result4==NULL' is always true
+    if (result4 == NULL) {
+                ^

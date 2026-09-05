@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_substring_present(const char *list[], size_t count, const char *substring) {
+    if (list == NULL || substring == NULL) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL && strstr(list[i], substring) != NULL) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    const char *strings[] = {
+        "hello world",
+        "foo bar",
+        "test string",
+        "example"
+    };
+    
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    
+    const char *substring = "world";
+    
+    if (is_substring_present(strings, count, substring)) {
+        printf("Substring '%s' found in the list.\n", substring);
+    } else {
+        printf("Substring '%s' not found in the list.\n", substring);
+    }
+    
+    return 0;
+}

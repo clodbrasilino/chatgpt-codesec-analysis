@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+
+char *find_last_occurrence(const char *str, int c) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    char *last = NULL;
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        if (str[i] == (char)c) {
+            last = (char *)&str[i];
+        }
+        i++;
+    }
+
+    if (c == '\0') {
+        return (char *)&str[i];
+    }
+
+    return last;
+}
+
+int main(void) {
+    const char *text = "hello world";
+    char target = 'o';
+
+    char *result = find_last_occurrence(text, target);
+
+    if (result != NULL) {
+        /* Possible weaknesses found:
+         *  %ld in format string (no. 2) requires 'long' but the argument type is 'ptrdiff_t {aka signed int}'. [invalidPrintfArgType_sint]
+         */
+        printf("Last occurrence of '%c' found at position %ld: %s\n", target, result - text, result);
+    } else {
+        printf("Character '%c' not found.\n", target);
+    }
+
+    return 0;
+}

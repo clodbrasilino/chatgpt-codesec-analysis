@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+Node *remove_empty_lists(Node *head) {
+    Node dummy;
+    dummy.next = head;
+    Node *prev = &dummy;
+    Node *curr = head;
+
+    while (curr != NULL) {
+        Node *next_node = curr->next;
+        if (curr->data == NULL) {
+            prev->next = next_node;
+            free(curr);
+        } else {
+            prev = curr;
+        }
+        curr = next_node;
+    }
+
+    return dummy.next;
+}
+
+Node *create_node(void *data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        Node *next_node = curr->next;
+        free(curr);
+        curr = next_node;
+    }
+}
+
+int main(void) {
+    Node *list1 = create_node((void *)0x1);
+    Node *list2 = create_node(NULL);
+    Node *list3 = create_node((void *)0x2);
+    Node *list4 = create_node(NULL);
+    Node *list5 = create_node((void *)0x3);
+
+    list1->next = list2;
+    list2->next = list3;
+    list3->next = list4;
+    list4->next = list5;
+
+    Node *head = list1;
+
+    head = remove_empty_lists(head);
+
+    Node *curr = head;
+    while (curr != NULL) {
+        printf("%p\n", curr->data);
+        curr = curr->next;
+    }
+
+    free_list(head);
+
+    return 0;
+}
+```

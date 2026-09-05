@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <complex.h>
+#include <math.h>
+
+double get_angle(double complex z) {
+    return carg(z);
+}
+
+int main(void) {
+    double complex z = 1.0 + 1.0 * I;
+    double angle = get_angle(z);
+    printf("Angle: %f radians\n", angle);
+    return 0;
+}

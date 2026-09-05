@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Node *subtract_lists(Node *list1, Node *list2) {
+    Node dummy;
+    dummy.next = NULL;
+    Node *tail = &dummy;
+    Node *p1 = list1;
+    Node *p2 = list2;
+
+    while (p1 != NULL && p2 != NULL) {
+        Node *new_node = create_node(p1->data - p2->data);
+        tail->next = new_node;
+        tail = new_node;
+        p1 = p1->next;
+        p2 = p2->next;
+    }
+
+    while (p1 != NULL) {
+        Node *new_node = create_node(p1->data);
+        tail->next = new_node;
+        tail = new_node;
+        p1 = p1->next;
+    }
+
+    while (p2 != NULL) {
+        Node *new_node = create_node(0 - p2->data);
+        tail->next = new_node;
+        tail = new_node;
+        p2 = p2->next;
+    }
+
+    return dummy.next;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node *list1 = create_node(10);
+    list1->next = create_node(20);
+    list1->next->next = create_node(30);
+    list1->next->next->next = create_node(40);
+
+    Node *list2 = create_node(5);
+    list2->next = create_node(15);
+    list2->next->next = create_node(25);
+
+    Node *result = subtract_lists(list1, list2);
+
+    print_list(result);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}

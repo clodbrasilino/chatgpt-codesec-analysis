@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+
+int max_sum_subarray_length(const int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    int max_sum = INT_MIN;
+    int max_length = 0;
+    int current_sum = 0;
+    int current_length = 0;
+    int i;
+
+    for (i = 0; i < n; i++) {
+        if (current_sum < 0) {
+            current_sum = arr[i];
+            current_length = 1;
+        } else {
+            if (arr[i] > 0 && current_sum > INT_MAX - arr[i]) {
+                current_sum = arr[i];
+                current_length = 1;
+            } else if (arr[i] < 0 && current_sum < INT_MIN - arr[i]) {
+                current_sum = arr[i];
+                current_length = 1;
+            } else {
+                current_sum += arr[i];
+                current_length++;
+            }
+        }
+
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            max_length = current_length;
+        }
+    }
+
+    return max_length;
+}
+
+int main(void) {
+    int arr[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+    int length;
+
+    length = max_sum_subarray_length(arr, n);
+
+    if (length >= 0) {
+        printf("Length of maximum sum subarray: %d\n", length);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

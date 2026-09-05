@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y)
+        return -1;
+    if (x > y)
+        return 1;
+    return 0;
+}
+
+int min_removals(int *arr, size_t n, int k)
+{
+    size_t i, j, max_keep;
+
+    if (arr == NULL || n == 0)
+        return 0;
+
+    qsort(arr, n, sizeof(int), compare);
+
+    max_keep = 1;
+    i = 0;
+
+    for (j = 1; j < n; j++) {
+        while (arr[j] - arr[i] > k)
+            i++;
+
+        if (j - i + 1 > max_keep)
+            max_keep = j - i + 1;
+    }
+
+    return (int)(n - max_keep);
+}
+
+int main(void)
+{
+    size_t n, i;
+    int k;
+    int *arr;
+    int result;
+
+    if (scanf("%zu", &n) != 1)
+        return 1;
+
+    if (n == 0) {
+        printf("0\n");
+        return 0;
+    }
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL)
+        return 1;
+
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return 1;
+        }
+    }
+
+    if (scanf("%d", &k) != 1) {
+        free(arr);
+        return 1;
+    }
+
+    if (k < 0) {
+        free(arr);
+        return 1;
+    }
+
+    result = min_removals(arr, n, k);
+    printf("%d\n", result);
+
+    free(arr);
+    return 0;
+}

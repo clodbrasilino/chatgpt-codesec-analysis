@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465.c:65:15: style: Variable 'val' can be declared as pointer to const [constVariablePointer]
+        char *val = dict->items[read_idx].value;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-465.c:94:17: style: Variable 'filtered' can be declared as pointer to const [constVariablePointer]
+    Dictionary *filtered = dictionary_drop_empty(dict);
+                ^

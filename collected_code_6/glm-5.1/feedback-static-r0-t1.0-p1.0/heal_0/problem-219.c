@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void extract_min_max_k(int *tuple, int size, int k, int **min_k, int **max_k) {
+    if (tuple == NULL || min_k == NULL || max_k == NULL) {
+        return;
+    }
+
+    if (size <= 0 || k <= 0 || k > size) {
+        *min_k = NULL;
+        *max_k = NULL;
+        return;
+    }
+
+    int *min_arr = (int *)malloc(k * sizeof(int));
+    int *max_arr = (int *)malloc(k * sizeof(int));
+
+    if (min_arr == NULL || max_arr == NULL) {
+        free(min_arr);
+        free(max_arr);
+        *min_k = NULL;
+        *max_k = NULL;
+        return;
+    }
+
+    int *sorted = (int *)malloc(size * sizeof(int));
+    if (sorted == NULL) {
+        free(min_arr);
+        free(max_arr);
+        *min_k = NULL;
+        *max_k = NULL;
+        return;
+    }
+
+    for (int i = 0; i < size; i++) {
+        sorted[i] = tuple[i];
+    }
+
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (sorted[j] > sorted[j + 1]) {
+                int temp = sorted[j];
+                sorted[j] = sorted[j + 1];
+                sorted[j + 1] = temp;
+            }
+        }
+    }
+
+    for (int i = 0; i < k; i++) {
+        min_arr[i] = sorted[i];
+        max_arr[i] = sorted[size - k + i];
+    }
+
+    free(sorted);
+
+    *min_k = min_arr;
+    *max_k = max_arr;
+}
+
+int main() {
+    int tuple[] = {12, 3, 5, 7, 19, 0, 8, 15};
+    int size = sizeof(tuple) / sizeof(tuple[0]);
+    int k = 3;
+    int *min_k = NULL;
+    int *max_k = NULL;
+
+    extract_min_max_k(tuple, size, k, &min_k, &max_k);
+
+    if (min_k != NULL && max_k != NULL) {
+        printf("Minimum %d elements: ", k);
+        for (int i = 0; i < k; i++) {
+            printf("%d ", min_k[i]);
+        }
+        printf("\n");
+
+        printf("Maximum %d elements: ", k);
+        for (int i = 0; i < k; i++) {
+            printf("%d ", max_k[i]);
+        }
+        printf("\n");
+
+        free(min_k);
+        free(max_k);
+    } else {
+        if (min_k) free(min_k);
+        if (max_k) free(max_k);
+    }
+
+    return 0;
+}

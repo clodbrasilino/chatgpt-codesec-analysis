@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+double distance(Point p1, Point p2) {
+    double dx = p2.x - p1.x;
+    double dy = p2.y - p1.y;
+    return sqrt(dx * dx + dy * dy);
+}
+
+bool isValidTriangle(Point p1, Point p2, Point p3) {
+    double a = distance(p1, p2);
+    double b = distance(p2, p3);
+    double c = distance(p1, p3);
+    
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return false;
+    }
+    
+    if (a + b <= c || a + c <= b || b + c <= a) {
+        return false;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    Point p1, p2, p3;
+    
+    printf("Enter coordinates of first point (x y): ");
+    if (scanf("%lf %lf", &p1.x, &p1.y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter coordinates of second point (x y): ");
+    if (scanf("%lf %lf", &p2.x, &p2.y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter coordinates of third point (x y): ");
+    if (scanf("%lf %lf", &p3.x, &p3.y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (isValidTriangle(p1, p2, p3)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *input)
+{
+    char *output;
+    size_t input_len;
+    size_t i;
+    size_t j;
+    int capitalize_next;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+    output = (char *)malloc(input_len + 1);
+    if (output == NULL) {
+        return NULL;
+    }
+
+    i = 0;
+    j = 0;
+    capitalize_next = 1;
+
+    while (i < input_len) {
+        if (input[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next && input[i] >= 'a' && input[i] <= 'z') {
+                output[j] = (char)(input[i] - 'a' + 'A');
+                capitalize_next = 0;
+            } else {
+                output[j] = input[i];
+                capitalize_next = 0;
+            }
+            j++;
+        }
+        i++;
+    }
+
+    output[j] = '\0';
+    return output;
+}
+
+int main(void)
+{
+    const char *input = "hello_world_this_is_c";
+    char *result = snake_to_camel(input);
+
+    if (result == NULL) {
+        return 1;
+    }
+
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}

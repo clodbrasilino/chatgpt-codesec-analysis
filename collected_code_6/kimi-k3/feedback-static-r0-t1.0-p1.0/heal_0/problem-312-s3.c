@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_cone_volume(double radius, double height) {
+    return (1.0 / 3.0) * M_PI * radius * radius * height;
+}
+
+int main(void) {
+    double radius, height;
+    
+    printf("Enter the radius of the cone: ");
+    if (scanf("%lf", &radius) != 1 || radius < 0) {
+        fprintf(stderr, "Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter the height of the cone: ");
+    if (scanf("%lf", &height) != 1 || height < 0) {
+        fprintf(stderr, "Invalid input for height\n");
+        return 1;
+    }
+    
+    printf("Volume of the cone: %.2f\n", calculate_cone_volume(radius, height));
+    
+    return 0;
+}

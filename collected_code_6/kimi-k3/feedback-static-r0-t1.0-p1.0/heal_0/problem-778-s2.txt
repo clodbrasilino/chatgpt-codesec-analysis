@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Sublist;
+
+typedef struct {
+    Sublist *sublists;
+    size_t count;
+} PackedList;
+
+PackedList pack_consecutive_duplicates(const int *arr, size_t n) {
+    PackedList result = {NULL, 0};
+    
+    if (arr == NULL || n == 0) {
+        return result;
+    }
+    
+    size_t capacity = 8;
+    result.sublists = (Sublist *)malloc(capacity * sizeof(Sublist));
+    if (result.sublists == NULL) {
+        return result;
+    }
+    
+    size_t i = 0;
+    while (i < n) {
+        size_t start = i;
+        int value = arr[i];
+        
+        while (i < n && arr[i] == value) {
+            i++;
+        }
+        
+        size_t sublist_size = i - start;
+        
+        if (result.count == capacity) {
+            capacity *= 2;
+            Sublist *temp = (Sublist *)realloc(result.sublists, capacity * sizeof(Sublist));
+            if (temp == NULL) {
+                for (size_t j = 0; j < result.count; j++) {
+                    free(result.sublists[j].data);
+                }
+                free(result.sublists);
+                result.sublists = NULL;
+                result.count = 0;
+                return result;
+            }
+            result.sublists = temp;
+        }
+        
+        result.sublists[result.count].data = (int *)malloc(sublist_size * sizeof(int));
+        if (result.sublists[result.count].data == NULL) {
+            for (size_t j = 0; j < result.count; j++) {
+                free(result.sublists[j].data);
+            }
+            free(result.sublists);
+            result.sublists = NULL;
+            result.count = 0;
+            return result;
+        }
+        
+        for (size_t j = 0; j < sublist_size; j++) {
+            result.sublists[result.count].data[j] = value;
+        }
+        result.sublists[result.count].size = sublist_size;
+        result.count++;
+    }
+    
+    return result;
+}
+
+void free_packed_list(PackedList *packed) {
+    if (packed == NULL || packed->sublists == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < packed->count; i++) {
+        free(packed->sublists[i].data);
+    }
+    free(packed->sublists);
+    packed->sublists = NULL;
+    packed->count = 0;
+}
+
+void print_packed_list(const PackedList *packed) {
+    if (packed == NULL || packed->sublists == NULL) {
+        printf("[]\n");
+        return;
+    }
+    
+    printf("[");
+    for (size_t i = 0; i < packed->count; i++) {
+        printf("[");
+        for (size_t j = 0; j < packed->sublists[i].size; j++) {
+            printf("%d", packed->sublists[i].data[j]);
+            if (j < packed->sublists[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i < packed->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    int arr[] = {1, 1, 2, 2, 2, 3, 1, 1, 4, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    printf("Original list: [");
+    for (size_t i = 0; i < n; i++) {
+        printf("%d", arr[i]);
+        if (i < n - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    
+    PackedList packed = pack_consecutive_duplicates(arr, n);
+    
+    if (packed.sublists == NULL && n > 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Packed list: ");
+    print_packed_list(&packed);
+    
+    free_packed_list(&packed);
+    
+    return EXIT_SUCCESS;
+}
+```

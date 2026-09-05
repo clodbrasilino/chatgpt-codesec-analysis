@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:19:9: error: use of undeclared identifier 'errno'
+   19 |         errno = EINVAL;
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:19:17: error: use of undeclared identifier 'EINVAL'
+   19 |         errno = EINVAL;
+      |                 ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:29:16: error: use of undeclared identifier 'EINVAL'
+   29 |         return EINVAL;
+      |                ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:37:16: error: use of undeclared identifier 'EINVAL'
+   37 |         return EINVAL;
+      |                ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:40:9: error: use of undeclared identifier 'errno'
+   40 |     if (errno == EINVAL || isnan(prob)) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:40:18: error: use of undeclared identifier 'EINVAL'
+   40 |     if (errno == EINVAL || isnan(prob)) {
+      |                  ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-486.c:42:16: error: use of undeclared identifier 'EINVAL'
+   42 |         return EINVAL;
+      |                ^~~~~~
+7 errors generated.

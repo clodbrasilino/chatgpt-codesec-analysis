@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double compute_value(const double *array, size_t length) {
+    if (array == NULL || length == 0) {
+        return 0.0;
+    }
+
+    double product = 1.0;
+
+    for (size_t i = 0; i < length; ++i) {
+        product *= array[i];
+    }
+
+    return product / (double)length;
+}
+
+int main(void) {
+    double numbers[] = {2.0, 4.0, 6.0, 8.0};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+    double result = compute_value(numbers, length);
+
+    printf("%f\n", result);
+
+    return 0;
+}
+```

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+typedef struct {
+    int id;
+    double value1;
+    double value2;
+    double value3;
+} TupleRecord;
+
+static int find_max_element(const TupleRecord *records, size_t count, double *max_result)
+{
+    size_t i;
+    double max_val;
+
+    if (records == NULL || max_result == NULL || count == 0) {
+        return -1;
+    }
+
+    max_val = records[0].value1;
+
+    if (records[0].value2 > max_val) {
+        max_val = records[0].value2;
+    }
+    if (records[0].value3 > max_val) {
+        max_val = records[0].value3;
+    }
+
+    for (i = 1; i < count; i++) {
+        if (records[i].value1 > max_val) {
+            max_val = records[i].value1;
+        }
+        if (records[i].value2 > max_val) {
+            max_val = records[i].value2;
+        }
+        if (records[i].value3 > max_val) {
+            max_val = records[i].value3;
+        }
+    }
+
+    *max_result = max_val;
+    return 0;
+}
+
+int main(void)
+{
+    TupleRecord *records = NULL;
+    size_t num_records = 0;
+    size_t i;
+    double max_element = 0.0;
+    int status;
+
+    printf("Enter the number of tuple records: ");
+    
+    if (scanf("%zu", &num_records) != 1) {
+        fprintf(stderr, "Error: Invalid input for number of records\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num_records == 0) {
+        fprintf(stderr, "Error: Number of records must be greater than zero\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num_records > SIZE_MAX / sizeof(TupleRecord)) {
+        fprintf(stderr, "Error: Number of records too large\n");
+        return EXIT_FAILURE;
+    }
+
+    records = malloc(num_records * sizeof(TupleRecord));
+    if (records == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_records; i++) {
+        printf("Enter record %zu (id value1 value2 value3): ", i + 1);
+        
+        if (scanf("%d %lf %lf %lf", 
+                  &records[i].id, 
+                  &records[i].value1, 
+                  &records[i].value2, 
+                  &records[i].value3) != 4) {
+            fprintf(stderr, "Error: Invalid input for record %zu\n", i + 1);
+            free(records);
+            records = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    status = find_max_element(records, num_records, &max_element);
+    
+    if (status != 0) {
+        fprintf(stderr, "Error: Failed to find maximum element\n");
+        free(records);
+        records = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum element across all records: %.2f\n", max_element);
+
+    free(records);
+    records = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int is_list;
+    union {
+        int value;
+        struct Node *child;
+    } data;
+    struct Node *next;
+} Node;
+
+Node *create_value_node(int val) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (!n) exit(EXIT_FAILURE);
+    n->is_list = 0;
+    n->data.value = val;
+    n->next = NULL;
+    return n;
+}
+
+Node *create_list_node(Node *child) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (!n) exit(EXIT_FAILURE);
+    n->is_list = 1;
+    n->data.child = child;
+    n->next = NULL;
+    return n;
+}
+
+int value_in_list(Node *head, int val) {
+    Node *curr = head;
+    while (curr) {
+        if (!curr->is_list) {
+            if (curr->data.value == val) return 1;
+        } else {
+            if (value_in_list(curr->data.child, val)) return 1;
+        }
+        curr = curr->next;
+    }
+    return 0;
+}
+
+Node *find_nested_elements(Node *list1, Node *list2) {
+    Node *result_head = NULL;
+    Node *result_tail = NULL;
+    Node *curr = list1;
+
+    while (curr) {
+        if (curr->is_list) {
+            Node *sub = curr->data.child;
+            while (sub) {
+                if (!sub->is_list) {
+                    if (value_in_list(list2, sub->data.value)) {
+                        Node *new_node = create_value_node(sub->data.value);
+                        if (!result_head) {
+                            result_head = new_node;
+                            result_tail = new_node;
+                        } else {
+                            result_tail->next = new_node;
+                            result_tail = new_node;
+                        }
+                    }
+                }
+                sub = sub->next;
+            }
+        }
+        curr = curr->next;
+    }
+    return result_head;
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr) {
+        Node *next = curr->next;
+        if (curr->is_list) {
+            free_list(curr->data.child);
+        }
+        free(curr);
+        curr = next;
+    }
+}
+
+void print_list(Node *head) {
+    Node *curr = head;
+    printf("[");
+    while (curr) {
+        if (curr->is_list) {
+            print_list(curr->data.child);
+        } else {
+            printf("%d", curr->data.value);
+        }
+        if (curr->next) printf(", ");
+        curr = curr->next;
+    }
+    printf("]");
+}
+
+int main(void) {
+    Node *l1_sub1 = create_value_node(1);
+    l1_sub1->next = create_value_node(2);
+    l1_sub1->next->next = create_value_node(3);
+    Node *l1_sub2 = create_value_node(4);
+    l1_sub2->next = create_value_node(5);
+    Node *l1 = create_list_node(l1_sub1);
+    l1->next = create_list_node(l1_sub2);
+
+    Node *l2 = create_value_node(2);
+    l2->next = create_value_node(4);
+    l2->next->next = create_value_node(6);
+
+    Node *result = find_nested_elements(l1, l2);
+
+    printf("List 1: ");
+    print_list(l1);
+    printf("\nList 2: ");
+    print_list(l2);
+    printf("\nIntersection from nested lists: ");
+    print_list(result);
+    printf("\n");
+
+    free_list(l1);
+    free_list(l2);
+    free_list(result);
+
+    return 0;
+}

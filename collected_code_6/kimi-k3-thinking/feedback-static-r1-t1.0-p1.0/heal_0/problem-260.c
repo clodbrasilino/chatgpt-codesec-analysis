@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <limits.h>
+
+int nth_newman_shanks_williams_prime(unsigned int n, uint64_t *result);
+
+static uint64_t add_mod(uint64_t a, uint64_t b, uint64_t m);
+static uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t m);
+static uint64_t pow_mod(uint64_t base, uint64_t exponent, uint64_t m);
+static int is_prime(uint64_t value);
+
+static uint64_t add_mod(uint64_t a, uint64_t b, uint64_t m)
+{
+    uint64_t sum = a + b;
+
+    if (sum >= m || sum < a)
+    {
+        sum -= m;
+    }
+
+    return sum;
+}
+
+static uint64_t mul_mod(uint64_t a, uint64_t b, uint64_t m)
+{
+    uint64_t product = 0ULL;
+    uint64_t factor = a % m;
+    uint64_t multiplier = b;
+
+    while (multiplier != 0ULL)
+    {
+        if ((multiplier & 1ULL) != 0ULL)
+        {
+            product = add_mod(product, factor, m);
+        }
+        factor = add_mod(factor, factor, m);
+        multiplier >>= 1;
+    }
+
+    return product;
+}
+
+static uint64_t pow_mod(uint64_t base, uint64_t exponent, uint64_t m)
+{
+    uint64_t result = 1ULL % m;
+    uint64_t power = base % m;
+
+    while (exponent != 0ULL)
+    {
+        if ((exponent & 1ULL) != 0ULL)
+        {
+            result = mul_mod(result, power, m);
+        }
+        power = mul_mod(power, power, m);
+        exponent >>= 1;
+    }
+
+    return result;
+}
+
+static int is_prime(uint64_t value)
+{
+    static const uint64_t bases[] = {
+        2ULL, 3ULL, 5ULL, 7ULL, 11ULL, 13ULL,
+        17ULL, 19ULL, 23ULL, 29ULL, 31ULL, 37ULL
+    };
+    const size_t base_count = sizeof(bases) / sizeof(bases[0]);
+    size_t i;
+    uint64_t d;
+    uint64_t r;
+
+    if (value < 2ULL)
+    {
+        return 0;
+    }
+
+    for (i = 0U; i < base_count; i++)
+    {
+        if (value == bases[i])
+        {
+            return 1;
+        }
+        if (value % bases[i] == 0ULL)
+        {
+            return 0;
+        }
+    }
+
+    d = value - 1ULL;
+    r = 0ULL;
+    while ((d & 1ULL) == 0ULL)
+    {
+        d >>= 1;
+        r++;
+    }
+
+    for (i = 0U; i < base_count; i++)
+    {
+        uint64_t x = pow_mod(bases[i], d, value);
+        uint64_t j;
+        int probable_composite = 1;
+
+        if (x == 1ULL || x == value - 1ULL)
+        {
+            continue;
+        }
+
+        for (j = 1ULL; j < r; j++)
+        {
+            x = mul_mod(x, x, value);
+            if (x == value - 1ULL)
+            {
+                probable_composite = 0;
+                break;
+            }
+        }
+
+        if (probable_composite)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int nth_newman_shanks_williams_prime(unsigned int n, uint64_t *result)
+{
+    uint64_t previous = 1ULL;
+    uint64_t current = 1ULL;
+    uint64_t index;
+    unsigned int found = 0U;
+
+    if (result == NULL || n == 0U)
+    {
+        return 0;
+    }
+
+    for (index = 2ULL; ; index++)
+    {
+        uint64_t next;
+
+        if (current > (UINT64_MAX - previous) / 2ULL)
+        {
+            return 0;
+        }
+
+        next = 2ULL * current + previous;
+        previous = current;
+        current = next;
+
+        if ((index & 1ULL) == 1ULL && is_prime(current))
+        {
+            found++;
+            if (found == n)
+            {
+                *result = current;
+                return 1;
+            }
+        }
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    char *end = NULL;
+    unsigned long parsed;
+    uint64_t prime = 0ULL;
+
+    if (argc != 2)
+    {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (argv[1][0] == '-')
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    parsed = strtoul(argv[1], &end, 10);
+    if (errno != 0 || end == argv[1] || *end != '\0' ||
+        parsed == 0UL || parsed > (unsigned long)UINT_MAX)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (nth_newman_shanks_williams_prime((unsigned int)parsed, &prime) == 0)
+    {
+        fprintf(stderr, "Error: the requested Newman-Shanks-Williams prime exceeds 64-bit range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%" PRIu64 "\n", prime);
+    return EXIT_SUCCESS;
+}

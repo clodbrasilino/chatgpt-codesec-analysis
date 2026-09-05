@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} Frequency;
+
+Frequency* count_consecutive_duplicates(const int* arr, size_t size, size_t* out_size) {
+    if (arr == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    if (size == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    Frequency* result = malloc(size * sizeof(Frequency));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t res_index = 0;
+    result[res_index].value = arr[0];
+    result[res_index].count = 1;
+
+    for (size_t i = 1; i < size; ++i) {
+        if (arr[i] == result[res_index].value) {
+            result[res_index].count += 1;
+        } else {
+            res_index += 1;
+            result[res_index].value = arr[i];
+            result[res_index].count = 1;
+        }
+    }
+
+    *out_size = res_index + 1;
+
+    Frequency* resized_result = realloc(result, *out_size * sizeof(Frequency));
+    if (resized_result != NULL) {
+        result = resized_result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, 1, 1, 2, 2, 3, 4, 4, 4, 4, 5, 5, 1};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t out_size = 0;
+
+    Frequency* freqs = count_consecutive_duplicates(arr, size, &out_size);
+
+    if (freqs != NULL) {
+        for (size_t i = 0; i < out_size; ++i) {
+            printf("Value: %d, Consecutive Count: %d\n", freqs[i].value, freqs[i].count);
+        }
+        free(freqs);
+    }
+
+    return 0;
+}

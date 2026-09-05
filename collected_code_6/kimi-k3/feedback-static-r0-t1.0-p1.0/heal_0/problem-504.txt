@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+long long cube_sum(int n)
+{
+    if (n <= 0) {
+        return 0;
+    }
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        if (sum > LLONG_MAX - (long long)i * i * i) {
+            return -1;
+        }
+        sum += (long long)i * i * i;
+    }
+    return sum;
+}
+
+int main(void)
+{
+    int n;
+    if (scanf("%d", &n) != 1 || n < 0) {
+        return 1;
+    }
+    long long result = cube_sum(n);
+    if (result == -1) {
+        return 1;
+    }
+    printf("%lld\n", result);
+    return 0;
+}
+```

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-102-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-102-s2.c:70:9: style: Condition 'null_check_result' is always true [knownConditionTrueFalse]
+    if (null_check_result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-102-s2.c:69:44: note: Calling function 'snake_to_camel' returns 0
+    int null_check_result = (snake_to_camel(NULL) == NULL);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-102-s2.c:69:51: note: Assignment 'null_check_result=snake_to_camel(NULL)==NULL', assigned value is 1
+    int null_check_result = (snake_to_camel(NULL) == NULL);
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-102-s2.c:70:9: note: Condition 'null_check_result' is always true
+    if (null_check_result) {
+        ^

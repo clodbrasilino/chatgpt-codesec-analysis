@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} Element;
+
+int iterate_repeated(const Element *elements, size_t num_elements, int **result, size_t *result_size) {
+    size_t total_count = 0;
+    size_t i, j;
+    size_t index = 0;
+    int *output;
+
+    if (elements == NULL || result == NULL || result_size == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < num_elements; i++) {
+        if (elements[i].count > SIZE_MAX - total_count) {
+            return -1;
+        }
+        total_count += elements[i].count;
+    }
+
+    if (total_count == 0) {
+        *result = NULL;
+        *result_size = 0;
+        return 0;
+    }
+
+    if (total_count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    output = malloc(total_count * sizeof(int));
+    if (output == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < num_elements; i++) {
+        for (j = 0; j < elements[i].count; j++) {
+            output[index++] = elements[i].value;
+        }
+    }
+
+    *result = output;
+    *result_size = total_count;
+    return 0;
+}
+
+int main(void) {
+    Element elements[] = {
+        {1, 2},
+        {2, 3},
+        {3, 1}
+    };
+    size_t num_elements = sizeof(elements) / sizeof(elements[0]);
+    int *result = NULL;
+    size_t result_size = 0;
+    size_t i;
+    int status;
+
+    status = iterate_repeated(elements, num_elements, &result, &result_size);
+    if (status != 0) {
+        fprintf(stderr, "Error: Failed to process elements\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

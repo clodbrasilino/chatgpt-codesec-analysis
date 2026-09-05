@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int gcd(unsigned int a, unsigned int b) {
+    while (b != 0U) {
+        unsigned int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int main(void) {
+    unsigned int num1 = 0U;
+    unsigned int num2 = 0U;
+    int result = 0;
+
+    (void)printf("Enter two positive integers: ");
+    result = scanf("%u %u", &num1, &num2);
+
+    if (result != 2) {
+        (void)fprintf(stderr, "Error: Invalid input format\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((num1 == 0U) || (num2 == 0U)) {
+        (void)fprintf(stderr, "Error: Both numbers must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("GCD: %u\n", gcd(num1, num2));
+
+    return EXIT_SUCCESS;
+}

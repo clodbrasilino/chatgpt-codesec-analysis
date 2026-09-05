@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_adjacent_product(const int *array, size_t size) {
+    if (array == NULL || size < 2) {
+        return 0;
+    }
+
+    long long max_product = (long long)array[0] * array[1];
+
+    for (size_t i = 1; i < size - 1; ++i) {
+        long long current_product = (long long)array[i] * array[i + 1];
+        if (current_product > max_product) {
+            max_product = current_product;
+        }
+    }
+
+    if (max_product < INT_MIN || max_product > INT_MAX) {
+        return 0;
+    }
+
+    return (int)max_product;
+}
+
+int main(void) {
+    int arr1[] = {3, 6, -2, -5, 7, 3};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%d\n", max_adjacent_product(arr1, size1));
+
+    int arr2[] = {INT_MAX, INT_MAX};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%d\n", max_adjacent_product(arr2, size2));
+
+    return 0;
+}
+```

@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+#include <ctype.h>
+
+int find_shortest_word_length(const char *str) {
+    int min_length = INT_MAX;
+    int current_length = 0;
+    
+    if (str == NULL) {
+        return -1;
+    }
+    
+    while (*str != '\0') {
+        if (isspace((unsigned char)*str)) {
+            if (current_length > 0) {
+                if (current_length < min_length) {
+                    min_length = current_length;
+                }
+                current_length = 0;
+            }
+        } else {
+            current_length++;
+        }
+        str++;
+    }
+    
+    if (current_length > 0 && current_length < min_length) {
+        min_length = current_length;
+    }
+    
+    return (min_length == INT_MAX) ? 0 : min_length;
+}
+
+int main(void) {
+    const char *test_string = "The quick brown fox jumps over the lazy dog";
+    int result = find_shortest_word_length(test_string);
+    
+    if (result >= 0) {
+        printf("Shortest word length: %d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+    
+    return 0;
+}

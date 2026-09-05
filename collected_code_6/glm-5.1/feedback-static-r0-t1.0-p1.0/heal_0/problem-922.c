@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int* find_max_product_pair(const int* arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return NULL;
+    }
+
+    int max1 = INT_MIN;
+    int max2 = INT_MIN;
+    int min1 = INT_MAX;
+    int min2 = INT_MAX;
+
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] > max1) {
+            max2 = max1;
+            max1 = arr[i];
+        } else if (arr[i] > max2) {
+            max2 = arr[i];
+        }
+
+        if (arr[i] < min1) {
+            min2 = min1;
+            min1 = arr[i];
+        } else if (arr[i] < min2) {
+            min2 = arr[i];
+        }
+    }
+
+    int* result = (int*)malloc(2 * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if ((long long)max1 * max2 >= (long long)min1 * min2) {
+        result[0] = max1;
+        result[1] = max2;
+    } else {
+        result[0] = min1;
+        result[1] = min2;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, -4, 3, -6, 7, 0};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int* pair = find_max_product_pair(arr, size);
+    if (pair != NULL) {
+        printf("Pair with highest product: %d and %d\n", pair[0], pair[1]);
+        free(pair);
+    } else {
+        printf("Array must contain at least two elements.\n");
+    }
+
+    return 0;
+}

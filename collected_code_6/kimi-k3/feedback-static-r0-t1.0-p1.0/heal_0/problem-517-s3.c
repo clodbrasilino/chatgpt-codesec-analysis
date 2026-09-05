@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int find_largest_positive(const int *numbers, size_t count, int *result)
+{
+    size_t i;
+    int found = 0;
+
+    if (numbers == NULL || result == NULL || count == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (numbers[i] > 0) {
+            if (!found || numbers[i] > *result) {
+                *result = numbers[i];
+                found = 1;
+            }
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = {3, -5, 12, 0, 7, -2, 9};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int largest;
+
+    if (find_largest_positive(numbers, count, &largest)) {
+        printf("Largest positive number: %d\n", largest);
+    } else {
+        printf("No positive numbers found in the list.\n");
+    }
+
+    return 0;
+}

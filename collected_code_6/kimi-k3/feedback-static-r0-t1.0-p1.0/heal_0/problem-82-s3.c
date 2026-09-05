@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <math.h>
+
+double sphere_volume(double radius) {
+    return (4.0 / 3.0) * M_PI * radius * radius * radius;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double volume = 0.0;
+
+    printf("Enter the radius of the sphere: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Radius must be non-negative.\n");
+        return 1;
+    }
+
+    volume = sphere_volume(radius);
+    printf("Volume of the sphere: %.6f\n", volume);
+
+    return 0;
+}

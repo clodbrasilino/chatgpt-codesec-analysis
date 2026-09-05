@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+int recursion_list_sum(struct Node *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    return head->data + recursion_list_sum(head->next);
+}
+
+int main(void) {
+    struct Node *head = malloc(sizeof(struct Node));
+    struct Node *second = malloc(sizeof(struct Node));
+    struct Node *third = malloc(sizeof(struct Node));
+
+    if (head == NULL || second == NULL || third == NULL) {
+        free(head);
+        free(second);
+        free(third);
+        return 1;
+    }
+
+    head->data = 10;
+    head->next = second;
+
+    second->data = 20;
+    second->next = third;
+
+    third->data = 30;
+    third->next = NULL;
+
+    int total = recursion_list_sum(head);
+    printf("%d\n", total);
+
+    free(head);
+    free(second);
+    free(third);
+
+    return 0;
+}
+```

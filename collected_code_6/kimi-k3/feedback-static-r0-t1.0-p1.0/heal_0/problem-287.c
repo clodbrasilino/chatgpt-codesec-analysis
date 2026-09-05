@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <limits.h>
+
+int sum_of_squares(int n, unsigned long long *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    if (n < 0) {
+        return -1;
+    }
+    if (n > 0 && (unsigned long long)n > (ULLONG_MAX / 4) / (unsigned long long)n / (unsigned long long)(2 * n + 1)) {
+        return -1;
+    }
+    
+    *result = 0;
+    for (int i = 1; i <= n; i++) {
+        unsigned long long even = 2ULL * (unsigned long long)i;
+        *result += even * even;
+    }
+    return 0;
+}
+
+int main(void) {
+    int n;
+    unsigned long long result;
+    
+    printf("Enter the number of even natural numbers: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (sum_of_squares(n, &result) != 0) {
+        fprintf(stderr, "Invalid input or overflow detected\n");
+        return 1;
+    }
+    
+    printf("Sum of squares of first %d even natural numbers: %llu\n", n, result);
+    
+    return 0;
+}

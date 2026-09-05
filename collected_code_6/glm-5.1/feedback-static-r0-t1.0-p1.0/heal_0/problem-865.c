@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef void (*MapFunc)(int);
+
+void map(const int *list, size_t size, MapFunc func) {
+    if (list == NULL || func == NULL || size == 0) {
+        return;
+    }
+    for (size_t i = 0; i < size; i++) {
+        func(list[i]);
+    }
+}
+
+void print_item(int item) {
+    printf("%d ", item);
+}
+
+void print_n_times(const int *list, size_t size, size_t n) {
+    if (list == NULL || size == 0) {
+        return;
+    }
+    for (size_t i = 0; i < n; i++) {
+        map(list, size, print_item);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    size_t n = 3;
+    
+    print_n_times(list, size, n);
+    
+    return 0;
+}

@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-933.c: In function 'camel_to_snake':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-933.c:10:18: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   10 |     size_t len = strlen(camel_str);
+      |                  ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-933.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <ctype.h>
+  +++ |+#include <string.h>
+    4 | 

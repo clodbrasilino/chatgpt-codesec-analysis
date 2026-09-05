@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-405-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-405-s2.c:51:9: style: Condition 'contains_in_null' is always false [knownConditionTrueFalse]
+    if (contains_in_null) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-405-s2.c:50:43: note: Calling function 'tuple_contains' returns 0
+    bool contains_in_null = tuple_contains(null_tuple_ptr, target_exists);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-405-s2.c:50:43: note: Assignment 'contains_in_null=tuple_contains(null_tuple_ptr,target_exists)', assigned value is 0
+    bool contains_in_null = tuple_contains(null_tuple_ptr, target_exists);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_5/healed/problem-405-s2.c:51:9: note: Condition 'contains_in_null' is always false
+    if (contains_in_null) {
+        ^

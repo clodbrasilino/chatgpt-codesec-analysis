@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+double average_of_cubes(unsigned int n)
+{
+    if (n == 0) {
+        return 0.0;
+    }
+    
+    double sum = 0.0;
+    for (unsigned int i = 1; i <= n; i++) {
+        sum += (double)i * (double)i * (double)i;
+    }
+    
+    return sum / (double)n;
+}
+
+int main(void)
+{
+    char input[256];
+    char *endptr;
+    long value;
+    unsigned int n;
+    double result;
+    
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    value = strtol(input, &endptr, 10);
+    
+    if (errno != 0 || endptr == input || (*endptr != '\n' && *endptr != '\0')) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (value < 0 || (unsigned long)value > UINT_MAX) {
+        fprintf(stderr, "Input out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    n = (unsigned int)value;
+    result = average_of_cubes(n);
+    
+    printf("%.6f\n", result);
+    
+    return EXIT_SUCCESS;
+}

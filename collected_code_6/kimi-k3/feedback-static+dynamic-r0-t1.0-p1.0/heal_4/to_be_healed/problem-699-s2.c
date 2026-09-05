@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'Not Possible', got -1
+  */
+
+int min_swaps(const char *str1, const char *str2) {
+    int len = strlen(str1);
+    if (len != (int)strlen(str2)) {
+        return -1;
+    }
+
+    int count0_str1 = 0, count1_str1 = 0;
+    int count0_str2 = 0, count1_str2 = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (str1[i] == '0') count0_str1++;
+        else if (str1[i] == '1') count1_str1++;
+        else return -1;
+
+        if (str2[i] == '0') count0_str2++;
+        else if (str2[i] == '1') count1_str2++;
+        else return -1;
+    }
+
+    if (count0_str1 != count0_str2 || count1_str1 != count1_str2) {
+        return -1;
+    }
+
+    int swaps = 0;
+    for (int i = 0; i < len; i++) {
+        if (str1[i] != str2[i]) {
+            swaps++;
+        }
+    }
+
+    return swaps / 2;
+}
+
+int main() {
+    char str1[100], str2[100];
+    
+    if (scanf("%99s", str1) != 1) {
+        printf("Not Possible\n");
+        return 0;
+    }
+    if (scanf("%99s", str2) != 1) {
+        printf("Not Possible\n");
+        return 0;
+    }
+
+    int result = min_swaps(str1, str2);
+    if (result == -1) {
+        printf("Not Possible\n");
+    } else {
+        printf("%d\n", result);
+    }
+
+    return 0;
+}

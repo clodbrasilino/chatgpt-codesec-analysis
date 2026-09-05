@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int sum_tuple(const Tuple *t) {
+    int sum = 0;
+    size_t i;
+    if (t == NULL || t->elements == NULL) {
+        return 0;
+    }
+    for (i = 0; i < t->size; i++) {
+        sum += t->elements[i];
+    }
+    return sum;
+}
+
+int main(void) {
+    Tuple tuples[3];
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5};
+    int data3[] = {6, 7, 8, 9};
+    size_t i;
+    int total = 0;
+
+    tuples[0].elements = data1;
+    tuples[0].size = sizeof(data1) / sizeof(data1[0]);
+
+    tuples[1].elements = data2;
+    tuples[1].size = sizeof(data2) / sizeof(data2[0]);
+
+    tuples[2].elements = data3;
+    tuples[2].size = sizeof(data3) / sizeof(data3[0]);
+
+    for (i = 0; i < 3; i++) {
+        total += sum_tuple(&tuples[i]);
+    }
+
+    printf("Total sum: %d\n", total);
+    return 0;
+}

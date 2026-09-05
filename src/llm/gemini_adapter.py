@@ -29,11 +29,19 @@ class GeminiClient:
         gen_config = genai_types.GenerateContentConfig(
             max_output_tokens=max_tokens,
         )
-        if thinking:
-            gen_config.thinking_config = genai_types.ThinkingConfig(
-                include_thoughts=True
-            )
-        else:
+        # Gemini 3.x controls reasoning depth via thinking_level
+        # (low / medium / high; verified 2026-09-05, google-genai 2.20.0).
+        # The registry pins the level per variant in cfg.extra_body —
+        # there is no "off" for Gemini 3.x Pro: base runs "low".
+        level = (self.cfg.extra_body or {}).get("thinking_level")
+        if thinking or level:
+            tc_kwargs: dict = {}
+            if level:
+                tc_kwargs["thinking_level"] = level
+            if thinking:
+                tc_kwargs["include_thoughts"] = True
+            gen_config.thinking_config = genai_types.ThinkingConfig(**tc_kwargs)
+        if not thinking:
             gen_config.temperature = temperature
             gen_config.top_p = top_p
 

@@ -1,0 +1,214 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+int dict_init(Dictionary *dict, size_t initial_capacity) {
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    dict->entries = calloc(initial_capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->entries[i].key);
+            free(dict->entries[i].value);
+        }
+        free(dict->entries);
+    }
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int dict_resize(Dictionary *dict) {
+    DictEntry *new_entries;
+    size_t new_capacity;
+    
+    if (dict == NULL) {
+        return -1;
+    }
+    
+    new_capacity = dict->capacity * 2;
+    new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+    if (new_entries == NULL) {
+        return -1;
+    }
+    
+    dict->entries = new_entries;
+    dict->capacity = new_capacity;
+    return 0;
+}
+
+int dict_add(Dictionary *dict, const char *key, const char *value) {
+    char *new_key;
+    char *new_value;
+    
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    
+    if (dict->size >= dict->capacity) {
+        if (dict_resize(dict) != 0) {
+            return -1;
+        }
+    }
+    
+    new_key = malloc(strlen(key) + 1);
+    if (new_key == NULL) {
+        return -1;
+    }
+    strcpy(new_key, key);
+    
+    new_value = malloc(strlen(value) + 1);
+    if (new_value == NULL) {
+        free(new_key);
+        return -1;
+    }
+    strcpy(new_value, value);
+    
+    dict->entries[dict->size].key = new_key;
+    dict->entries[dict->size].value = new_value;
+    dict->size++;
+    
+    return 0;
+}
+
+int dict_find(const Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return (int)i;
+        }
+    }
+    return -1;
+}
+
+int merge_dicts(Dictionary *result, const Dictionary *dict1, 
+                const Dictionary *dict2, const Dictionary *dict3) {
+    const Dictionary *dicts[3];
+    
+    if (result == NULL || dict1 == NULL || dict2 == NULL || dict3 == NULL) {
+        return -1;
+    }
+    
+    dicts[0] = dict1;
+    dicts[1] = dict2;
+    dicts[2] = dict3;
+    
+    for (int d = 0; d < 3; d++) {
+        for (size_t i = 0; i < dicts[d]->size; i++) {
+            if (dict_find(result, dicts[d]->entries[i].key) < 0) {
+                if (dict_add(result, dicts[d]->entries[i].key, 
+                            dicts[d]->entries[i].value) != 0) {
+                    return -1;
+                }
+            }
+        }
+    }
+    
+    return 0;
+}
+
+void dict_print(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    printf("{");
+    for (size_t i = 0; i < dict->size; i++) {
+        printf("\"%s\": \"%s\"", dict->entries[i].key, dict->entries[i].value);
+        if (i < dict->size - 1) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void) {
+    Dictionary dict1, dict2, dict3, merged;
+    int status = 0;
+    
+    if (dict_init(&dict1, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dict1\n");
+        return 1;
+    }
+    if (dict_init(&dict2, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dict2\n");
+        dict_free(&dict1);
+        return 1;
+    }
+    if (dict_init(&dict3, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dict3\n");
+        dict_free(&dict1);
+        dict_free(&dict2);
+        return 1;
+    }
+    if (dict_init(&merged, 8) != 0) {
+        fprintf(stderr, "Failed to initialize merged\n");
+        dict_free(&dict1);
+        dict_free(&dict2);
+        dict_free(&dict3);
+        return 1;
+    }
+    
+    if (dict_add(&dict1, "name", "John") != 0 ||
+        dict_add(&dict1, "age", "30") != 0) {
+        fprintf(stderr, "Failed to add to dict1\n");
+        status = 1;
+        goto cleanup;
+    }
+    
+    if (dict_add(&dict2, "city", "New York") != 0 ||
+        dict_add(&dict2, "country", "USA") != 0) {
+        fprintf(stderr, "Failed to add to dict2\n");
+        status = 1;
+        goto cleanup;
+    }
+    
+    if (dict_add(&dict3, "occupation", "Engineer") != 0 ||
+        dict_add(&dict3, "salary", "75000") != 0) {
+        fprintf(stderr, "Failed to add to dict3\n");
+        status = 1;
+        goto cleanup;
+    }
+    
+    if (merge_dicts(&merged, &dict1, &dict2, &dict3) != 0) {
+        fprintf(stderr, "Failed to merge dictionaries\n");
+        status = 1;
+        goto cleanup;
+    }
+    
+    printf("Merged dictionary: ");
+    dict_print(&merged);
+
+cleanup:
+    dict_free(&dict1);
+    dict_free(&dict2);
+    dict_free(&dict3);
+    dict_free(&merged);
+    
+    return status;
+}

@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} IntList;
+
+size_t remove_empty_lists(IntList *lists, size_t count)
+{
+    size_t read_idx;
+    size_t write_idx = 0;
+    size_t new_count;
+
+    if (lists == NULL) {
+        return 0;
+    }
+
+    for (read_idx = 0; read_idx < count; read_idx++) {
+        if (lists[read_idx].elements != NULL && lists[read_idx].length > 0) {
+            if (write_idx != read_idx) {
+                lists[write_idx] = lists[read_idx];
+            }
+            write_idx++;
+        } else {
+            free(lists[read_idx].elements);
+        }
+    }
+
+    new_count = write_idx;
+
+    while (write_idx < count) {
+        lists[write_idx].elements = NULL;
+        lists[write_idx].length = 0;
+        write_idx++;
+    }
+
+    return new_count;
+}
+
+static IntList create_list(const int *values, size_t length)
+{
+    IntList list;
+    size_t i;
+
+    list.elements = NULL;
+    list.length = 0;
+
+    if (values == NULL || length == 0) {
+        return list;
+    }
+
+    list.elements = malloc(length * sizeof(*list.elements));
+    if (list.elements == NULL) {
+        return list;
+    }
+
+    for (i = 0; i < length; i++) {
+        list.elements[i] = values[i];
+    }
+    list.length = length;
+
+    return list;
+}
+
+static void print_lists(const IntList *lists, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL) {
+        printf("[]\n");
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < count; i++) {
+        printf("[");
+        for (j = 0; j < lists[i].length; j++) {
+            printf("%d", lists[i].elements[j]);
+            if (j + 1 < lists[i].length) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1 < count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+static void free_lists(IntList *lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(lists[i].elements);
+        lists[i].elements = NULL;
+        lists[i].length = 0;
+    }
+
+    free(lists);
+}
+
+int main(void)
+{
+    int values1[] = {1, 2, 3};
+    int values3[] = {4, 5};
+    int values5[] = {6};
+    const size_t count = 5;
+    size_t new_count;
+    IntList *lists;
+
+    lists = calloc(count, sizeof(*lists));
+    if (lists == NULL) {
+        fprintf(stderr, "Failed to allocate memory for list of lists\n");
+        return EXIT_FAILURE;
+    }
+
+    lists[0] = create_list(values1, 3);
+    lists[1] = create_list(NULL, 0);
+    lists[2] = create_list(values3, 2);
+    lists[3] = create_list(NULL, 0);
+    lists[4] = create_list(values5, 1);
+
+    if (lists[0].length != 3 || lists[2].length != 2 || lists[4].length != 1) {
+        fprintf(stderr, "Failed to allocate memory for sublist\n");
+        free_lists(lists, count);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list of lists: ");
+    print_lists(lists, count);
+
+    new_count = remove_empty_lists(lists, count);
+
+    printf("After removing empty lists: ");
+    print_lists(lists, new_count);
+
+    free_lists(lists, count);
+
+    return EXIT_SUCCESS;
+}
+```

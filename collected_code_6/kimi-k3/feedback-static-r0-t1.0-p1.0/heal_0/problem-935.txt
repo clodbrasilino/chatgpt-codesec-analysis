@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long calculate_sum_of_squares(unsigned int n)
+{
+    unsigned long long sum = 0;
+    unsigned long long i;
+    
+    for (i = 1; i <= n; i++)
+    {
+        if (i > 0 && sum > ULLONG_MAX - (i * i))
+        {
+            return ULLONG_MAX;
+        }
+        sum += i * i;
+    }
+    
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long result;
+    
+    printf("Enter a positive integer: ");
+    
+    if (scanf("%u", &n) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = calculate_sum_of_squares(n);
+    
+    printf("Sum of squares from 1 to %u = %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

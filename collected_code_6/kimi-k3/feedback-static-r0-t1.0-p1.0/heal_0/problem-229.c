@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void rearrange(int *arr, size_t n)
+{
+    if (arr == NULL || n == 0) {
+        return;
+    }
+
+    int *temp = malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return;
+    }
+
+    size_t idx = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] < 0) {
+            temp[idx++] = arr[i];
+        }
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] >= 0) {
+            temp[idx++] = arr[i];
+        }
+    }
+
+    memcpy(arr, temp, n * sizeof(int));
+    free(temp);
+}
+
+int main(void)
+{
+    int arr[] = {12, -3, 5, -7, -1, 8, -4, 0, 6, -9};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array:\n");
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    rearrange(arr, n);
+
+    printf("Rearranged array:\n");
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

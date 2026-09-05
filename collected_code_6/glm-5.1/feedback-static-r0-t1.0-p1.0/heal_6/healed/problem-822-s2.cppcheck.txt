@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-822-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-822-s2.c:60:55: style: Condition 'null_result' is always false [knownConditionTrueFalse]
+    printf("Password: %-15s Valid: %s\n", "null_ptr", null_result ? "true" : "false");
+                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-822-s2.c:59:36: note: Calling function 'is_valid_password' returns 0
+    null_result = is_valid_password(NULL);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-822-s2.c:59:36: note: Assignment 'null_result=is_valid_password(NULL)', assigned value is 0
+    null_result = is_valid_password(NULL);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-822-s2.c:60:55: note: Condition 'null_result' is always false
+    printf("Password: %-15s Valid: %s\n", "null_ptr", null_result ? "true" : "false");
+                                                      ^

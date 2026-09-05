@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+double babylonian_sqrt(double x, int *status)
+{
+    double guess;
+    double prev_guess;
+    int iterations = 0;
+    const int max_iterations = 1000;
+    const double epsilon = DBL_EPSILON * 10.0;
+
+    if (status == NULL) {
+        return -1.0;
+    }
+
+    if (x < 0.0) {
+        *status = EDOM;
+        return -1.0;
+    }
+
+    if (x == 0.0) {
+        *status = 0;
+        return 0.0;
+    }
+
+    if (x == 1.0) {
+        *status = 0;
+        return 1.0;
+    }
+
+    guess = x / 2.0;
+    prev_guess = 0.0;
+
+    while (iterations < max_iterations) {
+        prev_guess = guess;
+        guess = (guess + x / guess) / 2.0;
+
+        if (fabs(guess - prev_guess) < epsilon) {
+            *status = 0;
+            return guess;
+        }
+
+        iterations++;
+    }
+
+    *status = 0;
+    return guess;
+}
+
+int main(void)
+{
+    double numbers[] = {0.0, 1.0, 4.0, 9.0, 16.0, 25.0, 2.0, 10.0, 100.0, -5.0};
+    int num_tests = sizeof(numbers) / sizeof(numbers[0]);
+    int i;
+    int status;
+    double result;
+
+    for (i = 0; i < num_tests; i++) {
+        status = 0;
+        result = babylonian_sqrt(numbers[i], &status);
+
+        if (status == EDOM) {
+            printf("sqrt(%.2f) = Error: negative input\n", numbers[i]);
+        } else {
+            printf("sqrt(%.2f) = %.10f\n", numbers[i], result);
+        }
+    }
+
+    return 0;
+}

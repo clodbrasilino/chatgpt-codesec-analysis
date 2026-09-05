@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    long long res = 1;
+    for (int i = 1; i <= k; i++) {
+        if (res > (res * (n - k + i)) / i) {
+            return -1;
+        }
+        res = res * (n - k + i) / i;
+    }
+    return res;
+}
+
+long long sum_of_squares_of_binomial_coefficients(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    long long sum = 0;
+    for (int k = 0; k <= n; k++) {
+        long long c = binomial_coefficient(n, k);
+        if (c < 0) {
+            return -1;
+        }
+        sum += c * c;
+        if (sum < 0) {
+            return -1;
+        }
+    }
+    return sum;
+}
+
+int main(int argc, char const * const * argv) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return 1;
+    }
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || val < 0 || val > 30) {
+        fprintf(stderr, "Error: n must be a non-negative integer <= 30\n");
+        return 1;
+    }
+    int n = (int)val;
+    long long result = sum_of_squares_of_binomial_coefficients(n);
+    if (result < 0) {
+        fprintf(stderr, "Error: Arithmetic overflow detected\n");
+        return 1;
+    }
+    printf("%lld\n", result);
+    return 0;
+}

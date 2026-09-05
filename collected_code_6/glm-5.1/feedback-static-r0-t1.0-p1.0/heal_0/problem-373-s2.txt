@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_cuboid_volume(double length, double width, double height) {
+    if (length <= 0.0 || width <= 0.0 || height <= 0.0) {
+        fprintf(stderr, "Invalid dimensions\n");
+        exit(EXIT_FAILURE);
+    }
+    return length * width * height;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <length> <width> <height>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr_l, *endptr_w, *endptr_h;
+    double length = strtod(argv[1], &endptr_l);
+    double width = strtod(argv[2], &endptr_w);
+    double height = strtod(argv[3], &endptr_h);
+
+    if (*endptr_l != '\0' || *endptr_w != '\0' || *endptr_h != '\0') {
+        fprintf(stderr, "Invalid numeric input\n");
+        return EXIT_FAILURE;
+    }
+
+    double volume = calculate_cuboid_volume(length, width, height);
+    printf("%f\n", volume);
+
+    return EXIT_SUCCESS;
+}
+```

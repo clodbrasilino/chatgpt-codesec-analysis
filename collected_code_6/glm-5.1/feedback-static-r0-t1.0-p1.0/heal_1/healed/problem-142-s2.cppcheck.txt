@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:29:16: style: Condition 'size_a==0' is always false [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:25:28: note: Assignment 'size_a=sizeof(a)/sizeof(a[0])', assigned value is 3
+    int size_a = sizeof(a) / sizeof(a[0]);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:29:16: note: Condition 'size_a==0' is always false
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:29:31: style: Condition 'size_b==0' is always false [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:26:28: note: Assignment 'size_b=sizeof(b)/sizeof(b[0])', assigned value is 3
+    int size_b = sizeof(b) / sizeof(b[0]);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:29:31: note: Condition 'size_b==0' is always false
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:29:46: style: Condition 'size_c==0' is always false [knownConditionTrueFalse]
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:27:28: note: Assignment 'size_c=sizeof(c)/sizeof(c[0])', assigned value is 3
+    int size_c = sizeof(c) / sizeof(c[0]);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142-s2.c:29:46: note: Condition 'size_c==0' is always false
+    if (size_a == 0 || size_b == 0 || size_c == 0) {
+                                             ^

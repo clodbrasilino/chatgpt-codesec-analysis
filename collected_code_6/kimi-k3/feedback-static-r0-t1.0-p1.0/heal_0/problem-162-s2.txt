@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <errno.h>
+#include <stdlib.h>
+
+int sum_alternate_series(int n, long *result)
+{
+    long sum = 0;
+    int current = n;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n <= 0) {
+        *result = 0;
+        return 0;
+    }
+
+    while (current > 0) {
+        if (sum > LONG_MAX - current) {
+            return -2;
+        }
+        sum += current;
+        
+        if (current <= 2) {
+            break;
+        }
+        current -= 2;
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    char input_buffer[256];
+    char *endptr = NULL;
+    long input_value = 0;
+    long result = 0;
+    int status = 0;
+
+    printf("Enter a positive integer: ");
+    
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input_value = strtol(input_buffer, &endptr, 10);
+
+    if (errno == ERANGE || endptr == input_buffer || *endptr != '\n') {
+        fprintf(stderr, "Invalid input: not a valid integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input_value > INT_MAX || input_value < 0) {
+        fprintf(stderr, "Input out of valid range\n");
+        return EXIT_FAILURE;
+    }
+
+    status = sum_alternate_series((int)input_value, &result);
+
+    if (status == -1) {
+        fprintf(stderr, "Internal error: invalid parameter\n");
+        return EXIT_FAILURE;
+    } else if (status == -2) {
+        fprintf(stderr, "Arithmetic overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

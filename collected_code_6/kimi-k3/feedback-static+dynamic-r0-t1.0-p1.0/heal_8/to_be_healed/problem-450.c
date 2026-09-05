@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['practice', 'solution'], got <no output>
+  *  test case 2 failed: expected ['exercises'], got <no output>
+  *  test case 1 failed: expected ['Python'], got <no output>
+  */
+
+char **extract_strings(const char *const *list, size_t count, size_t extract_size, size_t *out_count)
+{
+    if (list == NULL || out_count == NULL || count == 0 || extract_size == 0)
+    {
+        return NULL;
+    }
+
+    char **result = malloc(count * sizeof(char *));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    size_t extracted = 0;
+
+    for (size_t i = 0; i < count; i++)
+    {
+        if (list[i] == NULL)
+        {
+            continue;
+        }
+
+        size_t len = strlen(list[i]);
+        if (len != extract_size)
+        {
+            continue;
+        }
+
+        result[extracted] = malloc(len + 1);
+        if (result[extracted] == NULL)
+        {
+            for (size_t j = 0; j < extracted; j++)
+            {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        memcpy(result[extracted], list[i], len + 1);
+        extracted++;
+    }
+
+    if (extracted == 0)
+    {
+        free(result);
+        *out_count = 0;
+        return NULL;
+    }
+
+    char **resized = realloc(result, extracted * sizeof(char *));
+    if (resized != NULL)
+    {
+        result = resized;
+    }
+
+    *out_count = extracted;
+    return result;
+}
+
+void free_extracted(char **list, size_t count)
+{
+    if (list == NULL)
+    {
+        return;
+    }
+
+    for (size_t i = 0; i < count; i++)
+    {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *test1[] = {"practice", "solution", "test", "code"};
+    const char *test2[] = {"Python", "Java", "C", "Rust"};
+    const char *test3[] = {"exercises", "practice", "solution"};
+
+    size_t result_count = 0;
+
+    char **extracted = extract_strings(test1, 4, 8, &result_count);
+    if (extracted != NULL)
+    {
+        for (size_t i = 0; i < result_count; i++)
+        {
+            printf("%s\n", extracted[i]);
+        }
+        free_extracted(extracted, result_count);
+    }
+    else if (result_count > 0)
+    {
+        result_count = 0;
+    }
+
+    extracted = extract_strings(test2, 4, 6, &result_count);
+    if (extracted != NULL)
+    {
+        for (size_t i = 0; i < result_count; i++)
+        {
+            printf("%s\n", extracted[i]);
+        }
+        free_extracted(extracted, result_count);
+    }
+    else if (result_count > 0)
+    {
+        result_count = 0;
+    }
+
+    extracted = extract_strings(test3, 3, 9, &result_count);
+    if (extracted != NULL)
+    {
+        for (size_t i = 0; i < result_count; i++)
+        {
+            printf("%s\n", extracted[i]);
+        }
+        free_extracted(extracted, result_count);
+    }
+    else if (result_count > 0)
+    {
+        result_count = 0;
+    }
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_prime_divisors(long long n) {
+    if (n <= 1) {
+        return 0;
+    }
+    
+    long long sum = 0;
+    long long num = n;
+    
+    if (num % 2 == 0) {
+        sum += 2;
+        while (num % 2 == 0) {
+            num /= 2;
+        }
+    }
+    
+    for (long long i = 3; i <= num / i; i += 2) {
+        if (num % i == 0) {
+            sum += i;
+            while (num % i == 0) {
+                num /= i;
+            }
+        }
+    }
+    
+    if (num > 2) {
+        sum += num;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    long long number;
+    
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (number < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", sum_prime_divisors(number));
+    
+    return EXIT_SUCCESS;
+}

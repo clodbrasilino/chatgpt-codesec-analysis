@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Pair;
+
+typedef struct {
+    Pair* items;
+    int count;
+    int capacity;
+} PairList;
+
+PairList* extract_symmetric_pairs(const Pair* tuples, int size) {
+    PairList* result = (PairList*)malloc(sizeof(PairList));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    int max_pairs = size / 2 + 1;
+    result->items = (Pair*)malloc(max_pairs * sizeof(Pair));
+    if (result->items == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->count = 0;
+    result->capacity = max_pairs;
+
+    int* matched = (int*)calloc(size, sizeof(int));
+    if (matched == NULL) {
+        free(result->items);
+        free(result);
+        return NULL;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (matched[i]) {
+            continue;
+        }
+
+        for (int j = i + 1; j < size; j++) {
+            if (matched[j]) {
+                continue;
+            }
+
+            if (tuples[i].a == tuples[j].b && tuples[i].b == tuples[j].a) {
+                if (result->count < result->capacity) {
+                    result->items[result->count] = tuples[i];
+                    result->count++;
+                }
+                matched[i] = 1;
+                matched[j] = 1;
+                break;
+            }
+        }
+    }
+
+    free(matched);
+    return result;
+}
+
+int main() {
+    Pair tuples[] = {{1, 2}, {3, 4}, {2, 1}, {5, 6}, {4, 3}, {7, 8}, {1, 2}};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    PairList* symmetric_pairs = extract_symmetric_pairs(tuples, size);
+    if (symmetric_pairs == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < symmetric_pairs->count; i++) {
+        printf("(%d, %d)\n", symmetric_pairs->items[i].a, symmetric_pairs->items[i].b);
+    }
+
+    free(symmetric_pairs->items);
+    free(symmetric_pairs);
+
+    return EXIT_SUCCESS;
+}

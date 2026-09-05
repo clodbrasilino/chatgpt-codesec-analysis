@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int tuple_list_has_all_k_elements(const int *const *tuples,
+                                  const size_t *lengths,
+                                  size_t tuple_count,
+                                  size_t k)
+{
+    size_t i;
+
+    if (tuples == NULL || lengths == NULL)
+    {
+        return 0;
+    }
+
+    for (i = 0; i < tuple_count; i++)
+    {
+        if (tuples[i] == NULL || lengths[i] != k)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const int tuple_a[] = {1, 2, 3};
+    const int tuple_b[] = {4, 5, 6};
+    const int tuple_c[] = {7, 8, 9};
+    const int tuple_d[] = {10, 11};
+
+    const int *list_one[] = {tuple_a, tuple_b, tuple_c};
+    const size_t lengths_one[] = {3, 3, 3};
+    const size_t count_one = sizeof(list_one) / sizeof(list_one[0]);
+
+    const int *list_two[] = {tuple_a, tuple_b, tuple_d};
+    const size_t lengths_two[] = {3, 3, 2};
+    const size_t count_two = sizeof(list_two) / sizeof(list_two[0]);
+
+    const size_t k = 3;
+
+    printf("List one has all tuples with %zu elements: %s\n",
+           k,
+           tuple_list_has_all_k_elements(list_one, lengths_one, count_one, k)
+               ? "true" : "false");
+
+    printf("List two has all tuples with %zu elements: %s\n",
+           k,
+           tuple_list_has_all_k_elements(list_two, lengths_two, count_two, k)
+               ? "true" : "false");
+
+    printf("Null tuple list handled safely: %s\n",
+           tuple_list_has_all_k_elements(NULL, lengths_one, count_one, k)
+               ? "true" : "false");
+
+    return 0;
+}

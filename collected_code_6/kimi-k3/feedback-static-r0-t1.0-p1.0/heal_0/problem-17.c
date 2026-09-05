@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+double calculate_square_perimeter(double side) {
+    if (side < 0.0) {
+        return -1.0;
+    }
+    return 4.0 * side;
+}
+
+int main(void) {
+    double side = 0.0;
+    double perimeter = 0.0;
+    int scan_result = 0;
+
+    printf("Enter the side length of the square: ");
+    
+    scan_result = scanf("%lf", &side);
+    
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+
+    perimeter = calculate_square_perimeter(side);
+    
+    if (perimeter < 0.0) {
+        fprintf(stderr, "Error: Side length cannot be negative\n");
+        return 1;
+    }
+
+    printf("Perimeter of the square: %.2f\n", perimeter);
+    
+    return 0;
+}

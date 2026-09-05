@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *extract_rear_elements(char *arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return NULL;
+    }
+    
+    char *result = (char *)malloc((size + 1) * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    int i;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == NULL) {
+            result[i] = '\0';
+        } else {
+            int len = strlen(arr[i]);
+            if (len > 0) {
+                result[i] = arr[i][len - 1];
+            } else {
+                result[i] = '\0';
+            }
+        }
+    }
+    result[size] = '\0';
+    
+    return result;
+}
+
+int main() {
+    char *arr[] = {"hello", "world", "programming", "language"};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    char *rear_elements = extract_rear_elements(arr, size);
+    
+    if (rear_elements != NULL) {
+        printf("Rear elements: %s\n", rear_elements);
+        free(rear_elements);
+        rear_elements = NULL;
+    } else {
+        printf("Memory allocation failed or invalid input.\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+double calculate_parallelogram_area(double base, double height);
+
+int main(void)
+{
+    double base = 0.0;
+    double height = 0.0;
+    double area = 0.0;
+
+    printf("Enter base: ");
+    if (scanf("%lf", &base) != 1)
+    {
+        fprintf(stderr, "Invalid input for base\n");
+        return 1;
+    }
+
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1)
+    {
+        fprintf(stderr, "Invalid input for height\n");
+        return 1;
+    }
+
+    if (base < 0.0 || height < 0.0)
+    {
+        fprintf(stderr, "Base and height must be non-negative\n");
+        return 1;
+    }
+
+    area = calculate_parallelogram_area(base, height);
+    printf("Area: %.2f\n", area);
+
+    return 0;
+}
+
+double calculate_parallelogram_area(double base, double height)
+{
+    return base * height;
+}

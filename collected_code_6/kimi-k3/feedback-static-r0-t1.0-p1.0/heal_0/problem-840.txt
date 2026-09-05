@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+
+int check_roots_opposite_sign(double a, double b, double c, int *result)
+{
+    double discriminant;
+    double root1;
+    double root2;
+    double sqrt_discriminant;
+
+    if (result == NULL)
+    {
+        return -1;
+    }
+
+    if (fabs(a) < DBL_EPSILON)
+    {
+        return -1;
+    }
+
+    discriminant = b * b - 4.0 * a * c;
+
+    if (discriminant < 0.0)
+    {
+        return -1;
+    }
+
+    sqrt_discriminant = sqrt(discriminant);
+
+    root1 = (-b + sqrt_discriminant) / (2.0 * a);
+    root2 = (-b - sqrt_discriminant) / (2.0 * a);
+
+    if (fabs(root1 + root2) < DBL_EPSILON && fabs(root1) > DBL_EPSILON)
+    {
+        *result = 1;
+    }
+    else
+    {
+        *result = 0;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+    int result = 0;
+    int status;
+
+    printf("Enter coefficients a, b, and c: ");
+
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    status = check_roots_opposite_sign(a, b, c, &result);
+
+    if (status != 0)
+    {
+        fprintf(stderr, "Invalid quadratic equation or complex roots\n");
+        return 1;
+    }
+
+    if (result == 1)
+    {
+        printf("Roots are numerically equal but opposite in sign\n");
+    }
+    else
+    {
+        printf("Roots are not numerically equal but opposite in sign\n");
+    }
+
+    return 0;
+}
+```

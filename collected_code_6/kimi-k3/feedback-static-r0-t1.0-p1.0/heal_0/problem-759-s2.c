@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+int check_precision(const char *str, int *result) {
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    errno = 0;
+    char *endptr;
+    double value = strtod(str, &endptr);
+
+    if (errno != 0 || endptr == str || *endptr != '\0') {
+        return -1;
+    }
+
+    if (value < -1e15 || value > 1e15) {
+        return -1;
+    }
+
+    double scaled = value * 100.0;
+    double rounded = round(scaled);
+    double diff = fabs(scaled - rounded);
+
+    *result = (diff < 1e-9) ? 1 : 0;
+    return 0;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "3.14",
+        "3.14159",
+        "10.00",
+        "7.5",
+        "0.999",
+        "invalid",
+        "1e20"
+    };
+
+    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        int result = 0;
+        int status = check_precision(test_cases[i], &result);
+
+        if (status == 0) {
+            printf("%s: %s\n", test_cases[i],
+                   result ? "Valid (2 decimal places)" : "Invalid precision");
+        } else {
+            printf("%s: Invalid input\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

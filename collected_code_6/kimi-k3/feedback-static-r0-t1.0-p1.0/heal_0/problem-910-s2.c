@@ -1,0 +1,85 @@
+#include <stdio.h>
+
+static int is_leap_year(int year)
+{
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+static int days_in_month(int year, int month)
+{
+    static const int days[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    if (month < 1 || month > 12)
+    {
+        return 0;
+    }
+
+    if (month == 2 && is_leap_year(year))
+    {
+        return 29;
+    }
+
+    return days[month - 1];
+}
+
+int validate_date(int year, int month, int day)
+{
+    int max_day;
+
+    if (year < 1 || month < 1 || month > 12 || day < 1)
+    {
+        return 0;
+    }
+
+    max_day = days_in_month(year, month);
+
+    if (max_day == 0 || day > max_day)
+    {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    int year;
+    int month;
+    int day;
+    int result;
+
+    printf("Enter year: ");
+    result = scanf("%d", &year);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter month: ");
+    result = scanf("%d", &month);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("Enter day: ");
+    result = scanf("%d", &day);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (validate_date(year, month, day))
+    {
+        printf("Valid date\n");
+    }
+    else
+    {
+        printf("Invalid date\n");
+    }
+
+    return 0;
+}

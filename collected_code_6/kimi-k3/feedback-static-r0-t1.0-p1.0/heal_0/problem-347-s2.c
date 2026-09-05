@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long count_squares(long long width, long long height) {
+    if (width <= 0 || height <= 0) {
+        return 0;
+    }
+    
+    if (width > height) {
+        long long temp = width;
+        width = height;
+        height = temp;
+    }
+    
+    long long w = width;
+    long long h = height;
+    
+    if (w > LLONG_MAX / (w + 1)) {
+        return -1;
+    }
+    long long term1 = w * (w + 1);
+    
+    if (term1 > LLONG_MAX / (2 * w + 1)) {
+        return -1;
+    }
+    long long term2 = term1 * (2 * w + 1);
+    
+    if (term2 % 6 != 0) {
+        return -1;
+    }
+    long long sum_squares = term2 / 6;
+    
+    long long diff = h - w;
+    if (diff > LLONG_MAX / w) {
+        return -1;
+    }
+    long long term3 = diff * w;
+    
+    if (term3 > LLONG_MAX / (w + 1)) {
+        return -1;
+    }
+    long long term4 = term3 * (w + 1);
+    
+    if (term4 % 2 != 0) {
+        return -1;
+    }
+    long long sum_rectangles = term4 / 2;
+    
+    if (sum_squares > LLONG_MAX - sum_rectangles) {
+        return -1;
+    }
+    
+    return sum_squares + sum_rectangles;
+}
+
+int main(void) {
+    long long width, height;
+    
+    if (scanf("%lld %lld", &width, &height) != 2) {
+        return EXIT_FAILURE;
+    }
+    
+    long long result = count_squares(width, height);
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

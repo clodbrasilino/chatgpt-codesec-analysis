@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify(int *heap, size_t size, size_t i) {
+    size_t smallest = i;
+    size_t left = 2 * i + 1;
+    size_t right = 2 * i + 2;
+
+    if (left < size && heap[left] < heap[smallest]) {
+        smallest = left;
+    }
+    if (right < size && heap[right] < heap[smallest]) {
+        smallest = right;
+    }
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        min_heapify(heap, size, smallest);
+    }
+}
+
+void build_min_heap(int *heap, size_t size) {
+    if (size <= 1) {
+        return;
+    }
+    for (size_t i = size / 2; i > 0; i--) {
+        min_heapify(heap, size, i - 1);
+    }
+}
+
+int* find_largest_integers(const int *array, size_t array_size, size_t k, size_t *out_size) {
+    if (array == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    if (k == 0 || array_size == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    if (k > array_size) {
+        k = array_size;
+    }
+
+    int *heap = (int *)malloc(k * sizeof(int));
+    if (heap == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < k; i++) {
+        heap[i] = array[i];
+    }
+
+    build_min_heap(heap, k);
+
+    for (size_t i = k; i < array_size; i++) {
+        if (array[i] > heap[0]) {
+            heap[0] = array[i];
+            min_heapify(heap, k, 0);
+        }
+    }
+
+    *out_size = k;
+    return heap;
+}
+
+int main(void) {
+    int data[] = {15, 3, 9, 21, 5, 2, 8, 99, 10, 11};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    size_t k = 4;
+    size_t out_size = 0;
+
+    int *largest = find_largest_integers(data, data_size, k, &out_size);
+    
+    if (largest == NULL) {
+        if (k > 0 && data_size > 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    for (size_t i = 0; i < out_size; i++) {
+        printf("%d\n", largest[i]);
+    }
+
+    free(largest);
+    return EXIT_SUCCESS;
+}
+```

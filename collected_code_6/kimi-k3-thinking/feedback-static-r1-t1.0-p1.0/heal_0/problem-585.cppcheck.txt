@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:178:11: style: Condition 'n>count' is always false [knownConditionTrueFalse]
+    if (n > count) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:174:16: note: Assignment 'n=3', assigned value is 3
+    size_t n = 3;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:178:11: note: Condition 'n>count' is always false
+    if (n > count) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:27:12: style: The scope of the variable 'smallest' can be reduced. [variableScope]
+    size_t smallest;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:28:12: style: The scope of the variable 'left' can be reduced. [variableScope]
+    size_t left;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:29:12: style: The scope of the variable 'right' can be reduced. [variableScope]
+    size_t right;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-585.c:51:12: style: The scope of the variable 'parent' can be reduced. [variableScope]
+    size_t parent;
+           ^

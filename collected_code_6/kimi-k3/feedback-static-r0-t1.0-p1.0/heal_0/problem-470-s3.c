@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple pairwise_add(const Tuple *t1, const Tuple *t2) {
+    Tuple result;
+    result.elements = NULL;
+    result.size = 0;
+
+    if (t1 == NULL || t2 == NULL || t1->size != t2->size || t1->size == 0) {
+        return result;
+    }
+
+    result.elements = (int *)malloc(t1->size * sizeof(int));
+    if (result.elements == NULL) {
+        return result;
+    }
+
+    result.size = t1->size;
+    for (size_t i = 0; i < t1->size; i++) {
+        result.elements[i] = t1->elements[i] + t2->elements[i];
+    }
+
+    return result;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+        t->size = 0;
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {10, 20, 30, 40, 50};
+
+    Tuple t1;
+    t1.elements = arr1;
+    t1.size = sizeof(arr1) / sizeof(arr1[0]);
+
+    Tuple t2;
+    t2.elements = arr2;
+    t2.size = sizeof(arr2) / sizeof(arr2[0]);
+
+    Tuple result = pairwise_add(&t1, &t2);
+
+    if (result.elements != NULL) {
+        printf("Result: ");
+        for (size_t i = 0; i < result.size; i++) {
+            printf("%d ", result.elements[i]);
+        }
+        printf("\n");
+        free_tuple(&result);
+    } else {
+        fprintf(stderr, "Error: pairwise addition failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+} TupleArray;
+
+static bool tuples_equal(const Tuple *a, const Tuple *b) {
+    return (a->first == b->first) && (a->second == b->second);
+}
+
+static size_t count_occurrences(const Tuple *tuples, size_t count, const Tuple *target) {
+    size_t occurrences = 0;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (tuples_equal(&tuples[i], target)) {
+            occurrences++;
+        }
+    }
+
+    return occurrences;
+}
+
+TupleArray extract_singly_occurring(const Tuple *tuples, size_t count, bool *success) {
+    TupleArray result;
+    Tuple *shrunk;
+    size_t i;
+    size_t out_index = 0;
+
+    result.data = NULL;
+    result.size = 0;
+
+    if (success == NULL) {
+        return result;
+    }
+    *success = false;
+
+    if (count == 0) {
+        *success = true;
+        return result;
+    }
+
+    if (tuples == NULL) {
+        return result;
+    }
+
+    result.data = (Tuple *)malloc(count * sizeof(Tuple));
+    if (result.data == NULL) {
+        return result;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (count_occurrences(tuples, count, &tuples[i]) == 1) {
+            result.data[out_index] = tuples[i];
+            out_index++;
+        }
+    }
+
+    if (out_index == 0) {
+        free(result.data);
+        result.data = NULL;
+        *success = true;
+        return result;
+    }
+
+    shrunk = (Tuple *)realloc(result.data, out_index * sizeof(Tuple));
+    if (shrunk != NULL) {
+        result.data = shrunk;
+    }
+
+    result.size = out_index;
+    *success = true;
+    return result;
+}
+
+void free_tuple_array(TupleArray *arr) {
+    if (arr != NULL) {
+        free(arr->data);
+        arr->data = NULL;
+        arr->size = 0;
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {5, 7}, {9, 1}, {3, 2}, {5, 7}, {11, 23}, {9, 1}, {8, 0}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    bool success = false;
+    TupleArray singles;
+    size_t i;
+
+    singles = extract_singly_occurring(tuples, count, &success);
+    if (!success) {
+        fprintf(stderr, "Error: unable to extract singly occurring tuples.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Singly occurring tuples:\n");
+    if (singles.size == 0) {
+        printf("(none)\n");
+    }
+    for (i = 0; i < singles.size; i++) {
+        printf("(%d, %d)\n", singles.data[i].first, singles.data[i].second);
+    }
+
+    free_tuple_array(&singles);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-965.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-965.c:67:16: style: Condition 'result==NULL' is always true [knownConditionTrueFalse]
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-965.c:66:34: note: Calling function 'camel_to_snake' returns 0
+    char *result = camel_to_snake(null_input);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-965.c:66:34: note: Assignment 'result=camel_to_snake(null_input)', assigned value is 0
+    char *result = camel_to_snake(null_input);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-965.c:67:16: note: Condition 'result==NULL' is always true
+    if (result == NULL) {
+               ^

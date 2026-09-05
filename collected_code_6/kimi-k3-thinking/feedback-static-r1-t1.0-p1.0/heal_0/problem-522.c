@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int longest_bitonic_subsequence(const int *arr, size_t n)
+{
+    if (arr == NULL || n == 0)
+    {
+        return 0;
+    }
+
+    size_t *lis = malloc(n * sizeof(*lis));
+    if (lis == NULL)
+    {
+        return -1;
+    }
+
+    size_t *lds = malloc(n * sizeof(*lds));
+    if (lds == NULL)
+    {
+        free(lis);
+        return -1;
+    }
+
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < n; i++)
+    {
+        lis[i] = 1;
+    }
+
+    for (i = 1; i < n; i++)
+    {
+        for (j = 0; j < i; j++)
+        {
+            if (arr[i] > arr[j] && lis[i] < lis[j] + 1)
+            {
+                lis[i] = lis[j] + 1;
+            }
+        }
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        lds[i] = 1;
+    }
+
+    i = n;
+    while (i > 0)
+    {
+        i--;
+        for (j = i + 1; j < n; j++)
+        {
+            if (arr[i] > arr[j] && lds[i] < lds[j] + 1)
+            {
+                lds[i] = lds[j] + 1;
+            }
+        }
+    }
+
+    size_t max_length = lis[0] + lds[0] - 1;
+    for (i = 1; i < n; i++)
+    {
+        size_t current = lis[i] + lds[i] - 1;
+        if (current > max_length)
+        {
+            max_length = current;
+        }
+    }
+
+    free(lis);
+    free(lds);
+
+    return (int)max_length;
+}
+
+int main(void)
+{
+    int arr[] = {1, 11, 2, 10, 4, 5, 2, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = longest_bitonic_subsequence(arr, n);
+
+    if (result < 0)
+    {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Length of longest bitonic subsequence: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

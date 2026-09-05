@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t string_length(const char *str)
+{
+    if (str == NULL)
+    {
+        return 0;
+    }
+    
+    size_t length = 0;
+    while (str[length] != '\0')
+    {
+        length++;
+    }
+    return length;
+}
+
+int main(void)
+{
+    char buffer[256];
+    
+    printf("Enter a string: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+    
+    printf("Length of the string: %zu\n", string_length(buffer));
+    
+    return EXIT_SUCCESS;
+}
+```

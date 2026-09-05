@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-699-s3.c: In function 'min_swaps':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-699-s3.c:40:22: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+   40 |             swaps += abs(diff);
+      |                      ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_10/healed/problem-699-s3.c:3:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    2 | #include <string.h>
+  +++ |+#include <stdlib.h>
+    3 | 

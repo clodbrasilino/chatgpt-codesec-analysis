@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool find_kth_element(const int *arr, size_t size, size_t k, int *result) {
+    if (arr == NULL || result == NULL || k >= size) {
+        return false;
+    }
+    *result = arr[k];
+    return true;
+}
+
+int main(void) {
+    int arr[] = {1, 3, 5, 7, 2, 4, 6, 8};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t k;
+    int result;
+    
+    if (printf("Enter k (0 to %zu): ", size - 1) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%zu", &k) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (find_kth_element(arr, size, k, &result)) {
+        printf("Element at index %zu: %d\n", k, result);
+    } else {
+        fprintf(stderr, "Invalid index\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

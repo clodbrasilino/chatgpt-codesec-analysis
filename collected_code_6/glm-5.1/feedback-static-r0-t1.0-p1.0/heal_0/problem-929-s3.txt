@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* count_repeated_items(const int* tuple, size_t size, size_t* out_size) {
+    int* counts = malloc(size * sizeof(int));
+    if (!counts) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        counts[i] = 0;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = 0; j < size; j++) {
+            if (tuple[i] == tuple[j]) {
+                counts[i]++;
+            }
+        }
+    }
+
+    *out_size = size;
+    return counts;
+}
+
+int main() {
+    int tuple[] = {1, 2, 2, 3, 1, 4, 2};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t out_size;
+
+    int* counts = count_repeated_items(tuple, size, &out_size);
+    if (!counts) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < out_size; i++) {
+        printf("%d: %d\n", tuple[i], counts[i]);
+    }
+
+    free(counts);
+    counts = NULL;
+
+    return 0;
+}
+```

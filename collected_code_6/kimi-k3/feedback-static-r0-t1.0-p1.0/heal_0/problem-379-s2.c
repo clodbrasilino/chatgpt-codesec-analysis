@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+double surface_area_of_cuboid(double length, double width, double height) {
+    return 2 * (length * width + length * height + width * height);
+}
+
+int main(void) {
+    double length, width, height;
+    if (scanf("%lf %lf %lf", &length, &width, &height) == 3) {
+        printf("%lf\n", surface_area_of_cuboid(length, width, height));
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    return 0;
+}

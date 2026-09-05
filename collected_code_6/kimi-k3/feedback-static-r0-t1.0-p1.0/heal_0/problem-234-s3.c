@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double cube_volume(double side)
+{
+    return side * side * side;
+}
+
+int main(void)
+{
+    double side;
+    int scan_result;
+    
+    printf("Enter the side length of the cube: ");
+    
+    scan_result = scanf("%lf", &side);
+    
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (side < 0.0)
+    {
+        fprintf(stderr, "Error: Side length cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (side > 1290.0)
+    {
+        fprintf(stderr, "Error: Side length too large (would cause overflow)\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Volume of the cube: %.2f\n", cube_volume(side));
+    
+    return EXIT_SUCCESS;
+}

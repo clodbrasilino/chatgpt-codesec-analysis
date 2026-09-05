@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int filter_odd_numbers(const int *input, size_t count, int **output, size_t *output_count)
+{
+    size_t i;
+    size_t odd_count = 0;
+    int *result = NULL;
+
+    if (input == NULL || output == NULL || output_count == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (input[i] % 2 != 0) {
+            odd_count++;
+        }
+    }
+
+    *output_count = odd_count;
+
+    if (odd_count == 0) {
+        *output = NULL;
+        return 0;
+    }
+
+    result = (int *)malloc(odd_count * sizeof(int));
+    if (result == NULL) {
+        return -2;
+    }
+
+    odd_count = 0;
+    for (i = 0; i < count; i++) {
+        if (input[i] % 2 != 0) {
+            result[odd_count] = input[i];
+            odd_count++;
+        }
+    }
+
+    *output = result;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int *odd_numbers = NULL;
+    size_t odd_count = 0;
+    int status;
+    size_t i;
+
+    status = filter_odd_numbers(numbers, count, &odd_numbers, &odd_count);
+    if (status != 0) {
+        fprintf(stderr, "Error: filter_odd_numbers failed with status %d\n", status);
+        return EXIT_FAILURE;
+    }
+
+    printf("Odd numbers: ");
+    for (i = 0; i < odd_count; i++) {
+        printf("%d ", odd_numbers[i]);
+    }
+    printf("\n");
+
+    free(odd_numbers);
+    odd_numbers = NULL;
+
+    return EXIT_SUCCESS;
+}

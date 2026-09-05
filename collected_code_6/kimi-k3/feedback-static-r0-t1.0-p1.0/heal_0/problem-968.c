@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double find_max_periodic(double a, double b, double c, double d, double e) {
+    double max_val = -INFINITY;
+    double step = 0.0001;
+    double period = 2 * M_PI;
+    double x;
+
+    for (x = 0; x < period; x += step) {
+        double val = a * sin(b * x + c) + d * cos(e * x);
+        if (val > max_val) {
+            max_val = val;
+        }
+    }
+
+    return max_val;
+}
+
+int main(void) {
+    double a, b, c, d, e;
+
+    if (scanf("%lf %lf %lf %lf %lf", &a, &b, &c, &d, &e) != 5) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    double result = find_max_periodic(a, b, c, d, e);
+    printf("%.6f\n", result);
+
+    return EXIT_SUCCESS;
+}

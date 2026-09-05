@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equilateral_triangles(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    return n * (n + 2) * (2 * n + 1) / 8;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <side_length>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || val < 0) {
+        fprintf(stderr, "Error: side_length must be a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+    int result = count_equilateral_triangles((int)val);
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_column(int **lists, int *sizes, int num_lists, int col) {
+    int total = 0;
+    if (lists == NULL || sizes == NULL || num_lists <= 0 || col < 0) {
+        return 0;
+    }
+    for (int i = 0; i < num_lists; i++) {
+        if (lists[i] != NULL && col < sizes[i]) {
+            total += lists[i][col];
+        }
+    }
+    return total;
+}
+
+int main(void) {
+    int row0[] = {1, 2, 3};
+    int row1[] = {4, 5};
+    int row2[] = {7, 8, 9, 10};
+    
+    int num_lists = 3;
+    int sizes[] = {3, 2, 4};
+    
+    int **lists = malloc(num_lists * sizeof(int *));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    lists[0] = row0;
+    lists[1] = row1;
+    lists[2] = row2;
+    
+    int col_to_sum = 1;
+    int result = sum_column(lists, sizes, num_lists, col_to_sum);
+    
+    printf("%d\n", result);
+    
+    free(lists);
+    
+    return EXIT_SUCCESS;
+}

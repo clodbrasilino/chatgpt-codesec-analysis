@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long find_nth_nonagonal(unsigned long long n) {
+    if (n == 0) {
+        exit(EXIT_FAILURE);
+    }
+    return n * (7 * n - 5) / 2;
+}
+
+int main(void) {
+    unsigned long long n;
+    if (scanf("%llu", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    unsigned long long result = find_nth_nonagonal(n);
+    printf("%llu\n", result);
+    return EXIT_SUCCESS;
+}

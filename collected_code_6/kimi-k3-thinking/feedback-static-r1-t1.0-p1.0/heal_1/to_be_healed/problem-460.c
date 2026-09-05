@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int *get_first_elements(int **sublists, const size_t *lengths, size_t count, size_t *out_count)
+{
+    int *result;
+    size_t i;
+    size_t j = 0;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+
+    if (sublists == NULL || lengths == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (sublists[i] != NULL && lengths[i] > 0) {
+            result[j] = sublists[i][0];
+            j++;
+        }
+    }
+
+    *out_count = j;
+    return result;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5};
+    int c[] = {6};
+    int d[] = {7, 8, 9, 10};
+    int *sublists[] = {a, b, c, d};
+    const size_t lengths[] = {3, 2, 1, 4};
+    const size_t count = sizeof(sublists) / sizeof(sublists[0]);
+    size_t out_count = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+    int *firsts;
+
+    firsts = get_first_elements(sublists, lengths, count, &out_count);
+    if (firsts == NULL) {
+        fprintf(stderr, "Error: failed to get first elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (out_count == 0) {
+        printf("No first elements found.\n");
+    } else {
+        for (i = 0; i < out_count; i++) {
+            printf("%d", firsts[i]);
+            if (i + 1 < out_count) {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+
+    free(firsts);
+    firsts = NULL;
+
+    return EXIT_SUCCESS;
+}

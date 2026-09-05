@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_digit(int numerator, int denominator, int n) {
+    if (denominator == 0 || n <= 0) {
+        return -1;
+    }
+
+    int a = abs(numerator);
+    int b = abs(denominator);
+
+    a = a % b;
+
+    for (int i = 0; i < n; i++) {
+        a *= 10;
+        if (a < 0) {
+            return -1;
+        }
+        int digit = a / b;
+        a = a % b;
+        if (i == n - 1) {
+            return digit;
+        }
+    }
+
+    return -1;
+}
+
+int main(void) {
+    int num = 1;
+    int den = 7;
+    int n = 5;
+
+    int result = find_nth_digit(num, den, n);
+
+    printf("%d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_dog_years(int human_years) {
+    if (human_years <= 0) {
+        return -1;
+    }
+
+    if (human_years == 1) {
+        return 15;
+    }
+
+    if (human_years == 2) {
+        return 24;
+    }
+
+    return 24 + ((human_years - 2) * 5);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <human_years>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || val <= 0 || val > 2147483647) {
+        fprintf(stderr, "Invalid input: must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    int human_years = (int)val;
+    int dog_years = calculate_dog_years(human_years);
+
+    if (dog_years < 0) {
+        fprintf(stderr, "Calculation error\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", dog_years);
+    return EXIT_SUCCESS;
+}

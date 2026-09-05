@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_inversions(int *tuples, size_t num_tuples, size_t tuple_size) {
+    size_t inversions = 0;
+    size_t total_elements = num_tuples * tuple_size;
+
+    if (tuples == NULL || total_elements == 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        size_t offset = i * tuple_size;
+        for (size_t x = 0; x < tuple_size; x++) {
+            for (size_t y = x + 1; y < tuple_size; y++) {
+                if (tuples[offset + x] > tuples[offset + y]) {
+                    inversions++;
+                }
+            }
+        }
+    }
+
+    return inversions;
+}
+
+int main(void) {
+    int tuples[][3] = {{2, 1, 3}, {4, 1, 2}, {1, 2, 3}};
+    int (*tuples_ptr)[3] = malloc(3 * sizeof(*tuples_ptr));
+
+    if (tuples_ptr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 0; j < 3; j++) {
+            tuples_ptr[i][j] = tuples[i][j];
+        }
+    }
+
+    size_t inv = count_inversions((int *)tuples_ptr, 3, 3);
+    printf("%zu\n", inv);
+
+    free(tuples_ptr);
+    tuples_ptr = NULL;
+
+    return EXIT_SUCCESS;
+}

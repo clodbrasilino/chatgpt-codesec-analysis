@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long maxSubArraySumRepeated(const int *arr, size_t n, size_t k) {
+    if (arr == NULL || n == 0 || k == 0) {
+        return 0;
+    }
+
+    long long max_ending_here = 0;
+    long long max_so_far = LLONG_MIN;
+    long long total_sum = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        total_sum += arr[i];
+    }
+
+    size_t limit = (k < 2) ? k : 2;
+    for (size_t rep = 0; rep < limit; rep++) {
+        for (size_t i = 0; i < n; i++) {
+            max_ending_here += arr[i];
+            if (max_so_far < max_ending_here) {
+                max_so_far = max_ending_here;
+            }
+            if (max_ending_here < 0) {
+                max_ending_here = 0;
+            }
+        }
+    }
+
+    if (k > 2 && total_sum > 0) {
+        long long extended_sum = max_so_far + (total_sum * (long long)(k - 2));
+        if (extended_sum > max_so_far) {
+            max_so_far = extended_sum;
+        }
+    }
+
+    return max_so_far;
+}
+
+int main(void) {
+    int arr[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 3;
+
+    long long result = maxSubArraySumRepeated(arr, n, k);
+    printf("%lld\n", result);
+
+    return 0;
+}

@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} IntTuple;
+
+IntTuple string_to_int_tuple(const char *str) {
+    IntTuple tuple = {NULL, 0};
+
+    if (str == NULL) {
+        return tuple;
+    }
+
+    size_t length = strlen(str);
+    if (length == 0) {
+        return tuple;
+    }
+
+    size_t capacity = 1;
+    tuple.elements = (int *)malloc(capacity * sizeof(int));
+    if (tuple.elements == NULL) {
+        return tuple;
+    }
+
+    const char *ptr = str;
+    while (*ptr != '\0') {
+        char *endptr;
+        long val = strtol(ptr, &endptr, 10);
+
+        if (ptr == endptr) {
+            ptr++;
+            continue;
+        }
+
+        if (tuple.size >= capacity) {
+            size_t new_capacity = capacity * 2;
+            int *temp = (int *)realloc(tuple.elements, new_capacity * sizeof(int));
+            if (temp == NULL) {
+                free(tuple.elements);
+                tuple.elements = NULL;
+                tuple.size = 0;
+                return tuple;
+            }
+            tuple.elements = temp;
+            capacity = new_capacity;
+        }
+
+        tuple.elements[tuple.size++] = (int)val;
+        ptr = endptr;
+    }
+
+    if (tuple.size == 0) {
+        free(tuple.elements);
+        tuple.elements = NULL;
+        return tuple;
+    }
+
+    int *shrunk = (int *)realloc(tuple.elements, tuple.size * sizeof(int));
+    if (shrunk != NULL) {
+        tuple.elements = shrunk;
+    }
+
+    return tuple;
+}
+
+int main(void) {
+    const char *input = "10 20 30 40 50";
+    IntTuple tuple = string_to_int_tuple(input);
+
+    if (tuple.elements != NULL) {
+        for (size_t i = 0; i < tuple.size; i++) {
+            printf("%d ", tuple.elements[i]);
+        }
+        printf("\n");
+        free(tuple.elements);
+    }
+
+    return 0;
+}

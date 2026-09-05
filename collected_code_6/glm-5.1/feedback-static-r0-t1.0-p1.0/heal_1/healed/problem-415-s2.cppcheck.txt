@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c:7:9: warning: Either the condition 'res==NULL' is redundant or there is possible null pointer dereference: res. [nullPointerRedundantCheck]
+        res[0] = INT_MIN;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c:6:37: note: Assuming that condition 'res==NULL' is not redundant
+    if (arr == NULL || n < 2 || res == NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c:7:9: note: Null pointer dereference
+        res[0] = INT_MIN;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c:8:9: warning: Either the condition 'res==NULL' is redundant or there is possible null pointer dereference: res. [nullPointerRedundantCheck]
+        res[1] = INT_MIN;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c:6:37: note: Assuming that condition 'res==NULL' is not redundant
+    if (arr == NULL || n < 2 || res == NULL) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-415-s2.c:8:9: note: Null pointer dereference
+        res[1] = INT_MIN;
+        ^

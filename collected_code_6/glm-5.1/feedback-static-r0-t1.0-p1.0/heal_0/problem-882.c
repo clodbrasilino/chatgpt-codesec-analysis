@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_parallelogram_perimeter(double base, double side)
+{
+    if (base <= 0.0 || side <= 0.0)
+    {
+        fprintf(stderr, "Invalid input: dimensions must be strictly positive.\n");
+        exit(EXIT_FAILURE);
+    }
+    return 2.0 * (base + side);
+}
+
+int main(void)
+{
+    double base = 5.0;
+    double side = 3.0;
+    double perimeter = calculate_parallelogram_perimeter(base, side);
+    printf("Perimeter: %f\n", perimeter);
+    return 0;
+}

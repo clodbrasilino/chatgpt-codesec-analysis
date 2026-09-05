@@ -1,0 +1,51 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool is_leap_year(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+}
+
+bool validate_gregorian_date(int day, int month, int year) {
+    if (year < 1582) {
+        return false;
+    }
+    if (year == 1582) {
+        if (month < 10) {
+            return false;
+        }
+        if (month == 10 && day < 15) {
+            return false;
+        }
+    }
+    if (month < 1 || month > 12) {
+        return false;
+    }
+    if (day < 1) {
+        return false;
+    }
+    int max_days = 31;
+    if (month == 4 || month == 6 || month == 9 || month == 11) {
+        max_days = 30;
+    } else if (month == 2) {
+        max_days = is_leap_year(year) ? 29 : 28;
+    }
+    if (day > max_days) {
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    const int test_days[] = {4, 29, 31, 0, 15, 14};
+    const int test_months[] = {7, 2, 4, 5, 10, 10};
+    const int test_years[] = {2023, 2020, 2023, 2023, 1582, 1582};
+    size_t count = sizeof(test_days) / sizeof(test_days[0]);
+    for (size_t i = 0; i < count; i++) {
+        int d = test_days[i];
+        int m = test_months[i];
+        int y = test_years[i];
+        bool valid = validate_gregorian_date(d, m, y);
+        printf("%04d-%02d-%02d: %s\n", y, m, d, valid ? "Valid" : "Invalid");
+    }
+    return 0;
+}

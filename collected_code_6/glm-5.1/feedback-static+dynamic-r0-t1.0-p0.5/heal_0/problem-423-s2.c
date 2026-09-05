@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int getMaxGold(int **mine, int m, int n) {
+    int **dp = (int **)malloc(m * sizeof(int *));
+    if (dp == NULL) {
+        return -1;
+    }
+    for (int i = 0; i < m; i++) {
+        dp[i] = (int *)malloc(n * sizeof(int));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return -1;
+        }
+    }
+
+    for (int y = n - 1; y >= 0; y--) {
+        for (int x = 0; x < m; x++) {
+            int right = (y == n - 1) ? 0 : dp[x][y + 1];
+            int right_up = (x == 0 || y == n - 1) ? 0 : dp[x - 1][y + 1];
+            int right_down = (x == m - 1 || y == n - 1) ? 0 : dp[x + 1][y + 1];
+            dp[x][y] = mine[x][y] + (right > right_up ? (right > right_down ? right : right_down) : (right_up > right_down ? right_up : right_down));
+        }
+    }
+
+    int max_gold = dp[0][0];
+    for (int i = 1; i < m; i++) {
+        if (dp[i][0] > max_gold) {
+            max_gold = dp[i][0];
+        }
+    }
+
+    for (int i = 0; i < m; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return max_gold;
+}
+
+int main() {
+    int m = 4;
+    int n = 4;
+    int *mine_rows[4];
+    int row0[] = {1, 3, 1, 5};
+    int row1[] = {2, 2, 4, 1};
+    int row2[] = {5, 0, 2, 3};
+    int row3[] = {0, 6, 1, 2};
+    mine_rows[0] = row0;
+    mine_rows[1] = row1;
+    mine_rows[2] = row2;
+    mine_rows[3] = row3;
+
+    int **mine = (int **)malloc(m * sizeof(int *));
+    if (mine == NULL) {
+        return 1;
+    }
+    for (int i = 0; i < m; i++) {
+        mine[i] = (int *)malloc(n * sizeof(int));
+        if (mine[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(mine[j]);
+            }
+            free(mine);
+            return 1;
+        }
+        for (int j = 0; j < n; j++) {
+            mine[i][j] = mine_rows[i][j];
+        }
+    }
+
+    int result = getMaxGold(mine, m, n);
+    if (result != -1) {
+        printf("%d\n", result);
+    }
+
+    for (int i = 0; i < m; i++) {
+        free(mine[i]);
+    }
+    free(mine);
+
+    return 0;
+}

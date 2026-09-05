@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  */
+
+Node* string_to_list(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    
+    Node *head = NULL;
+    Node *tail = NULL;
+    
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        Node *new_node = (Node*)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                Node *temp = head;
+                head = head->next;
+                free(temp);
+            }
+            return NULL;
+        }
+        
+        new_node->data = str[i];
+        new_node->next = NULL;
+        
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+    
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void print_words(Node *head) {
+    if (head == NULL) {
+        return;
+    }
+    
+    Node *current = head;
+    int in_word = 0;
+    
+    while (current != NULL) {
+        if (current->data != ' ') {
+            printf("%c", current->data);
+            in_word = 1;
+        } else if (in_word) {
+            printf("\n");
+            in_word = 0;
+        }
+        current = current->next;
+    }
+    
+    if (in_word) {
+        printf("\n");
+    }
+}
+
+int main(int argc, char *argv[]) {
+    const char *str = NULL;
+    
+    if (argc > 1) {
+        str = argv[1];
+    } else {
+        static char buffer[1024];
+        if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+            size_t len = strlen(buffer);
+            if (len > 0 && buffer[len - 1] == '\n') {
+                buffer[len - 1] = '\0';
+            }
+            str = buffer;
+        } else {
+            str = "";
+        }
+    }
+    
+    Node *list = string_to_list(str);
+    
+    if (list == NULL && str != NULL && str[0] != '\0') {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+    
+    print_words(list);
+    free_list(list);
+    
+    return EXIT_SUCCESS;
+}

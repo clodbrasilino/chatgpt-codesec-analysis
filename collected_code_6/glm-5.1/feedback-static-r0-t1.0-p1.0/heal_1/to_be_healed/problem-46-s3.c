@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'array' can be declared as pointer to const [constParameterPointer]
+ */
+int all_different(int *array, size_t size) {
+    if (array == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (array[i] == array[j]) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    size_t len1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    int arr2[] = {1, 2, 3, 4, 4};
+    size_t len2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    int result1 = all_different(arr1, len1);
+    int result2 = all_different(arr2, len2);
+
+    printf("%d\n", result1);
+    printf("%d\n", result2);
+
+    return 0;
+}

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t sum_fifth_power_even(int n)
+{
+    if (n <= 0)
+    {
+        return 0;
+    }
+    
+    uint64_t sum = 0;
+    int i;
+    
+    for (i = 1; i <= n; i++)
+    {
+        uint64_t even_num = (uint64_t)2 * i;
+        uint64_t fifth_power = even_num * even_num * even_num * even_num * even_num;
+        sum += fifth_power;
+    }
+    
+    return sum;
+}
+
+int main(void)
+{
+    int n;
+    int scan_result;
+    
+    printf("Enter the value of n: ");
+    scan_result = scanf("%d", &n);
+    
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0)
+    {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Sum of fifth power of first %d even natural numbers: %" PRIu64 "\n", 
+           n, sum_fifth_power_even(n));
+    
+    return 0;
+}

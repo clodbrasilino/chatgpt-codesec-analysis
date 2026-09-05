@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-28-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-28-s3.c:33:9: warning: %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+    if (scanf("%llu %llu", &n, &k) != 2) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-28-s3.c:33:9: warning: %llu in format string (no. 2) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+    if (scanf("%llu %llu", &n, &k) != 2) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-28-s3.c:39:5: warning: %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+    printf("C(%llu, %llu) = %llu\n", n, k, result);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-28-s3.c:39:5: warning: %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+    printf("C(%llu, %llu) = %llu\n", n, k, result);
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-28-s3.c:39:5: warning: %llu in format string (no. 3) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+    printf("C(%llu, %llu) = %llu\n", n, k, result);
+    ^

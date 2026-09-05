@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-408-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-408-s2.c:4:25: style: Parameter 'nums1' can be declared as pointer to const [constParameterPointer]
+int** find_k_pairs(int* nums1, int nums1_size, int* nums2, int nums2_size, int k, int* return_size, int** return_column_sizes) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-408-s2.c:4:53: style: Parameter 'nums2' can be declared as pointer to const [constParameterPointer]
+int** find_k_pairs(int* nums1, int nums1_size, int* nums2, int nums2_size, int k, int* return_size, int** return_column_sizes) {
+                                                    ^

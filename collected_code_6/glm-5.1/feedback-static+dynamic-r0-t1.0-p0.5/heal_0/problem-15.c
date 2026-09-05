@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_lowercase(const char *str, size_t *count) {
+    *count = 0;
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        char **result = malloc(sizeof(char *));
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = calloc(1, sizeof(char));
+        if (result[0] == NULL) {
+            free(result);
+            return NULL;
+        }
+        return result;
+    }
+
+    size_t capacity = 16;
+    char **result = malloc(capacity * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t start = 0;
+    size_t i = 0;
+
+    while (i <= len) {
+        if (i == len || islower((unsigned char)str[i])) {
+            size_t seg_len = i - start;
+            char *segment = malloc(seg_len + 1);
+            if (segment == NULL) {
+                for (size_t j = 0; j < *count; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+            memcpy(segment, str + start, seg_len);
+            segment[seg_len] = '\0';
+
+            if (*count >= capacity) {
+                capacity *= 2;
+                char **new_result = realloc(result, capacity * sizeof(char *));
+                if (new_result == NULL) {
+                    free(segment);
+                    for (size_t j = 0; j < *count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                result = new_result;
+            }
+
+            result[*count] = segment;
+            (*count)++;
+
+            if (i < len) {
+                char *lower_char = malloc(2);
+                if (lower_char == NULL) {
+                    for (size_t j = 0; j < *count; j++) {
+                        free(result[j]);
+                    }
+                    free(result);
+                    return NULL;
+                }
+                lower_char[0] = str[i];
+                lower_char[1] = '\0';
+
+                if (*count >= capacity) {
+                    capacity *= 2;
+                    char **new_result = realloc(result, capacity * sizeof(char *));
+                    if (new_result == NULL) {
+                        free(lower_char);
+                        for (size_t j = 0; j < *count; j++) {
+                            free(result[j]);
+                        }
+                        free(result);
+                        return NULL;
+                    }
+                    result = new_result;
+                }
+
+                result[*count] = lower_char;
+                (*count)++;
+            }
+
+            start = i + 1;
+        }
+        i++;
+    }
+
+    return result;
+}
+
+void free_split_result(char **result, size_t count) {
+    if (result == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    const char *input = "ABCdEFGhIJKlMNO";
+    size_t count = 0;
+    char **result = split_at_lowercase(input, &count);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%s\n", result[i]);
+        }
+        free_split_result(result, count);
+    }
+
+    return 0;
+}

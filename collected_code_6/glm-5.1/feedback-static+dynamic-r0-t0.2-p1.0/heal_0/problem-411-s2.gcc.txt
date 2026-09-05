@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-411-s2.c: In function 'snake_to_camel':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-411-s2.c:38:43: error: implicit declaration of function 'toupper' [-Wimplicit-function-declaration]
+   38 |             camel_str[dest_idx++] = (char)toupper((unsigned char)cursor[match.rm_so + 1]);
+      |                                           ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-411-s2.c:5:1: note: include '<ctype.h>' or provide a declaration of 'toupper'
+    4 | #include <regex.h>
+  +++ |+#include <ctype.h>
+    5 | 

@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int checkProduct(int num) {
+    int evenProduct = 1, oddProduct = 1;
+    int position = 1;
+    int digit;
+    
+    num = abs(num);
+    
+    if (num == 0) {
+        return 1;
+    }
+    
+    while (num > 0) {
+        digit = num % 10;
+        if (position % 2 == 0) {
+            evenProduct *= digit;
+        } else {
+            oddProduct *= digit;
+        }
+        num /= 10;
+        position++;
+    }
+    
+    return (evenProduct == oddProduct);
+}
+
+int main(void) {
+    int number;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (checkProduct(number)) {
+        printf("Product of digits at even and odd places are equal\n");
+    } else {
+        printf("Product of digits at even and odd places are not equal\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

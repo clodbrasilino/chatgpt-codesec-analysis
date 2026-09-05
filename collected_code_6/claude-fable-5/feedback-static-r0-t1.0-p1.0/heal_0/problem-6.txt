@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool is_power_of_two(unsigned int x)
+{
+    return (x != 0U) && ((x & (x - 1U)) == 0U);
+}
+
+static bool differ_by_one_bit(unsigned int a, unsigned int b)
+{
+    return is_power_of_two(a ^ b);
+}
+
+int main(void)
+{
+    unsigned int a;
+    unsigned int b;
+
+    printf("Enter first number: ");
+    if (scanf("%u", &a) != 1) {
+        fprintf(stderr, "Invalid input for first number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%u", &b) != 1) {
+        fprintf(stderr, "Invalid input for second number\n");
+        return EXIT_FAILURE;
+    }
+
+    if (differ_by_one_bit(a, b)) {
+        printf("%u and %u differ at exactly one bit position\n", a, b);
+    } else {
+        printf("%u and %u do not differ at exactly one bit position\n", a, b);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

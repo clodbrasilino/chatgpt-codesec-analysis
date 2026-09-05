@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:36:53: error: incompatible pointer to integer conversion initializing 'int' with an expression of type 'char[2]' [-Wint-conversion]
+   36 |     DictionaryEntry entries1[] = {(char[]){"a", 1}, (char[]){"b", 1}, (char[]){"c", 1}};
+      |                                                     ^~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-464-s2.c:39:53: error: incompatible pointer to integer conversion initializing 'int' with an expression of type 'char[2]' [-Wint-conversion]
+   39 |     DictionaryEntry entries2[] = {(char[]){"a", 1}, (char[]){"b", 2}, (char[]){"c", 1}};
+      |                                                     ^~~~~~~~~~~~~~~~
+2 errors generated.

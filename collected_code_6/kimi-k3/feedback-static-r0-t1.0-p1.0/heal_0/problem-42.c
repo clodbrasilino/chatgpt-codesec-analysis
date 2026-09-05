@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_repeated_elements(const int *arr, size_t size, int *error_code) {
+    long long sum = 0;
+    size_t i, j;
+    int *counted;
+    
+    if (arr == NULL || size == 0) {
+        if (error_code != NULL) {
+            *error_code = -1;
+        }
+        return 0;
+    }
+    
+    counted = calloc(size, sizeof(int));
+    if (counted == NULL) {
+        if (error_code != NULL) {
+            *error_code = -2;
+        }
+        return 0;
+    }
+    
+    if (error_code != NULL) {
+        *error_code = 0;
+    }
+    
+    for (i = 0; i < size; i++) {
+        if (counted[i]) {
+            continue;
+        }
+        
+        int count = 0;
+        for (j = i; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+            }
+        }
+        
+        if (count > 1) {
+            sum += (long long)arr[i] * count;
+            for (j = i; j < size; j++) {
+                if (arr[i] == arr[j]) {
+                    counted[j] = 1;
+                }
+            }
+        }
+    }
+    
+    free(counted);
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 5, 1, 6, 3, 3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int error_code = 0;
+    long long result;
+    
+    result = sum_repeated_elements(arr, size, &error_code);
+    
+    if (error_code == 0) {
+        printf("Sum of repeated elements: %lld\n", result);
+    } else {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

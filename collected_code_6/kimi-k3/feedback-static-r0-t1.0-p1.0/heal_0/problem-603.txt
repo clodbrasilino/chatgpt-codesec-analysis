@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+static int is_lucid(int num)
+{
+    if (num < 0) {
+        return 0;
+    }
+    
+    int digit_sum = 0;
+    int temp = num;
+    
+    while (temp > 0) {
+        digit_sum += temp % 10;
+        temp /= 10;
+    }
+    
+    if (digit_sum == 0) {
+        return 0;
+    }
+    
+    return (num % digit_sum == 0);
+}
+
+int get_lucid_number(int n)
+{
+    if (n < 0) {
+        return -1;
+    }
+    
+    for (int i = n; i >= 1; i--) {
+        if (is_lucid(i)) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+int main(void)
+{
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = get_lucid_number(n);
+    
+    if (result == -1) {
+        printf("No lucid number found\n");
+    } else {
+        printf("%d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

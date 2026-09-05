@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-640-s3.c: In function 'remove_parenthesis':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-640-s3.c:25:32: error: implicit declaration of function 'isspace' [-Wimplicit-function-declaration]
+   25 |             if (depth == 0 && !isspace((unsigned char)str[i])) {
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-640-s3.c:4:1: note: include '<ctype.h>' or provide a declaration of 'isspace'
+    3 | #include <string.h>
+  +++ |+#include <ctype.h>
+    4 | 

@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double calculate_surface_area(double base_edge, double height) {
+    double slant_height, base_area, lateral_area, surface_area;
+    
+    if (base_edge <= 0.0 || height <= 0.0) {
+        return -1.0;
+    }
+    
+    slant_height = sqrt(pow(base_edge / 2.0, 2.0) + pow(height, 2.0));
+    base_area = pow(base_edge, 2.0);
+    lateral_area = 2.0 * base_edge * slant_height;
+    surface_area = base_area + lateral_area;
+    
+    return surface_area;
+}
+
+int main(void) {
+    double base_edge, height, surface_area;
+    
+    printf("Enter the base edge length: ");
+    if (scanf("%lf", &base_edge) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    surface_area = calculate_surface_area(base_edge, height);
+    
+    if (surface_area < 0.0) {
+        fprintf(stderr, "Invalid dimensions\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Surface area: %.2lf\n", surface_area);
+    
+    return EXIT_SUCCESS;
+}

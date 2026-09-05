@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint64_t catalan(unsigned int n)
+{
+    uint64_t result = 1;
+    unsigned int i;
+
+    if (n > 33)
+    {
+        fprintf(stderr, "Error: n too large for 64-bit result\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        if (result > UINT64_MAX / (2 * (2 * i + 1)))
+        {
+            fprintf(stderr, "Error: arithmetic overflow\n");
+            exit(EXIT_FAILURE);
+        }
+        result = result * 2 * (2 * i + 1) / (i + 2);
+    }
+
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    unsigned int n;
+    int parsed;
+
+    if (argc != 2)
+    {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    parsed = sscanf(argv[1], "%u", &n);
+    if (parsed != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", (unsigned long long)catalan(n));
+
+    return EXIT_SUCCESS;
+}

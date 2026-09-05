@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool all_different(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = i + 1; j < n; j++) {
+            if (arr[i] == arr[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    if (all_different(arr, n)) {
+        printf("All numbers are different\n");
+    } else {
+        printf("Some numbers are duplicates\n");
+    }
+    
+    return 0;
+}
+```

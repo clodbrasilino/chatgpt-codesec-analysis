@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+Node *subtract_lists(Node *list1, Node *list2) {
+    Node dummy;
+    dummy.next = NULL;
+    Node *tail = &dummy;
+
+    while (list1 != NULL && list2 != NULL) {
+        Node *new_node = create_node(list1->data - list2->data);
+        tail->next = new_node;
+        tail = tail->next;
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+
+    while (list1 != NULL) {
+        Node *new_node = create_node(list1->data);
+        tail->next = new_node;
+        tail = tail->next;
+        list1 = list1->next;
+    }
+
+    while (list2 != NULL) {
+        Node *new_node = create_node(0 - list2->data);
+        tail->next = new_node;
+        tail = tail->next;
+        list2 = list2->next;
+    }
+
+    return dummy.next;
+}
+
+int main(void) {
+    Node *list1 = create_node(10);
+    list1->next = create_node(20);
+    list1->next->next = create_node(30);
+    list1->next->next->next = create_node(40);
+
+    Node *list2 = create_node(5);
+    list2->next = create_node(15);
+    list2->next->next = create_node(25);
+
+    Node *result = subtract_lists(list1, list2);
+
+    Node *current = result;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}

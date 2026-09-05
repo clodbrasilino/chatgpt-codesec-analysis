@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:18:44: error: use of undeclared identifier 'INT_MIN'
+   18 |         int maxLeftX = (partitionX == 0) ? INT_MIN : nums1[partitionX - 1];
+      |                                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:19:45: error: use of undeclared identifier 'INT_MAX'
+   19 |         int minRightX = (partitionX == x) ? INT_MAX : nums1[partitionX];
+      |                                             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:21:44: error: use of undeclared identifier 'INT_MIN'
+   21 |         int maxLeftY = (partitionY == 0) ? INT_MIN : nums2[partitionY - 1];
+      |                                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:22:45: error: use of undeclared identifier 'INT_MAX'
+   22 |         int minRightY = (partitionY == y) ? INT_MAX : nums2[partitionY];
+      |                                             ^~~~~~~
+4 errors generated.

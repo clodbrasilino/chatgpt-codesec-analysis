@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t string_length(const char *str)
+{
+    if (str == NULL)
+    {
+        return 0;
+    }
+
+    size_t len = 0;
+    while (str[len] != '\0')
+    {
+        len++;
+    }
+    return len;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    if (argc != 2)
+    {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    size_t len = string_length(argv[1]);
+    printf("%zu\n", len);
+
+    return EXIT_SUCCESS;
+}

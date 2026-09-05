@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-748.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-748.c:130:17: style: Condition 'result6==NULL' is always true [knownConditionTrueFalse]
+    if (result6 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-748.c:129:31: note: Calling function 'add_spaces' returns 0
+    char *result6 = add_spaces(NULL);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-748.c:129:31: note: Assignment 'result6=add_spaces(NULL)', assigned value is 0
+    char *result6 = add_spaces(NULL);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-748.c:130:17: note: Condition 'result6==NULL' is always true
+    if (result6 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-748.c:129:11: style: Variable 'result6' can be declared as pointer to const [constVariablePointer]
+    char *result6 = add_spaces(NULL);
+          ^

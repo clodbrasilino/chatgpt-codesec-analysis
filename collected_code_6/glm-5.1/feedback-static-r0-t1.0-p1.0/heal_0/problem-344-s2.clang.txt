@@ -1,0 +1,17 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:14:25: error: call to undeclared library function 'sqrt' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |         int root = (int)sqrt(i);
+      |                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:14:25: note: include the header <math.h> or explicitly provide a declaration for 'sqrt'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:19: error: use of undeclared identifier 'INT_MAX'
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                   ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:40: error: use of undeclared identifier 'INT_MAX'
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                                        ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:61: error: use of undeclared identifier 'INT_MIN'
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                                                             ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-344-s2.c:37:82: error: use of undeclared identifier 'INT_MIN'
+   37 |     if (lower_l > INT_MAX || upper_l > INT_MAX || lower_l < INT_MIN || upper_l < INT_MIN) {
+      |                                                                                  ^~~~~~~
+5 errors generated.

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *remove_duplicates(const int *tuple, size_t size, size_t *out_size) {
+    if (tuple == NULL || out_size == NULL) {
+        return NULL;
+    }
+
+    int *result = (int *)malloc(size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < count; j++) {
+            if (tuple[i] == result[j]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            result[count++] = tuple[i];
+        }
+    }
+
+    int *temp = (int *)realloc(result, count * sizeof(int));
+    if (temp != NULL) {
+        result = temp;
+    }
+
+    *out_size = count;
+    return result;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3, 2, 4, 1, 5, 6, 5};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t out_size;
+
+    int *unique_tuple = remove_duplicates(tuple, size, &out_size);
+
+    if (unique_tuple != NULL) {
+        for (size_t i = 0; i < out_size; i++) {
+            printf("%d ", unique_tuple[i]);
+        }
+        printf("\n");
+        free(unique_tuple);
+    }
+
+    return 0;
+}

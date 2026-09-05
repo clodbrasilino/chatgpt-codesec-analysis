@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+
+int haveOppositeSign(int a, int b) {
+    return ((a ^ b) < 0);
+}
+
+int main(void) {
+    int x, y;
+
+    if (scanf("%d %d", &x, &y) != 2) {
+        return 1;
+    }
+
+    if (haveOppositeSign(x, y)) {
+        printf("Opposite signs\n");
+    } else {
+        printf("Same signs\n");
+    }
+
+    return 0;
+}
+```

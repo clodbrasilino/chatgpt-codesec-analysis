@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-31-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-31-s2.c:107:9: style: The scope of the variable 'current_value' can be reduced. [variableScope]
+    int current_value = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-31-s2.c:107:23: style: Variable 'current_value' is assigned a value that is never used. [unreadVariable]
+    int current_value = 0;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-31-s2.c:143:31: style: Variable 'current_value' is assigned a value that is never used. [unreadVariable]
+                current_value = lists[i][indices[i]];
+                              ^

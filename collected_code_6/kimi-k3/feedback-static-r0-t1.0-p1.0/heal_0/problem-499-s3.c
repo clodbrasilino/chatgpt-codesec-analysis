@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+double calculate_diameter(double radius)
+{
+    return 2.0 * radius;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double diameter = 0.0;
+
+    printf("Enter the radius of the circle: ");
+    
+    if (scanf("%lf", &radius) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    if (radius < 0.0)
+    {
+        fprintf(stderr, "Error: Radius cannot be negative.\n");
+        return 1;
+    }
+
+    diameter = calculate_diameter(radius);
+    printf("The diameter of the circle is: %lf\n", diameter);
+
+    return 0;
+}

@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double geometric_series_sum(double a, double r, int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+
+    if (r == 1.0) {
+        return a * n;
+    }
+
+    return a * (1.0 - pow(r, n)) / (1.0 - r);
+}
+
+int main(int argc, char *argv[]) {
+    double a = 2.0;
+    double r = 3.0;
+    int n = 4;
+
+    double sum = geometric_series_sum(a, r, n);
+
+    printf("%f\n", sum);
+
+    return 0;
+}
+```

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_average(const int *array, size_t length) {
+    if (array == NULL || length == 0) {
+        return 0.0;
+    }
+
+    long long sum = 0;
+    for (size_t i = 0; i < length; ++i) {
+        sum += array[i];
+    }
+
+    return (double)sum / (double)length;
+}
+
+int main(void) {
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+    double average = calculate_average(numbers, length);
+
+    printf("%f\n", average);
+
+    return 0;
+}

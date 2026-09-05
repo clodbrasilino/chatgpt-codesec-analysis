@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int has_profit;
+    double profit_amount;
+} ProfitResult;
+
+ProfitResult calculate_profit(double cost_price, double selling_price) {
+    ProfitResult result;
+    double diff = selling_price - cost_price;
+    
+    if (diff > 0.0) {
+        result.has_profit = 1;
+        result.profit_amount = diff;
+    } else {
+        result.has_profit = 0;
+        result.profit_amount = 0.0;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    double cost = 100.0;
+    double sell = 150.0;
+    
+    ProfitResult res = calculate_profit(cost, sell);
+    
+    if (res.has_profit) {
+        printf("%.2f\n", res.profit_amount);
+    } else {
+        printf("none\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+bool find_common_first(const Tuple *list, size_t size, int *result) {
+    if (list == NULL || result == NULL || size == 0) {
+        return false;
+    }
+    
+    int candidate = list[0].first;
+    
+    for (size_t i = 1; i < size; i++) {
+        if (list[i].first != candidate) {
+            return false;
+        }
+    }
+    
+    *result = candidate;
+    return true;
+}
+
+int main(void) {
+    Tuple list[] = {{5, 10}, {5, 20}, {5, 30}};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int common;
+    
+    if (find_common_first(list, size, &common)) {
+        printf("Common first element: %d\n", common);
+    } else {
+        printf("No common first element found\n");
+    }
+    
+    return 0;
+}

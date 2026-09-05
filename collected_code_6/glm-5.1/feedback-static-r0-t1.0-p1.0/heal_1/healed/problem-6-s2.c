@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int differ_at_one_bit(int a, int b) {
+    int xor_val = a ^ b;
+    if (xor_val == 0) {
+        return 0;
+    }
+    if ((xor_val & (xor_val - 1)) == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <int1> <int2>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    long val1 = strtol(argv[1], NULL, 10);
+    long val2 = strtol(argv[2], NULL, 10);
+
+    if (val1 < INT_MIN || val1 > INT_MAX || val2 < INT_MIN || val2 > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+
+    int a = (int)val1;
+    int b = (int)val2;
+
+    if (differ_at_one_bit(a, b)) {
+        printf("1\n");
+    } else {
+        printf("0\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-460-s3.c:45:10: warning: Value stored to 'n2' during its initialization is never read [deadcode.DeadStores]
+   45 |     Node n2 = {2, &n1};
+      |          ^~   ~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-460-s3.c:47:10: warning: Value stored to 'n4' during its initialization is never read [deadcode.DeadStores]
+   47 |     Node n4 = {4, &n3};
+      |          ^~   ~~~~~~~~
+2 warnings generated.

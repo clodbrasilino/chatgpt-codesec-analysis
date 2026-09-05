@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double compute_binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0.0;
+    }
+    if (k == 0 || k == n) {
+        return 1.0;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    double result = 1.0;
+    for (int i = 0; i < k; i++) {
+        result *= (n - i);
+        result /= (i + 1);
+    }
+    return result;
+}
+
+double compute_binomial_probability(int n, int k, double p) {
+    if (n < 0 || p < 0.0 || p > 1.0) {
+        return 0.0;
+    }
+    if (k < 0 || k > n) {
+        return 0.0;
+    }
+    double coefficient = compute_binomial_coefficient(n, k);
+    double success = pow(p, k);
+    double failure = pow(1.0 - p, n - k);
+    return coefficient * success * failure;
+}
+
+int main(int argc, char * const * const argv) {
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <n> <k> <p>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr_n;
+    char *endptr_k;
+    char *endptr_p;
+    long n = strtol(argv[1], &endptr_n, 10);
+    long k = strtol(argv[2], &endptr_k, 10);
+    double p = strtod(argv[3], &endptr_p);
+    if (*endptr_n != '\0' || *endptr_k != '\0' || *endptr_p != '\0') {
+        fprintf(stderr, "Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    double probability = compute_binomial_probability((int)n, (int)k, p);
+    printf("%f\n", probability);
+    return EXIT_SUCCESS;
+}

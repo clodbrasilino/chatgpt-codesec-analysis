@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} List;
+
+List list_create(size_t initial_capacity) {
+    List list;
+    list.data = (int *)malloc(initial_capacity * sizeof(int));
+    if (list.data == NULL) {
+        list.size = 0;
+        list.capacity = 0;
+        return list;
+    }
+    list.size = 0;
+    list.capacity = initial_capacity;
+    return list;
+}
+
+int list_append(List *list, int value) {
+    if (list->size == list->capacity) {
+        size_t new_capacity = list->capacity == 0 ? 4 : list->capacity * 2;
+        int *new_data = (int *)realloc(list->data, new_capacity * sizeof(int));
+        if (new_data == NULL) {
+            return -1;
+        }
+        list->data = new_data;
+        list->capacity = new_capacity;
+    }
+    list->data[list->size++] = value;
+    return 0;
+}
+
+void list_free(List *list) {
+    free(list->data);
+    list->data = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+int list_contains(const List *list, int value) {
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->data[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+List list_difference(const List *list1, const List *list2) {
+    List diff = list_create(list1->size > 0 ? list1->size : 1);
+    if (diff.data == NULL && diff.capacity == 0) {
+        return diff;
+    }
+
+    for (size_t i = 0; i < list1->size; i++) {
+        if (!list_contains(list2, list1->data[i])) {
+            if (list_append(&diff, list1->data[i]) != 0) {
+                list_free(&diff);
+                List empty = {NULL, 0, 0};
+                return empty;
+            }
+        }
+    }
+
+    return diff;
+}
+
+int main(void) {
+    List list1 = list_create(4);
+    List list2 = list_create(4);
+
+    if (list1.data == NULL || list2.data == NULL) {
+        list_free(&list1);
+        list_free(&list2);
+        return 1;
+    }
+
+    list_append(&list1, 1);
+    list_append(&list1, 2);
+    list_append(&list1, 3);
+    list_append(&list1, 4);
+
+    list_append(&list2, 3);
+    list_append(&list2, 4);
+    list_append(&list2, 5);
+    list_append(&list2, 6);
+
+    List diff = list_difference(&list1, &list2);
+
+    if (diff.data != NULL) {
+        for (size_t i = 0; i < diff.size; i++) {
+            printf("%d ", diff.data[i]);
+        }
+        printf("\n");
+    }
+
+    list_free(&list1);
+    list_free(&list2);
+    list_free(&diff);
+
+    return 0;
+}

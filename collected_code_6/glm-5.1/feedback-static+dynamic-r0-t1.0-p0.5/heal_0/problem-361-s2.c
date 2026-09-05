@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+int is_empty_list(Node *list) {
+    return list == NULL;
+}
+
+Node *remove_empty_lists(Node *list_of_lists) {
+    Node dummy;
+    dummy.next = list_of_lists;
+    Node *prev = &dummy;
+    Node *curr = list_of_lists;
+
+    while (curr != NULL) {
+        if (is_empty_list((Node *)curr->data)) {
+            prev->next = curr->next;
+            Node *temp = curr;
+            curr = curr->next;
+            free(temp);
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+
+    return dummy.next;
+}
+
+Node *create_node(void *data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Node *create_list(int *arr, int size) {
+    if (size == 0) {
+        return NULL;
+    }
+    Node *head = create_node(arr);
+    Node *curr = head;
+    for (int i = 1; i < size; i++) {
+        curr->next = create_node(arr + i);
+        curr = curr->next;
+    }
+    return head;
+}
+
+void free_list(Node *list) {
+    Node *curr = list;
+    while (curr != NULL) {
+        Node *temp = curr;
+        curr = curr->next;
+        free(temp);
+    }
+}
+
+void free_list_of_lists(Node *list_of_lists) {
+    Node *curr = list_of_lists;
+    while (curr != NULL) {
+        free_list((Node *)curr->data);
+        Node *temp = curr;
+        curr = curr->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    int a1[] = {1, 2, 3};
+    int a2[] = {4, 5};
+    int a3[] = {6};
+
+    Node *l1 = create_list(a1, 3);
+    Node *l2 = create_list(NULL, 0);
+    Node *l3 = create_list(a2, 2);
+    Node *l4 = create_list(NULL, 0);
+    Node *l5 = create_list(a3, 1);
+
+    Node *lol = create_node(l1);
+    lol->next = create_node(l2);
+    lol->next->next = create_node(l3);
+    lol->next->next->next = create_node(l4);
+    lol->next->next->next->next = create_node(l5);
+
+    Node *filtered = remove_empty_lists(lol);
+
+    Node *curr = filtered;
+    while (curr != NULL) {
+        Node *inner = (Node *)curr->data;
+        printf("[");
+        while (inner != NULL) {
+            printf("%d", *(int *)inner->data);
+            inner = inner->next;
+            if (inner != NULL) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        curr = curr->next;
+    }
+
+    free_list_of_lists(filtered);
+
+    return 0;
+}

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int find_element_after_rotation(const int *arr, size_t size, size_t rotations, size_t index, int *result)
+{
+    size_t effective_rotation;
+    size_t actual_index;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (size == 0) {
+        return -1;
+    }
+
+    if (index >= size) {
+        return -1;
+    }
+
+    effective_rotation = rotations % size;
+    actual_index = (index + effective_rotation) % size;
+
+    *result = arr[actual_index];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t rotations;
+    size_t index;
+    int result;
+    int status;
+
+    printf("Enter number of rotations: ");
+    if (scanf("%zu", &rotations) != 1) {
+        fprintf(stderr, "Invalid input for rotations\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter index to find: ");
+    if (scanf("%zu", &index) != 1) {
+        fprintf(stderr, "Invalid input for index\n");
+        return EXIT_FAILURE;
+    }
+
+    status = find_element_after_rotation(arr, size, rotations, index, &result);
+
+    if (status != 0) {
+        fprintf(stderr, "Error: Invalid parameters or index out of bounds\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Element at index %zu after %zu rotations: %d\n", index, rotations, result);
+
+    return EXIT_SUCCESS;
+}
+```

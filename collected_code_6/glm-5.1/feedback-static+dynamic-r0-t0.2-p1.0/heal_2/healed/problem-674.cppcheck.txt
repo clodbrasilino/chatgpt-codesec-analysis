@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-674.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-674.c:140:17: style: Condition 'output3==NULL' is always true [knownConditionTrueFalse]
+    if (output3 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-674.c:139:56: note: Calling function 'remove_duplicate_words' returns 0
+    const char * const output3 = remove_duplicate_words(NULL);
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-674.c:139:56: note: Assignment 'output3=remove_duplicate_words(NULL)', assigned value is 0
+    const char * const output3 = remove_duplicate_words(NULL);
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_2/healed/problem-674.c:140:17: note: Condition 'output3==NULL' is always true
+    if (output3 == NULL) {
+                ^

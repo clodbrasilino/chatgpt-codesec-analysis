@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int *search_strings(const char *haystack, const char **needles, size_t needle_count) {
+    int *results = NULL;
+
+    if (needle_count > 0) {
+        results = (int *)malloc(needle_count * sizeof(int));
+        if (results == NULL) {
+            return NULL;
+        }
+
+        for (size_t i = 0; i < needle_count; i++) {
+            if (needles[i] == NULL || haystack == NULL) {
+                results[i] = 0;
+                continue;
+            }
+
+            if (strstr(haystack, needles[i]) != NULL) {
+                results[i] = 1;
+            } else {
+                results[i] = 0;
+            }
+        }
+    }
+
+    return results;
+}
+
+int main(void) {
+    const char *haystack = "The quick brown fox jumps over the lazy dog";
+    const char *needles[] = {"quick", "lazy", "missing", NULL};
+    /* Possible weaknesses found:
+     *  Assignment 'needle_count=3', assigned value is 3
+     */
+    size_t needle_count = 3;
+
+    int *results = search_strings(haystack, needles, needle_count);
+    if (results == NULL) {
+        /* Possible weaknesses found:
+         *  Condition 'needle_count>0' is always true
+         *  Condition 'needle_count>0' is always true [knownConditionTrueFalse]
+         */
+        if (needle_count > 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    for (size_t i = 0; i < needle_count; i++) {
+        printf("Needle '%s': %s\n", needles[i], results[i] ? "Found" : "Not Found");
+    }
+
+    free(results);
+
+    return EXIT_SUCCESS;
+}

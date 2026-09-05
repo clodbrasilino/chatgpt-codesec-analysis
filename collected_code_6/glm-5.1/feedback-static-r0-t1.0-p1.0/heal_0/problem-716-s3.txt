@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+
+double perimeter_rhombus(double side) {
+    if (side <= 0.0) {
+        return -1.0;
+    }
+    return 4.0 * side;
+}
+
+int main(void) {
+    double side = 5.0;
+    double p = perimeter_rhombus(side);
+    if (p < 0.0) {
+        return 1;
+    }
+    printf("%.2f\n", p);
+    return 0;
+}
+```

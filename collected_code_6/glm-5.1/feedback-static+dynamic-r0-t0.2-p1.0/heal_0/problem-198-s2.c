@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double triangle_area(double a, double b, double t1, double t2, double t3) {
+    double x1 = a * cos(t1);
+    double y1 = b * sin(t1);
+    double x2 = a * cos(t2);
+    double y2 = b * sin(t2);
+    double x3 = a * cos(t3);
+    double y3 = b * sin(t3);
+    return 0.5 * fabs(x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
+}
+
+double find_largest_inscribed_triangle(double a, double b) {
+    if (a <= 0.0 || b <= 0.0) {
+        return 0.0;
+    }
+    double max_area = 0.0;
+    double t1 = 0.0;
+    double t2 = 2.0 * M_PI / 3.0;
+    double t3 = 4.0 * M_PI / 3.0;
+    double step = 0.01;
+    double decay = 0.95;
+    int iterations = 1000;
+    for (int i = 0; i < iterations; i++) {
+        double current_area = triangle_area(a, b, t1, t2, t3);
+        double best_local_area = current_area;
+        double best_t1 = t1;
+        double best_t2 = t2;
+        double best_t3 = t3;
+        for (double d1 = -step; d1 <= step; d1 += step * 0.5) {
+            for (double d2 = -step; d2 <= step; d2 += step * 0.5) {
+                for (double d3 = -step; d3 <= step; d3 += step * 0.5) {
+                    double area = triangle_area(a, b, t1 + d1, t2 + d2, t3 + d3);
+                    if (area > best_local_area) {
+                        best_local_area = area;
+                        best_t1 = t1 + d1;
+                        best_t2 = t2 + d2;
+                        best_t3 = t3 + d3;
+                    }
+                }
+            }
+        }
+        t1 = best_t1;
+        t2 = best_t2;
+        t3 = best_t3;
+        if (best_local_area > max_area) {
+            max_area = best_local_area;
+        }
+        step *= decay;
+    }
+    return max_area;
+}
+
+int main(void) {
+    double a = 5.0;
+    double b = 3.0;
+    double area = find_largest_inscribed_triangle(a, b);
+    printf("%.6f\n", area);
+    return 0;
+}

@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int find_perfect_squares(long start, long end, long **squares, size_t *count)
+{
+    long root_start;
+    long root_end;
+    long i;
+    size_t capacity = 10;
+    size_t size = 0;
+    long *result;
+
+    if (squares == NULL || count == NULL)
+    {
+        return -1;
+    }
+
+    *squares = NULL;
+    *count = 0;
+
+    if (start > end)
+    {
+        long temp = start;
+        start = end;
+        end = temp;
+    }
+
+    if (end < 0)
+    {
+        return 0;
+    }
+
+    if (start < 0)
+    {
+        start = 0;
+    }
+
+    root_start = (long)ceil(sqrt((double)start));
+    root_end = (long)floor(sqrt((double)end));
+
+    if (root_start > root_end)
+    {
+        return 0;
+    }
+
+    result = (long *)malloc(capacity * sizeof(long));
+    if (result == NULL)
+    {
+        return -1;
+    }
+
+    for (i = root_start; i <= root_end; i++)
+    {
+        if (size >= capacity)
+        {
+            long *temp;
+            capacity *= 2;
+            temp = (long *)realloc(result, capacity * sizeof(long));
+            if (temp == NULL)
+            {
+                free(result);
+                return -1;
+            }
+            result = temp;
+        }
+        result[size] = i * i;
+        size++;
+    }
+
+    *squares = result;
+    *count = size;
+    return 0;
+}
+
+int main(void)
+{
+    long start;
+    long end;
+    long *squares = NULL;
+    size_t count = 0;
+    size_t i;
+    int status;
+
+    printf("Enter start number: ");
+    if (scanf("%ld", &start) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter end number: ");
+    if (scanf("%ld", &end) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    status = find_perfect_squares(start, end, &squares, &count);
+    if (status != 0)
+    {
+        fprintf(stderr, "Error finding perfect squares\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perfect squares between %ld and %ld:\n", start, end);
+    for (i = 0; i < count; i++)
+    {
+        printf("%ld\n", squares[i]);
+    }
+
+    free(squares);
+    return EXIT_SUCCESS;
+}
+```

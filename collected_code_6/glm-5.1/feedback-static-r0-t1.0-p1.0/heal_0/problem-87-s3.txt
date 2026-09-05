@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char *key;
+    char *value;
+    struct KeyValuePair *next;
+} KeyValuePair;
+
+typedef struct Dictionary {
+    KeyValuePair *head;
+} Dictionary;
+
+Dictionary *dict_create() {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+void dict_set(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return;
+    }
+    KeyValuePair *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            char *new_value = strdup(value);
+            if (new_value == NULL) {
+                exit(EXIT_FAILURE);
+            }
+            free(current->value);
+            current->value = new_value;
+            return;
+        }
+        current = current->next;
+    }
+    KeyValuePair *pair = (KeyValuePair *)malloc(sizeof(KeyValuePair));
+    if (pair == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    pair->key = strdup(key);
+    pair->value = strdup(value);
+    if (pair->key == NULL || pair->value == NULL) {
+        free(pair->key);
+        free(pair->value);
+        free(pair);
+        exit(EXIT_FAILURE);
+    }
+    pair->next = dict->head;
+    dict->head = pair;
+}
+
+Dictionary *dict_merge(Dictionary *d1, Dictionary *d2, Dictionary *d3) {
+    Dictionary *merged = dict_create();
+    KeyValuePair *current;
+    
+    current = d3->head;
+    while (current != NULL) {
+        dict_set(merged, current->key, current->value);
+        current = current->next;
+    }
+    
+    current = d2->head;
+    while (current != NULL) {
+        dict_set(merged, current->key, current->value);
+        current = current->next;
+    }
+    
+    current = d1->head;
+    while (current != NULL) {
+        dict_set(merged, current->key, current->value);
+        current = current->next;
+    }
+    
+    return merged;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    KeyValuePair *current = dict->head;
+    while (current != NULL) {
+        KeyValuePair *next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+void dict_print(Dictionary *dict) {
+    KeyValuePair *current = dict->head;
+    while (current != NULL) {
+        printf("\"%s\": \"%s\"\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+int main() {
+    Dictionary *d1 = dict_create();
+    dict_set(d1, "a", "1");
+    dict_set(d1, "b", "2");
+
+    Dictionary *d2 = dict_create();
+    dict_set(d2, "b", "3");
+    dict_set(d2, "c", "4");
+
+    Dictionary *d3 = dict_create();
+    dict_set(d3, "d", "5");
+    dict_set(d3, "a", "6");
+
+    Dictionary *merged = dict_merge(d1, d2, d3);
+    dict_print(merged);
+
+    dict_free(d1);
+    dict_free(d2);
+    dict_free(d3);
+    dict_free(merged);
+
+    return 0;
+}
+```

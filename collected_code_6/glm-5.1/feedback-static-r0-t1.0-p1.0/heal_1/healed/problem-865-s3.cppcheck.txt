@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-865-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-865-s3.c:28:37: style: Parameter 'user_data' can be declared as pointer to const. However it seems that 'print_n_times' is a callback function, if 'user_data' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+void print_n_times(int value, void *user_data) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-865-s3.c:44:35: note: You might need to cast the function pointer here
+    int *result = map(list, size, print_n_times, &data);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-865-s3.c:28:37: note: Parameter 'user_data' can be declared as pointer to const
+void print_n_times(int value, void *user_data) {
+                                    ^

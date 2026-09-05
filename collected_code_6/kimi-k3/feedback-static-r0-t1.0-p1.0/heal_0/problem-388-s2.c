@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+unsigned long highest_power_of_2(unsigned long n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned long power = 1;
+    while (power <= n / 2) {
+        power *= 2;
+    }
+    return power;
+}
+
+int main(void) {
+    unsigned long test_values[] = {0, 1, 2, 3, 4, 5, 8, 15, 16, 17, 100, 1000};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        printf("highest_power_of_2(%lu) = %lu\n", 
+               test_values[i], 
+               highest_power_of_2(test_values[i]));
+    }
+    
+    return 0;
+}

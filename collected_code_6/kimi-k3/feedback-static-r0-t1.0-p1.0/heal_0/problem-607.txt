@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int search_pattern(const char *str, const char *pattern, size_t *start, size_t *end)
+{
+    regex_t regex;
+    regmatch_t match;
+    int ret;
+
+    if (str == NULL || pattern == NULL || start == NULL || end == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 1, &match, 0);
+    if (ret == 0) {
+        *start = (size_t)match.rm_so;
+        *end = (size_t)match.rm_eo;
+        regfree(&regex);
+        return 0;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 1;
+    } else {
+        regfree(&regex);
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *pattern = "quick";
+    size_t start = 0;
+    size_t end = 0;
+    int result;
+
+    result = search_pattern(text, pattern, &start, &end);
+
+    if (result == 0) {
+        printf("Pattern found at position %zu to %zu\n", start, end);
+        printf("Matched text: ");
+        for (size_t i = start; i < end; i++) {
+            putchar(text[i]);
+        }
+        printf("\n");
+    } else if (result == 1) {
+        printf("Pattern not found\n");
+    } else {
+        printf("Error occurred during regex operation\n");
+    }
+
+    return 0;
+}
+```

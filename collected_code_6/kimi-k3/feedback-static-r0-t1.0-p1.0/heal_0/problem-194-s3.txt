@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <errno.h>
+#include <limits.h>
+
+int octal_to_decimal(long long octal, long long *decimal) {
+    long long result = 0;
+    long long base = 1;
+    int digit;
+
+    if (decimal == NULL || octal < 0) {
+        return -1;
+    }
+
+    if (octal == 0) {
+        *decimal = 0;
+        return 0;
+    }
+
+    while (octal > 0) {
+        digit = (int)(octal % 10);
+        if (digit > 7) {
+            return -1;
+        }
+
+        if (result > (LLONG_MAX - digit * base) / 8) {
+            if (base > LLONG_MAX / 8 && octal > 10) {
+                return -1;
+            }
+        }
+
+        if (digit != 0 && base > LLONG_MAX / digit) {
+            return -1;
+        }
+
+        if (result > LLONG_MAX - digit * base) {
+            return -1;
+        }
+
+        result += digit * base;
+        octal /= 10;
+
+        if (octal > 0 && base > LLONG_MAX / 8) {
+            return -1;
+        }
+        base *= 8;
+    }
+
+    *decimal = result;
+    return 0;
+}
+
+int main(void) {
+    long long octal_input;
+    long long decimal_result;
+    int scan_result;
+
+    printf("Enter an octal number: ");
+    scan_result = scanf("%lld", &octal_input);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+
+    if (octal_to_decimal(octal_input, &decimal_result) != 0) {
+        fprintf(stderr, "Error: Invalid octal number or overflow\n");
+        return 1;
+    }
+
+    printf("Decimal: %lld\n", decimal_result);
+
+    return 0;
+}
+```

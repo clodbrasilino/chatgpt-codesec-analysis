@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    float *values;
+    size_t count;
+} FloatTuple;
+
+static int is_valid_float(const char *s) {
+    if (s == NULL || *s == '\0') return 0;
+    int dot = 0, digit = 0;
+    if (*s == '-' || *s == '+') s++;
+    if (*s == '\0') return 0;
+    while (*s) {
+        if (*s == '.') {
+            if (dot) return 0;
+            dot = 1;
+        } else if (isdigit((unsigned char)*s)) {
+            digit = 1;
+        } else {
+            return 0;
+        }
+        s++;
+    }
+    return digit;
+}
+
+FloatTuple *string_to_tuple(const char *str) {
+    if (str == NULL) return NULL;
+    
+    char *copy = malloc(strlen(str) + 1);
+    if (copy == NULL) return NULL;
+    strcpy(copy, str);
+    
+    FloatTuple *tuple = malloc(sizeof(FloatTuple));
+    if (tuple == NULL) {
+        free(copy);
+        return NULL;
+    }
+    tuple->values = NULL;
+    tuple->count = 0;
+    
+    size_t capacity = 0;
+    char *token = strtok(copy, " \t\n\r,");
+    
+    while (token != NULL) {
+        if (!is_valid_float(token)) {
+            free(tuple->values);
+            free(tuple);
+            free(copy);
+            return NULL;
+        }
+        
+        if (tuple->count >= capacity) {
+            size_t new_cap = capacity == 0 ? 4 : capacity * 2;
+            float *new_vals = realloc(tuple->values, new_cap * sizeof(float));
+            if (new_vals == NULL) {
+                free(tuple->values);
+                free(tuple);
+                free(copy);
+                return NULL;
+            }
+            tuple->values = new_vals;
+            capacity = new_cap;
+        }
+        
+        char *endptr;
+        float val = strtof(token, &endptr);
+        if (*endptr != '\0') {
+            free(tuple->values);
+            free(tuple);
+            free(copy);
+            return NULL;
+        }
+        
+        tuple->values[tuple->count++] = val;
+        token = strtok(NULL, " \t\n\r,");
+    }
+    
+    free(copy);
+    return tuple;
+}
+
+void free_tuple(FloatTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->values);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *input = "1.5, 2.3, -3.7, 4.0";
+    
+    FloatTuple *tuple = string_to_tuple(input);
+    if (tuple == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return 1;
+    }
+    
+    printf("Tuple: (");
+    for (size_t i = 0; i < tuple->count; i++) {
+        printf("%.2f", tuple->values[i]);
+        if (i < tuple->count - 1) printf(", ");
+    }
+    printf(")\n");
+    
+    free_tuple(tuple);
+    return 0;
+}

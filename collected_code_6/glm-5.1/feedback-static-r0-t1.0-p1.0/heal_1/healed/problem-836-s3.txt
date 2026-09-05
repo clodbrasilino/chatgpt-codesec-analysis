@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_subarray_length(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    int max_sum = INT_MIN;
+    int current_sum = 0;
+    int max_length = 0;
+    int current_length = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (current_sum > 0) {
+            current_sum += arr[i];
+            current_length++;
+        } else {
+            current_sum = arr[i];
+            current_length = 1;
+        }
+
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            max_length = current_length;
+        } else if (current_sum == max_sum) {
+            if (current_length > max_length) {
+                max_length = current_length;
+            }
+        }
+    }
+
+    return max_length;
+}
+
+int main() {
+    int arr1[] = {1, -2, 1, 1, -2, 1};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int len1 = max_subarray_length(arr1, n1);
+    printf("%d\n", len1);
+
+    int arr2[] = {-2, -3, -1, -5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int len2 = max_subarray_length(arr2, n2);
+    printf("%d\n", len2);
+
+    int arr3[] = {1, 2, 3, 4};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int len3 = max_subarray_length(arr3, n3);
+    printf("%d\n", len3);
+
+    int *arr4 = NULL;
+    int len4 = max_subarray_length(arr4, 0);
+    printf("%d\n", len4);
+
+    return 0;
+}

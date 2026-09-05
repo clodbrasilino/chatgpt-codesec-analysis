@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void separate_and_print_numbers(const char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int pos = 0;
+    int i = 0;
+
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            int start_pos = pos;
+            int num_start = i;
+
+            while (isdigit((unsigned char)str[i])) {
+                i++;
+                pos++;
+            }
+
+            printf("Number: ");
+            for (int j = num_start; j < i; j++) {
+                putchar(str[j]);
+            }
+            printf(", Position: %d\n", start_pos);
+        } else {
+            i++;
+            pos++;
+        }
+    }
+}
+
+int main(void) {
+    const char *text = "abc123def456ghi789j0k";
+    printf("String: %s\n", text);
+    separate_and_print_numbers(text);
+    return 0;
+}
+```

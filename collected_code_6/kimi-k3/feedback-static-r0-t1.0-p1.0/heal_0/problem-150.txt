@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool isInSequence(unsigned int num) {
+    if (num == 0) {
+        return false;
+    }
+    return (num & (num - 1)) == 0;
+}
+
+int main(void) {
+    unsigned int num;
+    int result;
+    
+    printf("Enter a positive integer: ");
+    
+    result = scanf("%u", &num);
+    
+    if (result != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (num == 0) {
+        fprintf(stderr, "Error: Number must be positive\n");
+        return 1;
+    }
+    
+    if (isInSequence(num)) {
+        printf("%u is present in the sequence\n", num);
+    } else {
+        printf("%u is not present in the sequence\n", num);
+    }
+    
+    return 0;
+}
+```

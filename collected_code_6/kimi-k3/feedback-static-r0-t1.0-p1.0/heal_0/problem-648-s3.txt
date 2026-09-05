@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void exchange_nth_values(int *list, size_t size, size_t n)
+{
+    size_t i;
+    
+    if (list == NULL || n == 0 || size == 0)
+    {
+        return;
+    }
+    
+    for (i = n - 1; i + 1 < size; i += n)
+    {
+        int temp = list[i];
+        list[i] = list[i + 1];
+        list[i + 1] = temp;
+    }
+}
+
+int main(void)
+{
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    size_t n = 3;
+    size_t i;
+    
+    printf("Original list: ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+    
+    exchange_nth_values(list, size, n);
+    
+    printf("Modified list: ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}
+```

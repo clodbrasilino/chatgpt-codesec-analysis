@@ -1,0 +1,306 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int is_list;
+    int value;
+    struct Node **children;
+    size_t child_count;
+} Node;
+
+static Node *create_leaf(int value)
+{
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_list = 0;
+    node->value = value;
+    node->children = NULL;
+    node->child_count = 0;
+    return node;
+}
+
+static Node *create_list(void)
+{
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_list = 1;
+    node->value = 0;
+    node->children = NULL;
+    node->child_count = 0;
+    return node;
+}
+
+static int add_child(Node *parent, Node *child)
+{
+    Node **new_children;
+    size_t new_count;
+
+    if (parent == NULL || child == NULL || !parent->is_list) {
+        return 0;
+    }
+
+    if (parent->child_count == (size_t)-1) {
+        return 0;
+    }
+
+    new_count = parent->child_count + 1;
+    new_children = (Node **)realloc(parent->children, new_count * sizeof(Node *));
+    if (new_children == NULL) {
+        return 0;
+    }
+
+    parent->children = new_children;
+    parent->children[parent->child_count] = child;
+    parent->child_count = new_count;
+    return 1;
+}
+
+static void free_node(Node *node)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    if (node == NULL) {
+        return;
+    }
+
+    if (node->is_list && node->children != NULL) {
+        for (i = 0; i < node->child_count; i++) {
+            free_node(node->children[i]);
+        }
+        free(node->children);
+    }
+
+    free(node);
+}
+
+static int nodes_equal(const Node *a, const Node *b)
+{
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'found' can be reduced. [variableScope]
+     */
+    int found;
+
+    if (a == NULL || b == NULL) {
+        return 0;
+    }
+
+    if (a->is_list != b->is_list) {
+        return 0;
+    }
+
+    if (!a->is_list) {
+        return a->value == b->value;
+    }
+
+    if (a->child_count != b->child_count) {
+        return 0;
+    }
+
+    for (i = 0; i < a->child_count; i++) {
+        size_t j;
+        found = 0;
+        for (j = 0; j < b->child_count; j++) {
+            if (nodes_equal(a->children[i], b->children[j])) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+static int is_subset_helper(const Node *sub, const Node *super)
+{
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'found' can be reduced. [variableScope]
+     */
+    int found;
+
+    if (sub == NULL || super == NULL) {
+        return 0;
+    }
+
+    if (!sub->is_list && !super->is_list) {
+        return sub->value == super->value;
+    }
+
+    if (sub->is_list && !super->is_list) {
+        return 0;
+    }
+
+    if (!sub->is_list && super->is_list) {
+        for (i = 0; i < super->child_count; i++) {
+            if (nodes_equal(sub, super->children[i])) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    for (i = 0; i < sub->child_count; i++) {
+        size_t j;
+        found = 0;
+        for (j = 0; j < super->child_count; j++) {
+            if (nodes_equal(sub->children[i], super->children[j])) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int is_subset(const Node *sub, const Node *super)
+{
+    if (sub == NULL || super == NULL) {
+        return 0;
+    }
+    return is_subset_helper(sub, super);
+}
+
+int main(void)
+{
+    Node *super = NULL;
+    Node *sub = NULL;
+    Node *tmp = NULL;
+    Node *inner1 = NULL;
+    Node *inner2 = NULL;
+    int result = 0;
+
+    super = create_list();
+    if (super == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(1);
+    if (tmp == NULL || !add_child(super, tmp)) {
+        free_node(tmp);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    inner1 = create_list();
+    if (inner1 == NULL) {
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(2);
+    if (tmp == NULL || !add_child(inner1, tmp)) {
+        free_node(tmp);
+        free_node(inner1);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(3);
+    if (tmp == NULL || !add_child(inner1, tmp)) {
+        free_node(tmp);
+        free_node(inner1);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!add_child(super, inner1)) {
+        free_node(inner1);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(4);
+    if (tmp == NULL || !add_child(super, tmp)) {
+        free_node(tmp);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    sub = create_list();
+    if (sub == NULL) {
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(1);
+    if (tmp == NULL || !add_child(sub, tmp)) {
+        free_node(tmp);
+        free_node(sub);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    inner2 = create_list();
+    if (inner2 == NULL) {
+        free_node(sub);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(2);
+    if (tmp == NULL || !add_child(inner2, tmp)) {
+        free_node(tmp);
+        free_node(inner2);
+        free_node(sub);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tmp = create_leaf(3);
+    if (tmp == NULL || !add_child(inner2, tmp)) {
+        free_node(tmp);
+        free_node(inner2);
+        free_node(sub);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!add_child(sub, inner2)) {
+        free_node(inner2);
+        free_node(sub);
+        free_node(super);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    result = is_subset(sub, super);
+
+    if (result) {
+        printf("Subset\n");
+    } else {
+        printf("Not subset\n");
+    }
+
+    free_node(sub);
+    free_node(super);
+
+    return EXIT_SUCCESS;
+}

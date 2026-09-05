@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_lowercase(const char *input, size_t *count);
+void free_tokens(char **tokens, size_t count);
+
+char **split_at_lowercase(const char *input, size_t *count)
+{
+    char **tokens = NULL;
+    char **temp = NULL;
+    size_t num_tokens = 0;
+    size_t start = 0;
+    size_t i = 0;
+    size_t len = 0;
+
+    if (input == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    len = strlen(input);
+
+    for (i = 0; i <= len; i++) {
+        if (i == len || islower((unsigned char)input[i])) {
+            if (i > start) {
+                size_t seg_len = i - start;
+                char *segment = malloc(seg_len + 1);
+                if (segment == NULL) {
+                    free_tokens(tokens, num_tokens);
+                    return NULL;
+                }
+                memcpy(segment, &input[start], seg_len);
+                segment[seg_len] = '\0';
+
+                temp = realloc(tokens, (num_tokens + 1) * sizeof(char *));
+                if (temp == NULL) {
+                    free(segment);
+                    free_tokens(tokens, num_tokens);
+                    return NULL;
+                }
+                tokens = temp;
+                tokens[num_tokens] = segment;
+                num_tokens++;
+            }
+            start = i + 1;
+        }
+    }
+
+    *count = num_tokens;
+    return tokens;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+int main(void)
+{
+    const char *test = "HELLOworldFOObarBAZ123";
+    char **tokens = NULL;
+    size_t count = 0;
+    size_t i;
+
+    tokens = split_at_lowercase(test, &count);
+    if (tokens == NULL && count == 0) {
+        if (strlen(test) > 0) {
+            fprintf(stderr, "Failed to split string or no tokens found\n");
+        }
+    }
+
+    printf("Input: %s\n", test);
+    printf("Tokens: %zu\n", count);
+    for (i = 0; i < count; i++) {
+        printf("  [%zu]: %s\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double calculate_profit(double amount, double cost, int *has_profit) {
+    if (has_profit == NULL) {
+        return 0.0;
+    }
+    
+    *has_profit = 0;
+    
+    if (amount < 0.0 || cost < 0.0) {
+        return 0.0;
+    }
+    
+    if (amount > cost) {
+        *has_profit = 1;
+        return amount - cost;
+    }
+    
+    return 0.0;
+}
+
+int main(void) {
+    double amount = 0.0;
+    double cost = 0.0;
+    int has_profit = 0;
+    double profit = 0.0;
+    
+    printf("Enter amount: ");
+    if (scanf("%lf", &amount) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter cost: ");
+    if (scanf("%lf", &cost) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    profit = calculate_profit(amount, cost, &has_profit);
+    
+    if (has_profit) {
+        printf("Profit: %.2f\n", profit);
+    } else {
+        printf("No profit\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

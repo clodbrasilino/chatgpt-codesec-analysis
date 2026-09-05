@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c:5:6: warning: Either the condition 'letters==NULL' is redundant or there is possible null pointer dereference: letters. [nullPointerRedundantCheck]
+    *letters = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c:7:32: note: Assuming that condition 'letters==NULL' is not redundant
+    if (str == NULL || letters == NULL || digits == NULL) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c:5:6: note: Null pointer dereference
+    *letters = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c:6:6: warning: Either the condition 'digits==NULL' is redundant or there is possible null pointer dereference: digits. [nullPointerRedundantCheck]
+    *digits = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c:7:50: note: Assuming that condition 'digits==NULL' is not redundant
+    if (str == NULL || letters == NULL || digits == NULL) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-343-s3.c:6:6: note: Null pointer dereference
+    *digits = 0;
+     ^

@@ -1,0 +1,14 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-51-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-51-s2.c:26:9: error: 'errno' undeclared (first use in this function)
+   26 |     if (errno == ERANGE || *endptr_a != '\0' || *endptr_b != '\0' || *endptr_c != '\0' || a <= 0.0 || b <= 0.0 || c <= 0.0) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-51-s2.c:3:1: note: 'errno' is defined in header '<errno.h>'; this is probably fixable by adding '#include <errno.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <errno.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-51-s2.c:26:9: note: each undeclared identifier is reported only once for each function it appears in
+   26 |     if (errno == ERANGE || *endptr_a != '\0' || *endptr_b != '\0' || *endptr_c != '\0' || a <= 0.0 || b <= 0.0 || c <= 0.0) {
+      |         ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-51-s2.c:26:18: error: 'ERANGE' undeclared (first use in this function)
+   26 |     if (errno == ERANGE || *endptr_a != '\0' || *endptr_b != '\0' || *endptr_c != '\0' || a <= 0.0 || b <= 0.0 || c <= 0.0) {
+      |                  ^~~~~~

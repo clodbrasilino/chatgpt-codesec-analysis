@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int sum_in_range(int arr[], int size, int start, int end) {
+    int sum = 0;
+    int i;
+
+    if (start < 0 || end >= size || start > end) {
+        return -1;
+    }
+
+    for (i = start; i <= end; i++) {
+        sum += arr[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int start = 2;
+    int end = 5;
+    int result;
+
+    result = sum_in_range(arr, size, start, end);
+
+    if (result == -1) {
+        printf("Invalid range\n");
+    } else {
+        printf("Sum of elements from index %d to %d is %d\n", start, end, result);
+    }
+
+    return 0;
+}

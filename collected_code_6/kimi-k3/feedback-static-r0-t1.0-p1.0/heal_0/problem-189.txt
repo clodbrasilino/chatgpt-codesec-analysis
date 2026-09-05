@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int firstMissingPositive(int* nums, int numsSize) {
+    if (nums == NULL || numsSize <= 0) {
+        return 1;
+    }
+    
+    int i = 0;
+    while (i < numsSize) {
+        if (nums[i] > 0 && nums[i] <= numsSize && nums[nums[i] - 1] != nums[i]) {
+            int temp = nums[i];
+            nums[i] = nums[temp - 1];
+            nums[temp - 1] = temp;
+        } else {
+            i++;
+        }
+    }
+    
+    for (i = 0; i < numsSize; i++) {
+        if (nums[i] != i + 1) {
+            return i + 1;
+        }
+    }
+    
+    return numsSize + 1;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 0};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Test 1: %d\n", firstMissingPositive(arr1, size1));
+    
+    int arr2[] = {3, 4, -1, 1};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Test 2: %d\n", firstMissingPositive(arr2, size2));
+    
+    int arr3[] = {7, 8, 9, 11, 12};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Test 3: %d\n", firstMissingPositive(arr3, size3));
+    
+    int arr4[] = {1};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("Test 4: %d\n", firstMissingPositive(arr4, size4));
+    
+    int arr5[] = {2};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("Test 5: %d\n", firstMissingPositive(arr5, size5));
+    
+    return 0;
+}
+```

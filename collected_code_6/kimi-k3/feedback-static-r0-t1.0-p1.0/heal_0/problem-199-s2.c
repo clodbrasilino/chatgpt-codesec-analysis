@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+unsigned int highest_power_of_2(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned int power = 1;
+    
+    while (power <= n / 2) {
+        power *= 2;
+    }
+    
+    return power;
+}
+
+int main(void) {
+    unsigned int test_values[] = {0, 1, 2, 3, 4, 5, 8, 10, 16, 17, 100, 1000};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        unsigned int n = test_values[i];
+        unsigned int result = highest_power_of_2(n);
+        printf("Highest power of 2 <= %u is %u\n", n, result);
+    }
+    
+    return 0;
+}

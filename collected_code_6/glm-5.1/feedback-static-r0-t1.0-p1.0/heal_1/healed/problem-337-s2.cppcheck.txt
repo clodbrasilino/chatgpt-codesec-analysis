@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:31:27: style: Condition 'effective_str_len<word_len' is always true [knownConditionTrueFalse]
+    if (effective_str_len < word_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:25:14: note: Assuming that condition 'p>=str' is not redundant
+    while (p >= str && ispunct((unsigned char)*p)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:29:25: note: Assignment 'effective_str_len=(unsigned long)(p-str+1)', assigned value is less than 1
+    effective_str_len = (size_t)(p - str + 1);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:19:34: note: Assuming that condition 'word_len==0' is not redundant
+    if (str_len == 0 || word_len == 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:31:27: note: Condition 'effective_str_len<word_len' is always true
+    if (effective_str_len < word_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:35:27: style: Condition 'effective_str_len>word_len' is always false [knownConditionTrueFalse]
+    if (effective_str_len > word_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:25:14: note: Assuming that condition 'p>=str' is not redundant
+    while (p >= str && ispunct((unsigned char)*p)) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:29:25: note: Assignment 'effective_str_len=(unsigned long)(p-str+1)', assigned value is less than 1
+    effective_str_len = (size_t)(p - str + 1);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:31:27: note: Assuming condition is false
+    if (effective_str_len < word_len) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-337-s2.c:35:27: note: Condition 'effective_str_len>word_len' is always false
+    if (effective_str_len > word_len) {
+                          ^

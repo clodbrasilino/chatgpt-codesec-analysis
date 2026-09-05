@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-582.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-582.c:73:22: style: Condition 'empty_status==-1' is always true [knownConditionTrueFalse]
+    if (empty_status == -1) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-582.c:72:43: note: Calling function 'dictionary_is_empty' returns -1
+    int empty_status = dictionary_is_empty(dict);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-582.c:72:43: note: Assignment 'empty_status=dictionary_is_empty(dict)', assigned value is -1
+    int empty_status = dictionary_is_empty(dict);
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-582.c:73:22: note: Condition 'empty_status==-1' is always true
+    if (empty_status == -1) {
+                     ^

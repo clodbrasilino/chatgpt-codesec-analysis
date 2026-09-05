@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+double lateralSurfaceAreaOfCube(double side) {
+    if (side < 0) {
+        return -1;
+    }
+    return 4 * side * side;
+}
+
+int main() {
+    double side;
+    printf("Enter the side length of the cube: ");
+    if (scanf("%lf", &side) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    double result = lateralSurfaceAreaOfCube(side);
+    if (result == -1) {
+        printf("Side length cannot be negative.\n");
+        return 1;
+    }
+    printf("Lateral surface area of the cube: %.2lf\n", result);
+    return 0;
+}

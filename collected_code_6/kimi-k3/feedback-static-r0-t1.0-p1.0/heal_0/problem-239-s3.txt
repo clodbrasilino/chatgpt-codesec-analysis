@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countSequences(int n, int m) {
+    if (n <= 0 || m <= 0) {
+        return 0;
+    }
+
+    long long *dp = (long long *)calloc((size_t)(m + 1), sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    long long *prev = (long long *)calloc((size_t)(m + 1), sizeof(long long));
+    if (prev == NULL) {
+        free(dp);
+        return -1;
+    }
+
+    for (int j = 1; j <= m; j++) {
+        prev[j] = 1;
+    }
+
+    for (int i = 2; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            dp[j] = 0;
+        }
+
+        for (int j = 1; j <= m; j++) {
+            for (int k = 1; k <= j / 2; k++) {
+                dp[j] += prev[k];
+            }
+        }
+
+        long long *temp = prev;
+        prev = dp;
+        dp = temp;
+    }
+
+    long long result = 0;
+    for (int j = 1; j <= m; j++) {
+        result += prev[j];
+    }
+
+    free(dp);
+    free(prev);
+
+    return result;
+}
+
+int main(void) {
+    int n = 0;
+    int m = 0;
+
+    printf("Enter sequence length (n): ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter maximum value (m): ");
+    if (scanf("%d", &m) != 1 || m <= 0) {
+        fprintf(stderr, "Invalid input for m\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = countSequences(n, m);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of possible sequences: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-11-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-11-s3.c:17:9: style: The scope of the variable 'found_last' can be reduced. [variableScope]
+    int found_last = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-11-s3.c:17:20: style: Variable 'found_last' is assigned a value that is never used. [unreadVariable]
+    int found_last = 0;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-11-s3.c:30:24: style: Variable 'found_last' is assigned a value that is never used. [unreadVariable]
+            found_last = 1;
+                       ^

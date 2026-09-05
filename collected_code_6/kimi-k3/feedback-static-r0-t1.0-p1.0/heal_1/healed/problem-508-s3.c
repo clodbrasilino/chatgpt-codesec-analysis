@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_common_elements_order(const int *list1, int size1, const int *list2, int size2) {
+    int *common1 = (int *)malloc(size1 * sizeof(int));
+    int *common2 = (int *)malloc(size2 * sizeof(int));
+    int count1 = 0, count2 = 0;
+    int i, j;
+    
+    if (common1 == NULL || common2 == NULL) {
+        free(common1);
+        free(common2);
+        return -1;
+    }
+    
+    for (i = 0; i < size1; i++) {
+        for (j = 0; j < size2; j++) {
+            if (list1[i] == list2[j]) {
+                common1[count1++] = list1[i];
+                break;
+            }
+        }
+    }
+    
+    for (i = 0; i < size2; i++) {
+        for (j = 0; j < size1; j++) {
+            if (list2[i] == list1[j]) {
+                common2[count2++] = list2[i];
+                break;
+            }
+        }
+    }
+    
+    if (count1 != count2) {
+        free(common1);
+        free(common2);
+        return 0;
+    }
+    
+    for (i = 0; i < count1; i++) {
+        if (common1[i] != common2[i]) {
+            free(common1);
+            free(common2);
+            return 0;
+        }
+    }
+    
+    free(common1);
+    free(common2);
+    return 1;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 4, 5, 1, 3};
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+    
+    int result = check_common_elements_order(list1, size1, list2, size2);
+    
+    if (result == 1) {
+        printf("Common elements are in the same order\n");
+    } else if (result == 0) {
+        printf("Common elements are not in the same order\n");
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    
+    return 0;
+}

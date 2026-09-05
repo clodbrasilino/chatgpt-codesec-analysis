@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple first;
+    Tuple second;
+} NestedTuple;
+
+NestedTuple subtract_nested_tuples(NestedTuple t1, NestedTuple t2) {
+    NestedTuple result;
+    result.first.a = t1.first.a - t2.first.a;
+    result.first.b = t1.first.b - t2.first.b;
+    result.second.a = t1.second.a - t2.second.a;
+    result.second.b = t1.second.b - t2.second.b;
+    return result;
+}
+
+int main() {
+    NestedTuple t1 = {{10, 20}, {30, 40}};
+    NestedTuple t2 = {{1, 2}, {3, 4}};
+    NestedTuple res = subtract_nested_tuples(t1, t2);
+    printf("%d %d %d %d\n", res.first.a, res.first.b, res.second.a, res.second.b);
+    return 0;
+}
+```

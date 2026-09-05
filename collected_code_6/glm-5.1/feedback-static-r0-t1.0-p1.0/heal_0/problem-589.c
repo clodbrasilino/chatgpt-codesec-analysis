@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+
+void find_perfect_squares(long long start, long long end) {
+    if (start > end) {
+        long long temp = start;
+        start = end;
+        end = temp;
+    }
+
+    if (start <= 0) {
+        start = 1;
+    }
+
+    long long sqrt_start = (long long)ceil(sqrt((double)start));
+    long long sqrt_end = (long long)floor(sqrt((double)end));
+
+    if (sqrt_start * sqrt_start < start) {
+        sqrt_start++;
+    }
+
+    if (sqrt_end * sqrt_end > end) {
+        sqrt_end--;
+    }
+
+    long long i;
+    for (i = sqrt_start; i <= sqrt_end; i++) {
+        printf("%lld\n", i * i);
+    }
+}
+
+int main(void) {
+    long long a, b;
+
+    if (scanf("%lld %lld", &a, &b) != 2) {
+        return 1;
+    }
+
+    find_perfect_squares(a, b);
+
+    return 0;
+}

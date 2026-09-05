@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int findMaxSum(int grid[2][100], int n) {
+    if (n == 0) return 0;
+    if (n == 1) return max(grid[0][0], grid[1][0]);
+
+    int dp[100];
+    dp[0] = max(grid[0][0], grid[1][0]);
+    dp[1] = max(max(grid[0][0], grid[1][0]), max(grid[0][1], grid[1][1]));
+
+    for (int i = 2; i < n; i++) {
+        dp[i] = max(dp[i - 1], dp[i - 2] + max(grid[0][i], grid[1][i]));
+    }
+
+    return dp[n - 1];
+}
+
+int main() {
+    int n;
+    printf("Enter the number of columns: ");
+    scanf("%d", &n);
+
+    if (n <= 0 || n > 100) {
+        printf("Invalid input. Number of columns must be between 1 and 100.\n");
+        return 1;
+    }
+
+    int grid[2][100];
+    printf("Enter the elements of the grid (2 x %d):\n", n);
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &grid[i][j]);
+        }
+    }
+
+    int result = findMaxSum(grid, n);
+    printf("Maximum sum such that no two chosen numbers are adjacent: %d\n", result);
+
+    return 0;
+}

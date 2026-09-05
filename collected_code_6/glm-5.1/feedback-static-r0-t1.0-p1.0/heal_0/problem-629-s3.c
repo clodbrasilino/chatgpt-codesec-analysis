@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_even_numbers(const int *list, size_t size, size_t *out_size) {
+    if (list == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 == 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    int *even_list = (int *)malloc(count * sizeof(int));
+    if (even_list == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 == 0) {
+            even_list[index] = list[i];
+            index++;
+        }
+    }
+
+    *out_size = count;
+    return even_list;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    size_t even_count = 0;
+
+    int *even_numbers = find_even_numbers(list, list_size, &even_count);
+
+    if (even_numbers != NULL) {
+        for (size_t i = 0; i < even_count; i++) {
+            printf("%d ", even_numbers[i]);
+        }
+        printf("\n");
+        free(even_numbers);
+    } else {
+        printf("No even numbers found or memory allocation failed.\n");
+    }
+
+    return 0;
+}

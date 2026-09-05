@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-928-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-928-s3.c:50:43: error: passing argument 1 of 'convert_date' from incompatible pointer type [-Wincompatible-pointer-types]
+   50 |     const char *converted3 = convert_date(ptr_null);
+      |                                           ^~~~~~~~
+      |                                           |
+      |                                           const char * const*
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_7/healed/problem-928-s3.c:5:32: note: expected 'const char *' but argument is of type 'const char * const*'
+    5 | char *convert_date(const char *yyyy_mm_dd) {
+      |                    ~~~~~~~~~~~~^~~~~~~~~~

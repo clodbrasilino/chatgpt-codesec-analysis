@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+#include <errno.h>
+
+int calculate_jumps(long long jump_length, long long target_x) {
+    if (jump_length <= 0 || target_x < 0) {
+        return -1;
+    }
+    
+    if (target_x == 0) {
+        return 0;
+    }
+    
+    if (target_x <= jump_length) {
+        return 1;
+    }
+    
+    long long quotient = target_x / jump_length;
+    long long remainder = target_x % jump_length;
+    
+    if (remainder == 0) {
+        if (quotient > INT_MAX) {
+            return -1;
+        }
+        return (int)quotient;
+    }
+    
+    if (quotient + 1 > INT_MAX) {
+        return -1;
+    }
+    
+    return (int)(quotient + 1);
+}
+
+int main(void) {
+    long long jump_length;
+    long long target_x;
+    int result;
+    
+    printf("Enter jump length: ");
+    if (scanf("%lld", &jump_length) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter target x-coordinate: ");
+    if (scanf("%lld", &target_x) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = calculate_jumps(jump_length, target_x);
+    
+    if (result < 0) {
+        printf("Cannot reach target or invalid parameters\n");
+    } else {
+        printf("Number of jumps required: %d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}

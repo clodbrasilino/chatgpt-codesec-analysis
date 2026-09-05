@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c:53:9: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   53 |         (char *){"banana", 3},
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c:53:9: note: (near initialization for 'dict[0].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c:55:9: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   55 |         (char *){"date", 7},
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c:55:9: note: (near initialization for 'dict[1].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c:57:9: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   57 |         (char *){"fig", 9}
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_5/healed/problem-694-s2.c:57:9: note: (near initialization for 'dict[2].value')

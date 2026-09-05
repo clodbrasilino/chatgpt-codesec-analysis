@@ -1,0 +1,49 @@
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+size_t count_lists(Node **array_of_lists, size_t num_lists) {
+    if (array_of_lists == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < num_lists; i++) {
+        if (array_of_lists[i] != NULL) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    Node *list1 = malloc(sizeof(Node));
+    Node *list2 = NULL;
+    Node *list3 = malloc(sizeof(Node));
+    
+    if (list1 == NULL || list3 == NULL) {
+        free(list1);
+        free(list3);
+        return 1;
+    }
+
+    list1->next = NULL;
+    list3->next = NULL;
+
+    Node *lists[] = {list1, list2, list3};
+    size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+
+    size_t result = count_lists(lists, num_lists);
+    printf("%zu\n", result);
+
+    free(list1);
+    free(list3);
+
+    return 0;
+}
+```

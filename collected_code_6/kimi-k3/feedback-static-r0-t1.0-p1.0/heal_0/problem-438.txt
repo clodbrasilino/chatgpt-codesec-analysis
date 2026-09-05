@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    if (ta->first != tb->first) {
+        return ta->first - tb->first;
+    }
+    return ta->second - tb->second;
+}
+
+long long count_bidirectional_pairs(const Tuple *tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return 0;
+    }
+    
+    Tuple *sorted = malloc(count * sizeof(Tuple));
+    if (sorted == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        sorted[i] = tuples[i];
+    }
+    
+    qsort(sorted, count, sizeof(Tuple), compare_tuples);
+    
+    long long bidirectional_count = 0;
+    size_t i = 0;
+    
+    while (i < count) {
+        size_t j = i;
+        while (j < count && sorted[j].first == sorted[i].first && sorted[j].second == sorted[i].second) {
+            j++;
+        }
+        size_t freq_a = j - i;
+        
+        if (sorted[i].first == sorted[i].second) {
+            bidirectional_count += (long long)freq_a * (freq_a - 1) / 2;
+        } else {
+            Tuple target = {sorted[i].second, sorted[i].first};
+            size_t left = 0;
+            size_t right = count;
+            size_t first_pos = count;
+            
+            while (left < right) {
+                size_t mid = left + (right - left) / 2;
+                if (compare_tuples(&sorted[mid], &target) >= 0) {
+                    first_pos = mid;
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            
+            if (first_pos < count && compare_tuples(&sorted[first_pos], &target) == 0) {
+                size_t last_pos = first_pos;
+                left = first_pos;
+                right = count;
+                while (left < right) {
+                    size_t mid = left + (right - left) / 2;
+                    if (compare_tuples(&sorted[mid], &target) <= 0) {
+                        last_pos = mid;
+                        left = mid + 1;
+                    } else {
+                        right = mid;
+                    }
+                }
+                size_t freq_b = last_pos - first_pos + 1;
+                bidirectional_count += (long long)freq_a * freq_b;
+            }
+        }
+        i = j;
+    }
+    
+    free(sorted);
+    return bidirectional_count / 2;
+}
+
+int main(void) {
+    Tuple tuples[] = {{1, 2}, {2, 1}, {3, 4}, {4, 3}, {1, 2}, {5, 5}, {5, 5}};
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    
+    long long result = count_bidirectional_pairs(tuples, count);
+    if (result >= 0) {
+        printf("Bidirectional pairs: %lld\n", result);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

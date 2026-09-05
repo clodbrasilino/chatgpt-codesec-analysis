@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdlib.h>
+
+int match_ab(const char *string) {
+    regex_t regex;
+    int ret;
+
+    ret = regcomp(&regex, "^ab*$", REG_EXTENDED);
+    if (ret != 0) {
+        regfree(&regex);
+        return 0;
+    }
+
+    ret = regexec(&regex, string, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *test1 = "a";
+    const char *test2 = "ab";
+    const char *test3 = "abbb";
+    const char *test4 = "abb";
+    const char *test5 = "acb";
+    const char *test6 = "b";
+
+    printf("%s: %d\n", test1, match_ab(test1));
+    printf("%s: %d\n", test2, match_ab(test2));
+    printf("%s: %d\n", test3, match_ab(test3));
+    printf("%s: %d\n", test4, match_ab(test4));
+    printf("%s: %d\n", test5, match_ab(test5));
+    printf("%s: %d\n", test6, match_ab(test6));
+
+    return 0;
+}

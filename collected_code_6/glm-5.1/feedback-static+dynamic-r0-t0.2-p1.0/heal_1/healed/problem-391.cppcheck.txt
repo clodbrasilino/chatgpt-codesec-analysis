@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-391.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-391.c:50:14: style: Variable 'key' can be declared as const array [constVariable]
+        char key[2] = {lists[0][i], '\0'};
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_1/healed/problem-391.c:56:18: style: Variable 'nested_key' can be declared as const array [constVariable]
+            char nested_key[2] = {lists[j][i], '\0'};
+                 ^

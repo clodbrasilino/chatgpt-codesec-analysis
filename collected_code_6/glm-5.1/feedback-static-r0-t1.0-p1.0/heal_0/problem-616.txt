@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t size;
+    int *elements;
+} Tuple;
+
+Tuple tuple_mod(const Tuple a, const Tuple b) {
+    Tuple result;
+    if (a.size != b.size) {
+        result.size = 0;
+        result.elements = NULL;
+        return result;
+    }
+
+    if (a.size == 0) {
+        result.size = 0;
+        result.elements = NULL;
+        return result;
+    }
+
+    result.size = a.size;
+    result.elements = (int *)malloc(a.size * sizeof(int));
+    if (result.elements == NULL) {
+        result.size = 0;
+        return result;
+    }
+
+    for (size_t i = 0; i < a.size; i++) {
+        if (b.elements[i] == 0) {
+            free(result.elements);
+            result.elements = NULL;
+            result.size = 0;
+            return result;
+        }
+        result.elements[i] = a.elements[i] % b.elements[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {10, 20, 30, 40};
+    int arr2[] = {3, 7, 4, 5};
+
+    Tuple a = {4, arr1};
+    Tuple b = {4, arr2};
+
+    Tuple res = tuple_mod(a, b);
+
+    if (res.size > 0 && res.elements != NULL) {
+        for (size_t i = 0; i < res.size; i++) {
+            printf("%d ", res.elements[i]);
+        }
+        printf("\n");
+        free(res.elements);
+    }
+
+    return 0;
+}
+```

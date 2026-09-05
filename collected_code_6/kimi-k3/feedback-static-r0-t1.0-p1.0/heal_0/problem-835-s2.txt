@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_slope(double x1, double y1, double x2, double y2);
+
+int main(void) {
+    double x1, y1, x2, y2, slope;
+    
+    printf("Enter coordinates of first point (x1 y1): ");
+    if (scanf("%lf %lf", &x1, &y1) != 2) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter coordinates of second point (x2 y2): ");
+    if (scanf("%lf %lf", &x2, &y2) != 2) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (fabs(x2 - x1) < 1e-10) {
+        fprintf(stderr, "Error: Vertical line has undefined slope\n");
+        return 1;
+    }
+    
+    slope = calculate_slope(x1, y1, x2, y2);
+    printf("Slope: %.6f\n", slope);
+    
+    return 0;
+}
+
+double calculate_slope(double x1, double y1, double x2, double y2) {
+    return (y2 - y1) / (x2 - x1);
+}
+```

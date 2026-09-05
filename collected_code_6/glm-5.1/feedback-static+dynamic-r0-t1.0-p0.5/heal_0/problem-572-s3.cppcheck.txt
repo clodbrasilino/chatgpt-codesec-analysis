@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-572-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-572-s3.c:13:14: style: Variable 'current_list' can be declared as pointer to const [constVariablePointer]
+        int* current_list = lists[i];
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-572-s3.c:4:46: style: Parameter 'list_sizes' can be declared as const array [constParameter]
+int* remove_two_duplicates(int* lists[], int list_sizes[], int num_lists, int result_size, int* out_size) {
+                                             ^

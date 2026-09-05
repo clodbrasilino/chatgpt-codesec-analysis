@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_list_sum(const int *const *lists, const size_t *sizes, size_t num_lists, long *result)
+{
+    size_t i;
+    size_t j;
+    long max_sum;
+    long current_sum;
+
+    if (lists == NULL || sizes == NULL || result == NULL || num_lists == 0U)
+    {
+        return -1;
+    }
+
+    max_sum = LONG_MIN;
+
+    for (i = 0U; i < num_lists; i++)
+    {
+        if (lists[i] == NULL && sizes[i] > 0U)
+        {
+            return -1;
+        }
+
+        current_sum = 0L;
+
+        for (j = 0U; j < sizes[i]; j++)
+        {
+            current_sum += (long)lists[i][j];
+        }
+
+        if (current_sum > max_sum)
+        {
+            max_sum = current_sum;
+        }
+    }
+
+    *result = max_sum;
+    return 0;
+}
+
+int main(void)
+{
+    int list0[] = {1, 2, 3, 4};
+    int list1[] = {5, 6};
+    int list2[] = {10, 20, 30};
+    int list3[] = {-1, -2, -3};
+
+    const int *lists[] = {list0, list1, list2, list3};
+    const size_t sizes[] = {
+        sizeof(list0) / sizeof(list0[0]),
+        sizeof(list1) / sizeof(list1[0]),
+        sizeof(list2) / sizeof(list2[0]),
+        sizeof(list3) / sizeof(list3[0])
+    };
+    const size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+    long result = 0L;
+
+    if (max_list_sum(lists, sizes, num_lists, &result) != 0)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum sum: %ld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

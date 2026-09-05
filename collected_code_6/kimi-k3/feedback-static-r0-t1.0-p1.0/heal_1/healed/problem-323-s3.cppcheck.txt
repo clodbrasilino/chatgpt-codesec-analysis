@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-323-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-323-s3.c:52:11: style: Condition 'n==0' is always false [knownConditionTrueFalse]
+    if (n == 0)
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-323-s3.c:50:28: note: Assignment 'n=sizeof(arr)/sizeof(arr[0])', assigned value is 10
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-323-s3.c:52:11: note: Condition 'n==0' is always false
+    if (n == 0)
+          ^

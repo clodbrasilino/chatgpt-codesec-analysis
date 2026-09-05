@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+static double power(double base, int exponent)
+{
+    double result = 1.0;
+    long exp = exponent;
+    int negative = 0;
+
+    if (exponent == 0) {
+        return 1.0;
+    }
+
+    if (exponent < 0) {
+        if (base == 0.0) {
+            errno = EDOM;
+            return 0.0;
+        }
+        negative = 1;
+        exp = -(long)exponent;
+    }
+
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result *= base;
+            if (errno == ERANGE) {
+                return negative ? 0.0 : HUGE_VAL;
+            }
+        }
+        base *= base;
+        exp /= 2;
+    }
+
+    return negative ? 1.0 / result : result;
+}
+
+int main(void)
+{
+    double base;
+    int exponent;
+    double result;
+
+    printf("Enter base: ");
+    if (scanf("%lf", &base) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return 1;
+    }
+
+    printf("Enter exponent (integer): ");
+    if (scanf("%d", &exponent) != 1) {
+        fprintf(stderr, "Invalid input for exponent\n");
+        return 1;
+    }
+
+    errno = 0;
+    result = power(base, exponent);
+
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Cannot raise 0 to a negative power\n");
+        return 1;
+    }
+
+    if (errno == ERANGE) {
+        fprintf(stderr, "Warning: Result overflowed\n");
+    }
+
+    printf("Result: %f\n", result);
+
+    return 0;
+}

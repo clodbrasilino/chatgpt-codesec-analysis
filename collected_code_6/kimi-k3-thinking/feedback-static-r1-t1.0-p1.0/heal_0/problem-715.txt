@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+static void skip_delims(const char **p)
+{
+    while (**p != '\0' &&
+           (isspace((unsigned char)**p) || **p == ',' || **p == '(' || **p == ')')) {
+        (*p)++;
+    }
+}
+
+IntTuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    IntTuple *tuple = malloc(sizeof(*tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->data = NULL;
+    tuple->size = 0;
+
+    size_t capacity = 0;
+    const char *p = str;
+
+    skip_delims(&p);
+    while (*p != '\0') {
+        errno = 0;
+        char *end = NULL;
+        long value = strtol(p, &end, 10);
+
+        if (end == p) {
+            free(tuple->data);
+            free(tuple);
+            return NULL;
+        }
+        if (errno == ERANGE || value > INT_MAX || value < INT_MIN) {
+            free(tuple->data);
+            free(tuple);
+            return NULL;
+        }
+        if (tuple->size == capacity) {
+            size_t new_capacity = (capacity == 0) ? 8 : capacity * 2;
+            if (new_capacity > SIZE_MAX / sizeof(*tuple->data)) {
+                free(tuple->data);
+                free(tuple);
+                return NULL;
+            }
+            int *new_data = realloc(tuple->data, new_capacity * sizeof(*new_data));
+            if (new_data == NULL) {
+                free(tuple->data);
+                free(tuple);
+                return NULL;
+            }
+            tuple->data = new_data;
+            capacity = new_capacity;
+        }
+        tuple->data[tuple->size] = (int)value;
+        tuple->size++;
+        p = end;
+        skip_delims(&p);
+    }
+
+    return tuple;
+}
+
+void free_tuple(IntTuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->data);
+        free(tuple);
+    }
+}
+
+int main(void)
+{
+    const char *input = "(10, 20, 30, 40, 50)";
+    IntTuple *tuple = string_to_tuple(input);
+
+    if (tuple == NULL) {
+        fprintf(stderr, "Error: failed to convert string to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->data[i]);
+        if (i + 1 < tuple->size) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}
+```

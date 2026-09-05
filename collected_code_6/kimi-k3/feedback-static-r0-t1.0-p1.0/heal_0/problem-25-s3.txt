@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+long long productOfNonRepeated(const int arr[], size_t size) {
+    if (arr == NULL || size == 0) {
+        return 1;
+    }
+
+    long long product = 1;
+    bool foundNonRepeated = false;
+
+    for (size_t i = 0; i < size; i++) {
+        bool isRepeated = false;
+
+        for (size_t j = 0; j < size; j++) {
+            if (i != j && arr[i] == arr[j]) {
+                isRepeated = true;
+                break;
+            }
+        }
+
+        if (!isRepeated) {
+            product *= arr[i];
+            foundNonRepeated = true;
+        }
+    }
+
+    return foundNonRepeated ? product : 1;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 1, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    long long result = productOfNonRepeated(arr, size);
+    printf("Product of non-repeated elements: %lld\n", result);
+
+    return 0;
+}
+```

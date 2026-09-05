@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define TYPE_INT 1
+#define TYPE_TUPLE 2
+
+typedef struct Element {
+    int type;
+    void *data;
+} Element;
+
+typedef struct Tuple {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct Node {
+    Element element;
+    struct Node *next;
+} Node;
+
+size_t count_until_tuple(Node *head) {
+    size_t count = 0;
+    Node *current = head;
+    
+    while (current != NULL) {
+        if (current->element.type == TYPE_TUPLE) {
+            break;
+        }
+        count++;
+        current = current->next;
+    }
+    
+    return count;
+}
+
+Node *create_int_node(int val, Node *next) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    
+    int *data = (int *)malloc(sizeof(int));
+    if (data == NULL) {
+        free(node);
+        exit(EXIT_FAILURE);
+    }
+    
+    *data = val;
+    node->element.type = TYPE_INT;
+    node->element.data = data;
+    node->next = next;
+    
+    return node;
+}
+
+Node *create_tuple_node(int a, int b, Node *next) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    
+    Tuple *data = (Tuple *)malloc(sizeof(Tuple));
+    if (data == NULL) {
+        free(node);
+        exit(EXIT_FAILURE);
+    }
+    
+    data->a = a;
+    data->b = b;
+    node->element.type = TYPE_TUPLE;
+    node->element.data = data;
+    node->next = next;
+    
+    return node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current->element.data);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *list = create_int_node(1, 
+                    create_int_node(2, 
+                        create_tuple_node(3, 4, 
+                            create_int_node(5, NULL))));
+                            
+    size_t count = count_until_tuple(list);
+    printf("%zu\n", count);
+    
+    free_list(list);
+    
+    return 0;
+}
+```

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint32_t highest_power_of_2(uint32_t n)
+{
+    uint32_t power = 1;
+    
+    if (n == 0) {
+        return 0;
+    }
+    
+    while (power <= n / 2) {
+        power *= 2;
+    }
+    
+    return power;
+}
+
+int main(void)
+{
+    uint32_t test_values[] = {0, 1, 2, 3, 4, 5, 8, 15, 16, 17, 100, 1000, UINT32_MAX};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+    
+    for (i = 0; i < num_tests; i++) {
+        uint32_t result = highest_power_of_2(test_values[i]);
+        printf("highest_power_of_2(%u) = %u\n", test_values[i], result);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+
+int find_minimum(int a, int b, int c);
+
+int find_minimum(int a, int b, int c) {
+    int min = a;
+    
+    if (b < min) {
+        min = b;
+    }
+    
+    if (c < min) {
+        min = c;
+    }
+    
+    return min;
+}
+
+int main(void) {
+    int num1 = 0;
+    int num2 = 0;
+    int num3 = 0;
+    int result = 0;
+    
+    printf("Enter three integers: ");
+    
+    if (scanf("%d %d %d", &num1, &num2, &num3) != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    result = find_minimum(num1, num2, num3);
+    
+    printf("Minimum: %d\n", result);
+    
+    return 0;
+}
+```

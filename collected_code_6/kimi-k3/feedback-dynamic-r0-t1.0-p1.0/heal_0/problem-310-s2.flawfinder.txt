@@ -1,0 +1,43 @@
+Flawfinder version 2.0.19, (C) 2001-2019 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 222
+Examining /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-310-s2.c
+
+FINAL RESULTS:
+
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-310-s2.c:64:  [4] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination [MS-banned]
+  (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy
+  easily misused).
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-310-s2.c:100:  [4] (buffer) strcpy:
+  Does not check for buffer overflows when copying to destination [MS-banned]
+  (CWE-120). Consider using snprintf, strcpy_s, or strlcpy (warning: strncpy
+  easily misused).
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-310-s2.c:36:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-310-s2.c:60:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_0/problem-310-s2.c:91:  [1] (buffer) strlen:
+  Does not handle strings that are not \0-terminated; if given one it may
+  perform an over-read (it could cause a crash if unprotected) (CWE-126).
+
+ANALYSIS SUMMARY:
+
+Hits = 5
+Lines analyzed = 142 in approximately 0.00 seconds (30704 lines/second)
+Physical Source Lines of Code (SLOC) = 119
+Hits@level = [0]   5 [1]   3 [2]   0 [3]   0 [4]   2 [5]   0
+Hits@level+ = [0+]  10 [1+]   5 [2+]   2 [3+]   2 [4+]   2 [5+]   0
+Hits/KSLOC@level+ = [0+] 84.0336 [1+] 42.0168 [2+] 16.8067 [3+] 16.8067 [4+] 16.8067 [5+]   0
+Minimum risk level = 1
+
+Not every hit is necessarily a security vulnerability.
+You can inhibit a report by adding a comment in this form:
+// flawfinder: ignore
+Make *sure* it's a false positive!
+You can use the option --neverignore to show these.
+
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.

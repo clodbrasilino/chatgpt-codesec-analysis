@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-450.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-450.c:91:12: style: Variable 'extract_sizes' can be declared as const array [constVariable]
+    size_t extract_sizes[] = {8, 6, 9};
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-dynamic-r0-t1.0-p1.0/heal_1/healed/problem-450.c:89:25: style: Variable 'result_count' is assigned a value that is never used. [unreadVariable]
+    size_t result_count = 0;
+                        ^

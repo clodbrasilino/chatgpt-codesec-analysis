@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int sum_of_digits(long long n) {
+    int sum = 0;
+    if (n < 0) {
+        n = -n;
+    }
+    while (n > 0) {
+        sum += (int)(n % 10);
+        n /= 10;
+    }
+    return sum;
+}
+
+void maximize_digit_sum_split(long long num, long long *part1, long long *part2, int *max_sum) {
+    if (part1 == NULL || part2 == NULL || max_sum == NULL) {
+        return;
+    }
+    
+    if (num < 0) {
+        num = -num;
+    }
+    
+    *max_sum = -1;
+    *part1 = 0;
+    *part2 = num;
+    
+    long long divisor = 1;
+    
+    while (divisor <= num) {
+        long long left = num / divisor;
+        long long right = num % divisor;
+        
+        int current_sum = sum_of_digits(left) + sum_of_digits(right);
+        
+        if (current_sum > *max_sum) {
+            *max_sum = current_sum;
+            *part1 = left;
+            *part2 = right;
+        }
+        
+        if (divisor > LLONG_MAX / 10) {
+            break;
+        }
+        divisor *= 10;
+    }
+}
+
+int main(void) {
+    long long number;
+    long long part1, part2;
+    int max_sum;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    maximize_digit_sum_split(number, &part1, &part2, &max_sum);
+    
+    printf("First part: %lld\n", part1);
+    printf("Second part: %lld\n", part2);
+    printf("Sum of digits: %d\n", max_sum);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c: In function 'sort_tuples':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:14:37: error: passing argument 4 of 'qsort' from incompatible pointer type [-Wincompatible-pointer-types]
+   14 |     qsort(tuples, n, sizeof(Tuple), lambda);
+      |                                     ^~~~~~
+      |                                     |
+      |                                     int (*)(const Tuple *, const Tuple *)
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:176:29: note: expected 'int (*)(const void *, const void *)' but argument is of type 'int (*)(const Tuple *, const Tuple *)'
+  176 |             int (* _Nonnull __compar)(const void *, const void *));
+      |             ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:56: error: implicit declaration of function 'lambda' [-Wimplicit-function-declaration]
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                        ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:63: error: expected expression before 'int'
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                               ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-64-s3.c:24:76: error: expected ';' before '{' token
+   24 |     cmp_first = (int (*)(const Tuple *, const Tuple *))lambda(int a, int b) {
+      |                                                                            ^~
+      |                                                                            ;

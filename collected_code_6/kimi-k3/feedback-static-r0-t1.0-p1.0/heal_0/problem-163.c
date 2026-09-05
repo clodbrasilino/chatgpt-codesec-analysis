@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+
+#define PI 3.14159265358979323846
+
+double calculate_polygon_area(int sides, double length) {
+    if (sides < 3) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    if (length <= 0.0) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    
+    double angle = PI / sides;
+    double area = (sides * length * length) / (4.0 * tan(angle));
+    
+    return area;
+}
+
+int main(void) {
+    int sides;
+    double length;
+    double area;
+    
+    printf("Enter number of sides (minimum 3): ");
+    if (scanf("%d", &sides) != 1) {
+        fprintf(stderr, "Error: Invalid input for sides\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter side length (positive value): ");
+    if (scanf("%lf", &length) != 1) {
+        fprintf(stderr, "Error: Invalid input for length\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    area = calculate_polygon_area(sides, length);
+    
+    if (errno != 0 || area < 0.0) {
+        fprintf(stderr, "Error: Invalid polygon parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Area of regular polygon: %.6f\n", area);
+    
+    return EXIT_SUCCESS;
+}

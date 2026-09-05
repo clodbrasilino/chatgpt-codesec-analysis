@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    size_t length;
+} List;
+
+typedef struct ListOfLists {
+    List **lists;
+    size_t count;
+    size_t capacity;
+} ListOfLists;
+
+ListOfLists *find_max_length_lists(ListOfLists *source) {
+    if (source == NULL || source->count == 0) {
+        return NULL;
+    }
+
+    size_t max_len = 0;
+    for (size_t i = 0; i < source->count; i++) {
+        if (source->lists[i] != NULL && source->lists[i]->length > max_len) {
+            max_len = source->lists[i]->length;
+        }
+    }
+
+    if (max_len == 0) {
+        return NULL;
+    }
+
+    size_t result_count = 0;
+    for (size_t i = 0; i < source->count; i++) {
+        if (source->lists[i] != NULL && source->lists[i]->length == max_len) {
+            result_count++;
+        }
+    }
+
+    ListOfLists *result = malloc(sizeof(ListOfLists));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->lists = malloc(result_count * sizeof(List *));
+    if (result->lists == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->count = result_count;
+    result->capacity = result_count;
+
+    size_t insert_idx = 0;
+    for (size_t i = 0; i < source->count; i++) {
+        if (source->lists[i] != NULL && source->lists[i]->length == max_len) {
+            result->lists[insert_idx++] = source->lists[i];
+        }
+    }
+
+    return result;
+}
+
+List *create_list(size_t length) {
+    List *lst = malloc(sizeof(List));
+    if (lst == NULL) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < length; i++) {
+        Node *new_node = malloc(sizeof(Node));
+        if (new_node == NULL) {
+            Node *current = lst->head;
+            while (current != NULL) {
+                Node *temp = current;
+                current = current->next;
+                free(temp);
+            }
+            free(lst);
+            return NULL;
+        }
+        new_node->data = NULL;
+        new_node->next = lst->head;
+        lst->head = new_node;
+    }
+    
+    lst->length = length;
+    return lst;
+}
+
+void free_list(List *lst) {
+    if (lst == NULL) {
+        return;
+    }
+    Node *current = lst->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(lst);
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (lol != NULL) {
+        free(lol->lists);
+        free(lol);
+    }
+}
+
+int main(void) {
+    ListOfLists source;
+    source.capacity = 5;
+    source.count = 5;
+    source.lists = malloc(source.capacity * sizeof(List *));
+    if (source.lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    source.lists[0] = create_list(2);
+    source.lists[1] = create_list(5);
+    source.lists[2] = create_list(5);
+    source.lists[3] = create_list(3);
+    source.lists[4] = create_list(1);
+
+    if (source.lists[0] == NULL || source.lists[1] == NULL || 
+        source.lists[2] == NULL || source.lists[3] == NULL || 
+        source.lists[4] == NULL) {
+        for (size_t i = 0; i < source.count; i++) {
+            free_list(source.lists[i]);
+        }
+        free(source.lists);
+        return EXIT_FAILURE;
+    }
+
+    ListOfLists *max_lists = find_max_length_lists(&source);
+
+    if (max_lists != NULL) {
+        printf("Max length: %zu\n", max_lists->count > 0 ? max_lists->lists[0]->length : 0);
+        printf("Lists with max length:\n");
+        for (size_t i = 0; i < max_lists->count; i++) {
+            printf("List %zu: length %zu\n", i, max_lists->lists[i]->length);
+        }
+        free_list_of_lists(max_lists);
+    }
+
+    for (size_t i = 0; i < source.count; i++) {
+        free_list(source.lists[i]);
+    }
+    free(source.lists);
+
+    return EXIT_SUCCESS;
+}

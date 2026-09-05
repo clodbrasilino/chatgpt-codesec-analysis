@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool are_elements_unique(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return true;
+    }
+    
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int unique_list[] = {1, 2, 3, 4, 5};
+    int duplicate_list[] = {1, 2, 3, 2, 5};
+    size_t unique_size = sizeof(unique_list) / sizeof(unique_list[0]);
+    size_t duplicate_size = sizeof(duplicate_list) / sizeof(duplicate_list[0]);
+    
+    printf("List 1 is %s\n", are_elements_unique(unique_list, unique_size) ? "unique" : "not unique");
+    printf("List 2 is %s\n", are_elements_unique(duplicate_list, duplicate_size) ? "unique" : "not unique");
+    
+    return EXIT_SUCCESS;
+}

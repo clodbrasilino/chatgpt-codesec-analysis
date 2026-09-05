@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_char(char *str, char ch) {
+    if (str == NULL) {
+        return;
+    }
+    
+    char *read_ptr = str;
+    char *write_ptr = str;
+    
+    while (*read_ptr != '\0') {
+        if (*read_ptr != ch) {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+int main(void) {
+    char buffer[256];
+    char ch;
+    int c;
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    buffer[strcspn(buffer, "\n")] = '\0';
+    
+    if (scanf(" %c", &ch) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    while ((c = getchar()) != '\n' && c != EOF) {
+    }
+    
+    remove_char(buffer, ch);
+    
+    printf("%s\n", buffer);
+    
+    return EXIT_SUCCESS;
+}

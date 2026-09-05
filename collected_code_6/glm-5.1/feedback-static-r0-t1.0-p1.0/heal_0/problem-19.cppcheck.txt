@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-19.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-19.c:66:27: style: Condition 'contains_duplicate(arr4,0)' is always false [knownConditionTrueFalse]
+    if (contains_duplicate(arr4, 0)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-19.c:66:27: note: Calling function 'contains_duplicate' returns 0
+    if (contains_duplicate(arr4, 0)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-19.c:66:27: note: Condition 'contains_duplicate(arr4,0)' is always false
+    if (contains_duplicate(arr4, 0)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-19.c:13:30: style: Parameter 'nums' can be declared as pointer to const [constParameterPointer]
+bool contains_duplicate(int *nums, size_t nums_size) {
+                             ^

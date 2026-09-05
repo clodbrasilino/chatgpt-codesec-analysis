@@ -1,0 +1,46 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:19:15: style: Condition 'word4!=NULL' is always false [knownConditionTrueFalse]
+    if (word4 != NULL && is_length_even(word1)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:17:25: note: Assignment 'word4=NULL', assigned value is 0
+    const char *word4 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:19:15: note: Condition 'word4!=NULL' is always false
+    if (word4 != NULL && is_length_even(word1)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:21:22: style: Condition 'word4==NULL' is always true [knownConditionTrueFalse]
+    } else if (word4 == NULL || !is_length_even(word1)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:17:25: note: Assignment 'word4=NULL', assigned value is 0
+    const char *word4 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:21:22: note: Condition 'word4==NULL' is always true
+    } else if (word4 == NULL || !is_length_even(word1)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:25:15: style: Condition 'word4!=NULL' is always false [knownConditionTrueFalse]
+    if (word4 != NULL && is_length_even(word2)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:17:25: note: Assignment 'word4=NULL', assigned value is 0
+    const char *word4 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:25:15: note: Condition 'word4!=NULL' is always false
+    if (word4 != NULL && is_length_even(word2)) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:27:22: style: Condition 'word4==NULL' is always true [knownConditionTrueFalse]
+    } else if (word4 == NULL || !is_length_even(word2)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:17:25: note: Assignment 'word4=NULL', assigned value is 0
+    const char *word4 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:27:22: note: Condition 'word4==NULL' is always true
+    } else if (word4 == NULL || !is_length_even(word2)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:37:15: style: Condition 'word4==NULL' is always true [knownConditionTrueFalse]
+    if (word4 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:17:25: note: Assignment 'word4=NULL', assigned value is 0
+    const char *word4 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_6/healed/problem-964.c:37:15: note: Condition 'word4==NULL' is always true
+    if (word4 == NULL) {
+              ^

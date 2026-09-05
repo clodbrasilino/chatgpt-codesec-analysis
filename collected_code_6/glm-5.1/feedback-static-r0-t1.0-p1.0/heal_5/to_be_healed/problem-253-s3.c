@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_integers(const int *list, size_t max_elements) {
+    if (list == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < max_elements; i++) {
+        if (list[i] != 0) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 0, 4, 5, 0, 7, 8, 9, 10};
+    size_t max_elements = sizeof(numbers) / sizeof(numbers[0]);
+
+    size_t result = count_integers(numbers, max_elements);
+    printf("%zu\n", result);
+
+    /* Possible weaknesses found:
+     *  Variable 'null_ptr' can be declared as pointer to const [constVariablePointer]
+     */
+    int *null_ptr = NULL;
+    /* Possible weaknesses found:
+     *  Calling function 'count_integers' returns 0
+     *  Assignment 'null_result=count_integers(null_ptr,max_elements)', assigned value is 0
+     */
+    size_t null_result = count_integers(null_ptr, max_elements);
+
+    /* Possible weaknesses found:
+     *  Condition 'null_result!=0' is always false
+     *  Condition 'null_result!=0' is always false [knownConditionTrueFalse]
+     */
+    if (null_result != 0) {
+        printf("%zu\n", null_result);
+    }
+
+    (void)null_result;
+    return 0;
+}

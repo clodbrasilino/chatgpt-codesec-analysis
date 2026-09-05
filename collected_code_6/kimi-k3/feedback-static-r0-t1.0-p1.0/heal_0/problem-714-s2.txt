@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int count_distinct_prime_powers(long long n) {
+    if (n < 0) {
+        if (n == LLONG_MIN) {
+            return -1;
+        }
+        n = -n;
+    }
+    if (n < 2) {
+        return 0;
+    }
+
+    int count = 0;
+    
+    if (n % 2 == 0) {
+        count++;
+        while (n % 2 == 0) {
+            n /= 2;
+        }
+    }
+    
+    for (long long i = 3; i <= n / i; i += 2) {
+        if (n % i == 0) {
+            count++;
+            while (n % i == 0) {
+                n /= i;
+            }
+        }
+    }
+    
+    if (n > 1) {
+        count++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    long long num;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = count_distinct_prime_powers(num);
+    if (result < 0) {
+        fprintf(stderr, "Overflow error\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Number of distinct prime factors: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

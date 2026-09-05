@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:35:12: style: Condition 'na<=0' is always false [knownConditionTrueFalse]
+    if (na <= 0 || nb <= 0 || nc <= 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:31:14: note: Assignment 'na=(int)(sizeof(a)/sizeof(a[0]))', assigned value is 6
+    int na = (int)(sizeof(a) / sizeof(a[0]));
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:35:12: note: Condition 'na<=0' is always false
+    if (na <= 0 || nb <= 0 || nc <= 0) {
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:35:23: style: Condition 'nb<=0' is always false [knownConditionTrueFalse]
+    if (na <= 0 || nb <= 0 || nc <= 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:32:14: note: Assignment 'nb=(int)(sizeof(b)/sizeof(b[0]))', assigned value is 5
+    int nb = (int)(sizeof(b) / sizeof(b[0]));
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:35:23: note: Condition 'nb<=0' is always false
+    if (na <= 0 || nb <= 0 || nc <= 0) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:35:34: style: Condition 'nc<=0' is always false [knownConditionTrueFalse]
+    if (na <= 0 || nb <= 0 || nc <= 0) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:33:14: note: Assignment 'nc=(int)(sizeof(c)/sizeof(c[0]))', assigned value is 8
+    int nc = (int)(sizeof(c) / sizeof(c[0]));
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-142.c:35:34: note: Condition 'nc<=0' is always false
+    if (na <= 0 || nb <= 0 || nc <= 0) {
+                                 ^

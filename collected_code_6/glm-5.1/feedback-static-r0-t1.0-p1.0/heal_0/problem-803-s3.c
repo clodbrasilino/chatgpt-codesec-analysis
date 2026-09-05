@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+
+int is_perfect_square(long long num) {
+    if (num < 0) {
+        return 0;
+    }
+    if (num == 0) {
+        return 1;
+    }
+    errno = 0;
+    double sqrt_val = sqrt((double)num);
+    if (errno != 0) {
+        return 0;
+    }
+    long long sqrt_floor = (long long)sqrt_val;
+    return (sqrt_floor * sqrt_floor == num);
+}
+
+int main(void) {
+    long long val;
+    if (scanf("%lld", &val) == 1) {
+        if (is_perfect_square(val)) {
+            printf("1\n");
+        } else {
+            printf("0\n");
+        }
+    }
+    return 0;
+}

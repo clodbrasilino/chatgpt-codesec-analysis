@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int minCoins(const int coins[], int numCoins, int value) {
+    if (value < 0 || numCoins <= 0 || coins == NULL) {
+        return -1;
+    }
+    if (value == 0) {
+        return 0;
+    }
+
+    int *dp = (int *)malloc((size_t)(value + 1) * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 0;
+    for (int i = 1; i <= value; i++) {
+        dp[i] = INT_MAX;
+    }
+
+    for (int i = 1; i <= value; i++) {
+        for (int j = 0; j < numCoins; j++) {
+            if (coins[j] > 0 && coins[j] <= i && dp[i - coins[j]] != INT_MAX) {
+                int subResult = dp[i - coins[j]] + 1;
+                if (subResult < dp[i]) {
+                    dp[i] = subResult;
+                }
+            }
+        }
+    }
+
+    int result = (dp[value] == INT_MAX) ? -1 : dp[value];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int coins[] = {1, 2, 5, 10, 20, 50, 100};
+    int numCoins = (int)(sizeof(coins) / sizeof(coins[0]));
+    int value = 93;
+
+    int result = minCoins(coins, numCoins, value);
+
+    if (result == -1) {
+        printf("Cannot make value %d with given coins.\n", value);
+    } else {
+        printf("Minimum coins needed for %d: %d\n", value, result);
+    }
+
+    return 0;
+}

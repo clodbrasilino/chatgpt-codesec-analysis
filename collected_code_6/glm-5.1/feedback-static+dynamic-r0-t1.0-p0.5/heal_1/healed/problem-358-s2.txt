@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* modulo_division_lists(const int* a, const int* b, size_t size, int* error) {
+    if (size == 0) {
+        *error = 1;
+        return NULL;
+    }
+
+    int* result = (int*)malloc(size * sizeof(int));
+    if (result == NULL) {
+        *error = 2;
+        return NULL;
+    }
+
+    *error = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (b[i] == 0) {
+            free(result);
+            *error = 3;
+            return NULL;
+        }
+        result[i] = a[i] % b[i];
+    }
+
+    return result;
+}
+
+int main() {
+    const int a[] = {10, 20, 30, 40, 50};
+    const int b[] = {3, 4, 5, 6, 7};
+    size_t size = sizeof(a) / sizeof(a[0]);
+    int error = 0;
+
+    int* result = modulo_division_lists(a, b, size, &error);
+
+    if (error != 0) {
+        printf("Error code: %d\n", error);
+        if (result != NULL) {
+            free(result);
+        }
+        return 1;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+
+    return 0;
+}

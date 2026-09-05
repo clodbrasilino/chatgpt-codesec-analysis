@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void extract_rear_elements(char *arr[], int size, char *result) {
+    if (arr == NULL || result == NULL || size <= 0) {
+        return;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        if (arr[i] != NULL && strlen(arr[i]) > 0) {
+            result[i] = arr[i][strlen(arr[i]) - 1];
+        } else {
+            result[i] = '\0';
+        }
+    }
+    result[size] = '\0';
+}
+
+int main() {
+    char *strings[] = {"hello", "world", "programming", "code"};
+    int size = sizeof(strings) / sizeof(strings[0]);
+    char *result = malloc((size + 1) * sizeof(char));
+    
+    if (result == NULL) {
+        return 1;
+    }
+    
+    extract_rear_elements(strings, size, result);
+    
+    printf("Rear elements: ");
+    for (int i = 0; i < size; i++) {
+        if (result[i] != '\0') {
+            printf("%c ", result[i]);
+        }
+    }
+    printf("\n");
+    
+    free(result);
+    return 0;
+}

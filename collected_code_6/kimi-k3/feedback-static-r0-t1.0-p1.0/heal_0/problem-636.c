@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool areRootsReciprocal(double a, double b, double c) {
+    if (a == 0.0 || c == 0.0) {
+        return false;
+    }
+    return fabs((c / a) - 1.0) < 1e-9;
+}
+
+int main(void) {
+    double a, b, c;
+    int scanResult;
+    
+    printf("Enter coefficients a, b, and c: ");
+    scanResult = scanf("%lf %lf %lf", &a, &b, &c);
+    
+    if (scanResult != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (areRootsReciprocal(a, b, c)) {
+        printf("The roots are reciprocal of each other.\n");
+    } else {
+        printf("The roots are not reciprocal of each other.\n");
+    }
+    
+    return 0;
+}

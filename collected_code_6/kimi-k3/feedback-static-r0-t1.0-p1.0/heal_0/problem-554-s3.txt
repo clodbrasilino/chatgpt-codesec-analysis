@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int* find_odd_numbers(const int* input, size_t count, size_t* odd_count) {
+    if (input == NULL || odd_count == NULL || count == 0) {
+        return NULL;
+    }
+    
+    size_t odds = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (input[i] % 2 != 0) {
+            odds++;
+        }
+    }
+    
+    if (odds == 0) {
+        *odd_count = 0;
+        return NULL;
+    }
+    
+    int* result = malloc(odds * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    size_t index = 0;
+    for (size_t i = 0; i < count; i++) {
+        if (input[i] % 2 != 0) {
+            result[index++] = input[i];
+        }
+    }
+    
+    *odd_count = odds;
+    return result;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 23};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t odd_count = 0;
+    
+    int* odd_numbers = find_odd_numbers(numbers, count, &odd_count);
+    
+    if (odd_count > 0 && odd_numbers != NULL) {
+        printf("Odd numbers found: ");
+        for (size_t i = 0; i < odd_count; i++) {
+            printf("%d ", odd_numbers[i]);
+        }
+        printf("\n");
+        free(odd_numbers);
+    } else {
+        printf("No odd numbers found or error occurred.\n");
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

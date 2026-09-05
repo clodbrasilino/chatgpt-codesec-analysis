@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <math.h>
+
+int check_decimal_precision(double number) {
+    double rounded = round(number * 100) / 100;
+    double difference = fabs(number - rounded);
+    return difference < 0.000001;
+}
+
+int main(void) {
+    double test_values[] = {3.14, 3.141, 3.145, 2.00, 2.005, 0.99, 0.999};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    int i;
+    
+    for (i = 0; i < num_tests; i++) {
+        if (check_decimal_precision(test_values[i])) {
+            printf("%.10f has precision of 2\n", test_values[i]);
+        } else {
+            printf("%.10f does not have precision of 2\n", test_values[i]);
+        }
+    }
+    
+    return 0;
+}

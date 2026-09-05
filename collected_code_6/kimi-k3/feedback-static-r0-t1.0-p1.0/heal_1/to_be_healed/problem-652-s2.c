@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int size;
+} TupleMatrix;
+
+typedef struct {
+    Tuple *tuples;
+    int size;
+} TupleList;
+
+void freeTupleMatrix(TupleMatrix *matrix) {
+    if (matrix != NULL) {
+        for (int i = 0; i < matrix->size; i++) {
+            free(matrix->tuples[i].data);
+        }
+        free(matrix->tuples);
+        matrix->tuples = NULL;
+        matrix->size = 0;
+    }
+}
+
+void freeTupleList(TupleList *list) {
+    if (list != NULL) {
+        for (int i = 0; i < list->size; i++) {
+            free(list->tuples[i].data);
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+        list->size = 0;
+    }
+}
+
+TupleList flattenTupleMatrix(TupleMatrix *matrix) {
+    TupleList result = {NULL, 0};
+    if (matrix == NULL || matrix->size == 0) {
+        return result;
+    }
+
+    int numRows = matrix->size;
+    int numCols = matrix->tuples[0].size;
+
+    result.tuples = (Tuple *)malloc(numCols * sizeof(Tuple));
+    if (result.tuples == NULL) {
+        return result;
+    }
+    result.size = numCols;
+
+    for (int i = 0; i < numCols; i++) {
+        result.tuples[i].data = (int *)malloc(numRows * sizeof(int));
+        if (result.tuples[i].data == NULL) {
+            freeTupleList(&result);
+            return result;
+        }
+        result.tuples[i].size = numRows;
+        for (int j = 0; j < numRows; j++) {
+            result.tuples[i].data[j] = matrix->tuples[j].data[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    TupleMatrix matrix;
+    matrix.size = 3;
+    matrix.tuples = (Tuple *)malloc(matrix.size * sizeof(Tuple));
+    if (matrix.tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'data1' can be declared as const array [constVariable]
+     */
+    int data1[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'data2' can be declared as const array [constVariable]
+     */
+    int data2[] = {4, 5, 6};
+    /* Possible weaknesses found:
+     *  Variable 'data3' can be declared as const array [constVariable]
+     */
+    int data3[] = {7, 8, 9};
+
+    matrix.tuples[0].data = (int *)malloc(3 * sizeof(int));
+    matrix.tuples[1].data = (int *)malloc(3 * sizeof(int));
+    matrix.tuples[2].data = (int *)malloc(3 * sizeof(int));
+
+    if (matrix.tuples[0].data == NULL || matrix.tuples[1].data == NULL || matrix.tuples[2].data == NULL) {
+        freeTupleMatrix(&matrix);
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < 3; i++) {
+        matrix.tuples[0].data[i] = data1[i];
+        matrix.tuples[1].data[i] = data2[i];
+        matrix.tuples[2].data[i] = data3[i];
+    }
+    matrix.tuples[0].size = 3;
+    matrix.tuples[1].size = 3;
+    matrix.tuples[2].size = 3;
+
+    TupleList flattened = flattenTupleMatrix(&matrix);
+
+    for (int i = 0; i < flattened.size; i++) {
+        printf("(");
+        for (int j = 0; j < flattened.tuples[i].size; j++) {
+            printf("%d", flattened.tuples[i].data[j]);
+            if (j < flattened.tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+
+    freeTupleMatrix(&matrix);
+    freeTupleList(&flattened);
+
+    return EXIT_SUCCESS;
+}

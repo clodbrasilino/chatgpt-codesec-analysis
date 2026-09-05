@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long perrin_sum(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned long long p0 = 3ULL;
+    unsigned long long p1 = 0ULL;
+    unsigned long long p2 = 2ULL;
+    unsigned int i;
+
+    if (n == 0U)
+    {
+        return 0ULL;
+    }
+
+    sum = p0;
+    if (n == 1U)
+    {
+        return sum;
+    }
+
+    sum += p1;
+    if (n == 2U)
+    {
+        return sum;
+    }
+
+    sum += p2;
+    if (n == 3U)
+    {
+        return sum;
+    }
+
+    for (i = 3U; i < n; i++)
+    {
+        unsigned long long p_next = p0 + p1;
+        sum += p_next;
+        p0 = p1;
+        p1 = p2;
+        p2 = p_next;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *endptr = NULL;
+    long value;
+    unsigned int n;
+    unsigned long long result;
+
+    if (printf("Enter the number of Perrin terms to sum: ") < 0)
+    {
+        fprintf(stderr, "Error: Failed to write prompt\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) == EOF)
+    {
+        fprintf(stderr, "Error: Failed to flush output\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    value = strtol(buffer, &endptr, 10);
+
+    if (errno != 0)
+    {
+        fprintf(stderr, "Error: Invalid number format\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == buffer)
+    {
+        fprintf(stderr, "Error: No digits found\n");
+        return EXIT_FAILURE;
+    }
+
+    if (value < 0L)
+    {
+        fprintf(stderr, "Error: Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if ((unsigned long)value > (unsigned long)UINT_MAX)
+    {
+        fprintf(stderr, "Error: Number too large\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)value;
+    result = perrin_sum(n);
+
+    if (printf("Sum of first %u Perrin numbers: %llu\n", n, result) < 0)
+    {
+        fprintf(stderr, "Error: Failed to write result\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

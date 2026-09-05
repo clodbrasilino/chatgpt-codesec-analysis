@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s2.c:16:10: style: The scope of the variable 'found' can be reduced. [variableScope]
+    bool found;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s2.c:5:45: style: Parameter 'list1' can be declared as pointer to const [constParameterPointer]
+bool are_common_elements_in_same_order(int *list1, int size1, int *list2, int size2) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-508-s2.c:5:68: style: Parameter 'list2' can be declared as pointer to const [constParameterPointer]
+bool are_common_elements_in_same_order(int *list1, int size1, int *list2, int size2) {
+                                                                   ^

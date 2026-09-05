@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *keys;
+    int *values;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary *items;
+    size_t size;
+    size_t capacity;
+} DictionaryList;
+
+DictionaryList *create_empty_dictionary_list(size_t count) {
+    if (count == 0) {
+        return NULL;
+    }
+
+    DictionaryList *list = (DictionaryList *)malloc(sizeof(DictionaryList));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    list->items = (Dictionary *)calloc(count, sizeof(Dictionary));
+    if (list->items == NULL) {
+        free(list);
+        return NULL;
+    }
+
+    list->size = count;
+    list->capacity = count;
+
+    for (size_t i = 0; i < count; i++) {
+        list->items[i].keys = NULL;
+        list->items[i].values = NULL;
+        list->items[i].size = 0;
+        list->items[i].capacity = 0;
+    }
+
+    return list;
+}
+
+void free_dictionary_list(DictionaryList *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        free(list->items[i].keys);
+        free(list->items[i].values);
+    }
+
+    free(list->items);
+    free(list);
+}
+
+int main(void) {
+    size_t count = 5;
+    DictionaryList *list = create_empty_dictionary_list(count);
+
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        printf("Dictionary %zu: size=%zu, capacity=%zu\n", i, list->items[i].size, list->items[i].capacity);
+    }
+
+    free_dictionary_list(list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int get_last_digit_factorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    if (n >= 5) {
+        return 0;
+    }
+    
+    int last_digit = 1;
+    for (int i = 2; i <= n; i++) {
+        last_digit = (last_digit * i) % 10;
+    }
+    
+    return last_digit;
+}
+
+int main(void) {
+    int number;
+    
+    if (printf("Enter a non-negative integer: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (number < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = get_last_digit_factorial(number);
+    if (result == -1) {
+        fprintf(stderr, "Error computing factorial\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Last digit of %d! is %d\n", number, result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

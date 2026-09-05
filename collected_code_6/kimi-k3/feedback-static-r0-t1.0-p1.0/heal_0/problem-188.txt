@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <math.h>
+
+bool isProductOfTwoSquares(long long n)
+{
+    if (n < 0) {
+        return false;
+    }
+    
+    if (n == 0) {
+        return true;
+    }
+    
+    long long limit = (long long)sqrt((double)n);
+    
+    for (long long i = 0; i <= limit; i++) {
+        if (i > 0 && n % i != 0) {
+            continue;
+        }
+        
+        long long square1 = i * i;
+        
+        if (i > 0 && square1 / i != i) {
+            break;
+        }
+        
+        if (square1 > n) {
+            break;
+        }
+        
+        if (square1 == 0) {
+            continue;
+        }
+        
+        if (n % square1 != 0) {
+            continue;
+        }
+        
+        long long quotient = n / square1;
+        long long root2 = (long long)sqrt((double)quotient);
+        
+        if (root2 * root2 == quotient) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+    
+    printf("Enter a number: ");
+    
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (isProductOfTwoSquares(number)) {
+        printf("%lld can be represented as product of two squares\n", number);
+    } else {
+        printf("%lld cannot be represented as product of two squares\n", number);
+    }
+    
+    return 0;
+}
+```

@@ -1,0 +1,273 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+} ListOfLists;
+
+typedef struct {
+    IntList *unique_lists;
+    size_t *frequencies;
+    size_t count;
+    size_t capacity;
+} FrequencyResult;
+
+static int lists_equal(const IntList *a, const IntList *b)
+{
+    if (a->size != b->size) {
+        return 0;
+    }
+    if (a->size == 0) {
+        return 1;
+    }
+    if (a->data == NULL || b->data == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        if (a->data[i] != b->data[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+static int copy_list(const IntList *src, IntList *dest)
+{
+    dest->size = src->size;
+    dest->data = NULL;
+    if (src->size > 0) {
+        dest->data = (int *)malloc(src->size * sizeof(int));
+        if (dest->data == NULL) {
+            return -1;
+        }
+        for (size_t i = 0; i < src->size; i++) {
+            dest->data[i] = src->data[i];
+        }
+    }
+    return 0;
+}
+
+static void free_frequency_result(FrequencyResult *result)
+{
+    if (result == NULL) {
+        return;
+    }
+    if (result->unique_lists != NULL) {
+        for (size_t i = 0; i < result->count; i++) {
+            free(result->unique_lists[i].data);
+        }
+        free(result->unique_lists);
+    }
+    free(result->frequencies);
+    result->unique_lists = NULL;
+    result->frequencies = NULL;
+    result->count = 0;
+    result->capacity = 0;
+}
+
+static int init_frequency_result(FrequencyResult *result, size_t initial_capacity)
+{
+    result->unique_lists = NULL;
+    result->frequencies = NULL;
+    result->count = 0;
+    result->capacity = 0;
+    
+    if (initial_capacity == 0) {
+        return 0;
+    }
+    
+    result->unique_lists = (IntList *)calloc(initial_capacity, sizeof(IntList));
+    if (result->unique_lists == NULL) {
+        return -1;
+    }
+    
+    result->frequencies = (size_t *)calloc(initial_capacity, sizeof(size_t));
+    if (result->frequencies == NULL) {
+        free(result->unique_lists);
+        result->unique_lists = NULL;
+        return -1;
+    }
+    
+    result->capacity = initial_capacity;
+    return 0;
+}
+
+static int resize_frequency_result(FrequencyResult *result)
+{
+    size_t new_capacity = (result->capacity == 0) ? 4 : result->capacity * 2;
+    
+    IntList *new_lists = (IntList *)realloc(result->unique_lists, 
+                                             new_capacity * sizeof(IntList));
+    if (new_lists == NULL) {
+        return -1;
+    }
+    result->unique_lists = new_lists;
+    
+    size_t *new_freqs = (size_t *)realloc(result->frequencies, 
+                                           new_capacity * sizeof(size_t));
+    if (new_freqs == NULL) {
+        return -1;
+    }
+    result->frequencies = new_freqs;
+    
+    for (size_t i = result->capacity; i < new_capacity; i++) {
+        result->unique_lists[i].data = NULL;
+        result->unique_lists[i].size = 0;
+        result->frequencies[i] = 0;
+    }
+    
+    result->capacity = new_capacity;
+    return 0;
+}
+
+int find_frequency(const ListOfLists *input, FrequencyResult *result)
+{
+    if (input == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (init_frequency_result(result, input->count) != 0) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < input->count; i++) {
+        if (input->lists[i].size > 0 && input->lists[i].data == NULL) {
+            free_frequency_result(result);
+            return -1;
+        }
+        
+        int found = 0;
+        for (size_t j = 0; j < result->count; j++) {
+            if (lists_equal(&input->lists[i], &result->unique_lists[j])) {
+                result->frequencies[j]++;
+                found = 1;
+                break;
+            }
+        }
+        
+        if (!found) {
+            if (result->count >= result->capacity) {
+                if (resize_frequency_result(result) != 0) {
+                    free_frequency_result(result);
+                    return -1;
+                }
+            }
+            
+            if (copy_list(&input->lists[i], &result->unique_lists[result->count]) != 0) {
+                free_frequency_result(result);
+                return -1;
+            }
+            result->frequencies[result->count] = 1;
+            result->count++;
+        }
+    }
+    
+    return 0;
+}
+
+static void free_list_of_lists(ListOfLists *lol)
+{
+    if (lol == NULL) {
+        return;
+    }
+    if (lol->lists != NULL) {
+        for (size_t i = 0; i < lol->count; i++) {
+            free(lol->lists[i].data);
+        }
+        free(lol->lists);
+    }
+    lol->lists = NULL;
+    lol->count = 0;
+}
+
+static int create_list_of_lists(ListOfLists *lol, int data[][3], 
+                                 const size_t *sizes, size_t count)
+{
+    lol->lists = NULL;
+    lol->count = 0;
+    
+    if (count == 0) {
+        return 0;
+    }
+    
+    lol->lists = (IntList *)calloc(count, sizeof(IntList));
+    if (lol->lists == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < count; i++) {
+        lol->lists[i].size = sizes[i];
+        lol->lists[i].data = NULL;
+        if (sizes[i] > 0) {
+            lol->lists[i].data = (int *)malloc(sizes[i] * sizeof(int));
+            if (lol->lists[i].data == NULL) {
+                free_list_of_lists(lol);
+                return -1;
+            }
+            for (size_t j = 0; j < sizes[i]; j++) {
+                lol->lists[i].data[j] = data[i][j];
+            }
+        }
+    }
+    
+    lol->count = count;
+    return 0;
+}
+
+static void print_list(const IntList *list)
+{
+    printf("[");
+    for (size_t i = 0; i < list->size; i++) {
+        printf("%d", list->data[i]);
+        if (i + 1 < list->size) {
+            printf(", ");
+        }
+    }
+    printf("]");
+}
+
+int main(void)
+{
+    int raw_data[][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {1, 2, 3},
+        {7, 8, 9},
+        {4, 5, 6},
+        {1, 2, 3},
+        {10, 11, 12}
+    };
+    size_t sizes[] = {3, 3, 3, 3, 3, 3, 3};
+    size_t num_lists = sizeof(sizes) / sizeof(sizes[0]);
+    
+    ListOfLists input;
+    FrequencyResult result;
+    
+    if (create_list_of_lists(&input, raw_data, sizes, num_lists) != 0) {
+        fprintf(stderr, "Failed to create input lists\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (find_frequency(&input, &result) != 0) {
+        fprintf(stderr, "Failed to compute frequencies\n");
+        free_list_of_lists(&input);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Frequency count:\n");
+    for (size_t i = 0; i < result.count; i++) {
+        print_list(&result.unique_lists[i]);
+        printf(" -> %zu occurrence(s)\n", result.frequencies[i]);
+    }
+    
+    free_frequency_result(&result);
+    free_list_of_lists(&input);
+    
+    return EXIT_SUCCESS;
+}

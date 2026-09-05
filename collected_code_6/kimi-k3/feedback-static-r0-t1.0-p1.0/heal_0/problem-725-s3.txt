@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int extract_quoted_values(const char *input, char ***results, size_t *count) {
+    regex_t regex;
+    regmatch_t matches[2];
+    const char *pattern = "\"([^\"]*)\"";
+    const char *cursor = input;
+    size_t capacity = 10;
+    size_t num_results = 0;
+    char **result_array = NULL;
+    int ret;
+
+    if (input == NULL || results == NULL || count == NULL) {
+        return -1;
+    }
+
+    result_array = malloc(capacity * sizeof(char *));
+    if (result_array == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        free(result_array);
+        return -1;
+    }
+
+    while (regexec(&regex, cursor, 2, matches, 0) == 0) {
+        size_t start = matches[1].rm_so;
+        size_t end = matches[1].rm_eo;
+        size_t length = end - start;
+        char *value = NULL;
+
+        if (num_results >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char **temp = realloc(result_array, new_capacity * sizeof(char *));
+            if (temp == NULL) {
+                break;
+            }
+            result_array = temp;
+            capacity = new_capacity;
+        }
+
+        value = malloc(length + 1);
+        if (value == NULL) {
+            break;
+        }
+
+        strncpy(value, cursor + start, length);
+        value[length] = '\0';
+        result_array[num_results] = value;
+        num_results++;
+
+        cursor += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (num_results == 0) {
+        free(result_array);
+        *results = NULL;
+        *count = 0;
+        return 0;
+    }
+
+    *results = result_array;
+    *count = num_results;
+    return 0;
+}
+
+void free_results(char **results, size_t count) {
+    size_t i;
+    if (results == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(results[i]);
+    }
+    free(results);
+}
+
+int main(void) {
+    const char *test_string = "Hello \"world\" and \"C programming\" language \"regex\"";
+    char **results = NULL;
+    size_t count = 0;
+    size_t i;
+    int status;
+
+    status = extract_quoted_values(test_string, &results, &count);
+    if (status != 0) {
+        fprintf(stderr, "Error extracting quoted values\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %zu quoted values:\n", count);
+    for (i = 0; i < count; i++) {
+        printf("[%zu]: %s\n", i, results[i]);
+    }
+
+    free_results(results, count);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_sequence(const int *data, size_t data_size, const int *patterns, size_t pattern_count) {
+    size_t i;
+    size_t j;
+
+    if (data == NULL || patterns == NULL) {
+        return 0;
+    }
+
+    if (pattern_count == 0) {
+        return 1;
+    }
+
+    if (data_size == 0 || data_size % pattern_count != 0) {
+        return 0;
+    }
+
+    for (i = 0; i < data_size; i += pattern_count) {
+        for (j = 0; j < pattern_count; ++j) {
+            if (data[i + j] != patterns[j]) {
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+int main(void) {
+    int data[] = {1, 2, 3, 1, 2, 3, 1, 2, 3};
+    int patterns[] = {1, 2, 3};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    size_t pattern_count = sizeof(patterns) / sizeof(patterns[0]);
+    int result;
+
+    result = check_sequence(data, data_size, patterns, pattern_count);
+
+    if (result) {
+        printf("The data follows the sequence.\n");
+    } else {
+        printf("The data does not follow the sequence.\n");
+    }
+
+    return 0;
+}
+```

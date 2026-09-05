@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-781-s2.c: In function 'check_divisor_count_parity':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-781-s2.c:8:33: error: implicit declaration of function 'sqrt' [-Wimplicit-function-declaration]
+    8 |     long long root = (long long)sqrt((double)n);
+      |                                 ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-781-s2.c:3:1: note: include '<math.h>' or provide a declaration of 'sqrt'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 

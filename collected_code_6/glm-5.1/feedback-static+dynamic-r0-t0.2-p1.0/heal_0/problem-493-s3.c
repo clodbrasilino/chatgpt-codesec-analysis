@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+Point*** calculate_hex_grid(int cols, int rows, double size) {
+    if (cols <= 0 || rows <= 0 || size <= 0.0) {
+        return NULL;
+    }
+
+    Point*** grid = (Point***)malloc(rows * sizeof(Point**));
+    if (grid == NULL) {
+        return NULL;
+    }
+
+    double horiz_spacing = size * 2.0;
+    double vert_spacing = size * sqrt(3.0);
+
+    for (int r = 0; r < rows; r++) {
+        grid[r] = (Point**)malloc(cols * sizeof(Point*));
+        if (grid[r] == NULL) {
+            for (int i = 0; i < r; i++) {
+                free(grid[i]);
+            }
+            free(grid);
+            return NULL;
+        }
+
+        for (int c = 0; c < cols; c++) {
+            grid[r][c] = (Point*)malloc(6 * sizeof(Point));
+            if (grid[r][c] == NULL) {
+                for (int i = 0; i < r; i++) {
+                    for (int j = 0; j < cols; j++) {
+                        free(grid[i][j]);
+                    }
+                    free(grid[i]);
+                }
+                for (int j = 0; j < c; j++) {
+                    free(grid[r][j]);
+                }
+                free(grid[r]);
+                free(grid);
+                return NULL;
+            }
+
+            double center_x = c * horiz_spacing + (r % 2) * (horiz_spacing / 2.0);
+            double center_y = r * vert_spacing;
+
+            for (int i = 0; i < 6; i++) {
+                double angle = M_PI / 3.0 * i;
+                grid[r][c][i].x = center_x + size * cos(angle);
+                grid[r][c][i].y = center_y + size * sin(angle);
+            }
+        }
+    }
+
+    return grid;
+}
+
+void free_hex_grid(Point*** grid, int cols, int rows) {
+    if (grid == NULL) {
+        return;
+    }
+    for (int r = 0; r < rows; r++) {
+        if (grid[r] == NULL) {
+            continue;
+        }
+        for (int c = 0; c < cols; c++) {
+            free(grid[r][c]);
+        }
+        free(grid[r]);
+    }
+    free(grid);
+}
+
+int main() {
+    int cols = 3;
+    int rows = 3;
+    double size = 1.0;
+
+    Point*** grid = calculate_hex_grid(cols, rows, size);
+    if (grid == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            printf("Hexagon [%d][%d]:\n", r, c);
+            for (int i = 0; i < 6; i++) {
+                printf("  (%.2f, %.2f)\n", grid[r][c][i].x, grid[r][c][i].y);
+            }
+        }
+    }
+
+    free_hex_grid(grid, cols, rows);
+
+    return EXIT_SUCCESS;
+}

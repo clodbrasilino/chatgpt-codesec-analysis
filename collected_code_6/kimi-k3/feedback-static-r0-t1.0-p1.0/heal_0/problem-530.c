@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stddef.h>
+
+double negative_ratio(const int *arr, size_t size)
+{
+    size_t i;
+    size_t negative_count = 0;
+
+    if (arr == NULL || size == 0) {
+        return 0.0;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            negative_count++;
+        }
+    }
+
+    return (double)negative_count / (double)size;
+}
+
+int main(void)
+{
+    int numbers[] = {1, -2, 3, -4, 5, -6, 7, 8, -9, 10};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    double ratio;
+
+    ratio = negative_ratio(numbers, size);
+
+    printf("Ratio of negative numbers: %.2f\n", ratio);
+
+    return 0;
+}

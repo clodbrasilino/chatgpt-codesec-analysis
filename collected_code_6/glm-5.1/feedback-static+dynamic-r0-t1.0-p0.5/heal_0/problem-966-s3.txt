@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+TupleList remove_empty_tuples(TupleList list) {
+    TupleList result;
+    result.count = 0;
+    result.tuples = (Tuple *)malloc(list.count * sizeof(Tuple));
+    if (result.tuples == NULL) {
+        result.tuples = NULL;
+        result.count = 0;
+        return result;
+    }
+
+    for (int i = 0; i < list.count; i++) {
+        if (list.tuples[i].size > 0) {
+            result.tuples[result.count] = list.tuples[i];
+            result.count++;
+        }
+    }
+
+    Tuple *shrunk = (Tuple *)realloc(result.tuples, result.count * sizeof(Tuple));
+    if (shrunk != NULL || result.count == 0) {
+        result.tuples = shrunk;
+    }
+
+    return result;
+}
+
+int main() {
+    Tuple t1 = {(int[]){1, 2}, 2};
+    Tuple t2 = {NULL, 0};
+    Tuple t3 = {(int[]){3}, 1};
+    Tuple t4 = {NULL, 0};
+
+    TupleList original;
+    original.count = 4;
+    original.tuples = (Tuple *)malloc(original.count * sizeof(Tuple));
+    if (original.tuples == NULL) {
+        return 1;
+    }
+    original.tuples[0] = t1;
+    original.tuples[1] = t2;
+    original.tuples[2] = t3;
+    original.tuples[3] = t4;
+
+    TupleList filtered = remove_empty_tuples(original);
+
+    for (int i = 0; i < filtered.count; i++) {
+        printf("Tuple %d (size %d): ", i, filtered.tuples[i].size);
+        for (int j = 0; j < filtered.tuples[i].size; j++) {
+            printf("%d ", filtered.tuples[i].elements[j]);
+        }
+        printf("\n");
+    }
+
+    free(original.tuples);
+    free(filtered.tuples);
+
+    return 0;
+}
+```

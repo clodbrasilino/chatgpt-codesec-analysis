@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdint.h>
+
+bool is_perfect_square(long long n)
+{
+    if (n < 0) {
+        return false;
+    }
+    
+    if (n == 0 || n == 1) {
+        return true;
+    }
+    
+    long long left = 1;
+    long long right = n;
+    
+    if (right > LLONG_MAX / 2) {
+        right = LLONG_MAX / 2;
+    }
+    
+    while (left <= right) {
+        long long mid = left + (right - left) / 2;
+        
+        if (mid > 0 && mid > LLONG_MAX / mid) {
+            right = mid - 1;
+            continue;
+        }
+        
+        long long square = mid * mid;
+        
+        if (square == n) {
+            return true;
+        } else if (square < n) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+    int result;
+    
+    printf("Enter a number: ");
+    result = scanf("%lld", &number);
+    
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (is_perfect_square(number)) {
+        printf("%lld is a perfect square\n", number);
+    } else {
+        printf("%lld is not a perfect square\n", number);
+    }
+    
+    return 0;
+}
+```

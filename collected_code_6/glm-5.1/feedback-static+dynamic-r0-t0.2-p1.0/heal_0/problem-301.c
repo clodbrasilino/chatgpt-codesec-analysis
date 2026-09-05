@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum { DICT_INT, DICT_STRING, DICT_DICT } DictType;
+
+typedef struct DictEntry {
+    char *key;
+    DictType type;
+    void *value;
+    struct DictEntry *next;
+} DictEntry;
+
+typedef struct {
+    DictEntry *head;
+} Dict;
+
+Dict *dict_create() {
+    Dict *d = (Dict *)malloc(sizeof(Dict));
+    if (d == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    d->head = NULL;
+    return d;
+}
+
+void dict_add(Dict *d, const char *key, DictType type, void *value) {
+    if (d == NULL || key == NULL) {
+        return;
+    }
+    DictEntry *entry = (DictEntry *)malloc(sizeof(DictEntry));
+    if (entry == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    entry->key = (char *)malloc(strlen(key) + 1);
+    if (entry->key == NULL) {
+        free(entry);
+        exit(EXIT_FAILURE);
+    }
+    strcpy(entry->key, key);
+    entry->type = type;
+    entry->value = value;
+    entry->next = d->head;
+    d->head = entry;
+}
+
+int find_depth(Dict *d) {
+    if (d == NULL) {
+        return 0;
+    }
+    int max_depth = 0;
+    DictEntry *current = d->head;
+    while (current != NULL) {
+        if (current->type == DICT_DICT && current->value != NULL) {
+            int sub_depth = find_depth((Dict *)current->value);
+            if (sub_depth > max_depth) {
+                max_depth = sub_depth;
+            }
+        }
+        current = current->next;
+    }
+    return max_depth + 1;
+}
+
+void dict_free(Dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    DictEntry *current = d->head;
+    while (current != NULL) {
+        DictEntry *next = current->next;
+        if (current->type == DICT_DICT && current->value != NULL) {
+            dict_free((Dict *)current->value);
+        }
+        free(current->key);
+        free(current);
+        current = next;
+    }
+    free(d);
+}
+
+int main() {
+    Dict *level3 = dict_create();
+    dict_add(level3, "leaf", DICT_INT, (void *)(long)42);
+
+    Dict *level2 = dict_create();
+    dict_add(level2, "sub_dict", DICT_DICT, (void *)level3);
+    dict_add(level2, "val", DICT_INT, (void *)(long)10);
+
+    Dict *level1 = dict_create();
+    dict_add(level1, "nested", DICT_DICT, (void *)level2);
+    dict_add(level1, "top_val", DICT_STRING, (void *)"hello");
+
+    int depth = find_depth(level1);
+    printf("%d\n", depth);
+
+    dict_free(level1);
+
+    return 0;
+}

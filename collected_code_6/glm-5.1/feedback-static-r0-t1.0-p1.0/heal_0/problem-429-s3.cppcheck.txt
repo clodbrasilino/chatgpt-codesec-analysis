@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-429-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-429-s3.c:5:103: style: Parameter 'indices' can be declared as const array [constParameter]
+void* elementwise_extract(const void* t1, const void* t2, size_t tuple_size, size_t elem_size, size_t indices[], size_t num_indices, void** out_tuple) {
+                                                                                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-429-s3.c:42:9: style: Variable 'a' can be declared as const array [constVariable]
+    int a[] = {1, 2, 3, 4};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-429-s3.c:43:9: style: Variable 'b' can be declared as const array [constVariable]
+    int b[] = {5, 6, 7, 8};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-429-s3.c:59:10: style: Variable 't' can be declared as pointer to const [constVariablePointer]
+    int* t = (int*)out_tuple;
+         ^

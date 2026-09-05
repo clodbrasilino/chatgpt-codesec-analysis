@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:68:16: style: Condition 'result==NULL' is always true [knownConditionTrueFalse]
+    if (result == NULL && null_input == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:66:34: note: Calling function 'camel_to_snake' returns 0
+    char *result = camel_to_snake(null_input);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:66:34: note: Assignment 'result=camel_to_snake(null_input)', assigned value is 0
+    char *result = camel_to_snake(null_input);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:68:16: note: Condition 'result==NULL' is always true
+    if (result == NULL && null_input == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:68:38: style: Condition 'null_input==NULL' is always true [knownConditionTrueFalse]
+    if (result == NULL && null_input == NULL) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:65:30: note: Assignment 'null_input=NULL', assigned value is 0
+    const char *null_input = NULL;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_8/healed/problem-965.c:68:38: note: Condition 'null_input==NULL' is always true
+    if (result == NULL && null_input == NULL) {
+                                     ^

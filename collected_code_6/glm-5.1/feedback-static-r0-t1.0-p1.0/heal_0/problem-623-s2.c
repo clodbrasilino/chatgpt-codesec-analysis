@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+long long *calculate_powers(const int *list, size_t size, int n) {
+    if (list == NULL || size == 0) {
+        return NULL;
+    }
+
+    if (n < 0) {
+        return NULL;
+    }
+
+    long long *result = (long long *)malloc(size * sizeof(long long));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        long long base = list[i];
+        long long power = 1;
+
+        if (base == 0 && n == 0) {
+            errno = EDOM;
+            free(result);
+            return NULL;
+        }
+
+        for (int j = 0; j < n; j++) {
+            if (base != 0 && power > LLONG_MAX / base) {
+                errno = ERANGE;
+                free(result);
+                return NULL;
+            }
+            power *= base;
+        }
+
+        result[i] = power;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list[] = {2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int n = 3;
+
+    long long *powers = calculate_powers(list, size, n);
+    if (powers == NULL) {
+        if (errno == ERANGE) {
+            printf("Range error occurred\\n");
+        } else if (errno == EDOM) {
+            printf("Domain error occurred\\n");
+        } else {
+            printf("Allocation or input error occurred\\n");
+        }
+        return 1;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%lld ", powers[i]);
+    }
+    printf("\\n");
+
+    free(powers);
+    powers = NULL;
+
+    return 0;
+}

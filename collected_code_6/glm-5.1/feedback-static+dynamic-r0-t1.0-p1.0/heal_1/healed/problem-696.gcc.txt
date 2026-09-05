@@ -1,0 +1,65 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c: In function 'zip_lists':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:42:19: error: assignment to 'int *' from incompatible pointer type 'int **' [-Wincompatible-pointer-types]
+   42 |         result[i] = allocate_matrix(1, total_len);
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:55:31: error: passing argument 1 of 'free_matrix' from incompatible pointer type [-Wincompatible-pointer-types]
+   55 |             free_matrix(result[i], 1);
+      |                         ~~~~~~^~~
+      |                               |
+      |                               int *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:18:24: note: expected 'int **' but argument is of type 'int *'
+   18 | void free_matrix(int **matrix, int rows) {
+      |                  ~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:67:25: error: subscripted value is neither array nor pointer nor vector
+   67 |             result[i][0][j] = list1[i][0][j];
+      |                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:67:42: error: subscripted value is neither array nor pointer nor vector
+   67 |             result[i][0][j] = list1[i][0][j];
+      |                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:70:25: error: subscripted value is neither array nor pointer nor vector
+   70 |             result[i][0][inner_len1 + j] = list2[i][0][j];
+      |                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:70:55: error: subscripted value is neither array nor pointer nor vector
+   70 |             result[i][0][inner_len1 + j] = list2[i][0][j];
+      |                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:104:30: error: passing argument 1 of 'zip_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |     int **zipped = zip_lists(list1, sizes1, 2, list2, sizes2, 2);
+      |                              ^~~~~
+      |                              |
+      |                              int ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:24:23: note: expected 'int **' but argument is of type 'int ***'
+   24 | int** zip_lists(int **list1, int **sizes1, int len1, int **list2, int **sizes2, int len2) {
+      |                 ~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:104:37: error: passing argument 2 of 'zip_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |     int **zipped = zip_lists(list1, sizes1, 2, list2, sizes2, 2);
+      |                                     ^~~~~~
+      |                                     |
+      |                                     int ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:24:36: note: expected 'int **' but argument is of type 'int ***'
+   24 | int** zip_lists(int **list1, int **sizes1, int len1, int **list2, int **sizes2, int len2) {
+      |                              ~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:104:48: error: passing argument 4 of 'zip_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |     int **zipped = zip_lists(list1, sizes1, 2, list2, sizes2, 2);
+      |                                                ^~~~~
+      |                                                |
+      |                                                int ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:24:60: note: expected 'int **' but argument is of type 'int ***'
+   24 | int** zip_lists(int **list1, int **sizes1, int len1, int **list2, int **sizes2, int len2) {
+      |                                                      ~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:104:55: error: passing argument 5 of 'zip_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+  104 |     int **zipped = zip_lists(list1, sizes1, 2, list2, sizes2, 2);
+      |                                                       ^~~~~~
+      |                                                       |
+      |                                                       int ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:24:73: note: expected 'int **' but argument is of type 'int ***'
+   24 | int** zip_lists(int **list1, int **sizes1, int len1, int **list2, int **sizes2, int len2) {
+      |                                                                   ~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:108:42: error: invalid operands to binary + (have 'int *' and 'int *')
+  108 |             int total_len = sizes1[i][0] + sizes2[i][0];
+      |                             ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
+      |                                      |              |
+      |                                      int *          int *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-696.c:110:43: error: subscripted value is neither array nor pointer nor vector
+  110 |                 printf("%d ", zipped[i][0][j]);
+      |                                           ^

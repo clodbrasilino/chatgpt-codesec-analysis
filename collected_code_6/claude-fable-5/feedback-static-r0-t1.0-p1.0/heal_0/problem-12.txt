@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 4
+#define COLS 4
+
+static long row_sum(const int row[], size_t cols)
+{
+    long sum = 0;
+    size_t j;
+
+    for (j = 0; j < cols; j++) {
+        sum += row[j];
+    }
+    return sum;
+}
+
+static void swap_rows(int a[], int b[], size_t cols)
+{
+    size_t j;
+    int tmp;
+
+    for (j = 0; j < cols; j++) {
+        tmp = a[j];
+        a[j] = b[j];
+        b[j] = tmp;
+    }
+}
+
+static void sort_matrix_by_row_sum(int matrix[][COLS], size_t rows, size_t cols)
+{
+    size_t i;
+    size_t k;
+
+    if (rows < 2U || cols == 0U) {
+        return;
+    }
+
+    for (i = 0; i + 1U < rows; i++) {
+        size_t min_index = i;
+        long min_sum = row_sum(matrix[i], cols);
+
+        for (k = i + 1U; k < rows; k++) {
+            long current_sum = row_sum(matrix[k], cols);
+
+            if (current_sum < min_sum) {
+                min_sum = current_sum;
+                min_index = k;
+            }
+        }
+
+        if (min_index != i) {
+            swap_rows(matrix[i], matrix[min_index], cols);
+        }
+    }
+}
+
+static int print_matrix(const int matrix[][COLS], size_t rows, size_t cols)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            if (printf("%d ", matrix[i][j]) < 0) {
+                return -1;
+            }
+        }
+        if (printf("\n") < 0) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int matrix[ROWS][COLS] = {
+        {9, 8, 7, 6},
+        {1, 2, 3, 4},
+        {5, 5, 5, 5},
+        {0, 1, 0, 1}
+    };
+
+    if (printf("Original matrix:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (print_matrix(matrix, ROWS, COLS) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    sort_matrix_by_row_sum(matrix, ROWS, COLS);
+
+    if (printf("Sorted matrix by row sum:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (print_matrix(matrix, ROWS, COLS) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

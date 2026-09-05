@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c:17:11: style: Condition 'a==0' is always false [knownConditionTrueFalse]
+    if (a == 0 || b == 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c:14:11: note: Assuming that condition 'a<=0' is not redundant
+    if (a <= 0 || b <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c:17:11: note: Condition 'a==0' is always false
+    if (a == 0 || b == 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c:17:21: style: Condition 'b==0' is always false [knownConditionTrueFalse]
+    if (a == 0 || b == 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c:14:21: note: Assuming that condition 'b<=0' is not redundant
+    if (a <= 0 || b <= 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-876-s3.c:17:21: note: Condition 'b==0' is always false
+    if (a == 0 || b == 0) {
+                    ^

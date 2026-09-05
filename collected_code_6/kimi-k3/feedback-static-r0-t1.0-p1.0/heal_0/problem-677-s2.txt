@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <float.h>
+#include <math.h>
+
+bool is_valid_triangle(double a, double b, double c) {
+    if (isnan(a) || isnan(b) || isnan(c)) {
+        return false;
+    }
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return false;
+    }
+    if (a > DBL_MAX - b || a > DBL_MAX - c || b > DBL_MAX - c) {
+        return false;
+    }
+    return (a + b > c) && (a + c > b) && (b + c > a);
+}
+
+int main(void) {
+    double a, b, c;
+    
+    printf("Enter three sides of triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (is_valid_triangle(a, b, c)) {
+        printf("Valid triangle\n");
+    } else {
+        printf("Invalid triangle\n");
+    }
+    
+    return 0;
+}
+```

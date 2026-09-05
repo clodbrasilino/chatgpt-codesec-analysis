@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+int multiply_tuples(const Tuple *t1, const Tuple *t2, Tuple *result) {
+    if (t1 == NULL || t2 == NULL || result == NULL) {
+        return -1;
+    }
+    if (t1->data == NULL || t2->data == NULL) {
+        return -1;
+    }
+    if (t1->size != t2->size) {
+        return -1;
+    }
+    if (t1->size == 0) {
+        result->data = NULL;
+        result->size = 0;
+        return 0;
+    }
+
+    int *new_data = malloc(t1->size * sizeof(int));
+    if (new_data == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < t1->size; i++) {
+        new_data[i] = t1->data[i] * t2->data[i];
+    }
+
+    free(result->data);
+    result->data = new_data;
+    result->size = t1->size;
+
+    return 0;
+}
+
+int main(void) {
+    int data1[] = {1, 2, 3, 4, 5};
+    int data2[] = {6, 7, 8, 9, 10};
+    
+    Tuple t1 = {data1, sizeof(data1) / sizeof(data1[0])};
+    Tuple t2 = {data2, sizeof(data2) / sizeof(data2[0])};
+    Tuple result = {NULL, 0};
+
+    if (multiply_tuples(&t1, &t2, &result) != 0) {
+        fprintf(stderr, "Error: Failed to multiply tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: ");
+    for (size_t i = 0; i < result.size; i++) {
+        printf("%d ", result.data[i]);
+    }
+    printf("\n");
+
+    free(result.data);
+
+    return EXIT_SUCCESS;
+}
+```

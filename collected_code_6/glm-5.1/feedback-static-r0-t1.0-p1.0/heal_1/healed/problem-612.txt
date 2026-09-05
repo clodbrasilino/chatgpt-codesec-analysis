@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** merge_first_last(int** lists, const int* list_sizes, int num_lists, int* result_sizes, int* result_count) {
+    if (num_lists == 0) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    *result_count = num_lists;
+    int** result = (int**)malloc(num_lists * sizeof(int*));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < num_lists; i++) {
+        int current_size = list_sizes[i];
+        int new_size = 0;
+
+        if (current_size == 1) {
+            new_size = 1;
+        } else if (current_size > 1) {
+            new_size = 2;
+        }
+
+        result_sizes[i] = new_size;
+        
+        if (new_size == 0) {
+            result[i] = NULL;
+            continue;
+        }
+
+        result[i] = (int*)malloc(new_size * sizeof(int));
+        if (result[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            *result_count = 0;
+            return NULL;
+        }
+
+        result[i][0] = lists[i][0];
+        if (new_size == 2) {
+            result[i][1] = lists[i][current_size - 1];
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int num_lists = 3;
+    int list0[] = {1, 2, 3, 4};
+    int list1[] = {5, 6, 7};
+    int list2[] = {8, 9};
+    
+    int* lists[] = {list0, list1, list2};
+    const int list_sizes[] = {4, 3, 2};
+    int result_sizes[3];
+    int result_count = 0;
+
+    int** result = merge_first_last(lists, list_sizes, num_lists, result_sizes, &result_count);
+
+    if (result == NULL) {
+        if (result_count == 0) {
+            return 0;
+        }
+        return 1;
+    }
+
+    for (int i = 0; i < result_count; i++) {
+        for (int j = 0; j < result_sizes[i]; j++) {
+            printf("%d ", result[i][j]);
+        }
+        printf("\n");
+        free(result[i]);
+    }
+    free(result);
+
+    return 0;
+}

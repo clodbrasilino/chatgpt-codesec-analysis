@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+#define EARTH_RADIUS_KM 6371.0
+#define PI 3.14159265358979323846
+
+typedef struct {
+    double latitude;
+    double longitude;
+} GeoPoint;
+
+static double degrees_to_radians(double degrees) {
+    return degrees * PI / 180.0;
+}
+
+static int validate_coordinates(const GeoPoint *point) {
+    if (point == NULL) {
+        return 0;
+    }
+    if (point->latitude < -90.0 || point->latitude > 90.0) {
+        return 0;
+    }
+    if (point->longitude < -180.0 || point->longitude > 180.0) {
+        return 0;
+    }
+    return 1;
+}
+
+static double calculate_distance(const GeoPoint *point1, const GeoPoint *point2) {
+    double lat1_rad;
+    double lat2_rad;
+    double delta_lat;
+    double delta_lon;
+    double a;
+    double c;
+    double distance;
+
+    if (!validate_coordinates(point1) || !validate_coordinates(point2)) {
+        return -1.0;
+    }
+
+    lat1_rad = degrees_to_radians(point1->latitude);
+    lat2_rad = degrees_to_radians(point2->latitude);
+    delta_lat = degrees_to_radians(point2->latitude - point1->latitude);
+    delta_lon = degrees_to_radians(point2->longitude - point1->longitude);
+
+    a = sin(delta_lat / 2.0) * sin(delta_lat / 2.0) +
+        cos(lat1_rad) * cos(lat2_rad) *
+        sin(delta_lon / 2.0) * sin(delta_lon / 2.0);
+
+    c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+
+    distance = EARTH_RADIUS_KM * c;
+
+    return distance;
+}
+
+int main(void) {
+    GeoPoint point1 = {40.7128, -74.0060};
+    GeoPoint point2 = {34.0522, -118.2437};
+    double distance;
+
+    distance = calculate_distance(&point1, &point2);
+
+    if (distance < 0.0) {
+        fprintf(stderr, "Error: Invalid coordinates provided\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Distance between points: %.2f km\n", distance);
+
+    return EXIT_SUCCESS;
+}

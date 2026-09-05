@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+size_t count_char_occurrences(const char *str, char c, size_t repetitions) {
+    if (str == NULL || repetitions == 0) {
+        return 0;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+
+    size_t single_count = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == c) {
+            single_count++;
+        }
+    }
+
+    if (repetitions == 1) {
+        return single_count;
+    }
+
+    if (single_count > SIZE_MAX / repetitions) {
+        return SIZE_MAX;
+    }
+
+    return single_count * repetitions;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <string> <char> <repetitions>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    const char *input_str = argv[1];
+    if (strlen(argv[2]) != 1) {
+        fprintf(stderr, "Error: Second argument must be a single character.\n");
+        return EXIT_FAILURE;
+    }
+    char target_char = argv[2][0];
+
+    char *endptr;
+    unsigned long rep_ul = strtoul(argv[3], &endptr, 10);
+    if (*endptr != '\0' || rep_ul > SIZE_MAX) {
+        fprintf(stderr, "Error: Invalid repetitions count.\n");
+        return EXIT_FAILURE;
+    }
+    size_t repetitions = (size_t)rep_ul;
+
+    size_t result = count_char_occurrences(input_str, target_char, repetitions);
+    printf("%zu\n", result);
+
+    return EXIT_SUCCESS;
+}

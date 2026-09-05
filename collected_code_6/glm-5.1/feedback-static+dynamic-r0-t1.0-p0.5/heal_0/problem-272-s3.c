@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t len;
+    size_t cap;
+} TupleList;
+
+TupleList* tuple_list_create(size_t cap) {
+    TupleList *list = (TupleList*)malloc(sizeof(TupleList));
+    if (!list) return NULL;
+    list->data = (Tuple*)malloc(cap * sizeof(Tuple));
+    if (!list->data) {
+        free(list);
+        return NULL;
+    }
+    list->len = 0;
+    list->cap = cap;
+    return list;
+}
+
+int tuple_list_push(TupleList *list, Tuple t) {
+    if (!list || !list->data) return -1;
+    if (list->len == list->cap) {
+        size_t new_cap = list->cap * 2;
+        Tuple *new_data = (Tuple*)realloc(list->data, new_cap * sizeof(Tuple));
+        if (!new_data) return -1;
+        list->data = new_data;
+        list->cap = new_cap;
+    }
+    list->data[list->len++] = t;
+    return 0;
+}
+
+int tuple_list_extract_rear(TupleList *list, Tuple *out) {
+    if (!list || !list->data || !out) return -1;
+    if (list->len == 0) return -1;
+    *out = list->data[list->len - 1];
+    list->len--;
+    return 0;
+}
+
+void tuple_list_destroy(TupleList *list) {
+    if (list) {
+        free(list->data);
+        free(list);
+    }
+}
+
+int main() {
+    TupleList *list = tuple_list_create(2);
+    if (!list) {
+        fprintf(stderr, "Allocation failed\n");
+        return 1;
+    }
+
+    tuple_list_push(list, (Tuple){1, 10});
+    tuple_list_push(list, (Tuple){2, 20});
+    tuple_list_push(list, (Tuple){3, 30});
+
+    Tuple rear;
+    while (tuple_list_extract_rear(list, &rear) == 0) {
+        printf("(%d, %d)\n", rear.a, rear.b);
+    }
+
+    tuple_list_destroy(list);
+    return 0;
+}

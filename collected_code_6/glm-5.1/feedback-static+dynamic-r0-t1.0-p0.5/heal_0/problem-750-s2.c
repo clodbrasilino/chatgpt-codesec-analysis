@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+    size_t capacity;
+} List;
+
+int list_init(List *list, size_t initial_capacity) {
+    list->data = (Tuple *)malloc(initial_capacity * sizeof(Tuple));
+    if (list->data == NULL) {
+        return -1;
+    }
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+int list_add(List *list, Tuple tuple) {
+    if (list == NULL || list->data == NULL) {
+        return -1;
+    }
+    if (list->size == list->capacity) {
+        size_t new_capacity = list->capacity == 0 ? 1 : list->capacity * 2;
+        Tuple *new_data = (Tuple *)realloc(list->data, new_capacity * sizeof(Tuple));
+        if (new_data == NULL) {
+            return -1;
+        }
+        list->data = new_data;
+        list->capacity = new_capacity;
+    }
+    list->data[list->size] = tuple;
+    list->size++;
+    return 0;
+}
+
+void list_free(List *list) {
+    if (list != NULL) {
+        free(list->data);
+        list->data = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+int main(void) {
+    List list;
+    if (list_init(&list, 2) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    Tuple t1 = {1, 2};
+    Tuple t2 = {3, 4};
+    Tuple t3 = {5, 6};
+
+    if (list_add(&list, t1) != 0) {
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    if (list_add(&list, t2) != 0) {
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    if (list_add(&list, t3) != 0) {
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < list.size; i++) {
+        printf("(%d, %d)\n", list.data[i].a, list.data[i].b);
+    }
+
+    list_free(&list);
+    return EXIT_SUCCESS;
+}

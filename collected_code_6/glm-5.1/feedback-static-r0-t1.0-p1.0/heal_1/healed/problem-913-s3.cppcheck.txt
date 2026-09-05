@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-913-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-913-s3.c:53:24: style: Condition 'test6' is always false [knownConditionTrueFalse]
+    printf("%s: %d\n", test6 ? test6 : "(null)", ends_with_number(test6));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-913-s3.c:44:25: note: Assignment 'test6=NULL', assigned value is 0
+    const char *test6 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-913-s3.c:53:24: note: Condition 'test6' is always false
+    printf("%s: %d\n", test6 ? test6 : "(null)", ends_with_number(test6));
+                       ^

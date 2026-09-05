@@ -1,0 +1,142 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **split_at_uppercase(const char *str, size_t *count)
+{
+    char **result;
+    char **temp;
+    const char *start;
+    const char *p;
+    size_t capacity;
+    size_t len;
+    size_t i;
+
+    if (str == NULL || count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+    capacity = 8;
+
+    result = malloc(capacity * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    start = str;
+    p = str;
+
+    while (*p != '\0') {
+        if (isupper((unsigned char)*p) && p != start) {
+            len = (size_t)(p - start);
+
+            if (*count >= capacity) {
+                capacity *= 2;
+                temp = realloc(result, capacity * sizeof(*result));
+                if (temp == NULL) {
+                    for (i = 0; i < *count; i++) {
+                        free(result[i]);
+                    }
+                    free(result);
+                    *count = 0;
+                    return NULL;
+                }
+                result = temp;
+            }
+
+            result[*count] = malloc(len + 1);
+            if (result[*count] == NULL) {
+                for (i = 0; i < *count; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                *count = 0;
+                return NULL;
+            }
+
+            memcpy(result[*count], start, len);
+            result[*count][len] = '\0';
+            (*count)++;
+
+            start = p;
+        }
+        p++;
+    }
+
+    len = (size_t)(p - start);
+    if (len > 0) {
+        if (*count >= capacity) {
+            capacity += 1;
+            temp = realloc(result, capacity * sizeof(*result));
+            if (temp == NULL) {
+                for (i = 0; i < *count; i++) {
+                    free(result[i]);
+                }
+                free(result);
+                *count = 0;
+                return NULL;
+            }
+            result = temp;
+        }
+
+        result[*count] = malloc(len + 1);
+        if (result[*count] == NULL) {
+            for (i = 0; i < *count; i++) {
+                free(result[i]);
+            }
+            free(result);
+            *count = 0;
+            return NULL;
+        }
+
+        memcpy(result[*count], start, len);
+        result[*count][len] = '\0';
+        (*count)++;
+    }
+
+    return result;
+}
+
+void free_split_result(char **result, size_t count)
+{
+    size_t i;
+
+    if (result == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+int main(void)
+{
+    const char *test_string = "HelloWorldThisIsATest";
+    char **parts;
+    size_t count;
+    size_t i;
+
+    parts = split_at_uppercase(test_string, &count);
+
+    if (parts == NULL) {
+        fprintf(stderr, "Error: Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original string: %s\n", test_string);
+    printf("Split into %zu parts:\n", count);
+
+    for (i = 0; i < count; i++) {
+        printf("  [%zu]: %s\n", i, parts[i]);
+    }
+
+    free_split_result(parts, count);
+
+    return EXIT_SUCCESS;
+}
+```

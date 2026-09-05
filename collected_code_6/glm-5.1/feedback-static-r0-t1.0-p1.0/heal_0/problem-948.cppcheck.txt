@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:65:10: style: Variable 'item0' can be declared as pointer to const [constVariablePointer]
+    int *item0 = tuple_get(t, 0);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:70:13: style: Variable 'item1' can be declared as pointer to const [constVariablePointer]
+    double *item1 = tuple_get(t, 1);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:75:11: style: Variable 'item2' can be declared as pointer to const [constVariablePointer]
+    char *item2 = tuple_get(t, 2);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:80:11: style: Variable 'item_oob' can be declared as pointer to const [constVariablePointer]
+    void *item_oob = tuple_get(t, 5);
+          ^

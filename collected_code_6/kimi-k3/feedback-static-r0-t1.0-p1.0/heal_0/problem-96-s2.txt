@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int count_divisors(int n) {
+    if (n == 0) {
+        return -1;
+    }
+    
+    if (n == INT_MIN) {
+        return -1;
+    }
+    
+    if (n < 0) {
+        n = -n;
+    }
+    
+    int count = 0;
+    int i;
+    
+    for (i = 1; i <= n / i; i++) {
+        if (n % i == 0) {
+            if (i == n / i) {
+                count += 1;
+            } else {
+                count += 2;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int number;
+    int result;
+    
+    printf("Enter an integer: ");
+    
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = count_divisors(number);
+    
+    if (result == -1) {
+        printf("Cannot determine divisors for input %d\n", number);
+    } else {
+        printf("Number of divisors: %d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

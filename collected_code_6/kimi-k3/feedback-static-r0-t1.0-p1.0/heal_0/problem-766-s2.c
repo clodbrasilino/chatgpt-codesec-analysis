@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+void iterate_consecutive_pairs(const Node *head, void (*callback)(int, int)) {
+    const Node *current;
+    
+    if (head == NULL || callback == NULL) {
+        return;
+    }
+    
+    current = head;
+    while (current->next != NULL) {
+        callback(current->data, current->next->data);
+        current = current->next;
+    }
+}
+
+void print_pair(int first, int second) {
+    printf("(%d, %d)\n", first, second);
+}
+
+Node* create_node(int value) {
+    Node *new_node = malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next;
+    
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    Node *new_node;
+    int values[] = {1, 2, 3, 4, 5};
+    size_t i;
+    
+    for (i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        new_node = create_node(values[i]);
+        if (new_node == NULL) {
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+        
+        if (head == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+    
+    iterate_consecutive_pairs(head, print_pair);
+    
+    free_list(head);
+    return EXIT_SUCCESS;
+}

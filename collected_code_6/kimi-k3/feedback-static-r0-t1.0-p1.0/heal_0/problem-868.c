@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+int lengthOfLastWord(const char *s) {
+    int length = 0;
+    int i = (int)strlen(s) - 1;
+
+    while (i >= 0 && s[i] == ' ') {
+        i--;
+    }
+
+    while (i >= 0 && s[i] != ' ') {
+        length++;
+        i--;
+    }
+
+    return length;
+}
+
+int main(void) {
+    char buffer[1024];
+
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        printf("%d\n", lengthOfLastWord(buffer));
+    }
+
+    return 0;
+}

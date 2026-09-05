@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+static int validate_input(double value)
+{
+    if (value <= 0.0 || !isfinite(value)) {
+        return 0;
+    }
+    return 1;
+}
+
+static double calculate_median(double base1, double base2)
+{
+    if (!validate_input(base1) || !validate_input(base2)) {
+        return -1.0;
+    }
+    return (base1 + base2) / 2.0;
+}
+
+int main(void)
+{
+    double base1, base2, median;
+    
+    printf("Enter the length of first base: ");
+    if (scanf("%lf", &base1) != 1) {
+        fprintf(stderr, "Error: Invalid input for first base\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the length of second base: ");
+    if (scanf("%lf", &base2) != 1) {
+        fprintf(stderr, "Error: Invalid input for second base\n");
+        return EXIT_FAILURE;
+    }
+    
+    median = calculate_median(base1, base2);
+    if (median < 0.0) {
+        fprintf(stderr, "Error: Invalid base lengths provided\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Median of trapezium: %.2f\n", median);
+    
+    return EXIT_SUCCESS;
+}

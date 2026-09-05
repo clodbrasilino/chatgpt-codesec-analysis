@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:15:11: style: Condition 'l<=0' is always false [knownConditionTrueFalse]
+    if (l <= 0 || w <= 0 || h <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:11:13: note: Assignment 'l=5', assigned value is 5
+    int l = 5;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:15:11: note: Condition 'l<=0' is always false
+    if (l <= 0 || w <= 0 || h <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:15:21: style: Condition 'w<=0' is always false [knownConditionTrueFalse]
+    if (l <= 0 || w <= 0 || h <= 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:12:13: note: Assignment 'w=4', assigned value is 4
+    int w = 4;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:15:21: note: Condition 'w<=0' is always false
+    if (l <= 0 || w <= 0 || h <= 0) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:15:31: style: Condition 'h<=0' is always false [knownConditionTrueFalse]
+    if (l <= 0 || w <= 0 || h <= 0) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:13:13: note: Assignment 'h=3', assigned value is 3
+    int h = 3;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_2/healed/problem-369-s2.c:15:31: note: Condition 'h<=0' is always false
+    if (l <= 0 || w <= 0 || h <= 0) {
+                              ^

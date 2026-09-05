@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_kth_element(const int *arr, size_t size, size_t k, int *result)
+{
+    size_t odd_count;
+    size_t i;
+    size_t odd_index;
+    size_t even_index;
+
+    if (arr == NULL || result == NULL || k == 0 || k > size)
+    {
+        return -1;
+    }
+
+    odd_count = 0;
+    for (i = 0; i < size; i++)
+    {
+        if (arr[i] % 2 != 0)
+        {
+            odd_count++;
+        }
+    }
+
+    odd_index = 0;
+    even_index = odd_count;
+
+    for (i = 0; i < size; i++)
+    {
+        if (arr[i] % 2 != 0)
+        {
+            if (odd_index == k - 1)
+            {
+                *result = arr[i];
+                return 0;
+            }
+            odd_index++;
+        }
+        else
+        {
+            if (even_index == k - 1)
+            {
+                *result = arr[i];
+                return 0;
+            }
+            even_index++;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr[] = {1, 3, 5, 7, 2, 4, 6, 8};
+    size_t size;
+    size_t k;
+    int result;
+    int status;
+
+    size = sizeof(arr) / sizeof(arr[0]);
+    k = 5;
+
+    status = find_kth_element(arr, size, k, &result);
+    if (status == 0)
+    {
+        printf("The %zuth element is: %d\n", k, result);
+    }
+    else
+    {
+        printf("Invalid input or k out of bounds\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

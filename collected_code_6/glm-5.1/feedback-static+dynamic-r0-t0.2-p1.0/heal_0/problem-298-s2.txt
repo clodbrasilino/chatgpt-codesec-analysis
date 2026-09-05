@@ -1,0 +1,161 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int is_list;
+    union {
+        int value;
+        struct {
+            struct Node *items;
+            size_t count;
+        } list;
+    } data;
+    struct Node *next;
+} Node;
+
+Node *create_value_node(int val) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (!n) exit(EXIT_FAILURE);
+    n->is_list = 0;
+    n->data.value = val;
+    n->next = NULL;
+    return n;
+}
+
+Node *create_list_node(Node *items, size_t count) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (!n) exit(EXIT_FAILURE);
+    n->is_list = 1;
+    n->data.list.items = items;
+    n->data.list.count = count;
+    n->next = NULL;
+    return n;
+}
+
+int value_in_list(int val, Node *list) {
+    Node *curr = list;
+    while (curr) {
+        if (!curr->is_list && curr->data.value == val) {
+            return 1;
+        }
+        curr = curr->next;
+    }
+    return 0;
+}
+
+int nested_list_in_list(Node *nested, Node *list) {
+    if (!nested) return 1;
+    if (nested->is_list) {
+        Node *curr = nested->data.list.items;
+        size_t i = 0;
+        for (; i < nested->data.list.count; ++i) {
+            if (!nested_list_in_list(curr, list)) {
+                return 0;
+            }
+            curr = curr->next;
+        }
+        return 1;
+    } else {
+        return value_in_list(nested->data.value, list);
+    }
+}
+
+Node *find_nested_elements(Node *nested_list, Node *target_list) {
+    Node *result = NULL;
+    Node *tail = NULL;
+    Node *curr = nested_list;
+
+    while (curr) {
+        if (curr->is_list) {
+            if (nested_list_in_list(curr, target_list)) {
+                Node *new_node = (Node *)malloc(sizeof(Node));
+                if (!new_node) exit(EXIT_FAILURE);
+                new_node->is_list = 1;
+                new_node->data.list.items = curr->data.list.items;
+                new_node->data.list.count = curr->data.list.count;
+                new_node->next = NULL;
+                if (!result) {
+                    result = new_node;
+                    tail = new_node;
+                } else {
+                    tail->next = new_node;
+                    tail = new_node;
+                }
+            }
+        }
+        curr = curr->next;
+    }
+    return result;
+}
+
+void free_list_shallow(Node *n) {
+    while (n) {
+        Node *next = n->next;
+        free(n);
+        n = next;
+    }
+}
+
+void print_nested(Node *n) {
+    printf("[");
+    Node *curr = n;
+    while (curr) {
+        if (curr->is_list) {
+            printf("[");
+            Node *inner = curr->data.list.items;
+            size_t i = 0;
+            for (; i < curr->data.list.count; ++i) {
+                if (inner->is_list) {
+                    printf("...");
+                } else {
+                    printf("%d", inner->data.value);
+                }
+                if (i < curr->data.list.count - 1) {
+                    printf(", ");
+                }
+                inner = inner->next;
+            }
+            printf("]");
+        } else {
+            printf("%d", curr->data.value);
+        }
+        if (curr->next) {
+            printf(", ");
+        }
+        curr = curr->next;
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    Node *target_list = create_value_node(1);
+    target_list->next = create_value_node(2);
+    target_list->next->next = create_value_node(3);
+
+    Node *sub1 = create_value_node(1);
+    sub1->next = create_value_node(2);
+    Node *nested1 = create_list_node(sub1, 2);
+
+    Node *sub2 = create_value_node(2);
+    sub2->next = create_value_node(4);
+    Node *nested2 = create_list_node(sub2, 2);
+
+    Node *sub3 = create_value_node(3);
+    Node *nested3 = create_list_node(sub3, 1);
+
+    Node *nested_list = nested1;
+    nested1->next = nested2;
+    nested2->next = nested3;
+
+    Node *result = find_nested_elements(nested_list, target_list);
+
+    print_nested(result);
+
+    free_list_shallow(result);
+    free_list_shallow(nested_list);
+    free_list_shallow(target_list);
+
+    return 0;
+}
+```

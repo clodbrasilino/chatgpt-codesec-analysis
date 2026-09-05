@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sum_fourth_power_odd(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    unsigned long long sum = 0;
+    int count = 0;
+    unsigned int i = 1;
+    
+    while (count < n) {
+        unsigned long long term = (unsigned long long)i * i * i * i;
+        sum += term;
+        i += 2;
+        count++;
+    }
+    
+    return sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    int n;
+    
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    if (sscanf(argv[1], "%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be a non-negative integer\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = sum_fourth_power_odd(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

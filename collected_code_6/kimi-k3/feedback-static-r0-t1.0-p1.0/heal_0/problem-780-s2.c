@@ -1,0 +1,260 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+typedef struct {
+    int *values;
+    size_t size;
+} Combination;
+
+typedef struct {
+    Combination *combinations;
+    size_t count;
+    size_t capacity;
+} CombinationList;
+
+void init_tuple(Tuple *t, size_t size) {
+    t->size = size;
+    t->elements = (int *)malloc(size * sizeof(int));
+    if (t->elements == NULL) {
+        t->size = 0;
+    }
+}
+
+void free_tuple(Tuple *t) {
+    if (t->elements != NULL) {
+        free(t->elements);
+        t->elements = NULL;
+    }
+    t->size = 0;
+}
+
+void init_tuple_list(TupleList *list, size_t count) {
+    list->count = count;
+    list->tuples = (Tuple *)malloc(count * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        list->count = 0;
+    }
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list->tuples != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            free_tuple(&list->tuples[i]);
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+    }
+    list->count = 0;
+}
+
+int init_combination_list(CombinationList *list, size_t initial_capacity) {
+    list->combinations = (Combination *)malloc(initial_capacity * sizeof(Combination));
+    if (list->combinations == NULL) {
+        list->count = 0;
+        list->capacity = 0;
+        return -1;
+    }
+    list->count = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+void free_combination_list(CombinationList *list) {
+    if (list->combinations != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            if (list->combinations[i].values != NULL) {
+                free(list->combinations[i].values);
+                list->combinations[i].values = NULL;
+            }
+        }
+        free(list->combinations);
+        list->combinations = NULL;
+    }
+    list->count = 0;
+    list->capacity = 0;
+}
+
+int add_combination(CombinationList *list, const int *values, size_t size) {
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Combination *new_combinations = (Combination *)realloc(
+            list->combinations, new_capacity * sizeof(Combination));
+        if (new_combinations == NULL) {
+            return -1;
+        }
+        list->combinations = new_combinations;
+        list->capacity = new_capacity;
+    }
+
+    list->combinations[list->count].values = (int *)malloc(size * sizeof(int));
+    if (list->combinations[list->count].values == NULL) {
+        return -1;
+    }
+
+    memcpy(list->combinations[list->count].values, values, size * sizeof(int));
+    list->combinations[list->count].size = size;
+    list->count++;
+    return 0;
+}
+
+int tuple_sum(const Tuple *t) {
+    int sum = 0;
+    for (size_t i = 0; i < t->size; i++) {
+        sum += t->elements[i];
+    }
+    return sum;
+}
+
+void find_combinations_recursive(const TupleList *list, size_t index, 
+                                  int target_sum, int current_sum,
+                                  int *current, size_t current_size,
+                                  CombinationList *result) {
+    if (current_sum == target_sum && current_size > 0) {
+        add_combination(result, current, current_size);
+        return;
+    }
+
+    if (index >= list->count || current_sum > target_sum) {
+        return;
+    }
+
+    current[current_size] = (int)index;
+    find_combinations_recursive(list, index + 1, target_sum,
+                                 current_sum + tuple_sum(&list->tuples[index]),
+                                 current, current_size + 1, result);
+
+    find_combinations_recursive(list, index + 1, target_sum,
+                                 current_sum, current, current_size, result);
+}
+
+int find_sum_combinations(const TupleList *list, int target_sum, 
+                          CombinationList *result) {
+    if (list == NULL || result == NULL || list->count == 0) {
+        return -1;
+    }
+
+    int *current = (int *)malloc(list->count * sizeof(int));
+    if (current == NULL) {
+        return -1;
+    }
+
+    find_combinations_recursive(list, 0, target_sum, 0, current, 0, result);
+
+    free(current);
+    return 0;
+}
+
+void print_combinations(const CombinationList *list, const TupleList *tuples) {
+    if (list->count == 0) {
+        printf("No combinations found.\n");
+        return;
+    }
+
+    printf("Found %zu combination(s):\n", list->count);
+    for (size_t i = 0; i < list->count; i++) {
+        printf("Combination %zu: ", i + 1);
+        for (size_t j = 0; j < list->combinations[i].size; j++) {
+            int idx = list->combinations[i].values[j];
+            printf("[");
+            for (size_t k = 0; k < tuples->tuples[idx].size; k++) {
+                printf("%d", tuples->tuples[idx].elements[k]);
+                if (k < tuples->tuples[idx].size - 1) {
+                    printf(", ");
+                }
+            }
+            printf("]");
+            if (j < list->combinations[i].size - 1) {
+                printf(" + ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    TupleList tuple_list;
+    init_tuple_list(&tuple_list, 5);
+
+    if (tuple_list.tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    init_tuple(&tuple_list.tuples[0], 2);
+    init_tuple(&tuple_list.tuples[1], 2);
+    init_tuple(&tuple_list.tuples[2], 2);
+    init_tuple(&tuple_list.tuples[3], 2);
+    init_tuple(&tuple_list.tuples[4], 2);
+
+    if (tuple_list.tuples[0].elements == NULL ||
+        tuple_list.tuples[1].elements == NULL ||
+        tuple_list.tuples[2].elements == NULL ||
+        tuple_list.tuples[3].elements == NULL ||
+        tuple_list.tuples[4].elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_tuple_list(&tuple_list);
+        return EXIT_FAILURE;
+    }
+
+    tuple_list.tuples[0].elements[0] = 2;
+    tuple_list.tuples[0].elements[1] = 3;
+
+    tuple_list.tuples[1].elements[0] = 1;
+    tuple_list.tuples[1].elements[1] = 4;
+
+    tuple_list.tuples[2].elements[0] = 3;
+    tuple_list.tuples[2].elements[1] = 2;
+
+    tuple_list.tuples[3].elements[0] = 5;
+    tuple_list.tuples[3].elements[1] = 0;
+
+    tuple_list.tuples[4].elements[0] = 1;
+    tuple_list.tuples[4].elements[1] = 1;
+
+    printf("Tuple list:\n");
+    for (size_t i = 0; i < tuple_list.count; i++) {
+        printf("Tuple %zu: [", i);
+        for (size_t j = 0; j < tuple_list.tuples[i].size; j++) {
+            printf("%d", tuple_list.tuples[i].elements[j]);
+            if (j < tuple_list.tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf("] (sum = %d)\n", tuple_sum(&tuple_list.tuples[i]));
+    }
+
+    int target_sum = 5;
+    printf("\nTarget sum: %d\n\n", target_sum);
+
+    CombinationList results;
+    if (init_combination_list(&results, 16) != 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_tuple_list(&tuple_list);
+        return EXIT_FAILURE;
+    }
+
+    if (find_sum_combinations(&tuple_list, target_sum, &results) != 0) {
+        fprintf(stderr, "Error finding combinations\n");
+        free_combination_list(&results);
+        free_tuple_list(&tuple_list);
+        return EXIT_FAILURE;
+    }
+
+    print_combinations(&results, &tuple_list);
+
+    free_combination_list(&results);
+    free_tuple_list(&tuple_list);
+
+    return EXIT_SUCCESS;
+}

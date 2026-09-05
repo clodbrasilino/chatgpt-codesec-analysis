@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_closest_smaller(int n) {
+    if (n > INT_MIN) {
+        return n - 1;
+    }
+    return INT_MIN;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (endptr == argv[1] || *endptr != '\0' || val < INT_MIN || val > INT_MAX) {
+        return EXIT_FAILURE;
+    }
+
+    int n = (int)val;
+    int result = find_closest_smaller(n);
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

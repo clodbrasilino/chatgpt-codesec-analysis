@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long find_remainder(int *arr, size_t size, int n) {
+    unsigned long long result = 1 % n;
+    size_t i;
+    for (i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            fprintf(stderr, "Error\n");
+            exit(EXIT_FAILURE);
+        }
+        result = (result * (unsigned long long)arr[i]) % n;
+    }
+    return result;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 3) {
+        return EXIT_FAILURE;
+    }
+    int n = atoi(argv[1]);
+    if (n <= 0) {
+        return EXIT_FAILURE;
+    }
+    size_t size = (size_t)argc - 2;
+    int *arr = (int *)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+    size_t i;
+    for (i = 0; i < size; i++) {
+        arr[i] = atoi(argv[i + 2]);
+    }
+    printf("%llu\n", find_remainder(arr, size, n));
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

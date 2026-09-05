@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void extract_min_max_k(const int *tuple, int size, int k, int **min_k, int **max_k) {
+    if (k <= 0 || size <= 0 || k > size) {
+        *min_k = NULL;
+        *max_k = NULL;
+        return;
+    }
+
+    int *temp = malloc(size * sizeof(int));
+    if (temp == NULL) {
+        *min_k = NULL;
+        *max_k = NULL;
+        return;
+    }
+
+    for (int i = 0; i < size; ++i) {
+        temp[i] = tuple[i];
+    }
+
+    for (int i = 0; i < size - 1; ++i) {
+        for (int j = 0; j < size - i - 1; ++j) {
+            if (temp[j] > temp[j + 1]) {
+                int t = temp[j];
+                temp[j] = temp[j + 1];
+                temp[j + 1] = t;
+            }
+        }
+    }
+
+    *min_k = malloc(k * sizeof(int));
+    if (*min_k == NULL) {
+        free(temp);
+        *max_k = NULL;
+        return;
+    }
+
+    *max_k = malloc(k * sizeof(int));
+    if (*max_k == NULL) {
+        free(temp);
+        free(*min_k);
+        *min_k = NULL;
+        return;
+    }
+
+    for (int i = 0; i < k; ++i) {
+        (*min_k)[i] = temp[i];
+        (*max_k)[i] = temp[size - k + i];
+    }
+
+    free(temp);
+}
+
+int main() {
+    int data[] = {5, 2, 8, 1, 9, 3, 7, 4, 6};
+    int size = sizeof(data) / sizeof(data[0]);
+    int k = 3;
+    int *min_k = NULL;
+    int *max_k = NULL;
+
+    extract_min_max_k(data, size, k, &min_k, &max_k);
+
+    if (min_k != NULL && max_k != NULL) {
+        printf("Min %d elements: ", k);
+        for (int i = 0; i < k; ++i) {
+            printf("%d ", min_k[i]);
+        }
+        printf("\n");
+
+        printf("Max %d elements: ", k);
+        for (int i = 0; i < k; ++i) {
+            printf("%d ", max_k[i]);
+        }
+        printf("\n");
+
+        free(min_k);
+        free(max_k);
+    } else {
+        printf("Failed to extract elements.\n");
+    }
+
+    return 0;
+}

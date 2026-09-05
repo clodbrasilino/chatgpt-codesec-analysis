@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+typedef struct {
+    const char *str;
+    size_t count;
+} StringFreq;
+
+static char *find_second_most_frequent(const char *sequence[], size_t size)
+{
+    StringFreq *freqs;
+    size_t unique_count = 0;
+    size_t i;
+    size_t j;
+    size_t first_idx = 0;
+    size_t second_idx = 0;
+    size_t first_count = 0;
+    size_t second_count = 0;
+    size_t result_len;
+    char *result;
+
+    if (sequence == NULL || size == 0) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(*freqs)) {
+        return NULL;
+    }
+
+    freqs = malloc(size * sizeof(*freqs));
+    if (freqs == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++) {
+        bool found = false;
+
+        if (sequence[i] == NULL) {
+            continue;
+        }
+
+        for (j = 0; j < unique_count; j++) {
+            if (strcmp(freqs[j].str, sequence[i]) == 0) {
+                freqs[j].count++;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            freqs[unique_count].str = sequence[i];
+            freqs[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    if (unique_count < 2) {
+        free(freqs);
+        return NULL;
+    }
+
+    for (i = 0; i < unique_count; i++) {
+        if (freqs[i].count > first_count) {
+            second_count = first_count;
+            second_idx = first_idx;
+            first_count = freqs[i].count;
+            first_idx = i;
+        } else if (freqs[i].count < first_count && freqs[i].count > second_count) {
+            second_count = freqs[i].count;
+            second_idx = i;
+        }
+    }
+
+    if (second_count == 0) {
+        free(freqs);
+        return NULL;
+    }
+
+    result_len = strlen(freqs[second_idx].str) + 1;
+    result = malloc(result_len);
+    if (result == NULL) {
+        free(freqs);
+        return NULL;
+    }
+
+    memcpy(result, freqs[second_idx].str, result_len);
+    free(freqs);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *sequence[] = {
+        "apple", "banana", "cherry", "apple",
+        "banana", "apple", "date", "banana",
+        "cherry", "apple"
+    };
+    size_t size = sizeof(sequence) / sizeof(sequence[0]);
+    char *second = find_second_most_frequent(sequence, size);
+
+    if (second != NULL) {
+        printf("Second most repeated string: \"%s\"\n", second);
+        free(second);
+    } else {
+        printf("There is no second most repeated string.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

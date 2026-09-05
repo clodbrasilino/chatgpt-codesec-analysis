@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-452-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-452-s2.c:39:15: style: Condition 'loss2!=NULL' is always false [knownConditionTrueFalse]
+    if (loss2 != NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-452-s2.c:37:32: note: Calling function 'calculate_loss' returns 0
+    int* loss2 = calculate_loss(cp2, sp2);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-452-s2.c:37:32: note: Assignment 'loss2=calculate_loss(cp2,sp2)', assigned value is 0
+    int* loss2 = calculate_loss(cp2, sp2);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-452-s2.c:39:15: note: Condition 'loss2!=NULL' is always false
+    if (loss2 != NULL) {
+              ^

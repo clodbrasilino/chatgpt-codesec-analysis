@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct SubList {
+    struct Node *head;
+    struct SubList *next;
+};
+
+int *get_last_elements(struct SubList *lists, size_t list_count) {
+    if (list_count == 0) {
+        return NULL;
+    }
+
+    int *result = (int *)malloc(list_count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    struct SubList *current_list = lists;
+    for (size_t i = 0; i < list_count; ++i) {
+        if (current_list == NULL || current_list->head == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        struct Node *current_node = current_list->head;
+        while (current_node->next != NULL) {
+            current_node = current_node->next;
+        }
+
+        result[i] = current_node->data;
+        current_list = current_list->next;
+    }
+
+    return result;
+}
+
+int main(void) {
+    struct Node n1_3 = {3, NULL};
+    struct Node n1_2 = {2, &n1_3};
+    struct Node n1_1 = {1, &n1_2};
+
+    struct Node n2_2 = {5, NULL};
+    struct Node n2_1 = {4, &n2_2};
+
+    struct Node n3_1 = {6, NULL};
+
+    struct SubList l3 = {&n3_1, NULL};
+    struct SubList l2 = {&n2_1, &l3};
+    struct SubList l1 = {&n1_1, &l2};
+
+    size_t count = 3;
+    int *last_elements = get_last_elements(&l1, count);
+
+    if (last_elements != NULL) {
+        for (size_t i = 0; i < count; ++i) {
+            printf("%d\n", last_elements[i]);
+        }
+        free(last_elements);
+    }
+
+    return 0;
+}
+```

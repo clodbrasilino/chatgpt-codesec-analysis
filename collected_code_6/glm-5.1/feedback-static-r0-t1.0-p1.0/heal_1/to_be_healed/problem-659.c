@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int cmp(const void *a, const void *b) {
+    long long diff = (long long)(*(const int *)a) - (long long)(*(const int *)b);
+    if (diff < 0) return -1;
+    if (diff > 0) return 1;
+    return 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+void print_duplicates(int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return;
+    }
+
+    int *sorted = malloc(size * sizeof(int));
+    if (sorted == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        sorted[i] = arr[i];
+    }
+
+    qsort(sorted, size, sizeof(int), cmp);
+
+    size_t i = 0;
+    while (i < size) {
+        size_t j = i + 1;
+        while (j < size && sorted[j] == sorted[i]) {
+            j++;
+        }
+
+        if (j - i > 1) {
+            printf("%d\n", sorted[i]);
+        }
+
+        i = j;
+    }
+
+    free(sorted);
+}
+
+int main(void) {
+    int data[] = {4, 2, 5, 2, 3, 5, 1, 4, 4, -2147483648, -2147483648};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+
+    print_duplicates(data, data_size);
+
+    return 0;
+}

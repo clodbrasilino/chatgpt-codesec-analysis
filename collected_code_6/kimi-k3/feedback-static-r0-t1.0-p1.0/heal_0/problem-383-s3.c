@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint32_t toggle_odd_bits(uint32_t num)
+{
+    return num ^ UINT32_C(0xAAAAAAAA);
+}
+
+int main(void)
+{
+    uint32_t num;
+
+    if (scanf("%" SCNu32, &num) != 1) {
+        return 1;
+    }
+
+    printf("%" PRIu32 "\n", toggle_odd_bits(num));
+
+    return 0;
+}

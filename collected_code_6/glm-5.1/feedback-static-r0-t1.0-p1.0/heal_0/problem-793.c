@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_last_position(const int *arr, size_t size, int target) {
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    long long low = 0;
+    long long high = (long long)size - 1;
+    int result = -1;
+
+    while (low <= high) {
+        long long mid = low + (high - low) / 2;
+        if (arr[mid] == target) {
+            result = (int)mid;
+            low = mid + 1;
+        } else if (arr[mid] < target) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 2, 2, 3, 4, 5};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int target1 = 2;
+    int pos1 = find_last_position(arr1, size1, target1);
+    printf("Target: %d, Last Position: %d\n", target1, pos1);
+
+    int arr2[] = {1, 1, 1, 1, 1};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int target2 = 1;
+    int pos2 = find_last_position(arr2, size2, target2);
+    printf("Target: %d, Last Position: %d\n", target2, pos2);
+
+    int arr3[] = {10, 20, 30};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int target3 = 5;
+    int pos3 = find_last_position(arr3, size3, target3);
+    printf("Target: %d, Last Position: %d\n", target3, pos3);
+
+    int pos4 = find_last_position(NULL, size3, target3);
+    printf("Target: %d, Last Position: %d\n", target3, pos4);
+
+    int pos5 = find_last_position(arr3, 0, target3);
+    printf("Target: %d, Last Position: %d\n", target3, pos5);
+
+    return 0;
+}

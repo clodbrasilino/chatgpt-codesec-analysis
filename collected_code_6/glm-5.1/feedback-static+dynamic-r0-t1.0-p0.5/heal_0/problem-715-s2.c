@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} IntTuple;
+
+IntTuple *str_to_int_tuple(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    size_t capacity = 10;
+    size_t count = 0;
+    int *elements = (int *)malloc(capacity * sizeof(int));
+    if (elements == NULL) {
+        return NULL;
+    }
+
+    const char *ptr = str;
+    while (*ptr != '\0') {
+        char *end;
+        long val = strtol(ptr, &end, 10);
+
+        if (ptr == end) {
+            ptr++;
+            continue;
+        }
+
+        if (val < INT_MIN || val > INT_MAX) {
+            free(elements);
+            return NULL;
+        }
+
+        if (count >= capacity) {
+            capacity *= 2;
+            int *temp = (int *)realloc(elements, capacity * sizeof(int));
+            if (temp == NULL) {
+                free(elements);
+                return NULL;
+            }
+            elements = temp;
+        }
+
+        elements[count++] = (int)val;
+        ptr = end;
+    }
+
+    IntTuple *tuple = (IntTuple *)malloc(sizeof(IntTuple));
+    if (tuple == NULL) {
+        free(elements);
+        return NULL;
+    }
+
+    if (count > 0) {
+        int *final_elements = (int *)realloc(elements, count * sizeof(int));
+        if (final_elements == NULL) {
+            tuple->elements = elements;
+            tuple->size = count;
+            return tuple;
+        }
+        tuple->elements = final_elements;
+    } else {
+        free(elements);
+        tuple->elements = NULL;
+    }
+
+    tuple->size = count;
+    return tuple;
+}
+
+void free_int_tuple(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *str = "10 20 30 40 50";
+    IntTuple *tuple = str_to_int_tuple(str);
+
+    if (tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->elements[i]);
+        if (i < tuple->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_int_tuple(tuple);
+
+    return EXIT_SUCCESS;
+}

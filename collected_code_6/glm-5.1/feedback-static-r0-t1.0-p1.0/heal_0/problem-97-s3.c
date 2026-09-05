@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    int item;
+    int count;
+} Frequency;
+
+Node *create_node(void *data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Frequency *find_frequencies(Node *list_of_lists, int *out_size) {
+    int capacity = 16;
+    int size = 0;
+    Frequency *freqs = (Frequency *)malloc(capacity * sizeof(Frequency));
+    if (freqs == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    Node *curr_list = list_of_lists;
+    while (curr_list != NULL) {
+        Node *inner_list = (Node *)curr_list->data;
+        while (inner_list != NULL) {
+            int val = *(int *)inner_list->data;
+            int found = 0;
+            for (int i = 0; i < size; i++) {
+                if (freqs[i].item == val) {
+                    freqs[i].count++;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found) {
+                if (size >= capacity) {
+                    capacity *= 2;
+                    Frequency *new_freqs = (Frequency *)realloc(freqs, capacity * sizeof(Frequency));
+                    if (new_freqs == NULL) {
+                        free(freqs);
+                        exit(EXIT_FAILURE);
+                    }
+                    freqs = new_freqs;
+                }
+                freqs[size].item = val;
+                freqs[size].count = 1;
+                size++;
+            }
+            inner_list = inner_list->next;
+        }
+        curr_list = curr_list->next;
+    }
+
+    *out_size = size;
+    return freqs;
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr != NULL) {
+        Node *next = curr->next;
+        free(curr->data);
+        free(curr);
+        curr = next;
+    }
+}
+
+int main(void) {
+    int v1 = 1, v2 = 2, v3 = 3, v4 = 1, v5 = 2, v6 = 1;
+
+    Node *inner1 = create_node(&v1);
+    inner1->next = create_node(&v2);
+    inner1->next->next = create_node(&v3);
+
+    Node *inner2 = create_node(&v4);
+    inner2->next = create_node(&v5);
+
+    Node *inner3 = create_node(&v6);
+
+    Node *outer = create_node(inner1);
+    outer->next = create_node(inner2);
+    outer->next->next = create_node(inner3);
+
+    int freq_size = 0;
+    Frequency *freqs = find_frequencies(outer, &freq_size);
+
+    for (int i = 0; i < freq_size; i++) {
+        printf("%d: %d\n", freqs[i].item, freqs[i].count);
+    }
+
+    free(freqs);
+
+    Node *curr = outer;
+    while (curr != NULL) {
+        free_list((Node *)curr->data);
+        Node *next = curr->next;
+        free(curr);
+        curr = next;
+    }
+
+    return 0;
+}

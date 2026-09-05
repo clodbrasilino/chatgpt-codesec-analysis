@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+static uint64_t gcd_u64(uint64_t a, uint64_t b) {
+    while (b != 0) {
+        uint64_t t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+static int lcm_u64_checked(uint64_t a, uint64_t b, uint64_t *out) {
+    uint64_t g;
+    uint64_t q;
+
+    if (out == NULL) {
+        return -1;
+    }
+    if (a == 0 || b == 0) {
+        *out = 0;
+        return 0;
+    }
+
+    g = gcd_u64(a, b);
+    q = a / g;
+
+    if (q > UINT64_MAX / b) {
+        return -2;
+    }
+
+    *out = q * b;
+    return 0;
+}
+
+static int smallest_multiple_first_n(unsigned int n, uint64_t *out) {
+    uint64_t acc = 1;
+    unsigned int i;
+
+    if (out == NULL) {
+        return -1;
+    }
+    if (n == 0) {
+        return -3;
+    }
+
+    for (i = 2; i <= n; i++) {
+        if (lcm_u64_checked(acc, (uint64_t)i, &acc) != 0) {
+            return -2;
+        }
+    }
+
+    *out = acc;
+    return 0;
+}
+
+int main(void) {
+    unsigned int n;
+    uint64_t result;
+    int rc;
+
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    rc = smallest_multiple_first_n(n, &result);
+    if (rc == -3) {
+        fprintf(stderr, "n must be >= 1\n");
+        return EXIT_FAILURE;
+    }
+    if (rc == -2) {
+        fprintf(stderr, "result overflow\n");
+        return EXIT_FAILURE;
+    }
+    if (rc != 0) {
+        fprintf(stderr, "error\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", (unsigned long long)result);
+    return EXIT_SUCCESS;
+}
+```

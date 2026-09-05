@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    size_t length;
+} List;
+
+typedef struct ListOfLists {
+    List **lists;
+    size_t count;
+} ListOfLists;
+
+List *create_list() {
+    List *list = malloc(sizeof(List));
+    if (!list) return NULL;
+    list->head = NULL;
+    list->length = 0;
+    return list;
+}
+
+void append_to_list(List *list, void *data) {
+    if (!list) return;
+    Node *node = malloc(sizeof(Node));
+    if (!node) return;
+    node->data = data;
+    node->next = NULL;
+    if (!list->head) {
+        list->head = node;
+    } else {
+        Node *current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = node;
+    }
+    list->length++;
+}
+
+ListOfLists *create_list_of_lists(size_t count) {
+    ListOfLists *lol = malloc(sizeof(ListOfLists));
+    if (!lol) return NULL;
+    lol->count = count;
+    lol->lists = malloc(count * sizeof(List *));
+    if (!lol->lists) {
+        free(lol);
+        return NULL;
+    }
+    for (size_t i = 0; i < count; i++) {
+        lol->lists[i] = create_list();
+        if (!lol->lists[i]) {
+            for (size_t j = 0; j < i; j++) {
+                free(lol->lists[j]->head);
+                free(lol->lists[j]);
+            }
+            free(lol->lists);
+            free(lol);
+            return NULL;
+        }
+    }
+    return lol;
+}
+
+void free_list(List *list) {
+    if (!list) return;
+    Node *current = list->head;
+    while (current) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (!lol) return;
+    for (size_t i = 0; i < lol->count; i++) {
+        free_list(lol->lists[i]);
+    }
+    free(lol->lists);
+    free(lol);
+}
+
+ListOfLists *find_min_length_lists(ListOfLists *lol) {
+    if (!lol || lol->count == 0) return NULL;
+
+    size_t min_len = lol->lists[0]->length;
+    for (size_t i = 1; i < lol->count; i++) {
+        if (lol->lists[i]->length < min_len) {
+            min_len = lol->lists[i]->length;
+        }
+    }
+
+    size_t result_count = 0;
+    for (size_t i = 0; i < lol->count; i++) {
+        if (lol->lists[i]->length == min_len) {
+            result_count++;
+        }
+    }
+
+    ListOfLists *result = create_list_of_lists(result_count);
+    if (!result) return NULL;
+
+    size_t result_index = 0;
+    for (size_t i = 0; i < lol->count; i++) {
+        if (lol->lists[i]->length == min_len) {
+            free_list(result->lists[result_index]);
+            result->lists[result_index] = lol->lists[i];
+            lol->lists[i] = NULL;
+            result_index++;
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    ListOfLists *lol = create_list_of_lists(4);
+    if (!lol) return 1;
+
+    append_to_list(lol->lists[0], (void *)1);
+    append_to_list(lol->lists[0], (void *)2);
+    append_to_list(lol->lists[0], (void *)3);
+
+    append_to_list(lol->lists[1], (void *)4);
+
+    append_to_list(lol->lists[2], (void *)5);
+    append_to_list(lol->lists[2], (void *)6);
+
+    append_to_list(lol->lists[3], (void *)7);
+
+    ListOfLists *min_lists = find_min_length_lists(lol);
+    if (min_lists) {
+        printf("Number of lists with minimum length: %zu\n", min_lists->count);
+        for (size_t i = 0; i < min_lists->count; i++) {
+            printf("List %zu length: %zu\n", i, min_lists->lists[i]->length);
+        }
+        free_list_of_lists(min_lists);
+    }
+
+    free_list_of_lists(lol);
+
+    return 0;
+}

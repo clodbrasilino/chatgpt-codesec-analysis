@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    double value;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    if (ta->value < tb->value) return -1;
+    if (ta->value > tb->value) return 1;
+    return 0;
+}
+
+Tuple* find_min_k_records(const Tuple *list, size_t count, size_t k, size_t *result_count) {
+    if (list == NULL || result_count == NULL || k == 0 || count == 0) {
+        if (result_count != NULL) *result_count = 0;
+        return NULL;
+    }
+    
+    size_t actual_k = (k > count) ? count : k;
+    Tuple *temp = malloc(count * sizeof(Tuple));
+    if (temp == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+    
+    memcpy(temp, list, count * sizeof(Tuple));
+    qsort(temp, count, sizeof(Tuple), compare_tuples);
+    
+    Tuple *result = malloc(actual_k * sizeof(Tuple));
+    if (result == NULL) {
+        free(temp);
+        *result_count = 0;
+        return NULL;
+    }
+    
+    memcpy(result, temp, actual_k * sizeof(Tuple));
+    free(temp);
+    *result_count = actual_k;
+    return result;
+}
+
+int main(void) {
+    Tuple data[] = {
+        {1, 45.2},
+        {2, 12.5},
+        {3, 78.9},
+        {4, 3.14},
+        {5, 56.7},
+        {6, 23.1}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    size_t k = 3;
+    size_t result_count = 0;
+    
+    Tuple *min_records = find_min_k_records(data, count, k, &result_count);
+    
+    if (min_records != NULL) {
+        printf("Minimum %zu records:\n", result_count);
+        for (size_t i = 0; i < result_count; i++) {
+            printf("ID: %d, Value: %.2f\n", min_records[i].id, min_records[i].value);
+        }
+        free(min_records);
+    } else {
+        fprintf(stderr, "Error: Failed to retrieve records\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

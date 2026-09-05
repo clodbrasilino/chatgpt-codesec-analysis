@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+long long sum_of_digits(long long number) {
+    long long absolute_number = llabs(number);
+    long long sum = 0;
+    while (absolute_number > 0) {
+        sum += absolute_number % 10;
+        absolute_number /= 10;
+    }
+    return sum;
+}
+
+int main(int argc, char * const * const argv) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <base> <exponent>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr_base = NULL;
+    char *endptr_exp = NULL;
+    long long base = strtoll(argv[1], &endptr_base, 10);
+    long long exponent = strtoll(argv[2], &endptr_exp, 10);
+
+    if (endptr_base == argv[1] || *endptr_base != '\0' || endptr_exp == argv[2] || *endptr_exp != '\0') {
+        fprintf(stderr, "Error: Invalid numeric input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (exponent < 0) {
+        fprintf(stderr, "Error: Exponent must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base == 0 && exponent == 0) {
+        fprintf(stderr, "Error: Zero to the power of zero is undefined\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    long long result = (long long)pow((double)base, (double)exponent);
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Numeric overflow during power calculation\n");
+        return EXIT_FAILURE;
+    }
+
+    long long digit_sum = sum_of_digits(result);
+    printf("%lld\n", digit_sum);
+
+    return EXIT_SUCCESS;
+}

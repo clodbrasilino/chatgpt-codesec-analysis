@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-615-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-615-s2.c:37:31: error: passing argument 1 of 'find_average' from incompatible pointer type [-Wincompatible-pointer-types]
+   37 |     double avg = find_average(tuples, 3, sizes);
+      |                               ^~~~~~
+      |                               |
+      |                               const int * const*
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-615-s2.c:4:34: note: expected 'int * const*' but argument is of type 'const int * const*'
+    4 | double find_average(int * const *tuples, int num_tuples, const int *tuple_sizes) {
+      |                     ~~~~~~~~~~~~~^~~~~~

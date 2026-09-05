@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+bool has_common_element(Node *list1, Node *list2) {
+    for (Node *p1 = list1; p1 != NULL; p1 = p1->next) {
+        for (Node *p2 = list2; p2 != NULL; p2 = p2->next) {
+            if (p1->data == p2->data) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+Node *create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *list1 = create_node(1);
+    list1->next = create_node(2);
+    list1->next->next = create_node(3);
+
+    Node *list2 = create_node(4);
+    list2->next = create_node(5);
+    list2->next->next = create_node(6);
+
+    Node *list3 = create_node(7);
+    list3->next = create_node(2);
+    list3->next->next = create_node(9);
+
+    if (has_common_element(list1, list2)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    if (has_common_element(list1, list3)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+
+    return 0;
+}

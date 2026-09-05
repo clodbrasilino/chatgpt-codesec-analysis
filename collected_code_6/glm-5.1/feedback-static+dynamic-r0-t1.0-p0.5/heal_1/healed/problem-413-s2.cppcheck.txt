@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-413-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-413-s2.c:45:61: style: Condition 'extract_nth_element(NULL,list_size,0,0,&result)==0' is always false [knownConditionTrueFalse]
+    if (extract_nth_element(NULL, list_size, 0, 0, &result) == 0) {
+                                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-413-s2.c:45:28: note: Calling function 'extract_nth_element' returns -1
+    if (extract_nth_element(NULL, list_size, 0, 0, &result) == 0) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_1/healed/problem-413-s2.c:45:61: note: Condition 'extract_nth_element(NULL,list_size,0,0,&result)==0' is always false
+    if (extract_nth_element(NULL, list_size, 0, 0, &result) == 0) {
+                                                            ^

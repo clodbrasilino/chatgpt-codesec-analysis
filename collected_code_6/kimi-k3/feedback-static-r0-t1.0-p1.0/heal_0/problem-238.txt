@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+unsigned long long count_non_empty_substrings(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    size_t n = strlen(str);
+    return (unsigned long long)n * (n + 1) / 2;
+}
+
+int main(void) {
+    char buffer[1024];
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    buffer[strcspn(buffer, "\n")] = '\0';
+    
+    printf("%llu\n", count_non_empty_substrings(buffer));
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-217-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-217-s2.c:56:14: style: Condition 'res4!='\0'' is always false [knownConditionTrueFalse]
+    if (res4 != '\0') {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-217-s2.c:36:36: note: Calling function 'find_first_repeated' returns 0
+    char res4 = find_first_repeated(test_str4);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-217-s2.c:36:36: note: Assignment 'res4=find_first_repeated(test_str4)', assigned value is 0
+    char res4 = find_first_repeated(test_str4);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_0/problem-217-s2.c:56:14: note: Condition 'res4!='\0'' is always false
+    if (res4 != '\0') {
+             ^

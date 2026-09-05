@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <fenv.h>
+
+double round_up_to_digits(double value, int digits)
+{
+    double multiplier;
+    double result;
+    
+    if (digits < 0 || digits > 308) {
+        errno = ERANGE;
+        return value;
+    }
+    
+    if (isnan(value) || isinf(value)) {
+        return value;
+    }
+    
+    multiplier = pow(10.0, (double)digits);
+    
+    if (isinf(multiplier) || multiplier == 0.0) {
+        errno = ERANGE;
+        return value;
+    }
+    
+    feclearexcept(FE_ALL_EXCEPT);
+    
+    result = ceil(value * multiplier) / multiplier;
+    
+    if (fetestexcept(FE_OVERFLOW | FE_UNDERFLOW | FE_INVALID)) {
+        errno = ERANGE;
+        return value;
+    }
+    
+    return result;
+}
+
+int main(void)
+{
+    double test_values[] = {3.14159, 2.71828, 1.23456789, -3.14159, 0.000123456};
+    int test_digits[] = {2, 3, 4, 2, 6};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+    
+    for (i = 0; i < num_tests; i++) {
+        errno = 0;
+        double result = round_up_to_digits(test_values[i], test_digits[i]);
+        
+        if (errno == 0) {
+            printf("round_up_to_digits(%f, %d) = %f\n", 
+                   test_values[i], test_digits[i], result);
+        } else {
+            printf("Error rounding %f to %d digits\n", 
+                   test_values[i], test_digits[i]);
+        }
+    }
+    
+    return 0;
+}

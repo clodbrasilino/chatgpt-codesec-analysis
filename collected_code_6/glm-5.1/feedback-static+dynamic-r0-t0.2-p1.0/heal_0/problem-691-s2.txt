@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    int key;
+    int *values;
+    int count;
+    int capacity;
+} Group;
+
+typedef struct {
+    Group *groups;
+    int count;
+    int capacity;
+} GroupList;
+
+void init_group(Group *g, int key) {
+    g->key = key;
+    g->capacity = 4;
+    g->values = (int *)malloc(g->capacity * sizeof(int));
+    g->count = 0;
+}
+
+void free_group(Group *g) {
+    free(g->values);
+    g->values = NULL;
+    g->count = 0;
+    g->capacity = 0;
+}
+
+void add_value_to_group(Group *g, int value) {
+    if (g->count == g->capacity) {
+        g->capacity *= 2;
+        int *new_values = (int *)realloc(g->values, g->capacity * sizeof(int));
+        if (!new_values) {
+            free(g->values);
+            exit(EXIT_FAILURE);
+        }
+        g->values = new_values;
+    }
+    g->values[g->count++] = value;
+}
+
+void init_group_list(GroupList *gl) {
+    gl->capacity = 4;
+    gl->groups = (Group *)malloc(gl->capacity * sizeof(Group));
+    gl->count = 0;
+}
+
+void free_group_list(GroupList *gl) {
+    for (int i = 0; i < gl->count; i++) {
+        free_group(&gl->groups[i]);
+    }
+    free(gl->groups);
+    gl->groups = NULL;
+    gl->count = 0;
+    gl->capacity = 0;
+}
+
+Group *find_group(GroupList *gl, int key) {
+    for (int i = 0; i < gl->count; i++) {
+        if (gl->groups[i].key == key) {
+            return &gl->groups[i];
+        }
+    }
+    return NULL;
+}
+
+Group *add_group_to_list(GroupList *gl, int key) {
+    if (gl->count == gl->capacity) {
+        gl->capacity *= 2;
+        Group *new_groups = (Group *)realloc(gl->groups, gl->capacity * sizeof(Group));
+        if (!new_groups) {
+            free_group_list(gl);
+            exit(EXIT_FAILURE);
+        }
+        gl->groups = new_groups;
+    }
+    Group *g = &gl->groups[gl->count++];
+    init_group(g, key);
+    return g;
+}
+
+GroupList group_tuples(Tuple *tuples, int size) {
+    GroupList gl;
+    init_group_list(&gl);
+
+    for (int i = 0; i < size; i++) {
+        Group *g = find_group(&gl, tuples[i].second);
+        if (!g) {
+            g = add_group_to_list(&gl, tuples[i].second);
+        }
+        add_value_to_group(g, tuples[i].first);
+    }
+
+    return gl;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 2},
+        {4, 5},
+        {6, 5},
+        {7, 2}
+    };
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    GroupList gl = group_tuples(tuples, size);
+
+    for (int i = 0; i < gl.count; i++) {
+        printf("Key %d: ", gl.groups[i].key);
+        for (int j = 0; j < gl.groups[i].count; j++) {
+            printf("%d ", gl.groups[i].values[j]);
+        }
+        printf("\n");
+    }
+
+    free_group_list(&gl);
+
+    return 0;
+}
+```

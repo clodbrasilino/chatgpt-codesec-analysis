@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strs == NULL || strsSize <= 0) {
+        char* empty = malloc(1);
+        if (empty) empty[0] = '\0';
+        return empty;
+    }
+
+    size_t minLen = strlen(strs[0]);
+    for (int i = 1; i < strsSize; i++) {
+        if (strs[i] == NULL) {
+            char* empty = malloc(1);
+            if (empty) empty[0] = '\0';
+            return empty;
+        }
+        size_t currentLen = strlen(strs[i]);
+        if (currentLen < minLen) {
+            minLen = currentLen;
+        }
+    }
+
+    char* prefix = malloc(minLen + 1);
+    if (prefix == NULL) {
+        return NULL;
+    }
+
+    size_t prefixLen = 0;
+    for (size_t i = 0; i < minLen; i++) {
+        char c = strs[0][i];
+        int match = 1;
+        for (int j = 1; j < strsSize; j++) {
+            if (strs[j][i] != c) {
+                match = 0;
+                break;
+            }
+        }
+        if (match) {
+            prefix[prefixLen++] = c;
+        } else {
+            break;
+        }
+    }
+
+    prefix[prefixLen] = '\0';
+    return prefix;
+}
+
+int main() {
+    char* strs1[] = {"flower", "flow", "flight"};
+    int size1 = 3;
+    char* res1 = longestCommonPrefix(strs1, size1);
+    if (res1 != NULL) {
+        printf("Longest common prefix: %s\n", res1);
+        free(res1);
+    }
+
+    char* strs2[] = {"dog", "racecar", "car"};
+    int size2 = 3;
+    char* res2 = longestCommonPrefix(strs2, size2);
+    if (res2 != NULL) {
+        printf("Longest common prefix: %s\n", res2);
+        free(res2);
+    }
+
+    char* empty_arr[] = {""};
+    int size3 = 1;
+    char* res3 = longestCommonPrefix(empty_arr, size3);
+    if (res3 != NULL) {
+        printf("Longest common prefix: %s\n", res3);
+        free(res3);
+    }
+
+    return 0;
+}
+```

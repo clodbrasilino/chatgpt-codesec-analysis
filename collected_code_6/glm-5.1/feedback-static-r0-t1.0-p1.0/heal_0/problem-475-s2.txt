@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct counter {
+    char *key;
+    int value;
+};
+
+int compare_counters(const void *a, const void *b) {
+    const struct counter *ca = (const struct counter *)a;
+    const struct counter *cb = (const struct counter *)b;
+    if (ca->value < cb->value) return -1;
+    if (ca->value > cb->value) return 1;
+    return 0;
+}
+
+struct counter *sort_counter_by_value(struct counter *counters, size_t size) {
+    if (counters == NULL || size == 0) {
+        return NULL;
+    }
+    qsort(counters, size, sizeof(struct counter), compare_counters);
+    return counters;
+}
+
+int main(void) {
+    size_t size = 5;
+    struct counter *counters = (struct counter *)malloc(size * sizeof(struct counter));
+    if (counters == NULL) {
+        return 1;
+    }
+
+    counters[0].key = "apple";
+    counters[0].value = 5;
+    counters[1].key = "banana";
+    counters[1].value = 2;
+    counters[2].key = "cherry";
+    counters[2].value = 8;
+    counters[3].key = "date";
+    counters[3].value = 1;
+    counters[4].key = "elderberry";
+    counters[4].value = 4;
+
+    struct counter *sorted = sort_counter_by_value(counters, size);
+    if (sorted != NULL) {
+        for (size_t i = 0; i < size; i++) {
+            printf("%s: %d\n", sorted[i].key, sorted[i].value);
+        }
+    }
+
+    free(counters);
+    counters = NULL;
+    return 0;
+}
+```

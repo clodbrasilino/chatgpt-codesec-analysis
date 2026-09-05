@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-855-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-855-s3.c:22:34: error: '__UINT_MAX__' undeclared (first use in this function); did you mean 'UINTMAX_C'?
+   22 |     if (*endptr != '\0' || val > __UINT_MAX__) {
+      |                                  ^~~~~~~~~~~~
+      |                                  UINTMAX_C
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-855-s3.c:22:34: note: each undeclared identifier is reported only once for each function it appears in

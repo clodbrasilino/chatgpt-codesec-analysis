@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int are_elements_same(const int *list, size_t size)
+{
+    size_t i;
+
+    if (list == NULL || size == 0)
+    {
+        return 0;
+    }
+
+    for (i = 1; i < size; i++)
+    {
+        if (list[i] != list[0])
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    int *list = NULL;
+    size_t size;
+    size_t i;
+    int result;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &size) != 1 || size == 0)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    list = (int *)malloc(size * sizeof(int));
+    if (list == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu elements:\n", size);
+    for (i = 0; i < size; i++)
+    {
+        if (scanf("%d", &list[i]) != 1)
+        {
+            fprintf(stderr, "Invalid input\n");
+            free(list);
+            list = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = are_elements_same(list, size);
+
+    if (result == 1)
+    {
+        printf("All elements are the same\n");
+    }
+    else
+    {
+        printf("Elements are not the same\n");
+    }
+
+    free(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

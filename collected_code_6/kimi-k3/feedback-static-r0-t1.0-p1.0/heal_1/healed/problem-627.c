@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSmallestMissing(const int arr[], int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        if (arr[i] != i + 1) {
+            return i + 1;
+        }
+    }
+    return n + 1;
+}
+
+int main(void) {
+    int n;
+    int *arr;
+    int result;
+    int i;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input for number of elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %d sorted positive integers: ", n);
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input for array element.\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = findSmallestMissing(arr, n);
+    printf("The smallest missing number is: %d\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

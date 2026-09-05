@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t decagonal_number(uint32_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    return (uint64_t)n * (4 * (uint64_t)n - 3);
+}
+
+int main(void) {
+    uint32_t n;
+    int result;
+    
+    result = scanf("%u", &n);
+    
+    if (result != 1) {
+        return 1;
+    }
+    
+    printf("%llu\n", (unsigned long long)decagonal_number(n));
+    
+    return 0;
+}
+```

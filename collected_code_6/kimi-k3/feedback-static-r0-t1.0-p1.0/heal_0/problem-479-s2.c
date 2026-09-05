@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_first_digit(int number);
+
+int find_first_digit(int number)
+{
+    int abs_num;
+    int first_digit;
+    
+    if (number == 0)
+    {
+        return 0;
+    }
+    
+    abs_num = abs(number);
+    first_digit = abs_num;
+    
+    while (first_digit >= 10)
+    {
+        first_digit = first_digit / 10;
+    }
+    
+    return first_digit;
+}
+
+int main(void)
+{
+    int input_value;
+    int result;
+    int scan_result;
+    
+    printf("Enter an integer: ");
+    scan_result = scanf("%d", &input_value);
+    
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = find_first_digit(input_value);
+    printf("First digit: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

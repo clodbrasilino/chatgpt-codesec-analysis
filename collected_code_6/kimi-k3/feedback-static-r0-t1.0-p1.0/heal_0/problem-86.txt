@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t centered_hexagonal(uint32_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    return 3ULL * n * (n - 1) + 1;
+}
+
+int main(void) {
+    uint32_t n;
+    if (scanf("%u", &n) != 1) {
+        return 1;
+    }
+    printf("%llu\n", (unsigned long long)centered_hexagonal(n));
+    return 0;
+}
+```

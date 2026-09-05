@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSmallestMissing(const int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    
+    int left = 0;
+    int right = n - 1;
+    
+    if (arr[0] != 0) {
+        return 0;
+    }
+    
+    if (arr[right] == right) {
+        return n;
+    }
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == mid) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return left;
+}
+
+int main(void) {
+    int arr1[] = {0, 1, 2, 3, 4, 5, 7, 8, 9};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Smallest missing element: %d\n", findSmallestMissing(arr1, n1));
+    
+    int arr2[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Smallest missing element: %d\n", findSmallestMissing(arr2, n2));
+    
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Smallest missing element: %d\n", findSmallestMissing(arr3, n3));
+    
+    return EXIT_SUCCESS;
+}

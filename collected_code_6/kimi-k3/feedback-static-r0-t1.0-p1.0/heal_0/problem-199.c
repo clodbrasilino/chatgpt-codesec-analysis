@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint32_t highest_power_of_2(uint32_t n)
+{
+    if (n == 0U) {
+        return 0U;
+    }
+    
+    n |= (n >> 1U);
+    n |= (n >> 2U);
+    n |= (n >> 4U);
+    n |= (n >> 8U);
+    n |= (n >> 16U);
+    
+    return n - (n >> 1U);
+}
+
+int main(void)
+{
+    uint32_t test_values[] = {0U, 1U, 5U, 16U, 17U, 100U, 1000U, UINT32_MAX};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+    
+    for (i = 0U; i < num_tests; i++) {
+        uint32_t result = highest_power_of_2(test_values[i]);
+        if (printf("%u -> %u\n", test_values[i], result) < 0) {
+            return 1;
+        }
+    }
+    
+    return 0;
+}

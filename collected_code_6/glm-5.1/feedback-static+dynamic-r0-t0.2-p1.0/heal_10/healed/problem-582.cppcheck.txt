@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-582.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-582.c:66:22: style: Condition 'dict_is_empty(dict)' is always true [knownConditionTrueFalse]
+    if (dict_is_empty(dict)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-582.c:66:22: note: Calling function 'dict_is_empty' returns 1
+    if (dict_is_empty(dict)) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t0.2-p1.0/heal_10/healed/problem-582.c:66:22: note: Condition 'dict_is_empty(dict)' is always true
+    if (dict_is_empty(dict)) {
+                     ^

@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int count_pairs_with_diff_k(const int *arr, int n, int k) {
+    if (arr == NULL || n < 2) {
+        return 0;
+    }
+
+    int temp[n];
+    for (int i = 0; i < n; ++i) {
+        temp[i] = arr[i];
+    }
+
+    qsort(temp, n, sizeof(int), compare);
+
+    int count = 0;
+    int left = 0;
+    int right = 1;
+
+    while (right < n) {
+        int diff = temp[right] - temp[left];
+
+        if (diff == k) {
+            count++;
+            int left_val = temp[left];
+            int right_val = temp[right];
+
+            while (left < n && temp[left] == left_val) {
+                left++;
+            }
+
+            while (right < n && temp[right] == right_val) {
+                right++;
+            }
+
+            if (right <= left) {
+                right = left + 1;
+            }
+        } else if (diff < k) {
+            right++;
+        } else {
+            left++;
+            if (right <= left) {
+                right = left + 1;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int arr1[] = {1, 5, 3, 4, 2};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int k1 = 3;
+    int result1 = count_pairs_with_diff_k(arr1, n1, k1);
+    printf("%d\n", result1);
+
+    int arr2[] = {8, 12, 10, 4, 6, 8};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 2;
+    int result2 = count_pairs_with_diff_k(arr2, n2, k2);
+    printf("%d\n", result2);
+
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int k3 = 0;
+    int result3 = count_pairs_with_diff_k(arr3, n3, k3);
+    printf("%d\n", result3);
+
+    const int *arr4 = NULL;
+    int n4 = 5;
+    int k4 = 2;
+    int result4 = count_pairs_with_diff_k(arr4, n4, k4);
+    printf("%d\n", result4);
+
+    return 0;
+}

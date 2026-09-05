@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:193:40: error: passing argument 2 of 'init_list_of_lists' from incompatible pointer type [-Wincompatible-pointer-types]
+  193 |     if (init_list_of_lists(&container, all_sublists, counts, list_count) != 0) {
+      |                                        ^~~~~~~~~~~~
+      |                                        |
+      |                                        const char ***
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:127:81: note: expected 'const char * const* const*' but argument is of type 'const char ***'
+  127 | static int init_list_of_lists(ListOfLists *container, const char *const *const *values, const size_t *counts, size_t list_count)
+      |                                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~

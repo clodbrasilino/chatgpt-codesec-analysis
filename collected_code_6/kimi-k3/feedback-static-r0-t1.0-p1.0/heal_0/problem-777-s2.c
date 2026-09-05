@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sumNonRepeated(int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+    
+    int sum = 0;
+    int count;
+    
+    for (int i = 0; i < size; i++) {
+        count = 0;
+        for (int j = 0; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+            }
+        }
+        if (count == 1) {
+            sum += arr[i];
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 1, 4, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    
+    if (size == 0) {
+        fprintf(stderr, "Array is empty\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = sumNonRepeated(arr, size);
+    printf("Sum of non-repeated elements: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

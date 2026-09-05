@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+bool check_equal_length(Tuple *tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return false;
+    }
+
+    size_t expected_length = tuples[0].length;
+
+    for (size_t i = 1; i < count; i++) {
+        if (tuples[i].length != expected_length) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    size_t tuple_count = 3;
+    Tuple *tuples = (Tuple *)malloc(tuple_count * sizeof(Tuple));
+    if (tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    int arr1[] = {1, 2, 3};
+    tuples[0].elements = arr1;
+    tuples[0].length = 3;
+
+    int arr2[] = {4, 5, 6};
+    tuples[1].elements = arr2;
+    tuples[1].length = 3;
+
+    int arr3[] = {7, 8, 9};
+    tuples[2].elements = arr3;
+    tuples[2].length = 3;
+
+    bool result = check_equal_length(tuples, tuple_count);
+    printf("%s\n", result ? "True" : "False");
+
+    free(tuples);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sumOddLengthSubarrays(int* arr, int arrSize) {
+    if (arr == NULL || arrSize <= 0) {
+        return 0;
+    }
+    
+    long long totalSum = 0;
+    int i;
+    
+    for (i = 0; i < arrSize; i++) {
+        int left = i + 1;
+        int right = arrSize - i;
+        int totalSubarrays = left * right;
+        int oddCount = (totalSubarrays + 1) / 2;
+        totalSum += (long long)arr[i] * oddCount;
+    }
+    
+    return totalSum;
+}
+
+int main(void) {
+    int arr1[] = {1, 4, 2, 5, 3};
+    int arr2[] = {1, 2};
+    int arr3[] = {10, 11, 12};
+    
+    printf("%lld\n", sumOddLengthSubarrays(arr1, 5));
+    printf("%lld\n", sumOddLengthSubarrays(arr2, 2));
+    printf("%lld\n", sumOddLengthSubarrays(arr3, 3));
+    
+    return 0;
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_even_chars(const char *str) {
+    size_t len;
+    size_t out_size;
+    size_t j;
+    size_t i;
+    char *result;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    out_size = (len / 2) + (len % 2) + 1;
+    result = (char *)malloc(out_size * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (i % 2 != 0) {
+            result[j] = str[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    char *res;
+    const char *input1 = "abcdef";
+    const char *input2 = "";
+    const char *input3 = "a";
+
+    res = remove_even_chars(input1);
+    if (res != NULL) {
+        printf("%s\n", res);
+        free(res);
+    }
+
+    res = remove_even_chars(input2);
+    if (res != NULL) {
+        printf("%s\n", res);
+        free(res);
+    }
+
+    res = remove_even_chars(input3);
+    if (res != NULL) {
+        printf("%s\n", res);
+        free(res);
+    }
+
+    return 0;
+}

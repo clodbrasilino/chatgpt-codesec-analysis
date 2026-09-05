@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *find_even_numbers(const int *list, size_t size, size_t *out_size) {
+    if (list == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 == 0) {
+            count++;
+        }
+    }
+
+    int *even_list = (int *)malloc(count * sizeof(int));
+    if (even_list == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] % 2 == 0) {
+            even_list[j] = list[i];
+            j++;
+        }
+    }
+
+    *out_size = count;
+    return even_list;
+}
+
+int main(void) {
+    int mixed_list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t mixed_size = sizeof(mixed_list) / sizeof(mixed_list[0]);
+    size_t even_size = 0;
+
+    int *even_numbers = find_even_numbers(mixed_list, mixed_size, &even_size);
+
+    if (even_numbers != NULL) {
+        for (size_t i = 0; i < even_size; i++) {
+            printf("%d ", even_numbers[i]);
+        }
+        printf("\n");
+        free(even_numbers);
+    }
+
+    return 0;
+}

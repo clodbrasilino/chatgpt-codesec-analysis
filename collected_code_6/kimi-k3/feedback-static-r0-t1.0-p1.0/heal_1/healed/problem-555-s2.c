@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int64_t compute_difference(int64_t n) {
+    if (n < 0) {
+        return -1;
+    }
+    int64_t sum = n * (n + 1) / 2;
+    int64_t sum_of_cubes = sum * sum;
+    return sum_of_cubes - sum;
+}
+
+int main(void) {
+    int64_t n;
+    if (scanf("%" SCNd64, &n) != 1) {
+        return 1;
+    }
+    printf("%" PRId64 "\n", compute_difference(n));
+    return 0;
+}

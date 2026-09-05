@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_first_last(char *str, char c) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+
+    char *first = strchr(str, c);
+    if (first == NULL) {
+        return;
+    }
+
+    memmove(first, first + 1, strlen(first));
+
+    len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+
+    char *last = strrchr(str, c);
+    if (last == NULL) {
+        return;
+    }
+
+    memmove(last, last + 1, strlen(last));
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string> <char>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    size_t arg_len = strlen(argv[2]);
+    if (arg_len != 1) {
+        fprintf(stderr, "Error: Second argument must be a single character.\n");
+        return EXIT_FAILURE;
+    }
+
+    char c = argv[2][0];
+    size_t str_size = strlen(argv[1]) + 1;
+
+    char *str = (char *)malloc(str_size * sizeof(char));
+    if (str == NULL) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
+
+    strncpy(str, argv[1], str_size);
+    str[str_size - 1] = '\0';
+
+    remove_first_last(str, c);
+
+    printf("%s\n", str);
+
+    free(str);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_max_difference(const Tuple *tuples, size_t count, int *max_diff) {
+    if (tuples == NULL || max_diff == NULL || count == 0) {
+        return -1;
+    }
+
+    *max_diff = INT_MIN;
+    int found = 0;
+
+    for (size_t i = 0; i < count; i++) {
+        int current_diff = abs(tuples[i].first - tuples[i].second);
+        
+        if (!found || current_diff > *max_diff) {
+            *max_diff = current_diff;
+            found = 1;
+        }
+    }
+
+    return found ? 0 : -1;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {2, 5},
+        {8, 1},
+        {10, 3},
+        {4, 9}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int max_difference;
+
+    if (find_max_difference(tuples, count, &max_difference) == 0) {
+        printf("Maximum difference: %d\n", max_difference);
+    } else {
+        fprintf(stderr, "Error: Invalid input or empty list\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t set_odd_bits(uint32_t num) {
+    uint32_t mask = 0xAAAAAAAA;
+    return num | mask;
+}
+
+int main() {
+    uint32_t number;
+
+    printf("Enter a number: ");
+    if (scanf("%u", &number) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    uint32_t result = set_odd_bits(number);
+
+    printf("Result: %u\n", result);
+
+    return 0;
+}
+```

@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t cols;
+} Row;
+
+typedef struct {
+    Row *rows;
+    size_t count;
+    size_t cols;
+} Matrix;
+
+int compare_rows(const int *row1, const int *row2, size_t cols) {
+    size_t i;
+    for (i = 0; i < cols; i++) {
+        if (row1[i] != row2[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+Matrix remove_similar_rows(Matrix *matrix) {
+    Matrix result;
+    size_t i, j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'is_duplicate' can be reduced. [variableScope]
+     */
+    int is_duplicate;
+    
+    result.rows = NULL;
+    result.count = 0;
+    result.cols = matrix->cols;
+    
+    if (matrix->count == 0 || matrix->rows == NULL) {
+        return result;
+    }
+    
+    result.rows = (Row *)malloc(matrix->count * sizeof(Row));
+    if (result.rows == NULL) {
+        return result;
+    }
+    
+    for (i = 0; i < matrix->count; i++) {
+        is_duplicate = 0;
+        for (j = 0; j < result.count; j++) {
+            if (compare_rows(matrix->rows[i].data, result.rows[j].data, matrix->cols)) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        
+        if (!is_duplicate) {
+            result.rows[result.count].data = (int *)malloc(matrix->cols * sizeof(int));
+            if (result.rows[result.count].data == NULL) {
+                size_t k;
+                for (k = 0; k < result.count; k++) {
+                    free(result.rows[k].data);
+                }
+                free(result.rows);
+                result.rows = NULL;
+                result.count = 0;
+                return result;
+            }
+            
+            for (j = 0; j < matrix->cols; j++) {
+                result.rows[result.count].data[j] = matrix->rows[i].data[j];
+            }
+            result.rows[result.count].cols = matrix->cols;
+            result.count++;
+        }
+    }
+    
+    return result;
+}
+
+void free_matrix(Matrix *matrix) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+    if (matrix->rows != NULL) {
+        for (i = 0; i < matrix->count; i++) {
+            if (matrix->rows[i].data != NULL) {
+                free(matrix->rows[i].data);
+            }
+        }
+        free(matrix->rows);
+        matrix->rows = NULL;
+        matrix->count = 0;
+    }
+}
+
+void print_matrix(Matrix *matrix) {
+    size_t i, j;
+    for (i = 0; i < matrix->count; i++) {
+        printf("(");
+        for (j = 0; j < matrix->cols; j++) {
+            printf("%d", matrix->rows[i].data[j]);
+            if (j < matrix->cols - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void) {
+    Matrix input, result;
+    size_t i, j;
+    int test_data[][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {1, 2, 3},
+        {7, 8, 9},
+        {4, 5, 6},
+        {1, 2, 3}
+    };
+    size_t num_rows = sizeof(test_data) / sizeof(test_data[0]);
+    size_t num_cols = sizeof(test_data[0]) / sizeof(test_data[0][0]);
+    
+    input.count = num_rows;
+    input.cols = num_cols;
+    input.rows = (Row *)malloc(num_rows * sizeof(Row));
+    
+    if (input.rows == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    for (i = 0; i < num_rows; i++) {
+        input.rows[i].data = (int *)malloc(num_cols * sizeof(int));
+        if (input.rows[i].data == NULL) {
+            size_t k;
+            for (k = 0; k < i; k++) {
+                free(input.rows[k].data);
+            }
+            free(input.rows);
+            fprintf(stderr, "Memory allocation failed\n");
+            return 1;
+        }
+        input.rows[i].cols = num_cols;
+        for (j = 0; j < num_cols; j++) {
+            input.rows[i].data[j] = test_data[i][j];
+        }
+    }
+    
+    printf("Original matrix:\n");
+    print_matrix(&input);
+    
+    result = remove_similar_rows(&input);
+    
+    printf("\nMatrix after removing similar rows:\n");
+    print_matrix(&result);
+    
+    free_matrix(&input);
+    free_matrix(&result);
+    
+    return 0;
+}

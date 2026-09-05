@@ -1,0 +1,183 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} StringList;
+
+typedef struct {
+    StringList *lists;
+    size_t count;
+} ListOfLists;
+
+static int compare_strings(const void *a, const void *b)
+{
+    const char *const *sa = (const char *const *)a;
+    const char *const *sb = (const char *const *)b;
+    return strcmp(*sa, *sb);
+}
+
+int sort_sublists(ListOfLists *lol)
+{
+    size_t i;
+    if (lol == NULL) {
+        return -1;
+    }
+    for (i = 0; i < lol->count; i++) {
+        if (lol->lists[i].items != NULL && lol->lists[i].count > 1) {
+            qsort(lol->lists[i].items, lol->lists[i].count,
+                  sizeof(char *), compare_strings);
+        }
+    }
+    return 0;
+}
+
+static char *duplicate_string(const char *s)
+{
+    size_t len;
+    char *copy;
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strlen(s);
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+int init_string_list(StringList *list, const char **strings, size_t count)
+{
+    size_t i;
+    if (list == NULL) {
+        return -1;
+    }
+    list->items = NULL;
+    list->count = 0;
+    if (count == 0) {
+        return 0;
+    }
+    if (strings == NULL || count > SIZE_MAX / sizeof(char *)) {
+        return -1;
+    }
+    list->items = calloc(count, sizeof(char *));
+    if (list->items == NULL) {
+        return -1;
+    }
+    for (i = 0; i < count; i++) {
+        list->items[i] = duplicate_string(strings[i]);
+        if (list->items[i] == NULL) {
+            size_t j;
+            for (j = 0; j < i; j++) {
+                free(list->items[j]);
+            }
+            free(list->items);
+            list->items = NULL;
+            return -1;
+        }
+    }
+    list->count = count;
+    return 0;
+}
+
+void free_string_list(StringList *list)
+{
+    size_t i;
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        free(list->items[i]);
+    }
+    free(list->items);
+    list->items = NULL;
+    list->count = 0;
+}
+
+void free_list_of_lists(ListOfLists *lol)
+{
+    size_t i;
+    if (lol == NULL) {
+        return;
+    }
+    for (i = 0; i < lol->count; i++) {
+        free_string_list(&lol->lists[i]);
+    }
+    free(lol->lists);
+    lol->lists = NULL;
+    lol->count = 0;
+}
+
+void print_list_of_lists(const ListOfLists *lol)
+{
+    size_t i, j;
+    if (lol == NULL) {
+        return;
+    }
+    for (i = 0; i < lol->count; i++) {
+        printf("[");
+        for (j = 0; j < lol->lists[i].count; j++) {
+            printf("\"%s\"", lol->lists[i].items[j]);
+            if (j + 1 < lol->lists[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    const char *data0[] = {"banana", "apple", "cherry"};
+    const char *data1[] = {"dog", "cat"};
+    const char *data2[] = {"zebra", "lion", "tiger", "bear"};
+    ListOfLists lol;
+    size_t i;
+
+    lol.lists = calloc(3, sizeof(StringList));
+    if (lol.lists == NULL) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    lol.count = 3;
+
+    if (init_string_list(&lol.lists[0], data0, 3) != 0) {
+        fprintf(stderr, "Initialization failed\n");
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+    if (init_string_list(&lol.lists[1], data1, 2) != 0) {
+        fprintf(stderr, "Initialization failed\n");
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+    if (init_string_list(&lol.lists[2], data2, 4) != 0) {
+        fprintf(stderr, "Initialization failed\n");
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before sorting:\n");
+    print_list_of_lists(&lol);
+
+    if (sort_sublists(&lol) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        free_list_of_lists(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("After sorting:\n");
+    print_list_of_lists(&lol);
+
+    free_list_of_lists(&lol);
+    return EXIT_SUCCESS;
+}
+```

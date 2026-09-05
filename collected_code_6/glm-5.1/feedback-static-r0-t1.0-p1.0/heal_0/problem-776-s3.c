@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+static int is_vowel(char c) {
+    c = tolower((unsigned char)c);
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
+}
+
+int count_chars_with_vowel_neighbors(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t len = strlen(str);
+    int count = 0;
+
+    if (len > 1) {
+        if (is_vowel(str[1]) && !is_vowel(str[0])) {
+            count++;
+        }
+    }
+
+    for (size_t i = 1; i < len - 1; i++) {
+        if ((is_vowel(str[i - 1]) || is_vowel(str[i + 1])) && !is_vowel(str[i])) {
+            count++;
+        }
+    }
+
+    if (len > 1) {
+        if (is_vowel(str[len - 2]) && !is_vowel(str[len - 1])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *test1 = "hello";
+    const char *test2 = "abcdef";
+    const char *test3 = "aeiou";
+    const char *test4 = "xyz";
+
+    printf("%d\n", count_chars_with_vowel_neighbors(test1));
+    printf("%d\n", count_chars_with_vowel_neighbors(test2));
+    printf("%d\n", count_chars_with_vowel_neighbors(test3));
+    printf("%d\n", count_chars_with_vowel_neighbors(test4));
+
+    return 0;
+}

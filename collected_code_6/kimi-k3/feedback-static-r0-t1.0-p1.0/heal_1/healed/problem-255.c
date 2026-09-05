@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void generate_combinations(char *colors, int num_colors, int num_choose, char *current, int position)
+{
+    if (position == num_choose)
+    {
+        printf("%s\n", current);
+        return;
+    }
+
+    for (int i = 0; i < num_colors; i++)
+    {
+        current[position] = colors[i];
+        generate_combinations(colors, num_colors, num_choose, current, position + 1);
+    }
+}
+
+int main(void)
+{
+    char colors[] = {'R', 'G', 'B'};
+    int num_colors = 3;
+    int num_choose;
+    char *current = NULL;
+
+    if (scanf("%d", &num_choose) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num_choose <= 0)
+    {
+        fprintf(stderr, "Invalid number of colors to choose\n");
+        return EXIT_FAILURE;
+    }
+
+    current = malloc((size_t)(num_choose + 1));
+    if (current == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    current[num_choose] = '\0';
+
+    generate_combinations(colors, num_colors, num_choose, current, 0);
+
+    free(current);
+    current = NULL;
+
+    return EXIT_SUCCESS;
+}

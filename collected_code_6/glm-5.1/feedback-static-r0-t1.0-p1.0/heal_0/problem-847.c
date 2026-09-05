@@ -1,0 +1,119 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct Tuple {
+    Node* list;
+} Tuple;
+
+Node* copy_list(Node* head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node* new_head = (Node*)malloc(sizeof(Node));
+    if (new_head == NULL) {
+        return NULL;
+    }
+    new_head->value = head->value;
+    new_head->next = NULL;
+
+    Node* current_new = new_head;
+    Node* current_old = head->next;
+
+    while (current_old != NULL) {
+        Node* new_node = (Node*)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            Node* temp = new_head;
+            while (temp != NULL) {
+                Node* next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            return NULL;
+        }
+        new_node->value = current_old->value;
+        new_node->next = NULL;
+        
+        current_new->next = new_node;
+        current_new = new_node;
+        current_old = current_old->next;
+    }
+
+    return new_head;
+}
+
+Node* copy_list_from_singleton_tuple(Tuple tuple) {
+    return copy_list(tuple.list);
+}
+
+Node* create_node(int value) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node* n1 = create_node(1);
+    if (n1 == NULL) return 1;
+    Node* n2 = create_node(2);
+    if (n2 == NULL) {
+        free_list(n1);
+        return 1;
+    }
+    Node* n3 = create_node(3);
+    if (n3 == NULL) {
+        free_list(n1);
+        free(n2);
+        return 1;
+    }
+
+    n1->next = n2;
+    n2->next = n3;
+
+    Tuple singleton = {n1};
+
+    Node* copied_list = copy_list_from_singleton_tuple(singleton);
+    if (copied_list == NULL) {
+        free_list(n1);
+        return 1;
+    }
+
+    printf("Original list:\n");
+    Node* curr = singleton.list;
+    while (curr != NULL) {
+        printf("%d ", curr->value);
+        curr = curr->next;
+    }
+    printf("\n");
+
+    printf("Copied list:\n");
+    curr = copied_list;
+    while (curr != NULL) {
+        printf("%d ", curr->value);
+        curr = curr->next;
+    }
+    printf("\n");
+
+    free_list(n1);
+    free_list(copied_list);
+
+    return 0;
+}

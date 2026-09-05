@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int countSubstrings(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    size_t len = strlen(str);
+    
+    for (size_t i = 0; i < len; i++) {
+        for (size_t j = i; j < len; j++) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    char str[1000];
+    
+    if (fgets(str, sizeof(str), stdin) != NULL) {
+        size_t len = strlen(str);
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+        }
+        
+        int result = countSubstrings(str);
+        printf("%d\n", result);
+    }
+    
+    return 0;
+}
+```

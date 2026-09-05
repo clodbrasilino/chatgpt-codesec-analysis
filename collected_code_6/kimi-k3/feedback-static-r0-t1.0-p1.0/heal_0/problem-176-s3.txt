@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+double calculate_distance(Point p1, Point p2) {
+    double dx = p2.x - p1.x;
+    double dy = p2.y - p1.y;
+    return sqrt(dx * dx + dy * dy);
+}
+
+double calculate_perimeter(Point a, Point b, Point c) {
+    double side_ab = calculate_distance(a, b);
+    double side_bc = calculate_distance(b, c);
+    double side_ca = calculate_distance(c, a);
+    return side_ab + side_bc + side_ca;
+}
+
+int main(void) {
+    Point p1 = {0.0, 0.0};
+    Point p2 = {3.0, 0.0};
+    Point p3 = {0.0, 4.0};
+    
+    double perimeter = calculate_perimeter(p1, p2, p3);
+    
+    printf("Perimeter of triangle: %.2f\n", perimeter);
+    
+    return 0;
+}
+```

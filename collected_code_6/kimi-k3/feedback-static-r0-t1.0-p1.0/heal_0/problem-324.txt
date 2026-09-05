@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int sum_alternate_chains(const Tuple *tuples, size_t count, int start_index, int *result)
+{
+    long sum;
+    size_t i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    *result = 0;
+
+    if (tuples == NULL && count > 0) {
+        return -1;
+    }
+
+    if (start_index != 0 && start_index != 1) {
+        return -1;
+    }
+
+    sum = 0;
+
+    for (i = (size_t)start_index; i < count; i += 2) {
+        if ((tuples[i].first > 0 && sum > LONG_MAX - tuples[i].first) ||
+            (tuples[i].first < 0 && sum < LONG_MIN - tuples[i].first)) {
+            return -1;
+        }
+        sum += tuples[i].first;
+
+        if ((tuples[i].second > 0 && sum > LONG_MAX - tuples[i].second) ||
+            (tuples[i].second < 0 && sum < LONG_MIN - tuples[i].second)) {
+            return -1;
+        }
+        sum += tuples[i].second;
+    }
+
+    if (sum > INT_MAX || sum < INT_MIN) {
+        return -1;
+    }
+
+    *result = (int)sum;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}, {9, 10}};
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    int result;
+    int status;
+
+    status = sum_alternate_chains(tuples, count, 0, &result);
+    if (status == 0) {
+        printf("Sum of alternate chain starting at index 0: %d\n", result);
+    } else {
+        fprintf(stderr, "Error calculating sum for chain starting at index 0\n");
+    }
+
+    status = sum_alternate_chains(tuples, count, 1, &result);
+    if (status == 0) {
+        printf("Sum of alternate chain starting at index 1: %d\n", result);
+    } else {
+        fprintf(stderr, "Error calculating sum for chain starting at index 1\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

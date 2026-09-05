@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int multiply_list(const int *list, size_t size, long long *result) {
+    if (list == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+    *result = 1;
+    for (size_t i = 0; i < size; i++) {
+        *result *= list[i];
+    }
+    return 0;
+}
+
+int main(void) {
+    int list[] = {2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    long long result;
+
+    if (multiply_list(list, size, &result) == 0) {
+        printf("%lld\n", result);
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

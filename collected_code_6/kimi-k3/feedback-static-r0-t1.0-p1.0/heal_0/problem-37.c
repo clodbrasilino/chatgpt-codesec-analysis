@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        long long int_val;
+        char *str_val;
+    } data;
+} MixedElement;
+
+typedef struct {
+    MixedElement *elements;
+    size_t count;
+    size_t capacity;
+} MixedList;
+
+static int compare_elements(const void *a, const void *b) {
+    const MixedElement *elem_a = (const MixedElement *)a;
+    const MixedElement *elem_b = (const MixedElement *)b;
+    
+    if (elem_a->type != elem_b->type) {
+        return (elem_a->type == TYPE_INT) ? -1 : 1;
+    }
+    
+    if (elem_a->type == TYPE_INT) {
+        if (elem_a->data.int_val < elem_b->data.int_val) return -1;
+        if (elem_a->data.int_val > elem_b->data.int_val) return 1;
+        return 0;
+    } else {
+        return strcmp(elem_a->data.str_val, elem_b->data.str_val);
+    }
+}
+
+static MixedList* create_list(size_t initial_capacity) {
+    MixedList *list = (MixedList *)malloc(sizeof(MixedList));
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    list->elements = (MixedElement *)calloc(initial_capacity, sizeof(MixedElement));
+    if (list->elements == NULL) {
+        free(list);
+        return NULL;
+    }
+    
+    list->count = 0;
+    list->capacity = initial_capacity;
+    return list;
+}
+
+static bool add_int(MixedList *list, long long value) {
+    if (list == NULL) {
+        return false;
+    }
+    
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        MixedElement *new_elements = (MixedElement *)realloc(list->elements, 
+                                                             new_capacity * sizeof(MixedElement));
+        if (new_elements == NULL) {
+            return false;
+        }
+        list->elements = new_elements;
+        list->capacity = new_capacity;
+    }
+    
+    list->elements[list->count].type = TYPE_INT;
+    list->elements[list->count].data.int_val = value;
+    list->count++;
+    return true;
+}
+
+static bool add_string(MixedList *list, const char *value) {
+    if (list == NULL || value == NULL) {
+        return false;
+    }
+    
+    if (list->count >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        MixedElement *new_elements = (MixedElement *)realloc(list->elements, 
+                                                             new_capacity * sizeof(MixedElement));
+        if (new_elements == NULL) {
+            return false;
+        }
+        list->elements = new_elements;
+        list->capacity = new_capacity;
+    }
+    
+    size_t len = strlen(value) + 1;
+    char *str_copy = (char *)malloc(len);
+    if (str_copy == NULL) {
+        return false;
+    }
+    strcpy(str_copy, value);
+    
+    list->elements[list->count].type = TYPE_STRING;
+    list->elements[list->count].data.str_val = str_copy;
+    list->count++;
+    return true;
+}
+
+static void free_list(MixedList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    if (list->elements != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            if (list->elements[i].type == TYPE_STRING) {
+                free(list->elements[i].data.str_val);
+            }
+        }
+        free(list->elements);
+    }
+    free(list);
+}
+
+static void print_list(const MixedList *list) {
+    if (list == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    
+    printf("[");
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->elements[i].type == TYPE_INT) {
+            printf("%lld", list->elements[i].data.int_val);
+        } else {
+            printf("\"%s\"", list->elements[i].data.str_val);
+        }
+        if (i < list->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    MixedList *list = create_list(4);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to create list\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (!add_int(list, 42) ||
+        !add_string(list, "hello") ||
+        !add_int(list, 10) ||
+        !add_string(list, "world") ||
+        !add_int(list, 5) ||
+        !add_string(list, "apple") ||
+        !add_int(list, 100)) {
+        fprintf(stderr, "Failed to add elements\n");
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original: ");
+    print_list(list);
+    
+    qsort(list->elements, list->count, sizeof(MixedElement), compare_elements);
+    
+    printf("Sorted:   ");
+    print_list(list);
+    
+    free_list(list);
+    return EXIT_SUCCESS;
+}

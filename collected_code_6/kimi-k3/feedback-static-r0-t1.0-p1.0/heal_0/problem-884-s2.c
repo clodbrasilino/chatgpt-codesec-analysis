@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool check_bits_in_range(unsigned int num, int start, int end) {
+    if (start < 0 || end < 0 || start > end || end >= (int)(sizeof(unsigned int) * CHAR_BIT)) {
+        return false;
+    }
+    
+    unsigned int mask = 0;
+    for (int i = start; i <= end; i++) {
+        mask |= (1U << i);
+    }
+    
+    return (num & mask) == mask;
+}
+
+int main(void) {
+    unsigned int num;
+    int start, end;
+    
+    if (scanf("%u %d %d", &num, &start, &end) != 3) {
+        return 1;
+    }
+    
+    if (check_bits_in_range(num, start, end)) {
+        printf("true\n");
+    } else {
+        printf("false\n");
+    }
+    
+    return 0;
+}

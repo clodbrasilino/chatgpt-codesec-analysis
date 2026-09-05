@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-898-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-898-s2.c:57:16: style: Condition 'subset==NULL' is always true [knownConditionTrueFalse]
+    if (subset == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-898-s2.c:56:32: note: Calling function 'extract_continuous' returns 0
+    subset = extract_continuous(NULL, 0, 0, 1, &out_size);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-898-s2.c:56:32: note: Assignment 'subset=extract_continuous(NULL,0,0,1,&out_size)', assigned value is 0
+    subset = extract_continuous(NULL, 0, 0, 1, &out_size);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_0/problem-898-s2.c:57:16: note: Condition 'subset==NULL' is always true
+    if (subset == NULL) {
+               ^

@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+
+double square_perimeter(double side);
+
+int main(void) {
+    double side;
+    printf("Enter the side length of the square: ");
+    if (scanf("%lf", &side) != 1 || side < 0) {
+        fprintf(stderr, "Invalid input. Please enter a non-negative number.\n");
+        return 1;
+    }
+    printf("Perimeter: %.2f\n", square_perimeter(side));
+    return 0;
+}
+
+double square_perimeter(double side) {
+    return 4.0 * side;
+}
+```

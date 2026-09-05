@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **string_to_list(const char *str, size_t *list_size) {
+    size_t len = strlen(str);
+    char **list = NULL;
+    size_t count = 0;
+    size_t capacity = 0;
+    size_t start = 0;
+    size_t i;
+
+    if (len == 0) {
+        *list_size = 0;
+        return NULL;
+    }
+
+    capacity = 16;
+    list = (char **)malloc(capacity * sizeof(char *));
+    if (list == NULL) {
+        *list_size = 0;
+        return NULL;
+    }
+
+    for (i = 0; i <= len; ++i) {
+        if (str[i] == ' ' || str[i] == '\0') {
+            if (i > start) {
+                if (count >= capacity) {
+                    capacity *= 2;
+                    char **temp = (char **)realloc(list, capacity * sizeof(char *));
+                    if (temp == NULL) {
+                        for (size_t j = 0; j < count; ++j) {
+                            free(list[j]);
+                        }
+                        free(list);
+                        *list_size = 0;
+                        return NULL;
+                    }
+                    list = temp;
+                }
+                size_t token_len = i - start;
+                list[count] = (char *)malloc((token_len + 1) * sizeof(char));
+                if (list[count] == NULL) {
+                    for (size_t j = 0; j < count; ++j) {
+                        free(list[j]);
+                    }
+                    free(list);
+                    *list_size = 0;
+                    return NULL;
+                }
+                strncpy(list[count], str + start, token_len);
+                list[count][token_len] = '\0';
+                count++;
+            }
+            start = i + 1;
+        }
+    }
+
+    if (count == 0) {
+        free(list);
+        *list_size = 0;
+        return NULL;
+    }
+
+    char **shrunk_list = (char **)realloc(list, count * sizeof(char *));
+    if (shrunk_list != NULL) {
+        list = shrunk_list;
+    }
+
+    *list_size = count;
+    return list;
+}
+
+void free_list(char **list, size_t list_size) {
+    if (list != NULL) {
+        for (size_t i = 0; i < list_size; ++i) {
+            free(list[i]);
+        }
+        free(list);
+    }
+}
+
+int main(void) {
+    const char *input = "Hello world from C programming";
+    size_t size = 0;
+    char **list = string_to_list(input, &size);
+
+    if (list != NULL) {
+        for (size_t i = 0; i < size; ++i) {
+            printf("%s\n", list[i]);
+        }
+        free_list(list, size);
+    }
+
+    return 0;
+}
+```

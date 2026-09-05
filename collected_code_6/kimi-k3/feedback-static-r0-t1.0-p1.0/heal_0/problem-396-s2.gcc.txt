@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-396-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-396-s2.c:36:15: error: implicit declaration of function 'strchr' [-Wimplicit-function-declaration]
+   36 |     newline = strchr(input, '\n');
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-396-s2.c:4:1: note: include '<string.h>' or provide a declaration of 'strchr'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 

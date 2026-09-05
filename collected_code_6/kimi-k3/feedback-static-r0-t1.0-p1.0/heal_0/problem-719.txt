@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool match_pattern(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+    
+    if (str[0] != 'a') {
+        return false;
+    }
+    
+    size_t i = 1;
+    while (str[i] == 'b') {
+        i++;
+    }
+    
+    return str[i] == '\0';
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "a",
+        "ab",
+        "abb",
+        "abbb",
+        "b",
+        "ba",
+        "abc",
+        "aab",
+        ""
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        if (match_pattern(test_strings[i])) {
+            printf("\"%s\" matches\n", test_strings[i]);
+        } else {
+            printf("\"%s\" does not match\n", test_strings[i]);
+        }
+    }
+    
+    return 0;
+}
+```

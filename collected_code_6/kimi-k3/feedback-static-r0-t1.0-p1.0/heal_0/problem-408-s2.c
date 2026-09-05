@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+static int compare_pairs(const void *a, const void *b)
+{
+    const Pair *pa = (const Pair *)a;
+    const Pair *pb = (const Pair *)b;
+
+    if (pa->first != pb->first) {
+        return pa->first - pb->first;
+    }
+    return pa->second - pb->second;
+}
+
+Pair *find_k_pairs(const int *arr1, size_t size1, const int *arr2, size_t size2, size_t k, size_t *result_size)
+{
+    Pair *all_pairs = NULL;
+    Pair *result = NULL;
+    size_t total_pairs;
+    size_t i;
+    size_t j;
+    size_t idx;
+
+    if (arr1 == NULL || arr2 == NULL || result_size == NULL || size1 == 0 || size2 == 0 || k == 0) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    total_pairs = size1 * size2;
+    if (k > total_pairs) {
+        k = total_pairs;
+    }
+
+    all_pairs = (Pair *)malloc(total_pairs * sizeof(Pair));
+    if (all_pairs == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    idx = 0;
+    for (i = 0; i < size1; i++) {
+        for (j = 0; j < size2; j++) {
+            all_pairs[idx].first = arr1[i];
+            all_pairs[idx].second = arr2[j];
+            idx++;
+        }
+    }
+
+    qsort(all_pairs, total_pairs, sizeof(Pair), compare_pairs);
+
+    result = (Pair *)malloc(k * sizeof(Pair));
+    if (result == NULL) {
+        free(all_pairs);
+        *result_size = 0;
+        return NULL;
+    }
+
+    memcpy(result, all_pairs, k * sizeof(Pair));
+    free(all_pairs);
+
+    *result_size = k;
+    return result;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 7, 11};
+    int arr2[] = {2, 4, 6};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t k = 3;
+    size_t result_size = 0;
+    Pair *pairs = NULL;
+    size_t i;
+
+    pairs = find_k_pairs(arr1, size1, arr2, size2, k, &result_size);
+
+    if (pairs == NULL) {
+        fprintf(stderr, "Error: Failed to find pairs\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Found %zu pairs:\n", result_size);
+    for (i = 0; i < result_size; i++) {
+        printf("(%d, %d)\n", pairs[i].first, pairs[i].second);
+    }
+
+    free(pairs);
+    return EXIT_SUCCESS;
+}

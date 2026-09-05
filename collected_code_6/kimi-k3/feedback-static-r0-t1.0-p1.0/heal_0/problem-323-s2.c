@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void rearrange_alternating(int arr[], int n)
+{
+    if (arr == NULL || n <= 0) {
+        return;
+    }
+
+    int *temp = (int *)malloc((size_t)n * sizeof(int));
+    if (temp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return;
+    }
+
+    int pos_idx = 0;
+    int neg_idx = 1;
+    int i;
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] >= 0) {
+            if (pos_idx < n) {
+                temp[pos_idx] = arr[i];
+                pos_idx += 2;
+            }
+        } else {
+            if (neg_idx < n) {
+                temp[neg_idx] = arr[i];
+                neg_idx += 2;
+            }
+        }
+    }
+
+    for (i = 0; i < n; i++) {
+        arr[i] = temp[i];
+    }
+
+    free(temp);
+    temp = NULL;
+}
+
+void print_array(const int arr[], int n)
+{
+    int i;
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int arr[] = {-5, -2, 5, 2, 4, 7, 1, 8, 0, -8};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+
+    printf("Original array: ");
+    print_array(arr, n);
+
+    rearrange_alternating(arr, n);
+
+    printf("Rearranged array: ");
+    print_array(arr, n);
+
+    return 0;
+}

@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s2.c: In function 'smallest_multiple':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s2.c:25:45: error: 'LLONG_MAX' undeclared (first use in this function)
+   25 |         if (result > 0 && i / current_gcd > LLONG_MAX / result) {
+      |                                             ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s2.c:3:1: note: 'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-901-s2.c:25:45: note: each undeclared identifier is reported only once for each function it appears in
+   25 |         if (result > 0 && i / current_gcd > LLONG_MAX / result) {
+      |                                             ^~~~~~~~~

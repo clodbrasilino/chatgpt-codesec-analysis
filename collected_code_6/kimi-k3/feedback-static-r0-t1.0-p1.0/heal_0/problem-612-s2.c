@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    Node* tail;
+    size_t size;
+} List;
+
+Node* create_node(int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int list_init(List* list) {
+    if (list == NULL) {
+        return -1;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    return 0;
+}
+
+int list_append(List* list, int data) {
+    if (list == NULL) {
+        return -1;
+    }
+    Node* node = create_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+    if (list->head == NULL) {
+        list->head = node;
+        list->tail = node;
+    } else {
+        list->tail->next = node;
+        list->tail = node;
+    }
+    list->size++;
+    return 0;
+}
+
+void list_free(List* list) {
+    if (list == NULL) {
+        return;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+}
+
+int merge_first_last(List* list) {
+    if (list == NULL) {
+        return -1;
+    }
+    if (list->size < 2) {
+        return -1;
+    }
+    int merged = list->head->data + list->tail->data;
+    Node* temp = list->head;
+    list->head = list->head->next;
+    free(temp);
+    if (list->head == NULL) {
+        list->tail = NULL;
+    } else {
+        Node* current = list->head;
+        while (current->next != list->tail) {
+            current = current->next;
+        }
+        free(list->tail);
+        list->tail = current;
+        list->tail->next = NULL;
+    }
+    list->size -= 2;
+    if (list_append(list, merged) != 0) {
+        return -1;
+    }
+    return 0;
+}
+
+void list_print(const List* list) {
+    if (list == NULL) {
+        return;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    List list;
+    if (list_init(&list) != 0) {
+        fprintf(stderr, "Failed to initialize list\n");
+        return EXIT_FAILURE;
+    }
+    if (list_append(&list, 1) != 0 ||
+        list_append(&list, 2) != 0 ||
+        list_append(&list, 3) != 0 ||
+        list_append(&list, 4) != 0 ||
+        list_append(&list, 5) != 0) {
+        fprintf(stderr, "Failed to append elements\n");
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+    printf("Original list: ");
+    list_print(&list);
+    if (merge_first_last(&list) != 0) {
+        fprintf(stderr, "Failed to merge first and last elements\n");
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+    printf("Merged list: ");
+    list_print(&list);
+    list_free(&list);
+    return EXIT_SUCCESS;
+}

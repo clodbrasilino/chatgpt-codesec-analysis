@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+int get_first(const Tuple *t, int *out) {
+    if (t == NULL || out == NULL || t->data == NULL || t->size == 0) {
+        return -1;
+    }
+    *out = t->data[0];
+    return 0;
+}
+
+int get_last(const Tuple *t, int *out) {
+    if (t == NULL || out == NULL || t->data == NULL || t->size == 0) {
+        return -1;
+    }
+    *out = t->data[t->size - 1];
+    return 0;
+}
+
+int main(void) {
+    int values[] = {10, 20, 30, 40, 50};
+    Tuple t;
+    t.data = values;
+    t.size = sizeof(values) / sizeof(values[0]);
+
+    int first = 0;
+    int last = 0;
+
+    if (get_first(&t, &first) == 0 && get_last(&t, &last) == 0) {
+        printf("First: %d\n", first);
+        printf("Last: %d\n", last);
+    } else {
+        fprintf(stderr, "Error accessing tuple data\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

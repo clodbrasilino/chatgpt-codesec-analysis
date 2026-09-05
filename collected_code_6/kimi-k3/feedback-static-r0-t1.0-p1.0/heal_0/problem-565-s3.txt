@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **split_string(const char *str, size_t *count)
+{
+    size_t len;
+    size_t i;
+    char **chars;
+
+    if (str == NULL || count == NULL)
+        return NULL;
+
+    len = strlen(str);
+    *count = len;
+
+    if (len == 0)
+        return NULL;
+
+    chars = malloc((len + 1) * sizeof(char *));
+    if (chars == NULL)
+    {
+        *count = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++)
+    {
+        chars[i] = malloc(2 * sizeof(char));
+        if (chars[i] == NULL)
+        {
+            size_t j;
+
+            for (j = 0; j < i; j++)
+                free(chars[j]);
+            free(chars);
+            *count = 0;
+            return NULL;
+        }
+        chars[i][0] = str[i];
+        chars[i][1] = '\0';
+    }
+
+    chars[len] = NULL;
+    return chars;
+}
+
+void free_split_string(char **chars, size_t count)
+{
+    size_t i;
+
+    if (chars == NULL)
+        return;
+
+    for (i = 0; i < count; i++)
+        free(chars[i]);
+    free(chars);
+}
+
+int main(void)
+{
+    const char *input = "Hello";
+    size_t count = 0;
+    size_t i;
+    char **chars = split_string(input, &count);
+
+    if (chars == NULL)
+    {
+        fprintf(stderr, "Failed to split string\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++)
+        printf("Character %zu: %s\n", i, chars[i]);
+
+    free_split_string(chars, count);
+    return EXIT_SUCCESS;
+}
+```

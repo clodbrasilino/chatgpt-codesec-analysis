@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int contains_z(const char *word) {
+    if (word == NULL) {
+        return 0;
+    }
+    while (*word != '\0') {
+        if (*word == 'z') {
+            return 1;
+        }
+        word++;
+    }
+    return 0;
+}
+
+int main(void) {
+    char buffer[256];
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        size_t len = strlen(buffer);
+        if (len > 0 && buffer[len - 1] == '\n') {
+            buffer[len - 1] = '\0';
+        }
+        if (contains_z(buffer)) {
+            printf("Match found\n");
+        } else {
+            printf("No match\n");
+        }
+    }
+    return 0;
+}
+```

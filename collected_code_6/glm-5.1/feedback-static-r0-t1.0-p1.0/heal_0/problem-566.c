@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int get_sum(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    return (n % 10) + get_sum(n / 10);
+}
+
+int main(int argc, char *argv[]) {
+    unsigned int num = 12345;
+    unsigned int result = get_sum(num);
+    printf("%u\n", result);
+    return 0;
+}

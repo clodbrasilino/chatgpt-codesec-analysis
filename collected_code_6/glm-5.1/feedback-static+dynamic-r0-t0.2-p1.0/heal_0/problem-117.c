@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
+int convert_list_to_float(const char * const *list, size_t size, float *out) {
+    if (list == NULL || out == NULL) {
+        return -1;
+    }
+
+    int converted_count = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i] == NULL) {
+            continue;
+        }
+
+        char *endptr = NULL;
+        errno = 0;
+        float val = strtof(list[i], &endptr);
+
+        if (errno == 0 && endptr != list[i] && *endptr == '\0') {
+            out[i] = val;
+            converted_count++;
+        }
+    }
+
+    return converted_count;
+}
+
+int main(void) {
+    const char *list[] = {
+        "3.14159",
+        "-2.5",
+        "0",
+        "not_a_float",
+        "123.456abc",
+        "",
+        "1e5",
+        NULL
+    };
+
+    size_t size = sizeof(list) / sizeof(list[0]);
+    float *results = (float *)malloc(size * sizeof(float));
+
+    if (results == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    memset(results, 0, size * sizeof(float));
+
+    int count = convert_list_to_float(list, size, results);
+
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i] != NULL) {
+            printf("Input: '%s', Output: %f\n", list[i], results[i]);
+        } else {
+            printf("Input: NULL, Output: %f\n", results[i]);
+        }
+    }
+
+    printf("Total successfully converted: %d\n", count);
+
+    free(results);
+    results = NULL;
+
+    return EXIT_SUCCESS;
+}

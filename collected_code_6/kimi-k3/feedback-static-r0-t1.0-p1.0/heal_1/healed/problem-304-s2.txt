@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findElementAfterRotations(const int arr[], int size, int rotations, int index) {
+    if (size <= 0 || index < 0 || index >= size) {
+        return -1;
+    }
+    
+    rotations = rotations % size;
+    if (rotations < 0) {
+        rotations += size;
+    }
+    
+    int actualIndex = (index + rotations) % size;
+    return arr[actualIndex];
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int rotations = 3;
+    int index = 2;
+    
+    int result = findElementAfterRotations(arr, size, rotations, index);
+    
+    if (result != -1) {
+        printf("Element at index %d after %d rotations: %d\n", index, rotations, result);
+    } else {
+        printf("Invalid input parameters\n");
+    }
+    
+    return 0;
+}
+```

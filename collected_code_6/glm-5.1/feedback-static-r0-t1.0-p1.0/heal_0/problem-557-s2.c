@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+void toggle_case(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len; i++) {
+        if (isupper((unsigned char)str[i])) {
+            str[i] = tolower((unsigned char)str[i]);
+        } else if (islower((unsigned char)str[i])) {
+            str[i] = toupper((unsigned char)str[i]);
+        }
+    }
+}
+
+int main(void) {
+    char buffer[256];
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+    buffer[strcspn(buffer, "\n")] = '\0';
+    toggle_case(buffer);
+    printf("%s\n", buffer);
+    return 0;
+}

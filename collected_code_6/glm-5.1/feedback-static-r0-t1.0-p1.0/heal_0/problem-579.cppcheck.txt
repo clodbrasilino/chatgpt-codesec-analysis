@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-579.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-579.c:4:27: style: Parameter 't1' can be declared as pointer to const [constParameterPointer]
+int* find_dissimilar(int *t1, int s1, int *t2, int s2, int *res_size) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-579.c:4:44: style: Parameter 't2' can be declared as pointer to const [constParameterPointer]
+int* find_dissimilar(int *t1, int s1, int *t2, int s2, int *res_size) {
+                                           ^

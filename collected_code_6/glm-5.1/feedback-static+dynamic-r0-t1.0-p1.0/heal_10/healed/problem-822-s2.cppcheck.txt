@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-822-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-822-s2.c:56:54: style: Condition 'valid' is always false [knownConditionTrueFalse]
+    printf("Password: NULL             Valid: %s\n", valid ? "true" : "false");
+                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-822-s2.c:55:35: note: Calling function 'is_valid_password' returns 0
+    bool valid = is_valid_password(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-822-s2.c:55:35: note: Assignment 'valid=is_valid_password(NULL)', assigned value is 0
+    bool valid = is_valid_password(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-822-s2.c:56:54: note: Condition 'valid' is always false
+    printf("Password: NULL             Valid: %s\n", valid ? "true" : "false");
+                                                     ^

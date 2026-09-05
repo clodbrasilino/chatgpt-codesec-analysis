@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *keys;
+    int *values;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary *dictionaries;
+    size_t size;
+} DictionaryList;
+
+bool are_all_dictionaries_empty(const DictionaryList *list) {
+    if (list == NULL) {
+        return true;
+    }
+
+    for (size_t i = 0; i < list->size; i++) {
+        if (list->dictionaries[i].size > 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    Dictionary empty_dicts[2] = {
+        {NULL, NULL, 0, 0},
+        {NULL, NULL, 0, 0}
+    };
+
+    Dictionary non_empty_dict = {NULL, NULL, 1, 1};
+
+    DictionaryList list1 = {empty_dicts, 2};
+    DictionaryList list2 = {&non_empty_dict, 1};
+    DictionaryList list3 = {NULL, 0};
+
+    if (are_all_dictionaries_empty(&list1)) {
+        printf("List 1: All empty\n");
+    } else {
+        printf("List 1: Not all empty\n");
+    }
+
+    if (are_all_dictionaries_empty(&list2)) {
+        printf("List 2: All empty\n");
+    } else {
+        printf("List 2: Not all empty\n");
+    }
+
+    if (are_all_dictionaries_empty(&list3)) {
+        printf("List 3: All empty\n");
+    } else {
+        printf("List 3: Not all empty\n");
+    }
+
+    if (are_all_dictionaries_empty(NULL)) {
+        printf("NULL list: All empty\n");
+    } else {
+        printf("NULL list: Not all empty\n");
+    }
+
+    return 0;
+}
+```

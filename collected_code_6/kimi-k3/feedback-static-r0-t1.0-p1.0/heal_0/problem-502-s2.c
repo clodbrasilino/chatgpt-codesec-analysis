@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int find_remainder(int dividend, int divisor, int *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (divisor == 0) {
+        return -1;
+    }
+    
+    if (dividend == INT_MIN && divisor == -1) {
+        return -1;
+    }
+    
+    *result = dividend % divisor;
+    return 0;
+}
+
+int main(void)
+{
+    int dividend = 0;
+    int divisor = 0;
+    int remainder = 0;
+    int status = 0;
+    
+    printf("Enter dividend: ");
+    if (scanf("%d", &dividend) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter divisor: ");
+    if (scanf("%d", &divisor) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    status = find_remainder(dividend, divisor, &remainder);
+    if (status != 0) {
+        fprintf(stderr, "Error: invalid operation\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Remainder: %d\n", remainder);
+    
+    return EXIT_SUCCESS;
+}

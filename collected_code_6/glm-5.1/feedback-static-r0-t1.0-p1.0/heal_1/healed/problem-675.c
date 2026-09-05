@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+int add_and_check(int a, int b, int low, int high) {
+    long long sum = (long long)a + (long long)b;
+    if (sum > INT_MAX || sum < INT_MIN) {
+        return -1;
+    }
+    int int_sum = (int)sum;
+    if (int_sum >= low && int_sum <= high) {
+        return 20;
+    }
+    return int_sum;
+}
+
+int main(void) {
+    int a = 5;
+    int b = 10;
+    int low = 10;
+    int high = 20;
+    int result = add_and_check(a, b, low, high);
+    printf("%d\n", result);
+    return 0;
+}

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+
+double cylinder_surface_area(double radius) {
+    if (radius < 0.0 || !isfinite(radius)) {
+        errno = EDOM;
+        return -1.0;
+    }
+    return M_PI * radius * radius;
+}
+
+int main(void) {
+    double radius;
+    
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    double area = cylinder_surface_area(radius);
+    if (area < 0.0) {
+        fprintf(stderr, "Error: Invalid radius value\n");
+        return 1;
+    }
+    
+    printf("%.6f\n", area);
+    return 0;
+}

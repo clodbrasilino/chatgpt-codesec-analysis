@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:8:6: warning: Either the condition 'sum_even==NULL' is redundant or there is possible null pointer dereference: sum_even. [nullPointerRedundantCheck]
+    *sum_even = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:11:34: note: Assuming that condition 'sum_even==NULL' is not redundant
+    if (list == NULL || sum_even == NULL || sum_odd == NULL) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:8:6: note: Null pointer dereference
+    *sum_even = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:9:6: warning: Either the condition 'sum_odd==NULL' is redundant or there is possible null pointer dereference: sum_odd. [nullPointerRedundantCheck]
+    *sum_odd = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:11:53: note: Assuming that condition 'sum_odd==NULL' is not redundant
+    if (list == NULL || sum_even == NULL || sum_odd == NULL) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:9:6: note: Null pointer dereference
+    *sum_odd = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-881-s3.c:4:21: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+void find_sums(int *list, size_t size, int *sum_even, int *sum_odd) {
+                    ^

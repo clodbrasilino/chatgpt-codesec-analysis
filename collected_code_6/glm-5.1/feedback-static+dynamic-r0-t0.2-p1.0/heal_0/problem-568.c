@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *keys;
+    int *values;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary *items;
+    size_t size;
+    size_t capacity;
+} List;
+
+Dictionary create_dictionary() {
+    Dictionary dict;
+    dict.size = 0;
+    dict.capacity = 4;
+    dict.keys = malloc(dict.capacity * sizeof(int));
+    dict.values = malloc(dict.capacity * sizeof(int));
+    if (dict.keys == NULL || dict.values == NULL) {
+        free(dict.keys);
+        free(dict.values);
+        dict.keys = NULL;
+        dict.values = NULL;
+        dict.capacity = 0;
+    }
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        free(dict->keys);
+        free(dict->values);
+        dict->keys = NULL;
+        dict->values = NULL;
+        dict->size = 0;
+        dict->capacity = 0;
+    }
+}
+
+List create_list(size_t count) {
+    List list;
+    list.size = 0;
+    list.capacity = count > 0 ? count : 4;
+    list.items = malloc(list.capacity * sizeof(Dictionary));
+    if (list.items == NULL) {
+        list.capacity = 0;
+        return list;
+    }
+    for (size_t i = 0; i < count; i++) {
+        Dictionary dict = create_dictionary();
+        if (dict.keys == NULL || dict.values == NULL) {
+            for (size_t j = 0; j < list.size; j++) {
+                free_dictionary(&list.items[j]);
+            }
+            free(list.items);
+            list.items = NULL;
+            list.size = 0;
+            list.capacity = 0;
+            return list;
+        }
+        list.items[list.size] = dict;
+        list.size++;
+    }
+    return list;
+}
+
+void free_list(List *list) {
+    if (list != NULL) {
+        for (size_t i = 0; i < list->size; i++) {
+            free_dictionary(&list->items[i]);
+        }
+        free(list->items);
+        list->items = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+int main() {
+    size_t count = 5;
+    List list = create_list(count);
+    if (list.items == NULL) {
+        return EXIT_FAILURE;
+    }
+    printf("Created list with %zu empty dictionaries\n", list.size);
+    free_list(&list);
+    return EXIT_SUCCESS;
+}

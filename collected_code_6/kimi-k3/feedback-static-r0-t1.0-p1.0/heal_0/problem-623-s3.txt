@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+double *power_elements(const double *list, size_t size, double exponent, size_t *result_size)
+{
+    double *result;
+    size_t i;
+
+    if (result_size == NULL) {
+        return NULL;
+    }
+    *result_size = 0;
+
+    if (list == NULL && size > 0) {
+        return NULL;
+    }
+
+    if (size == 0) {
+        return NULL;
+    }
+
+    if (size > SIZE_MAX / sizeof(double)) {
+        return NULL;
+    }
+
+    result = malloc(size * sizeof(double));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++) {
+        errno = 0;
+        result[i] = pow(list[i], exponent);
+        if (errno == EDOM || errno == ERANGE) {
+            free(result);
+            return NULL;
+        }
+    }
+
+    *result_size = size;
+    return result;
+}
+
+int main(void)
+{
+    double numbers[] = {1.5, 2.0, 3.5, 4.0, 5.25};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    double *powered;
+    size_t result_count;
+    size_t i;
+    double exponent = 3.0;
+
+    powered = power_elements(numbers, count, exponent, &result_count);
+    if (powered == NULL) {
+        fprintf(stderr, "Error: Failed to compute powers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original elements:\n");
+    for (i = 0; i < count; i++) {
+        printf("%.2f ", numbers[i]);
+    }
+    printf("\n");
+
+    printf("Elements raised to power %.2f:\n", exponent);
+    for (i = 0; i < result_count; i++) {
+        printf("%.2f ", powered[i]);
+    }
+    printf("\n");
+
+    free(powered);
+    return EXIT_SUCCESS;
+}
+```

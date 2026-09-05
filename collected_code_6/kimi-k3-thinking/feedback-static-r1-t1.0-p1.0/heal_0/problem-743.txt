@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int rotate_right(int *arr, size_t size, size_t positions)
+{
+    int *temp;
+
+    if (arr == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    positions %= size;
+    if (positions == 0)
+    {
+        return 0;
+    }
+
+    temp = (int *)malloc(positions * sizeof(*temp));
+    if (temp == NULL)
+    {
+        return -1;
+    }
+
+    memcpy(temp, arr + size - positions, positions * sizeof(*temp));
+    memmove(arr + positions, arr, (size - positions) * sizeof(*arr));
+    memcpy(arr, temp, positions * sizeof(*arr));
+
+    free(temp);
+    temp = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    const size_t size = sizeof(arr) / sizeof(arr[0]);
+    const size_t positions = 3;
+    size_t i;
+
+    printf("Original list: ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    if (rotate_right(arr, size, positions) != 0)
+    {
+        fprintf(stderr, "Error: failed to rotate the list.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rotated list:  ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```

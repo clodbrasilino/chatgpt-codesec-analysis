@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_odd_occurrence(const int arr[], size_t size)
+{
+    if (arr == NULL || size == 0) {
+        return INT_MIN;
+    }
+
+    int result = 0;
+    for (size_t i = 0; i < size; i++) {
+        result ^= arr[i];
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 2, 3, 1, 3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_odd_occurrence(arr, size);
+
+    if (result != INT_MIN) {
+        printf("Element occurring odd number of times: %d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

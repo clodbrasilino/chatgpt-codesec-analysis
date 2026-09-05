@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *pairs;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary *dictionary_create(size_t capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->pairs = malloc(capacity * sizeof(KeyValuePair));
+    if (!dict->pairs) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int dictionary_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key || dict->size >= dict->capacity) return 0;
+    dict->pairs[dict->size].key = strdup(key);
+    if (!dict->pairs[dict->size].key) return 0;
+    dict->pairs[dict->size].value = value;
+    dict->size++;
+    return 1;
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->pairs[i].key);
+    }
+    free(dict->pairs);
+    free(dict);
+}
+
+Dictionary *dictionary_filter(Dictionary *dict, int (*predicate)(int)) {
+    if (!dict || !predicate) return NULL;
+    Dictionary *filtered = dictionary_create(dict->capacity);
+    if (!filtered) return NULL;
+    for (size_t i = 0; i < dict->size; i++) {
+        if (predicate(dict->pairs[i].value)) {
+            if (!dictionary_insert(filtered, dict->pairs[i].key, dict->pairs[i].value)) {
+                dictionary_free(filtered);
+                return NULL;
+            }
+        }
+    }
+    return filtered;
+}
+
+int is_greater_than_ten(int value) {
+    return value > 10;
+}
+
+int main(void) {
+    Dictionary *dict = dictionary_create(5);
+    if (!dict) {
+        fprintf(stderr, "Failed to allocate dictionary\n");
+        return 1;
+    }
+
+    if (!dictionary_insert(dict, "apple", 5) ||
+        !dictionary_insert(dict, "banana", 12) ||
+        !dictionary_insert(dict, "cherry", 8) ||
+        !dictionary_insert(dict, "date", 15) ||
+        !dictionary_insert(dict, "elderberry", 3)) {
+        fprintf(stderr, "Failed to insert into dictionary\n");
+        dictionary_free(dict);
+        return 1;
+    }
+
+    Dictionary *filtered = dictionary_filter(dict, is_greater_than_ten);
+    if (!filtered) {
+        fprintf(stderr, "Failed to filter dictionary\n");
+        dictionary_free(dict);
+        return 1;
+    }
+
+    for (size_t i = 0; i < filtered->size; i++) {
+        printf("%s: %d\n", filtered->pairs[i].key, filtered->pairs[i].value);
+    }
+
+    dictionary_free(filtered);
+    dictionary_free(dict);
+    return 0;
+}

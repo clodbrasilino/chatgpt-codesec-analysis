@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_difference(const int *array, size_t size)
+{
+    if (array == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    int min = array[0];
+    int max = array[0];
+
+    for (size_t i = 1; i < size; i++)
+    {
+        if (array[i] < min)
+        {
+            min = array[i];
+        }
+        if (array[i] > max)
+        {
+            max = array[i];
+        }
+    }
+
+    return max - min;
+}
+
+int main(void)
+{
+    int array[] = {12, 45, 2, 67, 23, 89, 5};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    int result = find_difference(array, size);
+
+    if (result >= 0)
+    {
+        printf("Difference: %d\n", result);
+    }
+    else
+    {
+        fprintf(stderr, "Error: Invalid array\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

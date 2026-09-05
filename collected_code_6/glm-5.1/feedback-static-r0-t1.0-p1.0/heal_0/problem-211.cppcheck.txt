@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:4:51: style: Parameter 'array' can be declared as pointer to const [constParameterPointer]
+unsigned int count_0th_nth_bits_set(unsigned int *array, size_t size, unsigned int n) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:14:32: portability: Shifting signed 32-bit value by 31 bits is implementation-defined behaviour. See condition at line 9. [shiftTooManyBitsSigned]
+    unsigned int mask = 1 | (1 << n);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:9:11: note: Assuming that condition 'n>=sizeof(unsigned int)*8' is not redundant
+    if (n >= sizeof(unsigned int) * 8) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:14:32: note: Shift
+    unsigned int mask = 1 | (1 << n);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:14:32: warning: Either the condition 'n>=sizeof(unsigned int)*8' is redundant or there is signed integer overflow for expression '1<<n'. [integerOverflowCond]
+    unsigned int mask = 1 | (1 << n);
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:9:11: note: Assuming that condition 'n>=sizeof(unsigned int)*8' is not redundant
+    if (n >= sizeof(unsigned int) * 8) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-211.c:14:32: note: Integer overflow
+    unsigned int mask = 1 | (1 << n);
+                               ^

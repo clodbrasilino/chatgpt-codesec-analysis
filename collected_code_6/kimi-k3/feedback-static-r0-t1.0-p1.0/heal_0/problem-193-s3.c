@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+int remove_duplicates(Tuple *t) {
+    if (t == NULL || t->data == NULL || t->size == 0) {
+        return -1;
+    }
+
+    size_t unique_count = 1;
+    for (size_t i = 1; i < t->size; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (t->data[i] == t->data[j]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            t->data[unique_count] = t->data[i];
+            unique_count++;
+        }
+    }
+
+    if (unique_count < t->size) {
+        int *new_data = realloc(t->data, unique_count * sizeof(int));
+        if (new_data != NULL) {
+            t->data = new_data;
+        }
+    }
+    t->size = unique_count;
+
+    return 0;
+}
+
+void print_tuple(const Tuple *t) {
+    if (t == NULL || t->data == NULL) {
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->size; i++) {
+        printf("%d", t->data[i]);
+        if (i < t->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    int arr[] = {1, 2, 2, 3, 4, 4, 5, 1};
+    Tuple t = {arr, sizeof(arr) / sizeof(arr[0])};
+
+    printf("Original tuple: ");
+    print_tuple(&t);
+
+    if (remove_duplicates(&t) == 0) {
+        printf("Tuple after removing duplicates: ");
+        print_tuple(&t);
+    } else {
+        printf("Error removing duplicates\n");
+    }
+
+    return 0;
+}

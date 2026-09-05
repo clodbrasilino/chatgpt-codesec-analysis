@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-751-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-751-s2.c:50:20: style: Condition 'is_min_heap(null_array,0)' is always false [knownConditionTrueFalse]
+    if (is_min_heap(null_array, 0)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-751-s2.c:50:20: note: Calling function 'is_min_heap' returns 0
+    if (is_min_heap(null_array, 0)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-751-s2.c:50:20: note: Condition 'is_min_heap(null_array,0)' is always false
+    if (is_min_heap(null_array, 0)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_3/healed/problem-751-s2.c:49:10: style: Variable 'null_array' can be declared as pointer to const [constVariablePointer]
+    int *null_array = NULL;
+         ^

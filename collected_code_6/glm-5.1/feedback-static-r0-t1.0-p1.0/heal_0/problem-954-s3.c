@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* get_profit_amount(double selling_price, double cost_price) {
+    double diff = selling_price - cost_price;
+    if (diff > 0.0) {
+        int* profit = (int*)malloc(sizeof(int));
+        if (profit == NULL) {
+            return NULL;
+        }
+        *profit = (int)diff;
+        return profit;
+    }
+    return NULL;
+}
+
+int main(void) {
+    double cost = 150.0;
+    double sell = 200.0;
+    
+    int* result = get_profit_amount(sell, cost);
+    
+    if (result != NULL) {
+        printf("%d\n", *result);
+        free(result);
+    } else {
+        printf("None\n");
+    }
+    
+    return 0;
+}

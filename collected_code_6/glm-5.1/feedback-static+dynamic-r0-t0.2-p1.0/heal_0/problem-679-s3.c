@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary *dictionary_create(size_t initial_capacity) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = malloc(initial_capacity * sizeof(DictionaryEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+int dictionary_insert(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) return -1;
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictionaryEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictionaryEntry));
+        if (!new_entries) return -1;
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    char *new_key = strdup(key);
+    if (!new_key) return -1;
+    dict->entries[dict->size].key = new_key;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+const char *dictionary_get_key_by_index(const Dictionary *dict, size_t index) {
+    if (!dict) return NULL;
+    if (index >= dict->size) return NULL;
+    return dict->entries[index].key;
+}
+
+int dictionary_get_value_by_index(const Dictionary *dict, size_t index, int *out_value) {
+    if (!dict || !out_value) return -1;
+    if (index >= dict->size) return -1;
+    *out_value = dict->entries[index].value;
+    return 0;
+}
+
+void dictionary_destroy(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int main(void) {
+    Dictionary *dict = dictionary_create(4);
+    if (!dict) {
+        return EXIT_FAILURE;
+    }
+
+    dictionary_insert(dict, "alpha", 1);
+    dictionary_insert(dict, "beta", 2);
+    dictionary_insert(dict, "gamma", 3);
+
+    size_t target_index = 1;
+    const char *key = dictionary_get_key_by_index(dict, target_index);
+    int value;
+    int status = dictionary_get_value_by_index(dict, target_index, &value);
+
+    if (key && status == 0) {
+        printf("Index %zu: Key = %s, Value = %d\n", target_index, key, value);
+    } else {
+        printf("Failed to access index %zu\n", target_index);
+    }
+
+    target_index = 5;
+    key = dictionary_get_key_by_index(dict, target_index);
+    status = dictionary_get_value_by_index(dict, target_index, &value);
+
+    if (key && status == 0) {
+        printf("Index %zu: Key = %s, Value = %d\n", target_index, key, value);
+    } else {
+        printf("Failed to access index %zu\n", target_index);
+    }
+
+    dictionary_destroy(dict);
+
+    return EXIT_SUCCESS;
+}

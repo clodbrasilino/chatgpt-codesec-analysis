@@ -22,24 +22,20 @@ class ClaudeClient:
         reasoning: bool = False,
     ) -> LLMResponse:
         thinking = (self.cfg.reasoning or reasoning) and not self.cfg.disable_thinking
-        # NOTE (2026-08-31): Claude 4.6+ / Sonnet 5 / Opus 5 / Fable 5 use
-        # ADAPTIVE thinking (effort levels) — the manual budget_tokens toggle
-        # below is the legacy API and will need updating once ANTHROPIC_API_KEY
-        # arrives and the current SDK's parameter shape can be verified.
+        # NOTE (2026-09-13, key-time verification DONE): anthropic SDK 1.2.0
+        # REMOVED temperature/top_p from messages.create (Fable 5 = adaptive
+        # thinking, sampling params no longer accepted by the API). Base
+        # cells send no thinking config -> model-default adaptive behavior,
+        # matching the registered base-only entry for claude-fable-5.
         kwargs: dict = {
             "model": self.cfg.model_id,
             "messages": messages,
             "max_tokens": max_tokens,
         }
         if thinking:
-            kwargs["thinking"] = {
-                "type": "enabled",
-                "budget_tokens": min(max_tokens, 4096),
-            }
-        else:
-            kwargs["temperature"] = temperature
-            if top_p is not None:
-                kwargs["top_p"] = top_p
+            budget = min(max_tokens, 4096)
+            if budget >= 1024 and budget < max_tokens:
+                kwargs["thinking"] = {"type": "enabled", "budget_tokens": budget}
 
         def _call():
             return self.client.messages.create(**kwargs)

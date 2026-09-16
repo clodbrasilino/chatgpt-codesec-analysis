@@ -1,11 +1,19 @@
-openai
-tqdm
-scikit-learn
-matplotlib
-cwe2
-pandas
-anthropic
-google-genai
-scipy
-statsmodels
-pyyaml
+# Resolved 2026-09-11. Forward pin -- the cells already in results/ ran
+# 2026-09-01..04 and their versions were not captured.
+
+openai==3.13.0
+anthropic==1.5.0
+google-genai==2.23.0
+replicate==1.0.7
+
+numpy==2.5.3
+pandas==3.0.5
+scipy==1.18.1
+statsmodels==0.15.0
+scikit-learn==1.9.1
+matplotlib==3.11.1
+seaborn==0.13.2
+cwe2==3.0.0
+
+pyyaml==6.0.3
+tqdm==4.70.1

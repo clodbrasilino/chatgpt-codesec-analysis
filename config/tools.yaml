@@ -1,5 +1,8 @@
 # Tool paths and invocation flags for the multi-analyzer gate.
-# Verify with: ls /usr/local/bin/gcc-15 /usr/bin/clang cppcheckpremium/cppcheck /usr/local/bin/flawfinder
+# static.py resolves each tool as $<TOOL>_PATH -> this path (relative = repo
+# root) -> name on $PATH, so these need not match your machine.
+# Cppcheck Premium is commercial and gitignored: set CPPCHECK_PATH or put it in
+# ./cppcheckpremium/. Without it the gate loses ~96% of its findings.
 tools:
   gcc:
     path: /usr/local/bin/gcc-15          # Homebrew gcc (real GCC, needed for -fanalyzer)
@@ -11,7 +14,7 @@ tools:
     analyzer_flags: ["--analyze", "-Xclang", "-analyzer-config", "-Xclang", "crosscheck-with-z3=true", "-w"]
     report_suffix: ".clang.txt"
   cppcheck:
-    path: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/cppcheckpremium/cppcheck  # Cppcheck Premium 23.6.0 (supports --premium=bughunting)
+    path: cppcheckpremium/cppcheck       # repo-relative; override with CPPCHECK_PATH
     analyzer_flags: ["--premium=bughunting", "--enable=warning,style,performance,portability"]
     report_suffix: ".cppcheck.txt"
   flawfinder:
@@ -25,9 +28,11 @@ dynamic:
   timeout_s: 5
   mem_limit_mb: 512
   fuzzer: afl++                    # user decision; libFuzzer fallback available
-  afl_bin: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/build/afl/bin/afl-fuzz
-  afl_cc: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/build/afl/bin/afl-clang-fast
-  afl_lib: /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/build/afl/lib/afl   # AFL_PATH (compiler-rt + passes)
+  # AFL++ 5.02c built locally with TEST_MMAP=1 (architecture.md 7.7); build/ is
+  # gitignored, so these only resolve where --fuzz is actually used.
+  afl_bin: build/afl/bin/afl-fuzz
+  afl_cc: build/afl/bin/afl-clang-fast
+  afl_lib: build/afl/lib/afl       # AFL_PATH (compiler-rt + passes)
   fuzz_budget_s: 60
   seed_corpus_from_tests: true
 

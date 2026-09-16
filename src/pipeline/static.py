@@ -13,18 +13,69 @@ with a warning so the pipeline never hard-fails on tooling.
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
 
 import yaml
 from tqdm import tqdm
 
+REPO_ROOT = str(Path(__file__).resolve().parents[2])
 REPORT_SUFFIX = ".txt"  # appended to tool report suffix per file
 
 
+def _resolve_tool_path(tool: str, configured: str) -> str:
+    """Absolute path for ``tool``, portable across checkouts.
+
+    Resolution order: ``$<TOOL>_PATH`` override, then the configured path with
+    ``~``/``$VAR`` expanded (relative paths resolve against the repo root), then
+    the binary's own name on ``PATH``. The configured paths in tools.yaml are
+    absolute and machine-specific, so without the PATH fallback every analyzer
+    silently skips on any machine but the one that wrote the file.
+    """
+    override = os.getenv(f"{tool.upper()}_PATH")
+    if override:
+        if not os.path.exists(override):
+            print(f"[warn] {tool.upper()}_PATH points at {override}, which does not exist")
+        return override
+    expanded = os.path.expanduser(os.path.expandvars(configured or ""))
+    if expanded and not os.path.isabs(expanded):
+        expanded = os.path.join(REPO_ROOT, expanded)
+    if expanded and os.path.exists(expanded):
+        return expanded
+    if tool == "cppcheck":
+        # Never fall back to PATH here. The configured flags include
+        # --premium=bughunting, which the free Cppcheck rejects; the run would
+        # fail, write no report, and read downstream as "this file is clean" --
+        # silently zeroing the pipeline's dominant detector. Missing is safe
+        # (skipped with a warning); wrong-binary is not.
+        return expanded
+    basename = os.path.basename(expanded) if expanded else tool
+    found = shutil.which(basename)
+    if found:
+        return found
+    if tool == "gcc":
+        # Never fall back to bare "gcc": on macOS /usr/bin/gcc is Apple clang
+        # under a GCC name and silently ignores -fanalyzer, which would turn
+        # the GCC channel into a permanent zero-findings column. Homebrew
+        # installs the real thing as gcc-<major>, so look for that instead.
+        for major in range(20, 10, -1):
+            found = shutil.which(f"gcc-{major}")
+            if found:
+                return found
+        return expanded
+    return shutil.which(tool) or expanded
+
+
 def _load_tools(path: str = "config/tools.yaml") -> dict:
+    if not os.path.isabs(path):
+        path = os.path.join(REPO_ROOT, path)
     with open(path) as f:
-        return yaml.safe_load(f)["tools"]
+        tools = yaml.safe_load(f)["tools"]
+    for name, cfg in tools.items():
+        cfg["path"] = _resolve_tool_path(name, cfg.get("path", ""))
+    return tools
 
 
 def analyze(source_dir: str, tools: list[str] | None = None, compile_gate: bool = True) -> dict:

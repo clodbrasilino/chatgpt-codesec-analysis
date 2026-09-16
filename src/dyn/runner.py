@@ -25,6 +25,7 @@ from tqdm import tqdm
 from ..harness.find_function import detect_input_consumption
 from ..harness.mbpp_loader import SPEC_DIR, HarnessSpec
 from ..harness.run import run_one
+from ..pipeline.static import REPO_ROOT, _resolve_tool_path
 from .fuzzer import fuzz_program
 
 PROBLEM_RE = re.compile(r"^problem-(\d+)(-s(\d+))?$")
@@ -34,8 +35,17 @@ FUZZ_SUFFIX = ".fuzz.txt"
 
 
 def _load_dynamic(path: str = "config/tools.yaml") -> dict:
+    """Dynamic-channel config with AFL++ paths resolved the same way static.py
+    resolves analyzer paths, so a relative build/ path in the YAML works from
+    any working directory and any checkout."""
+    if not os.path.isabs(path):
+        path = os.path.join(REPO_ROOT, path)
     with open(path) as f:
-        return yaml.safe_load(f).get("dynamic", {})
+        cfg = yaml.safe_load(f).get("dynamic", {})
+    for key in ("afl_bin", "afl_cc", "afl_lib"):
+        if cfg.get(key):
+            cfg[key] = _resolve_tool_path(key.upper(), cfg[key])
+    return cfg
 
 
 def _spec_for(task_id: int) -> HarnessSpec | None:

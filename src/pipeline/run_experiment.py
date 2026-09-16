@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import os
 import re
 import shutil
 import sys
@@ -73,6 +74,8 @@ def _load_tasks() -> list[dict]:
 def _run_analyze(source_dir: Path, measure: str, model_id: str, fuzz: bool = False) -> None:
     if any(s in ci.STATIC_SUFFIXES for s in ci.CHANNEL_SUFFIXES.get(measure, [])):
         tools = ["gcc", "clang", "cppcheck", "flawfinder"]
+        skip = {t.strip() for t in os.getenv("SKIP_TOOLS", "").split(",") if t.strip()}
+        tools = [t for t in tools if t not in skip]
         st.analyze(str(source_dir), tools=tools, compile_gate=True)
     if "dynamic" in measure:
         _run_dynamic(source_dir, model_id, fuzz=fuzz)

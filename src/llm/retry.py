@@ -77,13 +77,41 @@ def retry_call(
         sem.release(provider)
 
 
+# Account-state conditions no retry can clear. Kept narrow on purpose: broader
+# words like "billing" or "per day" also occur in transient messages (a 429
+# linking to a billing page, a 503 "billing service temporarily unavailable").
+_FATAL_TOKENS = (
+    "arrearage",
+    "insufficient_quota",
+    "insufficient balance",
+    "insufficient_balance",
+    "account is in arrears",
+    "overdue payment",
+    "api key not valid",
+    "api_key_invalid",
+    "invalid_api_key",
+)
+
+
+def _is_fatal(ex: Exception) -> bool:
+    """True only for provider-side conditions no retry can clear."""
+
+    if isinstance(ex, OSError):
+        return False
+    msg = str(ex).lower()
+    return any(token in msg for token in _FATAL_TOKENS)
+
+
 def _is_transient(ex: Exception) -> bool:
     msg = str(ex).lower()
     status = getattr(ex, "status_code", None) or getattr(ex, "code", None)
-    if status in (429, 500, 502, 503, 504):
+    # Status first: a real 5xx is transient whatever its body happens to say.
+    if isinstance(status, int) and status >= 500:
         return True
-    if status is not None and isinstance(status, int):
-        return status >= 500
+    if _is_fatal(ex):
+        return False
+    if status == 429:
+        return True
     return any(
         token in msg
         for token in (

@@ -16,6 +16,7 @@ from tqdm import tqdm
 
 from src.llm.client import user_message
 from src.llm.registry import ModelConfig, get_client
+from src.llm.retry import _is_fatal
 from src.llm.parse import sanitize_llm_output
 from src.pipeline.usage_ledger import log_call
 
@@ -172,7 +173,13 @@ def run_batch(
 
 def _safe(fn, *args, max_attempts: int = 5):
     """Retry wrapper. Deterministic failures (TypeError etc.) must not hang
-    the pipeline forever: give up after ``max_attempts`` and re-raise."""
+    the pipeline forever: give up after ``max_attempts`` and re-raise.
+
+    Billing/auth/daily-quota failures are re-raised on the first attempt. They
+    never clear on their own, they apply to every remaining task in the cell,
+    and each attempt still counts against the same exhausted allowance — so
+    retrying them just converts a whole cell into ``heal_failed`` outcomes
+    while the operator sleeps."""
     last_ex: BaseException | None = None
     for attempt in range(1, max_attempts + 1):
         try:
@@ -180,6 +187,9 @@ def _safe(fn, *args, max_attempts: int = 5):
         except KeyboardInterrupt:
             raise
         except BaseException as ex:  # noqa: BLE001
+            if _is_fatal(ex):
+                print(f"fatal (not retrying): {ex}")
+                raise
             last_ex = ex
             traceback.print_exc()
             print(

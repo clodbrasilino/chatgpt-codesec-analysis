@@ -1,5 +1,19 @@
-"""Google Gemini adapter with thinking support (google-genai SDK)."""
+"""Google Gemini adapter with thinking support (google-genai SDK).
+
+Two serving surfaces, selected by environment:
+
+* Vertex AI (Agent Platform) when ``GEMINI_USE_VERTEX=1`` and
+  ``GOOGLE_CLOUD_PROJECT`` are both set. Authenticates
+  with Application Default Credentials (``gcloud auth application-default
+  login``) and bills the project's Cloud billing account, so Google Cloud
+  credits apply. There is no fixed requests-per-day cap here.
+* Gemini Developer API (AI Studio) otherwise, via ``GEMINI_API_KEY``. Cloud
+  credits do NOT pay for this surface, and Tier-1 projects are capped at a few
+  hundred requests per day.
+"""
 from __future__ import annotations
+
+import os
 
 from google import genai
 from google.genai import types as genai_types
@@ -11,7 +25,19 @@ from .retry import retry_call
 class GeminiClient:
     def __init__(self, cfg) -> None:
         self.cfg = cfg
-        self.client = genai.Client(api_key=cfg.api_key)
+        # Explicit opt-in: gcloud and GCE/Cloud Run metadata set
+        # GOOGLE_CLOUD_PROJECT on their own, so it alone must not reroute a sweep.
+        project = os.getenv("GOOGLE_CLOUD_PROJECT")
+        if project and os.getenv("GEMINI_USE_VERTEX", "").lower() in ("1", "true", "yes"):
+            self.surface = "vertex"
+            self.client = genai.Client(
+                vertexai=True,
+                project=project,
+                location=os.getenv("GOOGLE_CLOUD_LOCATION", "global"),
+            )
+        else:
+            self.surface = "aistudio"
+            self.client = genai.Client(api_key=cfg.api_key)
 
     def complete(
         self,
@@ -56,25 +82,34 @@ class GeminiClient:
         text = resp.text or ""
         reasoning = None
         # Thinking traces are exposed in thought parts when include_thoughts=True.
-        if resp.candidates:
-            parts = resp.candidates[0].content.parts
-            thought_texts = [p.thought for p in parts if getattr(p, "thought", None)]
+        if resp.candidates and resp.candidates[0].content:
+            parts = resp.candidates[0].content.parts or []
+            # Part.thought is a bool flag; the trace is in Part.text.
+            thought_texts = [p.text for p in parts if getattr(p, "thought", False) and p.text]
             if thought_texts:
                 reasoning = "\n".join(thought_texts)
         usage = {}
         if resp.usage_metadata:
+            um = resp.usage_metadata
+            prompt_tokens = um.prompt_token_count or 0
+            candidates = um.candidates_token_count or 0
+            # Thinking is billed as output. Vertex excludes it from
+            # candidates_token_count; the Developer API already includes it.
+            thoughts = getattr(um, "thoughts_token_count", 0) or 0
+            completion = candidates + thoughts if self.surface == "vertex" else candidates
             usage = {
-                "prompt_tokens": resp.usage_metadata.prompt_token_count,
-                "completion_tokens": resp.usage_metadata.candidates_token_count,
-                "total_tokens": (
-                    resp.usage_metadata.prompt_token_count
-                    + resp.usage_metadata.candidates_token_count
-                ),
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion,
+                "reasoning_tokens": thoughts,
+                # SDK total also covers cached and tool-use tokens.
+                "total_tokens": um.total_token_count or (prompt_tokens + completion),
+                "surface": self.surface,
             }
         return LLMResponse(
             text=text,
             reasoning=reasoning,
-            model=self.cfg.model_id,
+            # Surface distinguishes the arms: same weights, different serving.
+            model=f"{self.cfg.model_id}@{self.surface}",
             usage=usage,
             raw=resp.model_dump(),
         )

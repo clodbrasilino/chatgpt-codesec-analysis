@@ -7,12 +7,17 @@ Runs, for every ``.c`` in a directory:
 - Flawfinder                  -> .flawfinder.txt
 - compile gate (GCC ``-c``)   -> .o  (records compilability)
 
+Clang plist files are kept under reports/clang/, using the source path below
+the repository root. Sources outside the repository use a stable hashed folder
+so files with the same name do not overwrite one another.
+
 Tool paths/flags come from config/tools.yaml. Any missing tool is skipped
 with a warning so the pipeline never hard-fails on tooling.
 """
 from __future__ import annotations
 
 import os
+import hashlib
 import shutil
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -120,6 +125,17 @@ def _run_one(src: str, tool: str, cfg: dict) -> str | None:
     out = src[:-2] + cfg["report_suffix"]
     cmd = [path] + flags + [src]
     try:
+        if tool == "clang":
+            source = Path(src).resolve()
+            root = Path(REPO_ROOT).resolve()
+            try:
+                relative = source.relative_to(root)
+            except ValueError:
+                folder = hashlib.sha256(str(source.parent).encode()).hexdigest()[:16]
+                relative = Path("external") / folder / source.name
+            plist = root / "reports" / "clang" / relative.with_suffix(".plist")
+            plist.parent.mkdir(parents=True, exist_ok=True)
+            cmd.extend(["-o", str(plist)])
         with open(out, "w") as f:
             subprocess.run(
                 cmd, stdout=f, stderr=subprocess.STDOUT, timeout=120, check=False

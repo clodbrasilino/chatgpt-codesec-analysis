@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long get_lucid_number(long long n);
+
+long long get_lucid_number(long long n) {
+    long long prev;
+    long long curr;
+    long long next;
+
+    if (n < 1) {
+        return -1;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    if (n == 2) {
+        return 2;
+    }
+
+    prev = 1;
+    curr = 3;
+    next = prev + curr;
+
+    while (curr <= n) {
+        if (next > n) {
+            return curr;
+        }
+        prev = curr;
+        curr = next;
+        next = prev + curr;
+    }
+
+    return curr;
+}
+
+int main(void) {
+    long long n = 20;
+    long long result = get_lucid_number(n);
+
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

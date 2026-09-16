@@ -1,0 +1,194 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING,
+    TYPE_DICT
+} TupleElementType;
+
+typedef struct {
+    TupleElementType type;
+    union {
+        int i_val;
+        char *s_val;
+        Dictionary *d_val;
+    } data;
+} TupleElement;
+
+typedef struct {
+    TupleElement *elements;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+Dictionary* create_dictionary(void) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->size = 0;
+    dict->capacity = 4;
+    dict->items = malloc(dict->capacity * sizeof(DictItem));
+    if (!dict->items) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+int add_dict_item(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return -1;
+    if (dict->size == dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictItem *new_items = realloc(dict->items, new_capacity * sizeof(DictItem));
+        if (!new_items) return -1;
+        dict->items = new_items;
+        dict->capacity = new_capacity;
+    }
+    
+    char *k_copy = strdup(key);
+    if (!k_copy) return -1;
+    char *v_copy = strdup(value);
+    if (!v_copy) {
+        free(k_copy);
+        return -1;
+    }
+    
+    dict->items[dict->size].key = k_copy;
+    dict->items[dict->size].value = v_copy;
+    dict->size++;
+    return 0;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+Tuple* create_tuple(void) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    tuple->size = 0;
+    tuple->capacity = 4;
+    tuple->elements = malloc(tuple->capacity * sizeof(TupleElement));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    return tuple;
+}
+
+int add_dict_to_tuple(Tuple *tuple, Dictionary *dict) {
+    if (!tuple || !dict) return -1;
+    if (tuple->size == tuple->capacity) {
+        size_t new_capacity = tuple->capacity * 2;
+        TupleElement *new_elements = realloc(tuple->elements, new_capacity * sizeof(TupleElement));
+        if (!new_elements) return -1;
+        tuple->elements = new_elements;
+        tuple->capacity = new_capacity;
+    }
+    
+    tuple->elements[tuple->size].type = TYPE_DICT;
+    tuple->elements[tuple->size].data.d_val = dict;
+    tuple->size++;
+    return 0;
+}
+
+int add_int_to_tuple(Tuple *tuple, int val) {
+    if (!tuple) return -1;
+    if (tuple->size == tuple->capacity) {
+        size_t new_capacity = tuple->capacity * 2;
+        TupleElement *new_elements = realloc(tuple->elements, new_capacity * sizeof(TupleElement));
+        if (!new_elements) return -1;
+        tuple->elements = new_elements;
+        tuple->capacity = new_capacity;
+    }
+    
+    tuple->elements[tuple->size].type = TYPE_INT;
+    tuple->elements[tuple->size].data.i_val = val;
+    tuple->size++;
+    return 0;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (!tuple) return;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i].type == TYPE_DICT) {
+            free_dictionary(tuple->elements[i].data.d_val);
+        } else if (tuple->elements[i].type == TYPE_STRING) {
+            free(tuple->elements[i].data.s_val);
+        }
+    }
+    free(tuple->elements);
+    free(tuple);
+}
+
+int main(void) {
+    Tuple *tuple = create_tuple();
+    if (!tuple) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return 1;
+    }
+    
+    Dictionary *dict = create_dictionary();
+    if (!dict) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        free_tuple(tuple);
+        return 1;
+    }
+    
+    if (add_dict_item(dict, "key1", "value1") != 0 ||
+        add_dict_item(dict, "key2", "value2") != 0) {
+        fprintf(stderr, "Failed to add items to dictionary\n");
+        free_dictionary(dict);
+        free_tuple(tuple);
+        return 1;
+    }
+    
+    if (add_dict_to_tuple(tuple, dict) != 0) {
+        fprintf(stderr, "Failed to add dictionary to tuple\n");
+        free_dictionary(dict);
+        free_tuple(tuple);
+        return 1;
+    }
+
+    if (add_int_to_tuple(tuple, 42) != 0) {
+        fprintf(stderr, "Failed to add int to tuple\n");
+        free_tuple(tuple);
+        return 1;
+    }
+    
+    printf("Tuple size: %zu\n", tuple->size);
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i].type == TYPE_DICT) {
+            Dictionary *d = tuple->elements[i].data.d_val;
+            printf("Dictionary items:\n");
+            for (size_t j = 0; j < d->size; j++) {
+                printf("  %s: %s\n", d->items[j].key, d->items[j].value);
+            }
+        } else if (tuple->elements[i].type == TYPE_INT) {
+            printf("Int item: %d\n", tuple->elements[i].data.i_val);
+        }
+    }
+    
+    free_tuple(tuple);
+    return 0;
+}
+```

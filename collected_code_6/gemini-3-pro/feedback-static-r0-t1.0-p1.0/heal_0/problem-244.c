@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long find_next_perfect_square(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    long long root = (long long)floor(sqrt((double)n));
+    long long next_root = root + 1;
+    
+    if (next_root > LLONG_MAX / next_root) {
+        return -1;
+    }
+    
+    return next_root * next_root;
+}
+
+int main() {
+    long long input = 144;
+    long long result = find_next_perfect_square(input);
+    
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        printf("Overflow error\n");
+    }
+    
+    return 0;
+}

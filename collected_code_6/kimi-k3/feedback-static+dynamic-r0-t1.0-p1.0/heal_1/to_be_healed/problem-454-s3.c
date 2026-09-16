@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int match_word_with_z(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+    
+    size_t start = 0;
+    /* Possible weaknesses found:
+     *  Variable 'end' is assigned a value that is never used. [unreadVariable]
+     *  The scope of the variable 'end' can be reduced. [variableScope]
+     */
+    size_t end = 0;
+    
+    while (start < len) {
+        while (start < len && !isalpha((unsigned char)str[start])) {
+            start++;
+        }
+        
+        if (start >= len) {
+            break;
+        }
+        
+        end = start;
+        int has_z = 0;
+        
+        while (end < len && isalpha((unsigned char)str[end])) {
+            if (str[end] == 'z' || str[end] == 'Z') {
+                has_z = 1;
+            }
+            end++;
+        }
+        
+        if (has_z) {
+            return 1;
+        }
+        
+        start = end;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    char buffer[256];
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+    
+    if (match_word_with_z(buffer)) {
+        printf("Match found\n");
+    } else {
+        printf("No match\n");
+    }
+    
+    return 0;
+}

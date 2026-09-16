@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int third_angle(double angle1, double angle2, double *result)
+{
+    if (angle1 <= 0.0 || angle2 <= 0.0) {
+        return -1;
+    }
+    if ((angle1 + angle2) >= 180.0) {
+        return -1;
+    }
+    *result = 180.0 - (angle1 + angle2);
+    return 0;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+
+    printf("Enter the first angle: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for first angle.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the second angle: ");
+    if (scanf("%lf", &b) != 1) {
+        fprintf(stderr, "Invalid input for second angle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (third_angle(a, b, &c) != 0) {
+        fprintf(stderr, "Invalid angles: each must be positive and their sum less than 180.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The third angle is: %.2f\n", c);
+    return EXIT_SUCCESS;
+}
+```

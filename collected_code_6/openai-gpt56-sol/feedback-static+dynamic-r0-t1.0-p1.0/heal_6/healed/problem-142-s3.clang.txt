@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-142-s3.c:107:53: error: too many arguments to function call, expected 2, have 3
+  107 |                 compare_pairs(&list3[k], &list2[j], &list3[k]) <= 0) {
+      |                 ~~~~~~~~~~~~~                       ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-142-s3.c:10:12: note: 'compare_pairs' declared here
+   10 | static int compare_pairs(const void *left, const void *right)
+      |            ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.

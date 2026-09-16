@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_DIGITS 100
+
+typedef struct {
+    int digits[MAX_DIGITS];
+    int length;
+} BigInt;
+
+BigInt init_bigint(int val) {
+    BigInt b;
+    memset(b.digits, 0, sizeof(b.digits));
+    b.length = 0;
+    if (val == 0) {
+        b.length = 1;
+    } else {
+        while (val > 0) {
+            b.digits[b.length++] = val % 10;
+            val /= 10;
+        }
+    }
+    return b;
+}
+
+BigInt add_bigint(BigInt a, BigInt b) {
+    BigInt c;
+    memset(c.digits, 0, sizeof(c.digits));
+    int carry = 0;
+    int max_len = a.length > b.length ? a.length : b.length;
+    
+    for (int i = 0; i < max_len; i++) {
+        int sum = a.digits[i] + b.digits[i] + carry;
+        c.digits[i] = sum % 10;
+        carry = sum / 10;
+    }
+    c.length = max_len;
+    while (carry > 0) {
+        c.digits[c.length++] = carry % 10;
+        carry /= 10;
+    }
+    return c;
+}
+
+void print_bigint(BigInt b) {
+    if (b.length == 0) {
+        printf("0");
+    }
+    for (int i = b.length - 1; i >= 0; i--) {
+        printf("%d", b.digits[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+
+    if (n < 0 || n > 50) { 
+        return 1;
+    }
+
+    if (n == 0 || n == 1) {
+        printf("1\n");
+        return 0;
+    }
+
+    BigInt **bell = (BigInt **)malloc((n + 1) * sizeof(BigInt *));
+    if (bell == NULL) return 1;
+
+    for (int i = 0; i <= n; i++) {
+        bell[i] = (BigInt *)malloc((n + 1) * sizeof(BigInt));
+        if (bell[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(bell[j]);
+            }
+            free(bell);
+            return 1;
+        }
+    }
+
+    bell[0][0] = init_bigint(1);
+    
+    for (int i = 1; i <= n; i++) {
+        bell[i][0] = bell[i - 1][i - 1];
+        for (int j = 1; j <= i; j++) {
+            bell[i][j] = add_bigint(bell[i - 1][j - 1], bell[i][j - 1]);
+        }
+    }
+
+    print_bigint(bell[n][0]);
+
+    for (int i = 0; i <= n; i++) {
+        free(bell[i]);
+    }
+    free(bell);
+
+    return 0;
+}

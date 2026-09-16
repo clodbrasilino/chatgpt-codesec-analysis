@@ -1,59 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct ListNode {
+typedef struct Node {
     int value;
-    struct ListNode *next;
-} ListNode;
+    struct Node *next;
+} Node;
 
-ListNode* createNode(int value) {
-    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-    if (newNode == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
-    }
-    newNode->value = value;
-    newNode->next = NULL;
-    return newNode;
+int list_sum(Node *head) {
+    if (head == NULL) return 0;
+    return head->value + list_sum(head->next);
 }
 
-void insertAtEnd(ListNode **head, int value) {
-    ListNode *newNode = createNode(value);
-    if (*head == NULL) {
-        *head = newNode;
-        return;
-    }
-    ListNode *current = *head;
-    while (current->next != NULL) {
-        current = current->next;
-    }
-    current->next = newNode;
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
 }
 
-int listSumRecursive(ListNode *head) {
-    if (head == NULL) {
-        return 0;
-    }
-    return head->value + listSumRecursive(head->next);
-}
-
-int main() {
-    ListNode *head = NULL;
-    insertAtEnd(&head, 1);
-    insertAtEnd(&head, 2);
-    insertAtEnd(&head, 3);
-    insertAtEnd(&head, 4);
-    insertAtEnd(&head, 5);
-
-    int sum = listSumRecursive(head);
-    printf("Sum of list: %d\n", sum);
-
-    // Free the allocated memory
+void free_list(Node *head) {
     while (head != NULL) {
-        ListNode *temp = head;
+        Node *temp = head;
         head = head->next;
         free(temp);
     }
+}
+
+int main() {
+    Node *head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+
+    printf("List sum: %d\n", list_sum(head));
+
+    free_list(head);
 
     return 0;
 }

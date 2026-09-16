@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double findMinValue(double a, double b)
+{
+    return -sqrt((a * a) + (b * b));
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double result = 0.0;
+
+    printf("Enter coefficients a and b for f(x) = a*sin(x) + b*cos(x): ");
+
+    if (scanf("%lf %lf", &a, &b) != 2)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(a) || !isfinite(b))
+    {
+        fprintf(stderr, "Error: input values must be finite numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = findMinValue(a, b);
+
+    if (!isfinite(result))
+    {
+        fprintf(stderr, "Error: computation overflowed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum possible value of f(x) = %.6f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+The periodic function `f(x) = a*sin(x) + b*cos(x)` can be rewritten as `R*sin(x + φ)` where `R = sqrt(a² + b²)`. Since `sin` oscillates between -1 and 1, the minimum possible value of the function is `-sqrt(a² + b²)`.
+
+**Safety considerations addressed:**
+
+- **CWE-703**: The return value of `scanf` is checked, inputs are validated with `isfinite`, and the computed result is verified before printing.
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there is no lifetime mismanagement; all variables are initialized before use.
+- **CWE-710**: The code uses `int main(void)`, returns standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`), avoids implicit conversions, and diagnostics are written to `stderr`.
+
+**Example run:**
+
+```
+Enter coefficients a and b for f(x) = a*sin(x) + b*cos(x): 3 4
+Minimum possible value of f(x) = -5.000000
+```

@@ -1,0 +1,22 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long calculate_xor_sum(int *array, int size) {
+    long long sum = 0;
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            sum += (long long)array[i] ^ array[j];
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4};
+    int size = sizeof(array) / sizeof(array[0]);
+    long long result = calculate_xor_sum(array, size);
+    printf("The sum of xor of all pairs is: %lld\n", result);
+    return 0;
+}
+```

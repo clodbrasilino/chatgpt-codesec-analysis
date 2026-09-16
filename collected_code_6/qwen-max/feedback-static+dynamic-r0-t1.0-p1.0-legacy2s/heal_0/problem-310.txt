@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int length;
+    char *str;
+} StringTuple;
+
+StringTuple* convertToTuple(const char *input) {
+    StringTuple *tuple = (StringTuple*)malloc(sizeof(StringTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->length = strlen(input);
+    tuple->str = (char*)malloc((tuple->length + 1) * sizeof(char));
+    if (tuple->str == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    strcpy(tuple->str, input);
+    return tuple;
+}
+
+void freeTuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        if (tuple->str != NULL) {
+            free(tuple->str);
+        }
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *input = "Hello, World!";
+    StringTuple *result = convertToTuple(input);
+    if (result != NULL) {
+        printf("(%d, %s)\n", result->length, result->str);
+        freeTuple(result);
+    } else {
+        printf("Failed to allocate memory.\n");
+    }
+    return 0;
+}
+```

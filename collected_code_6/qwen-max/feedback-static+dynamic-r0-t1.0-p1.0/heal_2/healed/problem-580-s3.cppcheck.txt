@@ -1,0 +1,40 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:73:21: error: Memory leak: t1 [memleak]
+    if (t2 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:79:21: error: Memory leak: t1 [memleak]
+    if (t3 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:79:21: error: Memory leak: t2 [memleak]
+    if (t3 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:85:21: error: Memory leak: t1 [memleak]
+    if (t4 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:85:21: error: Memory leak: t2 [memleak]
+    if (t4 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:85:21: error: Memory leak: t3 [memleak]
+    if (t4 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:91:21: error: Memory leak: t2 [memleak]
+    if (t5 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:91:21: error: Memory leak: t3 [memleak]
+    if (t5 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:91:21: error: Memory leak: t4 [memleak]
+    if (t5 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:97:21: error: Memory leak: t3 [memleak]
+    if (t6 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:97:21: error: Memory leak: t4 [memleak]
+    if (t6 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:97:21: error: Memory leak: t5 [memleak]
+    if (t6 == NULL) return 1;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-580-s3.c:27:17: style: Variable 'current' is assigned a value that is never used. [unreadVariable]
+        current = head;
+                ^

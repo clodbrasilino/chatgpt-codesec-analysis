@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int count_negatives(const int *list, size_t size)
+{
+    if (list == NULL) {
+        return -1;
+    }
+    
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] < 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void)
+{
+    int numbers[] = {5, -3, 0, -7, 12, -1, 8, -4};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    int result = count_negatives(numbers, size);
+    
+    if (result < 0) {
+        fprintf(stderr, "Error: Invalid input to count_negatives\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Number of negative numbers: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool starts_and_ends_with_same_char(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    regex_t regex;
+    int ret;
+    bool result = false;
+
+    ret = regcomp(&regex, "^(.).*\\1$", REG_EXTENDED);
+    if (ret != 0) {
+        return false;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if (ret == 0) {
+        result = true;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "helloh";
+    const char *test2 = "world";
+    const char *test3 = "a";
+    const char *test4 = "";
+
+    printf("\"%s\": %s\n", test1, starts_and_ends_with_same_char(test1) ? "true" : "false");
+    printf("\"%s\": %s\n", test2, starts_and_ends_with_same_char(test2) ? "true" : "false");
+    printf("\"%s\": %s\n", test3, starts_and_ends_with_same_char(test3) ? "true" : "false");
+    printf("\"%s\": %s\n", test4, starts_and_ends_with_same_char(test4) ? "true" : "false");
+
+    return 0;
+}
+```

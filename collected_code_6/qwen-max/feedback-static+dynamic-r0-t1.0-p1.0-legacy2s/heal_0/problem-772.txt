@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* removeWordsOfLengthK(char *sentence, int k) {
+    int sentenceLen = strlen(sentence);
+    char *result = (char*)malloc(sentenceLen + 1);
+    if (!result) return NULL;
+    int j = 0;
+    int i = 0;
+
+    while (i < sentenceLen) {
+        int startWord = i;
+        while (i < sentenceLen && sentence[i] != ' ') {
+            i++;
+        }
+        int wordLen = i - startWord;
+        if (wordLen != k) {
+            for (int l = startWord; l < i; l++) {
+                result[j++] = sentence[l];
+            }
+        }
+        if (i < sentenceLen) {
+            result[j++] = sentence[i];
+        }
+        i++;
+    }
+    result[j] = '\0';
+    return result;
+}
+
+int main() {
+    char sentence[] = "This is a test string to demonstrate";
+    int k = 2;
+    char *filtered = removeWordsOfLengthK(sentence, k);
+    if (filtered) {
+        printf("%s\n", filtered);
+        free(filtered);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+    return 0;
+}
+```

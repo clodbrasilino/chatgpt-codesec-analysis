@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int find_parity(unsigned int n)
+{
+    unsigned int parity = 0U;
+
+    while (n != 0U) {
+        parity ^= (n & 1U);
+        n >>= 1U;
+    }
+
+    return parity;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    result = scanf("%u", &number);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_parity(number) == 1U) {
+        printf("The parity of %u is odd.\n", number);
+    } else {
+        printf("The parity of %u is even.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution computes parity by XOR-ing the least significant bit while shifting right, uses `unsigned int` to avoid undefined behavior with negative shifts, validates the `scanf` return value to handle exceptional input conditions, and adheres to standard coding practices with explicit return statuses via `EXIT_SUCCESS` and `EXIT_FAILURE`.

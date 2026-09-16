@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_cube_sum(unsigned int n) {
+    unsigned long long sum_n = ((unsigned long long)n * (n + 1)) / 2;
+    return sum_n * sum_n;
+}
+
+int main(void) {
+    int input;
+    unsigned int n;
+    unsigned long long result;
+
+    if (scanf("%d", &input) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0 || input > 65535) {
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)input;
+    result = calculate_cube_sum(n);
+
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

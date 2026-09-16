@@ -1,55 +1,87 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-    int key;
+typedef struct Node {
+    char *key;
     void *value;
-} DictionaryEntry;
+    struct Node *next;
+} Node;
 
 typedef struct Dictionary {
-    DictionaryEntry *entries;
+    Node **buckets;
     int size;
-    int capacity;
 } Dictionary;
 
-int get_depth(Dictionary *dict) {
-    int max_depth = 1, current_depth;
+Dictionary *create_dictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->size = size;
+    dict->buckets = (Node **)calloc(size, sizeof(Node *));
+    return dict;
+}
+
+void free_node(Node *node) {
+    if (node == NULL) return;
+    free(node->key);
+    free_node(node->next);
+    free(node);
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) return;
     for (int i = 0; i < dict->size; ++i) {
-        if (dict->entries[i].value != NULL && *((Dictionary**)dict->entries[i].value) != NULL) {
-            current_depth = 1 + get_depth(*((Dictionary**)dict->entries[i].value));
-            if (current_depth > max_depth) {
-                max_depth = current_depth;
-            }
+        free_node(dict->buckets[i]);
+    }
+    free(dict->buckets);
+    free(dict);
+}
+
+int dictionary_depth(Dictionary *dict, Node *node) {
+    if (node == NULL) return 0;
+    int max_depth = 0;
+    while (node != NULL) {
+        int current_depth = 1 + dictionary_depth(dict, node->next);
+        if (current_depth > max_depth) {
+            max_depth = current_depth;
+        }
+        node = node->next;
+    }
+    return max_depth;
+}
+
+int get_dictionary_depth(Dictionary *dict) {
+    if (dict == NULL) return 0;
+    int max_depth = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        int current_depth = dictionary_depth(dict, dict->buckets[i]);
+        if (current_depth > max_depth) {
+            max_depth = current_depth;
         }
     }
     return max_depth;
 }
 
 int main() {
-    Dictionary *main_dict = (Dictionary*)malloc(sizeof(Dictionary));
-    main_dict->capacity = 2;
-    main_dict->size = 2;
-    main_dict->entries = (DictionaryEntry*)malloc(main_dict->capacity * sizeof(DictionaryEntry));
+    Dictionary *dict = create_dictionary(10);
+    Node *node1 = (Node *)malloc(sizeof(Node));
+    node1->key = strdup("key1");
+    node1->value = NULL;
+    node1->next = NULL;
+    
+    Node *node2 = (Node *)malloc(sizeof(Node));
+    node2->key = strdup("key2");
+    node2->value = NULL;
+    node2->next = node1;
+    
+    Node *node3 = (Node *)malloc(sizeof(Node));
+    node3->key = strdup("key3");
+    node3->value = NULL;
+    node3->next = node2;
+    
+    dict->buckets[0] = node3;
+    
+    int depth = get_dictionary_depth(dict);
+    printf("Depth: %d\n", depth);
 
-    Dictionary *sub_dict = (Dictionary*)malloc(sizeof(Dictionary));
-    sub_dict->capacity = 1;
-    sub_dict->size = 1;
-    sub_dict->entries = (DictionaryEntry*)malloc(sub_dict->capacity * sizeof(DictionaryEntry));
-
-    sub_dict->entries[0].key = 1;
-    sub_dict->entries[0].value = NULL;
-
-    main_dict->entries[0].key = 1;
-    main_dict->entries[0].value = sub_dict;
-    main_dict->entries[1].key = 2;
-    main_dict->entries[1].value = NULL;
-
-    printf("Depth: %d\n", get_depth(main_dict));
-
-    free(sub_dict->entries);
-    free(sub_dict);
-    free(main_dict->entries);
-    free(main_dict);
-
+    free_dictionary(dict);
     return 0;
 }

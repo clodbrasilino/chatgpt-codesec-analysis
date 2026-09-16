@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define TAG_INT 1
+#define TAG_FLOAT 2
+
+typedef struct Node {
+    int tag;
+    union {
+        int int_val;
+        float float_val;
+    } data;
+    struct Node *next;
+} Node;
+
+Node *create_int_node(int val, Node *next) {
+    Node *n = malloc(sizeof(Node));
+    if (n == NULL) exit(EXIT_FAILURE);
+    n->tag = TAG_INT;
+    n->data.int_val = val;
+    n->next = next;
+    return n;
+}
+
+Node *create_float_node(float val, Node *next) {
+    Node *n = malloc(sizeof(Node));
+    if (n == NULL) exit(EXIT_FAILURE);
+    n->tag = TAG_FLOAT;
+    n->data.float_val = val;
+    n->next = next;
+    return n;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+double find_max(Node *head, int *success) {
+    double max_val = -1.0;
+    *success = 0;
+
+    if (head == NULL) {
+        return max_val;
+    }
+
+    Node *current = head;
+    while (current != NULL) {
+        if (current->tag == TAG_INT) {
+            if (!(*success) || current->data.int_val > max_val) {
+                max_val = current->data.int_val;
+                *success = 1;
+            }
+        } else if (current->tag == TAG_FLOAT) {
+            if (!(*success) || current->data.float_val > max_val) {
+                max_val = current->data.float_val;
+                *success = 1;
+            }
+        }
+        current = current->next;
+    }
+
+    return max_val;
+}
+
+int main(void) {
+    Node *list = create_int_node(10, create_float_node(25.5f, create_int_node(-5, NULL)));
+    
+    int success;
+    double max_val = find_max(list, &success);
+    
+    if (success) {
+        printf("Maximum value: %f\n", max_val);
+    } else {
+        printf("List is empty or contains no valid elements.\n");
+    }
+    
+    free_list(list);
+    
+    return 0;
+}

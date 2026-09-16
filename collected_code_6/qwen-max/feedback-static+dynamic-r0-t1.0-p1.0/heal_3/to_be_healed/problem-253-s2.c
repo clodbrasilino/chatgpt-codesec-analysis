@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 3, got <no output>
+  */
+
+size_t count_integers(const int *list, size_t length) {
+    if (list == NULL || length == 0) return 0;
+    size_t count = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (list[i] == (int)list[i]) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t count = count_integers(numbers, sizeof(numbers) / sizeof(numbers[0]));
+    printf("Number of integers: %zu\n", count);
+    return 0;
+}

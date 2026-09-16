@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+int append_node(Node **head, int data)
+{
+    Node *new_node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+void replace_last_with_list(Node **head, Node *replacement)
+{
+    Node *current;
+
+    if (head == NULL) {
+        return;
+    }
+
+    if (*head == NULL) {
+        *head = replacement;
+        return;
+    }
+
+    if ((*head)->next == NULL) {
+        free(*head);
+        *head = replacement;
+        return;
+    }
+
+    current = *head;
+    while (current->next->next != NULL) {
+        current = current->next;
+    }
+    free(current->next);
+    current->next = replacement;
+}
+
+void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void)
+{
+    Node *list = NULL;
+    Node *replacement = NULL;
+    int values1[] = {1, 2, 3, 4, 5};
+    int values2[] = {10, 20, 30};
+    size_t i;
+
+    for (i = 0; i < sizeof(values1) / sizeof(values1[0]); i++) {
+        if (append_node(&list, values1[i]) != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (i = 0; i < sizeof(values2) / sizeof(values2[0]); i++) {
+        if (append_node(&replacement, values2[i]) != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(list);
+            free_list(replacement);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(list);
+    printf("Replacement list: ");
+    print_list(replacement);
+
+    replace_last_with_list(&list, replacement);
+
+    printf("Resulting list: ");
+    print_list(list);
+
+    free_list(list);
+    return EXIT_SUCCESS;
+}

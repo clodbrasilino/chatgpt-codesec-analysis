@@ -7,8 +7,8 @@ void rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v) {
     float gf = g / 255.0;
     float bf = b / 255.0;
 
-    float max = fmaxf(fmaxf(rf, gf), bf);
-    float min = fminf(fminf(rf, gf), bf);
+    float max = fmax(rf, fmax(gf, bf));
+    float min = fmin(rf, fmin(gf, bf));
     float delta = max - min;
 
     *v = max;
@@ -16,28 +16,19 @@ void rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v) {
     if (delta == 0) {
         *h = 0;
         *s = 0;
-        return;
-    }
-
-    if (max > 0) {
+    } else {
         *s = delta / max;
-    } else {
-        *s = 0.0;
-        *h = -1;
-        return;
-    }
 
-    if (rf == max) {
-        *h = (gf - bf) / delta + (gf < bf ? 6 : 0);
-    } else if (gf == max) {
-        *h = (bf - rf) / delta + 2;
-    } else {
-        *h = (rf - gf) / delta + 4;
-    }
+        if (rf == max)
+            *h = (gf - bf) / delta + (gf < bf ? 6 : 0);
+        else if (gf == max)
+            *h = (bf - rf) / delta + 2;
+        else
+            *h = (rf - gf) / delta + 4;
 
-    *h *= 60.0;
-    if (*h < 0) {
-        *h += 360.0;
+        *h *= 60;
+        if (*h < 0)
+            *h += 360;
     }
 }
 
@@ -47,7 +38,7 @@ int main() {
 
     rgb_to_hsv(r, g, b, &h, &s, &v);
 
-    printf("HSV: %f, %f, %f\n", h, s, v);
+    printf("HSV: %.2f, %.2f, %.2f\n", h, s, v);
 
     return 0;
 }

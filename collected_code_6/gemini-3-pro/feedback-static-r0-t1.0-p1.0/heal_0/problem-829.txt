@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct StringHash {
+    char *str;
+    int count;
+};
+
+char* findSecondMostFrequent(char **arr, int n) {
+    if (arr == NULL || n < 2) {
+        return NULL;
+    }
+
+    struct StringHash *hashTable = (struct StringHash *)calloc(n, sizeof(struct StringHash));
+    if (hashTable == NULL) {
+        return NULL;
+    }
+
+    int uniqueCount = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == NULL) continue;
+        int found = 0;
+        for (int j = 0; j < uniqueCount; j++) {
+            if (strcmp(hashTable[j].str, arr[i]) == 0) {
+                hashTable[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            hashTable[uniqueCount].str = arr[i];
+            hashTable[uniqueCount].count = 1;
+            uniqueCount++;
+        }
+    }
+
+    int maxCount = -1;
+    int secondMaxCount = -1;
+    char *mostFreq = NULL;
+    char *secondMostFreq = NULL;
+
+    for (int i = 0; i < uniqueCount; i++) {
+        if (hashTable[i].count > maxCount) {
+            secondMaxCount = maxCount;
+            secondMostFreq = mostFreq;
+            maxCount = hashTable[i].count;
+            mostFreq = hashTable[i].str;
+        } else if (hashTable[i].count > secondMaxCount && hashTable[i].count < maxCount) {
+            secondMaxCount = hashTable[i].count;
+            secondMostFreq = hashTable[i].str;
+        }
+    }
+
+    free(hashTable);
+    return secondMostFreq;
+}
+
+int main(void) {
+    char *arr[] = {"apple", "banana", "apple", "orange", "banana", "apple", "grape", "banana", "grape"};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    char *result = findSecondMostFrequent(arr, n);
+
+    if (result != NULL) {
+        printf("%s\n", result);
+    } else {
+        printf("No second most frequent string found.\n");
+    }
+
+    return 0;
+}
+```

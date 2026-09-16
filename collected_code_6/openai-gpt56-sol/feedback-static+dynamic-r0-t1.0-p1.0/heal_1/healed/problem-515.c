@@ -1,0 +1,125 @@
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static bool has_subset_sum_divisible_by_m(const long long *values,
+                                          size_t count,
+                                          size_t modulus)
+{
+    bool *reachable;
+    bool *next;
+    size_t i;
+    size_t r;
+    long long mod;
+
+    if (values == NULL || count == 0U || modulus == 0U ||
+        modulus > (size_t)LLONG_MAX) {
+        return false;
+    }
+
+    if (count >= modulus) {
+        return true;
+    }
+
+    if (modulus > SIZE_MAX / sizeof(*reachable)) {
+        return false;
+    }
+
+    reachable = calloc(modulus, sizeof(*reachable));
+    next = calloc(modulus, sizeof(*next));
+
+    if (reachable == NULL || next == NULL) {
+        free(reachable);
+        free(next);
+        return false;
+    }
+
+    mod = (long long)modulus;
+
+    for (i = 0U; i < count; ++i) {
+        long long remainder = values[i] % mod;
+        size_t remainder_index;
+        bool *temporary;
+
+        if (remainder < 0) {
+            remainder += mod;
+        }
+
+        remainder_index = (size_t)remainder;
+
+        for (r = 0U; r < modulus; ++r) {
+            next[r] = reachable[r];
+        }
+
+        next[remainder_index] = true;
+
+        for (r = 0U; r < modulus; ++r) {
+            if (reachable[r]) {
+                size_t combined;
+
+                if (r >= modulus - remainder_index) {
+                    combined = r - (modulus - remainder_index);
+                } else {
+                    combined = r + remainder_index;
+                }
+
+                next[combined] = true;
+            }
+        }
+
+        temporary = reachable;
+        reachable = next;
+        next = temporary;
+
+        if (reachable[0]) {
+            free(reachable);
+            free(next);
+            return true;
+        }
+    }
+
+    free(reachable);
+    free(next);
+    return false;
+}
+
+int main(void)
+{
+    size_t count;
+    size_t modulus;
+    long long *values;
+    size_t i;
+    bool result;
+
+    if (scanf("%zu %zu", &count, &modulus) != 2 ||
+        count == 0U ||
+        modulus == 0U ||
+        modulus > (size_t)LLONG_MAX ||
+        count > SIZE_MAX / sizeof(*values)) {
+        return EXIT_FAILURE;
+    }
+
+    values = malloc(count * sizeof(*values));
+    if (values == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; ++i) {
+        if (scanf("%lld", &values[i]) != 1) {
+            free(values);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = has_subset_sum_divisible_by_m(values, count, modulus);
+    free(values);
+
+    if (printf("%s\n", result ? "Yes" : "No") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

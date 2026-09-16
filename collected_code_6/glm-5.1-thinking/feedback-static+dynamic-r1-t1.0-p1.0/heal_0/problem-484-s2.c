@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+int tuples_equal(Tuple a, Tuple b) {
+    return a.x == b.x && a.y == b.y;
+}
+
+void remove_matching_tuples(Tuple **arr1, size_t *len1, Tuple **arr2, size_t *len2) {
+    if (arr1 == NULL || len1 == NULL || arr2 == NULL || len2 == NULL) {
+        return;
+    }
+
+    size_t current_len1 = *len1;
+    size_t current_len2 = *len2;
+    Tuple *current_arr1 = *arr1;
+    Tuple *current_arr2 = *arr2;
+
+    if (current_arr1 == NULL) current_len1 = 0;
+    if (current_arr2 == NULL) current_len2 = 0;
+
+    size_t new_len1 = 0;
+    for (size_t i = 0; i < current_len1; i++) {
+        int match = 0;
+        for (size_t j = 0; j < current_len2; j++) {
+            if (tuples_equal(current_arr1[i], current_arr2[j])) {
+                match = 1;
+                break;
+            }
+        }
+        if (!match) new_len1++;
+    }
+
+    size_t new_len2 = 0;
+    for (size_t i = 0; i < current_len2; i++) {
+        int match = 0;
+        for (size_t j = 0; j < current_len1; j++) {
+            if (tuples_equal(current_arr2[i], current_arr1[j])) {
+                match = 1;
+                break;
+            }
+        }
+        if (!match) new_len2++;
+    }
+
+    Tuple *new_arr1 = NULL;
+    if (new_len1 > 0) {
+        new_arr1 = (Tuple *)malloc(new_len1 * sizeof(Tuple));
+        if (new_arr1 == NULL) return;
+        size_t idx = 0;
+        for (size_t i = 0; i < current_len1; i++) {
+            int match = 0;
+            for (size_t j = 0; j < current_len2; j++) {
+                if (tuples_equal(current_arr1[i], current_arr2[j])) {
+                    match = 1;
+                    break;
+                }
+            }
+            if (!match) {
+                new_arr1[idx++] = current_arr1[i];
+            }
+        }
+    }
+
+    Tuple *new_arr2 = NULL;
+    if (new_len2 > 0) {
+        new_arr2 = (Tuple *)malloc(new_len2 * sizeof(Tuple));
+        if (new_arr2 == NULL) {
+            free(new_arr1);
+            return;
+        }
+        size_t idx = 0;
+        for (size_t i = 0; i < current_len2; i++) {
+            int match = 0;
+            for (size_t j = 0; j < current_len1; j++) {
+                if (tuples_equal(current_arr2[i], current_arr1[j])) {
+                    match = 1;
+                    break;
+                }
+            }
+            if (!match) {
+                new_arr2[idx++] = current_arr2[i];
+            }
+        }
+    }
+
+    free(current_arr1);
+    free(current_arr2);
+
+    *arr1 = new_arr1;
+    *len1 = new_len1;
+    *arr2 = new_arr2;
+    *len2 = new_len2;
+}
+
+int main(void) {
+    Tuple arr1_data[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple arr2_data[] = {{3, 4}, {7, 8}, {5, 6}};
+
+    size_t len1 = sizeof(arr1_data) / sizeof(arr1_data[0]);
+    size_t len2 = sizeof(arr2_data) / sizeof(arr2_data[0]);
+
+    Tuple *arr1 = (Tuple *)malloc(len1 * sizeof(Tuple));
+    if (arr1 == NULL) return 1;
+    for (size_t i = 0; i < len1; i++) arr1[i] = arr1_data[i];
+
+    Tuple *arr2 = (Tuple *)malloc(len2 * sizeof(Tuple));
+    if (arr2 == NULL) {
+        free(arr1);
+        return 1;
+    }
+    for (size_t i = 0; i < len2; i++) arr2[i] = arr2_data[i];
+
+    remove_matching_tuples(&arr1, &len1, &arr2, &len2);
+
+    printf("Array 1:\n");
+    for (size_t i = 0; i < len1; i++) {
+        printf("(%d, %d)\n", arr1[i].x, arr1[i].y);
+    }
+
+    printf("Array 2:\n");
+    for (size_t i = 0; i < len2; i++) {
+        printf("(%d, %d)\n", arr2[i].x, arr2[i].y);
+    }
+
+    free(arr1);
+    free(arr2);
+
+    return 0;
+}

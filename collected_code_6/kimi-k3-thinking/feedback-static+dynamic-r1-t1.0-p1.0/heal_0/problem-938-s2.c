@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_three_closest(const int *arr1, size_t size1,
+                       const int *arr2, size_t size2,
+                       const int *arr3, size_t size3,
+                       int *result1, int *result2, int *result3)
+{
+    size_t i;
+    size_t j;
+    size_t k;
+    long best_diff;
+    int best1;
+    int best2;
+    int best3;
+
+    if (arr1 == NULL || arr2 == NULL || arr3 == NULL ||
+        result1 == NULL || result2 == NULL || result3 == NULL)
+    {
+        return -1;
+    }
+
+    if (size1 == 0U || size2 == 0U || size3 == 0U)
+    {
+        return -1;
+    }
+
+    i = 0U;
+    j = 0U;
+    k = 0U;
+    best_diff = LONG_MAX;
+    best1 = arr1[0];
+    best2 = arr2[0];
+    best3 = arr3[0];
+
+    while (i < size1 && j < size2 && k < size3)
+    {
+        int v1 = arr1[i];
+        int v2 = arr2[j];
+        int v3 = arr3[k];
+        int max_val = v1;
+        int min_val = v1;
+        long diff;
+
+        if (v2 > max_val)
+        {
+            max_val = v2;
+        }
+        if (v3 > max_val)
+        {
+            max_val = v3;
+        }
+        if (v2 < min_val)
+        {
+            min_val = v2;
+        }
+        if (v3 < min_val)
+        {
+            min_val = v3;
+        }
+
+        diff = (long)max_val - (long)min_val;
+
+        if (diff < best_diff)
+        {
+            best_diff = diff;
+            best1 = v1;
+            best2 = v2;
+            best3 = v3;
+        }
+
+        if (best_diff == 0L)
+        {
+            break;
+        }
+
+        if (min_val == v1)
+        {
+            i++;
+        }
+        else if (min_val == v2)
+        {
+            j++;
+        }
+        else
+        {
+            k++;
+        }
+    }
+
+    *result1 = best1;
+    *result2 = best2;
+    *result3 = best3;
+
+    return 0;
+}
+
+int main(void)
+{
+    static const int arr1[] = {1, 4, 10};
+    static const int arr2[] = {2, 15, 20};
+    static const int arr3[] = {10, 12};
+    int r1 = 0;
+    int r2 = 0;
+    int r3 = 0;
+
+    if (find_three_closest(arr1, sizeof(arr1) / sizeof(arr1[0]),
+                           arr2, sizeof(arr2) / sizeof(arr2[0]),
+                           arr3, sizeof(arr3) / sizeof(arr3[0]),
+                           &r1, &r2, &r3) == 0)
+    {
+        (void)printf("Closest elements: %d %d %d\n", r1, r2, r3);
+    }
+    else
+    {
+        (void)fprintf(stderr, "Invalid input provided\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

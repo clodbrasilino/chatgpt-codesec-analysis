@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findMax(int arr[], int n) {
+    int low = 0, high = n - 1;
+    while (low <= high) {
+        if (arr[low] <= arr[high])
+            return arr[high];
+        int mid = low + (high - low) / 2;
+        int next = (mid + 1) % n;
+        int prev = (mid + n - 1) % n;
+        if (arr[mid] >= arr[next] && arr[mid] >= arr[prev])
+            return arr[mid];
+        else if (arr[mid] <= arr[high])
+            high = mid - 1;
+        else if (arr[mid] >= arr[low])
+            low = mid + 1;
+    }
+    return INT_MIN;
+}
+
+int main() {
+    int arr[] = {3, 4, 5, 1, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int max = findMax(arr, n);
+    printf("Maximum element is: %d\n", max);
+    return 0;
+}

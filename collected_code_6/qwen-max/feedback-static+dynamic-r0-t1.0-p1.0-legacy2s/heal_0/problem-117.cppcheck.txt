@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-117.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-117.c:47:14: portability: Casting between signed char * and float * which have an incompatible binary data representation. [invalidPointerCast]
+            *(float*)current->data = value;
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-117.c:63:14: portability: Casting between signed char * and float * which have an incompatible binary data representation. [invalidPointerCast]
+        if (*(float*)curr->data == *(float*)curr->data) { // Check if it is a float
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-117.c:64:31: portability: Casting between signed char * and float * which have an incompatible binary data representation. [invalidPointerCast]
+            printf("%.2f\n", *(float*)curr->data);
+                              ^

@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
+
+static int next_perfect_square(long long n, long long *result)
+{
+    long long root;
+    long long candidate;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n < 0) {
+        *result = 0;
+        return 0;
+    }
+
+    root = (long long)sqrt((double)n);
+
+    while (root > 0 && root * root > n) {
+        root--;
+    }
+
+    while ((root + 1) <= LLONG_MAX / (root + 1) &&
+           (root + 1) * (root + 1) <= n) {
+        root++;
+    }
+
+    if (root + 1 > LLONG_MAX / (root + 1)) {
+        return -1;
+    }
+
+    candidate = (root + 1) * (root + 1);
+
+    if (candidate <= n) {
+        return -1;
+    }
+
+    *result = candidate;
+    return 0;
+}
+
+int main(void)
+{
+    long long input;
+    long long answer;
+    int scan_status;
+
+    printf("Enter a number: ");
+
+    scan_status = scanf("%lld", &input);
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (next_perfect_square(input, &answer) != 0) {
+        fprintf(stderr, "Could not compute next perfect square (overflow or error).\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The next perfect square greater than %lld is %lld\n", input, answer);
+
+    return EXIT_SUCCESS;
+}
+```

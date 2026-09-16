@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int search_regex(const char *text, const char *pattern) {
+    regex_t regex;
+    int reti;
+
+    if (regcomp(&regex, pattern, REG_EXTENDED|REG_NEWLINE) != 0) {
+        return -1;
+    }
+
+    if ((reti = regexec(&regex, text, 0, NULL, 0)) == 0) {
+        regfree(&regex);
+        return 0;
+    } else if (reti == REG_NOMATCH) {
+        regfree(&regex);
+        return -2;
+    } else {
+        regfree(&regex);
+        return -3;
+    }
+}
+
+int main() {
+    const char *text = "Hello, this is a test string.";
+    const char *pattern = "test";
+
+    int result = search_regex(text, pattern);
+
+    if (result == 0) {
+        printf("Pattern found.\n");
+    } else if (result == -1) {
+        printf("Failed to compile the pattern.\n");
+    } else if (result == -2) {
+        printf("Pattern not found.\n");
+    } else {
+        printf("An error occurred.\n");
+    }
+
+    return 0;
+}
+```

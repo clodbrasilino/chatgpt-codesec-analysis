@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_undulating(long n)
+{
+    if (n < 0) {
+        n = -n;
+    }
+    if (n < 100) {
+        return false;
+    }
+    int a = (int)(n % 10);
+    n /= 10;
+    int b = (int)(n % 10);
+    n /= 10;
+    if (a == b) {
+        return false;
+    }
+    bool expect_a = true;
+    while (n > 0) {
+        int d = (int)(n % 10);
+        if (expect_a) {
+            if (d != a) {
+                return false;
+            }
+        } else {
+            if (d != b) {
+                return false;
+            }
+        }
+        expect_a = !expect_a;
+        n /= 10;
+    }
+    return true;
+}
+
+int main(void)
+{
+    long num;
+    if (scanf("%ld", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    if (is_undulating(num)) {
+        printf("%ld is undulating\n", num);
+    } else {
+        printf("%ld is not undulating\n", num);
+    }
+    return 0;
+}

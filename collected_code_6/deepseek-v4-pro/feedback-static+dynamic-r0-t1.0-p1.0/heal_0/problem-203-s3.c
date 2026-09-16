@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int hamming_distance(int a, int b) {
+    int xor_result = a ^ b;
+    int distance = 0;
+    while (xor_result != 0) {
+        distance += xor_result & 1;
+        xor_result >>= 1;
+    }
+    return distance;
+}
+
+int main(void) {
+    int num1 = 7;
+    int num2 = 10;
+    printf("Hamming distance between %d and %d: %d\n", num1, num2, hamming_distance(num1, num2));
+    return 0;
+}

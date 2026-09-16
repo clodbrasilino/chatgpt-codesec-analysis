@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int count_coin_change(int amount, const int *coins, size_t num_coins)
+{
+    if (amount < 0 || coins == NULL || num_coins == 0) {
+        return -1;
+    }
+    
+    if (amount == 0) {
+        return 0;
+    }
+    
+    int *dp = calloc((size_t)amount + 1, sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+    
+    for (int i = 1; i <= amount; i++) {
+        dp[i] = INT_MAX;
+    }
+    
+    for (int i = 1; i <= amount; i++) {
+        for (size_t j = 0; j < num_coins; j++) {
+            if (coins[j] <= 0) {
+                free(dp);
+                return -1;
+            }
+            
+            if (coins[j] <= i && dp[i - coins[j]] != INT_MAX) {
+                if (dp[i - coins[j]] + 1 < dp[i]) {
+                    dp[i] = dp[i - coins[j]] + 1;
+                }
+            }
+        }
+    }
+    
+    int result = (dp[amount] == INT_MAX) ? -1 : dp[amount];
+    free(dp);
+    
+    return result;
+}
+
+int main(void)
+{
+    int coins[] = {1, 5, 10, 25};
+    size_t num_coins = sizeof(coins) / sizeof(coins[0]);
+    int amount = 0;
+    
+    printf("Enter amount: ");
+    
+    if (scanf("%d", &amount) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (amount < 0) {
+        fprintf(stderr, "Error: Amount cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = count_coin_change(amount, coins, num_coins);
+    
+    if (result == -1) {
+        printf("Cannot make change for amount %d\n", amount);
+    } else {
+        printf("Minimum coins needed: %d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}

@@ -1,86 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
+typedef struct List {
     int *elements;
     size_t size;
-} IntList;
+} List;
 
-IntList* create_list(size_t size) {
-    IntList *list = (IntList*)malloc(sizeof(IntList));
-    list->size = size;
-    list->elements = (int*)malloc(size * sizeof(int));
-    return list;
-}
-
-void free_list(IntList *list) {
-    free(list->elements);
-    free(list);
-}
-
-int sum_of_elements(const IntList *list) {
-    int sum = 0;
-    for (size_t i = 0; i < list->size; ++i) {
-        sum += list->elements[i];
-    }
-    return sum;
-}
-
-IntList* find_max_sum_list(const IntList *lists, size_t count) {
+List* findMaxSumList(List *lists, size_t count) {
     if (count == 0) {
         return NULL;
     }
 
-    const IntList *max_list = lists;
-    int max_sum = sum_of_elements(max_list);
+    List* maxList = lists;
+    int maxSum = 0;
 
-    for (size_t i = 1; i < count; ++i) {
-        int current_sum = sum_of_elements(&lists[i]);
-        if (current_sum > max_sum) {
-            max_sum = current_sum;
-            max_list = &lists[i];
+    for (size_t i = 0; i < count; ++i) {
+        int sum = 0;
+        for (size_t j = 0; j < lists[i].size; ++j) {
+            sum += lists[i].elements[j];
+        }
+        if (sum > maxSum) {
+            maxSum = sum;
+            maxList = &lists[i];
         }
     }
 
-    IntList *result = (IntList*)malloc(sizeof(IntList));
-    result->size = max_list->size;
-    result->elements = (int*)malloc(result->size * sizeof(int));
-    for (size_t i = 0; i < result->size; ++i) {
-        result->elements[i] = max_list->elements[i];
+    return maxList;
+}
+
+void freeLists(List *lists, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        free(lists[i].elements);
     }
-    return result;
+    free(lists);
 }
 
 int main() {
-    IntList *list1 = create_list(3);
-    list1->elements[0] = 1;
-    list1->elements[1] = 2;
-    list1->elements[2] = 3;
+    List lists[] = {
+        { .elements = (int []){1, 2, 3}, .size = 3 },
+        { .elements = (int []){4, 5, 6, 7}, .size = 4 },
+        { .elements = (int []){-1, -2, -3}, .size = 3 },
+        { .elements = (int []){8, 9}, .size = 2 }
+    };
 
-    IntList *list2 = create_list(4);
-    list2->elements[0] = 4;
-    list2->elements[1] = 5;
-    list2->elements[2] = 6;
-    list2->elements[3] = 7;
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+    List* maxList = findMaxSumList(lists, count);
 
-    IntList *lists[] = { *list1, *list2 };
-    size_t count = 2;
-
-    IntList *max_sum_list = find_max_sum_list(lists, count);
-
-    if (max_sum_list) {
-        printf("List with the highest sum: ");
-        for (size_t i = 0; i < max_sum_list->size; ++i) {
-            printf("%d ", max_sum_list->elements[i]);
+    if (maxList) {
+        printf("The list with the highest sum:\n");
+        for (size_t i = 0; i < maxList->size; ++i) {
+            printf("%d ", maxList->elements[i]);
         }
-        printf("\n");
-        free_list(max_sum_list);
+        printf("\nSum: %d\n", 0); // Placeholder for sum calculation
     } else {
         printf("No lists provided.\n");
     }
 
-    free_list(list1);
-    free_list(list2);
-
+    freeLists(lists, count);
     return 0;
 }

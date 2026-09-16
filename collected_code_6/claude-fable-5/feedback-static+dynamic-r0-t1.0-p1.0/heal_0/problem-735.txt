@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int toggle_middle_bits(unsigned int n);
+
+unsigned int toggle_middle_bits(unsigned int n)
+{
+    unsigned int mask;
+
+    if (n <= 3U) {
+        return n;
+    }
+
+    mask = n;
+    mask |= mask >> 1;
+    mask |= mask >> 2;
+    mask |= mask >> 4;
+    mask |= mask >> 8;
+    mask |= mask >> 16;
+
+    mask >>= 1;
+    mask &= ~1U;
+
+    return n ^ mask;
+}
+
+int main(void)
+{
+    unsigned int number;
+    unsigned int result;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_middle_bits(number);
+
+    printf("Original number: %u\n", number);
+    printf("After toggling middle bits: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+1. **`toggle_middle_bits`** builds a mask of all bits set up to the most significant bit of `n` using the bit-smearing technique (`mask |= mask >> k`).
+2. Shifting the mask right by one (`mask >>= 1`) drops the MSB from the mask, and `mask &= ~1U` drops the LSB, so only the "middle" bits remain set.
+3. XOR-ing `n` with this mask toggles exactly those middle bits.
+4. Numbers `<= 3` have no middle bits, so they are returned unchanged.
+
+**Safety considerations addressed:**
+
+- **CWE-703:** The return value of `scanf` is checked before using `number`, and a failure path exits cleanly with `EXIT_FAILURE`.
+- **CWE-664:** No dynamic resources (memory, files) are allocated, so there is nothing to leak or misuse across a lifetime.
+- **CWE-710:** The code uses `unsigned` arithmetic to avoid signed-shift undefined behavior, uses `int main(void)` with explicit return codes, declares the function prototype before use, and avoids implicit conversions.
+
+**Example:** for input `10` (binary `1010`), the middle bits `01` are toggled, producing `1100` = `12`.

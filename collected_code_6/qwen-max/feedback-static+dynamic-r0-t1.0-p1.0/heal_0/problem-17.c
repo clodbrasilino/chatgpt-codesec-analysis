@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+double calculate_perimeter(double side) {
+    return 4.0 * side;
+}
+
+int main() {
+    double side = 5.0;
+    double perimeter = calculate_perimeter(side);
+    printf("Perimeter of the square: %.2f\n", perimeter);
+    return 0;
+}

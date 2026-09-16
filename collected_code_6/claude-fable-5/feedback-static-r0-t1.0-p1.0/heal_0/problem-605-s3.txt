@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_prime(int n)
+{
+    if (n < 2) {
+        return false;
+    }
+    if (n < 4) {
+        return true;
+    }
+    if (n % 2 == 0) {
+        return false;
+    }
+    for (int i = 3; i <= n / i; i += 2) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    int number = 0;
+
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_prime(number)) {
+        printf("%d is a prime number.\n", number);
+    } else {
+        printf("%d is not a prime number.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety points in this implementation:
+
+- **CWE-703 avoidance**: The return value of `scanf` is checked, so invalid or missing input is detected and handled with an error message and a failure exit code rather than proceeding with an uninitialized or garbage value.
+- **CWE-664 avoidance**: No dynamically allocated resources, file handles, or other resources are used, so there is nothing to leak or misuse across a lifetime; `number` is also explicitly initialized.
+- **CWE-710 avoidance**: The code adheres to standard C conventions — `main` is declared as `int main(void)`, it returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, `bool` comes from `<stdbool.h>`, and the loop condition `i <= n / i` avoids the potential integer overflow that `i * i <= n` could cause for large inputs.

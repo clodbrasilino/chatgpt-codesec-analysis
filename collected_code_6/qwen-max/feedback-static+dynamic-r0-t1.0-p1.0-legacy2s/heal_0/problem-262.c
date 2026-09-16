@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+}
+
+Node** split_list(Node* head, int length, int* first_length, int* second_length) {
+    if (head == NULL || length <= 0) {
+        *first_length = 0;
+        *second_length = 0;
+        return (Node*[]){NULL, NULL};
+    }
+
+    Node* current = head;
+    for (int i = 1; i < length && current != NULL; ++i) {
+        current = current->next;
+    }
+
+    if (current == NULL) {
+        *first_length = 0;
+        *second_length = 0;
+        return (Node*[]){NULL, NULL};
+    }
+
+    *first_length = length - 1;
+    *second_length = 0;
+
+    Node* list1 = head;
+    Node* list2 = current->next;
+    current->next = NULL;
+
+    Node* temp = list2;
+    while (temp != NULL) {
+        ++*second_length;
+        temp = temp->next;
+    }
+
+    return (Node*[]){list1, list2};
+}
+
+int main() {
+    Node* head = NULL;
+    append_node(&head, 10);
+    append_node(&head, 20);
+    append_node(&head, 30);
+    append_node(&head, 40);
+    append_node(&head, 50);
+
+    int first_length = 0, second_length = 0;
+    Node** result = split_list(head, 3, &first_length, &second_length);
+
+    Node* list1 = result[0];
+    Node* list2 = result[1];
+
+    printf("First list: ");
+    for (int i = 0; i < first_length; ++i) {
+        printf("%d -> ", list1->data);
+        list1 = list1->next;
+    }
+    printf("\n");
+
+    printf("Second list: ");
+    for (int i = 0; i < second_length; ++i) {
+        printf("%d -> ", list2->data);
+        list2 = list2->next;
+    }
+    printf("\n");
+
+    return 0;
+}

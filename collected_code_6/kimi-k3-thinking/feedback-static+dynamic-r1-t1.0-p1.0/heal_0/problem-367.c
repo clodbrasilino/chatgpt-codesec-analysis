@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+struct TreeNode {
+    int data;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+
+static struct TreeNode *createNode(int data)
+{
+    struct TreeNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+static int treeHeight(const struct TreeNode *node)
+{
+    int leftHeight;
+    int rightHeight;
+
+    if (node == NULL) {
+        return 0;
+    }
+
+    leftHeight = treeHeight(node->left);
+    if (leftHeight == -1) {
+        return -1;
+    }
+
+    rightHeight = treeHeight(node->right);
+    if (rightHeight == -1) {
+        return -1;
+    }
+
+    if (abs(leftHeight - rightHeight) > 1) {
+        return -1;
+    }
+
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
+}
+
+bool isBalanced(const struct TreeNode *root)
+{
+    return treeHeight(root) != -1;
+}
+
+static void freeTree(struct TreeNode *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    freeTree(node->left);
+    freeTree(node->right);
+    free(node);
+}
+
+int main(void)
+{
+    struct TreeNode *balancedTree = createNode(1);
+    struct TreeNode *unbalancedTree = NULL;
+
+    if (balancedTree == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    balancedTree->left = createNode(2);
+    balancedTree->right = createNode(3);
+    if (balancedTree->left == NULL || balancedTree->right == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        freeTree(balancedTree);
+        return EXIT_FAILURE;
+    }
+
+    balancedTree->left->left = createNode(4);
+    balancedTree->left->right = createNode(5);
+    balancedTree->right->left = createNode(6);
+    if (balancedTree->left->left == NULL ||
+        balancedTree->left->right == NULL ||
+        balancedTree->right->left == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        freeTree(balancedTree);
+        return EXIT_FAILURE;
+    }
+
+    if (isBalanced(balancedTree)) {
+        printf("Tree 1 is balanced.\n");
+    } else {
+        printf("Tree 1 is not balanced.\n");
+    }
+
+    freeTree(balancedTree);
+    balancedTree = NULL;
+
+    unbalancedTree = createNode(1);
+    if (unbalancedTree == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    unbalancedTree->left = createNode(2);
+    if (unbalancedTree->left == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        freeTree(unbalancedTree);
+        return EXIT_FAILURE;
+    }
+
+    unbalancedTree->left->left = createNode(3);
+    if (unbalancedTree->left->left == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        freeTree(unbalancedTree);
+        return EXIT_FAILURE;
+    }
+
+    unbalancedTree->left->left->left = createNode(4);
+    if (unbalancedTree->left->left->left == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        freeTree(unbalancedTree);
+        return EXIT_FAILURE;
+    }
+
+    if (isBalanced(unbalancedTree)) {
+        printf("Tree 2 is balanced.\n");
+    } else {
+        printf("Tree 2 is not balanced.\n");
+    }
+
+    freeTree(unbalancedTree);
+    unbalancedTree = NULL;
+
+    return EXIT_SUCCESS;
+}

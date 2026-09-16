@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_tetrahedron_volume(double edge) {
+    return (sqrt(2) / 12.0) * pow(edge, 3);
+}
+
+int main() {
+    double edge;
+    printf("Enter the edge length of the tetrahedron: ");
+    if (scanf("%lf", &edge) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (edge <= 0.0) {
+        printf("Edge length must be positive\n");
+        return 1;
+    }
+
+    double volume = calculate_tetrahedron_volume(edge);
+    printf("The volume of the tetrahedron is: %f\n", volume);
+    return 0;
+}
+```

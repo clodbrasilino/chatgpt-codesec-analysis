@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int find_max_product(const Tuple *tuples, size_t len, long long *max_product) {
+    if (tuples == NULL || max_product == NULL) {
+        return -1;
+    }
+    if (len == 0) {
+        return -1;
+    }
+    
+    long long current = (long long)tuples[0].a * tuples[0].b;
+    *max_product = current;
+    
+    for (size_t i = 1; i < len; i++) {
+        current = (long long)tuples[i].a * tuples[i].b;
+        if (current > *max_product) {
+            *max_product = current;
+        }
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    Tuple list[] = {{1, 2}, {-5, -4}, {3, 1}, {0, 9}};
+    size_t len = sizeof(list) / sizeof(list[0]);
+    long long result;
+    
+    if (find_max_product(list, len, &result) == 0) {
+        printf("%lld\n", result);
+    } else {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

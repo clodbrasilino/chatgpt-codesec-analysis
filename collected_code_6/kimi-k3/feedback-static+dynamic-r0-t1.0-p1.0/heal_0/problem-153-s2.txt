@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Vertex;
+
+int find_parabola_vertex(double a, double b, double c, Vertex *vertex)
+{
+    if (vertex == NULL) {
+        return -1;
+    }
+    
+    if (fabs(a) < 1e-9) {
+        return -2;
+    }
+    
+    vertex->x = -b / (2.0 * a);
+    vertex->y = a * vertex->x * vertex->x + b * vertex->x + c;
+    
+    return 0;
+}
+
+int main(void)
+{
+    double a, b, c;
+    Vertex vertex;
+    int result;
+    
+    printf("Enter coefficients a, b, and c: ");
+    
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    result = find_parabola_vertex(a, b, c, &vertex);
+    
+    if (result == -1) {
+        fprintf(stderr, "Error: Null pointer passed\n");
+        return 1;
+    }
+    
+    if (result == -2) {
+        fprintf(stderr, "Error: Coefficient 'a' cannot be zero (not a parabola)\n");
+        return 1;
+    }
+    
+    printf("Vertex: (%.6f, %.6f)\n", vertex.x, vertex.y);
+    
+    return 0;
+}
+```

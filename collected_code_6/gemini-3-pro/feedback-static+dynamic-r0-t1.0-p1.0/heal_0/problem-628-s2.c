@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* replace_spaces(const char* input) {
+    if (input == NULL) {
+        return NULL;
+    }
+
+    size_t spaces = 0;
+    size_t len = 0;
+    for (size_t i = 0; input[i] != '\0'; i++) {
+        if (input[i] == ' ') {
+            spaces++;
+        }
+        len++;
+    }
+
+    size_t new_len = len + 2 * spaces + 1;
+    char* result = (char*)malloc(new_len * sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (input[i] == ' ') {
+            result[j++] = '%';
+            result[j++] = '2';
+            result[j++] = '0';
+        } else {
+            result[j++] = input[i];
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char* original = "Hello World C Developer";
+    char* modified = replace_spaces(original);
+
+    if (modified != NULL) {
+        printf("%s\n", modified);
+        free(modified);
+    } else {
+        fprintf(stderr, "Memory allocation failed or input was NULL.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

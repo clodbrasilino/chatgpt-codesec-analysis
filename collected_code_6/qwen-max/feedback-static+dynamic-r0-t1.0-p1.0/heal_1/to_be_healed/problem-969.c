@@ -1,61 +1,76 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'strncpy'
+  */
 
 typedef struct {
-    int a;
-    int b;
+    int id;
+    char name[50];
 } Tuple;
 
-Tuple* join_tuples(Tuple *tuples, int n, int *result_count) {
-    if (n == 0) {
-        *result_count = 0;
-        return NULL;
+Tuple* create_tuple(int id, const char *name) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        exit(EXIT_FAILURE);
     }
-
-    Tuple *result = (Tuple *)malloc(n * sizeof(Tuple));
-    if (!result) {
-        *result_count = 0;
-        return NULL;
-    }
-
-    *result_count = 1;
-    result[0] = tuples[0];
-
-    for (int i = 1; i < n; ++i) {
-        if (tuples[i].a == result[*result_count - 1].a) {
-            result[*result_count - 1].b += tuples[i].b;
-        } else {
-            result[*result_count] = tuples[i];
-            (*result_count)++;
-        }
-    }
-
+    t->id = id;
     /* Possible weaknesses found:
-     *  Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+     *  implicit declaration of function 'strncpy' [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strncpy'
+     *  call to undeclared library function 'strncpy' with type 'char *(char *, const char *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
      */
-    result = (Tuple *)realloc(result, *result_count * sizeof(Tuple));
-    if (!result) {
-        *result_count = 0;
+    strncpy(t->name, name, 49);
+    t->name[49] = '\0';
+    return t;
+}
+
+void append_name(char *dest, const char *src) {
+    /* Possible weaknesses found:
+     *  implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strlen'
+     *  include '<string.h>' or provide a declaration of 'strlen'
+     *  call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     */
+    size_t dest_len = strlen(dest);
+    if (dest_len + strlen(src) + 2 > 49) {
+        dest[49] = '\0';
+        return;
+    }
+    /* Possible weaknesses found:
+     *  call to undeclared library function 'strcat' with type 'char *(char *, const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  include '<string.h>' or provide a declaration of 'strcat'
+     *  implicit declaration of function 'strcat' [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strcat'
+     */
+    strcat(dest, ", ");
+    strcat(dest, src);
+}
+
+Tuple* join_tuples(Tuple *a, Tuple *b) {
+    if (a->id != b->id) {
         return NULL;
     }
-
-    return result;
+    append_name(a->name, b->name);
+    free(b);
+    return a;
 }
 
 int main() {
-    Tuple tuples[] = {{1, 2}, {1, 3}, {2, 4}, {2, 5}, {3, 6}};
-    int n = 5;
-    int result_count = 0;
+    Tuple *t1 = create_tuple(1, "Alice");
+    Tuple *t2 = create_tuple(1, "Bob");
+    Tuple *t3 = create_tuple(2, "Carol");
 
-    Tuple *result = join_tuples(tuples, n, &result_count);
-
-    if (result) {
-        for (int i = 0; i < result_count; ++i) {
-            printf("(%d, %d) ", result[i].a, result[i].b);
-        }
+    Tuple *result = join_tuples(t1, t2);
+    if (result != NULL) {
+        printf("Joined: %d - %s\n", result->id, result->name);
         free(result);
     } else {
-        printf("Failed to join tuples\n");
+        printf("Did not join.\n");
+    }
+
+    if (t3 != NULL) {
+        free(t3);
     }
 
     return 0;

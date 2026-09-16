@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+unsigned long long count_substrings(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+    
+    return (unsigned long long)len * (len + 1) / 2;
+}
+
+int main(void) {
+    const char *test1 = "hello";
+    const char *test2 = "";
+    const char *test3 = "a";
+    const char *test4 = "abcdefghijklmnopqrstuvwxyz";
+    
+    printf("\"%s\": %llu substrings\n", test1, count_substrings(test1));
+    printf("\"%s\": %llu substrings\n", test2, count_substrings(test2));
+    printf("\"%s\": %llu substrings\n", test3, count_substrings(test3));
+    printf("\"%s\": %llu substrings\n", test4, count_substrings(test4));
+    printf("NULL: %llu substrings\n", count_substrings(NULL));
+    
+    return 0;
+}

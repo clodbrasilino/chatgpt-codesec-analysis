@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+void sort_lists(int **lists, size_t count, size_t index) {
+    if (lists == NULL || count <= 1) {
+        return;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i] == NULL) {
+            return;
+        }
+    }
+    for (size_t i = 1; i < count; ++i) {
+        int *key = lists[i];
+        size_t j = i;
+        while (j > 0 && lists[j - 1][index] > key[index]) {
+            lists[j] = lists[j - 1];
+            --j;
+        }
+        lists[j] = key;
+    }
+}
+
+int main(void) {
+    int a[] = { 10, 3 };
+    int b[] = { 20, 1 };
+    int c[] = { 30, 2 };
+    int *lists[] = { a, b, c };
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+    size_t index = 1;
+
+    sort_lists(lists, count, index);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("%d %d\n", lists[i][0], lists[i][1]);
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void decimalToOctal(unsigned int decimalNumber);
+
+int main(void) {
+    unsigned int decimalNumber = 0;
+
+    if (scanf("%u", &decimalNumber) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    decimalToOctal(decimalNumber);
+
+    return EXIT_SUCCESS;
+}
+
+void decimalToOctal(unsigned int decimalNumber) {
+    int octalNumber[32];
+    int index = 0;
+
+    if (decimalNumber == 0) {
+        printf("0\n");
+        return;
+    }
+
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    while (decimalNumber > 0) {
+        octalNumber[index] = decimalNumber % 8;
+        decimalNumber = decimalNumber / 8;
+        index++;
+    }
+
+    for (int i = index - 1; i >= 0; i--) {
+        /* Possible weaknesses found:
+         *  Uninitialized variable: octalNumber
+         *  Uninitialized variable: octalNumber [uninitvar]
+         */
+        printf("%d", octalNumber[i]);
+    }
+    printf("\n");
+}

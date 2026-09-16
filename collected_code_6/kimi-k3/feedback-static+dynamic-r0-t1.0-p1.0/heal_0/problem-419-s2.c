@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+void round_and_sum(double *numbers, size_t length)
+{
+    if (numbers == NULL || length == 0)
+    {
+        fprintf(stderr, "Invalid input parameters\n");
+        return;
+    }
+
+    double sum = 0.0;
+    
+    for (size_t i = 0; i < length; i++)
+    {
+        numbers[i] = round(numbers[i]);
+        sum += numbers[i];
+    }
+    
+    double result = sum * (double)length;
+    printf("Result: %.2f\n", result);
+}
+
+int main(void)
+{
+    size_t length = 5;
+    double *numbers = malloc(length * sizeof(double));
+    
+    if (numbers == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    numbers[0] = 3.7;
+    numbers[1] = 2.3;
+    numbers[2] = 5.9;
+    numbers[3] = 1.2;
+    numbers[4] = 8.5;
+    
+    round_and_sum(numbers, length);
+    
+    free(numbers);
+    numbers = NULL;
+    
+    return EXIT_SUCCESS;
+}

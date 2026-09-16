@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct List {
+    int *items;
+    size_t length;
+};
+
+size_t count_lists(const struct List *lists, size_t num_lists);
+struct List make_list(const int *values, size_t length, int *status);
+void free_lists(struct List *lists, size_t num_lists);
+
+size_t count_lists(const struct List *lists, size_t num_lists)
+{
+    size_t count = 0U;
+    size_t i;
+
+    if (lists == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < num_lists; i++) {
+        if (lists[i].items != NULL) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+struct List make_list(const int *values, size_t length, int *status)
+{
+    struct List result;
+    size_t i;
+
+    result.items = NULL;
+    result.length = 0U;
+
+    if (status == NULL) {
+        return result;
+    }
+
+    *status = -1;
+
+    if (values == NULL || length == 0U) {
+        return result;
+    }
+
+    if (length > SIZE_MAX / sizeof(int)) {
+        return result;
+    }
+
+    result.items = malloc(length * sizeof(int));
+    if (result.items == NULL) {
+        return result;
+    }
+
+    for (i = 0U; i < length; i++) {
+        result.items[i] = values[i];
+    }
+
+    result.length = length;
+    *status = 0;
+
+    return result;
+}
+
+void free_lists(struct List *lists, size_t num_lists)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < num_lists; i++) {
+        free(lists[i].items);
+        lists[i].items = NULL;
+        lists[i].length = 0U;
+    }
+}
+
+int main(void)
+{
+    struct List lists[3];
+    int data1[] = {1, 3};
+    int data2[] = {5, 7};
+    int data3[] = {9, 11};
+    int status;
+    size_t total;
+
+    lists[0] = make_list(data1, sizeof(data1) / sizeof(data1[0]), &status);
+    if (status != 0) {
+        free_lists(lists, 1U);
+        fprintf(stderr, "Failed to create list 1\n");
+        return EXIT_FAILURE;
+    }
+
+    lists[1] = make_list(data2, sizeof(data2) / sizeof(data2[0]), &status);
+    if (status != 0) {
+        free_lists(lists, 2U);
+        fprintf(stderr, "Failed to create list 2\n");
+        return EXIT_FAILURE;
+    }
+
+    lists[2] = make_list(data3, sizeof(data3) / sizeof(data3[0]), &status);
+    if (status != 0) {
+        free_lists(lists, 3U);
+        fprintf(stderr, "Failed to create list 3\n");
+        return EXIT_FAILURE;
+    }
+
+    total = count_lists(lists, 3U);
+
+    if (printf("Number of lists: %zu\n", total) < 0) {
+        free_lists(lists, 3U);
+        return EXIT_FAILURE;
+    }
+
+    free_lists(lists, 3U);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+static uint64_t mod_mul(uint64_t a, uint64_t b, uint64_t mod)
+{
+    uint64_t result = 0;
+    a %= mod;
+    b %= mod;
+    
+    while (b > 0) {
+        if (b & 1) {
+            result = (result + a) % mod;
+        }
+        a = (a * 2) % mod;
+        b >>= 1;
+    }
+    
+    return result;
+}
+
+static uint64_t mod_pow(uint64_t base, uint64_t exp, uint64_t mod)
+{
+    uint64_t result = 1;
+    base %= mod;
+    
+    while (exp > 0) {
+        if (exp & 1) {
+            result = mod_mul(result, base, mod);
+        }
+        base = mod_mul(base, base, mod);
+        exp >>= 1;
+    }
+    
+    return result;
+}
+
+static bool has_self_inverse(uint64_t element, uint64_t p)
+{
+    if (element == 0 || element >= p) {
+        return false;
+    }
+    
+    uint64_t inverse = mod_pow(element, p - 2, p);
+    return inverse == element;
+}
+
+size_t count_self_inverse_elements(const uint64_t *array, size_t length, uint64_t p)
+{
+    if (array == NULL || p < 2) {
+        return 0;
+    }
+    
+    size_t count = 0;
+    
+    for (size_t i = 0; i < length; i++) {
+        if (has_self_inverse(array[i], p)) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void)
+{
+    uint64_t array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    size_t length = sizeof(array) / sizeof(array[0]);
+    uint64_t p = 13;
+    
+    size_t result = count_self_inverse_elements(array, length, p);
+    
+    printf("Number of elements with self-inverse modulo %lu: %zu\n", 
+           (unsigned long)p, result);
+    
+    return 0;
+}

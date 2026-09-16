@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int **create_2d_array(size_t rows, size_t cols)
+{
+    int **array = NULL;
+    size_t i;
+    size_t j;
+
+    if (rows == 0U || cols == 0U) {
+        return NULL;
+    }
+
+    if (rows > (SIZE_MAX / sizeof(int *))) {
+        return NULL;
+    }
+
+    if (cols > (SIZE_MAX / sizeof(int))) {
+        return NULL;
+    }
+
+    array = malloc(rows * sizeof(int *));
+    if (array == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < rows; i++) {
+        array[i] = malloc(cols * sizeof(int));
+        if (array[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(array[j]);
+            }
+            free(array);
+            return NULL;
+        }
+    }
+
+    return array;
+}
+
+void fill_2d_array(int **array, size_t rows, size_t cols)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            array[i][j] = (int)((i * cols) + j);
+        }
+    }
+}
+
+void print_2d_array(int **array, size_t rows, size_t cols)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            if (printf("%d ", array[i][j]) < 0) {
+                return;
+            }
+        }
+        if (printf("\n") < 0) {
+            return;
+        }
+    }
+}
+
+void free_2d_array(int **array, size_t rows)
+{
+    size_t i;
+
+    if (array == NULL) {
+        return;
+    }
+
+    for (i = 0; i < rows; i++) {
+        free(array[i]);
+    }
+    free(array);
+}
+
+int main(void)
+{
+    size_t rows = 4U;
+    size_t cols = 5U;
+    int **array = NULL;
+
+    array = create_2d_array(rows, cols);
+    if (array == NULL) {
+        (void)fprintf(stderr, "Failed to allocate 2D array\n");
+        return EXIT_FAILURE;
+    }
+
+    fill_2d_array(array, rows, cols);
+    print_2d_array(array, rows, cols);
+    free_2d_array(array, rows);
+    array = NULL;
+
+    return EXIT_SUCCESS;
+}

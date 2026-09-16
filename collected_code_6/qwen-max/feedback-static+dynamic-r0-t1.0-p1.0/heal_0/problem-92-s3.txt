@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_undulating(long long num) {
+    if (num < 100) return false;
+    int prev = -1, pp = -1;
+    while (num > 0) {
+        int digit = num % 10;
+        if (pp != -1 && (pp == digit || prev == digit)) {
+            return false;
+        }
+        pp = prev;
+        prev = digit;
+        num /= 10;
+    }
+    return pp != -1 && pp != prev;
+}
+
+int main() {
+    long long num;
+    printf("Enter a number: ");
+    scanf("%lld", &num);
+    if (is_undulating(num)) {
+        printf("The number is undulating.\n");
+    } else {
+        printf("The number is not undulating.\n");
+    }
+    return 0;
+}
+```

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_scalene(double a, double b, double c);
+
+bool is_scalene(double a, double b, double c) {
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return false;
+    }
+    if ((a + b <= c) || (a + c <= b) || (b + c <= a)) {
+        return false;
+    }
+    return (a != b) && (b != c) && (a != c);
+}
+
+int main(void) {
+    double a, b, c;
+
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        return 1;
+    }
+
+    if (is_scalene(a, b, c)) {
+        printf("The triangle is scalene.\n");
+    } else {
+        printf("The triangle is not scalene.\n");
+    }
+
+    return 0;
+}

@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 2101, got 1200
-  *  test case 2 failed: expected 27, got 10
-  *  test case 1 failed: expected 5013, got 6000
+  *  test case 2 failed: expected 27, got 6
+  *  test case 1 failed: expected 5013, got 4000
+  *  test case 0 failed: expected 2101, got 1000
   */
 
 int max_sum_no_three_consecutive(int *arr, int n) {
@@ -11,32 +11,24 @@ int max_sum_no_three_consecutive(int *arr, int n) {
     if (n == 1) return arr[0];
     if (n == 2) return arr[0] + arr[1];
 
-    int incl = arr[0];
-    int excl = 0;
-    /* Possible weaknesses found:
-     *  Variable 'excl_new' is assigned a value that is never used. [unreadVariable]
-     *  The scope of the variable 'excl_new' can be reduced. [variableScope]
-     */
-    int excl_new = 0;
+    int prev1 = arr[0], prev2 = 0, prev3 = 0;
 
     for (int i = 1; i < n; i++) {
-        excl_new = (excl > incl) ? excl : incl;
-        if (i >= 2)
-            incl = excl + arr[i];
-        else
-            incl = (i == 1) ? arr[0] + arr[1] : arr[0];
-        excl = excl_new;
+        int incl = arr[i] + prev3;
+        int excl = prev1 > prev2 ? prev1 : prev2;
+
+        prev3 = prev2;
+        prev2 = prev1;
+        prev1 = incl > excl ? incl : excl;
     }
 
-    return (incl > excl) ? incl : excl;
+    return prev1 > prev2 ? prev1 : prev2;
 }
 
 int main() {
-    int arr[] = {1, 2, 3, 1, 5, 6, 7};
+    int arr[] = {12, 34, 15, 20, 30, 5, 1};
     int n = sizeof(arr) / sizeof(arr[0]);
-
     int result = max_sum_no_three_consecutive(arr, n);
-    printf("Maximum sum is %d\n", result);
-
+    printf("%d\n", result);
     return 0;
 }

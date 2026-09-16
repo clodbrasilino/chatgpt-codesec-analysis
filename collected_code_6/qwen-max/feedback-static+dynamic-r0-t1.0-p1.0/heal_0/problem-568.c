@@ -2,33 +2,32 @@
 #include <stdlib.h>
 
 typedef struct {
-    int key;
-    char value[256];
+    void *data; // Assume data is a placeholder for actual dictionary implementation
 } Dictionary;
 
-typedef struct {
-    Dictionary **dicts;
-    size_t count;
-} DictList;
-
-DictList* create_empty_dicts(size_t num) {
-    DictList *list = (DictList*)malloc(sizeof(DictList));
-    if (!list) return NULL;
-
-    list->dicts = (Dictionary**)calloc(num, sizeof(Dictionary*));
-    if (!list->dicts) {
-        free(list);
-        return NULL;
+void free_dict(Dictionary *dict) {
+    if (dict->data) {
+        free(dict->data); // Free the data if it was allocated
     }
+}
 
-    list->count = num;
-    for (size_t i = 0; i < num; ++i) {
-        list->dicts[i] = (Dictionary*)calloc(1, sizeof(Dictionary));
-        if (!list->dicts[i]) {
-            for (size_t j = 0; j < i; ++j) {
-                free(list->dicts[j]);
+Dictionary* create_dict() {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->data = NULL; // Placeholder for actual data
+    return dict;
+}
+
+Dictionary** create_list_of_dicts(int num) {
+    Dictionary **list = malloc(num * sizeof(Dictionary*));
+    if (!list) return NULL;
+    for (int i = 0; i < num; ++i) {
+        list[i] = create_dict();
+        if (!list[i]) {
+            for (int j = 0; j < i; ++j) {
+                free_dict(list[j]);
+                free(list[j]);
             }
-            free(list->dicts);
             free(list);
             return NULL;
         }
@@ -36,21 +35,26 @@ DictList* create_empty_dicts(size_t num) {
     return list;
 }
 
-void free_dict_list(DictList *list) {
-    for (size_t i = 0; i < list->count; ++i) {
-        free(list->dicts[i]);
+void free_list_of_dicts(Dictionary **list, int num) {
+    if (list) {
+        for (int i = 0; i < num; ++i) {
+            if (list[i]) {
+                free_dict(list[i]);
+                free(list[i]);
+            }
+        }
+        free(list);
     }
-    free(list->dicts);
-    free(list);
 }
 
 int main() {
-    DictList *my_dict_list = create_empty_dicts(5);
-    if (my_dict_list == NULL) {
-        fprintf(stderr, "Failed to create dictionary list\n");
-        return 1;
+    int num_dicts = 5;
+    Dictionary **list = create_list_of_dicts(num_dicts);
+    if (list) {
+        // Use the list of dictionaries
+        free_list_of_dicts(list, num_dicts);
+    } else {
+        printf("Failed to create list of dictionaries\n");
     }
-
-    free_dict_list(my_dict_list);
     return 0;
 }

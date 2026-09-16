@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_regular_tetrahedron_surface_area(double edge_length) {
+    if (edge_length < 0.0) {
+        return -1.0;
+    }
+    return sqrt(3.0) * edge_length * edge_length;
+}
+
+int main(void) {
+    double edge_length = 0.0;
+    double area = 0.0;
+    int input_status = 0;
+
+    input_status = scanf("%lf", &edge_length);
+
+    if (input_status != 1) {
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_regular_tetrahedron_surface_area(edge_length);
+
+    if (area < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```

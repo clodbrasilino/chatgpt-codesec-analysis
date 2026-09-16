@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+#include <limits.h>
+
+int find_sqrt(int num, int *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    if (num < 0) {
+        return -1;
+    }
+    if (num == 0) {
+        *result = 0;
+        return 0;
+    }
+    
+    int root = (int)sqrt((double)num);
+    
+    if (root > 0 && root <= INT_MAX / root) {
+        if (root * root == num) {
+            *result = root;
+            return 0;
+        }
+    }
+    
+    if (root < INT_MAX && (root + 1) <= INT_MAX / (root + 1)) {
+        if ((root + 1) * (root + 1) == num) {
+            *result = root + 1;
+            return 0;
+        }
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int number;
+    int result;
+    
+    printf("Enter a number: ");
+    
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (find_sqrt(number, &result) == 0) {
+        printf("Square root of %d is %d\n", number, result);
+    } else {
+        printf("%d is not a perfect square\n", number);
+    }
+    
+    return 0;
+}

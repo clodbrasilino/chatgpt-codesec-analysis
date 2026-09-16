@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int sum_of_digits(unsigned int n);
+
+unsigned int sum_of_digits(unsigned int n) {
+    unsigned int sum = 0;
+    while (n != 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+int main(void) {
+    unsigned int number;
+    unsigned int sum;
+
+    if (scanf("%u", &number) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    sum = sum_of_digits(number);
+    printf("%u\n", sum);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkOddIndices(const int arr[], int size) {
+    for (int i = 1; i < size; i += 2) {
+        if (arr[i] % 2 == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {2, 3, 4, 5, 6};
+    int arr2[] = {2, 3, 4, 5, 6, 8};
+    int arr3[] = {1, 7, 3, 9, 5};
+    
+    printf("%d\n", checkOddIndices(arr1, 5));
+    printf("%d\n", checkOddIndices(arr2, 6));
+    printf("%d\n", checkOddIndices(arr3, 5));
+    
+    return 0;
+}
+```

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int find_first_max_even_word(const char *sentence, char *result, size_t result_size)
+{
+    size_t i = 0;
+    size_t len = 0;
+    size_t max_len = 0;
+    size_t best_start = 0;
+    int found = 0;
+
+    if (sentence == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    len = strlen(sentence);
+
+    while (i < len) {
+        while (i < len && sentence[i] == ' ') {
+            i++;
+        }
+        if (i < len) {
+            size_t start = i;
+            size_t word_len = 0;
+            while (i < len && sentence[i] != ' ') {
+                i++;
+            }
+            word_len = i - start;
+            if ((word_len % 2 == 0) && (word_len > max_len)) {
+                max_len = word_len;
+                best_start = start;
+                found = 1;
+            }
+        }
+    }
+
+    if (!found) {
+        return -1;
+    }
+
+    if (max_len >= result_size) {
+        return -1;
+    }
+
+    memcpy(result, sentence + best_start, max_len);
+    result[max_len] = '\0';
+    return 0;
+}
+
+int main(void)
+{
+    const char *sentence = "It is a pleasant day today";
+    char result[256];
+
+    if (find_first_max_even_word(sentence, result, sizeof(result)) == 0) {
+        if (printf("First maximum length even word: %s\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No even length word found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

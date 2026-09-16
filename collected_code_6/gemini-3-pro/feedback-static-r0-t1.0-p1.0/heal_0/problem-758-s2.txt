@@ -1,0 +1,129 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    struct List* next;
+} List;
+
+bool are_lists_equal(Node* head1, Node* head2) {
+    Node* ptr1 = head1;
+    Node* ptr2 = head2;
+    
+    while (ptr1 != NULL && ptr2 != NULL) {
+        if (ptr1->data != ptr2->data) {
+            return false;
+        }
+        ptr1 = ptr1->next;
+        ptr2 = ptr2->next;
+    }
+    
+    return ptr1 == NULL && ptr2 == NULL;
+}
+
+int count_unique_lists(List* list_of_lists) {
+    if (list_of_lists == NULL) {
+        return 0;
+    }
+    
+    int unique_count = 0;
+    List* current = list_of_lists;
+    
+    while (current != NULL) {
+        bool is_unique = true;
+        List* checker = list_of_lists;
+        
+        while (checker != current) {
+            if (are_lists_equal(current->head, checker->head)) {
+                is_unique = false;
+                break;
+            }
+            checker = checker->next;
+        }
+        
+        if (is_unique) {
+            unique_count++;
+        }
+        
+        current = current->next;
+    }
+    
+    return unique_count;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node != NULL) {
+        new_node->data = data;
+        new_node->next = NULL;
+    }
+    return new_node;
+}
+
+List* create_list_node(Node* head) {
+    List* new_list_node = (List*)malloc(sizeof(List));
+    if (new_list_node != NULL) {
+        new_list_node->head = head;
+        new_list_node->next = NULL;
+    }
+    return new_list_node;
+}
+
+void free_nodes(Node* head) {
+    while (head != NULL) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_list_of_lists(List* head) {
+    while (head != NULL) {
+        List* temp = head;
+        head = head->next;
+        free_nodes(temp->head);
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* l1 = create_node(1);
+    if (!l1) return 1;
+    l1->next = create_node(2);
+    if (!l1->next) { free_nodes(l1); return 1; }
+    
+    Node* l2 = create_node(1);
+    if (!l2) { free_nodes(l1); return 1; }
+    l2->next = create_node(2);
+    if (!l2->next) { free_nodes(l1); free_nodes(l2); return 1; }
+    
+    Node* l3 = create_node(3);
+    if (!l3) { free_nodes(l1); free_nodes(l2); return 1; }
+    
+    List* list1 = create_list_node(l1);
+    if (!list1) { free_nodes(l1); free_nodes(l2); free_nodes(l3); return 1; }
+    
+    List* list2 = create_list_node(l2);
+    if (!list2) { free_list_of_lists(list1); free_nodes(l2); free_nodes(l3); return 1; }
+    
+    List* list3 = create_list_node(l3);
+    if (!list3) { free_list_of_lists(list1); free_list_of_lists(list2); free_nodes(l3); return 1; }
+    
+    list1->next = list2;
+    list2->next = list3;
+    
+    int unique_counts = count_unique_lists(list1);
+    printf("Unique lists: %d\n", unique_counts);
+    
+    free_list_of_lists(list1);
+    
+    return 0;
+}
+```

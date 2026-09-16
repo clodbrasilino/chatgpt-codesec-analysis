@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSubarray(const int arr[], int n, const int subarr[], int m) {
+    if (m > n) {
+        return false;
+    }
+    if (m == 0) {
+        return true;
+    }
+    for (int i = 0; i <= n - m; i++) {
+        int j;
+        for (j = 0; j < m; j++) {
+            if (arr[i + j] != subarr[j]) {
+                break;
+            }
+        }
+        if (j == m) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int subarr1[] = {3, 4, 5};
+    int subarr2[] = {3, 5, 7};
+    int subarr3[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int m1 = sizeof(subarr1) / sizeof(subarr1[0]);
+    int m2 = sizeof(subarr2) / sizeof(subarr2[0]);
+    int m3 = sizeof(subarr3) / sizeof(subarr3[0]);
+    printf("subarr1 is %s\n", isSubarray(arr, n, subarr1, m1) ? "a subarray" : "not a subarray");
+    printf("subarr2 is %s\n", isSubarray(arr, n, subarr2, m2) ? "a subarray" : "not a subarray");
+    printf("subarr3 is %s\n", isSubarray(arr, n, subarr3, m3) ? "a subarray" : "not a subarray");
+    return 0;
+}

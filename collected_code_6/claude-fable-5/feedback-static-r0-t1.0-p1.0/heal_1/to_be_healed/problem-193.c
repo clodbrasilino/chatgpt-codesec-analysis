@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int *remove_duplicates(const int *input, size_t size, size_t *out_size)
+{
+    int *result = NULL;
+    size_t count = 0;
+    size_t i;
+    size_t j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'found' can be reduced. [variableScope]
+     */
+    bool found;
+
+    if (input == NULL || out_size == NULL || size == 0U) {
+        if (out_size != NULL) {
+            *out_size = 0U;
+        }
+        return NULL;
+    }
+
+    result = (int *)malloc(size * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0U;
+        return NULL;
+    }
+
+    for (i = 0U; i < size; i++) {
+        found = false;
+        for (j = 0U; j < count; j++) {
+            if (result[j] == input[i]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            result[count] = input[i];
+            count++;
+        }
+    }
+
+    *out_size = count;
+    return result;
+}
+
+int main(void)
+{
+    int tuple[] = {1, 3, 5, 2, 3, 5, 1, 1, 3};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t new_size = 0U;
+    size_t i;
+    int *unique = NULL;
+
+    unique = remove_duplicates(tuple, size, &new_size);
+    if (unique == NULL) {
+        (void)fprintf(stderr, "Failed to remove duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Original: ");
+    for (i = 0U; i < size; i++) {
+        (void)printf("%d ", tuple[i]);
+    }
+    (void)printf("\n");
+
+    (void)printf("Without duplicates: ");
+    for (i = 0U; i < new_size; i++) {
+        (void)printf("%d ", unique[i]);
+    }
+    (void)printf("\n");
+
+    free(unique);
+    unique = NULL;
+
+    return EXIT_SUCCESS;
+}

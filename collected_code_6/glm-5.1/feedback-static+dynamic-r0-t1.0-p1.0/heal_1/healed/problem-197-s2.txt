@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Tuple;
+
+Tuple tuple_pow(Tuple base, Tuple exp) {
+    Tuple result;
+    errno = 0;
+    result.x = pow(base.x, exp.x);
+    if (errno != 0) {
+        exit(EXIT_FAILURE);
+    }
+    errno = 0;
+    result.y = pow(base.y, exp.y);
+    if (errno != 0) {
+        exit(EXIT_FAILURE);
+    }
+    return result;
+}
+
+int main(void) {
+    Tuple base = {2.0, 3.0};
+    Tuple exp = {3.0, 2.0};
+    Tuple result = tuple_pow(base, exp);
+    printf("(%f, %f)\n", result.x, result.y);
+    return 0;
+}

@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:45:11: style: Condition 'n<=0' is always false [knownConditionTrueFalse]
+    if (n <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:43:31: note: Assignment 'n=(int)sizeof(arr1)/(int)sizeof(arr1[0])', assigned value is 5
+    int n = (int)sizeof(arr1) / (int)sizeof(arr1[0]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:45:11: note: Condition 'n<=0' is always false
+    if (n <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:50:11: style: Condition 'n!=(int)sizeof(arr2)/(int)sizeof(arr2[0])' is always false [knownConditionTrueFalse]
+    if (n != (int)sizeof(arr2) / (int)sizeof(arr2[0])) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:43:31: note: Assignment 'n=(int)sizeof(arr1)/(int)sizeof(arr1[0])', assigned value is 5
+    int n = (int)sizeof(arr1) / (int)sizeof(arr1[0]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:50:11: note: Condition 'n!=(int)sizeof(arr2)/(int)sizeof(arr2[0])' is always false
+    if (n != (int)sizeof(arr2) / (int)sizeof(arr2[0])) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:7:33: style: Parameter 'arr2' can be declared as const array [constParameter]
+int find_median(int arr1[], int arr2[], int n) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-622-s3.c:7:21: style: Parameter 'arr1' can be declared as const array [constParameter]
+int find_median(int arr1[], int arr2[], int n) {
+                    ^

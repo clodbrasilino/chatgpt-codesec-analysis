@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_first_digit(int number) {
+    if (number == INT_MIN) {
+        return 2;
+    }
+    
+    if (number < 0) {
+        number = -number;
+    }
+
+    while (number >= 10) {
+        number /= 10;
+    }
+
+    return number;
+}
+
+int main(void) {
+    int num;
+    int first_digit;
+    
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    first_digit = find_first_digit(num);
+    printf("%d\n", first_digit);
+
+    return EXIT_SUCCESS;
+}

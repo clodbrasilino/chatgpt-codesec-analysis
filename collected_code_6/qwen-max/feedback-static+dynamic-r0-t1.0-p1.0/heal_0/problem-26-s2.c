@@ -2,21 +2,32 @@
 #include <stdlib.h>
 
 typedef struct {
-    int count;
     int *elements;
-} Tuple;
+    size_t count;
+} TupleList;
 
-int has_k_elements(Tuple t, int k) {
-    return t.count == k;
+int check_k_elements(TupleList list, int k) {
+    if (list.count != k) {
+        return 0;
+    }
+    for (size_t i = 0; i < list.count; ++i) {
+        if (list.elements[i] == 0) {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 int main() {
-    Tuple t = {4, (int[]){1, 2, 3, 4}};
-    int k = 4;
-    if (has_k_elements(t, k)) {
-        printf("Tuple has all %d elements.\n", k);
+    int k = 3;
+    int elements[] = {1, 2, 3};
+    TupleList list = {elements, sizeof(elements) / sizeof(elements[0])};
+
+    if (check_k_elements(list, k)) {
+        printf("The tuple list has all %d elements.\n", k);
     } else {
-        printf("Tuple does not have all %d elements.\n", k);
+        printf("The tuple list does not have all %d elements.\n", k);
     }
+
     return 0;
 }

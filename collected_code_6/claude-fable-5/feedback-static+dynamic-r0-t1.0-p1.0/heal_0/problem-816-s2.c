@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int clear_tuples(Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        tuples[i].first = 0;
+        tuples[i].second = 0;
+    }
+
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("(%d, %d)", tuples[i].first, tuples[i].second);
+        if (i + 1 < count) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    size_t count = 3;
+    Tuple *tuples;
+    size_t i;
+
+    tuples = malloc(count * sizeof(*tuples));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        tuples[i].first = (int)(i + 1);
+        tuples[i].second = (int)((i + 1) * 10);
+    }
+
+    printf("Before clearing: ");
+    print_tuples(tuples, count);
+
+    if (clear_tuples(tuples, count) != 0) {
+        fprintf(stderr, "Failed to clear tuples\n");
+        free(tuples);
+        return EXIT_FAILURE;
+    }
+
+    printf("After clearing: ");
+    print_tuples(tuples, count);
+
+    free(tuples);
+    tuples = NULL;
+
+    return EXIT_SUCCESS;
+}

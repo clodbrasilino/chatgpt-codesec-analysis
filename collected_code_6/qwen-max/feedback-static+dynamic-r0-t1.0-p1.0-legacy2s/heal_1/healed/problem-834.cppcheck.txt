@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-834.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-834.c:9:38: portability: Assigning an integer to a pointer is not portable. [AssignmentIntegerToAddress]
+            (*matrix)[layer * n + i] = value++;
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-834.c:12:46: portability: Assigning an integer to a pointer is not portable. [AssignmentIntegerToAddress]
+            (*matrix)[i * n + n - layer - 1] = value++;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-834.c:16:52: portability: Assigning an integer to a pointer is not portable. [AssignmentIntegerToAddress]
+                (*matrix)[(n - layer - 1) * n + i] = value++;
+                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-834.c:20:38: portability: Assigning an integer to a pointer is not portable. [AssignmentIntegerToAddress]
+            (*matrix)[i * n + layer] = value++;
+                                     ^

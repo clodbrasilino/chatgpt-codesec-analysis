@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_ab(const char *text)
+{
+    regex_t regex;
+    int result;
+
+    if (text == NULL) {
+        return 0;
+    }
+
+    result = regcomp(&regex, "ab{2,3}", REG_EXTENDED);
+    if (result != 0) {
+        return -1;
+    }
+
+    result = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (result == 0) {
+        return 1;
+    }
+
+    if (result == REG_NOMATCH) {
+        return 0;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "abb",
+        "abbb",
+        "ab",
+        "abbbb",
+        "aabbc",
+        "hello",
+        "xabbz"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+    int result;
+
+    for (i = 0; i < count; i++) {
+        result = match_ab(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Regex error while processing \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": match\n", tests[i]);
+        } else {
+            printf("\"%s\": no match\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

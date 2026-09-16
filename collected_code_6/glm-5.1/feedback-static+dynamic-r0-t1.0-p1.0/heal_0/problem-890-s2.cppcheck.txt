@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:27:11: style: Condition 'n<=0' is always false [knownConditionTrueFalse]
+    if (n <= 0 || arr1 == NULL || arr2 == NULL) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:25:26: note: Assignment 'n=sizeof(arr1)/sizeof(arr1[0])', assigned value is 7
+    int n = sizeof(arr1) / sizeof(arr1[0]);
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:27:11: note: Condition 'n<=0' is always false
+    if (n <= 0 || arr1 == NULL || arr2 == NULL) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:27:24: style: Condition 'arr1==NULL' is always false [knownConditionTrueFalse]
+    if (n <= 0 || arr1 == NULL || arr2 == NULL) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:27:40: style: Condition 'arr2==NULL' is always false [knownConditionTrueFalse]
+    if (n <= 0 || arr1 == NULL || arr2 == NULL) {
+                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:7:9: style: The scope of the variable 'mid' can be reduced. [variableScope]
+    int mid;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:4:35: style: Parameter 'arr1' can be declared as pointer to const [constParameterPointer]
+int find_extra_element_index(int *arr1, int *arr2, int n) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-890-s2.c:4:46: style: Parameter 'arr2' can be declared as pointer to const [constParameterPointer]
+int find_extra_element_index(int *arr1, int *arr2, int n) {
+                                             ^

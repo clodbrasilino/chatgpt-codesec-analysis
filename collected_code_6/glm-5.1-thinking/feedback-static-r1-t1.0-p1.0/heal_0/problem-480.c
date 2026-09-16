@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+char find_max_occurrence(const char *str) {
+    if (str == NULL) {
+        return '\0';
+    }
+
+    int count[256] = {0};
+    int max_count = 0;
+    char max_char = '\0';
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        unsigned char idx = (unsigned char)str[i];
+        count[idx]++;
+        if (count[idx] > max_count) {
+            max_count = count[idx];
+            max_char = str[i];
+        }
+    }
+
+    return max_char;
+}
+
+int main(void) {
+    char res;
+
+    res = find_max_occurrence("hello world");
+    printf("%c\n", res);
+
+    res = find_max_occurrence("");
+    printf("%d\n", res);
+
+    res = find_max_occurrence(NULL);
+    printf("%d\n", res);
+
+    return 0;
+}

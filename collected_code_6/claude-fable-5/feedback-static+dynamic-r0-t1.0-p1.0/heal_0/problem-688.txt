@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double real;
+    double imag;
+} Complex;
+
+double complex_length(const Complex *c)
+{
+    if (c == NULL) {
+        return -1.0;
+    }
+    return hypot(c->real, c->imag);
+}
+
+int main(void)
+{
+    Complex num;
+    double length;
+
+    printf("Enter the real part: ");
+    if (scanf("%lf", &num.real) != 1) {
+        fprintf(stderr, "Invalid input for real part\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the imaginary part: ");
+    if (scanf("%lf", &num.imag) != 1) {
+        fprintf(stderr, "Invalid input for imaginary part\n");
+        return EXIT_FAILURE;
+    }
+
+    length = complex_length(&num);
+    if (length < 0.0) {
+        fprintf(stderr, "Error computing length\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The length of the complex number (%f + %fi) is %f\n",
+           num.real, num.imag, length);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key design decisions:
+
+- **`hypot()` instead of `sqrt(r*r + i*i)`**: This avoids intermediate overflow/underflow when the components are very large or very small, addressing CWE-703 (improper handling of exceptional conditions).
+- **NULL pointer check** in `complex_length` prevents dereferencing an invalid resource (CWE-664).
+- **Validated `scanf` return values**: Every input operation is checked before its result is used, so uninitialized memory is never read.
+- **`int main(void)` and standard exit codes** (`EXIT_SUCCESS`/`EXIT_FAILURE`) ensure adherence to the C standard (CWE-710).
+- The struct is passed by `const` pointer to make the function's contract explicit and avoid unintended modification.

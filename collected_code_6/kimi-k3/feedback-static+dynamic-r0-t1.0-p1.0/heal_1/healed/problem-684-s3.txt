@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool count_char_in_repeated_string(const char *str, char ch, size_t repeat_count, size_t *result)
+{
+    size_t len;
+    size_t char_count = 0;
+    size_t i;
+
+    if (str == NULL || result == NULL) {
+        return false;
+    }
+
+    *result = 0;
+    len = strlen(str);
+
+    if (len == 0 || repeat_count == 0) {
+        return true;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] == ch) {
+            char_count++;
+        }
+    }
+
+    if (char_count > 0 && repeat_count > SIZE_MAX / char_count) {
+        return false;
+    }
+
+    *result = char_count * repeat_count;
+    return true;
+}
+
+int main(void)
+{
+    const char *str = "abcac";
+    char ch = 'a';
+    size_t repeat_count = 3;
+    size_t result;
+
+    if (!count_char_in_repeated_string(str, ch, repeat_count, &result)) {
+        fprintf(stderr, "Error: overflow occurred during calculation\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Character '%c' occurs %zu times in the repeated string.\n", ch, result);
+
+    return EXIT_SUCCESS;
+}
+```

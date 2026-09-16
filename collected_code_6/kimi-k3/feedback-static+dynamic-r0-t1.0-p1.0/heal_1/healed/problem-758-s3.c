@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+} ListCollection;
+
+static int compare_ints(const void *a, const void *b)
+{
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    if (ia < ib) return -1;
+    if (ia > ib) return 1;
+    return 0;
+}
+
+static int lists_equal(const IntList *a, const IntList *b)
+{
+    size_t i;
+    if (a->size != b->size) return 0;
+    for (i = 0; i < a->size; ++i) {
+        if (a->data[i] != b->data[i]) return 0;
+    }
+    return 1;
+}
+
+static void normalize_list(IntList *list)
+{
+    if (list->size > 1) {
+        qsort(list->data, list->size, sizeof(int), compare_ints);
+    }
+}
+
+static size_t count_unique_lists(ListCollection *collection)
+{
+    size_t i, j, unique = 0;
+
+    if (collection == NULL || collection->lists == NULL) return 0;
+
+    for (i = 0; i < collection->count; ++i) {
+        normalize_list(&collection->lists[i]);
+    }
+
+    for (i = 0; i < collection->count; ++i) {
+        int is_duplicate = 0;
+        for (j = 0; j < i; ++j) {
+            if (lists_equal(&collection->lists[i], &collection->lists[j])) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) ++unique;
+    }
+    return unique;
+}
+
+static int init_list(IntList *list, const int *data, size_t size)
+{
+    size_t i;
+    if (size == 0) {
+        list->data = NULL;
+        list->size = 0;
+        return 1;
+    }
+    list->data = malloc(size * sizeof(int));
+    if (list->data == NULL) return 0;
+    for (i = 0; i < size; ++i) list->data[i] = data[i];
+    list->size = size;
+    return 1;
+}
+
+static void free_collection(ListCollection *collection)
+{
+    size_t i;
+    if (collection == NULL) return;
+    for (i = 0; i < collection->count; ++i) {
+        free(collection->lists[i].data);
+    }
+    free(collection->lists);
+    collection->lists = NULL;
+    collection->count = 0;
+}
+
+int main(void)
+{
+    const int a1[] = {1, 2, 3};
+    const int a2[] = {3, 2, 1};
+    const int a3[] = {4, 5};
+    const int a4[] = {1, 2, 3};
+    const int a5[] = {5, 4};
+    ListCollection collection;
+    size_t unique_count;
+
+    collection.count = 5;
+    collection.lists = calloc(collection.count, sizeof(IntList));
+    if (collection.lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!init_list(&collection.lists[0], a1, 3) ||
+        !init_list(&collection.lists[1], a2, 3) ||
+        !init_list(&collection.lists[2], a3, 2) ||
+        !init_list(&collection.lists[3], a4, 3) ||
+        !init_list(&collection.lists[4], a5, 2)) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_collection(&collection);
+        return EXIT_FAILURE;
+    }
+
+    unique_count = count_unique_lists(&collection);
+    printf("Number of unique lists: %zu\n", unique_count);
+
+    free_collection(&collection);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isEven(int number);
+
+bool isEven(int number)
+{
+    return (number % 2 == 0);
+}
+
+int main(void)
+{
+    int number = 0;
+
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return 1;
+    }
+
+    if (isEven(number))
+    {
+        printf("%d is even.\n", number);
+    }
+    else
+    {
+        printf("%d is odd.\n", number);
+    }
+
+    return 0;
+}
+```
+
+Key points addressing the CWE concerns:
+
+- **CWE-703**: The return value of `scanf` is checked to properly handle invalid or malformed input rather than proceeding with an uninitialized variable.
+- **CWE-710**: The code follows standard conventions — explicit function prototype, `int main(void)` signature, proper return status codes from `main`, and use of `bool`/`true`/`false` from `<stdbool.h>` instead of ad-hoc integer flags.
+- **CWE-664**: No dynamic resources are allocated, so there is no resource lifetime to mismanage; the program uses only stack variables with well-defined scope.

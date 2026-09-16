@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-950.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-950.c:21:61: error: implicit declaration of function 'get_chician_zodiac'; did you mean 'get_chinese_zodiac'? [-Wimplicit-function-declaration]
+   21 |     printf("Chinese Zodiac for the year %d is: %s\n", year, get_chician_zodiac(year));
+      |                                                             ^~~~~~~~~~~~~~~~~~
+      |                                                             get_chinese_zodiac

@@ -5,88 +5,75 @@
 typedef struct {
     char *key;
     int value;
-} DictEntry;
+} DictionaryEntry;
 
 typedef struct {
-    int size;
-    DictEntry *entries;
+    DictionaryEntry *entries;
+    size_t size;
+    size_t capacity;
 } Dictionary;
 
-Dictionary* createDictionary() {
-    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
-    if (!dict) return NULL;
+void dictionary_init(Dictionary *dict, size_t initial_capacity) {
     dict->size = 0;
-    dict->entries = NULL;
-    return dict;
+    dict->capacity = initial_capacity;
+    dict->entries = (DictionaryEntry *)malloc(initial_capacity * sizeof(DictionaryEntry));
 }
 
-void freeDictionary(Dictionary *dict) {
-    if (dict) {
-        for (int i = 0; i < dict->size; ++i) {
-            free(dict->entries[i].key);
-        }
-        free(dict->entries);
-        free(dict);
+void dictionary_deinit(Dictionary *dict) {
+    for (size_t i = 0; i < dict->size; ++i) {
+        free(dict->entries[i].key);
     }
+    free(dict->entries);
 }
 
-int findKey(Dictionary *dict, const char *key) {
-    for (int i = 0; i < dict->size; ++i) {
+int dictionary_contains(const Dictionary *dict, const char *key) {
+    for (size_t i = 0; i < dict->size; ++i) {
         if (strcmp(dict->entries[i].key, key) == 0) {
-            return i;
+            return 1;
         }
     }
-    return -1;
+    return 0;
 }
 
-void addOrUpdateEntry(Dictionary *dict, const char *key, int value) {
-    int index = findKey(dict, key);
-    if (index != -1) {
-        dict->entries[index].value = value;
-    } else {
-        dict->entries = (DictEntry*)realloc(dict->entries, (dict->size + 1) * sizeof(DictEntry));
-        if (!dict->entries) return;
-        dict->entries[dict->size].key = strdup(key);
-        dict->entries[dict->size].value = value;
-        dict->size++;
+void dictionary_add(Dictionary *dict, const char *key, int value) {
+    if (dict->size >= dict->capacity) {
+        dict->capacity *= 2;
+        dict->entries = (DictionaryEntry *)realloc(dict->entries, dict->capacity * sizeof(DictionaryEntry));
     }
+
+    dict->entries[dict->size].key = strdup(key);
+    dict->entries[dict->size].value = value;
+    ++dict->size;
 }
 
-Dictionary* mergeDictionaries(Dictionary *dict1, Dictionary *dict2) {
-    Dictionary *mergedDict = createDictionary();
-    if (!mergedDict) return NULL;
-    
-    for (int i = 0; i < dict1->size; ++i) {
-        addOrUpdateEntry(mergedDict, dict1->entries[i].key, dict1->entries[i].value);
-    }
-    for (int i = 0; i < dict2->size; ++i) {
-        addOrUpdateEntry(mergedDict, dict2->entries[i].key, dict2->entries[i].value);
-    }
-    
-    return mergedDict;
-}
-
-void printDictionary(Dictionary *dict) {
-    for (int i = 0; i < dict->size; ++i) {
-        printf("%s: %d\n", dict->entries[i].key, dict->entries[i].value);
+void merge_dictionaries(Dictionary *dest, const Dictionary *src) {
+    for (size_t i = 0; i < src->size; ++i) {
+        if (!dictionary_contains(dest, src->entries[i].key)) {
+            dictionary_add(dest, src->entries[i].key, src->entries[i].value);
+        }
     }
 }
 
 int main() {
-    Dictionary *dict1 = createDictionary();
-    addOrUpdateEntry(dict1, "one", 1);
-    addOrUpdateEntry(dict1, "two", 2);
+    Dictionary dict1, dict2;
 
-    Dictionary *dict2 = createDictionary();
-    addOrUpdateEntry(dict2, "two", 20);
-    addOrUpdateEntry(dict2, "three", 3);
+    dictionary_init(&dict1, 2);
+    dictionary_init(&dict2, 2);
 
-    Dictionary *mergedDict = mergeDictionaries(dict1, dict2);
-    printDictionary(mergedDict);
+    dictionary_add(&dict1, "apple", 10);
+    dictionary_add(&dict1, "banana", 20);
 
-    freeDictionary(dict1);
-    freeDictionary(dict2);
-    freeDictionary(mergedDict);
+    dictionary_add(&dict2, "orange", 30);
+    dictionary_add(&dict2, "banana", 25);
+
+    merge_dictionaries(&dict1, &dict2);
+
+    for (size_t i = 0; i < dict1.size; ++i) {
+        printf("%s: %d\n", dict1.entries[i].key, dict1.entries[i].value);
+    }
+
+    dictionary_deinit(&dict1);
+    dictionary_deinit(&dict2);
 
     return 0;
 }

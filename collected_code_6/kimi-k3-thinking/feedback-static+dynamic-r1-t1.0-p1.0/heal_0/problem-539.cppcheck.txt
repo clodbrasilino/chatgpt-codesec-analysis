@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:20:56: style: Parameter 'context' can be declared as pointer to const. However it seems that 'power_callback' is a callback function, if 'context' is declared with const you might also need to cast function pointer(s). [constParameterCallback]
+static long long power_callback(long long index, void *context)
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:72:33: note: You might need to cast the function pointer here
+    result = map(indices, size, power_callback, &base);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-539.c:20:56: note: Parameter 'context' can be declared as pointer to const
+static long long power_callback(long long index, void *context)
+                                                       ^

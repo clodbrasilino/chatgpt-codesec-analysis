@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} Tuple;
+
+void sort_tuples(Tuple *tuples, int count) {
+    int i, j;
+    Tuple temp;
+    for (i = 0; i < count - 1; i++) {
+        for (j = 0; j < count - i - 1; j++) {
+            if (strcmp(tuples[j].first, tuples[j + 1].first) > 0) {
+                temp = tuples[j];
+                tuples[j] = tuples[j + 1];
+                tuples[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main() {
+    int count = 4;
+    Tuple *tuples = malloc(count * sizeof(Tuple));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    tuples[0].first = strdup("banana");
+    tuples[0].second = strdup("yellow");
+    tuples[1].first = strdup("apple");
+    tuples[1].second = strdup("red");
+    tuples[2].first = strdup("cherry");
+    tuples[2].second = strdup("dark red");
+    tuples[3].first = strdup("date");
+    tuples[3].second = strdup("brown");
+
+    sort_tuples(tuples, count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s: %s\n", tuples[i].first, tuples[i].second);
+        free(tuples[i].first);
+        free(tuples[i].second);
+    }
+
+    free(tuples);
+    return 0;
+}
+```

@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *str);
+void free_tuple(Tuple *tuple);
+void print_tuple(const Tuple *tuple);
+
+Tuple *string_to_tuple(const char *str)
+{
+    Tuple *tuple;
+    size_t length;
+    size_t i;
+
+    if ((str == NULL) || (str[0] == '\0')) {
+        return NULL;
+    }
+
+    length = strlen(str);
+
+    tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = (char *)malloc((length + 1U) * sizeof(char));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (i = 0U; i < length; i++) {
+        tuple->items[i] = str[i];
+    }
+    tuple->items[length] = '\0';
+    tuple->count = length;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->count = 0U;
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if ((tuple == NULL) || (tuple->items == NULL) || (tuple->count == 0U)) {
+        return;
+    }
+
+    (void)printf("[");
+    for (i = 0U; i < tuple->count; i++) {
+        (void)printf("'%c'", tuple->items[i]);
+        if (i < (tuple->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("]\n");
+    (void)fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = { "python3.0", "item1", "15.10" };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+    size_t i;
+
+    for (i = 0U; i < num_inputs; i++) {
+        Tuple *tuple = string_to_tuple(inputs[i]);
+
+        if (tuple == NULL) {
+            (void)fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original code was, in fact, logically sound — the memory management, null-checks, and copy loop are all correct, and there are no buffer overflows or leaks. The reported symptom (`<no output>` on all three test cases) is characteristic of **stdout buffering issues** rather than a logic bug: when stdout is fully buffered (e.g., output redirected to a pipe by a test harness) and the process terminates abnormally or output is captured before flushing, buffered data is lost.
+
+Key points in the rewrite:
+
+1. **Consistent buffered output** – replaced the mixed `fputc`/`printf` usage with `printf` throughout, so all output goes through the same buffered path in order.
+2. **Explicit `fflush(stdout)`** retained after each tuple is printed, guaranteeing the output reaches the test harness even under pipe buffering.
+3. **Forward declarations** added so the translation unit is well-formed regardless of function ordering.
+4. All existing defensive measures (null-guards, `malloc` failure handling, cleanup on partial allocation failure, pointer invalidation in `free_tuple`) were preserved, as they were already correct.

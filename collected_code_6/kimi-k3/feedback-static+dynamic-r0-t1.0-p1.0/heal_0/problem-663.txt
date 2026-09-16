@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool findLargestK(int x, int y, long long *result) {
+    if (x <= 0 || y < 0 || y >= x || result == NULL) {
+        return false;
+    }
+    
+    if (LLONG_MAX % x >= y) {
+        *result = LLONG_MAX - (LLONG_MAX % x) + y;
+    } else {
+        *result = LLONG_MAX - (LLONG_MAX % x) - x + y;
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int x, y;
+    long long k;
+    
+    printf("Enter x and y: ");
+    if (scanf("%d %d", &x, &y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (findLargestK(x, y, &k)) {
+        printf("Largest k: %lld\n", k);
+    } else {
+        printf("No valid k exists\n");
+    }
+    
+    return 0;
+}
+```

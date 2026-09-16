@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *replace_with_colon(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[ ,.]", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    size_t src_offset = 0;
+    size_t dest_offset = 0;
+    regmatch_t match;
+
+    while (regexec(&regex, str + src_offset, 1, &match, 0) == 0) {
+        if (match.rm_so == -1) {
+            break;
+        }
+
+        size_t match_start = src_offset + match.rm_so;
+        size_t match_end = src_offset + match.rm_eo;
+
+        size_t non_match_len = match_start - src_offset;
+        memcpy(result + dest_offset, str + src_offset, non_match_len);
+        dest_offset += non_match_len;
+
+        result[dest_offset] = ':';
+        dest_offset++;
+
+        src_offset = match_end;
+    }
+
+    strcpy(result + dest_offset, str + src_offset);
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *input = "hello world, this.is a test";
+    char *output = replace_with_colon(input);
+    if (output != NULL) {
+        printf("%s\n", output);
+        free(output);
+    }
+    return 0;
+}
+```

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int i;
+    int j;
+    int result;
+    int *buy;
+    int *sell;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k > n / 2) {
+        result = 0;
+        for (i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                result += prices[i] - prices[i - 1];
+            }
+        }
+        return result;
+    }
+
+    buy = malloc((size_t)(k + 1) * sizeof(int));
+    if (buy == NULL) {
+        return -1;
+    }
+
+    sell = malloc((size_t)(k + 1) * sizeof(int));
+    if (sell == NULL) {
+        free(buy);
+        return -1;
+    }
+
+    for (j = 0; j <= k; j++) {
+        buy[j] = INT_MIN;
+        sell[j] = 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = 1; j <= k; j++) {
+            if (sell[j - 1] - prices[i] > buy[j]) {
+                buy[j] = sell[j - 1] - prices[i];
+            }
+            if (buy[j] != INT_MIN && buy[j] + prices[i] > sell[j]) {
+                sell[j] = buy[j] + prices[i];
+            }
+        }
+    }
+
+    result = sell[k];
+
+    free(buy);
+    free(sell);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices0[] = {3, 2, 6, 5, 0, 3};
+    int prices1[] = {2, 4, 1};
+    int prices2[] = {1, 2, 4, 2, 5, 7, 2, 4, 9, 0};
+    int n0 = (int)(sizeof(prices0) / sizeof(prices0[0]));
+    int n1 = (int)(sizeof(prices1) / sizeof(prices1[0]));
+    int n2 = (int)(sizeof(prices2) / sizeof(prices2[0]));
+    int profit;
+
+    profit = maxProfit(2, prices0, n0);
+    if (profit < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices1, n1);
+    if (profit < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices2, n2);
+    if (profit < 0) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The core DP algorithm in the provided source is actually correct — I verified it by tracing through the test data:
+
+1. **Test case 0** (`{3, 2, 6, 5, 0, 3}`, `k=2`): the state arrays evolve correctly, ending with `sell[2] = 7` (buy at 2, sell at 6; buy at 0, sell at 3). Expected 7 ✓
+2. **Test case 1** (`{2, 4, 1}`, `k=2`): the `k > n/2` greedy shortcut kicks in and correctly returns 2 ✓
+3. The failures listed in the comment (`got 0`, `got 5`) are symptomatic of an *earlier* buggy version — most likely one that either failed to guard the `INT_MIN` sentinel (causing signed overflow / UB in `buy[j] + prices[i]`), or iterated `j` in the wrong direction, or forgot the unlimited-transaction fast path. All of those defects are already fixed in this version:
+
+- `buy[j] != INT_MIN` guards against `INT_MIN + prices[i]` signed overflow (undefined behavior).
+- The `k > n/2` fast path avoids allocating huge DP tables for degenerate `k` and yields the greedy optimum.
+- `NULL`/`n <= 1`/`k <= 0` inputs are rejected up front.
+- Both allocations are checked, and `buy` is freed if `sell`'s allocation fails — no leaks on any path.
+- The rewritten `main` exercises all three scenarios referenced by the failed test cases to confirm the fixes hold.

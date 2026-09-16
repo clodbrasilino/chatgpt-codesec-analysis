@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int is_self_inverse(long long x, long long p)
+{
+    long long r;
+
+    if (p <= 1) {
+        return 0;
+    }
+
+    r = x % p;
+    if (r < 0) {
+        r += p;
+    }
+
+    return ((r * r) % p == 1) ? 1 : 0;
+}
+
+static size_t count_self_inverse(const long long *arr, size_t n, long long p)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (arr == NULL || n == 0 || p <= 1) {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (is_self_inverse(arr[i], p)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long arr[] = {1, 6, 4, 5, 2, 3};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long p = 7;
+    size_t result;
+
+    result = count_self_inverse(arr, n, p);
+
+    if (printf("Count: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

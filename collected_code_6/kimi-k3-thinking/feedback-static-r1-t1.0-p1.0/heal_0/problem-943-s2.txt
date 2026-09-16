@@ -1,0 +1,124 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *new_node = malloc(sizeof *new_node);
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static Node *build_list(const int *values, size_t count)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        Node *new_node = create_node(values[i]);
+        if (new_node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (tail == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    return head;
+}
+
+Node *merge_sorted_lists(Node *list1, Node *list2)
+{
+    Node dummy;
+    Node *tail = &dummy;
+
+    dummy.next = NULL;
+
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->data <= list2->data) {
+            tail->next = list1;
+            list1 = list1->next;
+        } else {
+            tail->next = list2;
+            list2 = list2->next;
+        }
+        tail = tail->next;
+    }
+
+    tail->next = (list1 != NULL) ? list1 : list2;
+
+    return dummy.next;
+}
+
+static void print_list(const Node *head)
+{
+    if (head == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    while (head != NULL) {
+        printf("%d%s", head->data, (head->next != NULL) ? " -> " : "\n");
+        head = head->next;
+    }
+}
+
+int main(void)
+{
+    const int values1[] = {1, 3, 5, 7, 9};
+    const int values2[] = {2, 4, 6, 8, 10};
+    Node *list1;
+    Node *list2;
+    Node *merged;
+
+    list1 = build_list(values1, sizeof values1 / sizeof values1[0]);
+    if (list1 == NULL) {
+        fprintf(stderr, "Error: failed to build first list\n");
+        return EXIT_FAILURE;
+    }
+
+    list2 = build_list(values2, sizeof values2 / sizeof values2[0]);
+    if (list2 == NULL) {
+        fprintf(stderr, "Error: failed to build second list\n");
+        free_list(list1);
+        return EXIT_FAILURE;
+    }
+
+    printf("List 1: ");
+    print_list(list1);
+
+    printf("List 2: ");
+    print_list(list2);
+
+    merged = merge_sorted_lists(list1, list2);
+
+    printf("Merged: ");
+    print_list(merged);
+
+    free_list(merged);
+
+    return EXIT_SUCCESS;
+}
+```

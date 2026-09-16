@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int countPairs(int arr[], int n, int sum) {
+    int count = 0;
+    int i, j;
+    
+    if (arr == NULL || n < 2) {
+        return 0;
+    }
+    
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (arr[i] + arr[j] == sum) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int n, sum, i;
+    int *arr = NULL;
+    int result;
+    
+    if (printf("Enter number of elements: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%d", &n) != 1 || n < 1) {
+        return EXIT_FAILURE;
+    }
+    
+    arr = (int *)malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Enter %d integers: ", n) < 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    if (printf("Enter sum: ") < 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    
+    if (scanf("%d", &sum) != 1) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    
+    result = countPairs(arr, n, sum);
+    
+    if (printf("Number of pairs: %d\n", result) < 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    
+    free(arr);
+    return EXIT_SUCCESS;
+}

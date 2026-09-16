@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int cmp(const void *a, const void *b) {
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+    return (x > y) - (x < y);
+}
+
+int* largestDivisibleSubset(int* nums, int numsSize, int* returnSize) {
+    if (returnSize == NULL) {
+        return NULL;
+    }
+    if (numsSize == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    if (nums == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    qsort(nums, numsSize, sizeof(int), cmp);
+
+    int *dp = (int *)malloc((size_t)numsSize * sizeof(int));
+    int *parent = (int *)malloc((size_t)numsSize * sizeof(int));
+    if (dp == NULL || parent == NULL) {
+        free(dp);
+        free(parent);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < numsSize; i++) {
+        dp[i] = 1;
+        parent[i] = -1;
+    }
+
+    int maxIdx = 0;
+    for (int i = 0; i < numsSize; i++) {
+        for (int j = 0; j < i; j++) {
+            if (nums[j] != 0 && nums[i] % nums[j] == 0 && dp[j] + 1 > dp[i]) {
+                dp[i] = dp[j] + 1;
+                parent[i] = j;
+            }
+        }
+        if (dp[i] > dp[maxIdx]) {
+            maxIdx = i;
+        }
+    }
+
+    int size = dp[maxIdx];
+    int *result = (int *)malloc((size_t)size * sizeof(int));
+    if (result == NULL) {
+        free(dp);
+        free(parent);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int idx = maxIdx;
+    for (int i = size - 1; i >= 0; i--) {
+        result[i] = nums[idx];
+        idx = parent[idx];
+    }
+
+    free(dp);
+    free(parent);
+    *returnSize = size;
+    return result;
+}
+
+int main(void) {
+    int nums[] = {1, 2, 4, 8};
+    int returnSize = 0;
+    int *result = largestDivisibleSubset(nums, sizeof(nums) / sizeof(nums[0]), &returnSize);
+
+    if (result == NULL && returnSize != 0) {
+        return 1;
+    }
+
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}
+```

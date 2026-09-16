@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+unsigned int count_set_bits(unsigned int n);
+
+unsigned int count_set_bits(unsigned int n) {
+    unsigned int count = 0;
+    while (n != 0) {
+        n &= (n - 1);
+        count++;
+    }
+    return count;
+}
+
+int main(void) {
+    unsigned int test_numbers[] = {0, 1, 15, 29, 4294967295U};
+    size_t num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        unsigned int bits = count_set_bits(test_numbers[i]);
+        printf("%u: %u\n", test_numbers[i], bits);
+    }
+
+    return 0;
+}

@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+int first_repeated_char(const char *str)
+{
+    bool seen[256] = { false };
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        if (seen[c]) {
+            return (int)c;
+        }
+        seen[c] = true;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char buffer[256];
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    result = first_repeated_char(buffer);
+
+    if (result == -1 || result == (int)'\n') {
+        printf("No repeated character found\n");
+    } else {
+        printf("First repeated character: %c\n", (char)result);
+    }
+
+    return 0;
+}
+```
+
+**Key safety considerations addressed:**
+
+- **CWE-664**: No dynamic memory allocation is used, so there are no resource lifetime issues. The fixed-size buffer is properly bounded via `sizeof(buffer)` in `fgets`.
+- **CWE-703**: The return value of `fgets` is checked for `NULL`, the function handles a `NULL` string pointer gracefully, and the "not found" case is explicitly signaled with `-1`.
+- **CWE-710**: Characters are cast to `unsigned char` before use as array indices (avoiding undefined behavior with negative `char` values), `main` returns `int` with an explicit `void` parameter list, and errors are written to `stderr` with a nonzero exit status.

@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int max_product_pairs(const Tuple *tuples, size_t count, long long *result)
+{
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'product' can be reduced. [variableScope]
+     */
+    long long product;
+    long long max;
+
+    if (tuples == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    max = LLONG_MIN;
+
+    for (i = 0U; i < count; i++) {
+        product = (long long)tuples[i].first * (long long)tuples[i].second;
+        if (product > max) {
+            max = product;
+        }
+    }
+
+    *result = max;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple data[] = {
+        {2, 7},
+        {2, 6},
+        {1, 8},
+        {4, 9}
+    };
+    size_t count = sizeof(data) / sizeof(data[0]);
+    long long result = 0;
+
+    if (max_product_pairs(data, count, &result) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum product: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

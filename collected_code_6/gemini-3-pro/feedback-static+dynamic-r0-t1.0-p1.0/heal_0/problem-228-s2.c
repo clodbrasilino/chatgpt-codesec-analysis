@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool are_all_bits_unset_in_range(unsigned int n, unsigned int l, unsigned int r) {
+    if (l > r || r > 32 || l == 0) {
+        return false;
+    }
+    
+    unsigned int num_bits = r - l + 1;
+    unsigned int mask;
+    
+    if (num_bits == 32) {
+        mask = ~0U;
+    } else {
+        mask = ((1U << num_bits) - 1) << (l - 1);
+    }
+    
+    return (n & mask) == 0;
+}
+
+int main(void) {
+    unsigned int n = 17;
+    unsigned int l = 2;
+    unsigned int r = 4;
+    
+    if (are_all_bits_unset_in_range(n, l, r)) {
+        printf("All bits are unset in the given range.\n");
+    } else {
+        printf("Not all bits are unset in the given range.\n");
+    }
+    
+    return 0;
+}

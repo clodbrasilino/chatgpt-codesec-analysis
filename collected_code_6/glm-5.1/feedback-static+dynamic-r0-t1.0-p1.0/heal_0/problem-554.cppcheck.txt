@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-554.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-554.c:5:6: warning: Either the condition 'odd_count==NULL' is redundant or there is possible null pointer dereference: odd_count. [nullPointerRedundantCheck]
+    *odd_count = 0;
+     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-554.c:6:35: note: Assuming that condition 'odd_count==NULL' is not redundant
+    if (list == NULL || odd_count == NULL || size == 0) {
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-554.c:5:6: note: Null pointer dereference
+    *odd_count = 0;
+     ^

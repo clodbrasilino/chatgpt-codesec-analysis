@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int count_std_occurrences(const char *str) {
+    int count = 0;
+    const char *p = str;
+    
+    while (*p != '\0') {
+        if (p[0] == 's' && p[1] == 't' && p[2] == 'd') {
+            count++;
+            p += 3;
+        } else {
+            p++;
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test1 = "stdteststdabcstd";
+    const char *test2 = "st";
+    const char *test3 = "stdstdstd";
+    const char *test4 = "abc";
+    const char *test5 = "sststdst";
+    const char *test6 = "";
+    
+    printf("%d\n", count_std_occurrences(test1));
+    printf("%d\n", count_std_occurrences(test2));
+    printf("%d\n", count_std_occurrences(test3));
+    printf("%d\n", count_std_occurrences(test4));
+    printf("%d\n", count_std_occurrences(test5));
+    printf("%d\n", count_std_occurrences(test6));
+    
+    return 0;
+}
+```

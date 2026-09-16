@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t size;
+} Dictionary;
+
+int all_dicts_empty(Dictionary **dicts, size_t count) {
+    if (dicts == NULL) {
+        return 1;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (dicts[i] != NULL && dicts[i]->size > 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    size_t count = 2;
+    Dictionary **dicts = malloc(count * sizeof(Dictionary *));
+    if (dicts == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    dicts[0] = malloc(sizeof(Dictionary));
+    if (dicts[0] == NULL) {
+        free(dicts);
+        return EXIT_FAILURE;
+    }
+    dicts[0]->size = 0;
+
+    dicts[1] = malloc(sizeof(Dictionary));
+    if (dicts[1] == NULL) {
+        free(dicts[0]);
+        free(dicts);
+        return EXIT_FAILURE;
+    }
+    dicts[1]->size = 5;
+
+    printf("%d\n", all_dicts_empty(dicts, count));
+
+    dicts[1]->size = 0;
+    printf("%d\n", all_dicts_empty(dicts, count));
+
+    free(dicts[0]);
+    free(dicts[1]);
+    free(dicts);
+
+    return EXIT_SUCCESS;
+}

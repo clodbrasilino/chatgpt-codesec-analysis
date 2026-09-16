@@ -1,0 +1,132 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+typedef struct {
+    char **data;
+    size_t count;
+} StringTuple;
+
+typedef struct {
+    int *data;
+    size_t count;
+} IntTuple;
+
+void free_string_tuple(StringTuple *tuple) {
+    if (tuple != NULL) {
+        if (tuple->data != NULL) {
+            for (size_t i = 0; i < tuple->count; i++) {
+                free(tuple->data[i]);
+            }
+            free(tuple->data);
+        }
+        tuple->data = NULL;
+        tuple->count = 0;
+    }
+}
+
+void free_int_tuple(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->count = 0;
+    }
+}
+
+int convert_string_to_int(const char *str, int *result) {
+    if (str == NULL || result == NULL || *str == '\0') {
+        return -1;
+    }
+
+    char *endptr;
+    errno = 0;
+    long val = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE || val > INT_MAX || val < INT_MIN) {
+        return -1;
+    }
+
+    if (endptr == str || *endptr != '\0') {
+        return -1;
+    }
+
+    *result = (int)val;
+    return 0;
+}
+
+IntTuple string_tuple_to_int_tuple(const StringTuple *str_tuple, int *error) {
+    IntTuple result = {NULL, 0};
+    
+    if (error == NULL) {
+        return result;
+    }
+    *error = 0;
+
+    if (str_tuple == NULL || str_tuple->data == NULL || str_tuple->count == 0) {
+        *error = -1;
+        return result;
+    }
+
+    result.data = malloc(str_tuple->count * sizeof(int));
+    if (result.data == NULL) {
+        *error = -2;
+        return result;
+    }
+
+    for (size_t i = 0; i < str_tuple->count; i++) {
+        if (convert_string_to_int(str_tuple->data[i], &result.data[i]) != 0) {
+            free_int_tuple(&result);
+            *error = -3;
+            return result;
+        }
+    }
+
+    result.count = str_tuple->count;
+    return result;
+}
+
+int main(void) {
+    const char *test_strings[] = {"123", "-456", "789", "0", "2147483647"};
+    const size_t test_count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    StringTuple str_tuple = {NULL, test_count};
+    str_tuple.data = malloc(test_count * sizeof(char *));
+    if (str_tuple.data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < test_count; i++) {
+        str_tuple.data[i] = malloc(strlen(test_strings[i]) + 1);
+        if (str_tuple.data[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_string_tuple(&str_tuple);
+            return EXIT_FAILURE;
+        }
+        strcpy(str_tuple.data[i], test_strings[i]);
+    }
+
+    int error = 0;
+    IntTuple int_tuple = string_tuple_to_int_tuple(&str_tuple, &error);
+
+    if (error != 0) {
+        fprintf(stderr, "Conversion failed with error code: %d\n", error);
+        free_string_tuple(&str_tuple);
+        return EXIT_FAILURE;
+    }
+
+    printf("Converted values: ");
+    for (size_t i = 0; i < int_tuple.count; i++) {
+        printf("%d ", int_tuple.data[i]);
+    }
+    printf("\n");
+
+    free_int_tuple(&int_tuple);
+    free_string_tuple(&str_tuple);
+
+    return EXIT_SUCCESS;
+}
+```

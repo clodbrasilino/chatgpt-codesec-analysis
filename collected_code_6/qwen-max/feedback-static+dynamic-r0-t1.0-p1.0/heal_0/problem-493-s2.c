@@ -2,68 +2,51 @@
 #include <stdlib.h>
 
 typedef struct {
-    int x;
-    int y;
+    double x;
+    double y;
 } Point;
 
 typedef struct {
-    Point points[6];
-} Hexagon;
+    Point* points;
+    int size;
+} PointsList;
 
-Hexagon* create_hexagon(int i, int j) {
-    Hexagon *h = (Hexagon*)malloc(sizeof(Hexagon));
-    if (h == NULL) return NULL;
-    h->points[0] = (Point){2 * i, 2 * j};
-    h->points[1] = (Point){2 * i + 1, 2 * j + 1};
-    h->points[2] = (Point){2 * i, 2 * j + 2};
-    h->points[3] = (Point){2 * i - 1, 2 * j + 1};
-    h->points[4] = (Point){2 * i - 2, 2 * j};
-    h->points[5] = (Point){2 * i - 1, 2 * j - 1};
-    return h;
-}
-
-Hexagon** calculate_hexagon_grid(int rows, int cols) {
-    Hexagon **grid = (Hexagon**)malloc(rows * sizeof(Hexagon*));
-    if (grid == NULL) return NULL;
-    for (int i = 0; i < rows; ++i) {
-        grid[i] = (Hexagon*)malloc(cols * sizeof(Hexagon));
-        if (grid[i] == NULL) {
-            for (int k = 0; k < i; ++k) free(grid[k]);
-            free(grid);
-            return NULL;
-        }
-        for (int j = 0; j < cols; ++j) {
-            grid[i][j] = *create_hexagon(i, j);
-        }
-    }
-    return grid;
-}
-
-void print_hexagon_grid(Hexagon **grid, int rows, int cols) {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            for (int k = 0; k < 6; ++k) {
-                printf("(%d, %d) ", grid[i][j].points[k].x, grid[i][j].points[k].y);
-            }
-            printf("\n");
-        }
+void free_points_list(PointsList plist) {
+    if (plist.points) {
+        free(plist.points);
     }
 }
 
-void free_hexagon_grid(Hexagon **grid, int rows) {
-    for (int i = 0; i < rows; ++i) {
-        free(grid[i]);
+PointsList calculate_hexagon(double cx, double cy, double radius) {
+    PointsList plist;
+    plist.points = (Point*) malloc(6 * sizeof(Point));
+    if (plist.points == NULL) {
+        exit(EXIT_FAILURE);
     }
-    free(grid);
+    plist.size = 6;
+
+    for (int i = 0; i < 6; ++i) {
+        double angle_deg = 60 * i - 30;
+        double angle_rad = M_PI / 180 * angle_deg;
+        plist.points[i].x = cx + radius * cos(angle_rad);
+        plist.points[i].y = cy + radius * sin(angle_rad);
+    }
+
+    return plist;
 }
 
 int main() {
-    int rows = 2;
-    int cols = 3;
-    Hexagon **hexagon_grid = calculate_hexagon_grid(rows, cols);
-    if (hexagon_grid != NULL) {
-        print_hexagon_grid(hexagon_grid, rows, cols);
-        free_hexagon_grid(hexagon_grid, rows);
+    double center_x = 0.0;
+    double center_y = 0.0;
+    double radius = 10.0;
+
+    PointsList hexagon = calculate_hexagon(center_x, center_y, radius);
+
+    for (int i = 0; i < hexagon.size; ++i) {
+        printf("Point %d: (%.2f, %.2f)\n", i+1, hexagon.points[i].x, hexagon.points[i].y);
     }
+
+    free_points_list(hexagon);
+
     return 0;
 }

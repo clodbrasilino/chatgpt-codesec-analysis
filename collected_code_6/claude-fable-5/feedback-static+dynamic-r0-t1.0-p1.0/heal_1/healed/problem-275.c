@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int find_last_removed_position(const int arr[], size_t n, int m)
+{
+    size_t i;
+    size_t last_index;
+    long max_cycles;
+
+    if (arr == NULL || n == 0U || m <= 0) {
+        return -1;
+    }
+
+    last_index = 0U;
+    max_cycles = -1L;
+
+    for (i = 0U; i < n; i++) {
+        long cycles;
+
+        if (arr[i] < 0) {
+            return -1;
+        }
+        cycles = ((long)arr[i] + (long)m - 1L) / (long)m;
+        if (cycles >= max_cycles) {
+            max_cycles = cycles;
+            last_index = i;
+        }
+    }
+
+    return (int)(last_index + 1U);
+}
+
+int main(void)
+{
+    int arr[] = { 31, 41, 59, 26, 53, 58, 97 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int m = 5;
+    int position;
+
+    position = find_last_removed_position(arr, n, m);
+
+    if (position < 0) {
+        (void)fprintf(stderr, "Error: invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Position of last removed element: %d\n", position) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_sequences(int n, int m) {
+    if (n <= 0 || m <= 0) {
+        return 0;
+    }
+
+    int **dp = (int **)malloc((n + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (int *)calloc(m + 1, sizeof(int));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+
+    for (int j = 1; j <= m; j++) {
+        dp[1][j] = 1;
+    }
+
+    for (int len = 2; len <= n; len++) {
+        for (int last = 1; last <= m; last++) {
+            for (int prev = 1; prev <= last / 2; prev++) {
+                dp[len][last] += dp[len - 1][prev];
+            }
+        }
+    }
+
+    int result = 0;
+    for (int j = 1; j <= m; j++) {
+        result += dp[n][j];
+    }
+
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    int n, m;
+
+    printf("Enter n and m: ");
+    if (scanf("%d %d", &n, &m) != 2) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    int result = count_sequences(n, m);
+    printf("Number of sequences: %d\n", result);
+
+    return 0;
+}
+```

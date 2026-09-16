@@ -1,0 +1,159 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+
+        free(head);
+        head = next;
+    }
+}
+
+static struct Node *build_list(const int *values, size_t count)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct Node *node = create_node(values[i]);
+
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return head;
+}
+
+static size_t list_length(const struct Node *head)
+{
+    size_t length = 0U;
+
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+static struct Node **split_every_nth(struct Node *head, size_t n,
+                                     size_t *out_count)
+{
+    struct Node **parts;
+    struct Node *current;
+    size_t length;
+    size_t part_count;
+    size_t index;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0U;
+    if (head == NULL || n == 0U) {
+        return NULL;
+    }
+
+    length = list_length(head);
+    part_count = (length + n - 1U) / n;
+
+    parts = malloc(part_count * sizeof(*parts));
+    if (parts == NULL) {
+        return NULL;
+    }
+
+    current = head;
+    for (index = 0U; index < part_count; index++) {
+        struct Node *segment_tail = current;
+        size_t step;
+
+        parts[index] = current;
+        for (step = 1U; step < n && segment_tail->next != NULL; step++) {
+            segment_tail = segment_tail->next;
+        }
+        current = segment_tail->next;
+        segment_tail->next = NULL;
+    }
+
+    *out_count = part_count;
+    return parts;
+}
+
+static void print_list(const struct Node *head)
+{
+    while (head != NULL) {
+        printf("%d", head->value);
+        if (head->next != NULL) {
+            printf(" -> ");
+        }
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int values[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    struct Node *list;
+    struct Node **parts;
+    size_t part_count;
+    size_t i;
+    size_t n = 3U;
+
+    list = build_list(values, count);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to build list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list:\n");
+    print_list(list);
+
+    parts = split_every_nth(list, n, &part_count);
+    if (parts == NULL) {
+        fprintf(stderr, "Failed to split list\n");
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Split into chunks of %zu:\n", n);
+    for (i = 0U; i < part_count; i++) {
+        printf("Part %zu: ", i + 1U);
+        print_list(parts[i]);
+    }
+
+    for (i = 0U; i < part_count; i++) {
+        free_list(parts[i]);
+    }
+    free(parts);
+
+    return EXIT_SUCCESS;
+}
+```

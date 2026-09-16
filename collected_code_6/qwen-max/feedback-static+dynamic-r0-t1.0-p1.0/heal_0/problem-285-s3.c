@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool matches_pattern(const char *str) {
+    if (strlen(str) < 3 || strlen(str) > 4) {
+        return false;
+    }
+    if (str[0] != 'a') {
+        return false;
+    }
+    int b_count = 0;
+    for (int i = 1; i < strlen(str); ++i) {
+        if (str[i] == 'b') {
+            b_count++;
+        } else {
+            return false;
+        }
+    }
+    return b_count >= 2 && b_count <= 3;
+}
+
+int main() {
+    const char *test1 = "abb";
+    const char *test2 = "abbb";
+    const char *test3 = "a";
+    const char *test4 = "abbbb";
+
+    printf("%s: %s\n", test1, matches_pattern(test1) ? "Match" : "No Match");
+    printf("%s: %s\n", test2, matches_pattern(test2) ? "Match" : "No Match");
+    printf("%s: %s\n", test3, matches_pattern(test3) ? "Match" : "No Match");
+    printf("%s: %s\n", test4, matches_pattern(test4) ? "Match" : "No Match");
+
+    return 0;
+}

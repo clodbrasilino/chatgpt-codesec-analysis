@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+size_t count_numeric(const char *str)
+{
+    size_t count = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            count++;
+        }
+        i++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *test1 = "abc123def45";
+    const char *test2 = "no digits here";
+    const char *test3 = "9876543210";
+    size_t result;
+
+    result = count_numeric(test1);
+    if (printf("Digits in \"%s\": %zu\n", test1, result) < 0) {
+        return 1;
+    }
+
+    result = count_numeric(test2);
+    if (printf("Digits in \"%s\": %zu\n", test2, result) < 0) {
+        return 1;
+    }
+
+    result = count_numeric(test3);
+    if (printf("Digits in \"%s\": %zu\n", test3, result) < 0) {
+        return 1;
+    }
+
+    result = count_numeric(NULL);
+    if (printf("Digits in NULL: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+**Key safety measures in this code:**
+
+- **CWE-664 (Resource lifetime):** No dynamic memory allocation is used, so there are no leaks or use-after-free risks. All strings are static literals with well-defined lifetimes.
+
+- **CWE-703 (Exceptional conditions):** The function checks for a `NULL` pointer before dereferencing, and the return value of `printf` is checked, with `main` returning a nonzero exit code on failure.
+
+- **CWE-710 (Coding standards):** The argument to `isdigit` is cast to `unsigned char` to avoid undefined behavior with negative `char` values, `size_t` is used for counting and indexing, `main(void)` uses the correct prototype, and `const` correctness is maintained throughout.

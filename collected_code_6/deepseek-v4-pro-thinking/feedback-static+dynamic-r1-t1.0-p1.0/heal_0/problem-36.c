@@ -1,0 +1,48 @@
+#include <stdio.h>
+
+int nth_digit(int numerator, int denominator, long long n)
+{
+    if (denominator == 0 || n <= 0) {
+        return -1;
+    }
+
+    long long num = numerator;
+    long long den = denominator;
+
+    if (num < 0) {
+        num = -num;
+    }
+    if (den < 0) {
+        den = -den;
+    }
+
+    num %= den;
+
+    int digit = 0;
+    for (long long i = 0; i < n; ++i) {
+        num *= 10;
+        digit = (int)(num / den);
+        num %= den;
+    }
+
+    return digit;
+}
+
+int main(void)
+{
+    int numerator;
+    int denominator;
+    long long n;
+
+    if (scanf("%d %d %lld", &numerator, &denominator, &n) != 3) {
+        return 1;
+    }
+
+    int digit = nth_digit(numerator, denominator, n);
+    if (digit == -1) {
+        return 1;
+    }
+
+    printf("%d\n", digit);
+    return 0;
+}

@@ -1,0 +1,120 @@
+```c
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TUPLE_INITIAL_CAPACITY 8
+
+typedef struct {
+    int *items;
+    size_t count;
+    int valid;
+} IntTuple;
+
+static int is_delimiter(char c) {
+    return isspace((unsigned char)c) || c == ',' || c == ';';
+}
+
+static void clear_int_tuple(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->items);
+        tuple->items = NULL;
+        tuple->count = 0;
+        tuple->valid = 0;
+    }
+}
+
+IntTuple string_to_int_tuple(const char *str) {
+    IntTuple result;
+    result.items = NULL;
+    result.count = 0;
+    result.valid = 0;
+
+    if (str == NULL) {
+        return result;
+    }
+
+    size_t capacity = 0;
+    const char *p = str;
+
+    while (*p != '\0') {
+        while (*p != '\0' && is_delimiter(*p)) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        errno = 0;
+        char *end = NULL;
+        long value = strtol(p, &end, 10);
+
+        if (errno != 0 || end == p || (*end != '\0' && !is_delimiter(*end))) {
+            clear_int_tuple(&result);
+            return result;
+        }
+        if (value > INT_MAX || value < INT_MIN) {
+            clear_int_tuple(&result);
+            return result;
+        }
+
+        if (result.count == capacity) {
+            size_t new_capacity;
+            if (capacity > SIZE_MAX / 2) {
+                clear_int_tuple(&result);
+                return result;
+            }
+            new_capacity = capacity == 0 ? TUPLE_INITIAL_CAPACITY : capacity * 2;
+            if (new_capacity > SIZE_MAX / sizeof(*result.items)) {
+                clear_int_tuple(&result);
+                return result;
+            }
+
+            int *temp = realloc(result.items, new_capacity * sizeof(*result.items));
+            if (temp == NULL) {
+                clear_int_tuple(&result);
+                return result;
+            }
+            result.items = temp;
+            capacity = new_capacity;
+        }
+
+        result.items[result.count] = (int)value;
+        result.count++;
+        p = end;
+    }
+
+    result.valid = 1;
+    return result;
+}
+
+void free_int_tuple(IntTuple *tuple) {
+    clear_int_tuple(tuple);
+}
+
+int main(void) {
+    const char *input = "1 2 3,4;-5 6";
+    IntTuple tuple = string_to_int_tuple(input);
+
+    if (!tuple.valid) {
+        fprintf(stderr, "Failed to parse input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < tuple.count; i++) {
+        printf("%d", tuple.items[i]);
+        if (i + 1 < tuple.count) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_int_tuple(&tuple);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int count;
+} Frequency;
+
+int* get_frequencies(const int* list, size_t size, Frequency** frequencies, size_t* freq_size) {
+    if (list == NULL || frequencies == NULL || freq_size == NULL) {
+        return NULL;
+    }
+
+    *freq_size = 0;
+    *frequencies = NULL;
+
+    if (size == 0) {
+        return NULL;
+    }
+
+    Frequency* temp_freqs = (Frequency*)malloc(size * sizeof(Frequency));
+    if (temp_freqs == NULL) {
+        return NULL;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        int found = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (temp_freqs[j].key == list[i]) {
+                temp_freqs[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            temp_freqs[unique_count].key = list[i];
+            temp_freqs[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    Frequency* final_freqs = (Frequency*)realloc(temp_freqs, unique_count * sizeof(Frequency));
+    if (final_freqs == NULL) {
+        if (unique_count > 0) {
+            *frequencies = temp_freqs;
+            *freq_size = unique_count;
+            return (int*)temp_freqs;
+        }
+        free(temp_freqs);
+        return NULL;
+    }
+
+    *frequencies = final_freqs;
+    *freq_size = unique_count;
+
+    return (int*)final_freqs;
+}
+
+int main(void) {
+    int list[] = {5, 2, 8, 2, 5, 5, 9, 8};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    Frequency* frequencies = NULL;
+    size_t freq_size = 0;
+
+    int* resource = get_frequencies(list, size, &frequencies, &freq_size);
+
+    if (frequencies != NULL) {
+        for (size_t i = 0; i < freq_size; i++) {
+            printf("%d: %d\n", frequencies[i].key, frequencies[i].count);
+        }
+        if (resource != NULL) {
+            free(resource);
+        }
+    }
+
+    return 0;
+}

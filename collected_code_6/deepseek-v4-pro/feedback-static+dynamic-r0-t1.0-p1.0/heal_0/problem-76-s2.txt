@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+
+int count_squares(int width, int height) {
+    if (width <= 0 || height <= 0) {
+        return 0;
+    }
+    
+    int count = 0;
+    int min = (width < height) ? width : height;
+    
+    for (int size = 1; size <= min; size++) {
+        count += (width - size + 1) * (height - size + 1);
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int width = 4;
+    int height = 3;
+    
+    int result = count_squares(width, height);
+    printf("Number of squares in %d x %d rectangle: %d\n", width, height, result);
+    
+    width = 5;
+    height = 5;
+    result = count_squares(width, height);
+    printf("Number of squares in %d x %d rectangle: %d\n", width, height, result);
+    
+    width = 1;
+    height = 1;
+    result = count_squares(width, height);
+    printf("Number of squares in %d x %d rectangle: %d\n", width, height, result);
+    
+    width = 0;
+    height = 5;
+    result = count_squares(width, height);
+    printf("Number of squares in %d x %d rectangle: %d\n", width, height, result);
+    
+    return 0;
+}
+```

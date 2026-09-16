@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int pairwise_add(const Tuple *tuple1, const Tuple *tuple2, Tuple *result) {
+    if (tuple1 == NULL || tuple2 == NULL || result == NULL) {
+        return -1;
+    }
+    if (tuple1->size != tuple2->size) {
+        return -1;
+    }
+    if (tuple1->size == 0) {
+        result->elements = NULL;
+        result->size = 0;
+        return 0;
+    }
+    
+    result->elements = (int *)malloc(tuple1->size * sizeof(int));
+    if (result->elements == NULL) {
+        return -1;
+    }
+    
+    result->size = tuple1->size;
+    
+    for (size_t i = 0; i < tuple1->size; i++) {
+        result->elements[i] = tuple1->elements[i] + tuple2->elements[i];
+    }
+    
+    return 0;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main(void) {
+    Tuple tuple1;
+    Tuple tuple2;
+    Tuple result;
+    int status;
+    
+    tuple1.elements = (int *)malloc(5 * sizeof(int));
+    if (tuple1.elements == NULL) {
+        return 1;
+    }
+    tuple1.size = 5;
+    tuple1.elements[0] = 1;
+    tuple1.elements[1] = 2;
+    tuple1.elements[2] = 3;
+    tuple1.elements[3] = 4;
+    tuple1.elements[4] = 5;
+    
+    tuple2.elements = (int *)malloc(5 * sizeof(int));
+    if (tuple2.elements == NULL) {
+        free_tuple(&tuple1);
+        return 1;
+    }
+    tuple2.size = 5;
+    tuple2.elements[0] = 10;
+    tuple2.elements[1] = 20;
+    tuple2.elements[2] = 30;
+    tuple2.elements[3] = 40;
+    tuple2.elements[4] = 50;
+    
+    status = pairwise_add(&tuple1, &tuple2, &result);
+    if (status != 0) {
+        free_tuple(&tuple1);
+        free_tuple(&tuple2);
+        return 1;
+    }
+    
+    printf("Tuple 1: ");
+    for (size_t i = 0; i < tuple1.size; i++) {
+        printf("%d ", tuple1.elements[i]);
+    }
+    printf("\n");
+    
+    printf("Tuple 2: ");
+    for (size_t i = 0; i < tuple2.size; i++) {
+        printf("%d ", tuple2.elements[i]);
+    }
+    printf("\n");
+    
+    printf("Result: ");
+    for (size_t i = 0; i < result.size; i++) {
+        printf("%d ", result.elements[i]);
+    }
+    printf("\n");
+    
+    free_tuple(&tuple1);
+    free_tuple(&tuple2);
+    free_tuple(&result);
+    
+    return 0;
+}
+```

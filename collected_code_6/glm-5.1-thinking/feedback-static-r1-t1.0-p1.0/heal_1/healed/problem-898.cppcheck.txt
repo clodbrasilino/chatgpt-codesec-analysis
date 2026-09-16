@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-898.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-898.c:55:50: style: Condition 'extract_contiguous(NULL,list_len,0,2)==NULL' is always true [knownConditionTrueFalse]
+    if (extract_contiguous(NULL, list_len, 0, 2) == NULL) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-898.c:55:27: note: Calling function 'extract_contiguous' returns 0
+    if (extract_contiguous(NULL, list_len, 0, 2) == NULL) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-898.c:55:50: note: Condition 'extract_contiguous(NULL,list_len,0,2)==NULL' is always true
+    if (extract_contiguous(NULL, list_len, 0, 2) == NULL) {
+                                                 ^

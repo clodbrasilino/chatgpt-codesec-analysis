@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int contains_interior_z(const char *word, size_t len)
+{
+    size_t i;
+
+    if (word == NULL || len < 3) {
+        return 0;
+    }
+
+    for (i = 1; i < len - 1; i++) {
+        if (word[i] == 'z' || word[i] == 'Z') {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int find_word_with_interior_z(const char *text, char *result, size_t result_size)
+{
+    size_t i = 0;
+
+    if (text == NULL || result == NULL || result_size == 0) {
+        return -1;
+    }
+
+    while (text[i] != '\0') {
+        size_t start;
+        size_t len;
+
+        while (text[i] != '\0' && !isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        start = i;
+
+        while (text[i] != '\0' && isalpha((unsigned char)text[i])) {
+            i++;
+        }
+
+        len = i - start;
+
+        if (len > 0 && contains_interior_z(text + start, len)) {
+            if (len >= result_size) {
+                return -1;
+            }
+            memcpy(result, text + start, len);
+            result[len] = '\0';
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "the lazy dog jumped",
+        "zebra runs fast",
+        "jazz music is nice",
+        "no matching words here",
+        "amazing puzzle pieces"
+    };
+    size_t num_tests = sizeof(tests) / sizeof(tests[0]);
+    char buffer[256];
+    size_t i;
+
+    for (i = 0; i < num_tests; i++) {
+        int status = find_word_with_interior_z(tests[i], buffer, sizeof(buffer));
+        if (status == 0) {
+            printf("Input: \"%s\" -> Match: \"%s\"\n", tests[i], buffer);
+        } else if (status == 1) {
+            printf("Input: \"%s\" -> No match found\n", tests[i]);
+        } else {
+            fprintf(stderr, "Error processing input: \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The changes address all three `[variableScope]` findings from the static analysis:
+
+1. **`start` and `len` in `find_word_with_interior_z`**: Both were declared at function scope but only used inside the outer `while` loop. They are now declared inside the loop body, minimizing their scope and making the code easier to reason about.
+
+2. **`status` in `main`**: It was declared at function scope but only used within a single loop iteration. It is now declared inside the `for` loop body, initialized directly with the function call result.
+
+Reducing variable scope is a good defensive practice: it prevents accidental reuse of stale values across iterations, improves readability, and helps both compilers and reviewers verify correctness. The program's behavior is unchanged — it still finds the first word containing a 'z'/'Z' that is neither the first nor last character of the word (matching "lazy", "jazz", "amazing", and correctly rejecting "zebra" since its 'z' is at the start).

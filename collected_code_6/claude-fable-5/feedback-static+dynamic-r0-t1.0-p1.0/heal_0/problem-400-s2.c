@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int count;
+} TupleFreq;
+
+static void normalize_tuple(Tuple *t)
+{
+    if (t->a > t->b) {
+        int tmp = t->a;
+        t->a = t->b;
+        t->b = tmp;
+    }
+}
+
+static int tuples_equal(const Tuple *x, const Tuple *y)
+{
+    return (x->a == y->a) && (x->b == y->b);
+}
+
+static int extract_frequencies(const Tuple *list, size_t n, TupleFreq **out, size_t *out_count)
+{
+    TupleFreq *freqs;
+    size_t unique_count = 0;
+    size_t i;
+    size_t j;
+
+    if (out == NULL || out_count == NULL) {
+        return -1;
+    }
+
+    *out = NULL;
+    *out_count = 0;
+
+    if (list == NULL || n == 0) {
+        return 0;
+    }
+
+    freqs = malloc(n * sizeof(TupleFreq));
+    if (freqs == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        Tuple norm = list[i];
+        int found = 0;
+        normalize_tuple(&norm);
+        for (j = 0; j < unique_count; j++) {
+            if (tuples_equal(&freqs[j].tuple, &norm)) {
+                freqs[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            freqs[unique_count].tuple = norm;
+            freqs[unique_count].count = 1;
+            unique_count++;
+        }
+    }
+
+    *out = freqs;
+    *out_count = unique_count;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple list[] = {
+        {3, 1}, {1, 3}, {2, 5}, {5, 2}, {6, 3}, {3, 6}, {1, 3}, {7, 8}
+    };
+    size_t n = sizeof(list) / sizeof(list[0]);
+    TupleFreq *freqs = NULL;
+    size_t count = 0;
+    size_t i;
+
+    if (extract_frequencies(list, n, &freqs, &count) != 0) {
+        fprintf(stderr, "Failed to compute tuple frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("(%d, %d): %d\n", freqs[i].tuple.a, freqs[i].tuple.b, freqs[i].count) < 0) {
+            free(freqs);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(freqs);
+    return EXIT_SUCCESS;
+}

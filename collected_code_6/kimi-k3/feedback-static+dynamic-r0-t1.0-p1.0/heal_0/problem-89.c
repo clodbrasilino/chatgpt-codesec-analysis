@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_closest_smaller(int n, int *result) {
+    if (result == NULL) {
+        return 0;
+    }
+    if (n == INT_MIN) {
+        return 0;
+    }
+    *result = n - 1;
+    return 1;
+}
+
+int main(void) {
+    int n;
+    int result;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (find_closest_smaller(n, &result)) {
+        printf("Closest smaller number: %d\n", result);
+    } else {
+        printf("No smaller number exists for %d\n", n);
+    }
+    
+    return 0;
+}

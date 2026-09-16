@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-725-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-725-s3.c:20:38: error: Array 'match[1]' accessed at index 1, which is out of bounds. [arrayIndexOutOfBounds]
+        strncpy(buffer, input + match[1].rm_so, match[1].rm_eo - match[1].rm_so);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-725-s3.c:21:21: error: Array 'match[1]' accessed at index 1, which is out of bounds. [arrayIndexOutOfBounds]
+        buffer[match[1].rm_eo - match[1].rm_so] = '\0';
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-725-s3.c:7:9: style: Unused variable: error [unusedVariable]
+    int error;
+        ^

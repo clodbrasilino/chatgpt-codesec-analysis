@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_product_even(const int *numbers, size_t count)
+{
+    size_t i;
+
+    if (numbers == NULL || count == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if ((numbers[i] % 2) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int values_even[] = {3, 5, 7, 4};
+    int values_odd[] = {3, 5, 7, 9};
+    size_t count_even = sizeof(values_even) / sizeof(values_even[0]);
+    size_t count_odd = sizeof(values_odd) / sizeof(values_odd[0]);
+
+    if (is_product_even(values_even, count_even)) {
+        if (printf("Product of first set is even\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Product of first set is odd\n") < 0) {
+            return 1;
+        }
+    }
+
+    if (is_product_even(values_odd, count_odd)) {
+        if (printf("Product of second set is even\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Product of second set is odd\n") < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+A key design decision here: instead of computing the actual product (which risks integer overflow, an undefined behavior in C and a violation of CWE-703), the function relies on the mathematical property that a product is even if and only if at least one factor is even. This makes the check safe for arbitrarily large inputs.
+
+The function also validates its parameters (`NULL` pointer and zero count) before use, checks the return value of `printf`, uses `size_t` for sizes, and passes the array as `const` since it is not modified.

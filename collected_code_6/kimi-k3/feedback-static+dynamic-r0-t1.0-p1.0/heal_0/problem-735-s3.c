@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint32_t toggle_middle_bits(uint32_t num)
+{
+    if (num == 0 || num == 1) {
+        return num;
+    }
+    
+    uint32_t msb_pos = 0;
+    uint32_t temp = num;
+    
+    while (temp > 1) {
+        temp >>= 1;
+        msb_pos++;
+    }
+    
+    if (msb_pos == 0) {
+        return num;
+    }
+    
+    uint32_t mask = ((1U << msb_pos) - 1) & ~1U;
+    
+    return num ^ mask;
+}
+
+int main(void)
+{
+    uint32_t num;
+    
+    if (scanf("%u", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    uint32_t result = toggle_middle_bits(num);
+    printf("%u\n", result);
+    
+    return 0;
+}

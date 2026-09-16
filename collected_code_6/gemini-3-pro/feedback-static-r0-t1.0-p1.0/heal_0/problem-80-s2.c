@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long get_nth_tetrahedral_number(unsigned int n) {
+    return (unsigned long long)n * (n + 1) * (n + 2) / 6;
+}
+
+int main(void) {
+    unsigned int n;
+    int result;
+
+    result = scanf("%u", &n);
+    if (result != 1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", get_nth_tetrahedral_number(n));
+
+    return EXIT_SUCCESS;
+}

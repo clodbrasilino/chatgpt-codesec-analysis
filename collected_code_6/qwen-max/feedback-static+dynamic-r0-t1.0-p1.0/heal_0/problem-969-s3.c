@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node *next;
+} Node;
+
+Node* createNode(Tuple t) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->data = t;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+Node* mergeTuples(Node *head) {
+    if (head == NULL || head->next == NULL) return head;
+
+    Node *current = head;
+    Node *result = NULL;
+    Node **last = &result;
+
+    while (current != NULL && current->next != NULL) {
+        if (current->data.key == current->next->data.key) {
+            current->data.value += current->next->data.value;
+            Node *toDelete = current->next;
+            current->next = current->next->next;
+            free(toDelete);
+        } else {
+            *last = current;
+            last = &(current->next);
+            current = current->next;
+        }
+    }
+    *last = current;
+    return result;
+}
+
+int main() {
+    Node *head = createNode((Tuple){1, 10});
+    head->next = createNode((Tuple){2, 20});
+    head->next->next = createNode((Tuple){2, 30});
+    head->next->next->next = createNode((Tuple){3, 40});
+
+    head = mergeTuples(head);
+
+    for (Node *current = head; current != NULL; current = current->next) {
+        printf("(%d, %d) ", current->data.key, current->data.value);
+    }
+
+    freeList(head);
+    return 0;
+}

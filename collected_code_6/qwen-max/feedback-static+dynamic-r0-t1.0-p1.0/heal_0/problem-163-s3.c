@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_polygon_area(int sides, double side_length) {
+    return (0.25 * sides * pow(side_length, 2)) / tan(M_PI / sides);
+}
+
+int main() {
+    int sides;
+    double side_length;
+
+    printf("Enter the number of sides: ");
+    if (scanf("%d", &sides) != 1 || sides < 3) {
+        fprintf(stderr, "Invalid number of sides. Please enter an integer greater than or equal to 3.\n");
+        return 1;
+    }
+
+    printf("Enter the length of a side: ");
+    if (scanf("%lf", &side_length) != 1 || side_length <= 0) {
+        fprintf(stderr, "Invalid side length. Please enter a positive number.\n");
+        return 1;
+    }
+
+    double area = calculate_polygon_area(sides, side_length);
+    printf("The area of the regular polygon is: %f\n", area);
+
+    return 0;
+}

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned long long gcd(unsigned long long a, unsigned long long b)
+{
+    while (b != 0ULL) {
+        unsigned long long t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+static int lcm(unsigned long long a, unsigned long long b, unsigned long long *result)
+{
+    unsigned long long g;
+    unsigned long long q;
+
+    if (a == 0ULL || b == 0ULL || result == NULL) {
+        return -1;
+    }
+
+    g = gcd(a, b);
+    q = a / g;
+
+    if (q > ULLONG_MAX / b) {
+        return -1;
+    }
+
+    *result = q * b;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned long long a;
+    unsigned long long b;
+    unsigned long long result;
+
+    printf("Enter two positive integers: ");
+
+    if (scanf("%llu %llu", &a, &b) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (a == 0ULL || b == 0ULL) {
+        fprintf(stderr, "Inputs must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    if (lcm(a, b, &result) != 0) {
+        fprintf(stderr, "LCM computation failed (overflow or invalid input)\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("LCM of %llu and %llu is %llu\n", a, b, result);
+
+    return EXIT_SUCCESS;
+}

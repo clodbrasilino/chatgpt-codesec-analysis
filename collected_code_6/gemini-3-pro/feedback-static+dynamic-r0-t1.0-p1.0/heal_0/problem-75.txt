@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int* elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple** tuples;
+    size_t count;
+} TupleList;
+
+bool are_all_divisible(const Tuple* tuple, int k) {
+    if (!tuple || k == 0) {
+        return false;
+    }
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i] % k != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+TupleList* find_divisible_tuples(const TupleList* input_list, int k) {
+    if (!input_list || k == 0) {
+        return NULL;
+    }
+
+    TupleList* result = malloc(sizeof(TupleList));
+    if (!result) {
+        return NULL;
+    }
+
+    result->tuples = malloc(input_list->count * sizeof(Tuple*));
+    if (!result->tuples) {
+        free(result);
+        return NULL;
+    }
+    result->count = 0;
+
+    for (size_t i = 0; i < input_list->count; i++) {
+        if (are_all_divisible(input_list->tuples[i], k)) {
+            result->tuples[result->count] = input_list->tuples[i];
+            result->count++;
+        }
+    }
+
+    return result;
+}
+
+void print_tuple_list(const TupleList* list) {
+    if (!list) return;
+    for (size_t i = 0; i < list->count; i++) {
+        printf("(");
+        for (size_t j = 0; j < list->tuples[i]->size; j++) {
+            printf("%d", list->tuples[i]->elements[j]);
+            if (j < list->tuples[i]->size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main() {
+    int k = 3;
+
+    int t1_data[] = {3, 6, 9};
+    Tuple t1 = {t1_data, 3};
+
+    int t2_data[] = {3, 4, 9};
+    Tuple t2 = {t2_data, 3};
+
+    int t3_data[] = {15, 30};
+    Tuple t3 = {t3_data, 2};
+
+    Tuple* input_tuples[] = {&t1, &t2, &t3};
+    TupleList input_list = {input_tuples, 3};
+
+    TupleList* result = find_divisible_tuples(&input_list, k);
+
+    if (result) {
+        print_tuple_list(result);
+        free(result->tuples);
+        free(result);
+    }
+
+    return 0;
+}
+```

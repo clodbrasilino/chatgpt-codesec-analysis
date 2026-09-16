@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static int append_node(Node **head, int data)
+{
+    Node *node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    node = create_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static int list_contains(const Node *head, int data)
+{
+    const Node *current = head;
+
+    while (current != NULL) {
+        if (current->data == data) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+static void free_list(Node *head)
+{
+    Node *current = head;
+    Node *next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int list_difference(const Node *first, const Node *second, Node **result)
+{
+    const Node *current;
+
+    if (result == NULL) {
+        return -1;
+    }
+    *result = NULL;
+
+    current = first;
+    while (current != NULL) {
+        if (!list_contains(second, current->data) &&
+            !list_contains(*result, current->data)) {
+            if (append_node(result, current->data) != 0) {
+                free_list(*result);
+                *result = NULL;
+                return -1;
+            }
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+
+    if (current == NULL) {
+        printf("(empty)");
+    }
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Node *first = NULL;
+    Node *second = NULL;
+    Node *difference = NULL;
+    const int first_values[] = {1, 2, 3, 4, 5, 2, 8};
+    const int second_values[] = {3, 4, 5, 6, 7};
+    size_t i;
+
+    for (i = 0; i < sizeof(first_values) / sizeof(first_values[0]); i++) {
+        if (append_node(&first, first_values[i]) != 0) {
+            fprintf(stderr, "error: unable to build first list\n");
+            free_list(first);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (i = 0; i < sizeof(second_values) / sizeof(second_values[0]); i++) {
+        if (append_node(&second, second_values[i]) != 0) {
+            fprintf(stderr, "error: unable to build second list\n");
+            free_list(first);
+            free_list(second);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (list_difference(first, second, &difference) != 0) {
+        fprintf(stderr, "error: unable to compute list difference\n");
+        free_list(first);
+        free_list(second);
+        return EXIT_FAILURE;
+    }
+
+    printf("First list:                  ");
+    print_list(first);
+    printf("Second list:                 ");
+    print_list(second);
+    printf("Difference (first - second): ");
+    print_list(difference);
+
+    free_list(first);
+    free_list(second);
+    free_list(difference);
+
+    return EXIT_SUCCESS;
+}

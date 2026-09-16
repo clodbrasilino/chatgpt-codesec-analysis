@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-15.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-15.c:77:26: style: Condition 'strlen(test)>0' is always true [knownConditionTrueFalse]
+        if (strlen(test) > 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-15.c:70:24: note: Assignment 'test="HELLOworldFOObarBAZ123"', assigned value is "HELLOworldFOObarBAZ123"
+    const char *test = "HELLOworldFOObarBAZ123";
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-15.c:77:26: note: Condition 'strlen(test)>0' is always true
+        if (strlen(test) > 0) {
+                         ^

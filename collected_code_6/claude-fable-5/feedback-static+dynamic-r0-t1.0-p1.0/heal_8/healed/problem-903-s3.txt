@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int countUnsetBits(unsigned int num)
+{
+    unsigned int count = 0U;
+    while (num > 0U)
+    {
+        if ((num & 1U) == 0U)
+        {
+            count++;
+        }
+        num >>= 1U;
+    }
+    return count;
+}
+
+static unsigned long long totalUnsetBits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)countUnsetBits(i);
+        if (i == n)
+        {
+            break;
+        }
+    }
+    return total;
+}
+
+int main(int argc, const char *argv[])
+{
+    unsigned int n = 0U;
+
+    if (argc > 1)
+    {
+        char extra = '\0';
+        if (sscanf(argv[1], "%u %c", &n, &extra) != 1 || n < 1U)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        if (scanf("%u", &n) != 1)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+        if (n < 1U)
+        {
+            fprintf(stderr, "Error: input must be at least 1\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%llu\n", totalUnsetBits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the identified weaknesses and how this version addresses them:
+
+The reported failures (`expected 4, got 1` and `expected 17, got 1`) indicate a prior version was computing the number of unset bits of `n` alone — e.g., `countUnsetBits(5)` yields `1` (binary `101`), and `countUnsetBits(14)` yields `1` (binary `1110`) — rather than the cumulative total across the range. The correct expected values correspond to the *sum* of unset bits from `1` through `n`: for `n = 5` the total is `0+1+0+2+1 = 4`, and for `n = 14` the running total reaches `17`.
+
+The rewritten code fixes this by having `totalUnsetBits()` iterate over every value in `[1, n]` and accumulate `countUnsetBits(i)` into an `unsigned long long` accumulator, avoiding overflow for large `n`. The explicit `if (i == n) break;` guard prevents an infinite loop when `n == UINT_MAX`, since `i <= n` would otherwise always hold after `i` wraps around. Input validation covers both the command-line argument path (rejecting trailing garbage via the `%c` probe) and the stdin path, returning `EXIT_FAILURE` on malformed or out-of-range input.

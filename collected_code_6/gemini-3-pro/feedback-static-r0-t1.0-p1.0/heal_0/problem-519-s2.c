@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_tetrahedron_volume(double side) {
+    if (side <= 0.0) {
+        return -1.0;
+    }
+    return (pow(side, 3) / (6.0 * sqrt(2.0)));
+}
+
+int main(void) {
+    double side = 5.0;
+    double volume = calculate_tetrahedron_volume(side);
+    
+    if (volume < 0.0) {
+        printf("Invalid side length.\n");
+        return 1;
+    }
+    
+    printf("Volume: %.6f\n", volume);
+    
+    return 0;
+}

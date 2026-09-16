@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int is_ending_with_alnum(const char *str) {
+    int rc;
+    regex_t regex;
+    const char *pattern = ".*[a-zA-Z0-9]$";
+
+    rc = regcomp(&regex, pattern, REG_EXTENDED);
+    if (rc != 0) {
+        return -1;
+    }
+
+    rc = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    return rc == 0 ? 1 : 0;
+}
+
+int main() {
+    const char *test_str1 = "HelloWorld123";
+    const char *test_str2 = "Hello World!123";
+    const char *test_str3 = "123@#";
+
+    printf("%s: %d\n", test_str1, is_ending_with_alnum(test_str1));
+    printf("%s: %d\n", test_str2, is_ending_with_alnum(test_str2));
+    printf("%s: %d\n", test_str3, is_ending_with_alnum(test_str3));
+
+    return 0;
+}

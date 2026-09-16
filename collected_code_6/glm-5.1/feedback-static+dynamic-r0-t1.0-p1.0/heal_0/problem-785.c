@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+
+typedef struct {
+    int *elements;
+    size_t count;
+} IntTuple;
+
+IntTuple tuple_string_to_int(const char *str) {
+    IntTuple result = {NULL, 0};
+    
+    if (str == NULL) {
+        return result;
+    }
+    
+    size_t len = strlen(str);
+    if (len < 2 || str[0] != '(' || str[len - 1] != ')') {
+        return result;
+    }
+    
+    size_t capacity = 1;
+    for (size_t i = 1; i < len - 1; i++) {
+        if (str[i] == ',') {
+            capacity++;
+        }
+    }
+    
+    if (capacity == 0) {
+        return result;
+    }
+    
+    result.elements = (int *)malloc(capacity * sizeof(int));
+    if (result.elements == NULL) {
+        return result;
+    }
+    
+    char *buffer = (char *)malloc(len - 1);
+    if (buffer == NULL) {
+        free(result.elements);
+        result.elements = NULL;
+        return result;
+    }
+    
+    memcpy(buffer, str + 1, len - 2);
+    buffer[len - 2] = '\0';
+    
+    char *saveptr = NULL;
+    char *token = strtok_r(buffer, ",", &saveptr);
+    
+    while (token != NULL) {
+        while (isspace((unsigned char)*token)) {
+            token++;
+        }
+        
+        if (*token == '\0') {
+            free(result.elements);
+            free(buffer);
+            result.elements = NULL;
+            result.count = 0;
+            return result;
+        }
+        
+        char *endptr = NULL;
+        errno = 0;
+        long val = strtol(token, &endptr, 10);
+        
+        if (errno != 0 || *endptr != '\0' || val < INT_MIN || val > INT_MAX) {
+            free(result.elements);
+            free(buffer);
+            result.elements = NULL;
+            result.count = 0;
+            return result;
+        }
+        
+        result.elements[result.count] = (int)val;
+        result.count++;
+        
+        token = strtok_r(NULL, ",", &saveptr);
+    }
+    
+    free(buffer);
+    return result;
+}
+
+int main(void) {
+    const char *input = "(10, -20, 30, 40)";
+    IntTuple t = tuple_string_to_int(input);
+    
+    if (t.elements != NULL) {
+        for (size_t i = 0; i < t.count; i++) {
+            printf("%d ", t.elements[i]);
+        }
+        printf("\n");
+        free(t.elements);
+    } else {
+        printf("Conversion failed\n");
+    }
+    
+    return 0;
+}

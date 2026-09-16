@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void print_element(int element) {
+    printf("%d ", element);
+}
+
+void map(int *array, size_t size, void (*func)(int)) {
+    if (array == NULL || func == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < size; i++) {
+        func(array[i]);
+    }
+}
+
+void print_list_n_times(int *array, size_t size, size_t n) {
+    if (array == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < n; i++) {
+        map(array, size, print_element);
+        printf("\n");
+    }
+}
+
+int main(void) {
+    size_t size = 5;
+    int *my_list = (int *)malloc(size * sizeof(int));
+    
+    if (my_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        my_list[i] = (int)(i + 1);
+    }
+
+    size_t n = 3;
+    print_list_n_times(my_list, size, n);
+
+    free(my_list);
+    my_list = NULL;
+
+    return 0;
+}

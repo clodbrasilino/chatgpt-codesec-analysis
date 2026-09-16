@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int check_same_start_end(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (strlen(str) == 0) {
+        return 0;
+    }
+
+    regex_t regex;
+    int ret;
+    const char *pattern = "^(.).*\\1$|^.$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (!ret) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        return 0;
+    }
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "racecar",
+        "hello",
+        "a",
+        "ab",
+        "aba",
+        "",
+        NULL
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        if (test_strings[i] != NULL) {
+            int result = check_same_start_end(test_strings[i]);
+            printf("String: '%s', Result: %d\n", test_strings[i], result);
+        } else {
+            int result = check_same_start_end(test_strings[i]);
+            printf("String: NULL, Result: %d\n", result);
+        }
+    }
+    
+    return 0;
+}

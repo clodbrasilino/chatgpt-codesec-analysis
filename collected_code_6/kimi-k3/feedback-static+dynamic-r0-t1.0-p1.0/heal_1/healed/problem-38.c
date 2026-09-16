@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+float divide_first_even_odd(const int *arr, int size) {
+    int first_even = -1;
+    int first_odd = -1;
+    int i;
+
+    if (arr == NULL || size <= 0) {
+        return 0.0f;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (first_even == -1 && arr[i] % 2 == 0) {
+            first_even = arr[i];
+        } else if (first_odd == -1 && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+        }
+
+        if (first_even != -1 && first_odd != -1) {
+            break;
+        }
+    }
+
+    if (first_even == -1 || first_odd == -1 || first_odd == 0) {
+        return 0.0f;
+    }
+
+    return (float)first_even / first_odd;
+}
+
+int main(void) {
+    int arr[] = {3, 7, 8, 10, 15};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    float result;
+
+    result = divide_first_even_odd(arr, size);
+    printf("Result: %.2f\n", result);
+
+    return 0;
+}

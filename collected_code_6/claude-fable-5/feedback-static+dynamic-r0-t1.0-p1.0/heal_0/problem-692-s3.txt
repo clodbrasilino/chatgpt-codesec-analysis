@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int last_two_digits_of_factorial(int n)
+{
+    int result;
+    int i;
+
+    if (n < 0)
+    {
+        return -1;
+    }
+
+    if (n >= 10)
+    {
+        return 0;
+    }
+
+    result = 1;
+    for (i = 2; i <= n; i++)
+    {
+        result = (result * i) % 100;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int number;
+    int digits;
+    int scan_result;
+
+    printf("Enter a non-negative integer: ");
+    scan_result = scanf("%d", &number);
+
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    digits = last_two_digits_of_factorial(number);
+
+    if (digits < 0)
+    {
+        fprintf(stderr, "Error: factorial is not defined for negative numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Last two digits of %d! are: %02d\n", number, digits);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The function computes the factorial modulo 100 to avoid integer overflow entirely. Since any factorial of 10 or greater contains both factors 2 and 5 at least twice (making it divisible by 100), the function short-circuits and returns 0 for `n >= 10`, so the loop only ever runs for small values. Input from `scanf` is validated before use, negative inputs are rejected through an error code checked by the caller, and the output uses `%02d` to correctly display leading zeros (e.g., `5! = 120` prints `20`, and `4! = 24` prints `24`).

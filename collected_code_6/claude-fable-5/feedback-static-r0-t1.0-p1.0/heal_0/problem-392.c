@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10007u
+
+typedef struct Node {
+    unsigned long key;
+    unsigned long value;
+    struct Node *next;
+} Node;
+
+static Node *table[TABLE_SIZE];
+
+static void free_table(void)
+{
+    size_t i;
+    for (i = 0; i < TABLE_SIZE; i++) {
+        Node *cur = table[i];
+        while (cur != NULL) {
+            Node *next = cur->next;
+            free(cur);
+            cur = next;
+        }
+        table[i] = NULL;
+    }
+}
+
+static int lookup(unsigned long key, unsigned long *out)
+{
+    Node *cur = table[key % TABLE_SIZE];
+    while (cur != NULL) {
+        if (cur->key == key) {
+            *out = cur->value;
+            return 1;
+        }
+        cur = cur->next;
+    }
+    return 0;
+}
+
+static int insert(unsigned long key, unsigned long value)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return 0;
+    }
+    node->key = key;
+    node->value = value;
+    node->next = table[key % TABLE_SIZE];
+    table[key % TABLE_SIZE] = node;
+    return 1;
+}
+
+static int max_sum(unsigned long n, unsigned long *result)
+{
+    unsigned long cached;
+    unsigned long a;
+    unsigned long b;
+    unsigned long c;
+    unsigned long d;
+    unsigned long sum;
+
+    if (n == 0UL) {
+        *result = 0UL;
+        return 1;
+    }
+    if (lookup(n, &cached)) {
+        *result = cached;
+        return 1;
+    }
+    if (!max_sum(n / 2UL, &a)) {
+        return 0;
+    }
+    if (!max_sum(n / 3UL, &b)) {
+        return 0;
+    }
+    if (!max_sum(n / 4UL, &c)) {
+        return 0;
+    }
+    if (!max_sum(n / 5UL, &d)) {
+        return 0;
+    }
+    sum = a + b + c + d;
+    if (sum < n) {
+        sum = n;
+    }
+    if (!insert(n, sum)) {
+        return 0;
+    }
+    *result = sum;
+    return 1;
+}
+
+int main(void)
+{
+    unsigned long n;
+    unsigned long result;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%lu", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!max_sum(n, &result)) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_table();
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum sum for %lu is %lu\n", n, result);
+
+    free_table();
+    return EXIT_SUCCESS;
+}

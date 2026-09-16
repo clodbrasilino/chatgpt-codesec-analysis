@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-413-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-413-s2.c:49:14: style: Condition 'ret3!=0' is always true [knownConditionTrueFalse]
+    if (ret3 != 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-413-s2.c:48:35: note: Calling function 'extract_nth_element' returns -1
+    int ret3 = extract_nth_element(null_list_ptr, 0, &result);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-413-s2.c:48:35: note: Assignment 'ret3=extract_nth_element(null_list_ptr,0,&result)', assigned value is -1
+    int ret3 = extract_nth_element(null_list_ptr, 0, &result);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-413-s2.c:49:14: note: Condition 'ret3!=0' is always true
+    if (ret3 != 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_4/healed/problem-413-s2.c:47:16: style: Variable 'null_list_ptr' can be declared as pointer to const [constVariablePointer]
+    TupleList *null_list_ptr = NULL;
+               ^

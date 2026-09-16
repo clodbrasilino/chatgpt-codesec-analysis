@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSumOfDivisorsEqual(int num1, int num2) {
+    int sum1 = 0, sum2 = 0;
+    for (int i = 1; i <= num1 / 2; ++i) {
+        if (num1 % i == 0) {
+            sum1 += i;
+        }
+    }
+    for (int i = 1; i <= num2 / 2; ++i) {
+        if (num2 % i == 0) {
+            sum2 += i;
+        }
+    }
+    return sum1 == sum2;
+}
+
+int main() {
+    int a, b;
+    printf("Enter two numbers: ");
+    scanf("%d %d", &a, &b);
+    if (isSumOfDivisorsEqual(a, b)) {
+        printf("The sum of divisors of the two numbers are equal.\n");
+    } else {
+        printf("The sum of divisors of the two numbers are not equal.\n");
+    }
+    return 0;
+}
+```

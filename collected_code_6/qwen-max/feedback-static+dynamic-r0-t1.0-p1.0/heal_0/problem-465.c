@@ -2,52 +2,67 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
+typedef struct KeyValuePair {
     char *key;
     char *value;
-} DictionaryItem;
+} KeyValuePair;
 
-typedef struct {
-    DictionaryItem *items;
-    size_t count;
+typedef struct Dictionary {
+    KeyValuePair *items;
+    int size;
 } Dictionary;
 
-Dictionary *create_dictionary(size_t initial_capacity) {
-    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
-    if (dict == NULL) return NULL;
-    dict->items = (DictionaryItem *)calloc(initial_capacity, sizeof(DictionaryItem));
-    if (dict->items == NULL) {
-        free(dict);
-        return NULL;
+int is_empty(const char *str) {
+    return str == NULL || strlen(str) == 0;
+}
+
+void clean_dictionary(Dictionary *dict) {
+    if (dict == NULL || dict->items == NULL) {
+        return;
     }
-    dict->count = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        if (is_empty(dict->items[i].key) || is_empty(dict->items[i].value)) {
+            free(dict->items[i].key);
+            free(dict->items[i].value);
+        }
+    }
+}
+
+Dictionary* drop_empty_items(Dictionary *dict) {
+    if (dict == NULL || dict->items == NULL) {
+        return dict;
+    }
+    clean_dictionary(dict);
+
+    int count_non_empty = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        if (!is_empty(dict->items[i].key) && !is_empty(dict->items[i].value)) {
+            dict->items[count_non_empty++] = dict->items[i];
+        }
+    }
+
+    if (count_non_empty != dict->size) {
+        KeyValuePair *new_items = (KeyValuePair *) realloc(dict->items, count_non_empty * sizeof(KeyValuePair));
+        if (new_items != NULL) {
+            dict->items = new_items;
+            dict->size = count_non_empty;
+        }
+    }
+
     return dict;
 }
 
-void add_item(Dictionary *dict, const char *key, const char *value) {
-    if (dict->count >= (sizeof(dict->items) / sizeof(dict->items[0]))) {
-        size_t new_capacity = dict->count * 2;
-        DictionaryItem *new_items = (DictionaryItem *)realloc(dict->items, new_capacity * sizeof(DictionaryItem));
-        if (new_items == NULL) return;
-        dict->items = new_items;
+void print_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        printf("%s: %s\n", dict->items[i].key, dict->items[i].value);
     }
-    dict->items[dict->count].key = strdup(key);
-    dict->items[dict->count].value = strdup(value);
-    ++dict->count;
-}
-
-Dictionary *drop_empty_items(Dictionary *dict) {
-    Dictionary *new_dict = create_dictionary(dict->count);
-    for (size_t i = 0; i < dict->count; ++i) {
-        if (dict->items[i].value != NULL && strlen(dict->items[i].value) > 0) {
-            add_item(new_dict, dict->items[i].key, dict->items[i].value);
-        }
-    }
-    return new_dict;
 }
 
 void free_dictionary(Dictionary *dict) {
-    for (size_t i = 0; i < dict->count; ++i) {
+    if (dict == NULL) {
+        return;
+    }
+    for (int i = 0; i < dict->size; ++i) {
         free(dict->items[i].key);
         free(dict->items[i].value);
     }
@@ -56,21 +71,24 @@ void free_dictionary(Dictionary *dict) {
 }
 
 int main() {
-    Dictionary *dict = create_dictionary(3);
-    if (dict == NULL) return 1;
+    Dictionary *dict = (Dictionary *) malloc(sizeof(Dictionary));
+    dict->size = 5;
+    dict->items = (KeyValuePair *) malloc(sizeof(KeyValuePair) * dict->size);
 
-    add_item(dict, "key1", "");
-    add_item(dict, "key2", "value2");
-    add_item(dict, "key3", "");
+    dict->items[0].key = strdup("key1");
+    dict->items[0].value = strdup("value1");
+    dict->items[1].key = strdup("");
+    dict->items[1].value = strdup("value2");
+    dict->items[2].key = strdup("key3");
+    dict->items[2].value = strdup("");
+    dict->items[3].key = strdup("key4");
+    dict->items[3].value = strdup("value4");
+    dict->items[4].key = strdup("key5");
+    dict->items[4].value = strdup("");
 
-    Dictionary *new_dict = drop_empty_items(dict);
-
-    for (size_t i = 0; i < new_dict->count; ++i) {
-        printf("%s: %s\n", new_dict->items[i].key, new_dict->items[i].value);
-    }
+    dict = drop_empty_items(dict);
+    print_dictionary(dict);
 
     free_dictionary(dict);
-    free_dictionary(new_dict);
-
     return 0;
 }

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-22.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-22.c:24:15: style: Condition 'range==0' is always false [knownConditionTrueFalse]
+    if (range == 0 || range > (unsigned long long)INT_MAX) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-22.c:23:90: note: Assignment 'range=(unsigned long long)max_val-(unsigned long long)min_val+1ULL', assigned value is greater than 0
+    unsigned long long range = (unsigned long long)max_val - (unsigned long long)min_val + 1ULL;
+                                                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-22.c:24:15: note: Condition 'range==0' is always false
+    if (range == 0 || range > (unsigned long long)INT_MAX) {
+              ^

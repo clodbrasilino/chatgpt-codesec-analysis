@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_diff_even_odd(int *numbers, int size) {
+    int first_even = -1, first_odd = -1;
+    for (int i = 0; i < size; ++i) {
+        if (numbers[i] % 2 == 0 && first_even == -1) {
+            first_even = numbers[i];
+        } else if (numbers[i] % 2 != 0 && first_odd == -1) {
+            first_odd = numbers[i];
+        }
+        if (first_even != -1 && first_odd != -1) {
+            break;
+        }
+    }
+    return (first_even - first_odd);
+}
+
+int main() {
+    int arr[] = {3, 5, 2, 8, 1, 6};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int difference = find_diff_even_odd(arr, size);
+    printf("Difference: %d\n", difference);
+    return 0;
+}

@@ -3,11 +3,13 @@
 
 int max_segments(int n, int a, int b, int c) {
     int max = 0;
-    for (int i = 0; i * a <= n; i++) {
-        for (int j = 0; j * b + i * a <= n; j++) {
+    for (int i = 0; i <= n / a; ++i) {
+        for (int j = 0; j <= (n - i * a) / b; ++j) {
             int k = (n - i * a - j * b) / c;
             if (i * a + j * b + k * c == n) {
-                max = (i + j + k > max) ? i + j + k : max;
+                if (i + j + k > max) {
+                    max = i + j + k;
+                }
             }
         }
     }
@@ -16,16 +18,13 @@ int max_segments(int n, int a, int b, int c) {
 
 int main() {
     int n, a, b, c;
-    printf("Enter the total length n and segment lengths a, b, c: ");
-    if (scanf("%d %d %d %d", &n, &a, &b, &c) != 4) {
-        fprintf(stderr, "Input error\n");
-        return EXIT_FAILURE;
-    }
-    if (n < 0 || a < 1 || b < 1 || c < 1) {
-        fprintf(stderr, "Invalid input values\n");
-        return EXIT_FAILURE;
-    }
+    printf("Enter the total length n: ");
+    scanf("%d", &n);
+    printf("Enter the segment lengths a, b, and c: ");
+    scanf("%d %d %d", &a, &b, &c);
+
     int result = max_segments(n, a, b, c);
     printf("Maximum number of segments: %d\n", result);
-    return EXIT_SUCCESS;
+
+    return 0;
 }

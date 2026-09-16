@@ -1,0 +1,155 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int *data;
+    size_t len;
+    struct Node *next;
+} Node;
+
+typedef struct CountNode {
+    int value;
+    size_t count;
+    struct CountNode *next;
+} CountNode;
+
+Node *create_node(int *data, size_t len) {
+    Node *n = malloc(sizeof(Node));
+    if (!n) {
+        return NULL;
+    }
+    n->data = data;
+    n->len = len;
+    n->next = NULL;
+    return n;
+}
+
+CountNode *create_count_node(int value) {
+    CountNode *cn = malloc(sizeof(CountNode));
+    if (!cn) {
+        return NULL;
+    }
+    cn->value = value;
+    cn->count = 1;
+    cn->next = NULL;
+    return cn;
+}
+
+CountNode *find_count_node(CountNode *head, int value) {
+    CountNode *curr = head;
+    while (curr) {
+        if (curr->value == value) {
+            return curr;
+        }
+        curr = curr->next;
+    }
+    return NULL;
+}
+
+CountNode *count_frequencies(Node *head) {
+    CountNode *freq_head = NULL;
+    CountNode *freq_tail = NULL;
+    Node *curr = head;
+
+    while (curr) {
+        if (curr->data) {
+            for (size_t i = 0; i < curr->len; i++) {
+                CountNode *found = find_count_node(freq_head, curr->data[i]);
+                if (found) {
+                    found->count++;
+                } else {
+                    CountNode *new_cn = create_count_node(curr->data[i]);
+                    if (!new_cn) {
+                        CountNode *tmp = freq_head;
+                        while (tmp) {
+                            CountNode *next = tmp->next;
+                            free(tmp);
+                            tmp = next;
+                        }
+                        return NULL;
+                    }
+                    if (!freq_head) {
+                        freq_head = new_cn;
+                        freq_tail = new_cn;
+                    } else {
+                        freq_tail->next = new_cn;
+                        freq_tail = new_cn;
+                    }
+                }
+            }
+        }
+        curr = curr->next;
+    }
+    return freq_head;
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr) {
+        Node *next = curr->next;
+        if (curr->data) {
+            free(curr->data);
+        }
+        free(curr);
+        curr = next;
+    }
+}
+
+void free_count_list(CountNode *head) {
+    CountNode *curr = head;
+    while (curr) {
+        CountNode *next = curr->next;
+        free(curr);
+        curr = next;
+    }
+}
+
+int main(void) {
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    for (int i = 0; i < 3; i++) {
+        size_t len = 3;
+        int *data = malloc(len * sizeof(int));
+        if (!data) {
+            free_list(head);
+            return 1;
+        }
+        for (size_t j = 0; j < len; j++) {
+            data[j] = (int)j + i;
+        }
+        Node *n = create_node(data, len);
+        if (!n) {
+            free(data);
+            free_list(head);
+            return 1;
+        }
+        if (!head) {
+            head = n;
+            tail = n;
+        } else {
+            tail->next = n;
+            tail = n;
+        }
+    }
+
+    CountNode *freq = count_frequencies(head);
+    if (!freq) {
+        free_list(head);
+        return 1;
+    }
+
+    CountNode *curr = freq;
+    while (curr) {
+        printf("%d: %zu\n", curr->value, curr->count);
+        curr = curr->next;
+    }
+
+    free_count_list(freq);
+    free_list(head);
+
+    return 0;
+}
+```

@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_odd(int num) {
+    return num % 2 != 0;
+}
+
+bool check_odd_indices(int *list, int size) {
+    for (int i = 1; i < size; i += 2) {
+        if (!is_odd(list[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int list[] = {2, 3, 4, 5, 6, 7};
+    int size = sizeof(list) / sizeof(list[0]);
+    
+    if (check_odd_indices(list, size)) {
+        printf("All odd indices contain odd numbers.\n");
+    } else {
+        printf("Not all odd indices contain odd numbers.\n");
+    }
+    
+    return 0;
+}

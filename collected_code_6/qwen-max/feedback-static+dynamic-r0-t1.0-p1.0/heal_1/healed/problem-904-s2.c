@@ -6,13 +6,14 @@ bool is_even(int num) {
 }
 
 int main() {
-    int number = 4;
-
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    
     if (is_even(number)) {
-        printf("%d is even.\n", number);
+        printf("The number is even.\n");
     } else {
-        printf("%d is not even.\n", number);
+        printf("The number is odd.\n");
     }
-
     return 0;
 }

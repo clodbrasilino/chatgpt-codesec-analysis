@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool sequential_search(int arr[], int n, int x) {
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == x) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int arr[] = {2, 3, 4, 10, 40};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 10;
+
+    if (sequential_search(arr, n, x)) {
+        printf("Element is present in the array\n");
+    } else {
+        printf("Element is not present in the array\n");
+    }
+
+    return 0;
+}

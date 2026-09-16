@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_parallelogram_perimeter(double base, double side);
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 600, got 70
+  *  test case 0 failed: expected 400, got 60
+  *  test case 2 failed: expected 144, got 34
+  */
+
+double calculate_parallelogram_perimeter(double base, double side) {
+    if (base <= 0.0 || side <= 0.0) {
+        return -1.0;
+    }
+    return 2.0 * (base + side);
+}
+
+int main(void) {
+    double base = 0.0;
+    double side = 0.0;
+    double perimeter = 0.0;
+    int items_read = 0;
+
+    items_read = scanf("%lf %lf", &base, &side);
+    
+    if (items_read != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    perimeter = calculate_parallelogram_perimeter(base, side);
+    
+    if (perimeter < 0.0) {
+        fprintf(stderr, "Dimensions must be strictly positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.2f\n", perimeter) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

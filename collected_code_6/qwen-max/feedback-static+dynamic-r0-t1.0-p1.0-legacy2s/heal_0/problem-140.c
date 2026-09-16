@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple* extractSinglyOccurring(Tuple *tuples, int count, int *newCount) {
+    int *occurrences = (int*)calloc(1024, sizeof(int));
+    for (int i = 0; i < count; ++i) {
+        occurrences[tuples[i].first]++;
+        occurrences[tuples[i].second]++;
+    }
+    *newCount = 0;
+    for (int i = 0; i < count; ++i) {
+        if (occurrences[tuples[i].first] == 1 && occurrences[tuples[i].second] == 1) {
+            (*newCount)++;
+        }
+    }
+    if (*newCount == 0) {
+        free(occurrences);
+        return NULL;
+    }
+    Tuple *result = (Tuple*)malloc(*newCount * sizeof(Tuple));
+    int index = 0;
+    for (int i = 0; i < count; ++i) {
+        if (occurrences[tuples[i].first] == 1 && occurrences[tuples[i].second] == 1) {
+            result[index++] = tuples[i];
+        }
+    }
+    free(occurrences);
+    return result;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 5}, {6, 7}, {8, 9}, {4, 10}};
+    int count = 6;
+    int newCount;
+    Tuple *singlyOccurring = extractSinglyOccurring(tuples, count, &newCount);
+    if (singlyOccurring) {
+        for (int i = 0; i < newCount; ++i) {
+            printf("%d, %d\n", singlyOccurring[i].first, singlyOccurring[i].second);
+        }
+        free(singlyOccurring);
+    }
+    return 0;
+}

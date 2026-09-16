@@ -1,58 +1,44 @@
 ```c
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-#define MAX_ADVERBS 100
-#define MAX_WORD_LENGTH 50
-
-typedef struct {
-    char word[MAX_WORD_LENGTH + 1];
-    int start;
-    int end;
-} AdverbInfo;
-
-int is_adverb(const char *word) {
-    if (strlen(word) < 4) return 0;
+bool isAdverb(const char *word) {
     size_t len = strlen(word);
-    return (word[len - 2] == 'l' && word[len - 1] == 'y') || 
-           (word[len - 2] == 'w' && word[len - 1] == 'y');
+    if (len < 4) return false;
+    return (strcmp(word + len - 4, "ly") == 0);
 }
 
-void find_adverbs(const char *sentence, AdverbInfo adverbs[], int *adverb_count) {
-    const char *delimiters = " ,.!?;:()[]{}\"'";
-    char *token;
-    char *copy = strdup(sentence);
-    *adverb_count = 0;
+void findAdverbs(const char *sentence, char **adverbs, int *positions, int *count) {
+    const char *delimiters = " ,.!?;:";  // Delimiters to split the sentence
+    const char *token;
+    const char *currentPos = sentence;
+    char *context = NULL;
 
-    token = strtok(copy, delimiters);
-    while (token != NULL && *adverb_count < MAX_ADVERBS) {
-        if (is_adverb(token)) {
-            strncpy(adverbs[*adverb_count].word, token, MAX_WORD_LENGTH + 1);
-            adverbs[*adverb_count].start = token - copy;
-            adverbs[*adverb_count].end = adverbs[*adverb_count].start + strlen(token) - 1;
-            (*adverb_count)++;
+    token = strtok_r((char *)sentence, delimiters, &context);
+    while (token != NULL) {
+        if (isAdverb(token)) {
+            adverbs[*count] = strdup(token);
+            positions[*count] = currentPos - sentence;
+            (*count)++;
         }
-        token = strtok(NULL, delimiters);
+        currentPos += strlen(token) + strspn(currentPos, delimiters);
+        token = strtok_r(NULL, delimiters, &context);
     }
-
-    free(copy);
 }
 
 int main() {
-    char sentence[1000];
-    AdverbInfo adverbs[MAX_ADVERBS];
-    int adverb_count = 0;
+    const char *sentence = "He quickly and quietly walked away from the scene.";
+    char *adverbs[100];
+    int positions[100];
+    int count = 0;
 
-    printf("Enter a sentence: ");
-    fgets(sentence, sizeof(sentence), stdin);
-    sentence[strcspn(sentence, "\n")] = '\0';
+    findAdverbs(sentence, adverbs, positions, &count);
 
-    find_adverbs(sentence, adverbs, &adverb_count);
-
-    for (int i = 0; i < adverb_count; i++) {
-        printf("Adverb: %s, Start: %d, End: %d\n", adverbs[i].word, adverbs[i].start, adverbs[i].end);
+    for (int i = 0; i < count; i++) {
+        printf("Adverb: %s, Position: %d\n", adverbs[i], positions[i]);
+        free(adverbs[i]);
     }
 
     return 0;

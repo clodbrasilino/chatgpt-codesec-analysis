@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c:39:30: style: Condition 'elements[i].type==TYPE_UNKNOWN' is always false [knownConditionTrueFalse]
+        if (elements[i].type == TYPE_UNKNOWN) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c:105:49: style: Condition 'result8' is always false [knownConditionTrueFalse]
+    printf("NULL elements all same type: %s\n", result8 ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c:95:33: note: Calling function 'all_same_type' returns 0
+    bool result8 = all_same_type(NULL, 0);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c:95:33: note: Assignment 'result8=all_same_type(NULL,0)', assigned value is 0
+    bool result8 = all_same_type(NULL, 0);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c:105:49: note: Condition 'result8' is always false
+    printf("NULL elements all same type: %s\n", result8 ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222-s2.c:22:7: style: struct member 'TupleElement::value' is never used. [unusedStructMember]
+    } value;
+      ^

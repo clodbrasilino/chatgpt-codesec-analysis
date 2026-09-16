@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void remove_spaces(char *str)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ' ') {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+int main(void)
+{
+    char buffer[256];
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    remove_spaces(buffer);
+
+    printf("Result: %s\n", buffer);
+
+    return 0;
+}
+```
+
+Key safety measures in this implementation:
+
+1. **CWE-664 (Resource lifetime)**: The buffer is a fixed-size stack array with a lifetime that spans its entire use — no dynamic allocation means no leaks or use-after-free. The in-place modification never writes beyond the original string length.
+
+2. **CWE-703 (Exceptional conditions)**: The return value of `fgets` is checked for `NULL` (handles EOF/read errors), and `remove_spaces` guards against a `NULL` pointer argument.
+
+3. **CWE-710 (Coding standards)**: Uses `size_t` for indices, `int main(void)` signature, bounded input via `fgets` with `sizeof(buffer)` (no `gets` or unbounded `scanf`), proper newline stripping with `strcspn`, and explicit return codes.

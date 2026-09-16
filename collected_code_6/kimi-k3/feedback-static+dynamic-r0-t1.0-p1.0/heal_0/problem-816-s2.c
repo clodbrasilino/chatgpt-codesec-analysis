@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    size_t size;
+} Tuple;
+
+Tuple *tuple_create(size_t size) {
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->values = calloc(size, sizeof(int));
+    if (t->values == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->size = size;
+    return t;
+}
+
+void tuple_clear(Tuple *t) {
+    if (t == NULL || t->values == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < t->size; i++) {
+        t->values[i] = 0;
+    }
+}
+
+void tuple_destroy(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    free(t->values);
+    free(t);
+}
+
+int main(void) {
+    Tuple *t = tuple_create(5);
+    if (t == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < t->size; i++) {
+        t->values[i] = (int)(i + 1);
+    }
+
+    printf("Before clear: ");
+    for (size_t i = 0; i < t->size; i++) {
+        printf("%d ", t->values[i]);
+    }
+    printf("\n");
+
+    tuple_clear(t);
+
+    printf("After clear: ");
+    for (size_t i = 0; i < t->size; i++) {
+        printf("%d ", t->values[i]);
+    }
+    printf("\n");
+
+    tuple_destroy(t);
+    return EXIT_SUCCESS;
+}

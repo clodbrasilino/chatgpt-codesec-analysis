@@ -3,24 +3,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *concat_tuples(const char **tuple, size_t len, const char *delimiter) {
-    if (len == 0) return NULL;
+char *concat_tuples(const char **tuple, int size, const char *delimiter) {
+    if (size <= 0 || !tuple || !*tuple || !delimiter) return NULL;
 
-    size_t delimiter_len = strlen(delimiter);
-    size_t total_len = 0;
-    for (size_t i = 0; i < len; ++i) {
+    int delimiter_len = strlen(delimiter);
+    int total_len = 0;
+    for (int i = 0; i < size; ++i) {
         total_len += strlen(tuple[i]);
     }
-    total_len += delimiter_len * (len - 1);
+    total_len += (size - 1) * delimiter_len + 1;
 
-    char *result = (char *)malloc(total_len + 1);
-    if (result == NULL) return NULL;
+    char *result = malloc(total_len * sizeof(char));
+    if (!result) return NULL;
 
-    result[0] = '\0';
-    for (size_t i = 0; i < len; ++i) {
-        strcat(result, tuple[i]);
-        if (i < len - 1) {
-            strcat(result, delimiter);
+    char *p = result;
+    for (int i = 0; i < size; ++i) {
+        p += sprintf(p, "%s", tuple[i]);
+        if (i < size - 1) {
+            p += sprintf(p, "%s", delimiter);
         }
     }
 
@@ -28,15 +28,17 @@ char *concat_tuples(const char **tuple, size_t len, const char *delimiter) {
 }
 
 int main() {
-    const char *tuple[] = {"Hello", "world", "from", "C"};
-    size_t len = sizeof(tuple) / sizeof(tuple[0]);
+    const char *tuple[] = {"Hello", "World", "C", "Programming"};
+    int size = 4;
+    const char *delimiter = "-";
 
-    const char *delimiter = ", ";
-    char *result = concat_tuples(tuple, len, delimiter);
-
-    if (result != NULL) {
+    char *result = concat_tuples(tuple, size, delimiter);
+    if (result) {
         printf("%s\n", result);
         free(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
     }
 
     return 0;

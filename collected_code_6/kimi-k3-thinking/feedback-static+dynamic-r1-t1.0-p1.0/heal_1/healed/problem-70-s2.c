@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct {
+    const int *elements;
+    size_t length;
+} Tuple;
+
+static bool all_tuples_equal_length(const Tuple *tuples, size_t tuple_count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return false;
+    }
+
+    if (tuple_count == 0U) {
+        return true;
+    }
+
+    for (i = 0U; i < tuple_count; i++) {
+        if (tuples[i].elements == NULL) {
+            return false;
+        }
+        if (tuples[i].length != tuples[0].length) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL || tuple->elements == NULL) {
+        printf("(null)\n");
+        return;
+    }
+
+    printf("{");
+    for (i = 0U; i < tuple->length; i++) {
+        printf("%d", tuple->elements[i]);
+        if (i + 1U < tuple->length) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+static void print_tuples(const Tuple *tuples, size_t tuple_count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < tuple_count; i++) {
+        print_tuple(&tuples[i]);
+    }
+}
+
+int main(void)
+{
+    int first_data[] = {10, 20, 30};
+    int second_data[] = {40, 50, 60};
+    int third_data[] = {70, 80, 90};
+    int fourth_data[] = {100, 200};
+
+    const Tuple equal_tuples[] = {
+        {first_data, sizeof(first_data) / sizeof(first_data[0])},
+        {second_data, sizeof(second_data) / sizeof(second_data[0])},
+        {third_data, sizeof(third_data) / sizeof(third_data[0])}
+    };
+
+    const Tuple mixed_tuples[] = {
+        {first_data, sizeof(first_data) / sizeof(first_data[0])},
+        {fourth_data, sizeof(fourth_data) / sizeof(fourth_data[0])},
+        {third_data, sizeof(third_data) / sizeof(third_data[0])}
+    };
+
+    print_tuples(equal_tuples, sizeof(equal_tuples) / sizeof(equal_tuples[0]));
+
+    if (all_tuples_equal_length(equal_tuples, sizeof(equal_tuples) / sizeof(equal_tuples[0]))) {
+        printf("First set: all tuples have equal length.\n");
+    } else {
+        printf("First set: tuples do not have equal length.\n");
+    }
+
+    print_tuples(mixed_tuples, sizeof(mixed_tuples) / sizeof(mixed_tuples[0]));
+
+    if (all_tuples_equal_length(mixed_tuples, sizeof(mixed_tuples) / sizeof(mixed_tuples[0]))) {
+        printf("Second set: all tuples have equal length.\n");
+    } else {
+        printf("Second set: tuples do not have equal length.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

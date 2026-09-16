@@ -1,30 +1,33 @@
 ```c
 #include <stdio.h>
-#include <regex.h>
 #include <string.h>
+#include <regex.h>
 
-void remove_lowercase_substrings(char *str) {
+int remove_lowercase_substrings(char *str) {
     regex_t regex;
-    regmatch_t matches[1];
-    char pattern[] = "[a-z]+";
+    regmatch_t match[1];
 
-    if (regcomp(&regex, pattern, REG_EXTENDED|REG_NEWLINE) != 0) {
-        return;
+    if (regcomp(&regex, "[a-z]+", REG_EXTENDED | REG_NOSUB) != 0) {
+        return -1;
     }
 
-    while (regexec(&regex, str, 1, matches, 0) == 0) {
-        int matchlen = matches[0].rm_eo - matches[0].rm_so;
-        memmove(str + matches[0].rm_so, str + matches[0].rm_eo, strlen(str + matches[0].rm_eo) + 1);
-        memset(str + strlen(str) - matchlen, 0, matchlen); 
+    int offset = 0;
+    while (1) {
+        int status = regexec(&regex, str + offset, 1, match, 0);
+        if (status == REG_NOMATCH)
+            break;
+
+        memmove(str + offset, str + offset + match[0].rm_eo - match[0].rm_so, strlen(str + offset + match[0].rm_eo - match[0].rm_so) + 1);
     }
 
     regfree(&regex);
+    return 0;
 }
 
 int main() {
-    char input[] = "TesTStrinG123";
-    remove_lowercase_substrings(input);
-    printf("%s\n", input);
+    char str[] = "TesTIngStrinG";
+    remove_lowercase_substrings(str);
+    printf("%s\n", str);
     return 0;
 }
 ```

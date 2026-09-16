@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_loss(int cost_price, int selling_price, int* loss_amount) {
+    if (loss_amount == NULL) {
+        return -1;
+    }
+    
+    if (cost_price < 0 || selling_price < 0) {
+        return -1;
+    }
+
+    if (cost_price > selling_price) {
+        *loss_amount = cost_price - selling_price;
+        return 1;
+    }
+
+    *loss_amount = 0;
+    return 0;
+}
+
+int main() {
+    int cost_price = 100;
+    int selling_price = 80;
+    int loss_amount = 0;
+
+    int result = calculate_loss(cost_price, selling_price, &loss_amount);
+
+    if (result == 1) {
+        printf("Loss amount: %d\n", loss_amount);
+    } else if (result == 0) {
+        printf("None\n");
+    } else {
+        printf("Invalid input or error occurred.\n");
+    }
+
+    cost_price = 80;
+    selling_price = 100;
+    
+    result = calculate_loss(cost_price, selling_price, &loss_amount);
+
+    if (result == 1) {
+        printf("Loss amount: %d\n", loss_amount);
+    } else if (result == 0) {
+        printf("None\n");
+    } else {
+        printf("Invalid input or error occurred.\n");
+    }
+
+    return 0;
+}

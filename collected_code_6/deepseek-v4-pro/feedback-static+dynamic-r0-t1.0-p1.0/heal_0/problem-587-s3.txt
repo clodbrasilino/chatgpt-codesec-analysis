@@ -1,0 +1,108 @@
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+struct list_node {
+    int value;
+    struct list_node *next;
+};
+
+struct tuple {
+    int *elements;
+    size_t size;
+};
+
+struct tuple *list_to_tuple(struct list_node *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    struct list_node *current = head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    struct tuple *result = (struct tuple *)malloc(sizeof(struct tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->elements = (int *)malloc(count * sizeof(int));
+    if (result->elements == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->size = count;
+
+    current = head;
+    for (size_t i = 0; i < count; i++) {
+        result->elements[i] = current->value;
+        current = current->next;
+    }
+
+    return result;
+}
+
+struct list_node *create_node(int value) {
+    struct list_node *node = (struct list_node *)malloc(sizeof(struct list_node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(struct list_node *head) {
+    struct list_node *current = head;
+    while (current != NULL) {
+        struct list_node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_tuple(struct tuple *t) {
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+int main() {
+    struct list_node *head = create_node(1);
+    if (head == NULL) {
+        return 1;
+    }
+    head->next = create_node(2);
+    if (head->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+    head->next->next = create_node(3);
+    if (head->next->next == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    struct tuple *t = list_to_tuple(head);
+    if (t == NULL) {
+        free_list(head);
+        return 1;
+    }
+
+    printf("Tuple size: %zu\n", t->size);
+    for (size_t i = 0; i < t->size; i++) {
+        printf("%d ", t->elements[i]);
+    }
+    printf("\n");
+
+    free_tuple(t);
+    free_list(head);
+
+    return 0;
+}
+```

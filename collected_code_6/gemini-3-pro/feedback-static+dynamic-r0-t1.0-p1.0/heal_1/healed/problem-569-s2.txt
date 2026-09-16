@@ -1,0 +1,91 @@
+```c
+#define _POSIX_C_SOURCE 200809L
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings(const void *a, const void *b) {
+    const char *str_a = *(const char **)a;
+    const char *str_b = *(const char **)b;
+    return strcmp(str_a, str_b);
+}
+
+void sort_sublists(char ***list_of_lists, const int *sublist_sizes, int num_sublists) {
+    if (list_of_lists == NULL || sublist_sizes == NULL || num_sublists <= 0) {
+        return;
+    }
+
+    for (int i = 0; i < num_sublists; i++) {
+        if (list_of_lists[i] != NULL && sublist_sizes[i] > 0) {
+            qsort(list_of_lists[i], sublist_sizes[i], sizeof(char *), compare_strings);
+        }
+    }
+}
+
+int main(void) {
+    int num_sublists = 2;
+    int sublist_sizes[] = {3, 2};
+
+    char ***list_of_lists = (char ***)malloc(num_sublists * sizeof(char **));
+    if (list_of_lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list_of_lists[0] = (char **)malloc(3 * sizeof(char *));
+    if (list_of_lists[0] == NULL) {
+        free(list_of_lists);
+        return EXIT_FAILURE;
+    }
+    list_of_lists[0][0] = strdup("banana");
+    list_of_lists[0][1] = strdup("apple");
+    list_of_lists[0][2] = strdup("cherry");
+
+    list_of_lists[1] = (char **)malloc(2 * sizeof(char *));
+    if (list_of_lists[1] == NULL) {
+        free(list_of_lists[0][0]);
+        free(list_of_lists[0][1]);
+        free(list_of_lists[0][2]);
+        free(list_of_lists[0]);
+        free(list_of_lists);
+        return EXIT_FAILURE;
+    }
+    list_of_lists[1][0] = strdup("zebra");
+    list_of_lists[1][1] = strdup("kangaroo");
+
+    for (int i = 0; i < num_sublists; i++) {
+        for (int j = 0; j < sublist_sizes[i]; j++) {
+            if (list_of_lists[i][j] == NULL) {
+                for (int k = 0; k < num_sublists; k++) {
+                    if (list_of_lists[k] != NULL) {
+                        for (int m = 0; m < sublist_sizes[k]; m++) {
+                            free(list_of_lists[k][m]);
+                        }
+                        free(list_of_lists[k]);
+                    }
+                }
+                free(list_of_lists);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    sort_sublists(list_of_lists, sublist_sizes, num_sublists);
+
+    for (int i = 0; i < num_sublists; i++) {
+        for (int j = 0; j < sublist_sizes[i]; j++) {
+            printf("%s ", list_of_lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (int i = 0; i < num_sublists; i++) {
+        for (int j = 0; j < sublist_sizes[i]; j++) {
+            free(list_of_lists[i][j]);
+        }
+        free(list_of_lists[i]);
+    }
+    free(list_of_lists);
+
+    return EXIT_SUCCESS;
+}
+```

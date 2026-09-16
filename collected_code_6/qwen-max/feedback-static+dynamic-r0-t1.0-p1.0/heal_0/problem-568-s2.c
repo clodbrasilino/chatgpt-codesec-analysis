@@ -1,71 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-    void* data;  // placeholder for dictionary data
+typedef struct Dictionary {
+    int key;
+    int value;
 } Dictionary;
 
-typedef struct {
-    Dictionary** dictionaries;
-    int capacity;
-    int count;
-} List;
+typedef struct Node {
+    Dictionary *dict;
+    struct Node *next;
+} Node;
 
-List* createList(int size) {
-    List* list = (List*)malloc(sizeof(List));
-    if (list == NULL) return NULL;
-
-    list->dictionaries = (Dictionary**)calloc(size, sizeof(Dictionary*));
-    if (list->dictionaries == NULL) {
-        free(list);
-        return NULL;
-    }
-
-    list->capacity = size;
-    list->count = 0;
-    return list;
-}
-
-void freeList(List* list) {
-    if (list != NULL) {
-        for (int i = 0; i < list->count; ++i) {
-            if (list->dictionaries[i] != NULL) {
-                free(list->dictionaries[i]);
-            }
+Node* createEmptyDictList(int count) {
+    Node *head = NULL;
+    Node *current = NULL;
+    for (int i = 0; i < count; i++) {
+        Dictionary *newDict = (Dictionary *)malloc(sizeof(Dictionary));
+        if (newDict == NULL) {
+            return NULL;
         }
-        free(list->dictionaries);
-        free(list);
+        newDict->key = 0;
+        newDict->value = 0;
+
+        Node *newNode = (Node *)malloc(sizeof(Node));
+        if (newNode == NULL) {
+            free(newDict);
+            return NULL;
+        }
+        newNode->dict = newDict;
+        newNode->next = NULL;
+
+        if (current == NULL) {
+            head = newNode;
+            current = newNode;
+        } else {
+            current->next = newNode;
+            current = current->next;
+        }
     }
+    return head;
 }
 
-int addEmptyDictionary(List* list) {
-    if (list->count >= list->capacity) return -1;
-
-    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
-    if (dict == NULL) return -1;
-
-    dict->data = NULL;
-    list->dictionaries[list->count++] = dict;
-    return 0;
+void freeDictList(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        free(current->dict);
+        current = current->next;
+        free(temp);
+    }
 }
 
 int main() {
-    int numDictionaries = 10;
-    List* list = createList(numDictionaries);
-
-    if (list == NULL) {
-        fprintf(stderr, "Failed to create list\n");
-        return EXIT_FAILURE;
+    int count = 5;
+    Node *dictList = createEmptyDictList(count);
+    if (dictList == NULL) {
+        printf("Failed to create dictionaries.\n");
+        return 1;
     }
 
-    for (int i = 0; i < numDictionaries; ++i) {
-        if (addEmptyDictionary(list) != 0) {
-            fprintf(stderr, "Failed to add empty dictionary\n");
-            freeList(list);
-            return EXIT_FAILURE;
-        }
-    }
+    // Use the list of dictionaries here
 
-    freeList(list);
-    return EXIT_SUCCESS;
+    freeDictList(dictList);
+    return 0;
 }

@@ -1,0 +1,160 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static struct Node *build_list(const int *values, size_t count)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct Node *node = create_node(values[i]);
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (tail == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return head;
+}
+
+static size_t list_length(const struct Node *head)
+{
+    size_t length = 0;
+
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+static int interleave_lists(const struct Node *a, const struct Node *b,
+                            struct Node **result)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+
+    if (result == NULL) {
+        return -1;
+    }
+    *result = NULL;
+
+    if (list_length(a) != list_length(b)) {
+        return -1;
+    }
+
+    while (a != NULL && b != NULL) {
+        struct Node *node_a = create_node(a->value);
+        struct Node *node_b;
+
+        if (node_a == NULL) {
+            free_list(head);
+            return -1;
+        }
+
+        node_b = create_node(b->value);
+        if (node_b == NULL) {
+            free(node_a);
+            free_list(head);
+            return -1;
+        }
+
+        node_a->next = node_b;
+
+        if (tail == NULL) {
+            head = node_a;
+        } else {
+            tail->next = node_a;
+        }
+        tail = node_b;
+
+        a = a->next;
+        b = b->next;
+    }
+
+    *result = head;
+    return 0;
+}
+
+static void print_list(const struct Node *head)
+{
+    while (head != NULL) {
+        if (printf("%d ", head->value) < 0) {
+            return;
+        }
+        head = head->next;
+    }
+    (void)printf("\n");
+}
+
+int main(void)
+{
+    const int values_a[] = { 1, 3, 5, 7 };
+    const int values_b[] = { 2, 4, 6, 8 };
+    struct Node *list_a;
+    struct Node *list_b;
+    struct Node *merged = NULL;
+
+    list_a = build_list(values_a, sizeof(values_a) / sizeof(values_a[0]));
+    if (list_a == NULL) {
+        (void)fprintf(stderr, "Failed to build first list\n");
+        return EXIT_FAILURE;
+    }
+
+    list_b = build_list(values_b, sizeof(values_b) / sizeof(values_b[0]));
+    if (list_b == NULL) {
+        (void)fprintf(stderr, "Failed to build second list\n");
+        free_list(list_a);
+        return EXIT_FAILURE;
+    }
+
+    if (interleave_lists(list_a, list_b, &merged) != 0) {
+        (void)fprintf(stderr, "Failed to interleave lists\n");
+        free_list(list_a);
+        free_list(list_b);
+        return EXIT_FAILURE;
+    }
+
+    print_list(list_a);
+    print_list(list_b);
+    print_list(merged);
+
+    free_list(list_a);
+    free_list(list_b);
+    free_list(merged);
+
+    return EXIT_SUCCESS;
+}
+```

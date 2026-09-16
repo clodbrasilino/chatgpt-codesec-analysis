@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef void (*StringMapFunc)(const char *);
+
+void map_strings(const char **strings, size_t count, StringMapFunc func)
+{
+    size_t i;
+
+    if (strings == NULL || func == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        if (strings[i] != NULL)
+        {
+            func(strings[i]);
+        }
+    }
+}
+
+void print_string(const char *str)
+{
+    if (str != NULL)
+    {
+        printf("%s\n", str);
+    }
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "Hello",
+        "World",
+        "This",
+        "Is",
+        "C",
+        "Programming"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    map_strings(strings, count, print_string);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_add_for_even_sum(const int *arr, size_t n)
+{
+    size_t i;
+    int parity = 0;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        parity ^= (arr[i] & 1);
+    }
+
+    return (parity == 0) ? 0 : 1;
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    int *arr;
+    int result;
+
+    printf("Enter number of elements: ");
+    if (scanf("%zu", &n) != 1 || n == 0 || n > 1000000) {
+        fprintf(stderr, "Invalid input for array size\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu integers: ", n);
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid integer input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = min_add_for_even_sum(arr, n);
+    printf("Minimum number to add: %d\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

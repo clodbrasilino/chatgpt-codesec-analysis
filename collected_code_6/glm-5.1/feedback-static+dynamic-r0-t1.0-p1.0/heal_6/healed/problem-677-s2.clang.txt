@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-677-s2.c:8:13: error: use of undeclared identifier 'LONG_MAX'
+    8 |     if (a > LONG_MAX - b || a + b <= c) {
+      |             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-677-s2.c:11:13: error: use of undeclared identifier 'LONG_MAX'
+   11 |     if (b > LONG_MAX - c || b + c <= a) {
+      |             ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-677-s2.c:14:13: error: use of undeclared identifier 'LONG_MAX'
+   14 |     if (a > LONG_MAX - c || a + c <= b) {
+      |             ^~~~~~~~
+3 errors generated.

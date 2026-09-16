@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_odd_index_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = malloc((len / 2U) + 2U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "abcdef",
+        "hello world",
+        "a",
+        ""
+    };
+    size_t count;
+    size_t i;
+    int status;
+
+    status = EXIT_SUCCESS;
+    count = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (i = 0U; i < count; i++) {
+        char *output = remove_odd_index_chars(test_strings[i]);
+        if (output == NULL) {
+            if (fprintf(stderr, "Memory allocation failed\n") < 0) {
+                status = EXIT_FAILURE;
+                break;
+            }
+            status = EXIT_FAILURE;
+            break;
+        }
+        if (printf("Input: \"%s\" -> Output: \"%s\"\n", test_strings[i], output) < 0) {
+            free(output);
+            status = EXIT_FAILURE;
+            break;
+        }
+        free(output);
+    }
+
+    return status;
+}

@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = value;
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static struct Node *build_list(const int *values, size_t count)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct Node *node = create_node(values[i]);
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return head;
+}
+
+static struct Node *merge_sorted_lists(struct Node *a, struct Node *b)
+{
+    struct Node dummy;
+    struct Node *tail = &dummy;
+
+    dummy.next = NULL;
+
+    while (a != NULL && b != NULL) {
+        if (a->data <= b->data) {
+            tail->next = a;
+            a = a->next;
+        } else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != NULL) {
+        tail->next = a;
+    } else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+static void print_list(const struct Node *head)
+{
+    while (head != NULL) {
+        if (printf("%d ", head->data) < 0) {
+            return;
+        }
+        head = head->next;
+    }
+    (void)printf("\n");
+}
+
+int main(void)
+{
+    const int values_a[] = {1, 3, 5, 7};
+    const int values_b[] = {2, 4, 6, 8, 10};
+    struct Node *list_a;
+    struct Node *list_b;
+    struct Node *merged;
+
+    list_a = build_list(values_a, sizeof(values_a) / sizeof(values_a[0]));
+    if (list_a == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list_b = build_list(values_b, sizeof(values_b) / sizeof(values_b[0]));
+    if (list_b == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        free_list(list_a);
+        return EXIT_FAILURE;
+    }
+
+    merged = merge_sorted_lists(list_a, list_b);
+
+    print_list(merged);
+
+    free_list(merged);
+
+    return EXIT_SUCCESS;
+}

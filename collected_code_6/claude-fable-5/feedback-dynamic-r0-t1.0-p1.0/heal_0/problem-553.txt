@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    int whole;
+    int fraction;
+} Tuple;
+
+static int count_digits(int value)
+{
+    int digits = 1;
+
+    if (value < 0) {
+        return -1;
+    }
+
+    while (value >= 10) {
+        value /= 10;
+        digits++;
+    }
+
+    return digits;
+}
+
+static int tuple_to_float(const Tuple *t, double *result)
+{
+    int digits;
+    double divisor;
+
+    if ((t == NULL) || (result == NULL)) {
+        return -1;
+    }
+
+    if ((t->whole < 0) || (t->fraction < 0)) {
+        return -1;
+    }
+
+    digits = count_digits(t->fraction);
+    if (digits < 0) {
+        return -1;
+    }
+
+    divisor = pow(10.0, (double)digits);
+    if (divisor <= 0.0) {
+        return -1;
+    }
+
+    *result = (double)t->whole + ((double)t->fraction / divisor);
+
+    return 0;
+}
+
+int main(void)
+{
+    Tuple input = { 4, 56 };
+    double value = 0.0;
+
+    if (tuple_to_float(&input, &value) != 0) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.2f\n", value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-353-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-353-s3.c:23:22: style: Condition 'new_cols>0' is always true [knownConditionTrueFalse]
+        if (new_cols > 0) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-353-s3.c:119:35: note: Calling function 'remove_column', 2nd argument '2' value is 2
+    int res = remove_column(list, 2);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-353-s3.c:11:47: note: Assuming that condition 'list->cols<=col' is not redundant
+    if (list == NULL || col < 0 || list->cols <= col || (list->rows > 0 && list->data == NULL)) {
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-353-s3.c:14:31: note: Assignment 'new_cols=list->cols-1', assigned value is greater than 1
+    int new_cols = list->cols - 1;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-353-s3.c:23:22: note: Condition 'new_cols>0' is always true
+        if (new_cols > 0) {
+                     ^

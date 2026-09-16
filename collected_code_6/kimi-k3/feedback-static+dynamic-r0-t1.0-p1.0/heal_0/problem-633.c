@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long sum_xor_pairs(const int *arr, size_t n)
+{
+    long long sum = 0;
+    size_t i, j;
+
+    if (arr == NULL || n == 0)
+        return 0;
+
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            sum += (long long)(arr[i] ^ arr[j]);
+        }
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long result;
+
+    result = sum_xor_pairs(arr, n);
+    printf("Sum of XOR of all pairs: %lld\n", result);
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int min_flips_to_alternate(const char *str) {
+    int len = strlen(str);
+    if (len == 0) return 0;
+    
+    int flips_start0 = 0;
+    int flips_start1 = 0;
+    
+    for (int i = 0; i < len; i++) {
+        char expected_bit = (i % 2 == 0) ? '0' : '1';
+        if (str[i] != expected_bit) {
+            flips_start0++;
+        }
+        
+        expected_bit = (i % 2 == 0) ? '1' : '0';
+        if (str[i] != expected_bit) {
+            flips_start1++;
+        }
+    }
+    
+    return (flips_start0 < flips_start1) ? flips_start0 : flips_start1;
+}
+
+int main(void) {
+    char input[100];
+    
+    printf("Enter binary string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = strlen(input);
+        if (len > 0 && input[len-1] == '\n') {
+            input[len-1] = '\0';
+        }
+        
+        printf("Minimum flips required: %d\n", min_flips_to_alternate(input));
+    }
+    
+    return 0;
+}
+```

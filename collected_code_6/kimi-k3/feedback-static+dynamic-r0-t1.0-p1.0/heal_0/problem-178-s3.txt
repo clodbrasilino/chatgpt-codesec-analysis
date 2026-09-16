@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int find_literal(const char *haystack, const char *needle, size_t *position) {
+    if (haystack == NULL || needle == NULL || position == NULL) {
+        return -1;
+    }
+    
+    const char *found = strstr(haystack, needle);
+    if (found == NULL) {
+        return 0;
+    }
+    
+    *position = (size_t)(found - haystack);
+    return 1;
+}
+
+int find_all_literals(const char *haystack, const char **needles, size_t needle_count, 
+                      int *results, size_t *positions) {
+    if (haystack == NULL || needles == NULL || results == NULL || positions == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < needle_count; i++) {
+        if (needles[i] == NULL) {
+            results[i] = -1;
+            continue;
+        }
+        results[i] = find_literal(haystack, needles[i], &positions[i]);
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *search_terms[] = {"quick", "fox", "cat", "lazy"};
+    size_t term_count = sizeof(search_terms) / sizeof(search_terms[0]);
+    
+    int *results = malloc(term_count * sizeof(int));
+    size_t *positions = malloc(term_count * sizeof(size_t));
+    
+    if (results == NULL || positions == NULL) {
+        free(results);
+        free(positions);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (find_all_literals(text, search_terms, term_count, results, positions) != 0) {
+        free(results);
+        free(positions);
+        fprintf(stderr, "Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < term_count; i++) {
+        if (results[i] == 1) {
+            printf("Found '%s' at position %zu\n", search_terms[i], positions[i]);
+        } else if (results[i] == 0) {
+            printf("'%s' not found\n", search_terms[i]);
+        } else {
+            printf("Error searching for '%s'\n", search_terms[i]);
+        }
+    }
+    
+    free(results);
+    free(positions);
+    
+    return EXIT_SUCCESS;
+}
+```

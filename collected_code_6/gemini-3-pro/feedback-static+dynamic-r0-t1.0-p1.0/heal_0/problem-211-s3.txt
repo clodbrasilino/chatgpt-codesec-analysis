@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <limits.h>
+
+size_t count_set_bits_on_indices(const unsigned int *array, size_t length, unsigned int o, unsigned int n) {
+    size_t count = 0;
+    unsigned int max_bits = sizeof(unsigned int) * CHAR_BIT;
+
+    if (array == NULL || length == 0) {
+        return 0;
+    }
+
+    if (o >= max_bits || n >= max_bits) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        unsigned int val = array[i];
+        if (((val & (1U << o)) != 0) && ((val & (1U << n)) != 0)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    unsigned int numbers[] = {5, 9, 3, 7, 10, 11};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    unsigned int o = 0;
+    unsigned int n = 1;
+    size_t result;
+
+    result = count_set_bits_on_indices(numbers, length, o, n);
+    
+    printf("%zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

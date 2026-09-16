@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int min_subsets_distinct(int *arr, size_t n)
+{
+    size_t i;
+    int max_count;
+    int current_count;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    qsort(arr, n, sizeof(int), compare_ints);
+
+    max_count = 1;
+    current_count = 1;
+
+    for (i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            current_count++;
+            if (current_count > max_count) {
+                max_count = current_count;
+            }
+        } else {
+            current_count = 1;
+        }
+    }
+
+    return max_count;
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    int *arr;
+    int result;
+
+    printf("Enter number of elements: ");
+    if (scanf("%zu", &n) != 1) {
+        fprintf(stderr, "Invalid input for number of elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0 || n > 1000000) {
+        fprintf(stderr, "Number of elements out of valid range.\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu elements: ", n);
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input for element %zu.\n", i);
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = min_subsets_distinct(arr, n);
+    printf("Minimum number of subsets with distinct elements: %d\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```
+
+The logic: the minimum number of subsets needed so that each subset contains only distinct elements equals the maximum frequency of any element in the array. The function sorts the array, then scans for the longest run of equal values, which gives that maximum frequency.

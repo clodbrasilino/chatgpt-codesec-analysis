@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int all_tuples_equal_length(const size_t *lengths, size_t count, size_t expected)
+{
+    size_t i;
+
+    if (lengths == NULL || count == 0U) {
+        return 0;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (lengths[i] != expected) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    size_t lengths1[] = {3U, 3U, 3U};
+    size_t lengths2[] = {2U, 3U, 2U};
+    size_t count1 = sizeof(lengths1) / sizeof(lengths1[0]);
+    size_t count2 = sizeof(lengths2) / sizeof(lengths2[0]);
+    int result1;
+    int result2;
+
+    result1 = all_tuples_equal_length(lengths1, count1, 3U);
+    result2 = all_tuples_equal_length(lengths2, count2, 2U);
+
+    if (result1 == 1) {
+        if (printf("All tuples have equal length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("All tuples do not have equal length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (result2 == 1) {
+        if (printf("All tuples have equal length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("All tuples do not have equal length\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+bool check_k(const Tuple *tuples, size_t count, int k)
+{
+    if (tuples == NULL || count == 0) {
+        return false;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuples[i].first == k || tuples[i].second == k) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+void report_result(const Tuple *tuples, size_t count, int k)
+{
+    if (check_k(tuples, count, k)) {
+        printf("Tuples contain %d\n", k);
+    } else {
+        printf("Tuples do not contain %d\n", k);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples1[] = { {3, 4}, {5, 6}, {7, 8}, {9, 10} };
+    Tuple tuples2[] = { {1, 2}, {2, 3}, {4, 4} };
+    size_t count1 = sizeof(tuples1) / sizeof(tuples1[0]);
+    size_t count2 = sizeof(tuples2) / sizeof(tuples2[0]);
+
+    report_result(tuples1, count1, 7);
+    report_result(tuples2, count2, 9);
+    report_result(tuples2, count2, 5);
+
+    return 0;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the `check_k(NULL, 0, 5)` call** — this was the source of the `knownConditionTrueFalse` warning, since passing `NULL` guarantees a `false` return, making the condition statically determinable and the `if` branch dead code. The NULL-safety check inside `check_k` is retained as defensive programming, but it should not be exercised deliberately from call sites.
+
+2. **Replaced it with a valid lookup** (`check_k(tuples2, count2, 5)`) that exercises the same "not found" output path through legitimate means — the value 5 genuinely isn't in `tuples2`, so the result is determined at runtime rather than being a known constant.
+
+3. **Added a `count == 0` guard** alongside the NULL check, so an empty array short-circuits cleanly without entering the loop.
+
+4. **Factored the repeated if/else printing into `report_result`** — the original duplicated the same conditional block three times, which is both a maintenance hazard and the reason the analyzer flagged each call site individually.

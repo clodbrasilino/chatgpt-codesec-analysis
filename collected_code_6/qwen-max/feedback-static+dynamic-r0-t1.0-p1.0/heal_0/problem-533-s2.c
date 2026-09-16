@@ -1,84 +1,104 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-    int type; // 0 for int, 1 for float, 2 for char
-    union {
-        int i;
-        float f;
-        char c;
-    } value;
-} TupleElement;
+typedef enum { INT, FLOAT, STRING, BOOL } DataType;
 
 typedef struct {
-    TupleElement *elements;
-    int size;
-    int capacity;
+    void *value;
+    DataType type;
+} Element;
+
+typedef struct Node {
+    Element element;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    Node *tail;
 } Tuple;
 
-void init_tuple(Tuple *t, int capacity) {
-    t->elements = (TupleElement *)malloc(capacity * sizeof(TupleElement));
-    t->size = 0;
-    t->capacity = capacity;
-}
-
 void free_tuple(Tuple *t) {
-    free(t->elements);
-    t->elements = NULL;
-    t->size = 0;
-    t->capacity = 0;
-}
-
-int add_element(Tuple *t, int type, union { int i; float f; char c; } value) {
-    if (t->size >= t->capacity) return -1;
-    t->elements[t->size].type = type;
-    t->elements[t->size].value = value;
-    t->size++;
-    return 0;
-}
-
-void remove_elements_by_type(Tuple *t, int type) {
-    int read = 0;
-    int write = 0;
-    while (read < t->size) {
-        if (t->elements[read].type != type) {
-            t->elements[write] = t->elements[read];
-            write++;
+    while (t->head) {
+        Node *temp = t->head;
+        t->head = t->head->next;
+        if (temp->element.type == STRING) {
+            free(temp->element.value);
         }
-        read++;
+        free(temp);
     }
-    t->size = write;
+    t->head = NULL;
+    t->tail = NULL;
 }
 
-void print_tuple(const Tuple *t) {
-    for (int i = 0; i < t->size; ++i) {
-        switch (t->elements[i].type) {
-            case 0: printf("%d ", t->elements[i].value.i); break;
-            case 1: printf("%f ", t->elements[i].value.f); break;
-            case 2: printf("%c ", t->elements[i].value.c); break;
-        }
+Tuple* create_tuple() {
+    Tuple *t = (Tuple*) malloc(sizeof(Tuple));
+    t->head = NULL;
+    t->tail = NULL;
+    return t;
+}
+
+void add_element(Tuple *t, void *value, DataType type) {
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    new_node->element.value = value;
+    new_node->element.type = type;
+    new_node->next = NULL;
+    
+    if (!t->head) {
+        t->head = new_node;
+        t->tail = new_node;
+    } else {
+        t->tail->next = new_node;
+        t->tail = new_node;
     }
-    printf("\n");
+}
+
+Tuple* remove_elements_of_type(Tuple *t, DataType type) {
+    Tuple *result = create_tuple();
+    Node *current = t->head;
+    while (current) {
+        if (current->element.type != type) {
+            add_element(result, current->element.value, current->element.type);
+        }
+        current = current->next;
+    }
+    return result;
 }
 
 int main() {
-    Tuple t;
-    init_tuple(&t, 10);
+    Tuple *t = create_tuple();
+    int i = 5;
+    float f = 3.14;
+    char *s = "hello";
+    int b = 1;
 
-    add_element(&t, 0, (union { int i; float f; char c; }){ .i = 1 });
-    add_element(&t, 1, (union { int i; float f; char c; }){ .f = 2.5f });
-    add_element(&t, 2, (union { int i; float f; char c; }){ .c = 'a' });
-    add_element(&t, 0, (union { int i; float f; char c; }){ .i = 2 });
-    add_element(&t, 1, (union { int i; float f; char c; }){ .f = 3.5f });
+    add_element(t, &i, INT);
+    add_element(t, &f, FLOAT);
+    add_element(t, s, STRING);
+    add_element(t, &b, BOOL);
 
-    printf("Original tuple: ");
-    print_tuple(&t);
+    Tuple *filtered = remove_elements_of_type(t, FLOAT);
 
-    remove_elements_by_type(&t, 1);
+    Node *current = filtered->head;
+    while (current) {
+        switch (current->element.type) {
+            case INT:
+                printf("INT: %d\n", *(int*)current->element.value);
+                break;
+            case FLOAT:
+                printf("FLOAT: %f\n", *(float*)current->element.value);
+                break;
+            case STRING:
+                printf("STRING: %s\n", (char*)current->element.value);
+                break;
+            case BOOL:
+                printf("BOOL: %d\n", *(int*)current->element.value);
+                break;
+        }
+        current = current->next;
+    }
 
-    printf("Modified tuple: ");
-    print_tuple(&t);
-
-    free_tuple(&t);
+    free_tuple(t);
+    free_tuple(filtered);
     return 0;
 }

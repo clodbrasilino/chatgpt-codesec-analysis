@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+void calculateSumAndAverage(int n, long long *sum, double *average) {
+    if (n <= 0 || sum == NULL || average == NULL) {
+        if (sum != NULL) *sum = 0;
+        if (average != NULL) *average = 0.0;
+        return;
+    }
+    
+    *sum = (long long)n * (n + 1) / 2;
+    *average = (double)*sum / n;
+}
+
+int main(void) {
+    int n;
+    long long sum;
+    double average;
+    
+    printf("Enter a positive integer: ");
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (n <= 0) {
+        fprintf(stderr, "Error: Please enter a positive integer\n");
+        return 1;
+    }
+    
+    calculateSumAndAverage(n, &sum, &average);
+    
+    printf("Sum of first %d natural numbers: %lld\n", n, sum);
+    printf("Average of first %d natural numbers: %.2f\n", n, average);
+    
+    return 0;
+}

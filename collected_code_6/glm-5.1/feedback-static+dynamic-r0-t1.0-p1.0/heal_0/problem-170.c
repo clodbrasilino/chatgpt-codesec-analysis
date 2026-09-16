@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_range(const int *list, size_t size, size_t start, size_t end) {
+    if (list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    if (size == 0) {
+        return 0;
+    }
+
+    if (start > end || start >= size) {
+        return 0;
+    }
+
+    if (end >= size) {
+        end = size - 1;
+    }
+
+    int sum = 0;
+    for (size_t i = start; i <= end; i++) {
+        sum += list[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    size_t start = 1;
+    size_t end = 3;
+
+    int result = sum_range(list, size, start, end);
+
+    printf("%d\n", result);
+
+    return 0;
+}

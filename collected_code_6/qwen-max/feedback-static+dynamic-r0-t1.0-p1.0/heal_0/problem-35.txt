@@ -1,0 +1,19 @@
+```c
+#include <stdio.h>
+
+int nthRectangularNumber(int n) {
+    return n * (n + 1);
+}
+
+int main() {
+    int n;
+    printf("Enter n: ");
+    if(scanf("%d", &n) == 1) {
+        int result = nthRectangularNumber(n);
+        printf("The %d-th rectangular number is: %d\n", n, result);
+    } else {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+    }
+    return 0;
+}
+```

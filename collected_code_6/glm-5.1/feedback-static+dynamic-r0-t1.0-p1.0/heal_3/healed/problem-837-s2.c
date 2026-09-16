@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long cube_sum_odd(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    unsigned long long un = (unsigned long long)n;
+    
+    if (un > ULLONG_MAX / un / 2) {
+        return 0;
+    }
+    
+    unsigned long long n_sq = un * un;
+    unsigned long long term = 2 * n_sq - 1;
+    
+    if (term == 0 || n_sq > ULLONG_MAX / term) {
+        return 0;
+    }
+    
+    return n_sq * term;
+}
+
+int main(int argc, char const * const argv[]) {
+    int n;
+    
+    if (argc != 2) {
+        printf("0\n");
+        return 1;
+    }
+    
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    
+    if (*endptr != '\0' || val < 0 || val > INT_MAX) {
+        printf("0\n");
+        return 1;
+    }
+    
+    n = (int)val;
+    unsigned long long result = cube_sum_odd(n);
+    
+    printf("%llu\n", result);
+    
+    return 0;
+}

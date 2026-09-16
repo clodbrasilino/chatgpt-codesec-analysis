@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct node {
+    char *data;
+    struct node *next;
+};
+
+static struct node *create_node(const char *word, size_t len)
+{
+    struct node *n = malloc(sizeof(struct node));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->data = malloc(len + 1);
+    if (n->data == NULL) {
+        free(n);
+        return NULL;
+    }
+    memcpy(n->data, word, len);
+    n->data[len] = '\0';
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(struct node *head)
+{
+    while (head != NULL) {
+        struct node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+static int string_to_list(const char *str, struct node **out_head)
+{
+    struct node *head = NULL;
+    struct node *tail = NULL;
+    size_t i = 0;
+    size_t len;
+
+    *out_head = NULL;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strlen(str);
+
+    while (i < len) {
+        size_t start;
+
+        while (i < len && (str[i] == ' ' || str[i] == '\t' ||
+                           str[i] == '\n' || str[i] == '\r')) {
+            i++;
+        }
+        if (i >= len) {
+            break;
+        }
+        start = i;
+        while (i < len && str[i] != ' ' && str[i] != '\t' &&
+               str[i] != '\n' && str[i] != '\r') {
+            i++;
+        }
+
+        {
+            struct node *n = create_node(&str[start], i - start);
+            if (n == NULL) {
+                free_list(head);
+                return -1;
+            }
+            if (head == NULL) {
+                head = n;
+                tail = n;
+            } else {
+                tail->next = n;
+                tail = n;
+            }
+        }
+    }
+
+    *out_head = head;
+    return 0;
+}
+
+static void print_list(const struct node *head)
+{
+    const struct node *cur = head;
+
+    printf("[");
+    while (cur != NULL) {
+        printf("'%s'", cur->data);
+        if (cur->next != NULL) {
+            printf(", ");
+        }
+        cur = cur->next;
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    char input[4096];
+    struct node *list = NULL;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        print_list(NULL);
+        return EXIT_SUCCESS;
+    }
+
+    input[strcspn(input, "\r\n")] = '\0';
+
+    if (string_to_list(input, &list) != 0) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

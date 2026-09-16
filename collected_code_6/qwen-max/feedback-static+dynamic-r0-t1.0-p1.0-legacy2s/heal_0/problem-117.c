@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    char *data;
+    struct ListNode *next;
+} ListNode;
+
+ListNode* createNode(char *data) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(ListNode *head) {
+    while (head != NULL) {
+        ListNode *temp = head;
+        head = head->next;
+        free(temp->data);
+        free(temp);
+    }
+}
+
+float strToFloat(const char *str) {
+    char *endptr;
+    float result = strtod(str, &endptr);
+    if (endptr == str) {
+        return -1.0; // Indicate conversion failure
+    }
+    return result;
+}
+
+ListNode* convertToListFloat(ListNode *head) {
+    ListNode *current = head;
+    while (current != NULL) {
+        float value = strToFloat(current->data);
+        if (value != -1.0) {
+            free(current->data);
+            current->data = (char*)malloc(sizeof(float));
+            if (current->data == NULL) {
+                return NULL; // Out of memory
+            }
+            *(float*)current->data = value;
+        }
+        current = current->next;
+    }
+    return head;
+}
+
+int main() {
+    ListNode *head = createNode("3.14");
+    head->next = createNode("hello");
+    head->next->next = createNode("2.71");
+    head->next->next->next = createNode("world");
+
+    head = convertToListFloat(head);
+
+    for (ListNode *curr = head; curr != NULL; curr = curr->next) {
+        if (*(float*)curr->data == *(float*)curr->data) { // Check if it is a float
+            printf("%.2f\n", *(float*)curr->data);
+        } else {
+            printf("%s\n", curr->data);
+        }
+    }
+
+    freeList(head);
+    return 0;
+}

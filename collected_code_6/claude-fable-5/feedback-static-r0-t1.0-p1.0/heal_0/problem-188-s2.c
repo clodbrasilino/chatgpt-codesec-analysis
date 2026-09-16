@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+static bool is_perfect_square(unsigned long long n)
+{
+    unsigned long long low = 0;
+    unsigned long long high = n;
+    if (n < 2ULL) {
+        return true;
+    }
+    while (low <= high) {
+        unsigned long long mid = low + (high - low) / 2ULL;
+        unsigned long long sq;
+        if (mid != 0ULL && mid > n / mid) {
+            high = mid - 1ULL;
+            continue;
+        }
+        sq = mid * mid;
+        if (sq == n) {
+            return true;
+        } else if (sq < n) {
+            low = mid + 1ULL;
+        } else {
+            if (mid == 0ULL) {
+                break;
+            }
+            high = mid - 1ULL;
+        }
+    }
+    return false;
+}
+
+static bool is_product_of_two_squares(unsigned long long n)
+{
+    unsigned long long a;
+    if (n == 0ULL) {
+        return true;
+    }
+    for (a = 1ULL; a <= n / a; a++) {
+        unsigned long long asq = a * a;
+        if (n % asq == 0ULL) {
+            if (is_perfect_square(n / asq)) {
+                return true;
+            }
+        }
+        if (asq > n / asq) {
+            break;
+        }
+    }
+    return false;
+}
+
+int main(void)
+{
+    unsigned long long n = 0ULL;
+    int result;
+
+    printf("Enter a non-negative number: ");
+    result = scanf("%llu", &n);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (is_product_of_two_squares(n)) {
+        printf("%llu can be represented as a product of two squares\n", n);
+    } else {
+        printf("%llu cannot be represented as a product of two squares\n", n);
+    }
+
+    return 0;
+}

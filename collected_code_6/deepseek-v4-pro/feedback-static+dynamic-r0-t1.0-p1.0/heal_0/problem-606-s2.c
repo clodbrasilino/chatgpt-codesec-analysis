@@ -1,0 +1,13 @@
+#include <math.h>
+#include <stdio.h>
+
+double degrees_to_radians(double degrees) {
+    return degrees * (M_PI / 180.0);
+}
+
+int main(void) {
+    double degrees = 180.0;
+    double radians = degrees_to_radians(degrees);
+    printf("%.2f degrees is %.6f radians\n", degrees, radians);
+    return 0;
+}

@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long countSubsequences(const int *arr, size_t n, long long k)
+{
+    if (arr == NULL || n == 0 || k <= 0) {
+        return 0;
+    }
+
+    size_t zeros = 0;
+    size_t m = 0;
+    int *positive = (int *)malloc(n * sizeof(int));
+    if (positive == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            zeros++;
+        } else {
+            positive[m] = arr[i];
+            m++;
+        }
+    }
+
+    long long limit = k - 1;
+    long long countPositive = 0;
+
+    if (limit >= 1 && m > 0) {
+        size_t rows = (size_t)limit + 1;
+        size_t cols = m + 1;
+        long long *dp = (long long *)calloc(rows * cols, sizeof(long long));
+        if (dp == NULL) {
+            free(positive);
+            return -1;
+        }
+
+        for (long long i = 1; i <= limit; i++) {
+            for (size_t j = 1; j <= m; j++) {
+                long long value = dp[(size_t)i * cols + (j - 1)];
+                if ((long long)positive[j - 1] <= i) {
+                    long long reduced = i / (long long)positive[j - 1];
+                    value += dp[(size_t)reduced * cols + (j - 1)] + 1;
+                }
+                dp[(size_t)i * cols + j] = value;
+            }
+        }
+
+        countPositive = dp[(size_t)limit * cols + m];
+        free(dp);
+    }
+
+    free(positive);
+
+    long long countWithZero = 0;
+    if (zeros > 0) {
+        long long total = 1;
+        long long nonZeroOnly = 1;
+        for (size_t i = 0; i < n; i++) {
+            total <<= 1;
+        }
+        for (size_t i = 0; i < m; i++) {
+            nonZeroOnly <<= 1;
+        }
+        countWithZero = total - nonZeroOnly;
+    }
+
+    return countPositive + countWithZero;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long k = 10;
+
+    long long result = countSubsequences(arr, n, k);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of subsequences with product smaller than %lld: %lld\n", k, result);
+
+    int arr2[] = {4, 8, 7, 2};
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    long long k2 = 50;
+
+    long long result2 = countSubsequences(arr2, n2, k2);
+    if (result2 < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of subsequences with product smaller than %lld: %lld\n", k2, result2);
+
+    return EXIT_SUCCESS;
+}

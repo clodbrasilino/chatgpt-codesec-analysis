@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int multiply_consecutive(int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+
+    if (size == 1) {
+        return list[0];
+    }
+
+    int *result = (int *)malloc((size - 1) * sizeof(int));
+    if (result == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        result[i] = list[i] * list[i + 1];
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 1;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    multiply_consecutive(list, size);
+
+    return 0;
+}

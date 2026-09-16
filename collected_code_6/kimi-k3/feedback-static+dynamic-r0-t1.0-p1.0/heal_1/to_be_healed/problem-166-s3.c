@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+long long countEvenXorPairs(int arr[], int n) {
+    long long evenCount = 0;
+    long long oddCount = 0;
+    long long i;
+    
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    
+    for (i = 0; i < n; i++) {
+        if ((arr[i] & 1) == 0) {
+            evenCount++;
+        } else {
+            oddCount++;
+        }
+    }
+    
+    return (evenCount * (evenCount - 1)) / 2 + (oddCount * (oddCount - 1)) / 2;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    long long result;
+    
+    result = countEvenXorPairs(arr, n);
+    
+    printf("Number of pairs with even XOR: %lld\n", result);
+    
+    return 0;
+}

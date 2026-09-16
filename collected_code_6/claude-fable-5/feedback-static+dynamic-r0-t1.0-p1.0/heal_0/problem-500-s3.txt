@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *concatenate_list(const char *const *list, size_t count)
+{
+    size_t total_length = 0;
+    size_t i;
+    char *result = NULL;
+    char *position = NULL;
+
+    if (list == NULL || count == 0) {
+        result = malloc(1);
+        if (result == NULL) {
+            return NULL;
+        }
+        result[0] = '\0';
+        return result;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t element_length;
+
+        if (list[i] == NULL) {
+            return NULL;
+        }
+
+        element_length = strlen(list[i]);
+
+        if (total_length > SIZE_MAX - element_length - 1) {
+            return NULL;
+        }
+
+        total_length += element_length;
+    }
+
+    result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    position = result;
+    for (i = 0; i < count; i++) {
+        size_t element_length = strlen(list[i]);
+        memcpy(position, list[i], element_length);
+        position += element_length;
+    }
+    *position = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = { "Hello", ", ", "world", "!" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    char *combined = NULL;
+
+    combined = concatenate_list(words, count);
+    if (combined == NULL) {
+        fprintf(stderr, "Failed to concatenate list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%s\n", combined) < 0) {
+        free(combined);
+        return EXIT_FAILURE;
+    }
+
+    free(combined);
+    return EXIT_SUCCESS;
+}
+```
+
+Note: `SIZE_MAX` requires `<stdint.h>`. Here is the corrected includes line to use:
+
+```c
+#include <stdint.h>
+```
+
+Add that include at the top with the others to ensure the overflow check compiles correctly.

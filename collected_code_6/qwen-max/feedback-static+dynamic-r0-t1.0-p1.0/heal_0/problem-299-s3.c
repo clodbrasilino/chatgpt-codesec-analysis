@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int maxAggregate(Tuple *tuples, int n) {
+    if (n <= 0) return 0;
+
+    int max = tuples[0].first + tuples[0].second;
+    for (int i = 1; i < n; ++i) {
+        int sum = tuples[i].first + tuples[i].second;
+        if (sum > max) {
+            max = sum;
+        }
+    }
+    return max;
+}
+
+int main() {
+    int n;
+    printf("Enter the number of tuples: ");
+    scanf("%d", &n);
+
+    Tuple *tuples = (Tuple *)malloc(n * sizeof(Tuple));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        printf("Enter first and second elements of tuple %d: ", i + 1);
+        scanf("%d %d", &tuples[i].first, &tuples[i].second);
+    }
+
+    int result = maxAggregate(tuples, n);
+    printf("The maximum aggregate is: %d\n", result);
+
+    free(tuples);
+    return 0;
+}

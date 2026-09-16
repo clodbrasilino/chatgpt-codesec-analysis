@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <math.h>
+
+double round_to_multiple(double number, double multiple) {
+    if (multiple == 0.0) {
+        return number;
+    }
+    return round(number / multiple) * multiple;
+}
+
+int main(void) {
+    double number = 17.6;
+    double multiple = 5.0;
+    
+    double rounded = round_to_multiple(number, multiple);
+    printf("%f\n", rounded);
+    
+    return 0;
+}

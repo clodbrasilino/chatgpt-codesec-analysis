@@ -1,52 +1,79 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #define MAX_WORDS 1024
-#define WORD_LENGTH 64
+#define MAX_WORD_LENGTH 64
 
-char* remove_duplicate_words(const char *input) {
-    char words[MAX_WORDS][WORD_LENGTH] = {0};
-    int word_count = 0;
-    const char *token;
-    token = strtok((char *)input, " ");
-    while (token != NULL && word_count < MAX_WORDS) {
-        int is_new_word = 1;
-        for (int i = 0; i < word_count; i++) {
-            if (strcmp(words[i], token) == 0) {
-                is_new_word = 0;
-                break;
-            }
+int is_word_in_array(const char *word, const char *const *words, int num_words) {
+    for (int i = 0; i < num_words; ++i) {
+        if (strcmp(word, words[i]) == 0) {
+            return 1;
         }
-        if (is_new_word) {
-            strncpy(words[word_count], token, WORD_LENGTH);
-            word_count++;
-        }
-        token = strtok(NULL, " ");
     }
+    return 0;
+}
 
-    char *result = (char *)malloc(WORD_LENGTH * word_count + word_count - 1);
+char *remove_duplicate_words(const char *input) {
+    char *result = (char *)malloc(strlen(input) + 1);
     if (result == NULL) {
         return NULL;
     }
-    result[0] = '\0';
-    for (int i = 0; i < word_count; i++) {
-        strncat(result, words[i], WORD_LENGTH);
-        if (i < word_count - 1) {
-            strncat(result, " ", WORD_LENGTH);
+
+    char **words = (char **)malloc(MAX_WORDS * sizeof(char *));
+    if (words == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    int num_words = 0;
+
+    const char *p = input;
+    while (*p) {
+        while (*p && !isalnum((unsigned char)*p)) p++;
+        const char *word_start = p;
+        while (*p && isalnum((unsigned char)*p)) p++;
+
+        if (word_start != p) {
+            char word[MAX_WORD_LENGTH + 1];
+            strncpy(word, word_start, p - word_start);
+            word[p - word_start] = '\0';
+
+            if (!is_word_in_array(word, (const char *const *)words, num_words)) {
+                if (num_words >= MAX_WORDS) {
+                    free(result);
+                    free(words);
+                    return NULL;
+                }
+                words[num_words++] = strdup(word);
+                strcat(result, word);
+                strcat(result, " ");
+            }
         }
     }
+    *(result + strlen(result) - 1) = '\0';
+
+    for (int i = 0; i < num_words; ++i) {
+        free(words[i]);
+    }
+    free(words);
+
     return result;
 }
 
 int main() {
-    const char *input = "this is a test test of of the duplicate duplicate word removal";
+    const char *input = "Python Exercises Practice Solution Python Exercises Practice";
     char *output = remove_duplicate_words(input);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
+
+    if (output == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed or too many unique words.\n");
+        return 1;
     }
+
+    printf("Original: %s\n", input);
+    printf("Processed: %s\n", output);
+
+    free(output);
     return 0;
 }

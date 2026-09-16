@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint64_t delannoy(int n, int m) {
+    if (n < 0 || m < 0) {
+        return 0;
+    }
+    
+    uint64_t **dp = malloc((size_t)(n + 1) * sizeof(uint64_t *));
+    if (dp == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = malloc((size_t)(m + 1) * sizeof(uint64_t));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i][0] = 1;
+    }
+    for (int j = 0; j <= m; j++) {
+        dp[0][j] = 1;
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            dp[i][j] = dp[i-1][j] + dp[i][j-1] + dp[i-1][j-1];
+        }
+    }
+    
+    uint64_t result = dp[n][m];
+    
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int n, m;
+    
+    printf("Enter n and m: ");
+    if (scanf("%d %d", &n, &m) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0 || m < 0) {
+        fprintf(stderr, "Negative values not allowed\n");
+        return EXIT_FAILURE;
+    }
+    
+    uint64_t result = delannoy(n, m);
+    printf("Delannoy(%d, %d) = %llu\n", n, m, (unsigned long long)result);
+    
+    return EXIT_SUCCESS;
+}

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct WordCount {
+typedef struct {
     char *word;
     int count;
 } WordCount;
@@ -12,62 +12,40 @@ int compare(const void *a, const void *b) {
     return ((WordCount *)b)->count - ((WordCount *)a)->count;
 }
 
-char* findMostFrequentWord(char *strings[], int size) {
-    WordCount *wordCounts = NULL;
-    int capacity = 10, length = 0;
-    wordCounts = malloc(capacity * sizeof(WordCount));
-    if (wordCounts == NULL) return NULL;
+char* findMostFrequentWord(char *strings[], int n) {
+    if (n == 0) return NULL;
 
-    for (int i = 0; i < size; i++) {
-        char *token = strtok(strings[i], " ");
-        while (token != NULL) {
-            int found = 0;
-            for (int j = 0; j < length; j++) {
-                if (strcmp(wordCounts[j].word, token) == 0) {
-                    wordCounts[j].count++;
-                    found = 1;
-                    break;
-                }
+    WordCount *wordCounts = (WordCount *)malloc(n * sizeof(WordCount));
+    for (int i = 0; i < n; ++i) {
+        wordCounts[i].word = strings[i];
+        wordCounts[i].count = 1;
+    }
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (strcmp(strings[i], strings[j]) == 0) {
+                wordCounts[i].count++;
+                wordCounts[j].count = 0; // Mark as counted
             }
-            if (!found) {
-                if (length >= capacity) {
-                    capacity *= 2;
-                    wordCounts = realloc(wordCounts, capacity * sizeof(WordCount));
-                    if (wordCounts == NULL) return NULL;
-                }
-                wordCounts[length].word = strdup(token);
-                wordCounts[length].count = 1;
-                length++;
-            }
-            token = strtok(NULL, " ");
         }
     }
 
-    qsort(wordCounts, length, sizeof(WordCount), compare);
+    qsort(wordCounts, n, sizeof(WordCount), compare);
 
-    char *mostFrequentWord = wordCounts[0].word;
-    for (int i = 0; i < length; i++) {
-        free(wordCounts[i].word);
-    }
+    char *result = wordCounts[0].word;
     free(wordCounts);
-
-    return mostFrequentWord;
+    return result;
 }
 
 int main() {
-    char *strings[] = {
-        "hello world",
-        "world of code",
-        "hello again and again"
-    };
-    int size = sizeof(strings) / sizeof(strings[0]);
+    char *strings[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
+    int n = sizeof(strings) / sizeof(strings[0]);
 
-    char *mostFrequent = findMostFrequentWord(strings, size);
-    if (mostFrequent != NULL) {
-        printf("Most frequent word: %s\n", mostFrequent);
-        free(mostFrequent);
+    char *mostFrequent = findMostFrequentWord(strings, n);
+    if (mostFrequent) {
+        printf("The most frequent word is: %s\n", mostFrequent);
     } else {
-        printf("No words found.\n");
+        printf("No words provided.\n");
     }
 
     return 0;

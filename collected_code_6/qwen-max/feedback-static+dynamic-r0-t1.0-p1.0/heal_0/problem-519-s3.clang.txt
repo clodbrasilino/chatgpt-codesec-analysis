@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-519-s3.c:4:63: error: call to undeclared library function 'sqrt' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    4 |     return (edge_length * edge_length * edge_length) / (6.0 * sqrt(2.0));
+      |                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-519-s3.c:4:63: note: include the header <math.h> or explicitly provide a declaration for 'sqrt'
+1 error generated.

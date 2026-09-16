@@ -1,50 +1,43 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int **create_2d_array(size_t rows, size_t cols) {
-    int **array = (int **)malloc(rows * sizeof(int *));
+int** create_2d_array(int rows, int cols) {
+    int** array = (int**)malloc(rows * sizeof(int*));
     if (array == NULL) {
-        return NULL;
+        exit(1);
     }
-    for (size_t i = 0; i < rows; ++i) {
-        array[i] = (int *)malloc(cols * sizeof(int));
+    for (int i = 0; i < rows; ++i) {
+        array[i] = (int*)malloc(cols * sizeof(int));
         if (array[i] == NULL) {
-            for (size_t j = 0; j < i; ++j) {
+            for (int j = 0; j < i; ++j) {
                 free(array[j]);
             }
             free(array);
-            return NULL;
-        }
-        for (size_t j = 0; j < cols; ++j) {
-            array[i][j] = 0;
+            exit(1);
         }
     }
     return array;
 }
 
-void free_2d_array(int **array, size_t rows) {
-    for (size_t i = 0; i < rows; ++i) {
+void free_2d_array(int** array, int rows) {
+    for (int i = 0; i < rows; ++i) {
         free(array[i]);
     }
     free(array);
 }
 
 int main() {
-    size_t rows = 5;
-    size_t cols = 5;
-    int **my_array = create_2d_array(rows, cols);
+    int rows = 3, cols = 4;
+    int **myArray = create_2d_array(rows, cols);
 
-    if (my_array != NULL) {
-        for (size_t i = 0; i < rows; ++i) {
-            for (size_t j = 0; j < cols; ++j) {
-                printf("%d ", my_array[i][j]);
-            }
-            printf("\n");
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            myArray[i][j] = i * j;
+            printf("%d ", myArray[i][j]);
         }
-        free_2d_array(my_array, rows);
-    } else {
-        printf("Memory allocation failed.\n");
+        printf("\n");
     }
 
+    free_2d_array(myArray, rows);
     return 0;
 }

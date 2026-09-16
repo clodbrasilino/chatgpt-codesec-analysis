@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <limits.h>
+
+unsigned long long find_binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n || n < 0) {
+        return 0;
+    }
+
+    if (k == 0 || k == n) {
+        return 1;
+    }
+
+    if (k > n - k) {
+        k = n - k;
+    }
+
+    unsigned long long res = 1;
+
+    for (int i = 0; i < k; ++i) {
+        if (ULONG_MAX / (n - i) < res) {
+            return 0;
+        }
+        res *= (n - i);
+        res /= (i + 1);
+    }
+
+    return res;
+}
+
+int main(void) {
+    int n = 0;
+    int k = 0;
+
+    if (scanf("%d %d", &n, &k) != 2) {
+        return 1;
+    }
+
+    unsigned long long result = find_binomial_coefficient(n, k);
+
+    if (result == 0 && (k != 0 && k != n && !(k < 0 || k > n || n < 0))) {
+        printf("Overflow occurred.\n");
+    } else {
+        printf("%llu\n", result);
+    }
+
+    return 0;
+}

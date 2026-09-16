@@ -1,0 +1,165 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple Tuple;
+
+typedef enum {
+    ELEM_INT,
+    ELEM_TUPLE
+} ElemType;
+
+typedef struct {
+    ElemType type;
+    union {
+        int value;
+        Tuple *tuple;
+    } data;
+} Element;
+
+struct Tuple {
+    Element *items;
+    size_t count;
+};
+
+static Tuple *tuple_create(size_t count)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->count = count;
+    if (count > 0) {
+        t->items = calloc(count, sizeof(Element));
+        if (t->items == NULL) {
+            free(t);
+            return NULL;
+        }
+    } else {
+        t->items = NULL;
+    }
+    return t;
+}
+
+static void tuple_free(Tuple *t)
+{
+    size_t i;
+    if (t == NULL) {
+        return;
+    }
+    for (i = 0; i < t->count; i++) {
+        if (t->items[i].type == ELEM_TUPLE) {
+            tuple_free(t->items[i].data.tuple);
+        }
+    }
+    free(t->items);
+    free(t);
+}
+
+static Tuple *remove_nested(const Tuple *t)
+{
+    size_t i;
+    size_t kept = 0;
+    Tuple *result;
+
+    if (t == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < t->count; i++) {
+        if (t->items[i].type == ELEM_INT) {
+            kept++;
+        }
+    }
+
+    result = tuple_create(kept);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    kept = 0;
+    for (i = 0; i < t->count; i++) {
+        if (t->items[i].type == ELEM_INT) {
+            result->items[kept].type = ELEM_INT;
+            result->items[kept].data.value = t->items[i].data.value;
+            kept++;
+        }
+    }
+    return result;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    size_t i;
+    if (t == NULL) {
+        printf("()");
+        return;
+    }
+    printf("(");
+    for (i = 0; i < t->count; i++) {
+        if (t->items[i].type == ELEM_INT) {
+            printf("%d", t->items[i].data.value);
+        } else {
+            tuple_print(t->items[i].data.tuple);
+        }
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf(")");
+}
+
+int main(void)
+{
+    Tuple *original;
+    Tuple *nested;
+    Tuple *result;
+
+    original = tuple_create(5);
+    if (original == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    nested = tuple_create(2);
+    if (nested == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        tuple_free(original);
+        return EXIT_FAILURE;
+    }
+
+    nested->items[0].type = ELEM_INT;
+    nested->items[0].data.value = 4;
+    nested->items[1].type = ELEM_INT;
+    nested->items[1].data.value = 6;
+
+    original->items[0].type = ELEM_INT;
+    original->items[0].data.value = 1;
+    original->items[1].type = ELEM_INT;
+    original->items[1].data.value = 5;
+    original->items[2].type = ELEM_INT;
+    original->items[2].data.value = 7;
+    original->items[3].type = ELEM_TUPLE;
+    original->items[3].data.tuple = nested;
+    original->items[4].type = ELEM_INT;
+    original->items[4].data.value = 10;
+
+    printf("Original tuple: ");
+    tuple_print(original);
+    printf("\n");
+
+    result = remove_nested(original);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to remove nested record\n");
+        tuple_free(original);
+        return EXIT_FAILURE;
+    }
+
+    printf("Tuple after removing nested record: ");
+    tuple_print(result);
+    printf("\n");
+
+    tuple_free(original);
+    tuple_free(result);
+
+    return EXIT_SUCCESS;
+}

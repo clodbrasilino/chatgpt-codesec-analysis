@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *arr, size_t start, size_t end)
+{
+    size_t root = start;
+
+    while ((root * 2U) + 1U <= end) {
+        size_t child = (root * 2U) + 1U;
+        size_t target = root;
+
+        if (arr[target] > arr[child]) {
+            target = child;
+        }
+        if ((child + 1U <= end) && (arr[target] > arr[child + 1U])) {
+            target = child + 1U;
+        }
+        if (target == root) {
+            return;
+        }
+        swap(&arr[root], &arr[target]);
+        root = target;
+    }
+}
+
+int heapify(int *arr, size_t n)
+{
+    size_t start;
+
+    if ((arr == NULL) || (n == 0U)) {
+        return -1;
+    }
+    if (n == 1U) {
+        return 0;
+    }
+
+    start = (n - 2U) / 2U;
+    for (;;) {
+        sift_down(arr, start, n - 1U);
+        if (start == 0U) {
+            break;
+        }
+        start--;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    size_t i;
+    size_t n = 10U;
+    int *data = malloc(n * sizeof(int));
+
+    if (data == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    data[0] = 9;
+    data[1] = 4;
+    data[2] = 7;
+    data[3] = 1;
+    data[4] = -2;
+    data[5] = 6;
+    data[6] = 5;
+    data[7] = 8;
+    data[8] = 0;
+    data[9] = 3;
+
+    if (heapify(data, n) != 0) {
+        (void)fprintf(stderr, "Heapify failed\n");
+        free(data);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", data[i]) < 0) {
+            free(data);
+            return EXIT_FAILURE;
+        }
+    }
+    (void)printf("\n");
+
+    free(data);
+    return EXIT_SUCCESS;
+}

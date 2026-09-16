@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long findRemainder(const int* arr, size_t size, int n) {
+    long long remainder = 1;
+
+    if (arr == NULL || size == 0 || n == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        remainder = (remainder * (arr[i] % n)) % n;
+    }
+
+    return remainder;
+}
+
+int main(void) {
+    int arr[] = {100, 10, 5, 25, 35, 14};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int n = 11;
+
+    long long result = findRemainder(arr, size, n);
+
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        printf("Invalid input or division by zero.\n");
+    }
+
+    return 0;
+}
+```

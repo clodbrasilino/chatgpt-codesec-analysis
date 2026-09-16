@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool are_elements_same(int *list, size_t size) {
+    if (size == 0) {
+        return true;
+    }
+
+    if (list == NULL) {
+        return false;
+    }
+
+    for (size_t i = 1; i < size; i++) {
+        if (list[i] != list[0]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int list1[] = {1, 1, 1, 1};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+
+    int list2[] = {1, 2, 1, 1};
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+
+    int list3[] = {5};
+    size_t size3 = sizeof(list3) / sizeof(list3[0]);
+
+    int *list4 = NULL;
+    size_t size4 = 0;
+
+    bool res1 = are_elements_same(list1, size1);
+    bool res2 = are_elements_same(list2, size2);
+    bool res3 = are_elements_same(list3, size3);
+    bool res4 = are_elements_same(list4, size4);
+
+    printf("List 1: %d\n", res1);
+    printf("List 2: %d\n", res2);
+    printf("List 3: %d\n", res3);
+    printf("List 4: %d\n", res4);
+
+    return 0;
+}
+```

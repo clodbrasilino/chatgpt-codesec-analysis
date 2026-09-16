@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool contains(const int *arr, size_t len, int value)
+{
+    for (size_t i = 0; i < len; i++) {
+        if (arr[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int *list_difference(const int *a, size_t a_len,
+                            const int *b, size_t b_len,
+                            size_t *out_len)
+{
+    if (out_len == NULL) {
+        return NULL;
+    }
+
+    *out_len = 0;
+
+    if (a == NULL || a_len == 0) {
+        return NULL;
+    }
+
+    int *result = malloc(a_len * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < a_len; i++) {
+        if (b == NULL || !contains(b, b_len, a[i])) {
+            result[count] = a[i];
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int *shrunk = realloc(result, count * sizeof(*shrunk));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    *out_len = count;
+    return result;
+}
+
+int main(void)
+{
+    int list_a[] = {1, 2, 3, 4, 5, 6};
+    int list_b[] = {2, 4, 6};
+    size_t a_len = sizeof(list_a) / sizeof(list_a[0]);
+    size_t b_len = sizeof(list_b) / sizeof(list_b[0]);
+    size_t diff_len = 0;
+
+    int *diff = list_difference(list_a, a_len, list_b, b_len, &diff_len);
+    if (diff == NULL && diff_len == 0) {
+        if (printf("No difference or allocation failure.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Difference: ") < 0) {
+        free(diff);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < diff_len; i++) {
+        if (printf("%d ", diff[i]) < 0) {
+            free(diff);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        free(diff);
+        return EXIT_FAILURE;
+    }
+
+    free(diff);
+    return EXIT_SUCCESS;
+}
+```

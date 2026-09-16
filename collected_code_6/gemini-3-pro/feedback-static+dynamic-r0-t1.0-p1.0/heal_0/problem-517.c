@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findLargestPositive(const int *array, size_t size, int *error_code) {
+    if (array == NULL || size == 0) {
+        if (error_code != NULL) {
+            *error_code = 1;
+        }
+        return -1;
+    }
+
+    int max_positive = -1;
+    for (size_t i = 0; i < size; ++i) {
+        if (array[i] > 0 && array[i] > max_positive) {
+            max_positive = array[i];
+        }
+    }
+
+    if (error_code != NULL) {
+        *error_code = 0;
+    }
+    return max_positive;
+}
+
+int main(void) {
+    int numbers[] = {-5, -10, 3, 7, 2, -1, 15, 8};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int error_code = 0;
+
+    int largest = findLargestPositive(numbers, size, &error_code);
+
+    if (error_code == 0) {
+        if (largest > 0) {
+            printf("Largest positive number: %d\n", largest);
+        } else {
+            printf("No positive numbers found.\n");
+        }
+    } else {
+        printf("Invalid input or empty array.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-536.c:76:23: error: call to undeclared function 'strtoumax'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   76 |     uintmax_t value = strtoumax(text, &end, 10);
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_2/healed/problem-536.c:95:22: error: call to undeclared function 'strtoimax'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   95 |     intmax_t value = strtoimax(text, &end, 10);
+      |                      ^
+2 errors generated.

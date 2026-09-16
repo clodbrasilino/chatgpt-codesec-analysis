@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head_ref, int new_data) {
+    if (head_ref == NULL) {
+        return;
+    }
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void removeKth(struct Node** head_ref, int k) {
+    if (head_ref == NULL || *head_ref == NULL || k < 1) {
+        return;
+    }
+
+    struct Node* temp = *head_ref;
+
+    if (k == 1) {
+        *head_ref = temp->next;
+        free(temp);
+        return;
+    }
+
+    for (int i = 1; temp != NULL && i < k - 1; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL || temp->next == NULL) {
+        return;
+    }
+
+    struct Node* next = temp->next->next;
+    free(temp->next);
+    temp->next = next;
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 2);
+    push(&head, 1);
+
+    printList(head);
+
+    removeKth(&head, 3);
+
+    printList(head);
+
+    freeList(head);
+
+    return 0;
+}

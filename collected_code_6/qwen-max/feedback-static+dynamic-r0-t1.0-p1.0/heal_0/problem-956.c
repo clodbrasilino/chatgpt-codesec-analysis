@@ -3,52 +3,61 @@
 #include <string.h>
 #include <regex.h>
 
-void split_string_at_uppercase(const char *input, char ***result, int *count) {
-    regex_t re;
+void split_string_at_uppercase(const char *input, char ***result, int *size) {
+    regex_t regex;
     regmatch_t match[1];
-    char *p = (char *)input;
-    int nmatch = 1;
-    size_t len = strlen(input);
-    *result = NULL;
-    *count = 0;
+    int count = 0;
+    int i, p;
 
-    if (regcomp(&re, "[A-Z]", REG_EXTENDED) != 0) {
+    if (regcomp(&regex, "[A-Z]", REG_EXTENDED)) {
         return;
     }
 
-    while (regexec(&re, p, nmatch, match, 0) == 0) {
-        if (match[0].rm_so > 0 || (match[0].rm_so == 0 && *p == '\0')) {
-            (*count)++;
-            *result = realloc(*result, sizeof(char *) * (*count));
-            (*result)[*count - 1] = strndup(p, match[0].rm_so);
-            p += match[0].rm_so + 1;
-        } else {
-            p++;
-        }
+    p = 0;
+    while (regexec(&regex, input + p, 1, match, 0) == 0) {
+        count++;
+        p += match[0].rm_eo;
+    }
+    *size = count + 1;
+
+    *result = (char **)malloc((*size) * sizeof(char *));
+    for (i = 0; i < *size; i++) {
+        (*result)[i] = NULL;
     }
 
-    if (strlen(p) > 0) {
-        (*count)++;
-        *result = realloc(*result, sizeof(char *) * (*count));
-        (*result)[*count - 1] = strdup(p);
+    p = 0;
+    i = 0;
+    while (regexec(&regex, input + p, 1, match, 0) == 0) {
+        (*result)[i] = (char *)malloc((match[0].rm_so - p + 1) * sizeof(char));
+        strncpy((*result)[i], input + p, match[0].rm_so - p);
+        (*result)[i][match[0].rm_so - p] = '\0';
+        p += match[0].rm_eo;
+        i++;
     }
+    (*result)[i] = (char *)malloc((strlen(input + p) + 1) * sizeof(char));
+    strcpy((*result)[i], input + p);
 
-    regfree(&re);
+    regfree(&regex);
+}
+
+void free_result(char ***result, int size) {
+    for (int i = 0; i < size; i++) {
+        free((*result)[i]);
+    }
+    free(*result);
 }
 
 int main() {
-    const char *str = "ThisIsAStringToSplitAtUppercaseLetters";
+    const char *input = "ThisIsAStringToSplitAtUppercaseLetters";
     char **result = NULL;
-    int count = 0;
+    int size;
 
-    split_string_at_uppercase(str, &result, &count);
+    split_string_at_uppercase(input, &result, &size);
 
-    for (int i = 0; i < count; i++) {
-        printf("Substring %d: %s\n", i + 1, result[i]);
-        free(result[i]);
+    for (int i = 0; i < size; i++) {
+        printf("%s\n", result[i]);
     }
 
-    free(result);
-
+    free_result(&result, size);
     return 0;
 }

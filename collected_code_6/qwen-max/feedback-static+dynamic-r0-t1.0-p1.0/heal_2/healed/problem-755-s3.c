@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_second_smallest(const int arr[], int n) {
+    if (n < 2) return INT_MAX;
+    int first = arr[0], second = INT_MAX;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < first) {
+            second = first;
+            first = arr[i];
+        } else if (arr[i] < second && arr[i] != first) {
+            second = arr[i];
+        }
+    }
+    return (second == INT_MAX || second == first) ? INT_MAX : second;
+}
+
+int main() {
+    int arr[] = {5, 2, 4, 1, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = find_second_smallest(arr, n);
+    if (result == INT_MAX) {
+        printf("There is no second smallest element.\n");
+    } else {
+        printf("The second smallest element is %d\n", result);
+    }
+    return 0;
+}

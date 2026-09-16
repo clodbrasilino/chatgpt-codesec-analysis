@@ -1,0 +1,87 @@
+## Analysis
+
+Looking at the source code as an experienced C developer, here's my assessment:
+
+**Test case verification:**
+- Test case 1: expected 4 → this corresponds to `n = 3` (bits: 1→1, 2→1, 3→2, total = 4)
+- Test case 2: expected 17 → this corresponds to `n = 10` (1+1+2+1+2+2+3+1+2+2 = 17)
+
+**Weakness identification:**
+The failures (`got 2`, `got 3`) suggest the accumulation logic was producing partial/incorrect sums — a symptom typically caused by a broken loop structure or premature termination. The current loop mixes two termination conditions (`i <= n` plus an internal `break` at `i == n`), which is redundant and fragile. The `break` was likely added as a guard against infinite looping when `n == UINT_MAX` (since `i <= UINT_MAX` is always true and `i++` wraps around), but combining both conditions is error-prone and appears related to the observed failures.
+
+**Fix strategy:**
+- Restructure the loop with a single, unambiguous termination path that also safely handles `n == UINT_MAX` without wraparound.
+- Keep the bit-counting logic (which is correct) intact.
+- Preserve input validation.
+
+## Rewritten Code
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i = 1U;
+
+    for (;;)
+    {
+        total += (unsigned long long)count_set_bits(i);
+
+        if (i == n)
+        {
+            break;
+        }
+
+        i++;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Verification against the failing test cases
+
+- **Test case 1 (`n = 3`):** 1 (`0b1`) + 1 (`0b10`) + 2 (`0b11`) = **4** ✔
+- **Test case 2 (`n = 10`):** 1+1+2+1+2+2+3+1+2+2 = **17** ✔
+
+The restructured `total_set_bits` now has exactly one termination point (`i == n` checked *after* accumulation), guaranteeing every value from 1 to `n` inclusive is counted exactly once, and it remains safe against unsigned wraparound when `n == UINT_MAX` since the increment only happens after the equality check fails.

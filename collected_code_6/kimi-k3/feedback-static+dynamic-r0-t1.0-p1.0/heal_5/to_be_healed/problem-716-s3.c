@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 40, got <no output>
+  *  test case 2 failed: expected 16, got <no output>
+  *  test case 1 failed: expected 20, got <no output>
+  */
+
+double rhombus_perimeter(double side)
+{
+    if (side <= 0.0 || !isfinite(side)) {
+        errno = EINVAL;
+        return -1.0;
+    }
+    
+    double perimeter = 4.0 * side;
+    
+    if (!isfinite(perimeter)) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    
+    return perimeter;
+}
+
+int main(void)
+{
+    double side;
+    double result;
+    
+    if (scanf("%lf", &side) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = rhombus_perimeter(side);
+    
+    if (result < 0.0) {
+        if (errno == EINVAL) {
+            fprintf(stderr, "Error: Side length must be positive and finite\n");
+        } else if (errno == ERANGE) {
+            fprintf(stderr, "Error: Result out of range\n");
+        } else {
+            fprintf(stderr, "Error: Calculation failed\n");
+        }
+        return EXIT_FAILURE;
+    }
+    
+    printf("%.0f\n", result);
+    fflush(stdout);
+    
+    return EXIT_SUCCESS;
+}

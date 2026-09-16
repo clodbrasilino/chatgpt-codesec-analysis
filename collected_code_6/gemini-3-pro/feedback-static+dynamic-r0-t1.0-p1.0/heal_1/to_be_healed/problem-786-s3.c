@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int find_insertion_point(int *arr, int size, int target) {
+    if (arr == NULL || size < 0) {
+        return -1;
+    }
+
+    int left = 0;
+    int right = size - 1;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+
+        if (arr[mid] == target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+
+    return left;
+}
+
+int main(void) {
+    int arr[] = {1, 3, 5, 6};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int target = 5;
+
+    int pos = find_insertion_point(arr, size, target);
+    if (pos >= 0) {
+        printf("Insertion point for %d is: %d\n", target, pos);
+    } else {
+        printf("Error: Invalid array or size.\n");
+    }
+
+    target = 2;
+    pos = find_insertion_point(arr, size, target);
+    if (pos >= 0) {
+        printf("Insertion point for %d is: %d\n", target, pos);
+    } else {
+        printf("Error: Invalid array or size.\n");
+    }
+
+    target = 7;
+    pos = find_insertion_point(arr, size, target);
+    if (pos >= 0) {
+        printf("Insertion point for %d is: %d\n", target, pos);
+    } else {
+        printf("Error: Invalid array or size.\n");
+    }
+    
+    target = 0;
+    pos = find_insertion_point(arr, size, target);
+    if (pos >= 0) {
+        printf("Insertion point for %d is: %d\n", target, pos);
+    } else {
+        printf("Error: Invalid array or size.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

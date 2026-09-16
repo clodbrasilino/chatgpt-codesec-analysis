@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void shell_sort(int *arr, int n) {
+    int gap, i, j, temp;
+    
+    for (gap = n / 2; gap > 0; gap /= 2) {
+        for (i = gap; i < n; i++) {
+            temp = arr[i];
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+int main(void) {
+    int n;
+    int *arr;
+    int i;
+
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    arr = (int *)malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    shell_sort(arr, n);
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

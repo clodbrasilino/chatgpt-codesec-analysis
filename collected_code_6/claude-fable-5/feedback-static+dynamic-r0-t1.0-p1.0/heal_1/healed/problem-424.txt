@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *extract_rear(const char *const *strings, size_t count)
+{
+    char *result = NULL;
+    size_t i;
+
+    if (strings == NULL || count == 0U) {
+        return NULL;
+    }
+
+    result = malloc(count + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        size_t len;
+
+        if (strings[i] == NULL) {
+            free(result);
+            return NULL;
+        }
+
+        len = strlen(strings[i]);
+        if (len == 0U) {
+            result[i] = ' ';
+        } else {
+            result[i] = strings[i][len - 1U];
+        }
+    }
+
+    result[count] = '\0';
+    return result;
+}
+
+int main(void)
+{
+    const char *const words[] = { "Mers", "for", "Vers" };
+    size_t count = sizeof(words) / sizeof(words[0]);
+    char *rear = extract_rear(words, count);
+    size_t i;
+
+    if (rear == NULL) {
+        (void)fprintf(stderr, "Extraction failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("[") < 0) {
+        free(rear);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (printf("'%c'", rear[i]) < 0) {
+            free(rear);
+            return EXIT_FAILURE;
+        }
+        if (i + 1U < count) {
+            if (printf(", ") < 0) {
+                free(rear);
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (printf("]\n") < 0) {
+        free(rear);
+        return EXIT_FAILURE;
+    }
+
+    free(rear);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original `extract_rear` function was logically sound: it validated its inputs, handled allocation failure, guarded against `NULL` entries, handled empty strings, and properly NUL-terminated the result. There were no memory leaks or buffer overruns.
+
+The weakness was in the output format produced by `main`. The failing test cases expected output in a Python-style list representation — e.g. `['s', 'r', 's']` — but the original program printed one bare character per line (`s\nr\ns\n`), which the test harness interpreted as no valid output at all.
+
+The fix keeps the extraction logic untouched and rewrites the printing loop to emit the characters as a bracketed, comma-separated list of quoted characters, matching the expected format `['s', 'r', 's']` for the sample input `{"Mers", "for", "Vers"}`. All `printf` return values are still checked, and the allocated buffer is freed on every exit path.

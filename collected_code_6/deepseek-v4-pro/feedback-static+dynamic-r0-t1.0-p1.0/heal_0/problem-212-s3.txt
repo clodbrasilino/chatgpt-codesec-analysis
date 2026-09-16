@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_fourth_powers(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        long long term = (long long)i * i * i * i;
+        if (term > __LONG_LONG_MAX__ - sum) {
+            return -1;
+        }
+        sum += term;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter a natural number n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_of_fourth_powers(n);
+    if (result == -1) {
+        fprintf(stderr, "Input too large or overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of fourth powers from 1 to %d = %lld\n", n, result);
+    return EXIT_SUCCESS;
+}
+```

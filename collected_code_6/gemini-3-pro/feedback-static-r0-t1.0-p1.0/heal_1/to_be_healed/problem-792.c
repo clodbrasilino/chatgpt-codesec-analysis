@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    /* Possible weaknesses found:
+     *  struct member 'Node::data' is never used. [unusedStructMember]
+     */
+    void* data;
+    /* Possible weaknesses found:
+     *  struct member 'Node::next' is never used. [unusedStructMember]
+     */
+    struct Node* next;
+};
+
+struct List {
+    struct Node* head;
+};
+
+int count_lists(struct List** lists, int num_lists) {
+    if (lists == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    for (int i = 0; i < num_lists; i++) {
+        if (lists[i] != NULL) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int num_lists = 3;
+    struct List** my_lists = (struct List**)malloc(num_lists * sizeof(struct List*));
+    
+    if (my_lists == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < num_lists; i++) {
+        my_lists[i] = (struct List*)malloc(sizeof(struct List));
+        if (my_lists[i] != NULL) {
+            my_lists[i]->head = NULL;
+        }
+    }
+
+    int result = count_lists(my_lists, num_lists);
+    printf("%d\n", result);
+
+    for (int i = 0; i < num_lists; i++) {
+        if (my_lists[i] != NULL) {
+            free(my_lists[i]);
+        }
+    }
+    free(my_lists);
+
+    return 0;
+}

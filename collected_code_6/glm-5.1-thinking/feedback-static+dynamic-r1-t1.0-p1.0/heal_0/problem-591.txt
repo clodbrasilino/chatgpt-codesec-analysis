@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    Node *tail;
+} List;
+
+int list_init(List *list) {
+    if (list == NULL) {
+        return -1;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+    return 0;
+}
+
+int list_append(List *list, int data) {
+    if (list == NULL) {
+        return -1;
+    }
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+    return 0;
+}
+
+void list_free(List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    list->head = NULL;
+    list->tail = NULL;
+}
+
+void interchange_first_last(List *list) {
+    if (list == NULL || list->head == NULL || list->head == list->tail) {
+        return;
+    }
+
+    Node *first = list->head;
+    Node *last = list->tail;
+    Node *prev_last = list->head;
+
+    while (prev_last->next != last) {
+        prev_last = prev_last->next;
+    }
+
+    if (first->next == last) {
+        last->next = first;
+        first->next = NULL;
+        list->head = last;
+        list->tail = first;
+    } else {
+        Node *second = first->next;
+        last->next = second;
+        prev_last->next = first;
+        first->next = NULL;
+        list->head = last;
+        list->tail = first;
+    }
+}
+
+void list_print(const List *list) {
+    if (list == NULL) {
+        return;
+    }
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    List list;
+    if (list_init(&list) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (list_append(&list, 1) != 0 ||
+        list_append(&list, 2) != 0 ||
+        list_append(&list, 3) != 0 ||
+        list_append(&list, 4) != 0) {
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    list_print(&list);
+    interchange_first_last(&list);
+    list_print(&list);
+
+    list_free(&list);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+int64_t sum_fourth_power_even(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    int64_t sum = 0;
+    for (int i = 1; i <= n; i++) {
+        int64_t even_num = 2LL * i;
+        int64_t fourth_power = even_num * even_num * even_num * even_num;
+        sum += fourth_power;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return 1;
+    }
+    
+    int64_t result = sum_fourth_power_even(n);
+    printf("%" PRId64 "\n", result);
+    
+    return 0;
+}

@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity * sizeof(char));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        t->items[i] = str[i];
+    }
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    char buffer[1024];
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        if (buffer[0] == '\0') {
+            continue;
+        }
+
+        Tuple *t = string_to_tuple(buffer);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", buffer);
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+        fflush(stdout);
+        tuple_destroy(t);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **Root cause of "got \<no output\>":** The original program used a hardcoded array of input strings, so it never consumed the test harness's input. Each test case supplies its string (e.g., `item1`, `15.10`, `python3.0`) via standard input, and expects the tuple representation of *that* string as output. The rewritten `main` reads lines from `stdin` with `fgets`, making the program respond to each test case's actual input.
+
+2. **Newline handling:** `fgets` retains the trailing newline (and possibly `\r` on Windows-style input). `strcspn(buffer, "\r\n")` truncates it so the newline character doesn't get included as a tuple item.
+
+3. **Output flushing:** `fflush(stdout)` after each print guarantees the output is delivered even if the harness kills the process or pipes aren't line-buffered — another common cause of "no output" failures.
+
+4. **Preserved safety properties:** The original memory management was actually sound — `tuple_create` correctly cleans up on partial allocation failure, `tuple_destroy` is null-safe, and `string_to_tuple` guards against `NULL` and empty strings. These were retained unchanged.
+
+5. **Empty line handling:** Blank input lines are skipped rather than treated as fatal errors, since `string_to_tuple` returns `NULL` for empty strings by design.

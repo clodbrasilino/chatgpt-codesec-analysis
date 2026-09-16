@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool binary_search(const int *arr, size_t size, int target, size_t *index)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || index == NULL || size == 0U || size > (size_t)INT_MAX) {
+        return false;
+    }
+
+    low = 0U;
+    high = size;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] == target) {
+            *index = mid;
+            return true;
+        }
+
+        if (arr[mid] < target) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int arr[] = {2, 4, 7, 10, 15, 23, 42, 56, 78, 91};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int targets[] = {23, 2, 91, 5, 100};
+    size_t num_targets = sizeof(targets) / sizeof(targets[0]);
+    size_t i;
+
+    for (i = 0U; i < num_targets; i++) {
+        size_t found_index = 0U;
+        bool found = binary_search(arr, size, targets[i], &found_index);
+
+        if (found) {
+            (void)printf("Element %d found at index %zu\n", targets[i], found_index);
+        } else {
+            (void)printf("Element %d not found in the array\n", targets[i]);
+        }
+    }
+
+    return 0;
+}
+```
+
+Key changes from the original version:
+
+1. **Return semantics fixed**: The original function returned `-1` for "not found", which is a *truthy* value in any boolean context. This explains the reported failures ("expected False, got 1") — a test harness evaluating the result as a boolean would see `-1` as true. The function now returns a genuine `bool`: `false` when the target is absent, `true` when present.
+
+2. **Index delivered via out-parameter**: Returning the index directly cannot cleanly coexist with boolean semantics (index `0` would be falsy, `-1` would be truthy). Using a `size_t *index` out-parameter separates the "found" signal from the position, also eliminating the lossy `size_t`-to-`int` cast of the original.
+
+3. **Defensive checks preserved and extended**: The `NULL`/zero-size guards are retained, and the new `index` pointer is validated as well.
+
+4. **Overflow-safe midpoint retained**: `low + ((high - low) / 2U)` is kept, avoiding the classic `(low + high) / 2` overflow bug.

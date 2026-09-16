@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+Node *string_to_list(const char *str)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    const char *p;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    p = str;
+
+    while (*p != '\0') {
+        const char *start;
+        size_t len;
+        Node *new_node;
+
+        while (*p != '\0' && isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        if (*p == '\0') {
+            break;
+        }
+
+        start = p;
+
+        while (*p != '\0' && !isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        len = (size_t)(p - start);
+
+        new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+
+        new_node->data = malloc(len + 1);
+        if (new_node->data == NULL) {
+            free(new_node);
+            free_list(head);
+            return NULL;
+        }
+
+        memcpy(new_node->data, start, len);
+        new_node->data[len] = '\0';
+        new_node->next = NULL;
+
+        if (tail == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    return head;
+}
+
+int print_list(const Node *head)
+{
+    const Node *current = head;
+
+    if (putchar('[') == EOF) {
+        return -1;
+    }
+
+    while (current != NULL) {
+        if (printf("'%s'", current->data) < 0) {
+            return -1;
+        }
+        if (current->next != NULL && fputs(", ", stdout) == EOF) {
+            return -1;
+        }
+        current = current->next;
+    }
+
+    if (fputs("]\n", stdout) == EOF) {
+        return -1;
+    }
+
+    if (fflush(stdout) == EOF) {
+        return -1;
+    }
+
+    return 0;
+}
+
+char *read_input(FILE *stream)
+{
+    size_t capacity = 256;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    int ch;
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF) {
+        if (length + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char *new_buffer;
+
+            if (new_capacity <= capacity) {
+                free(buffer);
+                return NULL;
+            }
+
+            new_buffer = realloc(buffer, new_capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+
+            buffer = new_buffer;
+            capacity = new_capacity;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+char *join_args(int argc, const char *const argv[])
+{
+    size_t total = 0;
+    char *result;
+    int i;
+
+    for (i = 1; i < argc; i++) {
+        size_t len = strlen(argv[i]);
+        if (total > SIZE_MAX - len - 1) {
+            return NULL;
+        }
+        total += len + 1;
+    }
+
+    result = malloc(total + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result[0] = '\0';
+
+    for (i = 1; i < argc; i++) {
+        strcat(result, argv[i]);
+        if (i + 1 < argc) {
+            strcat(result, " ");
+        }
+    }
+
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    char *input;
+    Node *list;
+
+    if (argc > 1) {
+        input = join_args(argc, (const char *const *)argv);
+    } else {
+        input = read_input(stdin);
+    }
+
+    if (input == NULL) {
+        fprintf(stderr, "Failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    list = string_to_list(input);
+    free(input);
+    input = NULL;
+
+    if (print_list(list) != 0) {
+        fprintf(stderr, "Failed to print list\n");
+        free_list(list);
+        return EXIT_FAILURE;
+    }
+
+    free_list(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}

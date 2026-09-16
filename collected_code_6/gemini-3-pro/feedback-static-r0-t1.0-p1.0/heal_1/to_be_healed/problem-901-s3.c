@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t gcd(uint64_t a, uint64_t b) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    uint64_t temp;
+    while (b != 0) {
+        temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+uint64_t lcm(uint64_t a, uint64_t b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    return (a / gcd(a, b)) * b;
+}
+
+uint64_t smallest_multiple(uint32_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    uint64_t result = 1;
+    for (uint32_t i = 1; i <= n; i++) {
+        result = lcm(result, i);
+        if (result == 0) {
+            return 0; 
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    uint32_t n = 20;
+    uint64_t result = smallest_multiple(n);
+    
+    if (result != 0) {
+        printf("The smallest multiple of the first %u numbers is %llu\n", n, (unsigned long long)result);
+    } else {
+        printf("Error calculating the smallest multiple or overflow occurred.\n");
+    }
+    
+    return 0;
+}

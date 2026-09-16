@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    Tuple record;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+} List;
+
+int extract_rear(List *list, Tuple *out) {
+    if (list == NULL || out == NULL) {
+        return -1;
+    }
+
+    if (list->head == NULL) {
+        return -1;
+    }
+
+    Node *current = list->head;
+    Node *previous = NULL;
+
+    while (current->next != NULL) {
+        previous = current;
+        current = current->next;
+    }
+
+    *out = current->record;
+
+    if (previous == NULL) {
+        list->head = NULL;
+    } else {
+        previous->next = NULL;
+    }
+
+    free(current);
+
+    return 0;
+}
+
+int append(List *list, int first, int second) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    new_node->record.first = first;
+    new_node->record.second = second;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+
+    return 0;
+}
+
+void free_list(List *list) {
+    if (list == NULL) {
+        return;
+    }
+
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+
+    list->head = NULL;
+}
+
+int main(void) {
+    List list;
+    list.head = NULL;
+
+    if (append(&list, 1, 10) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (append(&list, 2, 20) != 0) {
+        free_list(&list);
+        return EXIT_FAILURE;
+    }
+    if (append(&list, 3, 30) != 0) {
+        free_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    Tuple extracted;
+
+    while (extract_rear(&list, &extracted) == 0) {
+        printf("Extracted: (%d, %d)\n", extracted.first, extracted.second);
+    }
+
+    free_list(&list);
+
+    return EXIT_SUCCESS;
+}

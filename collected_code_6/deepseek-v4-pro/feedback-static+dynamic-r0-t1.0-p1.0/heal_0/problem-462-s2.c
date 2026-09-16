@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void generate_combinations(int *arr, int n, int r, int index, int *data, int i) {
+    if (index == r) {
+        printf("{ ");
+        for (int j = 0; j < r; j++) {
+            printf("%d ", data[j]);
+        }
+        printf("}\n");
+        return;
+    }
+
+    if (i >= n) {
+        return;
+    }
+
+    data[index] = arr[i];
+    generate_combinations(arr, n, r, index + 1, data, i + 1);
+    generate_combinations(arr, n, r, index, data, i + 1);
+}
+
+void find_all_combinations(int *arr, int n) {
+    int *data = (int *)malloc(n * sizeof(int));
+    if (data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int r = 1; r <= n; r++) {
+        printf("Combinations of size %d:\n", r);
+        generate_combinations(arr, n, r, 0, data, 0);
+        printf("\n");
+    }
+
+    free(data);
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    find_all_combinations(arr, n);
+
+    return 0;
+}

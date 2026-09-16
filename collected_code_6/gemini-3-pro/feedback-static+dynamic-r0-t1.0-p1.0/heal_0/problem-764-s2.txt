@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+int count_numeric_values(const char *str) {
+    int count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test_string = "Hello 123, this is a test 456.";
+    
+    int numeric_count = count_numeric_values(test_string);
+    
+    printf("Number of numeric values: %d\n", numeric_count);
+    
+    return 0;
+}
+```

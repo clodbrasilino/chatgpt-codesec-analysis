@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findFreqDifference(const int *arr, int n) {
+    int maxCount = 0, minCount = INT_MAX;
+    
+    for (int i = 0; i < n; ++i) {
+        int count = 0;
+        for (int j = 0; j < n; ++j) {
+            if (arr[i] == arr[j]) {
+                count++;
+            }
+        }
+        if (count > maxCount) {
+            maxCount = count;
+        }
+        if (count < minCount && count != 0) {
+            minCount = count;
+        }
+    }
+    return maxCount - minCount;
+}
+
+int main() {
+    int arr[] = {3, 5, 8, 2, 5, 3, 3, 5, 8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = findFreqDifference(arr, n);
+    printf("Difference between highest and least frequencies: %d\n", result);
+    
+    return 0;
+}

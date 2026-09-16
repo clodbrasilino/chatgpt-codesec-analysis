@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum { NODE_INT, NODE_LIST } NodeType;
+
+typedef struct Node {
+    NodeType type;
+    int value;
+    struct Node **items;
+    size_t count;
+} Node;
+
+static Node *create_int(int value)
+{
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->type = NODE_INT;
+    node->value = value;
+    node->items = NULL;
+    node->count = 0;
+    return node;
+}
+
+static Node *create_list(size_t count)
+{
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->type = NODE_LIST;
+    node->value = 0;
+    node->count = count;
+    node->items = NULL;
+    if (count > 0U) {
+        node->items = calloc(count, sizeof(Node *));
+        if (node->items == NULL) {
+            free(node);
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    return node;
+}
+
+static void free_node(Node *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    if (node->type == NODE_LIST) {
+        for (size_t i = 0; i < node->count; i++) {
+            free_node(node->items[i]);
+        }
+        free(node->items);
+    }
+    free(node);
+}
+
+static bool nodes_equal(const Node *a, const Node *b)
+{
+    if (a == NULL || b == NULL) {
+        return a == b;
+    }
+    if (a->type != b->type) {
+        return false;
+    }
+    if (a->type == NODE_INT) {
+        return a->value == b->value;
+    }
+    if (a->count != b->count) {
+        return false;
+    }
+    for (size_t i = 0; i < a->count; i++) {
+        if (!nodes_equal(a->items[i], b->items[i])) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool is_subset(const Node *sub, const Node *super)
+{
+    if (sub == NULL || super == NULL) {
+        return false;
+    }
+    if (sub->type != NODE_LIST || super->type != NODE_LIST) {
+        return false;
+    }
+    for (size_t i = 0; i < sub->count; i++) {
+        bool found = false;
+        for (size_t j = 0; j < super->count; j++) {
+            if (nodes_equal(sub->items[i], super->items[j])) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static void print_node(const Node *node)
+{
+    if (node == NULL) {
+        return;
+    }
+    if (node->type == NODE_INT) {
+        printf("%d", node->value);
+    } else {
+        printf("[");
+        for (size_t i = 0; i < node->count; i++) {
+            print_node(node->items[i]);
+            if (i + 1U < node->count) {
+                printf(", ");
+            }
+        }
+        printf("]");
+    }
+}
+
+int main(void)
+{
+    Node *super = create_list(4);
+    super->items[0] = create_int(1);
+    super->items[1] = create_int(2);
+    super->items[2] = create_list(2);
+    super->items[2]->items[0] = create_int(3);
+    super->items[2]->items[1] = create_int(4);
+    super->items[3] = create_int(5);
+
+    Node *sub1 = create_list(2);
+    sub1->items[0] = create_int(2);
+    sub1->items[1] = create_list(2);
+    sub1->items[1]->items[0] = create_int(3);
+    sub1->items[1]->items[1] = create_int(4);
+
+    Node *sub2 = create_list(2);
+    sub2->items[0] = create_int(2);
+    sub2->items[1] = create_list(2);
+    sub2->items[1]->items[0] = create_int(3);
+    sub2->items[1]->items[1] = create_int(5);
+
+    printf("Super list: ");
+    print_node(super);
+    printf("\n");
+
+    printf("List 1: ");
+    print_node(sub1);
+    printf("\n");
+    printf("List 1 is %sa subset of the super list\n",
+           is_subset(sub1, super) ? "" : "not ");
+
+    printf("List 2: ");
+    print_node(sub2);
+    printf("\n");
+    printf("List 2 is %sa subset of the super list\n",
+           is_subset(sub2, super) ? "" : "not ");
+
+    free_node(super);
+    free_node(sub1);
+    free_node(sub2);
+
+    return EXIT_SUCCESS;
+}

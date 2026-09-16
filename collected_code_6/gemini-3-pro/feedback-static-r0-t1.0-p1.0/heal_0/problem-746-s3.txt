@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define PI 3.14159265358979323846
+
+double calculate_sector_area(double radius, double angle_degrees, int *status) {
+    if (status == NULL) {
+        return -1.0;
+    }
+    
+    if (radius < 0.0 || angle_degrees < 0.0 || angle_degrees > 360.0) {
+        *status = 0;
+        return -1.0;
+    }
+    
+    *status = 1;
+    return (angle_degrees / 360.0) * PI * radius * radius;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double angle = 0.0;
+    double area = 0.0;
+    int status = 0;
+    int items_read = 0;
+
+    items_read = scanf("%lf %lf", &radius, &angle);
+    
+    if (items_read != 2) {
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_sector_area(radius, angle, &status);
+
+    if (status != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%f\n", area) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

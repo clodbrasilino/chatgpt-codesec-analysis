@@ -2,146 +2,97 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct KeyValue {
+typedef struct Node {
     char *key;
     char *value;
-} KeyValue;
-
-typedef struct List {
-    char *item;
-    struct List *next;
-} List;
-
-typedef struct {
-    char *key;
-    List *values;
-} DictItem;
+    struct Node *next;
+} Node;
 
 typedef struct Dictionary {
-    DictItem **items;
     int size;
-    int capacity;
+    Node **lists;
 } Dictionary;
 
-List* list_create(char *value) {
-    List *node = (List*)malloc(sizeof(List));
-    node->item = strdup(value);
-    node->next = NULL;
-    return node;
+Node* createNode(char *key, char *value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->key = strdup(key);
+    newNode->value = strdup(value);
+    newNode->next = NULL;
+    return newNode;
 }
 
-List* list_append(List *list, char *value) {
-    if (!list) {
-        return list_create(value);
-    }
-    list->next = list_append(list->next, value);
-    return list;
-}
-
-DictItem* dict_item_create(char *key, char *value) {
-    DictItem *item = (DictItem*)malloc(sizeof(DictItem));
-    item->key = strdup(key);
-    item->values = list_create(value);
-    return item;
-}
-
-int dict_resize(Dictionary *dict) {
-    dict->capacity *= 2;
-    DictItem **new_items = (DictItem**)realloc(dict->items, sizeof(DictItem*) * dict->capacity);
-    if (!new_items) {
-        return -1;
-    }
-    for (int i = dict->size; i < dict->capacity; ++i) {
-        new_items[i] = NULL;
-    }
-    dict->items = new_items;
-    return 0;
-}
-
-int hash_function(const char *key, int capacity) {
-    unsigned long hash = 5381;
-    int c;
-    while ((c = *key++)) {
-        hash = ((hash << 5) + hash) + c;
-    }
-    return hash % capacity;
-}
-
-void dict_insert(Dictionary *dict, char *key, char *value) {
-    int index = hash_function(key, dict->capacity);
-    while (dict->items[index]) {
-        if (strcmp(dict->items[index]->key, key) == 0) {
-            dict->items[index]->values = list_append(dict->items[index]->values, value);
-            return;
+void insertNode(Node **head, char *key, char *value) {
+    Node *newNode = createNode(key, value);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node *temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
         }
-        if (++index == dict->capacity) {
-            index = 0;
-        }
+        temp->next = newNode;
     }
-    if (dict->size >= dict->capacity) {
-        if (dict_resize(dict) != 0) {
-            return;
-        }
-    }
-    dict->items[index] = dict_item_create(key, value);
-    dict->size++;
 }
 
-Dictionary* dictionary_create() {
-    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
-    dict->capacity = 8;
-    dict->size = 0;
-    dict->items = (DictItem**)calloc(dict->capacity, sizeof(DictItem*));
+Dictionary* createDictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->size = size;
+    dict->lists = (Node **)calloc(size, sizeof(Node *));
+    for (int i = 0; i < size; i++) {
+        dict->lists[i] = NULL;
+    }
     return dict;
 }
 
-void print_dictionary(Dictionary *dict) {
-    for (int i = 0; i < dict->size; ++i) {
-        if (dict->items[i]) {
-            printf("%s: ", dict->items[i]->key);
-            for (List *list = dict->items[i]->values; list; list = list->next) {
-                printf("%s -> ", list->item);
-            }
-            printf("\n");
+int hashFunction(const char *key, int size) {
+    int hash = 0;
+    for (int i = 0; key[i] != '\0'; i++) {
+        hash += key[i];
+    }
+    return hash % size;
+}
+
+void addKeyValue(Dictionary *dict, const char *key, const char *value) {
+    int index = hashFunction(key, dict->size);
+    insertNode(&dict->lists[index], key, value);
+}
+
+void printDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; i++) {
+        Node *node = dict->lists[i];
+        while (node != NULL) {
+            printf("%s: %s\n", node->key, node->value);
+            node = node->next;
         }
     }
 }
 
-void free_list(List *list) {
-    if (list) {
-        free_list(list->next);
-        free(list->item);
-        free(list);
-    }
+void freeNode(Node *node) {
+    if (node == NULL) return;
+    free(node->key);
+    free(node->value);
+    freeNode(node->next);
+    free(node);
 }
 
-void free_dictionary(Dictionary *dict) {
-    if (dict) {
-        for (int i = 0; i < dict->capacity; ++i) {
-            if (dict->items[i]) {
-                free_list(dict->items[i]->values);
-                free(dict->items[i]->key);
-                free(dict->items[i]);
-            }
-        }
-        free(dict->items);
-        free(dict);
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; i++) {
+        freeNode(dict->lists[i]);
     }
+    free(dict->lists);
+    free(dict);
 }
 
 int main() {
-    Dictionary *dict = dictionary_create();
-    
-    KeyValue data[] = {{"apple", "red"}, {"banana", "yellow"}, {"apple", "green"}};
-    int n = sizeof(data) / sizeof(data[0]);
-    
-    for (int i = 0; i < n; ++i) {
-        dict_insert(dict, data[i].key, data[i].value);
-    }
-    
-    print_dictionary(dict);
-    
-    free_dictionary(dict);
-    
+    Dictionary *dict = createDictionary(10);
+    addKeyValue(dict, "apple", "fruit");
+    addKeyValue(dict, "carrot", "vegetable");
+    addKeyValue(dict, "banana", "fruit");
+    addKeyValue(dict, "broccoli", "vegetable");
+    addKeyValue(dict, "grape", "fruit");
+
+    printDictionary(dict);
+
+    freeDictionary(dict);
     return 0;
 }

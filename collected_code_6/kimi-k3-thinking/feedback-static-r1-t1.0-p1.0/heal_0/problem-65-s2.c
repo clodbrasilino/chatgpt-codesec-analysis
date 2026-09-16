@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+int list_sum(const struct Node *head)
+{
+    if (head == NULL)
+        return 0;
+    return head->data + list_sum(head->next);
+}
+
+struct Node *create_node(int data)
+{
+    struct Node *node = malloc(sizeof(*node));
+    if (node == NULL)
+        return NULL;
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int main(void)
+{
+    int values[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        struct Node *node = create_node(values[i]);
+        if (node == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+        if (head == NULL)
+            head = node;
+        else
+            tail->next = node;
+        tail = node;
+    }
+
+    printf("Sum: %d\n", list_sum(head));
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

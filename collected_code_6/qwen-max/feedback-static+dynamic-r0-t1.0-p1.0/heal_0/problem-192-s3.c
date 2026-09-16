@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool has_letter_and_number(const char *str) {
+    bool has_letter = false;
+    bool has_number = false;
+
+    while (*str) {
+        if (isalpha(*str)) {
+            has_letter = true;
+        } else if (isdigit(*str)) {
+            has_number = true;
+        }
+
+        if (has_letter && has_number) {
+            return true;
+        }
+        str++;
+    }
+
+    return false;
+}
+
+int main() {
+    const char *test_str = "Test123";
+    if (has_letter_and_number(test_str)) {
+        printf("The string contains at least one letter and one number.\n");
+    } else {
+        printf("The string does not contain at least one letter and one number.\n");
+    }
+
+    return 0;
+}

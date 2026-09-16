@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void countingSort(int *arr, int n, int k) {
+    int *count = (int *)malloc((k + 1) * sizeof(int));
+    for (int i = 0; i <= k; ++i) {
+        count[i] = 0;
+    }
+    for (int i = 0; i < n; ++i) {
+        ++count[arr[i]];
+    }
+    for (int i = 1; i <= k; ++i) {
+        count[i] += count[i - 1];
+    }
+    int *output = (int *)malloc(n * sizeof(int));
+    for (int i = n - 1; i >= 0; --i) {
+        output[--count[arr[i]]] = arr[i];
+    }
+    for (int i = 0; i < n; ++i) {
+        arr[i] = output[i];
+    }
+    free(count);
+    free(output);
+}
+
+int main() {
+    int arr[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 9;
+    countingSort(arr, n, k);
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", arr[i]);
+    }
+    return 0;
+}

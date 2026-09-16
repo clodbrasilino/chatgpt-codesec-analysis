@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void find_sequences(const char *str) {
+    regex_t regex;
+    regmatch_t match;
+    const char *pattern = "[a-z]+(_[a-z]+)*";
+    int ret;
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    const char *cursor = str;
+    while (1) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        } else if (ret != 0) {
+            char error_buffer[100];
+            regerror(ret, &regex, error_buffer, sizeof(error_buffer));
+            fprintf(stderr, "Regex match failed: %s\n", error_buffer);
+            break;
+        }
+
+        printf("Found sequence: %.*s\n", (int)(match.rm_eo - match.rm_so), cursor + match.rm_so);
+        cursor += match.rm_eo;
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *test_str = "this_is_a_test_string_with_sequences_like_this_one";
+    find_sequences(test_str);
+    return 0;
+}

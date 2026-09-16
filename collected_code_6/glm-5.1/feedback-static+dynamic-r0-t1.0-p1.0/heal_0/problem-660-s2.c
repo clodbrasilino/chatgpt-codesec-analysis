@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* choose_points(int a_start, int a_end, int b_start, int b_end, int* out_size) {
+    int a_len = a_end - a_start;
+    int b_len = b_end - b_start;
+    if (a_len < 0) a_len = 0;
+    if (b_len < 0) b_len = 0;
+    
+    int total_len = a_len + b_len;
+    if (total_len == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+    
+    int* result = (int*)malloc(total_len * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+    
+    int idx = 0;
+    for (int i = a_start; i < a_end; i++) {
+        result[idx++] = i;
+    }
+    for (int i = b_start; i < b_end; i++) {
+        result[idx++] = i;
+    }
+    
+    *out_size = total_len;
+    return result;
+}
+
+int main() {
+    int size = 0;
+    int* points = choose_points(0, 5, 10, 15, &size);
+    
+    if (points != NULL) {
+        for (int i = 0; i < size; i++) {
+            printf("%d ", points[i]);
+        }
+        printf("\n");
+        free(points);
+    }
+    
+    return 0;
+}

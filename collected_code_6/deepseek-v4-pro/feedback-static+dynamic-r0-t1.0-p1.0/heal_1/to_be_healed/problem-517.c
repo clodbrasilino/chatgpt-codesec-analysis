@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+int find_largest_positive(int *list, size_t size) {
+    int largest = INT_MIN;
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i] > 0 && list[i] > largest) {
+            largest = list[i];
+        }
+    }
+    return largest;
+}
+
+int main(void) {
+    int list[] = {-10, 5, 0, 23, -7, 12, 3};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int result = find_largest_positive(list, size);
+    if (result == INT_MIN) {
+        printf("No positive numbers found\n");
+    } else {
+        printf("Largest positive number: %d\n", result);
+    }
+    return 0;
+}

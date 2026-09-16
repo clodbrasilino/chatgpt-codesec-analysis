@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int cube_elements(const long long *input, long long *output, size_t count)
+{
+    size_t i;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        long long value = input[i];
+
+        if (value > 2097151LL || value < -2097152LL) {
+            return -1;
+        }
+
+        output[i] = value * value * value;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long long numbers[] = {1, 2, 3, 4, 5, -6, 10};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long *cubes;
+    size_t i;
+    int result;
+
+    cubes = malloc(count * sizeof(*cubes));
+    if (cubes == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    result = cube_elements(numbers, cubes, count);
+    if (result != 0) {
+        fprintf(stderr, "Cube computation failed\n");
+        free(cubes);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%lld^3 = %lld\n", numbers[i], cubes[i]) < 0) {
+            free(cubes);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(cubes);
+    return EXIT_SUCCESS;
+}
+```

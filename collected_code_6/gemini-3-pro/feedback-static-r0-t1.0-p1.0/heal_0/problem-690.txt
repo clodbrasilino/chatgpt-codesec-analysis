@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long* multiply_consecutive(const int* list, size_t size, size_t* out_size) {
+    if (list == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    if (size < 2) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    *out_size = size - 1;
+    long long* result = (long long*)malloc(*out_size * sizeof(long long));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *out_size; i++) {
+        result[i] = (long long)list[i] * list[i + 1];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int input_list[] = {1, 2, 3, 4, 5, 6};
+    size_t size = sizeof(input_list) / sizeof(input_list[0]);
+    size_t out_size = 0;
+
+    long long* result = multiply_consecutive(input_list, size, &out_size);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < out_size; i++) {
+            printf("%lld ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Failed to calculate or insufficient elements.\n");
+    }
+
+    return 0;
+}
+```

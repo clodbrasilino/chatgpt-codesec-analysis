@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+long long multiply_consecutive(long long *arr, int n) {
+    long long product = 0;
+    if (n > 0) {
+        product = 1;
+        for (int i = 0; i < n; i++) {
+            product *= arr[i];
+        }
+    }
+    return product;
+}
+
+int main() {
+    long long numbers[] = {2, 3, 4, 5};
+    int length = sizeof(numbers) / sizeof(numbers[0]);
+    long long result = multiply_consecutive(numbers, length);
+    printf("Product: %lld\n", result);
+    return 0;
+}

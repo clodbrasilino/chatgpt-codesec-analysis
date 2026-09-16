@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+long long sum_xor_pairs(int arr[], int n) {
+    long long sum = 0;
+    int i, j;
+    for (i = 0; i < 32; i++) {
+        long long ones = 0;
+        for (j = 0; j < n; j++) {
+            if (arr[j] & (1 << i)) {
+                ones++;
+            }
+        }
+        long long zeros = n - ones;
+        sum += (ones * zeros) * (1LL << i);
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    int *arr = malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    printf("%lld\n", sum_xor_pairs(arr, n));
+    free(arr);
+    return EXIT_SUCCESS;
+}

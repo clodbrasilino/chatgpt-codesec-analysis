@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int key;
+    int value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+} Dictionary;
+
+bool all_values_same(const Dictionary *dict) {
+    if (dict == NULL || dict->entries == NULL || dict->size == 0) {
+        return true;
+    }
+
+    int first_value = dict->entries[0].value;
+
+    for (size_t i = 1; i < dict->size; i++) {
+        if (dict->entries[i].value != first_value) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    Dictionary d1;
+    d1.size = 3;
+    d1.entries = (Entry *)malloc(d1.size * sizeof(Entry));
+    if (d1.entries == NULL) {
+        return EXIT_FAILURE;
+    }
+    d1.entries[0].key = 1; d1.entries[0].value = 5;
+    d1.entries[1].key = 2; d1.entries[1].value = 5;
+    d1.entries[2].key = 3; d1.entries[2].value = 5;
+
+    printf("%s\n", all_values_same(&d1) ? "True" : "False");
+    free(d1.entries);
+
+    Dictionary d2;
+    d2.size = 3;
+    d2.entries = (Entry *)malloc(d2.size * sizeof(Entry));
+    if (d2.entries == NULL) {
+        return EXIT_FAILURE;
+    }
+    d2.entries[0].key = 1; d2.entries[0].value = 5;
+    d2.entries[1].key = 2; d2.entries[1].value = 10;
+    d2.entries[2].key = 3; d2.entries[2].value = 5;
+
+    printf("%s\n", all_values_same(&d2) ? "True" : "False");
+    free(d2.entries);
+
+    Dictionary empty_dict = {NULL, 0};
+    printf("%s\n", all_values_same(&empty_dict) ? "True" : "False");
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:14:15: style: The scope of the variable 'carry' can be reduced. [variableScope]
+    int i, j, carry, left_smaller;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-100-s3.c:5:28: style: Parameter 'num' can be declared as pointer to const [constParameterPointer]
+static int all_nines(char *num, int len) {
+                           ^

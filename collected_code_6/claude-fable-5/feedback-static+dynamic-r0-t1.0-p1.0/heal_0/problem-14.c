@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double triangular_prism_volume(double base, double height, double length);
+
+double triangular_prism_volume(double base, double height, double length)
+{
+    return 0.5 * base * height * length;
+}
+
+int main(void)
+{
+    double base = 0.0;
+    double height = 0.0;
+    double length = 0.0;
+    double volume = 0.0;
+
+    printf("Enter the base of the triangle: ");
+    if (scanf("%lf", &base) != 1) {
+        fprintf(stderr, "Error: invalid input for base.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the triangle: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the length of the prism: ");
+    if (scanf("%lf", &length) != 1) {
+        fprintf(stderr, "Error: invalid input for length.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base <= 0.0 || height <= 0.0 || length <= 0.0) {
+        fprintf(stderr, "Error: all dimensions must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(base) || !isfinite(height) || !isfinite(length)) {
+        fprintf(stderr, "Error: inputs must be finite numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    volume = triangular_prism_volume(base, height, length);
+
+    if (!isfinite(volume)) {
+        fprintf(stderr, "Error: computed volume is out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The volume of the triangular prism is: %f\n", volume);
+
+    return EXIT_SUCCESS;
+}

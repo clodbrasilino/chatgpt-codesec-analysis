@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TUPLE_SIZE 2
+
+typedef struct {
+    int values[TUPLE_SIZE];
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    Tuple *tupleA = (Tuple *)a;
+    Tuple *tupleB = (Tuple *)b;
+    return (tupleA->values[0] - tupleB->values[0]);
+}
+
+void find_min_k_records(Tuple *tuples, int n, int k, Tuple *min_k_tuples) {
+    qsort(tuples, n, sizeof(Tuple), compare_tuples);
+    for (int i = 0; i < k; ++i) {
+        min_k_tuples[i] = tuples[i];
+    }
+}
+
+int main() {
+    Tuple tuples[] = {{3, 1}, {4, 2}, {1, 3}, {2, 4}};
+    int n = 4;
+    int k = 2;
+    Tuple min_k_tuples[k];
+
+    find_min_k_records(tuples, n, k, min_k_tuples);
+
+    for (int i = 0; i < k; ++i) {
+        printf("(%d, %d)\n", min_k_tuples[i].values[0], min_k_tuples[i].values[1]);
+    }
+
+    return 0;
+}

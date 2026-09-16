@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct dict_node {
+    char *key;
+    void *value;
+    struct dict_node *next;
+} dict_node;
+
+typedef struct dictionary {
+    dict_node **buckets;
+    int size;
+} dictionary;
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int find_depth(dict_node *head, int depth) {
+    if (!head) return depth;
+    return max(find_depth(head->next, depth), 1 + find_depth(head, depth + 1));
+}
+
+int dictionary_depth(dictionary *dict) {
+    if (!dict || !dict->buckets) return 0;
+    int max_depth = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        max_depth = max(max_depth, find_depth(dict->buckets[i], 0));
+    }
+    return max_depth;
+}
+
+int main() {
+    dictionary dict;
+    dict.size = 10;
+    dict.buckets = calloc(dict.size, sizeof(dict_node*));
+    if (!dict.buckets) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+
+    dict_node *node1 = (dict_node *)malloc(sizeof(dict_node));
+    node1->key = strdup("key1");
+    node1->value = NULL;
+    node1->next = NULL;
+
+    dict_node *node2 = (dict_node *)malloc(sizeof(dict_node));
+    node2->key = strdup("key2");
+    node2->value = NULL;
+    node2->next = node1;
+    dict.buckets[0] = node2;
+
+    int depth = dictionary_depth(&dict);
+    printf("Dictionary depth: %d\n", depth);
+
+    for (int i = 0; i < dict.size; ++i) {
+        dict_node *current = dict.buckets[i];
+        while (current) {
+            dict_node *temp = current;
+            current = current->next;
+            free(temp->key);
+            free(temp);
+        }
+    }
+    free(dict.buckets);
+    return 0;
+}
+```

@@ -1,32 +1,25 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'PythonProgram', got <no output>
+  *  test case 2 failed: expected 'ProgrammingLanguage', got <no output>
+  *  test case 1 failed: expected 'PythonLanguage', got <no output>
+  */
 
-char* snake_to_camel(char *snake_str) {
-    /* Possible weaknesses found:
-     *  Unused variable: i [unusedVariable]
-     */
-    int i, capitalize_next = 1;
-    char *src = snake_str;
-    char *dst = src;
-    while (*src) {
-        if (*src == '_') {
-            capitalize_next = 1;
-        } else if (capitalize_next) {
-            *dst++ = toupper(*src);
-            capitalize_next = 0;
-        } else {
-            *dst++ = *src;
-        }
-        src++;
+char* snake_to_camel(char *snake_case) {
+    char *token = strstr(snake_case, "_");
+    while (token != NULL) {
+        *token = toupper(*(token + 1));
+        memmove(token, token + 1, strlen(token));
+        token = strstr(token, "_");
     }
-    *dst = '\0';
-    return snake_str;
+    return snake_case;
 }
 
 int main() {
-    char snake_case[] = "this_is_a_test_string";
-    char *camel_case = snake_to_camel(snake_case);
-    printf("%s\n", camel_case);
+    char snake_case[] = "this_is_a_snake_case_string";
+    printf("Original: %s\n", snake_case);
+    printf("CamelCase: %s\n", snake_to_camel(snake_case));
     return 0;
 }

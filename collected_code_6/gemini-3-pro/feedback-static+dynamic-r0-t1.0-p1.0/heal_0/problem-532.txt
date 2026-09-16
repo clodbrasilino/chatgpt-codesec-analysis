@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int are_permutations(const char *str1, const char *str2) {
+    if (str1 == NULL || str2 == NULL) {
+        return 0;
+    }
+
+    int count[256] = {0};
+
+    int i = 0;
+    while (str1[i] != '\0') {
+        count[(unsigned char)str1[i]]++;
+        i++;
+    }
+
+    i = 0;
+    while (str2[i] != '\0') {
+        count[(unsigned char)str2[i]]--;
+        i++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        if (count[i] != 0) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void) {
+    const char *str1 = "listen";
+    const char *str2 = "silent";
+    const char *str3 = "hello";
+
+    if (are_permutations(str1, str2)) {
+        printf("\"%s\" and \"%s\" are permutations.\n", str1, str2);
+    } else {
+        printf("\"%s\" and \"%s\" are not permutations.\n", str1, str2);
+    }
+
+    if (are_permutations(str1, str3)) {
+        printf("\"%s\" and \"%s\" are permutations.\n", str1, str3);
+    } else {
+        printf("\"%s\" and \"%s\" are not permutations.\n", str1, str3);
+    }
+
+    return 0;
+}
+```

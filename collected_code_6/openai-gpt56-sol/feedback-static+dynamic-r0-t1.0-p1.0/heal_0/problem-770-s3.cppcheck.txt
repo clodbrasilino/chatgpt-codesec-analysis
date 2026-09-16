@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-770-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-770-s3.c:22:17: style: Condition 'odd!=0U' is always true [knownConditionTrueFalse]
+        if (odd != 0U && odd > UINT64_MAX / odd) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-770-s3.c:20:31: note: Assignment 'odd=2U*i+1U', assigned value is greater than 0
+        uint64_t odd = 2U * i + 1U;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-770-s3.c:22:17: note: Condition 'odd!=0U' is always true
+        if (odd != 0U && odd > UINT64_MAX / odd) {
+                ^

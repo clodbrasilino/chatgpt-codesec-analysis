@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head_ref, int data) {
+    if (!head_ref) {
+        return;
+    }
+    struct Node* newNode = createNode(data);
+    if (*head_ref == NULL) {
+        *head_ref = newNode;
+        return;
+    }
+    struct Node* last = *head_ref;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = newNode;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node** head_ref) {
+    if (!head_ref) {
+        return;
+    }
+    struct Node* current = *head_ref;
+    struct Node* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+    *head_ref = NULL;
+}
+
+void removeEvenNumbers(struct Node** head_ref) {
+    if (!head_ref || !*head_ref) {
+        return;
+    }
+
+    struct Node* current = *head_ref;
+    struct Node* prev = NULL;
+
+    while (current != NULL) {
+        if (current->data % 2 == 0) {
+            if (prev == NULL) {
+                *head_ref = current->next;
+                free(current);
+                current = *head_ref;
+            } else {
+                prev->next = current->next;
+                free(current);
+                current = prev->next;
+            }
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    appendNode(&head, 4);
+    appendNode(&head, 5);
+    appendNode(&head, 6);
+
+    printList(head);
+
+    removeEvenNumbers(&head);
+
+    printList(head);
+
+    freeList(&head);
+
+    return 0;
+}

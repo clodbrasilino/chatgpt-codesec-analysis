@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_gcd(int a, int b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    
+    if (b == 0) {
+        return a;
+    }
+    return find_gcd(b, a % b);
+}
+
+int main(int argc, const char * const argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <num1> <num2>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr1;
+    char *endptr2;
+    int num1 = (int)strtol(argv[1], &endptr1, 10);
+    int num2 = (int)strtol(argv[2], &endptr2, 10);
+
+    if (*endptr1 != '\0' || *endptr2 != '\0') {
+        fprintf(stderr, "Error: Invalid integer input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num1 == 0 && num2 == 0) {
+        fprintf(stderr, "Error: GCD of zero and zero is undefined.\n");
+        return EXIT_FAILURE;
+    }
+
+    int gcd = find_gcd(num1, num2);
+    printf("%d\n", gcd);
+
+    return EXIT_SUCCESS;
+}

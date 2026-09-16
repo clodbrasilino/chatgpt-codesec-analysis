@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool calculate_loss(double cost_price, double selling_price, double *loss_amount)
+{
+    if (loss_amount == NULL) {
+        return false;
+    }
+
+    if (cost_price < 0.0 || selling_price < 0.0) {
+        return false;
+    }
+
+    if (cost_price > selling_price) {
+        *loss_amount = cost_price - selling_price;
+        return true;
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    double cost_price = 0.0;
+    double selling_price = 0.0;
+    double loss_amount = 0.0;
+
+    printf("Enter cost price: ");
+    if (scanf("%lf", &cost_price) != 1) {
+        fprintf(stderr, "Invalid input for cost price\n");
+        return 1;
+    }
+
+    printf("Enter selling price: ");
+    if (scanf("%lf", &selling_price) != 1) {
+        fprintf(stderr, "Invalid input for selling price\n");
+        return 1;
+    }
+
+    if (cost_price < 0.0 || selling_price < 0.0) {
+        fprintf(stderr, "Prices must be non-negative\n");
+        return 1;
+    }
+
+    if (calculate_loss(cost_price, selling_price, &loss_amount)) {
+        printf("Loss amount: %.2f\n", loss_amount);
+    } else {
+        printf("None\n");
+    }
+
+    return 0;
+}

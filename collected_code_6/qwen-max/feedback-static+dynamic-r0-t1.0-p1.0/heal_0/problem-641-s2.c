@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+long nth_nonagonal(long n) {
+    return (n * (7 * n - 5)) / 2;
+}
+
+int main() {
+    long n;
+    printf("Enter the value of n: ");
+    if(scanf("%ld", &n) != 1 || n <= 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    printf("The %ldth nonagonal number is: %ld\n", n, nth_nonagonal(n));
+    return 0;
+}

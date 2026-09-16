@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    float value;
+} FloatTuple;
+
+FloatTuple* string_to_float_tuple(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+    FloatTuple *tuple = (FloatTuple *)malloc(sizeof(FloatTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->value = atof(str);
+    return tuple;
+}
+
+void free_float_tuple(FloatTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple);
+    }
+}
+
+int main() {
+    const char *input = "3.14";
+    FloatTuple *float_tuple = string_to_float_tuple(input);
+    if (float_tuple != NULL) {
+        printf("Converted value: %f\n", float_tuple->value);
+        free_float_tuple(float_tuple);
+    } else {
+        fprintf(stderr, "Conversion failed.\n");
+    }
+    return 0;
+}
+```

@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RLEPair;
+
+RLEPair* reflect_rle(const int* list, size_t list_len, size_t* rle_len) {
+    if (list == NULL || rle_len == NULL) {
+        return NULL;
+    }
+
+    *rle_len = 0;
+
+    if (list_len == 0) {
+        return NULL;
+    }
+
+    if (list_len > SIZE_MAX / sizeof(RLEPair)) {
+        return NULL;
+    }
+
+    RLEPair* encoded = malloc(list_len * sizeof(RLEPair));
+    if (encoded == NULL) {
+        return NULL;
+    }
+
+    encoded[0].value = list[0];
+    encoded[0].count = 1;
+    size_t current_rle_len = 1;
+
+    for (size_t i = 1; i < list_len; i++) {
+        if (list[i] == list[i - 1]) {
+            encoded[current_rle_len - 1].count++;
+        } else {
+            encoded[current_rle_len].value = list[i];
+            encoded[current_rle_len].count = 1;
+            current_rle_len++;
+        }
+    }
+
+    *rle_len = current_rle_len;
+
+    RLEPair* resized = realloc(encoded, current_rle_len * sizeof(RLEPair));
+    if (resized != NULL) {
+        return resized;
+    }
+
+    return encoded;
+}
+
+int* rle_decode(const RLEPair* rle_list, size_t rle_len, size_t* out_len) {
+    if (rle_list == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    size_t total_len = 0;
+    for (size_t i = 0; i < rle_len; i++) {
+        if (rle_list[i].count > SIZE_MAX - total_len) {
+            return NULL;
+        }
+        total_len += rle_list[i].count;
+    }
+
+    *out_len = total_len;
+
+    if (total_len == 0) {
+        return NULL;
+    }
+
+    if (total_len > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    int* decoded = malloc(total_len * sizeof(int));
+    if (decoded == NULL) {
+        return NULL;
+    }
+
+    size_t current_idx = 0;
+    for (size_t i = 0; i < rle_len; i++) {
+        for (size_t j = 0; j < rle_list[i].count; j++) {
+            decoded[current_idx++] = rle_list[i].value;
+        }
+    }
+
+    return decoded;
+}
+
+int main(void) {
+    int list[] = {1, 1, 1, 2, 2, 3, 3, 3, 3, 4};
+    size_t list_len = sizeof(list) / sizeof(list[0]);
+
+    size_t rle_len = 0;
+    RLEPair* encoded = reflect_rle(list, list_len, &rle_len);
+    if (encoded != NULL) {
+        for (size_t i = 0; i < rle_len; i++) {
+            printf("%d:%zu ", encoded[i].value, encoded[i].count);
+        }
+        printf("\n");
+
+        size_t decoded_len = 0;
+        int* decoded = rle_decode(encoded, rle_len, &decoded_len);
+        if (decoded != NULL) {
+            for (size_t i = 0; i < decoded_len; i++) {
+                printf("%d ", decoded[i]);
+            }
+            printf("\n");
+            free(decoded);
+        }
+
+        free(encoded);
+    }
+
+    return 0;
+}
+```

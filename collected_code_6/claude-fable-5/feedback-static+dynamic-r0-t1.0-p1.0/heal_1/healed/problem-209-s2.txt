@@ -1,0 +1,150 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEAP_SIZE 100
+
+typedef struct {
+    int data[MAX_HEAP_SIZE];
+    int size;
+} MinHeap;
+
+static void swap_ints(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heapify_down(MinHeap *heap, int index)
+{
+    while (1) {
+        int smallest = index;
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+
+        if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        swap_ints(&heap->data[index], &heap->data[smallest]);
+        index = smallest;
+    }
+}
+
+static void heapify_up(MinHeap *heap, int index)
+{
+    if (index < 0 || index >= MAX_HEAP_SIZE || index >= heap->size) {
+        return;
+    }
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[parent] <= heap->data[index]) {
+            break;
+        }
+        swap_ints(&heap->data[parent], &heap->data[index]);
+        index = parent;
+    }
+}
+
+int heap_insert(MinHeap *heap, int value)
+{
+    if (heap == NULL || heap->size < 0 || heap->size >= MAX_HEAP_SIZE) {
+        return -1;
+    }
+    heap->data[heap->size] = value;
+    heap->size++;
+    heapify_up(heap, heap->size - 1);
+    return 0;
+}
+
+int heap_delete_min(MinHeap *heap, int *deleted)
+{
+    if (heap == NULL || heap->size <= 0 || heap->size > MAX_HEAP_SIZE) {
+        return -1;
+    }
+    if (deleted != NULL) {
+        *deleted = heap->data[0];
+    }
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    if (heap->size > 0) {
+        heapify_down(heap, 0);
+    }
+    return 0;
+}
+
+int heap_replace_min(MinHeap *heap, int new_value, int *deleted)
+{
+    if (heap == NULL || heap->size <= 0 || heap->size > MAX_HEAP_SIZE) {
+        return -1;
+    }
+    if (deleted != NULL) {
+        *deleted = heap->data[0];
+    }
+    heap->data[0] = new_value;
+    heapify_down(heap, 0);
+    return 0;
+}
+
+void heap_print(const MinHeap *heap)
+{
+    int i;
+    if (heap == NULL || heap->size < 0 || heap->size > MAX_HEAP_SIZE) {
+        return;
+    }
+    for (i = 0; i < heap->size; i++) {
+        printf("%d ", heap->data[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    MinHeap heap;
+    int values[] = {15, 10, 20, 8, 25, 12};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+    int deleted;
+
+    heap.size = 0;
+
+    for (i = 0; i < count; i++) {
+        if (heap_insert(&heap, values[i]) != 0) {
+            fprintf(stderr, "Failed to insert %d into heap\n", values[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Heap before replacement: ");
+    heap_print(&heap);
+
+    if (heap_replace_min(&heap, 17, &deleted) != 0) {
+        fprintf(stderr, "Failed to replace minimum: heap is empty\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Deleted smallest element: %d\n", deleted);
+    printf("Heap after inserting 17: ");
+    heap_print(&heap);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes applied:**
+
+The static analyzer (cppcheck) flagged a potential out-of-bounds access in `heapify_up`. The warning `arrayIndexOutOfBoundsCond` arises because the analyzer cannot prove that `index` stays within `[0, MAX_HEAP_SIZE - 1]` — it only sees `index > 0` as the loop guard, and reasons that if the condition is not redundant, `index` could theoretically equal `100` (i.e., `MAX_HEAP_SIZE`), causing `heap->data[index]` to read past the end of the array.
+
+In practice this was a false positive, since `heap_insert` only ever calls `heapify_up` with `heap->size - 1` after verifying `heap->size < MAX_HEAP_SIZE`. However, `heapify_up` had no defensive guarantee of its own — it trusted its caller completely. The fixes made:
+
+1. **Explicit bounds guard in `heapify_up`**: The added precondition check (`index < 0 || index >= MAX_HEAP_SIZE || index >= heap->size`) makes the invariant locally provable, silencing the analyzer and hardening the function against future misuse by any new caller.
+
+2. **`heap->size` sanity checks in `heap_insert`, `heap_delete_min`, `heap_replace_min`, and `heap_print`**: If a `MinHeap` is ever used uninitialized or its `size` field is corrupted (e.g., negative or exceeding `MAX_HEAP_SIZE`), the functions now fail safely with `-1` or return early rather than indexing out of bounds.
+
+The logic, output, and API behavior remain identical for all valid inputs; the changes are purely defensive-programming hardening that makes the array-bounds invariants locally verifiable.

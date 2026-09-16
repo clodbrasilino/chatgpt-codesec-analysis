@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+int all_items_equal_to_string(Node *head, const char *target) {
+    if (target == NULL) {
+        return 0;
+    }
+
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data == NULL || strcmp(current->data, target) != 0) {
+            return 0;
+        }
+        current = current->next;
+    }
+    return 1;
+}
+
+int main(void) {
+    Node node3 = { "hello", NULL };
+    Node node2 = { "hello", &node3 };
+    Node node1 = { "hello", &node2 };
+
+    if (all_items_equal_to_string(&node1, "hello")) {
+        printf("All items are equal to 'hello'\n");
+    } else {
+        printf("Not all items are equal to 'hello'\n");
+    }
+
+    Node node_bad = { "world", NULL };
+    Node node_bad_list = { "hello", &node_bad };
+
+    if (all_items_equal_to_string(&node_bad_list, "hello")) {
+        printf("All items are equal to 'hello'\n");
+    } else {
+        printf("Not all items are equal to 'hello'\n");
+    }
+
+    return 0;
+}
+```

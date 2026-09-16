@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    long long start;
+    long long end;
+} Range;
+
+Range *find_missing_ranges(const long long *nums, size_t count,
+                           long long lower, long long upper,
+                           size_t *out_count)
+{
+    Range *result;
+    size_t capacity;
+    size_t n_ranges;
+    size_t i;
+    long long current;
+    int finished;
+
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+    if (lower > upper) {
+        return NULL;
+    }
+    if (nums == NULL && count > 0) {
+        return NULL;
+    }
+
+    capacity = count + 1;
+    result = malloc(capacity * sizeof(Range));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    n_ranges = 0;
+    current = lower;
+    finished = 0;
+
+    for (i = 0; i < count; i++) {
+        long long v = nums[i];
+        if (v < current) {
+            continue;
+        }
+        if (v > upper) {
+            break;
+        }
+        if (v > current) {
+            result[n_ranges].start = current;
+            result[n_ranges].end = v - 1;
+            n_ranges++;
+        }
+        if (v == upper) {
+            finished = 1;
+            break;
+        }
+        current = v + 1;
+    }
+
+    if (!finished && current <= upper) {
+        result[n_ranges].start = current;
+        result[n_ranges].end = upper;
+        n_ranges++;
+    }
+
+    if (n_ranges == 0) {
+        free(result);
+        return NULL;
+    }
+
+    *out_count = n_ranges;
+    return result;
+}
+
+int main(void)
+{
+    long long nums[] = { 2, 5, 6, 9, 12 };
+    size_t count = sizeof(nums) / sizeof(nums[0]);
+    long long lower = 0;
+    long long upper = 15;
+    size_t missing_count = 0;
+    size_t i;
+    Range *missing;
+
+    missing = find_missing_ranges(nums, count, lower, upper, &missing_count);
+    if (missing == NULL) {
+        if (missing_count == 0) {
+            printf("No missing ranges found or an error occurred.\n");
+        }
+        return EXIT_FAILURE;
+    }
+
+    printf("Missing ranges between %lld and %lld:\n", lower, upper);
+    for (i = 0; i < missing_count; i++) {
+        if (missing[i].start == missing[i].end) {
+            printf("%lld\n", missing[i].start);
+        } else {
+            printf("%lld->%lld\n", missing[i].start, missing[i].end);
+        }
+    }
+
+    free(missing);
+    return EXIT_SUCCESS;
+}

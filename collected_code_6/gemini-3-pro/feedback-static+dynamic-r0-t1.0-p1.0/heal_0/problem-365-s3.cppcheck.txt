@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-365-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-365-s3.c:27:15: style: The scope of the variable 'num' can be reduced. [variableScope]
+    long long num = 0;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-365-s3.c:27:19: style: Variable 'num' is assigned a value that is never used. [unreadVariable]
+    long long num = 0;
+                  ^

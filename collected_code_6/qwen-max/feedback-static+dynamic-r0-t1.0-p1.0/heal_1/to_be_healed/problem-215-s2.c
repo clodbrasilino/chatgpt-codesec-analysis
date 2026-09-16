@@ -1,38 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n'], got <no output>
+  */
 
 /* Possible weaknesses found:
  *  Parameter 'encoded' can be declared as pointer to const [constParameterPointer]
  */
-void decode_run_length(int* encoded, int n, int** decoded, int* decoded_size) {
-    *decoded = (int*)malloc(2 * n * sizeof(int));
-    if (*decoded == NULL) return;
-    
-    int* current = *decoded;
-    for (int i = 0; i < n; i += 2) {
-        int count = encoded[i];
-        int value = encoded[i + 1];
-        for (int j = 0; j < count; ++j) {
-            *current = value;
-            ++current;
+int* decode_list(int* encoded, int size, int* return_size) {
+    *return_size = 0;
+    for (int i = 0; i < size; i += 2) {
+        *return_size += encoded[i];
+    }
+
+    int* decoded = (int*)malloc(*return_size * sizeof(int));
+    if (!decoded) {
+        *return_size = 0;
+        return NULL;
+    }
+
+    *return_size = 0;
+    for (int i = 0; i < size; i += 2) {
+        for (int j = 0; j < encoded[i]; ++j) {
+            decoded[(*return_size)++] = encoded[i + 1];
         }
     }
-    *decoded_size = current - *decoded;
+
+    return decoded;
 }
 
 int main() {
-    int encoded[] = {3, 1, 2, 2, 1, 3};
-    int n = sizeof(encoded) / sizeof(encoded[0]);
-    
-    int* decoded;
-    int decoded_size;
-    
-    decode_run_length(encoded, n, &decoded, &decoded_size);
-    
-    for (int i = 0; i < decoded_size; ++i) {
-        printf("%d ", decoded[i]);
+    int encoded[] = {3, 2, 1, 5};
+    int size = sizeof(encoded) / sizeof(encoded[0]);
+    int return_size;
+
+    int* decoded = decode_list(encoded, size, &return_size);
+    if (decoded) {
+        for (int i = 0; i < return_size; ++i) {
+            printf("%d ", decoded[i]);
+        }
+        free(decoded);
+    } else {
+        printf("Memory allocation failed\n");
     }
-    
-    free(decoded);
+
     return 0;
 }

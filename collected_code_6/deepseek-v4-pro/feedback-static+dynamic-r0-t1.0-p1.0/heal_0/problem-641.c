@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int nonagonal_number(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    return n * (7 * n - 5) / 2;
+}
+
+int main(void) {
+    int n;
+    int result;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = nonagonal_number(n);
+    if (result == -1) {
+        printf("n must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Nonagonal number %d: %d\n", n, result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double compute_power(double base, double exponent)
+{
+    return pow(base, exponent);
+}
+
+double *map(double (*operation)(double, double), const double *bases, const double *exponents, size_t count)
+{
+    double *result;
+    size_t i;
+
+    if (operation == NULL || bases == NULL || exponents == NULL || count == 0)
+    {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        result[i] = operation(bases[i], exponents[i]);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const double bases[] = {2.0, 3.0, 4.0, 5.0, 10.0};
+    const double exponents[] = {3.0, 2.0, 0.5, 3.0, 2.0};
+    const size_t base_count = sizeof(bases) / sizeof(bases[0]);
+    const size_t exponent_count = sizeof(exponents) / sizeof(exponents[0]);
+    double *powers;
+    size_t i;
+
+    if (base_count != exponent_count)
+    {
+        fprintf(stderr, "Error: bases and exponents lists must have equal length.\n");
+        return EXIT_FAILURE;
+    }
+
+    powers = map(compute_power, bases, exponents, base_count);
+    if (powers == NULL)
+    {
+        fprintf(stderr, "Error: failed to create the power list.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < base_count; i++)
+    {
+        printf("%g ^ %g = %g\n", bases[i], exponents[i], powers[i]);
+    }
+
+    free(powers);
+    powers = NULL;
+
+    return EXIT_SUCCESS;
+}

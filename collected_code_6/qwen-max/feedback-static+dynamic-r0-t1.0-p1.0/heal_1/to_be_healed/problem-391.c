@@ -1,105 +1,160 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-typedef struct _node {
+typedef struct Node {
     char *key;
-    struct _node *value;
-    struct _node *next;
+    struct Node *next;
 } Node;
 
-typedef struct _dict {
-    Node *head;
+typedef struct Dict {
+    char *key;
+    void *value;
+    struct Dict *parent;
+    struct Dict *children;
 } Dict;
 
-Dict* create_dict() {
-    return (Dict*)malloc(sizeof(Dict));
+Dict* dict_new(char *key, void *value) {
+    Dict *d = (Dict *)malloc(sizeof(Dict));
+    d->key = key;
+    d->value = value;
+    d->parent = NULL;
+    d->children = NULL;
+    return d;
 }
 
-/* Possible weaknesses found:
- *  expected 'Dict *' {aka 'struct _dict *'} but argument is of type 'struct _node *'
- */
-Node* create_node(char *key, Dict *value) {
-    Node *node = (Node*)malloc(sizeof(Node));
-    node->key = strdup(key);
-    node->value = (struct _node*)value;
-    node->next = NULL;
-    return node;
-}
-
-void add_to_dict(Dict *dict, char *key, Dict *value) {
-    if (!dict || !key) return;
-    /* Possible weaknesses found:
-     *  passing argument 2 of 'create_node' from incompatible pointer type [-Wincompatible-pointer-types]
-     */
-    Node *new_node = create_node(key, (struct _node*)value);
-    new_node->next = dict->head;
-    dict->head = new_node;
-}
-
-Dict* list_to_nested_dict(int count, char **lists[]) {
-    if (count < 2) return NULL;
-    Dict *result = create_dict();
-    
-    for (int i = 0; lists[0][i] != NULL; ++i) {
-        Dict *current = result;
-        for (int j = 1; j < count && lists[j][i] != NULL; ++j) {
-            int found = 0;
-            for (Node *n = current->head; n != NULL; n = n->next) {
-                if (strcmp(n->key, lists[j-1][i]) == 0) {
-                    current = (Dict*)n->value;
-                    found = 1;
-                    break;
-                }
-            }
-            if (!found) {
-                Dict *new_dict = create_dict();
-                add_to_dict(current, lists[j-1][i], new_dict);
-                current = new_dict;
-            }
-        }
-        add_to_dict(current, lists[count-1][i], create_dict());
-    }
-
-    return result;
-}
-
-void free_dict(Dict *dict) {
-    if (!dict) return;
-    while (dict->head) {
-        Node *temp = dict->head;
-        dict->head = dict->head->next;
-        free(temp->key);
-        free_dict((Dict*)temp->value);
-        free(temp);
-    }
-    free(dict);
-}
-
-void print_dict(Dict *dict, int level) {
-    for (Node *n = dict->head; n != NULL; n = n->next) {
-        for (int i = 0; i < level; ++i) printf("  ");
-        printf("%s: ", n->key);
+void dict_insert(Dict *parent, char *key, void *value) {
+    if (parent == NULL) return;
+    Dict *new_child = dict_new(key, value);
+    new_child->parent = parent;
+    if (parent->children == NULL) {
+        parent->children = new_child;
+    } else {
+        Dict *current = parent->children;
         /* Possible weaknesses found:
-         *  Return value of allocation function 'create_dict' is not stored. [leakReturnValNotUsed]
+         *  no member named 'next' in 'struct Dict'
+         *  'Dict' has no member named 'next'
          */
-        if (n->value != (struct _node*)create_dict())
-            print_dict((Dict*)n->value, level + 1);
-        else
-            printf("(empty)\n");
+        while (current->next != NULL) {
+            /* Possible weaknesses found:
+             *  no member named 'next' in 'struct Dict'
+             *  'Dict' has no member named 'next'
+             */
+            current = current->next;
+        }
+        /* Possible weaknesses found:
+         *  no member named 'next' in 'struct Dict'
+         *  'Dict' has no member named 'next'
+         */
+        current->next = new_child;
     }
+}
+
+Dict* lists_to_nested_dict(Node **lists, int list_count) {
+    if (list_count <= 0 || lists == NULL) return NULL;
+    
+    Dict *root = dict_new("root", NULL);
+    Dict *current_dict = root;
+    
+    for (int i = 0; i < list_count; ++i) {
+        Node *current_node = lists[i];
+        while (current_node != NULL) {
+            dict_insert(current_dict, current_node->key, (void *)"value");
+            current_dict = current_dict->children;
+            current_node = current_node->next;
+        }
+        /* Possible weaknesses found:
+         *  no member named 'next' in 'struct Dict'
+         *  'Dict' has no member named 'next'
+         */
+        while (current_dict && current_dict->parent && current_dict->next == NULL) {
+            current_dict = current_dict->parent;
+        }
+        /* Possible weaknesses found:
+         *  no member named 'next' in 'struct Dict'
+         *  'Dict' has no member named 'next'
+         */
+        if (current_dict && current_dict->next) {
+            /* Possible weaknesses found:
+             *  no member named 'next' in 'struct Dict'
+             *  'Dict' has no member named 'next'
+             */
+            current_dict = current_dict->next;
+        }
+    }
+    
+    return root->children;
 }
 
 int main() {
-    char *list1[] = {"a", "b", "c", NULL};
-    char *list2[] = {"x", "y", "z", NULL};
-    char *list3[] = {"1", "2", "3", NULL};
-    char **lists[] = {list1, list2, list3};
+    Node *list1 = (Node *)malloc(sizeof(Node));
+    list1->key = "a";
+    list1->next = (Node *)malloc(sizeof(Node));
+    list1->next->key = "b";
+    list1->next->next = NULL;
 
-    Dict *nested_dict = list_to_nested_dict(3, lists);
-    print_dict(nested_dict, 0);
+    Node *list2 = (Node *)malloc(sizeof(Node));
+    list2->key = "x";
+    list2->next = (Node *)malloc(sizeof(Node));
+    list2->next->key = "y";
+    list2->next->next = (Node *)malloc(sizeof(Node));
+    list2->next->next->key = "z";
+    list2->next->next->next = NULL;
 
-    free_dict(nested_dict);
+    Node *list3 = (Node *)malloc(sizeof(Node));
+    list3->key = "m";
+    list3->next = (Node *)malloc(sizeof(Node));
+    list3->next->key = "n";
+    list3->next->next = NULL;
+
+    Node *lists[] = {list1, list2, list3};
+    Dict *nested_dict = lists_to_nested_dict(lists, 3);
+
+    // Free allocated memory
+    while (list1) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+    while (list2) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
+    while (list3) {
+        Node *temp = list3;
+        list3 = list3->next;
+        free(temp);
+    }
+
+    // Print nested dictionary and free memory
+    while (nested_dict) {
+        printf("%s -> ", nested_dict->key);
+        Dict *child = nested_dict->children;
+        while (child) {
+            printf("%s -> ", child->key);
+            /* Possible weaknesses found:
+             *  no member named 'next' in 'struct Dict'
+             *  'Dict' has no member named 'next'
+             */
+            child = child->next;
+        }
+        printf("\n");
+        child = nested_dict->children;
+        while (child) {
+            Dict *temp = child;
+            /* Possible weaknesses found:
+             *  no member named 'next' in 'struct Dict'
+             *  'Dict' has no member named 'next'
+             */
+            child = child->next;
+            free(temp);
+        }
+        /* Possible weaknesses found:
+         *  no member named 'next' in 'struct Dict'
+         *  'Dict' has no member named 'next'
+         */
+        nested_dict = nested_dict->next;
+    }
 
     return 0;
 }

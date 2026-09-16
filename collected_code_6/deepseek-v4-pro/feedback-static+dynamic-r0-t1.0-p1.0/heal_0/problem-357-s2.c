@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int find_max_tuple(Tuple *tuples, int count, int *result) {
+    if (tuples == NULL || result == NULL || count <= 0) {
+        return -1;
+    }
+    
+    int found = 0;
+    int max_value = 0;
+    
+    for (int i = 0; i < count; i++) {
+        if (tuples[i].elements == NULL || tuples[i].size <= 0) {
+            continue;
+        }
+        
+        for (int j = 0; j < tuples[i].size; j++) {
+            if (!found) {
+                max_value = tuples[i].elements[j];
+                found = 1;
+            } else if (tuples[i].elements[j] > max_value) {
+                max_value = tuples[i].elements[j];
+            }
+        }
+    }
+    
+    if (!found) {
+        return -1;
+    }
+    
+    *result = max_value;
+    return 0;
+}
+
+int main(void) {
+    int elements1[] = {3, 7, 2, 9, 5};
+    int elements2[] = {1, 4, 8};
+    int elements3[] = {6, 10, 3};
+    
+    Tuple tuples[3];
+    tuples[0].elements = elements1;
+    tuples[0].size = 5;
+    tuples[1].elements = elements2;
+    tuples[1].size = 3;
+    tuples[2].elements = elements3;
+    tuples[2].size = 3;
+    
+    int max_value;
+    int status = find_max_tuple(tuples, 3, &max_value);
+    
+    if (status == 0) {
+        printf("Maximum element: %d\n", max_value);
+    } else {
+        printf("No valid elements found\n");
+    }
+    
+    return 0;
+}

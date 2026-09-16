@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    unsigned long key;
+    unsigned long val;
+} Entry;
+
+static Entry *g_table = NULL;
+static size_t g_count = 0;
+static size_t g_cap = 0;
+
+static int cache_lookup(unsigned long key, unsigned long *out)
+{
+    size_t i;
+    for (i = 0; i < g_count; i++) {
+        if (g_table[i].key == key) {
+            *out = g_table[i].val;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void cache_store(unsigned long key, unsigned long val)
+{
+    if (g_count == g_cap) {
+        size_t newcap = (g_cap == 0) ? 64 : g_cap * 2;
+        Entry *tmp = realloc(g_table, newcap * sizeof(Entry));
+        if (tmp == NULL) {
+            return;
+        }
+        g_table = tmp;
+        g_cap = newcap;
+    }
+    g_table[g_count].key = key;
+    g_table[g_count].val = val;
+    g_count++;
+}
+
+static void cache_free(void)
+{
+    free(g_table);
+    g_table = NULL;
+    g_count = 0;
+    g_cap = 0;
+}
+
+static unsigned long max_sum(unsigned long n)
+{
+    unsigned long cached;
+    unsigned long parts;
+    unsigned long result;
+
+    if (n == 0UL) {
+        return 0UL;
+    }
+    if (cache_lookup(n, &cached)) {
+        return cached;
+    }
+    parts = max_sum(n / 2UL) + max_sum(n / 3UL) +
+            max_sum(n / 4UL) + max_sum(n / 5UL);
+    result = (parts > n) ? parts : n;
+    cache_store(n, result);
+    return result;
+}
+
+int main(void)
+{
+    unsigned long n;
+    unsigned long answer;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%lu", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    answer = max_sum(n);
+    printf("Maximum sum: %lu\n", answer);
+
+    cache_free();
+    return EXIT_SUCCESS;
+}

@@ -1,88 +1,152 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
+typedef struct Node {
     int value;
-    int list_index;
-    int element_index;
-} HeapNode;
+    struct Node* next;
+} Node;
 
-typedef int (*CompareFunc)(const void *, const void *);
+typedef struct Iterator {
+    Node* head;
+} Iterator;
 
-void heapify(HeapNode *arr, int n, int i, CompareFunc cmp) {
-    int largest = i;
-    int left = 2*i + 1;
-    int right = 2*i + 2;
+Iterator* create_iterator() {
+    Iterator* it = (Iterator*)malloc(sizeof(Iterator));
+    it->head = NULL;
+    return it;
+}
 
-    if (left < n && cmp(&arr[left], &arr[largest]) < 0)
-        largest = left;
+void push(Iterator* it, int val) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = val;
+    new_node->next = it->head;
+    it->head = new_node;
+}
 
-    if (right < n && cmp(&arr[right], &arr[largest]) < 0)
-        largest = right;
-
-    if (largest != i) {
-        HeapNode temp = arr[i];
-        arr[i] = arr[largest];
-        arr[largest] = temp;
-        heapify(arr, n, largest, cmp);
+int pop(Iterator* it) {
+    if (!it->head) {
+        return -1; // Assuming no negative values in the input
     }
+    Node* temp = it->head;
+    int ret = temp->value;
+    it->head = it->head->next;
+    free(temp);
+    return ret;
 }
 
-void build_min_heap(HeapNode *arr, int n, CompareFunc cmp) {
-    for (int i = n / 2 - 1; i >= 0; i--)
-        heapify(arr, n, i, cmp);
+int peek(Iterator* it) {
+    if (it->head) {
+        return it->head->value;
+    }
+    return -1; // Assuming no negative values in the input
 }
 
-int compare(const void *a, const void *b) {
-    return ((HeapNode*)a)->value - ((HeapNode*)b)->value;
+void free_iterator(Iterator* it) {
+    while (it->head) {
+        Node* temp = it->head;
+        it->head = it->head->next;
+        free(temp);
+    }
+    free(it);
 }
 
-int* getNext(HeapNode *heap, int *heap_size, int **lists, int *list_sizes, int num_lists, CompareFunc cmp) {
-    if (*heap_size == 0) return NULL;
+typedef struct MinHeapItem {
+    int value;
+    Iterator* it;
+    struct MinHeapItem* next;
+} MinHeapItem;
 
-    HeapNode min_node = heap[0];
-    heap[0] = heap[*heap_size - 1];
-    (*heap_size)--;
+typedef struct MinHeap {
+    MinHeapItem* head;
+} MinHeap;
 
-    if (min_node.element_index + 1 < list_sizes[min_node.list_index]) {
-        heap[0].value = lists[min_node.list_index][min_node.element_index + 1];
-        heap[0].element_index = min_node.element_index + 1;
-        heap[0].list_index = min_node.list_index;
-        heapify(heap, *heap_size, 0, cmp);
+MinHeap* create_min_heap() {
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    heap->head = NULL;
+    return heap;
+}
+
+void push_heap(MinHeap* heap, MinHeapItem* item) {
+    if (heap->head == NULL || item->value < heap->head->value) {
+        item->next = heap->head;
+        heap->head = item;
     } else {
-        heap[0].value = INT_MAX;
-        heap[0].element_index = min_node.element_index + 1;
-        heap[0].list_index = min_node.list_index;
-        heapify(heap, *heap_size, 0, cmp);
+        MinHeapItem* temp = heap->head;
+        while (temp->next && temp->next->value <= item->value) {
+            temp = temp->next;
+        }
+        item->next = temp->next;
+        temp->next = item;
+    }
+}
+
+MinHeapItem* pop_heap(MinHeap* heap) {
+    if (heap->head) {
+        MinHeapItem* top = heap->head;
+        heap->head = heap->head->next;
+        return top;
+    }
+    return NULL;
+}
+
+void free_heap(MinHeap* heap) {
+    while (heap->head) {
+        MinHeapItem* temp = heap->head;
+        heap->head = heap->head->next;
+        free(temp);
+    }
+    free(heap);
+}
+
+int merge_k_sorted_iterators(Iterator** iterators, int k) {
+    MinHeap* heap = create_min_heap();
+    for (int i = 0; i < k; ++i) {
+        if (iterators[i]->head) {
+            MinHeapItem* item = (MinHeapItem*)malloc(sizeof(MinHeapItem));
+            item->value = peek(iterators[i]);
+            item->it = iterators[i];
+            push_heap(heap, item);
+        }
     }
 
-    return &min_node.value;
+    while (heap->head) {
+        MinHeapItem* min_item = pop_heap(heap);
+        printf("%d ", min_item->value);
+        pop(min_item->it);
+
+        if (min_item->it->head) {
+            min_item->value = peek(min_item->it);
+            push_heap(heap, min_item);
+        } else {
+            free(min_item);
+        }
+    }
+
+    free_heap(heap);
+    return 0;
 }
 
 int main() {
-    int lists[][5] = {
-        {1, 4, 7, 9, INT_MAX},
-        {2, 6, 8, 10, INT_MAX},
-        {3, 5, 11, 12, INT_MAX}
-    };
-    int list_sizes[] = {4, 4, 4};
-    int num_lists = 3;
+    Iterator* iterators[3];
+    iterators[0] = create_iterator();
+    iterators[1] = create_iterator();
+    iterators[2] = create_iterator();
 
-    HeapNode heap[num_lists];
-    int heap_size = num_lists;
+    push(iterators[0], 1);
+    push(iterators[0], 4);
+    push(iterators[0], 5);
 
-    for (int i = 0; i < num_lists; ++i) {
-        heap[i].value = lists[i][0];
-        heap[i].list_index = i;
-        heap[i].element_index = 0;
-    }
+    push(iterators[1], 1);
+    push(iterators[1], 3);
+    push(iterators[1], 4);
 
-    build_min_heap(heap, heap_size, compare);
+    push(iterators[2], 2);
+    push(iterators[2], 6);
 
-    int *result;
-    while ((result = getNext(heap, &heap_size, (int**)lists, list_sizes, num_lists, compare)) != NULL) {
-        if (*result == INT_MAX) break;
-        printf("%d ", *result);
+    merge_k_sorted_iterators(iterators, 3);
+
+    for (int i = 0; i < 3; ++i) {
+        free_iterator(iterators[i]);
     }
 
     return 0;

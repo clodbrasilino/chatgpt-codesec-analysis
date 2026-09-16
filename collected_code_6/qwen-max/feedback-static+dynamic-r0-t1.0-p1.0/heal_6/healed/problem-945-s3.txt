@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include "uthash.h"
+
+struct my_struct {
+    int id;
+    char name[10];
+    UT_hash_handle hh;
+};
+
+int main() {
+    struct my_struct *user = NULL, *s;
+
+    s = (struct my_struct *)malloc(sizeof(struct my_struct));
+    if (s == NULL) return 1;
+    s->id = 1;
+    strcpy(s->name, "John");
+    HASH_ADD_INT(user, id, s);
+
+    s = (struct my_struct *)malloc(sizeof(struct my_struct));
+    if (s == NULL) return 1;
+    s->id = 2;
+    strcpy(s->name, "Jane");
+    HASH_ADD_INT(user, id, s);
+
+    for (s = user; s != NULL; s = (struct my_struct *)s->hh.next) {
+        printf("Name: %s, ID: %d\n", s->name, s->id);
+    }
+
+    struct my_struct *current_user, *tmp;
+    HASH_ITER(hh, user, current_user, tmp) {
+        HASH_DEL(user, current_user);
+        free(current_user);
+    }
+
+    return 0;
+}
+```

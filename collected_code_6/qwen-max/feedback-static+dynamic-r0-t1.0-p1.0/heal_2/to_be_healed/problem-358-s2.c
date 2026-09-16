@@ -1,49 +1,58 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int* list_modulo(const int *list1, int list1_size, const int *list2, int list2_size, int *result_size) {
-    if (list1 == NULL || list2 == NULL || list1_size <= 0 || list2_size <= 0 || list1_size != list2_size) {
-        *result_size = 0;
+int* modulo_division(const int* list1, int len1, const int* list2, int len2, int *result_len) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'result_len==NULL' is not redundant
+     */
+    if (len1 == 0 || len2 == 0 || list1 == NULL || list2 == NULL || result_len == NULL) {
+        /* Possible weaknesses found:
+         *  Either the condition 'result_len==NULL' is redundant or there is possible null pointer dereference: result_len. [nullPointerRedundantCheck]
+         *  Null pointer dereference
+         */
+        *result_len = -1;
         return NULL;
     }
-    
-    *result_size = list1_size;
-    int *result = (int *)malloc(*result_size * sizeof(int));
+
+    int min_len = (len1 < len2) ? len1 : len2;
+    int* result = (int*)malloc(min_len * sizeof(int));
     if (result == NULL) {
-        *result_size = 0;
+        *result_len = -1;
         return NULL;
     }
-    
-    for (int i = 0; i < *result_size; ++i) {
-        result[i] = (list1[i] % list2[i]) + (list2[i] ? 0 : 10000); // Avoid division by zero
+
+    for (int i = 0; i < min_len; ++i) {
+        if (list2[i] == 0) {
+            free(result);
+            *result_len = -1;
+            return NULL;
+        }
+        result[i] = list1[i] % list2[i];
     }
-    
+
+    *result_len = min_len;
     return result;
 }
 
 int main() {
-    /* Possible weaknesses found:
-     *  Variable 'list1' can be declared as const array [constVariable]
-     */
     int list1[] = {10, 20, 30};
-    /* Possible weaknesses found:
-     *  Variable 'list2' can be declared as const array [constVariable]
-     */
-    int list2[] = {3, 5, 7};
-    int list1_size = 3;
-    int list2_size = 3;
-    int result_size;
+    int list2[] = {3, 4, 5};
+    int len1 = sizeof(list1) / sizeof(list1[0]);
+    int len2 = sizeof(list2) / sizeof(list2[0]);
+    int result_len;
 
-    int *result = list_modulo(list1, list1_size, list2, list2_size, &result_size);
+    int* result = modulo_division(list1, len1, list2, len2, &result_len);
 
-    if (result != NULL) {
-        for (int i = 0; i < result_size; ++i) {
-            printf("%d ", result[i]);
-        }
-        free(result);
-    } else {
-        printf("Error in modulo calculation\n");
+    if (result_len == -1) {
+        printf("Error in calculation.\n");
+        return 1;
     }
 
+    for (int i = 0; i < result_len; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
     return 0;
 }

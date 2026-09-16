@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int toggle_odd_bits(unsigned int num)
+{
+    unsigned int mask = 0xAAAAAAAAu;
+    return num ^ mask;
+}
+
+int main(void)
+{
+    unsigned int number;
+    unsigned int result;
+
+    printf("Enter an unsigned integer: ");
+    if (scanf("%u", &number) != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_odd_bits(number);
+
+    printf("Original number: %u (0x%08X)\n", number, number);
+    printf("After toggling odd bits: %u (0x%08X)\n", result, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution toggles all odd bit positions (1, 3, 5, ..., 31, with bit 0 as the least significant bit) using the mask `0xAAAAAAAA`, which has 1s at every odd position. The XOR operation flips exactly those bits while leaving even positions untouched.
+
+Key safety considerations addressed:
+- **CWE-703**: The return value of `scanf` is checked, and the program exits gracefully with an error message on invalid input.
+- **CWE-710**: The code uses `int main(void)`, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, an unsigned literal suffix on the mask, and unsigned types throughout to avoid implementation-defined behavior with bitwise operations on signed integers.
+- **CWE-664**: No dynamic resources are allocated, so there are no lifetime management issues; all variables are stack-based with well-defined scope.

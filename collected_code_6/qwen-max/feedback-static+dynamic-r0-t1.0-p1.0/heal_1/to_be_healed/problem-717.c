@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'data' can be declared as pointer to const [constParameterPointer]
+ */
+double calculate_mean(double *data, int n) {
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        sum += data[i];
+    }
+    return sum / n;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'data' can be declared as pointer to const [constParameterPointer]
+ */
+double calculate_variance(double *data, int n, double mean) {
+    double variance = 0.0;
+    for (int i = 0; i < n; i++) {
+        variance += pow(data[i] - mean, 2);
+    }
+    return variance / n;
+}
+
+double calculate_standard_deviation(double *data, int n) {
+    if (n <= 1) {
+        return 0.0;
+    }
+    double mean = calculate_mean(data, n);
+    double variance = calculate_variance(data, n, mean);
+    return sqrt(variance);
+}
+
+int main() {
+    double data[] = {10.0, 12.0, 23.0, 23.0, 16.0, 23.0, 21.0, 16.0};
+    int n = sizeof(data) / sizeof(data[0]);
+    double std_deviation = calculate_standard_deviation(data, n);
+    printf("Standard Deviation: %.2f\n", std_deviation);
+    return 0;
+}

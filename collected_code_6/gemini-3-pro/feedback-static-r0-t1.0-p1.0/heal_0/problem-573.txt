@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long product_of_unique_numbers(const int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+
+    int *unique_list = (int *)malloc(size * sizeof(int));
+    if (unique_list == NULL) {
+        return 0;
+    }
+
+    size_t unique_count = 0;
+    long long product = 1;
+
+    for (size_t i = 0; i < size; ++i) {
+        int is_unique = 1;
+        for (size_t j = 0; j < unique_count; ++j) {
+            if (list[i] == unique_list[j]) {
+                is_unique = 0;
+                break;
+            }
+        }
+
+        if (is_unique) {
+            unique_list[unique_count++] = list[i];
+            product *= list[i];
+        }
+    }
+
+    free(unique_list);
+    return product;
+}
+
+int main(void) {
+    int list[] = {1, 2, 2, 3, 4, 4, 5, 1};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    long long result = product_of_unique_numbers(list, size);
+
+    printf("Product of unique numbers: %lld\n", result);
+
+    return 0;
+}
+```

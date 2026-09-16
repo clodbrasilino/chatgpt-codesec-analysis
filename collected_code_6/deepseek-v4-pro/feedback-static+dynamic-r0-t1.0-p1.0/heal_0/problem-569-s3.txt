@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings(const void *a, const void *b) {
+    return strcmp(*(const char **)a, *(const char **)b);
+}
+
+char ***sort_sublists(char ***lists, int list_count, int *sublist_counts) {
+    if (lists == NULL || sublist_counts == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < list_count; i++) {
+        if (lists[i] != NULL && sublist_counts[i] > 0) {
+            qsort(lists[i], sublist_counts[i], sizeof(char *), compare_strings);
+        }
+    }
+
+    return lists;
+}
+
+void free_lists(char ***lists, int list_count, int *sublist_counts) {
+    if (lists == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < list_count; i++) {
+        if (lists[i] != NULL) {
+            for (int j = 0; j < sublist_counts[i]; j++) {
+                free(lists[i][j]);
+            }
+            free(lists[i]);
+        }
+    }
+    free(lists);
+}
+
+int main(void) {
+    int sublist_counts[] = {3, 2, 4};
+    int list_count = 3;
+
+    char ***lists = malloc((size_t)list_count * sizeof(char **));
+    if (lists == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < list_count; i++) {
+        lists[i] = malloc((size_t)sublist_counts[i] * sizeof(char *));
+        if (lists[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                for (int k = 0; k < sublist_counts[j]; k++) {
+                    free(lists[j][k]);
+                }
+                free(lists[j]);
+            }
+            free(lists);
+            return 1;
+        }
+    }
+
+    lists[0][0] = strdup("banana");
+    lists[0][1] = strdup("apple");
+    lists[0][2] = strdup("cherry");
+
+    lists[1][0] = strdup("dog");
+    lists[1][1] = strdup("cat");
+
+    lists[2][0] = strdup("zebra");
+    lists[2][1] = strdup("lion");
+    lists[2][2] = strdup("tiger");
+    lists[2][3] = strdup("elephant");
+
+    sort_sublists(lists, list_count, sublist_counts);
+
+    for (int i = 0; i < list_count; i++) {
+        for (int j = 0; j < sublist_counts[i]; j++) {
+            printf("%s ", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_lists(lists, list_count, sublist_counts);
+
+    return 0;
+}
+```

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+Tuple maximize_tuples(const Tuple* t1, const Tuple* t2) {
+    Tuple result;
+    if (t1 == NULL || t2 == NULL) {
+        result.a = 0;
+        result.b = 0;
+        return result;
+    }
+    
+    result.a = (t1->a > t2->a) ? t1->a : t2->a;
+    result.b = (t1->b > t2->b) ? t1->b : t2->b;
+    
+    return result;
+}
+
+int main(void) {
+    Tuple t1 = {5, 10};
+    Tuple t2 = {8, 3};
+    
+    Tuple max_t = maximize_tuples(&t1, &t2);
+    
+    printf("(%d, %d)\n", max_t.a, max_t.b);
+    
+    return 0;
+}

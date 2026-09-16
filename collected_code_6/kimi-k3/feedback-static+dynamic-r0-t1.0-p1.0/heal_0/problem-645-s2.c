@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int kth_index_product(int **tuples, int num_tuples, int tuple_size, int k, long long *result)
+{
+    int i;
+    long long product;
+
+    if (tuples == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (num_tuples <= 0 || tuple_size <= 0) {
+        return -1;
+    }
+
+    if (k < 0 || k >= tuple_size) {
+        return -1;
+    }
+
+    product = 1;
+
+    for (i = 0; i < num_tuples; i++) {
+        if (tuples[i] == NULL) {
+            return -1;
+        }
+        product *= (long long)tuples[i][k];
+    }
+
+    *result = product;
+    return 0;
+}
+
+int main(void)
+{
+    int **tuples;
+    int num_tuples = 3;
+    int tuple_size = 3;
+    int k = 1;
+    long long result = 0;
+    int i;
+    int j;
+    int status;
+
+    tuples = (int **)malloc((size_t)num_tuples * sizeof(int *));
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_tuples; i++) {
+        tuples[i] = (int *)malloc((size_t)tuple_size * sizeof(int));
+        if (tuples[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (j = 0; j < i; j++) {
+                free(tuples[j]);
+            }
+            free(tuples);
+            return EXIT_FAILURE;
+        }
+    }
+
+    tuples[0][0] = 1; tuples[0][1] = 2; tuples[0][2] = 3;
+    tuples[1][0] = 4; tuples[1][1] = 5; tuples[1][2] = 6;
+    tuples[2][0] = 7; tuples[2][1] = 8; tuples[2][2] = 9;
+
+    status = kth_index_product(tuples, num_tuples, tuple_size, k, &result);
+
+    if (status == 0) {
+        printf("Product of %dth index elements: %lld\n", k, result);
+    } else {
+        fprintf(stderr, "Error computing product\n");
+    }
+
+    for (i = 0; i < num_tuples; i++) {
+        free(tuples[i]);
+    }
+    free(tuples);
+
+    if (status != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

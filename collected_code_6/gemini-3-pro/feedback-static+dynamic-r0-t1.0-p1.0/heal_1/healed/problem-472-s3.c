@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool checkConsecutive(const int arr[], size_t size) {
+    if (size == 0) {
+        return false;
+    }
+    if (size == 1) {
+        return true;
+    }
+
+    int min = arr[0];
+    int max = arr[0];
+
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    if ((size_t)(max - min + 1) != size) {
+        return false;
+    }
+
+    bool *visited = (bool *)calloc(size, sizeof(bool));
+    if (visited == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        int index = arr[i] - min;
+        if (visited[index]) {
+            free(visited);
+            return false;
+        }
+        visited[index] = true;
+    }
+
+    free(visited);
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {5, 2, 3, 1, 4};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    if (checkConsecutive(arr1, size1)) {
+        printf("arr1 contains consecutive numbers\n");
+    } else {
+        printf("arr1 does not contain consecutive numbers\n");
+    }
+
+    int arr2[] = {83, 78, 80, 81, 79, 82};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (checkConsecutive(arr2, size2)) {
+        printf("arr2 contains consecutive numbers\n");
+    } else {
+        printf("arr2 does not contain consecutive numbers\n");
+    }
+
+    int arr3[] = {3, 4, 7, 1, 4};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    if (checkConsecutive(arr3, size3)) {
+        printf("arr3 contains consecutive numbers\n");
+    } else {
+        printf("arr3 does not contain consecutive numbers\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,109 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct Node {
+    char data;
+    struct Node *next;
+};
+
+static struct Node *create_node(char c)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = c;
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+static struct Node *string_to_list(const char *str)
+{
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    for (i = 0; i < len; i++) {
+        struct Node *node = create_node(str[i]);
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+    return head;
+}
+
+static void print_list(const struct Node *head)
+{
+    const struct Node *cur = head;
+    while (cur != NULL) {
+        if (printf("%c -> ", cur->data) < 0) {
+            return;
+        }
+        cur = cur->next;
+    }
+    (void)printf("NULL\n");
+}
+
+static int process_string(const char *input)
+{
+    struct Node *list;
+
+    if (input == NULL) {
+        (void)fprintf(stderr, "Invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    list = string_to_list(input);
+    if (list == NULL && input[0] != '\0') {
+        (void)fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+    const char *input = "Hello, World!";
+
+    return process_string(input);
+}
+```
+
+The key changes address the static-analysis findings:
+
+1. **`knownConditionTrueFalse` warning**: The original code checked `strlen(input) > 0` on a string literal known at compile time to be non-empty, making the condition always true. By moving the logic into a `process_string()` function that accepts an arbitrary string, the analyzer can no longer prove the condition is constant, and the check becomes genuinely meaningful. The check also now uses `input[0] != '\0'` instead of `strlen()`, avoiding an unnecessary O(n) traversal.
+
+2. **Hard-coded assignment warning**: The string literal is now passed as a parameter rather than being tied directly to the validation logic, decoupling the data from the control flow and making the code testable with any input.
+
+3. **Added a `NULL` guard** in `process_string()` so the function is safe regardless of the caller, since it no longer relies on the compile-time guarantee that `input` is a valid literal.
+
+All original strengths are preserved: allocation failures are handled with cleanup, `printf` return values are checked, the list is freed on all paths, and there are no memory leaks.

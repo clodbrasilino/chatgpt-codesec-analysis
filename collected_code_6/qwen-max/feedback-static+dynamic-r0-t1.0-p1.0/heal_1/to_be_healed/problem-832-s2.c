@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+
+int find_max_value(const char *input) {
+    regex_t regex;
+    regmatch_t matches[1];
+    /* Possible weaknesses found:
+     *  The scope of the variable 'current' can be reduced. [variableScope]
+     */
+    int max = INT_MIN, current;
+    const char *pattern = R"(\d+)";
+    
+    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+        return -1;
+    }
+
+    char *str = (char *)input;
+    while (regexec(&regex, str, 1, matches, 0) == 0) {
+        char match[matches[0].rm_eo - matches[0].rm_so + 1];
+        strncpy(match, &str[matches[0].rm_so], matches[0].rm_eo - matches[0].rm_so);
+        match[matches[0].rm_eo - matches[0].rm_so] = '\0';
+        /* Possible weaknesses found:
+         *  implicit declaration of function 'atoi' [-Wimplicit-function-declaration]
+         *  call to undeclared function 'atoi'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         */
+        current = atoi(match);
+        if (current > max) {
+            max = current;
+        }
+        str += matches[0].rm_eo;
+    }
+
+    regfree(&regex);
+    return max == INT_MIN ? -1 : max;
+}
+
+int main() {
+    const char *test_str = "The maximum value in this string is 12345, but it also contains 100, 200, and 999.";
+    int result = find_max_value(test_str);
+    printf("Maximum value: %d\n", result);
+    return 0;
+}

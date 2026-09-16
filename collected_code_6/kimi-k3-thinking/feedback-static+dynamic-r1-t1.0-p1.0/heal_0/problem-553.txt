@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+
+double tuple_to_float(int whole, int fraction)
+{
+    double divisor = 1.0;
+    int temp;
+
+    if (fraction < 0) {
+        fprintf(stderr, "Error: fraction part must be non-negative\n");
+        return 0.0;
+    }
+
+    temp = fraction;
+    do {
+        divisor *= 10.0;
+        temp /= 10;
+    } while (temp > 0);
+
+    if (whole < 0) {
+        return (double)whole - (double)fraction / divisor;
+    }
+
+    return (double)whole + (double)fraction / divisor;
+}
+
+int main(void)
+{
+    int tuple[2] = {4, 5};
+    double result;
+
+    result = tuple_to_float(tuple[0], tuple[1]);
+    printf("(%d, %d) -> %g\n", tuple[0], tuple[1], result);
+
+    return 0;
+}
+```
+
+The function treats the tuple `(whole, fraction)` as the integer and fractional parts of a floating-point number, so `(4, 5)` becomes `4.5` and `(12, 34)` becomes `12.34`. It validates the input (negative fraction part is rejected with an error message), avoids dynamic memory allocation entirely (no lifetime issues), uses only stack-based variables, and follows standard C conventions with a proper function prototype, defined return values on all paths, and a `main` function returning an explicit status code.

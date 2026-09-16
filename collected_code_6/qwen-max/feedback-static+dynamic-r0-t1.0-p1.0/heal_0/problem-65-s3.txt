@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+Node* create_node(int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+int recursive_list_sum(Node* head) {
+    if (head == NULL) {
+        return 0;
+    }
+    return head->value + recursive_list_sum(head->next);
+}
+
+int main() {
+    Node* head = NULL;
+    Node* second = NULL;
+    Node* third = NULL;
+
+    head = create_node(1);
+    second = create_node(2);
+    third = create_node(3);
+
+    head->next = second;
+    second->next = third;
+
+    printf("Sum of list: %d\n", recursive_list_sum(head));
+
+    free(head);
+    free(second);
+    free(third);
+
+    return 0;
+}
+```

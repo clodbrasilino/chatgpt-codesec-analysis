@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 84.0, got <no output>
+  *  test case 0 failed: expected 35.0, got <no output>
+  *  test case 1 failed: expected 56.0, got <no output>
+  */
+
+long long tetrahedral_number(int n) {
+    if (n < 1) {
+        return -1;
+    }
+    return (long long)n * (n + 1) * (n + 2) / 6;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <positive integer>\n", argv[0]);
+        return 1;
+    }
+
+    char *endptr;
+    long input = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || input <= 0 || input > 1000000) {
+        fprintf(stderr, "Error: argument must be a positive integer (1-1000000)\n");
+        return 1;
+    }
+
+    int n = (int)input;
+    long long result = tetrahedral_number(n);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    printf("%lld\n", result);
+    return 0;
+}

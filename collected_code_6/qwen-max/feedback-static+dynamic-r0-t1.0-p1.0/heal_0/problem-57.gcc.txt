@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c: In function 'largestNumber':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c:15:17: error: too few arguments to function 'strcmp'; expected 2, have 1
+   15 |             if (strcmp(strcat(strcat(temp, str_digits[j]), str_digits[j + 1])) <= strcmp(strcat(strcat(temp, str_digits[j + 1]), str_digits[j]))) {
+      |                 ^~~~~~
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c:3:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:89:10: note: declared here
+   89 | int      strcmp(const char *__s1, const char *__s2);
+      |          ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-57.c:15:83: error: too few arguments to function 'strcmp'; expected 2, have 1
+   15 |             if (strcmp(strcat(strcat(temp, str_digits[j]), str_digits[j + 1])) <= strcmp(strcat(strcat(temp, str_digits[j + 1]), str_digits[j]))) {
+      |                                                                                   ^~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:89:10: note: declared here
+   89 | int      strcmp(const char *__s1, const char *__s2);
+      |          ^~~~~~

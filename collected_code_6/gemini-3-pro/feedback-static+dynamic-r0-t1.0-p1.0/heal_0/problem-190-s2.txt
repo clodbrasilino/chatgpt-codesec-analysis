@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+long long count_integral_coordinates(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4) {
+    long long dx1 = x2 - x1;
+    long long dy1 = y2 - y1;
+    long long dx2 = x4 - x1;
+    long long dy2 = y4 - y1;
+    
+    long long area = labs(dx1 * dy2 - dx2 * dy1);
+    
+    long long min_x = x1;
+    if (x2 < min_x) min_x = x2;
+    if (x3 < min_x) min_x = x3;
+    if (x4 < min_x) min_x = x4;
+    
+    long long max_x = x1;
+    if (x2 > max_x) max_x = x2;
+    if (x3 > max_x) max_x = x3;
+    if (x4 > max_x) max_x = x4;
+    
+    long long min_y = y1;
+    if (y2 < min_y) min_y = y2;
+    if (y3 < min_y) min_y = y3;
+    if (y4 < min_y) min_y = y4;
+    
+    long long max_y = y1;
+    if (y2 > max_y) max_y = y2;
+    if (y3 > max_y) max_y = y3;
+    if (y4 > max_y) max_y = y4;
+    
+    long long count = 0;
+    
+    for (long long x = min_x; x <= max_x; x++) {
+        for (long long y = min_y; y <= max_y; y++) {
+            long long a1 = labs(x1*(y2-y) + x2*(y-y1) + x*(y1-y2));
+            long long a2 = labs(x2*(y3-y) + x3*(y-y2) + x*(y2-y3));
+            long long a3 = labs(x3*(y4-y) + x4*(y-y3) + x*(y3-y4));
+            long long a4 = labs(x4*(y1-y) + x1*(y-y4) + x*(y4-y1));
+            
+            if (a1 + a2 + a3 + a4 == area && a1 > 0 && a2 > 0 && a3 > 0 && a4 > 0) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    int x1 = 0, y1 = 2;
+    int x2 = 2, y2 = 4;
+    int x3 = 4, y3 = 2;
+    int x4 = 2, y4 = 0;
+    
+    long long result = count_integral_coordinates(x1, y1, x2, y2, x3, y3, x4, y4);
+    printf("%lld\n", result);
+    
+    return 0;
+}
+```

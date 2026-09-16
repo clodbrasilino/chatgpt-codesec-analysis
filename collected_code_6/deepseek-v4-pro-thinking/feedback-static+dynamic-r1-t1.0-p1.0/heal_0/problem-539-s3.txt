@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef long long (*map_function)(int value, void *context);
+
+typedef struct {
+    int base;
+} power_context;
+
+long long int_power(int base, unsigned int exponent) {
+    long long result = 1;
+    long long factor = base;
+
+    while (exponent > 0) {
+        if (exponent & 1U) {
+            result *= factor;
+        }
+        exponent >>= 1U;
+        if (exponent > 0) {
+            factor *= factor;
+        }
+    }
+
+    return result;
+}
+
+long long power_at_index(int index, void *context) {
+    const power_context *ctx = context;
+    return int_power(ctx->base, (unsigned int)index);
+}
+
+long long *map(const int *input, size_t length, map_function function, void *context) {
+    long long *output;
+    size_t i;
+
+    if (function == NULL || input == NULL) {
+        return NULL;
+    }
+
+    if (length > (size_t)-1 / sizeof(*output)) {
+        return NULL;
+    }
+
+    output = malloc(length * sizeof(*output));
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; ++i) {
+        output[i] = function(input[i], context);
+    }
+
+    return output;
+}
+
+long long *power_list(int base, const int *indices, size_t length) {
+    power_context context;
+    size_t i;
+
+    if (indices == NULL && length > 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; ++i) {
+        if (indices[i] < 0) {
+            return NULL;
+        }
+    }
+
+    context.base = base;
+    return map(indices, length, power_at_index, &context);
+}
+
+int main(void) {
+    const int indices[] = {0, 1, 2, 3, 4, 5};
+    const size_t length = sizeof(indices) / sizeof(indices[0]);
+    long long *powers;
+    size_t i;
+
+    powers = power_list(2, indices, length);
+    if (powers == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < length; ++i) {
+        printf("%lld\n", powers[i]);
+    }
+
+    free(powers);
+    return EXIT_SUCCESS;
+}
+```

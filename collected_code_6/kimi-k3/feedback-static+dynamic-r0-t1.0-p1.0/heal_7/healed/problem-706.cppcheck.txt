@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-706.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-706.c:94:18: style: Condition 'is_subset(NULL,0,arr1,size1)' is always true [knownConditionTrueFalse]
+    if (is_subset(NULL, 0, arr1, size1)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-706.c:94:18: note: Calling function 'is_subset' returns 1
+    if (is_subset(NULL, 0, arr1, size1)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-706.c:94:18: note: Condition 'is_subset(NULL,0,arr1,size1)' is always true
+    if (is_subset(NULL, 0, arr1, size1)) {
+                 ^

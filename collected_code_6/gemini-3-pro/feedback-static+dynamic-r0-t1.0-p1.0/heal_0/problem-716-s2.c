@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculateRhombusPerimeter(double side) {
+    if (side <= 0.0) {
+        return -1.0;
+    }
+    return 4.0 * side;
+}
+
+int main(void) {
+    double side = 0.0;
+    double perimeter = 0.0;
+    int itemsRead = 0;
+
+    itemsRead = scanf("%lf", &side);
+    
+    if (itemsRead != 1) {
+        return EXIT_FAILURE;
+    }
+
+    perimeter = calculateRhombusPerimeter(side);
+
+    if (perimeter < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}

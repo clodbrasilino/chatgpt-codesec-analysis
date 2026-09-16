@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void find_words(char *str) {
+    char *token;
+    const char delimiter[] = " ,.!?";
+    token = strtok(str, delimiter);
+    while (token != NULL) {
+        if (tolower(token[0]) == 'a' || tolower(token[0]) == 'e') {
+            printf("%s\n", token);
+        }
+        token = strtok(NULL, delimiter);
+    }
+}
+
+int main() {
+    char str[] = "An apple a day keeps the doctor away. Every elephant is excited.";
+    find_words(str);
+    return 0;
+}

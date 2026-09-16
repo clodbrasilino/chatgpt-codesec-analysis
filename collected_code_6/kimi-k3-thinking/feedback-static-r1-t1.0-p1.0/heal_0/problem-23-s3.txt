@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int find_max_sum(const int *const *lists, const size_t *lengths, size_t count, long *result)
+{
+    size_t i;
+    size_t j;
+    long max_sum;
+
+    if ((lists == NULL) || (lengths == NULL) || (result == NULL) || (count == 0U))
+    {
+        return -1;
+    }
+
+    max_sum = LONG_MIN;
+
+    for (i = 0U; i < count; i++)
+    {
+        long sum = 0L;
+
+        if ((lists[i] == NULL) && (lengths[i] > 0U))
+        {
+            return -1;
+        }
+
+        for (j = 0U; j < lengths[i]; j++)
+        {
+            sum += (long)lists[i][j];
+        }
+
+        if (sum > max_sum)
+        {
+            max_sum = sum;
+        }
+    }
+
+    *result = max_sum;
+    return 0;
+}
+
+static void free_lists(int **lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL)
+    {
+        return;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        free(lists[i]);
+    }
+
+    free(lists);
+}
+
+int main(void)
+{
+    static const int data[4][5] = {
+        {1, 7, 2, 5, 0},
+        {3, 1, 1, 0, 0},
+        {10, 20, 30, 40, 50},
+        {-5, -10, -3, 0, 0}
+    };
+    static const size_t lengths[4] = {4U, 3U, 5U, 3U};
+    const size_t count = sizeof(lengths) / sizeof(lengths[0]);
+    int **lists;
+    long max_sum = 0L;
+    size_t i;
+    size_t j;
+    int status = EXIT_SUCCESS;
+
+    lists = malloc(count * sizeof(*lists));
+    if (lists == NULL)
+    {
+        fprintf(stderr, "Error: unable to allocate memory\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        lists[i] = NULL;
+    }
+
+    for (i = 0U; i < count; i++)
+    {
+        if (lengths[i] == 0U)
+        {
+            continue;
+        }
+
+        lists[i] = malloc(lengths[i] * sizeof(*lists[i]));
+        if (lists[i] == NULL)
+        {
+            fprintf(stderr, "Error: unable to allocate memory\n");
+            free_lists(lists, count);
+            return EXIT_FAILURE;
+        }
+
+        for (j = 0U; j < lengths[i]; j++)
+        {
+            lists[i][j] = data[i][j];
+        }
+    }
+
+    if (find_max_sum((const int *const *)lists, lengths, count, &max_sum) != 0)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        status = EXIT_FAILURE;
+    }
+    else
+    {
+        printf("Maximum sum: %ld\n", max_sum);
+    }
+
+    free_lists(lists, count);
+
+    return status;
+}
+```

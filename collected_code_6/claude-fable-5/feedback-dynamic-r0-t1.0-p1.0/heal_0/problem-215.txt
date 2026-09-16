@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int *decode_rle(const int *encoded, size_t encoded_len, size_t *decoded_len);
+
+int *decode_rle(const int *encoded, size_t encoded_len, size_t *decoded_len)
+{
+    size_t total = 0U;
+    size_t i;
+    size_t pos = 0U;
+    int *result = NULL;
+
+    if ((encoded == NULL) || (decoded_len == NULL) || ((encoded_len % 2U) != 0U)) {
+        return NULL;
+    }
+
+    for (i = 0U; i < encoded_len; i += 2U) {
+        int count = encoded[i];
+        if (count < 0) {
+            return NULL;
+        }
+        if (total > (SIZE_MAX - (size_t)count)) {
+            return NULL;
+        }
+        total += (size_t)count;
+    }
+
+    if (total == 0U) {
+        *decoded_len = 0U;
+        return NULL;
+    }
+
+    if (total > (SIZE_MAX / sizeof(int))) {
+        return NULL;
+    }
+
+    result = malloc(total * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < encoded_len; i += 2U) {
+        size_t count = (size_t)encoded[i];
+        int value = encoded[i + 1U];
+        size_t j;
+        for (j = 0U; j < count; j++) {
+            result[pos] = value;
+            pos++;
+        }
+    }
+
+    *decoded_len = total;
+    return result;
+}
+
+int main(void)
+{
+    const int encoded[] = {3, 7, 1, 4, 2, 9};
+    size_t encoded_len = sizeof(encoded) / sizeof(encoded[0]);
+    size_t decoded_len = 0U;
+    int *decoded = NULL;
+    size_t i;
+
+    decoded = decode_rle(encoded, encoded_len, &decoded_len);
+    if (decoded == NULL) {
+        if (decoded_len == 0U) {
+            (void)printf("Decoded list is empty or input invalid\n");
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Decoded list: ");
+    for (i = 0U; i < decoded_len; i++) {
+        (void)printf("%d ", decoded[i]);
+    }
+    (void)printf("\n");
+
+    free(decoded);
+    decoded = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

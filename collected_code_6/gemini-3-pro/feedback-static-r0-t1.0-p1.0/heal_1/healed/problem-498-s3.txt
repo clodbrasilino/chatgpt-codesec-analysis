@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int gcd(unsigned int a, unsigned int b) {
+    while (b != 0) {
+        unsigned int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int main(void) {
+    unsigned int num1 = 48;
+    unsigned int num2 = 18;
+    unsigned int result;
+
+    result = gcd(num1, num2);
+
+    printf("GCD of %u and %u is %u\n", num1, num2, result);
+
+    return EXIT_SUCCESS;
+}
+```

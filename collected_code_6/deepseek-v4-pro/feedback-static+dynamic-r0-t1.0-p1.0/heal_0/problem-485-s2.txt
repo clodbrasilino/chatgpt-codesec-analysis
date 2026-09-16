@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_palindrome(int num) {
+    if (num < 0) return false;
+    if (num == 0) return true;
+    
+    int original = num;
+    int reversed = 0;
+    
+    while (num > 0) {
+        if (reversed > (INT_MAX - num % 10) / 10) {
+            return false;
+        }
+        reversed = reversed * 10 + num % 10;
+        num /= 10;
+    }
+    
+    return original == reversed;
+}
+
+int find_largest_palindrome(int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return INT_MIN;
+    }
+    
+    int largest = INT_MIN;
+    bool found = false;
+    
+    for (int i = 0; i < size; i++) {
+        if (is_palindrome(arr[i])) {
+            found = true;
+            if (arr[i] > largest) {
+                largest = arr[i];
+            }
+        }
+    }
+    
+    if (!found) {
+        return INT_MIN;
+    }
+    
+    return largest;
+}
+
+int main(void) {
+    int arr1[] = {121, 123, 454, 78987, 1001, 565};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = find_largest_palindrome(arr1, size1);
+    if (result1 != INT_MIN) {
+        printf("Largest palindrome: %d\n", result1);
+    } else {
+        printf("No palindrome found\n");
+    }
+    
+    int arr2[] = {123, 456, 789, 1000};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = find_largest_palindrome(arr2, size2);
+    if (result2 != INT_MIN) {
+        printf("Largest palindrome: %d\n", result2);
+    } else {
+        printf("No palindrome found\n");
+    }
+    
+    int *arr3 = NULL;
+    int result3 = find_largest_palindrome(arr3, 0);
+    if (result3 != INT_MIN) {
+        printf("Largest palindrome: %d\n", result3);
+    } else {
+        printf("No palindrome found\n");
+    }
+    
+    int arr4[] = {-121, 12321, -454, 98789, -1001, -565};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    int result4 = find_largest_palindrome(arr4, size4);
+    if (result4 != INT_MIN) {
+        printf("Largest palindrome: %d\n", result4);
+    } else {
+        printf("No palindrome found\n");
+    }
+    
+    return 0;
+}
+```

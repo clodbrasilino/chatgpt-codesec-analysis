@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t size;
+} Tuple;
+
+void clear_tuple(Tuple* tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->data != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+    }
+    tuple->size = 0;
+}
+
+int main(void) {
+    Tuple t1;
+    t1.size = 3;
+    t1.data = (int*)malloc(t1.size * sizeof(int));
+    
+    if (t1.data != NULL) {
+        t1.data[0] = 1;
+        t1.data[1] = 2;
+        t1.data[2] = 3;
+    }
+
+    Tuple t2;
+    t2.size = 0;
+    t2.data = NULL;
+
+    clear_tuple(&t1);
+    clear_tuple(&t2);
+
+    return 0;
+}

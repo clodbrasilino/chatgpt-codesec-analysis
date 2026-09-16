@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_single_element(const int *arr, size_t n, int *result)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || result == NULL || n == 0U || (n % 2U) == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+        if ((mid % 2U) == 1U) {
+            mid--;
+        }
+        if (arr[mid] == arr[mid + 1U]) {
+            low = mid + 2U;
+        } else {
+            high = mid;
+        }
+    }
+
+    *result = arr[low];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 1, 2, 2, 3, 4, 4, 5, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int single = 0;
+
+    if (find_single_element(arr, n, &single) != 0) {
+        fprintf(stderr, "Invalid input array\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The element that appears only once is: %d\n", single) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The only weakness identified was the `[variableScope]` issue: `mid` was declared at function scope but is only used inside the `while` loop. Moving its declaration into the loop body reduces its scope, which improves readability, prevents accidental use of a stale value outside the loop, and gives the compiler clearer lifetime information. All other aspects of the original code (NULL checks, even-length rejection, unsigned arithmetic guarding against underflow, and checked I/O return values) were already sound and remain unchanged.

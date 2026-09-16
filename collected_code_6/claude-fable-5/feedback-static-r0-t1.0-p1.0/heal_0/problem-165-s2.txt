@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+size_t count_position_matches(const char *str)
+{
+    size_t count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strlen(str);
+
+    for (i = 0; i < len && i < 26; i++) {
+        if (str[i] == (char)('a' + i) || str[i] == (char)('A' + i)) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+    size_t len;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n') {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_position_matches(buffer);
+
+    printf("Characters at same position as in alphabet: %zu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+- `count_position_matches` compares each character of the string against the letter expected at that index in the English alphabet (`'a' + i` for lowercase, `'A' + i` for uppercase). For example, with input `"aBcXyZ"`, the characters `a` (position 0), `B` (position 1), and `c` (position 2) match, returning 3.
+- The loop is bounded by both the string length and 26, since positions beyond the alphabet cannot match.
+- `fgets` return value is checked to handle input failures (addresses CWE-703).
+- The buffer is fixed-size, `fgets` limits input to its capacity, and the trailing newline is stripped safely (addresses CWE-664).
+- The code uses standard-compliant constructs: `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE`, `size_t` for sizes, and explicit NULL checks (addresses CWE-710).

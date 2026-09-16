@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_odd_length(const char *word)
+{
+    size_t length;
+    
+    if (word == NULL)
+    {
+        return false;
+    }
+    
+    length = strlen(word);
+    return (length % 2) != 0;
+}
+
+int main(void)
+{
+    char word[256];
+    
+    printf("Enter a word: ");
+    
+    if (fgets(word, sizeof(word), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+    
+    word[strcspn(word, "\n")] = '\0';
+    
+    if (is_odd_length(word))
+    {
+        printf("The length of the word is odd.\n");
+    }
+    else
+    {
+        printf("The length of the word is even.\n");
+    }
+    
+    return 0;
+}

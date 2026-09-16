@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low <= high) {
+        if (arr[low] <= arr[high]) {
+            return low;
+        }
+
+        int mid = low + (high - low) / 2;
+        int next = (mid + 1) % n;
+        int prev = (mid + n - 1) % n;
+
+        if (arr[mid] <= arr[next] && arr[mid] <= arr[prev]) {
+            return mid;
+        }
+
+        if (arr[mid] >= arr[low]) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The fix applied: the variable `mid` was previously declared at function scope but only used inside the `while` loop body. Its declaration has been moved inside the loop, reducing its scope as flagged by the static analyzer (`[variableScope]`). This improves readability, limits the variable's lifetime to where it's actually needed, and prevents accidental use of a stale value outside the loop. The functional behavior is unchanged: the binary search correctly finds the index of the minimum element (the rotation count), handles the already-sorted case via the `arr[low] <= arr[high]` early return, and guards against `NULL` input or non-positive sizes.

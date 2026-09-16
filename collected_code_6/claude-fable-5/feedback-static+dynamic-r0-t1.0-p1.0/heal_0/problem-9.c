@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int find_min_rotations(const char *str, size_t *rotations)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+
+    if (str == NULL || rotations == NULL) {
+        return -1;
+    }
+
+    len = strlen(str);
+    if (len == 0) {
+        return -1;
+    }
+
+    for (i = 1; i <= len; i++) {
+        int match = 1;
+        for (j = 0; j < len; j++) {
+            if (str[j] != str[(j + i) % len]) {
+                match = 0;
+                break;
+            }
+        }
+        if (match == 1) {
+            *rotations = i;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    const char *test_strings[] = { "abab", "abc", "aaaa", "abcabcabc" };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        size_t result = 0;
+        if (find_min_rotations(test_strings[i], &result) == 0) {
+            if (printf("String: %s, Minimum rotations: %zu\n",
+                       test_strings[i], result) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (fprintf(stderr, "Error processing string: %s\n",
+                        test_strings[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

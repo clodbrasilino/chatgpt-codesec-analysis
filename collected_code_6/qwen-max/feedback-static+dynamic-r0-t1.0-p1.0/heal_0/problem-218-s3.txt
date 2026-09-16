@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    while (b) {
+        int t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+int minOpsToMakeEqual(int x, int y) {
+    int g = gcd(x, y);
+    return (x / g - 1) + (y / g - 1);
+}
+
+int main() {
+    int x, y;
+    printf("Enter two numbers: ");
+    if (scanf("%d %d", &x, &y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    int result = minOpsToMakeEqual(x, y);
+    printf("Minimum operations required: %d\n", result);
+    return EXIT_SUCCESS;
+}
+```

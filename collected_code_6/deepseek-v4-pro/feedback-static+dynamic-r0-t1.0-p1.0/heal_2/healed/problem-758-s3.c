@@ -1,0 +1,192 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+} List;
+
+int list_equals(const List* a, const List* b) {
+    const Node* na = a->head;
+    const Node* nb = b->head;
+    while (na != NULL && nb != NULL) {
+        if (na->data != nb->data) {
+            return 0;
+        }
+        na = na->next;
+        nb = nb->next;
+    }
+    return na == NULL && nb == NULL;
+}
+
+List* list_copy(const List* src) {
+    List* new_list = (List*)malloc(sizeof(List));
+    if (new_list == NULL) {
+        return NULL;
+    }
+    new_list->head = NULL;
+    Node* tail = NULL;
+    const Node* current = src->head;
+    while (current != NULL) {
+        Node* new_node = (Node*)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            Node* temp = new_list->head;
+            while (temp != NULL) {
+                Node* to_free = temp;
+                temp = temp->next;
+                free(to_free);
+            }
+            free(new_list);
+            return NULL;
+        }
+        new_node->data = current->data;
+        new_node->next = NULL;
+        if (tail == NULL) {
+            new_list->head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+        current = current->next;
+    }
+    return new_list;
+}
+
+void list_free(List* list) {
+    if (list == NULL) {
+        return;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+int count_unique_lists(List** lists, int count) {
+    if (lists == NULL || count <= 0) {
+        return 0;
+    }
+    List** unique_lists = (List**)malloc(sizeof(List*) * count);
+    if (unique_lists == NULL) {
+        return -1;
+    }
+    int unique_count = 0;
+    for (int i = 0; i < count; i++) {
+        if (lists[i] == NULL) {
+            continue;
+        }
+        int is_unique = 1;
+        for (int j = 0; j < unique_count; j++) {
+            if (list_equals(unique_lists[j], lists[i])) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            List* copy = list_copy(lists[i]);
+            if (copy == NULL) {
+                for (int k = 0; k < unique_count; k++) {
+                    list_free(unique_lists[k]);
+                }
+                free(unique_lists);
+                return -1;
+            }
+            unique_lists[unique_count++] = copy;
+        }
+    }
+    for (int i = 0; i < unique_count; i++) {
+        list_free(unique_lists[i]);
+    }
+    free(unique_lists);
+    return unique_count;
+}
+
+Node* create_node(int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+List* create_list(const int* arr, int size) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->head = NULL;
+    Node* tail = NULL;
+    for (int i = 0; i < size; i++) {
+        Node* node = create_node(arr[i]);
+        if (node == NULL) {
+            Node* current = list->head;
+            while (current != NULL) {
+                Node* next = current->next;
+                free(current);
+                current = next;
+            }
+            free(list);
+            return NULL;
+        }
+        if (tail == NULL) {
+            list->head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return list;
+}
+
+int main(void) {
+    const int arr1[] = {1, 2, 3};
+    const int arr2[] = {1, 2, 3};
+    const int arr3[] = {4, 5, 6};
+    const int arr4[] = {1, 2};
+    const int arr5[] = {1, 2, 3, 4};
+
+    List* l1 = create_list(arr1, 3);
+    List* l2 = create_list(arr2, 3);
+    List* l3 = create_list(arr3, 3);
+    List* l4 = create_list(arr4, 2);
+    List* l5 = create_list(arr5, 4);
+
+    if (l1 == NULL || l2 == NULL || l3 == NULL || l4 == NULL || l5 == NULL) {
+        list_free(l1);
+        list_free(l2);
+        list_free(l3);
+        list_free(l4);
+        list_free(l5);
+        return EXIT_FAILURE;
+    }
+
+    List* lists[] = {l1, l2, l3, l4, l5, NULL};
+    int count = 5;
+    int result = count_unique_lists(lists, count);
+    if (result == -1) {
+        list_free(l1);
+        list_free(l2);
+        list_free(l3);
+        list_free(l4);
+        list_free(l5);
+        return EXIT_FAILURE;
+    }
+    printf("Unique lists: %d\n", result);
+
+    list_free(l1);
+    list_free(l2);
+    list_free(l3);
+    list_free(l4);
+    list_free(l5);
+
+    return EXIT_SUCCESS;
+}

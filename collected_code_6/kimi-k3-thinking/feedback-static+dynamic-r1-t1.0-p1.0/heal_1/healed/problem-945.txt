@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *elements;
+    size_t size;
+    size_t capacity;
+} TupleSet;
+
+static bool tuple_equals(Tuple a, Tuple b)
+{
+    return a.first == b.first && a.second == b.second;
+}
+
+static bool set_contains(const TupleSet *set, Tuple value)
+{
+    size_t i;
+
+    for (i = 0; i < set->size; i++) {
+        if (tuple_equals(set->elements[i], value)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool set_add(TupleSet *set, Tuple value)
+{
+    if (set_contains(set, value)) {
+        return true;
+    }
+
+    if (set->size == set->capacity) {
+        size_t new_capacity = (set->capacity == 0) ? 8 : set->capacity * 2;
+        Tuple *new_elements;
+
+        if (new_capacity < set->capacity ||
+            new_capacity > SIZE_MAX / sizeof(Tuple)) {
+            return false;
+        }
+        new_elements = realloc(set->elements, new_capacity * sizeof(Tuple));
+        if (new_elements == NULL) {
+            return false;
+        }
+        set->elements = new_elements;
+        set->capacity = new_capacity;
+    }
+
+    set->elements[set->size] = value;
+    set->size++;
+    return true;
+}
+
+bool tuples_to_set(const Tuple *tuples, size_t count, TupleSet *result)
+{
+    size_t i;
+
+    if (result == NULL) {
+        return false;
+    }
+
+    result->elements = NULL;
+    result->size = 0;
+    result->capacity = 0;
+
+    if (tuples == NULL && count > 0) {
+        return false;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (!set_add(result, tuples[i])) {
+            free(result->elements);
+            result->elements = NULL;
+            result->size = 0;
+            result->capacity = 0;
+            return false;
+        }
+    }
+    return true;
+}
+
+void set_destroy(TupleSet *set)
+{
+    if (set != NULL) {
+        free(set->elements);
+        set->elements = NULL;
+        set->size = 0;
+        set->capacity = 0;
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {1, 2},
+        {5, 6},
+        {3, 4},
+        {7, 8}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    TupleSet set;
+    size_t i;
+
+    if (!tuples_to_set(tuples, count, &set)) {
+        fprintf(stderr, "Failed to convert tuples to set\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Set contains %zu unique tuples:\n", set.size);
+    for (i = 0; i < set.size; i++) {
+        printf("(%d, %d)\n", set.elements[i].first, set.elements[i].second);
+    }
+
+    set_destroy(&set);
+    return EXIT_SUCCESS;
+}
+```

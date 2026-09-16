@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <limits.h>
+
+int max_difference(const int arr[], int n) {
+    if (n < 2) {
+        return 0;
+    }
+
+    int min_element = arr[0];
+    int max_diff = arr[1] - arr[0];
+
+    for (int i = 1; i < n; i++) {
+        int current_diff = arr[i] - min_element;
+        if (current_diff > max_diff) {
+            max_diff = current_diff;
+        }
+        if (arr[i] < min_element) {
+            min_element = arr[i];
+        }
+    }
+
+    return max_diff;
+}
+
+int main(void) {
+    int arr[] = {7, 9, 5, 6, 3, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = max_difference(arr, n);
+    printf("Maximum difference: %d\n", result);
+
+    int arr2[] = {5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Maximum difference (single element): %d\n", max_difference(arr2, n2));
+
+    return 0;
+}

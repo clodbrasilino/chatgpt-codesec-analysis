@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    Tuple *t1 = (Tuple *)a;
+    Tuple *t2 = (Tuple *)b;
+    
+    if (t1->second < t2->second) return -1;
+    if (t1->second > t2->second) return 1;
+    return 0;
+}
+
+void sort_tuples(Tuple *arr, size_t size) {
+    if (arr == NULL || size == 0) return;
+    qsort(arr, size, sizeof(Tuple), compare);
+}
+
+int main() {
+    Tuple *arr = malloc(5 * sizeof(Tuple));
+    if (arr == NULL) {
+        return 1;
+    }
+
+    arr[0] = (Tuple){1, 5};
+    arr[1] = (Tuple){2, 1};
+    arr[2] = (Tuple){3, 4};
+    arr[3] = (Tuple){4, 2};
+    arr[4] = (Tuple){5, 3};
+
+    sort_tuples(arr, 5);
+
+    for (size_t i = 0; i < 5; i++) {
+        printf("(%d, %d)\n", arr[i].first, arr[i].second);
+    }
+
+    free(arr);
+
+    return 0;
+}

@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <math.h>
+
+unsigned long int binomial_coefficient(int n, int k) {
+    if (k > n - k) {
+        k = n - k;
+    }
+    unsigned long int result = 1;
+    for (int i = 0; i < k; ++i) {
+        result *= (n - i);
+        result /= (i + 1);
+    }
+    return result;
+}
+
+unsigned long long sum_of_squares_of_binomial_coefficients(int n) {
+    unsigned long long sum = 0;
+    for (int k = 0; k <= n; ++k) {
+        unsigned long int coeff = binomial_coefficient(n, k);
+        sum += (unsigned long long)coeff * coeff;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+
+    unsigned long long result = sum_of_squares_of_binomial_coefficients(n);
+    printf("Sum of squares of binomial coefficients for n = %d is %llu\n", n, result);
+
+    return 0;
+}

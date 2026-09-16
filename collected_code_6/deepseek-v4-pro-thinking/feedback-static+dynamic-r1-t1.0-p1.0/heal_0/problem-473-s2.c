@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+static int contains(const int *elements, size_t length, int value) {
+    for (size_t i = 0; i < length; ++i) {
+        if (elements[i] == value) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int tuple_intersection(const TupleList *list, Tuple *result) {
+    if (result == NULL || list == NULL) {
+        return -1;
+    }
+
+    result->elements = NULL;
+    result->length = 0;
+
+    if (list->count == 0) {
+        return 0;
+    }
+
+    if (list->tuples == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < list->count; ++i) {
+        if (list->tuples[i].length == 0) {
+            return 0;
+        }
+        if (list->tuples[i].elements == NULL) {
+            return -1;
+        }
+    }
+
+    size_t capacity = list->tuples[0].length;
+    if (capacity > (size_t)-1 / sizeof(int)) {
+        return -1;
+    }
+
+    result->elements = malloc(capacity * sizeof(int));
+    if (result->elements == NULL) {
+        return -1;
+    }
+
+    result->length = 0;
+    for (size_t i = 0; i < list->tuples[0].length; ++i) {
+        int value = list->tuples[0].elements[i];
+        if (!contains(result->elements, result->length, value)) {
+            result->elements[result->length++] = value;
+        }
+    }
+
+    for (size_t t = 1; t < list->count; ++t) {
+        size_t new_length = 0;
+        for (size_t i = 0; i < result->length; ++i) {
+            if (contains(list->tuples[t].elements, list->tuples[t].length, result->elements[i])) {
+                result->elements[new_length++] = result->elements[i];
+            }
+        }
+        result->length = new_length;
+        if (result->length == 0) {
+            free(result->elements);
+            result->elements = NULL;
+            return 0;
+        }
+    }
+
+    if (result->length < capacity) {
+        int *temp = realloc(result->elements, result->length * sizeof(int));
+        if (temp != NULL) {
+            result->elements = temp;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    int arr1[] = { 1, 2, 3, 4 };
+    int arr2[] = { 3, 4, 5, 6 };
+    int arr3[] = { 4, 3, 7, 8 };
+
+    Tuple tuples[] = {
+        { arr1, 4 },
+        { arr2, 4 },
+        { arr3, 4 }
+    };
+    TupleList list = { tuples, 3 };
+    Tuple result;
+
+    if (tuple_intersection(&list, &result) != 0) {
+        fprintf(stderr, "tuple_intersection failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result.length; ++i) {
+        printf("%d ", result.elements[i]);
+    }
+    printf("\n");
+
+    free(result.elements);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *merge_sorted_lists(struct Node *list1, struct Node *list2) {
+    if (list1 == NULL) return list2;
+    if (list2 == NULL) return list1;
+
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+
+    if (list1->data <= list2->data) {
+        head = list1;
+        list1 = list1->next;
+    } else {
+        head = list2;
+        list2 = list2->next;
+    }
+    tail = head;
+
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->data <= list2->data) {
+            tail->next = list1;
+            list1 = list1->next;
+        } else {
+            tail->next = list2;
+            list2 = list2->next;
+        }
+        tail = tail->next;
+    }
+
+    if (list1 != NULL) {
+        tail->next = list1;
+    } else {
+        tail->next = list2;
+    }
+
+    return head;
+}
+
+struct Node *create_node(int data) {
+    struct Node *node = (struct Node *)malloc(sizeof(struct Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(struct Node *head) {
+    struct Node *current = head;
+    struct Node *next_node;
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+void print_list(struct Node *head) {
+    struct Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    struct Node *list1 = create_node(1);
+    list1->next = create_node(3);
+    list1->next->next = create_node(5);
+
+    struct Node *list2 = create_node(2);
+    list2->next = create_node(4);
+    list2->next->next = create_node(6);
+
+    struct Node *merged = merge_sorted_lists(list1, list2);
+
+    print_list(merged);
+
+    free_list(merged);
+
+    return 0;
+}

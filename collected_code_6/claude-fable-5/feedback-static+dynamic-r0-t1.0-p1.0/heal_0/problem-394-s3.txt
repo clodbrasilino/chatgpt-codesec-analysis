@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_distinct(const int *tuple, size_t size)
+{
+    size_t i;
+    size_t j;
+
+    if (tuple == NULL) {
+        return false;
+    }
+
+    if (size < 2U) {
+        return true;
+    }
+
+    for (i = 0U; i < size - 1U; i++) {
+        for (j = i + 1U; j < size; j++) {
+            if (tuple[i] == tuple[j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int tuple1[] = {1, 4, 5, 6, 1, 4};
+    int tuple2[] = {1, 4, 5, 6, 8, 9};
+    int tuple3[] = {2, 3, 4, 5, 6};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t size3 = sizeof(tuple3) / sizeof(tuple3[0]);
+
+    if (is_distinct(tuple1, size1)) {
+        (void)printf("Tuple 1 is distinct\n");
+    } else {
+        (void)printf("Tuple 1 is not distinct\n");
+    }
+
+    if (is_distinct(tuple2, size2)) {
+        (void)printf("Tuple 2 is distinct\n");
+    } else {
+        (void)printf("Tuple 2 is not distinct\n");
+    }
+
+    if (is_distinct(tuple3, size3)) {
+        (void)printf("Tuple 3 is distinct\n");
+    } else {
+        (void)printf("Tuple 3 is not distinct\n");
+    }
+
+    return 0;
+}
+```

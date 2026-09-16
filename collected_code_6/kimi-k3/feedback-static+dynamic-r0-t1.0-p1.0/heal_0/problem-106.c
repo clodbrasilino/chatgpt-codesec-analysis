@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} IntList;
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+int list_init(IntList *list, size_t initial_capacity) {
+    if (list == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    list->data = malloc(initial_capacity * sizeof(int));
+    if (list->data == NULL) {
+        return -1;
+    }
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+void list_free(IntList *list) {
+    if (list != NULL) {
+        free(list->data);
+        list->data = NULL;
+        list->size = 0;
+        list->capacity = 0;
+    }
+}
+
+int tuple_init(IntTuple *tuple, size_t size) {
+    if (tuple == NULL || size == 0) {
+        return -1;
+    }
+    tuple->data = malloc(size * sizeof(int));
+    if (tuple->data == NULL) {
+        return -1;
+    }
+    tuple->size = size;
+    return 0;
+}
+
+void tuple_free(IntTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+    }
+}
+
+int add_list_to_tuple(IntTuple *tuple, const IntList *list) {
+    if (tuple == NULL || list == NULL || tuple->data == NULL || list->data == NULL) {
+        return -1;
+    }
+    if (tuple->size != list->size) {
+        return -1;
+    }
+    for (size_t i = 0; i < tuple->size; i++) {
+        tuple->data[i] += list->data[i];
+    }
+    return 0;
+}
+
+int main(void) {
+    IntList list;
+    IntTuple tuple;
+    size_t n = 5;
+
+    if (list_init(&list, n) != 0) {
+        fprintf(stderr, "Failed to initialize list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_init(&tuple, n) != 0) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        list.data[i] = (int)(i + 1);
+        tuple.data[i] = (int)((i + 1) * 10);
+    }
+    list.size = n;
+
+    printf("Tuple before addition: ");
+    for (size_t i = 0; i < tuple.size; i++) {
+        printf("%d ", tuple.data[i]);
+    }
+    printf("\n");
+
+    printf("List to add: ");
+    for (size_t i = 0; i < list.size; i++) {
+        printf("%d ", list.data[i]);
+    }
+    printf("\n");
+
+    if (add_list_to_tuple(&tuple, &list) != 0) {
+        fprintf(stderr, "Failed to add list to tuple\n");
+        list_free(&list);
+        tuple_free(&tuple);
+        return EXIT_FAILURE;
+    }
+
+    printf("Tuple after addition: ");
+    for (size_t i = 0; i < tuple.size; i++) {
+        printf("%d ", tuple.data[i]);
+    }
+    printf("\n");
+
+    list_free(&list);
+    tuple_free(&tuple);
+
+    return EXIT_SUCCESS;
+}

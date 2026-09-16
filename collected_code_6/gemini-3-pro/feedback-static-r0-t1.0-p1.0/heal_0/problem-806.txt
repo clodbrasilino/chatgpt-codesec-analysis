@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int find_max_uppercase_run(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int max_run = 0;
+    int current_run = 0;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (isupper((unsigned char)str[i])) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+    }
+
+    return max_run;
+}
+
+int main(void) {
+    const char *test1 = "helloWORLDhowAREyou";
+    const char *test2 = "ALLUPPERCASE";
+    const char *test3 = "nocapitals";
+    const char *test4 = NULL;
+    const char *test5 = "A";
+
+    printf("%d\n", find_max_uppercase_run(test1));
+    printf("%d\n", find_max_uppercase_run(test2));
+    printf("%d\n", find_max_uppercase_run(test3));
+    printf("%d\n", find_max_uppercase_run(test4));
+    printf("%d\n", find_max_uppercase_run(test5));
+
+    return 0;
+}
+```

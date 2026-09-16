@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void pair_addition(const int *tuple1, const int *tuple2, int *result, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        result[i] = tuple1[i] + tuple2[i];
+    }
+}
+
+int main() {
+    const size_t length = 3;
+    const int tuple1[length] = {1, 2, 3};
+    const int tuple2[length] = {4, 5, 6};
+    int result[length];
+
+    pair_addition(tuple1, tuple2, result, length);
+
+    for (size_t i = 0; i < length; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

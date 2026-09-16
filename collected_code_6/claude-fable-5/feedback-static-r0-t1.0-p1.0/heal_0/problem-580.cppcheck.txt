@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:150:18: style: Variable 'inner->count' is reassigned a value before the old one has been used. [redundantAssignment]
+    inner->count = 2;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:148:18: note: inner->count is assigned
+    inner->count = 1;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:150:18: note: inner->count is overwritten
+    inner->count = 2;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:154:17: style: Variable 'root->count' is reassigned a value before the old one has been used. [redundantAssignment]
+    root->count = 2;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:152:17: note: root->count is assigned
+    root->count = 1;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:154:17: note: root->count is overwritten
+    root->count = 2;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:156:17: style: Variable 'root->count' is reassigned a value before the old one has been used. [redundantAssignment]
+    root->count = 3;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:154:17: note: root->count is assigned
+    root->count = 2;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:156:17: note: root->count is overwritten
+    root->count = 3;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:158:17: style: Variable 'root->count' is reassigned a value before the old one has been used. [redundantAssignment]
+    root->count = 4;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:156:17: note: root->count is assigned
+    root->count = 3;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-580.c:158:17: note: root->count is overwritten
+    root->count = 4;
+                ^

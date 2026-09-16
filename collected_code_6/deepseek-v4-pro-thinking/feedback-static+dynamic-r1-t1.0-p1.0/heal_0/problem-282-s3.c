@@ -1,0 +1,128 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static size_t list_length(const Node *head) {
+    size_t length = 0;
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+static void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+static Node *append_node(Node **head, int data) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node *new_node = malloc(sizeof(*new_node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+
+    new_node->data = data;
+    new_node->next = NULL;
+
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+
+    return new_node;
+}
+
+Node *subtract_lists(const Node *a, const Node *b) {
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    if (list_length(a) != list_length(b)) {
+        return NULL;
+    }
+
+    Node *result_head = NULL;
+    Node *result_tail = NULL;
+
+    while (a != NULL && b != NULL) {
+        Node *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            free_list(result_head);
+            return NULL;
+        }
+
+        new_node->data = a->data - b->data;
+        new_node->next = NULL;
+
+        if (result_head == NULL) {
+            result_head = new_node;
+        } else {
+            result_tail->next = new_node;
+        }
+        result_tail = new_node;
+
+        a = a->next;
+        b = b->next;
+    }
+
+    return result_head;
+}
+
+int main(void) {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+
+    if (append_node(&list1, 10) == NULL ||
+        append_node(&list1, 20) == NULL ||
+        append_node(&list1, 30) == NULL) {
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    if (append_node(&list2, 3) == NULL ||
+        append_node(&list2, 2) == NULL ||
+        append_node(&list2, 1) == NULL) {
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    result = subtract_lists(list1, list2);
+    if (result == NULL) {
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    Node *current = result;
+    while (current != NULL) {
+        printf("%d\n", current->data);
+        current = current->next;
+    }
+
+    free_list(result);
+    free_list(list1);
+    free_list(list2);
+
+    return EXIT_SUCCESS;
+}

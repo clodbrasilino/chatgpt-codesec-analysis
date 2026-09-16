@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stddef.h>
+
+long long sum_of_positives(const int *list, size_t length) {
+    if (list == NULL || length == 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (size_t i = 0; i < length; i++) {
+        if (list[i] > 0) {
+            sum += list[i];
+        }
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {-5, 10, 3, -1, 0, 7, -20, 15};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+    long long result = sum_of_positives(numbers, length);
+
+    printf("Sum of positive numbers: %lld\n", result);
+
+    return 0;
+}

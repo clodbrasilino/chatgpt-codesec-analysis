@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-921.c: In function 'chunkify':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-921.c:31:31: error: assignment of read-only location '*((chunks + (sizetype)(i * 16))->data + (sizetype)(j * 4))'
+   31 |             chunks[i].data[j] = input[start_index + j];
+      |                               ^

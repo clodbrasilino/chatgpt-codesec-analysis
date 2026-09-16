@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} List;
+
+bool isSubset(const List *small, const List *large) {
+    for (size_t i = 0; i < small->length; ++i) {
+        bool found = false;
+        for (size_t j = 0; j < large->length; ++j) {
+            if (small->data[i] == large->data[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    List small = { .data = (int[]){1, 2, 3}, .length = 3 };
+    List large = { .data = (int[]){1, 2, 3, 4, 5, 6}, .length = 6 };
+
+    if (isSubset(&small, &large)) {
+        printf("The small list is a subset of the large list.\n");
+    } else {
+        printf("The small list is not a subset of the large list.\n");
+    }
+
+    return 0;
+}
+```

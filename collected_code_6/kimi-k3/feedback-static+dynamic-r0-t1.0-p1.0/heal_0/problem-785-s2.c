@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+int parse_tuple(const char *str, int **tuple, size_t *count) {
+    if (str == NULL || tuple == NULL || count == NULL) {
+        return -1;
+    }
+
+    *tuple = NULL;
+    *count = 0;
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str != '(') {
+        return -1;
+    }
+    str++;
+
+    size_t capacity = 10;
+    int *result = malloc(capacity * sizeof(int));
+    if (result == NULL) {
+        return -1;
+    }
+
+    size_t num_count = 0;
+
+    while (1) {
+        while (isspace((unsigned char)*str)) {
+            str++;
+        }
+
+        if (*str == ')') {
+            str++;
+            break;
+        }
+
+        char *endptr;
+        long value = strtol(str, &endptr, 10);
+        if (endptr == str) {
+            free(result);
+            return -1;
+        }
+
+        if (num_count >= capacity) {
+            size_t new_capacity = capacity * 2;
+            int *new_result = realloc(result, new_capacity * sizeof(int));
+            if (new_result == NULL) {
+                free(result);
+                return -1;
+            }
+            result = new_result;
+            capacity = new_capacity;
+        }
+
+        result[num_count++] = (int)value;
+        str = endptr;
+
+        while (isspace((unsigned char)*str)) {
+            str++;
+        }
+
+        if (*str == ',') {
+            str++;
+        } else if (*str != ')') {
+            free(result);
+            return -1;
+        }
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str != '\0') {
+        free(result);
+        return -1;
+    }
+
+    *tuple = result;
+    *count = num_count;
+    return 0;
+}
+
+int main(void) {
+    const char *input = "(1, 2, 3, 4, 5)";
+    int *tuple = NULL;
+    size_t count = 0;
+
+    if (parse_tuple(input, &tuple, &count) == 0) {
+        printf("Parsed %zu integers: ", count);
+        for (size_t i = 0; i < count; i++) {
+            printf("%d ", tuple[i]);
+        }
+        printf("\n");
+        free(tuple);
+    } else {
+        printf("Failed to parse tuple\n");
+    }
+
+    return 0;
+}

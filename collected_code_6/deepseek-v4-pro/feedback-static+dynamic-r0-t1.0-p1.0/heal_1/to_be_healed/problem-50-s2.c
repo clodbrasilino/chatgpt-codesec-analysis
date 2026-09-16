@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    size_t length;
+} List;
+
+List* find_min_length_list(List **lists, size_t num_lists) {
+    if (lists == NULL || num_lists == 0) {
+        return NULL;
+    }
+    
+    List *min_list = lists[0];
+    size_t min_length = lists[0]->length;
+    
+    for (size_t i = 1; i < num_lists; i++) {
+        if (lists[i] != NULL && lists[i]->length < min_length) {
+            min_list = lists[i];
+            min_length = lists[i]->length;
+        }
+    }
+    
+    return min_list;
+}
+
+void list_push_back(List *list, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->length++;
+}
+
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    list->head = NULL;
+    list->length = 0;
+}
+
+int main(void) {
+    List *lists[3];
+    
+    for (int i = 0; i < 3; i++) {
+        lists[i] = (List*)calloc(1, sizeof(List));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (int j = 0; j < i; j++) {
+                free(lists[j]);
+            }
+            return 1;
+        }
+    }
+    
+    list_push_back(lists[0], 1);
+    list_push_back(lists[0], 2);
+    list_push_back(lists[0], 3);
+    
+    list_push_back(lists[1], 10);
+    list_push_back(lists[1], 20);
+    
+    list_push_back(lists[2], 100);
+    list_push_back(lists[2], 200);
+    list_push_back(lists[2], 300);
+    list_push_back(lists[2], 400);
+    
+    /* Possible weaknesses found:
+     *  Variable 'result' can be declared as pointer to const [constVariablePointer]
+     */
+    List *result = find_min_length_list(lists, 3);
+    
+    if (result != NULL) {
+        printf("Minimum length: %zu\n", result->length);
+    }
+    
+    for (int i = 0; i < 3; i++) {
+        free_list(lists[i]);
+        free(lists[i]);
+    }
+    
+    return 0;
+}

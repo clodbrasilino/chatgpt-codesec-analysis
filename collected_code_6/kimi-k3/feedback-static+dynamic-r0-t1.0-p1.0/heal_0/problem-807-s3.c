@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int find_first_odd(const int *numbers, size_t size, int *result)
+{
+    size_t i;
+    
+    if (numbers == NULL || result == NULL || size == 0) {
+        return 0;
+    }
+    
+    for (i = 0; i < size; i++) {
+        if (numbers[i] % 2 != 0) {
+            *result = numbers[i];
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {2, 4, 6, 8, 10, 7, 12, 14};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int result;
+    int status;
+    
+    status = find_first_odd(numbers, size, &result);
+    
+    if (status == 1) {
+        printf("First odd number: %d\n", result);
+    } else {
+        printf("No odd number found\n");
+    }
+    
+    return 0;
+}

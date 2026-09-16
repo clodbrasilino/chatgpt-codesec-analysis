@@ -1,0 +1,34 @@
+Flawfinder version 2.0.19, (C) 2001-2019 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 222
+Examining /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-132-s2.c
+
+FINAL RESULTS:
+
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-132-s2.c:12:  [4] (format) vsnprintf:
+  If format strings can be influenced by an attacker, they can be exploited,
+  and note that sprintf variations do not always \0-terminate (CWE-134). Use
+  a constant for the format specification.
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-132-s2.c:26:  [4] (format) vsnprintf:
+  If format strings can be influenced by an attacker, they can be exploited,
+  and note that sprintf variations do not always \0-terminate (CWE-134). Use
+  a constant for the format specification.
+
+ANALYSIS SUMMARY:
+
+Hits = 2
+Lines analyzed = 60 in approximately 0.03 seconds (1954 lines/second)
+Physical Source Lines of Code (SLOC) = 51
+Hits@level = [0]   6 [1]   0 [2]   0 [3]   0 [4]   2 [5]   0
+Hits@level+ = [0+]   8 [1+]   2 [2+]   2 [3+]   2 [4+]   2 [5+]   0
+Hits/KSLOC@level+ = [0+] 156.863 [1+] 39.2157 [2+] 39.2157 [3+] 39.2157 [4+] 39.2157 [5+]   0
+Minimum risk level = 1
+
+Not every hit is necessarily a security vulnerability.
+You can inhibit a report by adding a comment in this form:
+// flawfinder: ignore
+Make *sure* it's a false positive!
+You can use the option --neverignore to show these.
+
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.

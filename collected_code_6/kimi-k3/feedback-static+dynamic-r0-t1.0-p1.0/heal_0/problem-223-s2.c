@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_majority_element(const int *arr, size_t size, int *majority_element)
+{
+    size_t i;
+    size_t count;
+    int candidate;
+
+    if (arr == NULL || size == 0 || majority_element == NULL) {
+        return 0;
+    }
+
+    candidate = arr[0];
+    count = 1;
+
+    for (i = 1; i < size; i++) {
+        if (arr[i] == candidate) {
+            count++;
+        } else {
+            if (count == 0) {
+                candidate = arr[i];
+                count = 1;
+            } else {
+                count--;
+            }
+        }
+    }
+
+    count = 0;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == candidate) {
+            count++;
+        }
+    }
+
+    if (count > size / 2) {
+        *majority_element = candidate;
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 3, 3, 3, 10};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int majority_element;
+    int result;
+
+    result = check_majority_element(arr, size, &majority_element);
+
+    if (result) {
+        printf("Majority element: %d\n", majority_element);
+    } else {
+        printf("No majority element found\n");
+    }
+
+    return 0;
+}

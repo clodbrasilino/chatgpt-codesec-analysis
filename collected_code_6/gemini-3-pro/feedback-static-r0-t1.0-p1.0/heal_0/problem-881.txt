@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+void find_first_even_odd_sum(const int *arr, size_t size, int *sum, bool *found_both) {
+    if (arr == NULL || sum == NULL || found_both == NULL) {
+        return;
+    }
+
+    bool found_even = false;
+    bool found_odd = false;
+    int first_even = 0;
+    int first_odd = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (!found_even && arr[i] % 2 == 0) {
+            first_even = arr[i];
+            found_even = true;
+        }
+        if (!found_odd && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+            found_odd = true;
+        }
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    *found_both = (found_even && found_odd);
+    if (*found_both) {
+        *sum = first_even + first_odd;
+    }
+}
+
+int main(void) {
+    int arr[] = {3, 7, 2, 8, 5, 4};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int sum = 0;
+    bool found_both = false;
+
+    find_first_even_odd_sum(arr, size, &sum, &found_both);
+
+    if (found_both) {
+        printf("Sum of first even and first odd number: %d\n", sum);
+    } else {
+        printf("Could not find both an even and an odd number in the list.\n");
+    }
+
+    return 0;
+}
+```

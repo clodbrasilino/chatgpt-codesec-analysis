@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_divisible_numbers(int* numbers, size_t size, int m, int n, int** result, size_t* result_size) {
+    if (numbers == NULL || result == NULL || result_size == NULL || m == 0 || n == 0) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        if (result != NULL) {
+            *result = NULL;
+        }
+        return;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (numbers[i] % m == 0 && numbers[i] % n == 0) {
+            count++;
+        }
+    }
+
+    *result_size = count;
+
+    if (count == 0) {
+        *result = NULL;
+        return;
+    }
+
+    *result = (int*)malloc(count * sizeof(int));
+    if (*result == NULL) {
+        *result_size = 0;
+        return;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (numbers[i] % m == 0 && numbers[i] % n == 0) {
+            (*result)[index++] = numbers[i];
+        }
+    }
+}
+
+int main(void) {
+    int numbers[] = {10, 15, 20, 30, 45, 60, 75, 90};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int m = 3;
+    int n = 5;
+    
+    int* result = NULL;
+    size_t result_size = 0;
+
+    find_divisible_numbers(numbers, size, m, n, &result, &result_size);
+
+    if (result != NULL && result_size > 0) {
+        for (size_t i = 0; i < result_size; ++i) {
+            printf("%d\n", result[i]);
+        }
+        free(result);
+        result = NULL;
+    }
+
+    return 0;
+}

@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int findPlatform(int arr[], int dep[], int n) {
+    qsort(arr, n, sizeof(int), compare);
+    qsort(dep, n, sizeof(int), compare);
+
+    int i = 1, j = 0, platform_needed = 1, result = 1;
+    while (i < n && j < n) {
+        if (arr[i] <= dep[j]) {
+            platform_needed++;
+            i++;
+        } else {
+            platform_needed--;
+            j++;
+        }
+        if (platform_needed > result) {
+            result = platform_needed;
+        }
+    }
+    return result;
+}
+
+int main() {
+    int arr[] = {900, 940, 950, 1100, 1500, 1800};
+    int dep[] = {910, 1200, 1120, 1130, 1900, 2000};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("Minimum number of platforms required: %d\n", findPlatform(arr, dep, n));
+    return 0;
+}
+```

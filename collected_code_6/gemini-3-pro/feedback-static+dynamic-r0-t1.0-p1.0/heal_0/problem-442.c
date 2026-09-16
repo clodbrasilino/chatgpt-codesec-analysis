@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_positive_ratio(const int *array, size_t length) {
+    if (array == NULL || length == 0) {
+        return 0.0;
+    }
+
+    size_t positive_count = 0;
+
+    for (size_t i = 0; i < length; ++i) {
+        if (array[i] > 0) {
+            positive_count++;
+        }
+    }
+
+    return (double)positive_count / (double)length;
+}
+
+int main(void) {
+    int numbers[] = {-1, 2, 3, -4, 5, 0, 7};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+    double ratio = find_positive_ratio(numbers, length);
+
+    printf("Ratio of positive numbers: %.2f\n", ratio);
+
+    return 0;
+}

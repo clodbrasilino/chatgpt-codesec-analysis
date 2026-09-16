@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int first;
+    double second;
+    char third;
+};
+
+size_t tuple_size(const struct Tuple *t)
+{
+    if (t == NULL) {
+        return 0U;
+    }
+    return sizeof(*t);
+}
+
+int print_tuple(const struct Tuple *t)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    if (printf("Tuple contents: first=%d, second=%f, third=%c\n",
+               t->first, t->second, t->third) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    struct Tuple t = { 10, 20.5, 'a' };
+    size_t size = tuple_size(&t);
+
+    if (size == 0U) {
+        fprintf(stderr, "Invalid tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    if (print_tuple(&t) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Size of the tuple: %zu bytes\n", size) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `unusedStructMember` warnings: all three struct members (`first`, `second`, `third`) are now actually read via the new `print_tuple` function, so the static analyzer no longer flags them as unused. The rest of the code retains its defensive checks — NULL pointer validation in `tuple_size` and `print_tuple`, and return-value checking on `printf` calls.

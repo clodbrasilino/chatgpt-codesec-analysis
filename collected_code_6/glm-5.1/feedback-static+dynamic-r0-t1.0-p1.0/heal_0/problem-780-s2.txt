@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    int size;
+} Tuple;
+
+typedef struct {
+    int *sum_values;
+    int count;
+} Combination;
+
+void find_sum_combinations(Tuple *tuples, int num_tuples, int target, Combination **results, int *result_count) {
+    int max_combinations = 1 << num_tuples;
+    *results = (Combination *)malloc(max_combinations * sizeof(Combination));
+    if (*results == NULL) {
+        *result_count = 0;
+        return;
+    }
+    
+    *result_count = 0;
+
+    for (int i = 1; i < max_combinations; i++) {
+        int current_sum = 0;
+        int current_count = 0;
+
+        for (int j = 0; j < num_tuples; j++) {
+            if (i & (1 << j)) {
+                current_count++;
+            }
+        }
+
+        int *current_values = (int *)malloc(current_count * sizeof(int));
+        if (current_values == NULL) {
+            for (int k = 0; k < *result_count; k++) {
+                free((*results)[k].sum_values);
+            }
+            free(*results);
+            *results = NULL;
+            *result_count = 0;
+            return;
+        }
+
+        int val_idx = 0;
+        for (int j = 0; j < num_tuples; j++) {
+            if (i & (1 << j)) {
+                int tuple_sum = 0;
+                for (int k = 0; k < tuples[j].size; k++) {
+                    tuple_sum += tuples[j].values[k];
+                }
+                current_sum += tuple_sum;
+                current_values[val_idx++] = j;
+            }
+        }
+
+        if (current_sum == target) {
+            (*results)[*result_count].sum_values = current_values;
+            (*results)[*result_count].count = current_count;
+            (*result_count)++;
+        } else {
+            free(current_values);
+        }
+    }
+
+    if (*result_count > 0) {
+        Combination *temp = (Combination *)realloc(*results, (*result_count) * sizeof(Combination));
+        if (temp != NULL) {
+            *results = temp;
+        }
+    } else {
+        free(*results);
+        *results = NULL;
+    }
+}
+
+int main() {
+    int data0[] = {1, 2};
+    int data1[] = {3};
+    int data2[] = {4, 1};
+
+    Tuple tuples[] = {
+        {data0, 2},
+        {data1, 1},
+        {data2, 2}
+    };
+    int num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    int target = 6;
+
+    Combination *results = NULL;
+    int result_count = 0;
+
+    find_sum_combinations(tuples, num_tuples, target, &results, &result_count);
+
+    for (int i = 0; i < result_count; i++) {
+        printf("Combination %d (Indices: ", i + 1);
+        for (int j = 0; j < results[i].count; j++) {
+            printf("%d", results[i].sum_values[j]);
+            if (j < results[i].count - 1) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+
+    for (int i = 0; i < result_count; i++) {
+        free(results[i].sum_values);
+    }
+    free(results);
+
+    return 0;
+}
+```

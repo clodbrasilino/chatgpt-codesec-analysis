@@ -3,76 +3,68 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
-    int *data;
-    size_t size;
-} Tuple;
+typedef struct ListNode {
+    char *value;
+    struct ListNode *next;
+} ListNode;
 
-List *tupleToList(Tuple *t, const char *str) {
-    if (t == NULL || t->data == NULL || str == NULL) return NULL;
-
-    List *list = (List *)malloc(sizeof(List));
-    if (list == NULL) return NULL;
-
-    list->size = 0;
-    list->capacity = t->size * 2;
-
-    list->elements = (char **)malloc(list->capacity * sizeof(char *));
-    if (list->elements == NULL) {
-        free(list);
+ListNode* append_to_list(ListNode *list, char *data) {
+    ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
+    if (!new_node) {
         return NULL;
     }
-
-    for (size_t i = 0; i < t->size; ++i) {
-        char *element = (char *)malloc((sizeof(int) + strlen(str) + 1) * sizeof(char));
-        if (element == NULL) {
-            for (size_t j = 0; j < list->size; ++j) {
-                free(list->elements[j]);
-            }
-            free(list->elements);
-            free(list);
-            return NULL;
-        }
-
-        sprintf(element, "%d%s", t->data[i], str);
-
-        list->elements[list->size++] = element;
+    new_node->value = (char *)malloc(strlen(data) + 1);
+    if (!new_node->value) {
+        free(new_node);
+        return NULL;
     }
+    strcpy(new_node->value, data);
+    new_node->next = list;
+    return new_node;
+}
 
+ListNode* convert_tuple_to_list(char **tuple, int size, const char *separator) {
+    ListNode *list = NULL;
+    for (int i = 0; i < size; i++) {
+        list = append_to_list(list, tuple[i]);
+        if (i < size - 1) {
+            list = append_to_list(list, (char *)separator);
+        }
+    }
     return list;
 }
 
-int main() {
-    Tuple t;
-    t.size = 3;
-    t.data = (int *)malloc(t.size * sizeof(int));
-    t.data[0] = 1;
-    t.data[1] = 2;
-    t.data[2] = 3;
-
-    const char *separator = "X";
-    List *list = tupleToList(&t, separator);
-
-    if (list != NULL) {
-        for (size_t i = 0; i < list->size; ++i) {
-            printf("%s\n", list->elements[i]);
-            free(list->elements[i]);
+void print_list(ListNode *list) {
+    while (list) {
+        printf("%s", list->value);
+        if (list->next) {
+            printf(", ");
         }
-        free(list->elements);
-        free(list);
+        list = list->next;
     }
+    printf("\n");
+}
 
-    free(t.data);
+void free_list(ListNode *list) {
+    while (list) {
+        ListNode *temp = list;
+        list = list->next;
+        free(temp->value);
+        free(temp);
+    }
+}
+
+int main() {
+    char *tuple[] = {"a", "b", "c"};
+    int size = sizeof(tuple) / sizeof(tuple[0]);
+    const char *separator = "X";
+    
+    ListNode *list = convert_tuple_to_list(tuple, size, separator);
+    if (list) {
+        print_list(list);
+        free_list(list);
+    }
+    
     return 0;
 }
-```
-
-Note: The `List` structure and its associated fields (`size`, `capacity`, and `elements`) are assumed to be defined elsewhere. If they are not, you need to define them as follows:
-
-```c
-typedef struct {
-    char **elements;
-    size_t size;
-    size_t capacity;
-} List;
 ```

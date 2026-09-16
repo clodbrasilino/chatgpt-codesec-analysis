@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+typedef struct {
+    Tuple t1;
+    Tuple t2;
+} NestedTuple;
+
+Tuple subtract_nested_tuples(const NestedTuple* nt) {
+    Tuple result;
+    if (nt == NULL) {
+        result.x = 0;
+        result.y = 0;
+        return result;
+    }
+    result.x = nt->t1.x - nt->t2.x;
+    result.y = nt->t1.y - nt->t2.y;
+    return result;
+}
+
+int main(void) {
+    NestedTuple* nt = (NestedTuple*)malloc(sizeof(NestedTuple));
+    if (nt == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    nt->t1.x = 10;
+    nt->t1.y = 20;
+    nt->t2.x = 3;
+    nt->t2.y = 5;
+
+    Tuple result = subtract_nested_tuples(nt);
+    printf("Result: (%d, %d)\n", result.x, result.y);
+
+    free(nt);
+    nt = NULL;
+
+    return EXIT_SUCCESS;
+}

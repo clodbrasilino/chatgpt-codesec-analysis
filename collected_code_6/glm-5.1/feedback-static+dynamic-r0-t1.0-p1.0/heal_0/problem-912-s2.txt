@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long compute_ln_lobb(unsigned int n, unsigned int m) {
+    if (m > n) {
+        return 0;
+    }
+    unsigned long long **c = malloc((n + 1) * sizeof(unsigned long long *));
+    if (c == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    for (unsigned int i = 0; i <= n; i++) {
+        c[i] = malloc((n + 1) * sizeof(unsigned long long));
+        if (c[i] == NULL) {
+            for (unsigned int j = 0; j < i; j++) {
+                free(c[j]);
+            }
+            free(c);
+            exit(EXIT_FAILURE);
+        }
+    }
+    for (unsigned int i = 0; i <= n; i++) {
+        c[i][0] = 1;
+        for (unsigned int j = 1; j <= i; j++) {
+            c[i][j] = c[i - 1][j - 1] + c[i - 1][j];
+        }
+    }
+    unsigned long long numerator = c[2 * n][n - m];
+    unsigned long long denominator = c[2 * n][n - m - 1];
+    unsigned long long result = numerator - denominator;
+    for (unsigned int i = 0; i <= n; i++) {
+        free(c[i]);
+    }
+    free(c);
+    return result;
+}
+
+int main(void) {
+    unsigned int n = 5;
+    unsigned int m = 2;
+    unsigned long long res = compute_ln_lobb(n, m);
+    printf("%llu\n", res);
+    return 0;
+}
+```

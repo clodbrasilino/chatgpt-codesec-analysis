@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:77:59: style: Condition 'fwrite(cursor+start,1,length,output)!=length' is always true [knownConditionTrueFalse]
+            if (fwrite(cursor + start, 1, length, output) != length ||
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:65:25: note: Assuming that condition 'match.rm_eo<=match.rm_so' is not redundant
+            match.rm_eo <= match.rm_so ||
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:73:32: note: start is assigned '(unsigned long)match.rm_so' here.
+            const size_t start = (size_t)match.rm_so;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:74:32: note: Assignment 'end=(unsigned long)match.rm_eo', assigned value is less than symbolic=start
+            const size_t end = (size_t)match.rm_eo;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:75:39: note: Assignment 'length=end-start', assigned value is less than 0
+            const size_t length = end - start;
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:77:59: note: Condition 'fwrite(cursor+start,1,length,output)!=length' is always true
+            if (fwrite(cursor + start, 1, length, output) != length ||
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-482.c:99:32: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char *const argv[])
+                               ^

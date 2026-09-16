@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-938.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-938.c:18:33: style: Parameter 'arr1' can be declared as pointer to const [constParameterPointer]
+struct Triplet findClosest(int *arr1, int *arr2, int *arr3, int n1, int n2, int n3) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-938.c:18:44: style: Parameter 'arr2' can be declared as pointer to const [constParameterPointer]
+struct Triplet findClosest(int *arr1, int *arr2, int *arr3, int n1, int n2, int n3) {
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-938.c:18:55: style: Parameter 'arr3' can be declared as pointer to const [constParameterPointer]
+struct Triplet findClosest(int *arr1, int *arr2, int *arr3, int n1, int n2, int n3) {
+                                                      ^

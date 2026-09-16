@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void move_zeroes_to_end(int *arr, size_t n)
+{
+    size_t write_index = 0;
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] != 0) {
+            arr[write_index] = arr[i];
+            write_index++;
+        }
+    }
+
+    while (write_index < n) {
+        arr[write_index] = 0;
+        write_index++;
+    }
+}
+
+void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int arr[] = {0, 1, 0, 3, 12, 0, 5, 0};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Before: ");
+    print_array(arr, n);
+
+    move_zeroes_to_end(arr, n);
+
+    printf("After:  ");
+    print_array(arr, n);
+
+    return EXIT_SUCCESS;
+}

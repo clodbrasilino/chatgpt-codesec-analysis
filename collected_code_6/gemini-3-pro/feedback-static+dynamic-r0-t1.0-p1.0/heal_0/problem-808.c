@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int* elements;
+    size_t size;
+} Tuple;
+
+bool contains_k(const Tuple* tuples, size_t num_tuples, int k) {
+    if (tuples == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        if (tuples[i].elements == NULL) {
+            continue;
+        }
+        for (size_t j = 0; j < tuples[i].size; j++) {
+            if (tuples[i].elements[j] == k) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int elems1[] = {1, 2, 3};
+    int elems2[] = {4, 5, 6};
+    
+    Tuple tuples[] = {
+        {elems1, sizeof(elems1) / sizeof(elems1[0])},
+        {elems2, sizeof(elems2) / sizeof(elems2[0])}
+    };
+    
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    int k1 = 5;
+    int k2 = 7;
+    
+    if (contains_k(tuples, num_tuples, k1)) {
+        printf("Tuples contain %d\n", k1);
+    } else {
+        printf("Tuples do not contain %d\n", k1);
+    }
+    
+    if (contains_k(tuples, num_tuples, k2)) {
+        printf("Tuples contain %d\n", k2);
+    } else {
+        printf("Tuples do not contain %d\n", k2);
+    }
+    
+    return 0;
+}

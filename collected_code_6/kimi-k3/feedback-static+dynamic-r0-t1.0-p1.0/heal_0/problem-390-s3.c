@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **insert_string_at_beginning(char **list, size_t count, const char *str)
+{
+    if (list == NULL || str == NULL || count == 0) {
+        return NULL;
+    }
+
+    char **new_list = malloc(count * sizeof(char *));
+    if (new_list == NULL) {
+        return NULL;
+    }
+
+    size_t str_len = strlen(str);
+
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] == NULL) {
+            new_list[i] = NULL;
+            continue;
+        }
+
+        size_t item_len = strlen(list[i]);
+        size_t new_len = str_len + item_len + 1;
+
+        new_list[i] = malloc(new_len);
+        if (new_list[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(new_list[j]);
+            }
+            free(new_list);
+            return NULL;
+        }
+
+        strcpy(new_list[i], str);
+        strcat(new_list[i], list[i]);
+    }
+
+    return new_list;
+}
+
+void free_list(char **list, size_t count)
+{
+    if (list == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    char *list[] = {"apple", "banana", "cherry", "date"};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    const char *prefix = "fruit_";
+
+    char **result = insert_string_at_beginning(list, count, prefix);
+
+    if (result == NULL) {
+        fprintf(stderr, "Error: Failed to create new list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list:\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("  %s\n", list[i]);
+    }
+
+    printf("\nModified list:\n");
+    for (size_t i = 0; i < count; i++) {
+        printf("  %s\n", result[i]);
+    }
+
+    free_list(result, count);
+
+    return EXIT_SUCCESS;
+}

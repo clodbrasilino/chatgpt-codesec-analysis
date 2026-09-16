@@ -6,27 +6,31 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-Node* insert_before_each_element(Node *head, int insertData) {
-    if (head == NULL) return head;
-
-    Node *current = head, *newHead = (Node *)malloc(sizeof(Node));
-    if (newHead == NULL) return NULL;
-    
-    newHead->data = insertData;
-    newHead->next = head;
-    head = newHead;
-
-    while (current->next != NULL) {
-        Node *newNode = (Node *)malloc(sizeof(Node));
-        if (newNode == NULL) {
-            return NULL;
-        }
-        newNode->data = insertData;
-        newNode->next = current->next;
-        current->next = newNode;
-        current = current->next->next;
+Node* create_node(int data) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        exit(1);
     }
-    return head;
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void insert_before_each(Node **head, int value) {
+    if (*head == NULL) {
+        return;
+    }
+
+    Node *current = *head;
+    *head = create_node(value);
+    (*head)->next = current;
+
+    while (current != NULL && current->next != NULL) {
+        Node *temp = current->next;
+        current->next = create_node(value);
+        current->next->next = temp;
+        current = temp;
+    }
 }
 
 void print_list(Node *head) {
@@ -38,37 +42,28 @@ void print_list(Node *head) {
     printf("NULL\n");
 }
 
-int main() {
-    Node *head = NULL, *second = NULL, *third = NULL;
-
-    head = (Node *)malloc(sizeof(Node));
-    second = (Node *)malloc(sizeof(Node));
-    third = (Node *)malloc(sizeof(Node));
-
-    head->data = 1;
-    head->next = second;
-
-    second->data = 2;
-    second->next = third;
-
-    third->data = 3;
-    third->next = NULL;
-
-    printf("Original list: ");
-    print_list(head);
-
-    head = insert_before_each_element(head, 0);
-
-    printf("Modified list: ");
-    print_list(head);
-
-    // Free allocated memory
-    Node *current = head;
-    while (current != NULL) {
-        Node *to_free = current;
-        current = current->next;
-        free(to_free);
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
     }
+}
 
+int main() {
+    Node *head = NULL;
+    head = create_node(10);
+    head->next = create_node(20);
+    head->next->next = create_node(30);
+
+    printf("Original List: ");
+    print_list(head);
+
+    insert_before_each(&head, 5);
+
+    printf("List after insertion: ");
+    print_list(head);
+
+    free_list(head);
     return 0;
 }

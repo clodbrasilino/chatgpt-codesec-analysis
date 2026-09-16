@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double divide_first_even_odd(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    int first_even = 0;
+    int first_odd = 0;
+    int found_even = 0;
+    int found_odd = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (!found_even && arr[i] % 2 == 0) {
+            first_even = arr[i];
+            found_even = 1;
+        }
+        if (!found_odd && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+            found_odd = 1;
+        }
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    if (!found_even || !found_odd || first_odd == 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    return (double)first_even / (double)first_odd;
+}
+
+int main(void) {
+    int numbers[] = {3, 8, 5, 4, 10};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+
+    double result = divide_first_even_odd(numbers, size);
+    
+    printf("%f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

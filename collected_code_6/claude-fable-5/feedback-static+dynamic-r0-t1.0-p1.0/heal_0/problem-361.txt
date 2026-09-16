@@ -1,0 +1,138 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+} List;
+
+static int init_list(List *list, const int *values, size_t count)
+{
+    if (list == NULL) {
+        return -1;
+    }
+    list->items = NULL;
+    list->count = 0U;
+    if (count == 0U || values == NULL) {
+        return 0;
+    }
+    list->items = malloc(count * sizeof(int));
+    if (list->items == NULL) {
+        return -1;
+    }
+    for (size_t i = 0U; i < count; i++) {
+        list->items[i] = values[i];
+    }
+    list->count = count;
+    return 0;
+}
+
+static void free_list(List *list)
+{
+    if (list != NULL) {
+        free(list->items);
+        list->items = NULL;
+        list->count = 0U;
+    }
+}
+
+static size_t remove_empty_lists(List *lists, size_t count)
+{
+    size_t write_index = 0U;
+
+    if (lists == NULL) {
+        return 0U;
+    }
+    for (size_t i = 0U; i < count; i++) {
+        if (lists[i].count > 0U && lists[i].items != NULL) {
+            if (write_index != i) {
+                lists[write_index] = lists[i];
+                lists[i].items = NULL;
+                lists[i].count = 0U;
+            }
+            write_index++;
+        } else {
+            free_list(&lists[i]);
+        }
+    }
+    return write_index;
+}
+
+static void print_lists(const List *lists, size_t count)
+{
+    if (lists == NULL) {
+        return;
+    }
+    printf("[");
+    for (size_t i = 0U; i < count; i++) {
+        printf("[");
+        for (size_t j = 0U; j < lists[i].count; j++) {
+            printf("%d", lists[i].items[j]);
+            if (j + 1U < lists[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1U < count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    const int a[] = {1, 2, 3};
+    const int b[] = {4, 5};
+    const int c[] = {6};
+    List lists[5];
+    size_t count = 5U;
+    size_t new_count;
+
+    if (init_list(&lists[0], a, 3U) != 0) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    if (init_list(&lists[1], NULL, 0U) != 0) {
+        free_list(&lists[0]);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    if (init_list(&lists[2], b, 2U) != 0) {
+        free_list(&lists[0]);
+        free_list(&lists[1]);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    if (init_list(&lists[3], NULL, 0U) != 0) {
+        free_list(&lists[0]);
+        free_list(&lists[1]);
+        free_list(&lists[2]);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+    if (init_list(&lists[4], c, 1U) != 0) {
+        free_list(&lists[0]);
+        free_list(&lists[1]);
+        free_list(&lists[2]);
+        free_list(&lists[3]);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: ");
+    print_lists(lists, count);
+
+    new_count = remove_empty_lists(lists, count);
+
+    printf("After:  ");
+    print_lists(lists, new_count);
+
+    for (size_t i = 0U; i < new_count; i++) {
+        free_list(&lists[i]);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

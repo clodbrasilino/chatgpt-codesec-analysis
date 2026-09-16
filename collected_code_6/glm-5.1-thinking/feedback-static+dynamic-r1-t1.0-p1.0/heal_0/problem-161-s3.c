@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *create_node(int data) {
+    struct Node *node = (struct Node *)malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(struct Node *head) {
+    struct Node *curr = head;
+    while (curr != NULL) {
+        struct Node *temp = curr;
+        curr = curr->next;
+        free(temp);
+    }
+}
+
+void print_list(struct Node *head) {
+    struct Node *curr = head;
+    while (curr != NULL) {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+    printf("\n");
+}
+
+struct Node *remove_elements(struct Node *src, struct Node *remove_list) {
+    if (src == NULL) {
+        return NULL;
+    }
+    if (remove_list == NULL) {
+        return src;
+    }
+    struct Node dummy;
+    dummy.next = src;
+    struct Node *curr = &dummy;
+    while (curr->next != NULL) {
+        int found = 0;
+        struct Node *r = remove_list;
+        while (r != NULL) {
+            if (r->data == curr->next->data) {
+                found = 1;
+                break;
+            }
+            r = r->next;
+        }
+        if (found) {
+            struct Node *temp = curr->next;
+            curr->next = temp->next;
+            free(temp);
+        } else {
+            curr = curr->next;
+        }
+    }
+    return dummy.next;
+}
+
+int main(void) {
+    struct Node *src = create_node(1);
+    if (src == NULL) return 1;
+    
+    src->next = create_node(2);
+    if (src->next == NULL) {
+        free_list(src);
+        return 1;
+    }
+    
+    src->next->next = create_node(3);
+    if (src->next->next == NULL) {
+        free_list(src);
+        return 1;
+    }
+    
+    src->next->next->next = create_node(4);
+    if (src->next->next->next == NULL) {
+        free_list(src);
+        return 1;
+    }
+    
+    src->next->next->next->next = create_node(2);
+    if (src->next->next->next->next == NULL) {
+        free_list(src);
+        return 1;
+    }
+
+    struct Node *rm = create_node(2);
+    if (rm == NULL) {
+        free_list(src);
+        return 1;
+    }
+    
+    rm->next = create_node(4);
+    if (rm->next == NULL) {
+        free_list(src);
+        free_list(rm);
+        return 1;
+    }
+
+    src = remove_elements(src, rm);
+
+    print_list(src);
+
+    free_list(src);
+    free_list(rm);
+
+    return 0;
+}

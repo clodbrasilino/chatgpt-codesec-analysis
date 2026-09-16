@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool are_elements_same(const int *arr, size_t size) {
+    if (size == 0) {
+        return true;
+    }
+    if (arr == NULL) {
+        return false;
+    }
+
+    int first_element = arr[0];
+
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] != first_element) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int list1[] = {5, 5, 5, 5, 5};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+
+    if (are_elements_same(list1, size1)) {
+        printf("list1: All elements are the same.\n");
+    } else {
+        printf("list1: Elements are not all the same.\n");
+    }
+
+    int list2[] = {5, 5, 4, 5, 5};
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+
+    if (are_elements_same(list2, size2)) {
+        printf("list2: All elements are the same.\n");
+    } else {
+        printf("list2: Elements are not all the same.\n");
+    }
+
+    int list3_dummy = 0;
+    const int *list3 = &list3_dummy;
+    size_t size3 = 0;
+
+    if (are_elements_same(list3, size3)) {
+        printf("Empty list: All elements are the same.\n");
+    } else {
+        printf("Empty list: Elements are not all the same or list is invalid.\n");
+    }
+
+    return 0;
+}
+```

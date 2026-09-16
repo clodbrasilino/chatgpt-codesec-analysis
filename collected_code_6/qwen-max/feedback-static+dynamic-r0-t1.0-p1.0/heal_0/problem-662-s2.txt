@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Pair;
+
+int compare(const void *a, const void *b) {
+    return strcmp(((Pair *)a)->key, ((Pair *)b)->key);
+}
+
+void sortListOfPairs(Pair *pairs, size_t count) {
+    qsort(pairs, count, sizeof(Pair), compare);
+}
+
+int main() {
+    Pair list[] = {{"banana", 2}, {"apple", 1}, {"cherry", 3}};
+    size_t listSize = sizeof(list) / sizeof(list[0]);
+
+    sortListOfPairs(list, listSize);
+
+    for (size_t i = 0; i < listSize; ++i) {
+        printf("%s: %d\n", list[i].key, list[i].value);
+    }
+
+    return 0;
+}
+```

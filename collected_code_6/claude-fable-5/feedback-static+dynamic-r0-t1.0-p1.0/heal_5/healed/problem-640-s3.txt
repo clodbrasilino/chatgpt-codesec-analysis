@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "python(java)",
+        "string(remove)",
+        "alpha(beta(gamma)delta)",
+        "Hello (remove me) World",
+        "abc(def(ghi)jkl)mno",
+        "no parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (printf("%s\n", output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original source code is, in fact, functionally correct. Tracing through the logic:
+
+1. **`remove_parentheses`** properly guards against `NULL` input, uses `calloc` (which zero-initializes, guaranteeing the buffer is never left with garbage), tracks nesting `depth` correctly for nested parentheses, and explicitly writes the terminating `'\0'` at index `j`.
+
+2. **Buffer sizing** is safe: the output can never exceed the input length, so `len + 1` bytes is always sufficient.
+
+3. **The reported failures** (garbage output like `��` and `@�`) are the classic signature of reading freed or uninitialized heap memory — a use-after-free or a missing null terminator. Neither defect exists in the code as shown. The most likely real-world causes of those symptoms would be:
+   - A variant of the code using `malloc` instead of `calloc` **and** forgetting `result[j] = '\0';`
+   - Printing `output` *after* `free(output)`
+   - Returning a pointer to a stack-local buffer
+
+4. In the rewrite I kept the defensive structure intact (`calloc`, explicit termination, `NULL` checks on allocation and `printf`) and added `output = NULL;` after `free` as a hardening measure against accidental dangling-pointer reuse, which addresses the class of weakness the test failures point toward.
+
+Expected output:
+
+```
+python
+string
+alpha
+Hello  World
+abcmno
+no parentheses here
+```

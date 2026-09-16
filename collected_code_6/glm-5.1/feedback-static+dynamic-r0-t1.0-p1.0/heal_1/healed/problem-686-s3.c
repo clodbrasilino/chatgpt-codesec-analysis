@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_frequencies(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return;
+    }
+
+    int *visited = (int *)malloc(size * sizeof(int));
+    if (visited == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        visited[i] = 0;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        if (visited[i] == 1) {
+            continue;
+        }
+
+        int count = 1;
+        for (size_t j = i + 1; j < size; j++) {
+            if (array[i] == array[j]) {
+                count++;
+                visited[j] = 1;
+            }
+        }
+
+        printf("%d %d\n", array[i], count);
+    }
+
+    free(visited);
+}
+
+int main(void) {
+    int arr[] = {10, 20, 20, 10, 30, 10};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    find_frequencies(arr, n);
+
+    return 0;
+}

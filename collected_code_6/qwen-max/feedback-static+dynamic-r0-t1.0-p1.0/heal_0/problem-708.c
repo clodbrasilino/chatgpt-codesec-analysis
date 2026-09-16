@@ -2,58 +2,77 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Node {
-    char *value;
-    struct Node *next;
-} Node;
+#define LIST_INITIAL_CAPACITY 5
 
-Node* create_node(char *value) {
-    Node *new_node = (Node*)malloc(sizeof(Node));
-    if (new_node == NULL) {
-        return NULL;
-    }
-    new_node->value = strdup(value);
-    if (new_node->value == NULL) {
-        free(new_node);
-        return NULL;
-    }
-    new_node->next = NULL;
-    return new_node;
+typedef struct {
+    char **elements;
+    size_t count;
+    size_t capacity;
+} StringList;
+
+StringList* create_string_list() {
+    StringList *list = (StringList*)malloc(sizeof(StringList));
+    list->elements = (char**)malloc(LIST_INITIAL_CAPACITY * sizeof(char*));
+    list->count = 0;
+    list->capacity = LIST_INITIAL_CAPACITY;
+    return list;
 }
 
-void free_list(Node *head) {
-    while (head != NULL) {
-        Node *temp = head;
-        head = head->next;
-        free(temp->value);
-        free(temp);
+void free_string_list(StringList *list) {
+    for (size_t i = 0; i < list->count; ++i) {
+        free(list->elements[i]);
     }
+    free(list->elements);
+    free(list);
 }
 
-Node* split_string_to_list(const char *str, char delimiter) {
-    Node *head = NULL;
-    Node **current = &head;
-    const char *start = str;
-    while (*str) {
-        if (*str == delimiter) {
-            *current = create_node(strncpy((char*)malloc((str - start + 1) * sizeof(char)), start, str - start));
-            current = &(*current)->next;
-            start = str + 1;
+int add_to_list(StringList *list, const char *str) {
+    if (list->count >= list->capacity) {
+        list->capacity *= 2;
+        list->elements = (char**)realloc(list->elements, list->capacity * sizeof(char*));
+        if (list->elements == NULL) {
+            return -1;
         }
-        str++;
     }
-    if (start != str) {
-        *current = create_node(strcpy((char*)malloc((str - start + 1) * sizeof(char)), start));
+
+    list->elements[list->count] = (char*)malloc((strlen(str) + 1) * sizeof(char));
+    if (list->elements[list->count] == NULL) {
+        return -1;
     }
-    return head;
+    strcpy(list->elements[list->count], str);
+    ++list->count;
+    return 0;
+}
+
+StringList* convert_string_to_list(const char *str, const char *delimiter) {
+    StringList *list = create_string_list();
+    const char *token;
+    token = strtok((char *)str, delimiter);
+
+    while (token != NULL) {
+        if (add_to_list(list, token) != 0) {
+            free_string_list(list);
+            return NULL;
+        }
+        token = strtok(NULL, delimiter);
+    }
+
+    return list;
 }
 
 int main() {
-    const char *input = "apple,banana,orange,grape";
-    Node *list = split_string_to_list(input, ',');
-    for (Node *node = list; node != NULL; node = node->next) {
-        printf("%s\n", node->value);
+    const char *input = "apple,banana,cherry,date";
+    const char *delimiter = ",";
+    StringList *result = convert_string_to_list(input, delimiter);
+
+    if (result != NULL) {
+        for (size_t i = 0; i < result->count; ++i) {
+            printf("%s\n", result->elements[i]);
+        }
+        free_string_list(result);
+    } else {
+        printf("Failed to convert string to list.\n");
     }
-    free_list(list);
+
     return 0;
 }

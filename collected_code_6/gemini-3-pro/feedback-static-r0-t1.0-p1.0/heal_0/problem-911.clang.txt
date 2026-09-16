@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-911.c:65:9: warning: Value stored to 'prod2' during its initialization is never read [deadcode.DeadStores]
+   65 |     int prod2 = bottom2[0] * bottom2[1] * (top3[0] > top3[1] ? (top3[0] > top3[2] ? top3[0] : top3[2]) : (top3[1] > top3[2] ? top3[1] : top3[2]));
+      |         ^~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

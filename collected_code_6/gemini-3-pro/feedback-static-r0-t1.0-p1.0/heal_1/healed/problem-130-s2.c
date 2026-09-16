@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ElementCount {
+    int value;
+    int count;
+};
+
+int findMaxFrequencyItem(const int *list, size_t size, int *error) {
+    if (list == NULL || size == 0) {
+        if (error != NULL) {
+            *error = 1;
+        }
+        return 0;
+    }
+
+    struct ElementCount *counts = (struct ElementCount *)malloc(size * sizeof(struct ElementCount));
+    if (counts == NULL) {
+        if (error != NULL) {
+            *error = 1;
+        }
+        return 0;
+    }
+
+    size_t uniqueCount = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < uniqueCount; ++j) {
+            if (counts[j].value == list[i]) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            counts[uniqueCount].value = list[i];
+            counts[uniqueCount].count = 1;
+            uniqueCount++;
+        }
+    }
+
+    int maxFreqItem = counts[0].value;
+    int maxFreq = counts[0].count;
+
+    for (size_t i = 1; i < uniqueCount; ++i) {
+        if (counts[i].count > maxFreq) {
+            maxFreq = counts[i].count;
+            maxFreqItem = counts[i].value;
+        }
+    }
+
+    free(counts);
+
+    if (error != NULL) {
+        *error = 0;
+    }
+    return maxFreqItem;
+}
+
+int main(void) {
+    int list[] = {1, 3, 2, 1, 4, 1, 2, 5, 2, 2};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int error = 0;
+
+    int maxItem = findMaxFrequencyItem(list, size, &error);
+
+    if (error == 0) {
+        printf("Item with maximum frequency: %d\n", maxItem);
+    } else {
+        printf("Error processing the list.\n");
+    }
+
+    const int *emptyList = NULL;
+    findMaxFrequencyItem(emptyList, 0, &error);
+    
+    if (error != 0) {
+        printf("Correctly handled empty/null list.\n");
+    }
+
+    return 0;
+}

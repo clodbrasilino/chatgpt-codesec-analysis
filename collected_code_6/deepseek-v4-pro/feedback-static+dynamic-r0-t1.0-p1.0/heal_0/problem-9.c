@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int minRotations(char *str) {
+    int n = strlen(str);
+    char *temp = (char *)malloc(2 * n + 1);
+    if (temp == NULL) {
+        return -1;
+    }
+    
+    strcpy(temp, str);
+    strcat(temp, str);
+    
+    for (int i = 1; i <= n; i++) {
+        if (strncmp(str, temp + i, n) == 0) {
+            free(temp);
+            return i;
+        }
+    }
+    
+    free(temp);
+    return n;
+}
+
+int main() {
+    char str[100];
+    
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+    
+    size_t len = strlen(str);
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    }
+    
+    if (strlen(str) == 0) {
+        printf("Empty string\n");
+        return 0;
+    }
+    
+    int rotations = minRotations(str);
+    if (rotations == -1) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Minimum rotations required: %d\n", rotations);
+    
+    return 0;
+}

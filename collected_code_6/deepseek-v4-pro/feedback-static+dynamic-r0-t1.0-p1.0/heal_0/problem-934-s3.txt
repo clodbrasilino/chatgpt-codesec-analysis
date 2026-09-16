@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long delannoy(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        exit(EXIT_FAILURE);
+    }
+
+    unsigned long long **dp = (unsigned long long **)malloc((n + 1) * sizeof(unsigned long long *));
+    if (dp == NULL) {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (unsigned long long *)malloc((n + 1) * sizeof(unsigned long long));
+        if (dp[i] == NULL) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (int i = 0; i <= n; i++) {
+        dp[i][0] = 1;
+        dp[0][i] = 1;
+    }
+
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= n; j++) {
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1] + dp[i - 1][j - 1];
+        }
+    }
+
+    unsigned long long result = dp[n][n];
+
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = delannoy(n);
+    printf("D(%d,%d) = %llu\n", n, n, result);
+
+    return EXIT_SUCCESS;
+}
+```

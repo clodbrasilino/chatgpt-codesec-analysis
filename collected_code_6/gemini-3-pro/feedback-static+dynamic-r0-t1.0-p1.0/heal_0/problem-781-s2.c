@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h>
+
+void checkDivisorsCount(int n) {
+    if (n <= 0) {
+        printf("Invalid input\n");
+        return;
+    }
+
+    int root = (int)sqrt((double)n);
+    if (root * root == n) {
+        printf("Odd\n");
+    } else {
+        printf("Even\n");
+    }
+}
+
+int main(void) {
+    int num;
+    
+    if (scanf("%d", &num) != 1) {
+        printf("Input error\n");
+        return 1;
+    }
+
+    checkDivisorsCount(num);
+
+    return 0;
+}

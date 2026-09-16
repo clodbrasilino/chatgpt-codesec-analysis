@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int calculate_wind_chill_metric(double temperature, double wind_speed, double *wind_chill);
+
+int calculate_wind_chill_metric(double temperature, double wind_speed, double *wind_chill) {
+    if (wind_chill == NULL) {
+        return -1;
+    }
+
+    if (temperature > 10.0 || wind_speed <= 4.8) {
+        return -2;
+    }
+
+    *wind_chill = 13.12 + (0.6215 * temperature) - (11.37 * pow(wind_speed, 0.16)) + (0.3965 * temperature * pow(wind_speed, 0.16));
+
+    return 0;
+}
+
+int main(void) {
+    double temperature = 0.0;
+    double wind_speed = 0.0;
+    double wind_chill = 0.0;
+    int status = 0;
+
+    if (scanf("%lf %lf", &temperature, &wind_speed) != 2) {
+        fprintf(stderr, "Invalid input format.\n");
+        return EXIT_FAILURE;
+    }
+
+    status = calculate_wind_chill_metric(temperature, wind_speed, &wind_chill);
+
+    if (status == -1) {
+        fprintf(stderr, "Null pointer provided for output.\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (status == -2) {
+        fprintf(stderr, "Values out of valid range for wind chill calculation (T <= 10.0 C, V > 4.8 km/h).\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", wind_chill);
+
+    return EXIT_SUCCESS;
+}
+```

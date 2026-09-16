@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stddef.h>
+
+ptrdiff_t find_removed_position(const int *original, size_t original_len, const int *modified, size_t modified_len) {
+    if (original == NULL || (modified == NULL && modified_len > 0)) {
+        return -1;
+    }
+    if (original_len == 0 || original_len - 1 != modified_len) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < modified_len; i++) {
+        if (original[i] != modified[i]) {
+            return (ptrdiff_t)i;
+        }
+    }
+
+    return (ptrdiff_t)(original_len - 1);
+}
+
+int main(void) {
+    int original[] = {10, 20, 30, 40, 50, 60};
+    int modified[] = {10, 20, 30, 50, 60};
+    
+    size_t original_len = sizeof(original) / sizeof(original[0]);
+    size_t modified_len = sizeof(modified) / sizeof(modified[0]);
+
+    ptrdiff_t position = find_removed_position(original, original_len, modified, modified_len);
+
+    if (position >= 0) {
+        printf("%td\n", position);
+    } else {
+        printf("-1\n");
+    }
+
+    return 0;
+}

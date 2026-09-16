@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int first_digit(long long number)
+{
+    unsigned long long n;
+
+    if (number < 0) {
+        n = (unsigned long long)(-(number + 1)) + 1ULL;
+    } else {
+        n = (unsigned long long)number;
+    }
+
+    while (n >= 10ULL) {
+        n /= 10ULL;
+    }
+
+    return (int)n;
+}
+
+int main(void)
+{
+    long long values[] = { 12345LL, -9876LL, 0LL, 7LL, LLONG_MIN, LLONG_MAX };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int digit = first_digit(values[i]);
+        if (printf("First digit of %lld is %d\n", values[i], digit) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

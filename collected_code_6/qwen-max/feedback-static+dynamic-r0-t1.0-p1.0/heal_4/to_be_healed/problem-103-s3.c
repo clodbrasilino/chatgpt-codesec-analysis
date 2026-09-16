@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 26, got 10130539643981594
+  *  test case 1 failed: expected 11, got 2251251860987659
+  *  test case 0 failed: expected 4, got 1125634626375812
+  */
+
+long long eulerian(int n, int m) {
+    long long a[n + 1][m + 1];
+    for (int i = 0; i <= n; i++) {
+        a[i][0] = 1;
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (i < j) {
+                a[i][j] = 0;
+            } else {
+                a[i][j] = (i - j) * a[i - 1][j - 1] + (j + 1) * a[i - 1][j];
+            }
+        }
+    }
+    return a[n][m];
+}
+
+int main() {
+    int n = 4, m = 2;
+    printf("Eulerian number A(%d, %d) is %lld\n", n, m, eulerian(n, m));
+    return 0;
+}

@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t xor_tuples(uint32_t a, uint32_t b) {
+    return a ^ b;
+}
+
+int main() {
+    uint32_t result = xor_tuples(0b1101, 0b1011);
+    printf("Result: %u\n", result);
+    return 0;
+}

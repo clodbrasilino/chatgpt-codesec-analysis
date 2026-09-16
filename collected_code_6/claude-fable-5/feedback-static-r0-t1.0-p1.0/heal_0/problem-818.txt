@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+size_t count_lowercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    size_t result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input.\n");
+        return 1;
+    }
+
+    result = count_lowercase(buffer);
+    printf("Number of lowercase letters: %zu\n", result);
+
+    return 0;
+}
+```
+
+Key safety points in this implementation:
+
+- **CWE-664 (Resource lifetime)**: No dynamic allocation is used, so there are no leaks or use-after-free risks. `fgets` writes only within the fixed-size buffer.
+- **CWE-703 (Exceptional conditions)**: The return value of `fgets` is checked before use, and `count_lowercase` guards against a `NULL` pointer instead of dereferencing it blindly.
+- **CWE-710 (Coding standards)**: `islower` receives its argument cast to `unsigned char` (passing a plain `char` with a negative value is undefined behavior), `size_t` is used for counts, `main` has a conforming signature, and `%zu` is the correct format specifier for `size_t`.

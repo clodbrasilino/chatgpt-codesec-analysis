@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long calculate_product(const int *tuple, size_t size, int *error) {
+    long long product = 1;
+    size_t i;
+
+    if (tuple == NULL || error == NULL) {
+        if (error != NULL) {
+            *error = EINVAL;
+        }
+        return 0;
+    }
+
+    *error = 0;
+
+    if (size == 0) {
+        return 1;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (tuple[i] != 0 && 
+            (tuple[i] > LLONG_MAX / product || tuple[i] < LLONG_MIN / product)) {
+            *error = ERANGE;
+            return 0;
+        }
+        product *= tuple[i];
+    }
+
+    return product;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    int error = 0;
+    long long result;
+
+    result = calculate_product(tuple, size, &error);
+
+    if (error == EINVAL) {
+        fprintf(stderr, "Error: Invalid argument\n");
+        return EXIT_FAILURE;
+    } else if (error == ERANGE) {
+        fprintf(stderr, "Error: Integer overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Product: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}

@@ -1,53 +1,43 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
-#include <ctype.h>
 #include <stdlib.h>
-
-#define MAX_WORDS 1024
-#define MAX_WORD_LENGTH 64
  /* Possible weaknesses found:
-  *  test case 2 failed: expected 'ca', got <no output>
   *  test case 1 failed: expected 'None', got <no output>
-  *  test case 0 failed: expected 'ab', got 
+  *  test case 0 failed: expected 'ab', got <no output>
+  *  test case 2 failed: expected 'ca', got <no output>
   */
 
-char* findFirstRepeatedWord(const char* str) {
-    if (str == NULL) return NULL;
+char* find_first_repeated_word(const char* str) {
+    const int MAX_WORDS = 100;
+    const int MAX_WORD_LENGTH = 50;
+    char words[MAX_WORDS][MAX_WORD_LENGTH];
+    int word_count = 0;
 
-    char words[MAX_WORDS][MAX_WORD_LENGTH] = {0};
-    int wordCount = 0;
-
-    char* mutableStr = strdup(str);
-    char* token = strtok(mutableStr, " .,;:!?-");
-    while (token != NULL && wordCount < MAX_WORDS) {
-        bool found = false;
-        for (int i = 0; i < wordCount; ++i) {
-            if (strcasecmp(words[i], token) == 0) {
-                found = true;
-                break;
+    char* mutable_str = strdup(str);
+    char* token = strtok(mutable_str, " ");
+    while (token && word_count < MAX_WORDS) {
+        for (int i = 0; i < word_count; i++) {
+            if (strcmp(words[i], token) == 0) {
+                free(mutable_str);
+                return token;
             }
         }
-        if (found) {
-            free(mutableStr);
-            return token;
-        } else {
-            strncpy(words[wordCount++], token, MAX_WORD_LENGTH - 1);
-        }
-        token = strtok(NULL, " .,;:!?-");
+        strcpy(words[word_count++], token);
+        token = strtok(NULL, " ");
     }
 
-    free(mutableStr);
+    free(mutable_str);
     return NULL;
 }
 
 int main() {
-    const char* str = "This is a test. This is only a test.";
-    char* result = findFirstRepeatedWord(str);
-    if (result) {
+    const char* input = "This is a test string with test words";
+    char* result = find_first_repeated_word(input);
+    if (result != NULL) {
         printf("First repeated word: %s\n", result);
     } else {
-        printf("No repeated word found.\n");
+        printf("No repeated words found.\n");
     }
     return 0;
 }

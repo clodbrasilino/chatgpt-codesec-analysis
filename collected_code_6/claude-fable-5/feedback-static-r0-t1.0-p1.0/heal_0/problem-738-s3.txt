@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double geometric_sum(int n)
+{
+    double sum = 0.0;
+    double term = 1.0;
+    int i;
+
+    for (i = 0; i <= n; i++) {
+        sum += term;
+        term /= 2.0;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int n = 0;
+    int result;
+    double sum;
+
+    printf("Enter n: ");
+    result = scanf("%d", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    sum = geometric_sum(n - 1);
+
+    if (printf("Geometric sum: %f\n", sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation calculates the geometric sum `1 + 1/2 + 1/4 + ... + 1/2^(n-1)` iteratively rather than recursively, which avoids potential stack exhaustion for large inputs (addressing CWE-664 concerns about resource lifetime). Key safety points:
+
+- **CWE-703**: The return value of `scanf` is checked to ensure valid input was actually read, negative values of `n` are rejected, and even the `printf` return value is verified.
+- **CWE-664**: No dynamic memory or file handles are used, so there are no resources to leak; the iterative approach bounds stack usage.
+- **CWE-710**: The code uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, declares all variables with explicit types, and avoids implicit conversions.

@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+} IntList;
+
+static int lists_equal(const IntList *first, const IntList *second)
+{
+    if (first == NULL || second == NULL) {
+        return 0;
+    }
+    if (first->length != second->length) {
+        return 0;
+    }
+    if (first->length == 0) {
+        return 1;
+    }
+    if (first->data == NULL || second->data == NULL) {
+        return first->data == second->data;
+    }
+    return memcmp(first->data, second->data, first->length * sizeof(*first->data)) == 0;
+}
+
+size_t count_unique_lists(const IntList *lists, size_t count)
+{
+    size_t unique_count = 0;
+    size_t i;
+    size_t j;
+    int duplicate;
+
+    if (lists == NULL && count > 0) {
+        return 0;
+    }
+
+    for (i = 0; i < count; ++i) {
+        duplicate = 0;
+        for (j = 0; j < i; ++j) {
+            if (lists_equal(&lists[i], &lists[j])) {
+                duplicate = 1;
+                break;
+            }
+        }
+        if (!duplicate) {
+            ++unique_count;
+        }
+    }
+
+    return unique_count;
+}
+
+int main(void)
+{
+    enum { LIST_COUNT = 5, MAX_LENGTH = 3 };
+    const size_t lengths[LIST_COUNT] = {3, 2, 3, 3, 2};
+    const int values[LIST_COUNT][MAX_LENGTH] = {
+        {1, 2, 3},
+        {4, 5, 0},
+        {1, 2, 3},
+        {4, 5, 6},
+        {4, 5, 0}
+    };
+    IntList lists[LIST_COUNT];
+    int *storage[LIST_COUNT];
+    size_t i;
+    size_t k;
+    size_t unique;
+
+    for (i = 0; i < LIST_COUNT; ++i) {
+        storage[i] = NULL;
+    }
+
+    for (i = 0; i < LIST_COUNT; ++i) {
+        storage[i] = malloc(lengths[i] * sizeof(*storage[i]));
+        if (storage[i] == NULL) {
+            for (k = 0; k < LIST_COUNT; ++k) {
+                free(storage[k]);
+            }
+            fprintf(stderr, "error: memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        memcpy(storage[i], values[i], lengths[i] * sizeof(*storage[i]));
+        lists[i].data = storage[i];
+        lists[i].length = lengths[i];
+    }
+
+    unique = count_unique_lists(lists, LIST_COUNT);
+
+    if (printf("Number of unique lists: %zu\n", unique) < 0) {
+        for (i = 0; i < LIST_COUNT; ++i) {
+            free(storage[i]);
+        }
+        fprintf(stderr, "error: failed to write output\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < LIST_COUNT; ++i) {
+        free(storage[i]);
+        storage[i] = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}

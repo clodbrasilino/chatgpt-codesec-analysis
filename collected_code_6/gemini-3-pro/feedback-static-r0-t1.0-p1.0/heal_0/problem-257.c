@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b);
+
+void swap(int *a, int *b) {
+    if (a == NULL || b == NULL) {
+        return;
+    }
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main(void) {
+    int x = 10;
+    int y = 20;
+
+    if (printf("Before: x = %d, y = %d\n", x, y) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    swap(&x, &y);
+
+    if (printf("After: x = %d, y = %d\n", x, y) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

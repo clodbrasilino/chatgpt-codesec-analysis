@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdarg.h>
+
+double tuple_product(int count, ...) {
+    if (count <= 0) {
+        return 0.0;
+    }
+    
+    va_list args;
+    va_start(args, count);
+    
+    double product = 1.0;
+    for (int i = 0; i < count; i++) {
+        product *= va_arg(args, double);
+    }
+    
+    va_end(args);
+    return product;
+}
+
+int main(void) {
+    double result1 = tuple_product(4, 2.5, 3.0, 4.5, 1.5);
+    printf("Product 1: %.2f\n", result1);
+    
+    double result2 = tuple_product(3, 10.0, 20.0, 5.0);
+    printf("Product 2: %.2f\n", result2);
+    
+    double result3 = tuple_product(1, 42.0);
+    printf("Product 3: %.2f\n", result3);
+    
+    return 0;
+}
+```

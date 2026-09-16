@@ -1,85 +1,45 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
-char* remove_parenthesis(const char *s) {
-    int len = strlen(s);
-    char *result = (char*)malloc((len + 1) * sizeof(char));
-    if (result == NULL) return NULL;
+char* remove_parenthesis(const char *str) {
+    int len = strlen(str);
+    char *result = (char*)malloc(len + 1);
+    if (!result) return NULL;
+    char *write_pos = result;
+    int parenthesis_level = 0;
 
-    int r_index = 0;
-    int p_count = 0;
-
-    for (int i = 0; i < len; i++) {
-        if (s[i] == '(') {
-            p_count++;
-        } else if (s[i] == ')') {
-            if (p_count > 0) {
-                p_count--;
+    for (const char *read_pos = str; *read_pos; read_pos++) {
+        if (*read_pos == '(') {
+            parenthesis_level++;
+        } else if (*read_pos == ')') {
+            if (parenthesis_level > 0) {
+                parenthesis_level--;
             }
-        } else {
-            result[r_index++] = s[i];
+        } else if (parenthesis_level == 0) {
+            *write_pos++ = *read_pos;
         }
     }
 
-    result[r_index] = '\0';
+    *write_pos = '\0';
     return result;
 }
 
 int main() {
-    const char input[] = "python";
-    char *output = remove_parenthesis(input);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
-    }
+    const char input1[] = "Example (with (nested) parenthesis) string.";
+    const char input2[] = "python (is a) programming language";
+    const char input3[] = "alpha(beta(gamma)) delta";
 
-    const char input2[] = "string";
-    output = remove_parenthesis(input2);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
-    }
+    char *output1 = remove_parenthesis(input1);
+    char *output2 = remove_parenthesis(input2);
+    char *output3 = remove_parenthesis(input3);
 
-    const char input3[] = "alpha";
-    output = remove_parenthesis(input3);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
-    }
+    printf("Output 1: %s\n", output1 ? output1 : "");
+    printf("Output 2: %s\n", output2 ? output2 : "");
+    printf("Output 3: %s\n", output3 ? output3 : "");
 
-    const char input4[] = "(test)";
-    output = remove_parenthesis(input4);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
-    }
-
-    const char input5[] = "a(b)c(d)e";
-    output = remove_parenthesis(input5);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
-    }
-
-    const char input6[] = "(()())";
-    output = remove_parenthesis(input6);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    } else {
-        fprintf(stderr, "Memory allocation failed.\n");
-    }
-
+    free(output1);
+    free(output2);
+    free(output3);
     return 0;
 }

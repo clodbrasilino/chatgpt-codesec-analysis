@@ -1,0 +1,141 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char name[50];
+    int height;
+    int width;
+} Student;
+
+typedef struct {
+    Student *students;
+    size_t size;
+    size_t capacity;
+} StudentDict;
+
+typedef struct {
+    Student *filtered;
+    size_t count;
+} FilteredStudents;
+
+int init_dict(StudentDict *dict, size_t initial_capacity) {
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    dict->students = (Student *)malloc(initial_capacity * sizeof(Student));
+    if (dict->students == NULL) {
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+void free_dict(StudentDict *dict) {
+    if (dict != NULL) {
+        free(dict->students);
+        dict->students = NULL;
+        dict->size = 0;
+        dict->capacity = 0;
+    }
+}
+
+int add_student(StudentDict *dict, const char *name, int height, int width) {
+    if (dict == NULL || name == NULL || height <= 0 || width <= 0) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        Student *new_students = (Student *)realloc(dict->students, new_capacity * sizeof(Student));
+        if (new_students == NULL) {
+            return -1;
+        }
+        dict->students = new_students;
+        dict->capacity = new_capacity;
+    }
+    strncpy(dict->students[dict->size].name, name, sizeof(dict->students[dict->size].name) - 1);
+    dict->students[dict->size].name[sizeof(dict->students[dict->size].name) - 1] = '\0';
+    dict->students[dict->size].height = height;
+    dict->students[dict->size].width = width;
+    dict->size++;
+    return 0;
+}
+
+FilteredStudents *filter_students(const StudentDict *dict, int min_height, int max_height, int min_width, int max_width) {
+    if (dict == NULL || dict->students == NULL || min_height > max_height || min_width > max_width) {
+        return NULL;
+    }
+    FilteredStudents *result = (FilteredStudents *)malloc(sizeof(FilteredStudents));
+    if (result == NULL) {
+        return NULL;
+    }
+    result->count = 0;
+    result->filtered = NULL;
+    
+    for (size_t i = 0; i < dict->size; i++) {
+        if (dict->students[i].height >= min_height && dict->students[i].height <= max_height &&
+            dict->students[i].width >= min_width && dict->students[i].width <= max_width) {
+            Student *temp = (Student *)realloc(result->filtered, (result->count + 1) * sizeof(Student));
+            if (temp == NULL) {
+                free(result->filtered);
+                free(result);
+                return NULL;
+            }
+            result->filtered = temp;
+            result->filtered[result->count] = dict->students[i];
+            result->count++;
+        }
+    }
+    return result;
+}
+
+void free_filtered(FilteredStudents *filtered) {
+    if (filtered != NULL) {
+        free(filtered->filtered);
+        filtered->filtered = NULL;
+        filtered->count = 0;
+    }
+}
+
+void print_filtered(const FilteredStudents *filtered) {
+    if (filtered == NULL || filtered->filtered == NULL) {
+        printf("No matching students found.\n");
+        return;
+    }
+    for (size_t i = 0; i < filtered->count; i++) {
+        printf("Name: %s, Height: %d, Width: %d\n", 
+               filtered->filtered[i].name, 
+               filtered->filtered[i].height, 
+               filtered->filtered[i].width);
+    }
+}
+
+int main(void) {
+    StudentDict dict;
+    if (init_dict(&dict, 5) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary.\n");
+        return EXIT_FAILURE;
+    }
+    
+    add_student(&dict, "Alice", 170, 60);
+    add_student(&dict, "Bob", 180, 75);
+    add_student(&dict, "Charlie", 165, 55);
+    add_student(&dict, "Diana", 175, 65);
+    add_student(&dict, "Eve", 160, 50);
+    
+    FilteredStudents *filtered = filter_students(&dict, 165, 175, 55, 70);
+    if (filtered == NULL) {
+        fprintf(stderr, "Filtering failed.\n");
+        free_dict(&dict);
+        return EXIT_FAILURE;
+    }
+    
+    print_filtered(filtered);
+    
+    free_filtered(filtered);
+    free(filtered);
+    free_dict(&dict);
+    
+    return EXIT_SUCCESS;
+}

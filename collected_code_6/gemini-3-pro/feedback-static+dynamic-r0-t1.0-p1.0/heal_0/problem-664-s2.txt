@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_even_numbers(int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+    
+    if (n % 2 != 0) {
+        return 0.0;
+    }
+
+    long long sum = 0;
+    long long count = 0;
+
+    for (int i = 2; i <= n; i += 2) {
+        sum += i;
+        count++;
+    }
+
+    if (count == 0) {
+        return 0.0;
+    }
+
+    return (double)sum / count;
+}
+
+int main(void) {
+    int input;
+    
+    if (scanf("%d", &input) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (input <= 0 || input % 2 != 0) {
+        return EXIT_FAILURE;
+    }
+
+    double average = average_of_even_numbers(input);
+    printf("%f\n", average);
+
+    return EXIT_SUCCESS;
+}
+```

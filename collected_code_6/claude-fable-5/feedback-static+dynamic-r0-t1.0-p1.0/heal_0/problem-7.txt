@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int find_long_words(const char *text)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char *word;
+    size_t length;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "[A-Za-z]{4,}", REG_EXTENDED);
+    if (ret != 0) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regcomp failed: %s\n", errbuf);
+        return -1;
+    }
+
+    cursor = text;
+    while ((ret = regexec(&regex, cursor, 1, &match, 0)) == 0) {
+        if (match.rm_so == -1) {
+            break;
+        }
+        length = (size_t)(match.rm_eo - match.rm_so);
+        word = malloc(length + 1);
+        if (word == NULL) {
+            fprintf(stderr, "malloc failed\n");
+            regfree(&regex);
+            return -1;
+        }
+        memcpy(word, cursor + match.rm_so, length);
+        word[length] = '\0';
+        printf("%s\n", word);
+        free(word);
+        cursor += match.rm_eo;
+        if (*cursor == '\0') {
+            break;
+        }
+    }
+
+    if (ret != 0 && ret != REG_NOMATCH) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "regexec failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog";
+
+    if (find_long_words(text) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

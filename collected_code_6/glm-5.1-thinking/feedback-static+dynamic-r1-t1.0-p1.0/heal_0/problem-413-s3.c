@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+    int third;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+} TupleList;
+
+int extract_nth_element(const TupleList *list, size_t tuple_index, size_t element_index, int *out) {
+    if (list == NULL || out == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    if (list->data == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    if (tuple_index >= list->size) {
+        return EXIT_FAILURE;
+    }
+    
+    if (element_index > 2) {
+        return EXIT_FAILURE;
+    }
+
+    Tuple t = list->data[tuple_index];
+
+    if (element_index == 0) {
+        *out = t.first;
+    } else if (element_index == 1) {
+        *out = t.second;
+    } else {
+        *out = t.third;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int main(void) {
+    TupleList list;
+    list.size = 2;
+    list.data = malloc(list.size * sizeof(Tuple));
+    
+    if (list.data == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list.data[0].first = 10;
+    list.data[0].second = 20;
+    list.data[0].third = 30;
+
+    list.data[1].first = 40;
+    list.data[1].second = 50;
+    list.data[1].third = 60;
+
+    int result;
+    
+    if (extract_nth_element(&list, 1, 2, &result) == EXIT_SUCCESS) {
+        printf("%d\n", result);
+    }
+
+    free(list.data);
+    list.data = NULL;
+
+    return EXIT_SUCCESS;
+}

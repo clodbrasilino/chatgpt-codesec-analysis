@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_in_sequence(long long n) {
+    long long low = 1, high = 1000000;
+    
+    while (low <= high) {
+        long long mid = low + (high - low) / 2;
+        long long position = mid * (mid + 1) / 2;
+        
+        if (position == n) {
+            return true;
+        } else if (position < n) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    long long num;
+    
+    printf("Enter a number: ");
+    if (scanf("%lld", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (is_in_sequence(num)) {
+        printf("%lld is present in the sequence\n", num);
+    } else {
+        printf("%lld is not present in the sequence\n", num);
+    }
+    
+    return 0;
+}
+```

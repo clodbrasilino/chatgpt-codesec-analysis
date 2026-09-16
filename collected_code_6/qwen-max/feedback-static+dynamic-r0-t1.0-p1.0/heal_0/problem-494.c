@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int binary_to_integer(const char *binary) {
+    if (binary == NULL) return -1;
+    int result = 0;
+    while (*binary) {
+        if (*binary != '0' && *binary != '1') return -1;
+        result = (result << 1) + (*binary - '0');
+        binary++;
+    }
+    return result;
+}
+
+int main() {
+    const char *binary_str = "1101";
+    int integer_value = binary_to_integer(binary_str);
+    if (integer_value != -1) {
+        printf("The integer value is: %d\n", integer_value);
+    } else {
+        printf("Invalid binary string.\n");
+    }
+    return 0;
+}

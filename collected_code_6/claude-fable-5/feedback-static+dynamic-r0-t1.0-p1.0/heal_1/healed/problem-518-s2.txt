@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long find_square_root(long long n)
+{
+    long long low;
+    long long high;
+
+    if (n < 0) {
+        return -1;
+    }
+    if (n < 2) {
+        return n;
+    }
+
+    low = 1;
+    high = n / 2;
+
+    while (low <= high) {
+        long long mid = low + (high - low) / 2;
+        long long square;
+
+        if (mid > n / mid) {
+            high = mid - 1;
+            continue;
+        }
+        square = mid * mid;
+        if (square == n) {
+            return mid;
+        }
+        if (square < n) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    long long number;
+    long long result;
+    int scan_status;
+
+    printf("Enter a perfect square number: ");
+    scan_status = scanf("%lld", &number);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: negative numbers are not allowed.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_square_root(number);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: %lld is not a perfect square.\n", number);
+        return EXIT_FAILURE;
+    }
+
+    printf("The square root of %lld is %lld\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **`[variableScope]` fix:** The variables `mid` and `square` were declared at function scope but only used inside the `while` loop. They have been moved inside the loop body, reducing their scope to the smallest region where they are needed. This improves readability, helps the compiler with optimization analysis, and prevents accidental use of stale values outside the loop.
+
+2. **Everything else preserved:** The overflow-safe midpoint calculation (`low + (high - low) / 2`), the pre-multiplication overflow guard (`mid > n / mid`), the input validation in `main`, and the error handling paths all remain intact, as they were already sound defensive practices.

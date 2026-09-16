@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long permutation_coefficient(int n, int k) {
+    if (n < 0 || k < 0 || k > n) {
+        return 0;
+    }
+    
+    long long result = 1;
+    for (int i = 0; i < k; i++) {
+        result *= (n - i);
+        if (result < 0) {
+            return 0;
+        }
+    }
+    return result;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <n> <k>\n", argv[0]);
+        return 1;
+    }
+    
+    char *endptr;
+    long n = strtol(argv[1], &endptr, 10);
+    if (*endptr != '\0' || n < 0) {
+        fprintf(stderr, "Error: n must be a non-negative integer\n");
+        return 1;
+    }
+    
+    long k = strtol(argv[2], &endptr, 10);
+    if (*endptr != '\0' || k < 0) {
+        fprintf(stderr, "Error: k must be a non-negative integer\n");
+        return 1;
+    }
+    
+    if (k > n) {
+        fprintf(stderr, "Error: k cannot be greater than n\n");
+        return 1;
+    }
+    
+    if (n > 20) {
+        fprintf(stderr, "Error: n is too large, result may overflow\n");
+        return 1;
+    }
+    
+    long long result = permutation_coefficient((int)n, (int)k);
+    printf("P(%ld, %ld) = %lld\n", n, k, result);
+    
+    return 0;
+}

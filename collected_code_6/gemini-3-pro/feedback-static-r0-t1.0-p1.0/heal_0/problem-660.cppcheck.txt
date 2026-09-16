@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:25:51: style: Condition 'range1_end>=range2_start' is always true [knownConditionTrueFalse]
+    if (range1_start < range2_start && range1_end >= range2_start && range1_end <= range2_end) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:13:20: note: Assuming condition 'range1_end<range2_start' is false
+    if (range1_end < range2_start) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:19:20: note: Assuming condition is false
+    if (range2_end < range1_start) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:25:51: note: Condition 'range1_end>=range2_start' is always true
+    if (range1_start < range2_start && range1_end >= range2_start && range1_end <= range2_end) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:31:51: style: Condition 'range2_end>=range1_start' is always true [knownConditionTrueFalse]
+    if (range2_start < range1_start && range2_end >= range1_start && range2_end <= range1_end) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:19:20: note: Assuming condition 'range2_end<range1_start' is false
+    if (range2_end < range1_start) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:25:67: note: Assuming condition is false
+    if (range1_start < range2_start && range1_end >= range2_start && range1_end <= range2_end) {
+                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-660.c:31:51: note: Condition 'range2_end>=range1_start' is always true
+    if (range2_start < range1_start && range2_end >= range1_start && range2_end <= range1_end) {
+                                                  ^

@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <ctype.h>
+
+char *remove_parenthesis_area(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+
+    if (len == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t depth = 0;
+    size_t w = 0;
+    int pending_space = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        unsigned char ch = (unsigned char)str[i];
+
+        if (ch == '(') {
+            depth++;
+            continue;
+        }
+
+        if (ch == ')' && depth > 0) {
+            depth--;
+            continue;
+        }
+
+        if (depth > 0) {
+            continue;
+        }
+
+        if (isspace(ch)) {
+            pending_space = 1;
+            continue;
+        }
+
+        if (pending_space && w > 0) {
+            result[w++] = ' ';
+        }
+
+        result[w++] = (char)ch;
+        pending_space = 0;
+    }
+
+    result[w] = '\0';
+    return result;
+}
+
+static char *read_line(FILE *stream)
+{
+    size_t capacity = 128;
+    size_t length = 0;
+
+    char *buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int ch;
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            if (capacity > SIZE_MAX / 2) {
+                free(buffer);
+                return NULL;
+            }
+            capacity *= 2;
+            char *resized = realloc(buffer, capacity);
+            if (resized == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = resized;
+        }
+        buffer[length++] = (char)ch;
+    }
+
+    if (ferror(stream) != 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (ch == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    if (length > 0 && buffer[length - 1] == '\r') {
+        length--;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+int main(int argc, char *argv[])
+{
+    char *input = NULL;
+    const char *source;
+
+    if (argc > 1) {
+        source = argv[1];
+    } else {
+        input = read_line(stdin);
+        if (input == NULL) {
+            fprintf(stderr, "Error reading input\n");
+            return EXIT_FAILURE;
+        }
+        source = input;
+    }
+
+    char *cleaned = remove_parenthesis_area(source);
+    if (cleaned == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free(input);
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", cleaned);
+
+    free(cleaned);
+    free(input);
+
+    return EXIT_SUCCESS;
+}
+```

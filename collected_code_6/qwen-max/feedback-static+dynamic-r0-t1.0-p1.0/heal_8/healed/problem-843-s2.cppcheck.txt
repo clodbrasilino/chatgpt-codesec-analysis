@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-843-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-843-s2.c:91:5: error: Memory leak: heap.array [memleak]
+    return ugly[n - 1];
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-843-s2.c:72:16: style: Variable 'heap.array' is assigned a value that is never used. [unreadVariable]
+    heap.array = (int*)malloc(MAX_HEAP_SIZE * sizeof(int));
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-843-s2.c:73:15: style: Variable 'heap.size' is assigned a value that is never used. [unreadVariable]
+    heap.size = 0;
+              ^

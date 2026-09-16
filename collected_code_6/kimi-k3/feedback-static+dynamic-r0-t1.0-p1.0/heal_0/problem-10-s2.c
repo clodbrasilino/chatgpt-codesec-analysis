@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int *get_n_smallest(const int *data, size_t count, size_t n, size_t *result_count) {
+    if (data == NULL || result_count == NULL || count == 0 || n == 0) {
+        if (result_count != NULL) {
+            *result_count = 0;
+        }
+        return NULL;
+    }
+
+    size_t actual_n = (n < count) ? n : count;
+    int *result = (int *)malloc(actual_n * sizeof(int));
+    if (result == NULL) {
+        *result_count = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < actual_n; i++) {
+        result[i] = data[i];
+    }
+
+    qsort(result, actual_n, sizeof(int), compare_ints);
+
+    for (size_t i = actual_n; i < count; i++) {
+        if (data[i] < result[actual_n - 1]) {
+            result[actual_n - 1] = data[i];
+            qsort(result, actual_n, sizeof(int), compare_ints);
+        }
+    }
+
+    *result_count = actual_n;
+    return result;
+}
+
+int main(void) {
+    int dataset[] = {42, 7, 19, 73, 3, 56, 11, 88, 25, 1};
+    size_t count = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 4;
+    size_t result_count = 0;
+
+    int *smallest = get_n_smallest(dataset, count, n, &result_count);
+    if (smallest == NULL) {
+        fprintf(stderr, "Failed to retrieve smallest items\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest items are: ", result_count);
+    for (size_t i = 0; i < result_count; i++) {
+        printf("%d ", smallest[i]);
+    }
+    printf("\n");
+
+    free(smallest);
+    return EXIT_SUCCESS;
+}

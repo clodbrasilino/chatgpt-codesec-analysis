@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int lower;
+    int upper;
+} Range;
+
+typedef struct {
+    Range* ranges;
+    size_t count;
+} RangeResult;
+
+RangeResult get_missing_ranges(const int* arr, size_t size, int start, int end) {
+    RangeResult empty_result = {NULL, 0};
+    
+    if (start > end) {
+        return empty_result;
+    }
+    
+    if (arr == NULL && size > 0) {
+        return empty_result;
+    }
+    
+    size_t max_missing = size + 1;
+    Range* result_ranges = (Range*)malloc(max_missing * sizeof(Range));
+    
+    if (result_ranges == NULL) {
+        return empty_result;
+    }
+    
+    size_t count = 0;
+    long long prev = (long long)start - 1;
+    
+    for (size_t i = 0; i <= size; i++) {
+        long long curr;
+        if (i == size) {
+            curr = (long long)end + 1;
+        } else {
+            curr = arr[i];
+        }
+        
+        if (curr > prev + 1) {
+            result_ranges[count].lower = (int)(prev + 1);
+            result_ranges[count].upper = (int)(curr - 1);
+            count++;
+        }
+        prev = curr;
+    }
+    
+    RangeResult final_result;
+    final_result.ranges = result_ranges;
+    final_result.count = count;
+    return final_result;
+}
+
+int main() {
+    int arr[] = {0, 1, 3, 50, 75};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int start = 0;
+    int end = 99;
+    
+    RangeResult result = get_missing_ranges(arr, size, start, end);
+    
+    for (size_t i = 0; i < result.count; i++) {
+        if (result.ranges[i].lower == result.ranges[i].upper) {
+            printf("%d\n", result.ranges[i].lower);
+        } else {
+            printf("[%d, %d]\n", result.ranges[i].lower, result.ranges[i].upper);
+        }
+    }
+    
+    free(result.ranges);
+    
+    return 0;
+}
+```

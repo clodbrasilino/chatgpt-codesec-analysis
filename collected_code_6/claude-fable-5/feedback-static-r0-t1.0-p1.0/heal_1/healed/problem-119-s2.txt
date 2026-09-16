@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_single_element(const int *arr, size_t n, int *result)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || result == NULL || n == 0U || (n % 2U) == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+        if ((mid % 2U) == 1U) {
+            mid--;
+        }
+        if (arr[mid] == arr[mid + 1U]) {
+            low = mid + 2U;
+        } else {
+            high = mid;
+        }
+    }
+
+    *result = arr[low];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 1, 2, 2, 3, 4, 4, 5, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int single = 0;
+
+    if (find_single_element(arr, n, &single) != 0) {
+        fprintf(stderr, "Invalid input array\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The element that appears only once is: %d\n", single) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code was already quite robust, with only one static-analysis finding to address:
+
+1. **`[variableScope]` on `mid`** — The variable `mid` was declared at function scope but only used inside the `while` loop. The fix moves its declaration (and initialization) into the loop body, reducing its scope. This is good practice: it limits the variable's lifetime to where it's actually needed, prevents accidental use of a stale value outside the loop, and lets the compiler optimize register allocation more effectively.
+
+**Other qualities worth noting (already correct in the original):**
+
+- **Overflow-safe midpoint:** `low + ((high - low) / 2U)` avoids the classic `(low + high) / 2` overflow bug.
+- **Defensive input validation:** NULL checks on both pointers, rejection of empty arrays, and rejection of even-length arrays (which cannot contain exactly one single element).
+- **Correct algorithm:** This is the O(log n) binary search for the single non-duplicated element in a sorted array of pairs, using the even/odd index invariant.
+- **Checked I/O:** The return value of `printf` is verified, and errors are reported via `stderr` with proper `EXIT_FAILURE`/`EXIT_SUCCESS` codes.
+- **`const`-correctness:** The input array is passed as `const int *`, and results are returned via an out-parameter with an integer status code — a clean, idiomatic C API design.

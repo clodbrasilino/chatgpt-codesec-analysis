@@ -1,68 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int data;
-    struct Node* next;
-} Node;
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
 
-Node* createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    if (newNode == NULL) {
-        return NULL;
-    }
-    newNode->data = data;
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
+    newNode->value = value;
     newNode->next = NULL;
     return newNode;
 }
 
-void insertBeforeEachElement(Node** head, int newData) {
+void insertBeforeEachElement(ListNode **head) {
     if (*head == NULL) {
-        *head = createNode(newData);
         return;
     }
 
-    Node* current = *head;
-    Node* newHead = createNode(newData);
-    newHead->next = current;
-    *head = newHead;
-
-    while (current->next != NULL) {
-        Node* temp = createNode(newData);
-        temp->next = current->next;
-        current->next = temp;
-        current = temp->next;
+    ListNode *current = *head;
+    while (current != NULL) {
+        ListNode *newNode = createNode(current->value - 1);
+        newNode->next = current;
+        if (current == *head) {
+            *head = newNode;
+        } else {
+            ListNode *prev = *head;
+            while (prev->next != current) {
+                prev = prev->next;
+            }
+            prev->next = newNode;
+        }
+        current = current->next;
     }
-
-    Node* temp = createNode(newData);
-    current->next = temp;
 }
 
-void printList(Node* head) {
-    Node* current = head;
-    while (current != NULL) {
-        printf("%d -> ", current->data);
-        current = current->next;
+void printList(ListNode *head) {
+    while (head != NULL) {
+        printf("%d -> ", head->value);
+        head = head->next;
     }
     printf("NULL\n");
 }
 
 int main() {
-    Node* head = createNode(10);
-    head->next = createNode(20);
-    head->next->next = createNode(30);
+    ListNode *head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
 
     printf("Original list: ");
     printList(head);
 
-    insertBeforeEachElement(&head, 5);
+    insertBeforeEachElement(&head);
 
     printf("List after insertion: ");
     printList(head);
 
-    // Free the allocated memory
+    // Free the list
     while (head != NULL) {
-        Node* temp = head;
+        ListNode *temp = head;
         head = head->next;
         free(temp);
     }

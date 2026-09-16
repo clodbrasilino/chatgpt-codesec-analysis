@@ -1,0 +1,60 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c: In function 'create_iterator':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:26:16: error: expected expression before ')' token
+   26 |     it.next = () {
+      |                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c: At top level:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:12: error: expected ';' before 'PriorityQueue'
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |            ^~~~~~~~~~~~~~
+      |            ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:46:40: error: expected ')' before '*' token
+   46 | void insert PriorityQueue(PriorityQueue *pq, Node *node) {
+      |                                        ^~
+      |                                        )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:18: error: expected ';' before 'PriorityQueue'
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                  ^~~~~~~~~~~~~~
+      |                  ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:61:46: error: expected ')' before '*' token
+   61 | Node *extract_min PriorityQueue(PriorityQueue *pq) {
+      |                                              ^~
+      |                                              )
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c: In function 'merge_sorted_iterators':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:101:13: error: implicit declaration of function 'insert' [-Wimplicit-function-declaration]
+  101 |             insert(pq, node);
+      |             ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:108:26: error: implicit declaration of function 'extract_min' [-Wimplicit-function-declaration]
+  108 |         Node *min_node = extract_min(pq);
+      |                          ^~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:108:26: error: initialization of 'Node *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:77: error: initialization of 'struct Node *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:77: note: (near initialization for '(anonymous)[0].next')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:80: error: initialization of 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:80: note: (near initialization for '(anonymous)[1].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:83: error: initialization of 'struct Node *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:83: note: (near initialization for '(anonymous)[1].next')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:135:19: error: incompatible types when initializing type 'Node *' using type 'Node'
+  135 |     Node *list1 = (Node){.value = (int []){1, 3, 5, 7}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:77: error: initialization of 'struct Node *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:77: note: (near initialization for '(anonymous)[0].next')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:80: error: initialization of 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:80: note: (near initialization for '(anonymous)[1].value')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:83: error: initialization of 'struct Node *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                                                                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:83: note: (near initialization for '(anonymous)[1].next')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-108-s3.c:136:19: error: incompatible types when initializing type 'Node *' using type 'Node'
+  136 |     Node *list2 = (Node){.value = (int []){2, 4, 6, 8}, .next = (Node[]){0, 1, 1, 1, 0}};
+      |                   ^

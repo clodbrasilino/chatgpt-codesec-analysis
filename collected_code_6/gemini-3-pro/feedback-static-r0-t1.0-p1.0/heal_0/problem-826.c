@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    INVALID,
+    EQUILATERAL,
+    ISOSCELES,
+    SCALENE
+} TriangleType;
+
+TriangleType get_triangle_type(double a, double b, double c) {
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return INVALID;
+    }
+    
+    if (a + b <= c || a + c <= b || b + c <= a) {
+        return INVALID;
+    }
+    
+    if (a == b && b == c) {
+        return EQUILATERAL;
+    } else if (a == b || b == c || a == c) {
+        return ISOSCELES;
+    } else {
+        return SCALENE;
+    }
+}
+
+void print_triangle_type(TriangleType type) {
+    switch (type) {
+        case INVALID:
+            printf("Invalid Triangle\n");
+            break;
+        case EQUILATERAL:
+            printf("Equilateral Triangle\n");
+            break;
+        case ISOSCELES:
+            printf("Isosceles Triangle\n");
+            break;
+        case SCALENE:
+            printf("Scalene Triangle\n");
+            break;
+        default:
+            printf("Unknown Error\n");
+            break;
+    }
+}
+
+int main(void) {
+    double a = 0;
+    double b = 0;
+    double c = 0;
+    int result = 0;
+
+    printf("Enter three sides of the triangle: ");
+    result = scanf("%lf %lf %lf", &a, &b, &c);
+
+    if (result != 3) {
+        printf("Invalid input format.\n");
+        return EXIT_FAILURE;
+    }
+
+    TriangleType type = get_triangle_type(a, b, c);
+    print_triangle_type(type);
+
+    return EXIT_SUCCESS;
+}

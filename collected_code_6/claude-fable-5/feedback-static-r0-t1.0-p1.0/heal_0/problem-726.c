@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *multiply_adjacent(const int *arr, size_t n, size_t *out_size)
+{
+    if (arr == NULL || out_size == NULL || n < 2) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+
+    *out_size = n - 1;
+    int *result = malloc((n - 1) * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i + 1 < n; i++) {
+        result[i] = arr[i] * arr[i + 1];
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int tuple[] = {1, 5, 7, 8, 10};
+    size_t n = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_size = 0;
+
+    int *result = multiply_adjacent(tuple, n, &result_size);
+    if (result == NULL) {
+        fprintf(stderr, "Error: could not compute adjacent products\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (size_t i = 0; i < result_size; i++) {
+        printf("%d", result[i]);
+        if (i + 1 < result_size) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

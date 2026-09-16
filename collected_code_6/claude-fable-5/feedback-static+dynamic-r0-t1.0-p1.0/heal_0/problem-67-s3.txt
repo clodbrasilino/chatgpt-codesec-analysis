@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int bell_number(unsigned int n, unsigned long long *result)
+{
+    unsigned long long **triangle;
+    unsigned int i;
+    unsigned int j;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > 25U) {
+        return -1;
+    }
+
+    triangle = malloc((n + 1U) * sizeof(*triangle));
+    if (triangle == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i <= n; i++) {
+        triangle[i] = malloc((i + 1U) * sizeof(**triangle));
+        if (triangle[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                free(triangle[j]);
+            }
+            free(triangle);
+            return -1;
+        }
+    }
+
+    triangle[0][0] = 1ULL;
+
+    for (i = 1U; i <= n; i++) {
+        triangle[i][0] = triangle[i - 1U][i - 1U];
+        for (j = 1U; j <= i; j++) {
+            if (triangle[i][j - 1U] > ULLONG_MAX - triangle[i - 1U][j - 1U]) {
+                for (j = 0U; j <= n; j++) {
+                    free(triangle[j]);
+                }
+                free(triangle);
+                return -1;
+            }
+            triangle[i][j] = triangle[i][j - 1U] + triangle[i - 1U][j - 1U];
+        }
+    }
+
+    *result = triangle[n][0];
+
+    for (i = 0U; i <= n; i++) {
+        free(triangle[i]);
+    }
+    free(triangle);
+
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long bell;
+    int scan_result;
+
+    printf("Enter the size of the set (0-25): ");
+
+    scan_result = scanf("%u", &n);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (bell_number(n, &bell) != 0) {
+        fprintf(stderr, "Failed to compute Bell number for n = %u\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of ways to partition a set of %u elements: %llu\n", n, bell);
+
+    return EXIT_SUCCESS;
+}
+```

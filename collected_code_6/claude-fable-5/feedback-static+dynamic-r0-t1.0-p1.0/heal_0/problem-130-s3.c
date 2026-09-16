@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool find_max_frequency_item(const int *arr, size_t n, int *result)
+{
+    if (arr == NULL || result == NULL || n == 0) {
+        return false;
+    }
+
+    int best_item = arr[0];
+    size_t best_count = 0;
+
+    for (size_t i = 0; i < n; i++) {
+        size_t count = 0;
+        for (size_t j = 0; j < n; j++) {
+            if (arr[j] == arr[i]) {
+                count++;
+            }
+        }
+        if (count > best_count) {
+            best_count = count;
+            best_item = arr[i];
+        }
+    }
+
+    *result = best_item;
+    return true;
+}
+
+int main(void)
+{
+    int data[] = {2, 3, 8, 4, 7, 9, 8, 2, 6, 5, 1, 6, 1, 2, 3, 4, 6, 9, 1, 2};
+    size_t n = sizeof(data) / sizeof(data[0]);
+    int max_item = 0;
+
+    if (!find_max_frequency_item(data, n, &max_item)) {
+        if (fprintf(stderr, "Error: could not determine maximum frequency item\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Item with maximum frequency: %d\n", max_item) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

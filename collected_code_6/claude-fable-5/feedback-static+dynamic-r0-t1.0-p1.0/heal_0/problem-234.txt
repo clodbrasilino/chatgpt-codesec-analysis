@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double cube_volume(double side)
+{
+    return side * side * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+    int result = 0;
+
+    printf("Enter the side length of the cube: ");
+    result = scanf("%lf", &side);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (side < 0.0) {
+        fprintf(stderr, "Error: side length cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Volume of the cube: %f\n", cube_volume(side));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This code addresses the specified weaknesses as follows:
+
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there are no resource lifetime issues to mismanage.
+- **CWE-703**: The return value of `scanf` is checked to ensure input was successfully read, and negative side lengths are rejected before computation.
+- **CWE-710**: The code follows standard C conventions — `main` is declared as `int main(void)`, all variables are initialized, standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`) are used, and errors are written to `stderr`.

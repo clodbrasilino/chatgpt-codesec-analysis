@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int safe_power(long long base, long long exponent, long long *result)
+{
+    long long value = 1;
+    long long i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (exponent < 0) {
+        return -1;
+    }
+
+    for (i = 0; i < exponent; i++) {
+        if (base != 0 && (value > LLONG_MAX / base || value < LLONG_MIN / base)) {
+            return -1;
+        }
+        value *= base;
+    }
+
+    *result = value;
+    return 0;
+}
+
+int tuple_exponentiation(const long long *bases, const long long *exponents,
+                         long long *results, size_t length)
+{
+    size_t i;
+
+    if (bases == NULL || exponents == NULL || results == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        if (safe_power(bases[i], exponents[i], &results[i]) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const long long tuple1[] = {2, 3, 4, 5};
+    const long long tuple2[] = {3, 2, 2, 1};
+    size_t length = sizeof(tuple1) / sizeof(tuple1[0]);
+    long long *results;
+    size_t i;
+
+    results = malloc(length * sizeof(*results));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_exponentiation(tuple1, tuple2, results, length) != 0) {
+        fprintf(stderr, "Exponentiation failed\n");
+        free(results);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < length; i++) {
+        printf("%lld", results[i]);
+        if (i < length - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the static-analysis finding: `tuple2` is now declared as a `const` array (and `tuple1` as well, for consistency, since neither is modified and both are only passed to parameters declared `const long long *`). This lets the compiler enforce immutability and can enable placement in read-only storage. All other defensive measures in the original — the `NULL` pointer checks, the negative-exponent rejection, and the pre-multiplication overflow guard against `LLONG_MAX`/`LLONG_MIN`, plus the `malloc` failure handling and memory cleanup on every exit path — were already correct and remain intact.

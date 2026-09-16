@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:42:33: error: use of undeclared identifier 'LLONG_MAX'
+   42 |             if ((k > 0 && num > LLONG_MAX - k) || (k < 0 && num < LLONG_MIN - k)) {
+      |                                 ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:42:67: error: use of undeclared identifier 'LLONG_MIN'
+   42 |             if ((k > 0 && num > LLONG_MAX - k) || (k < 0 && num < LLONG_MIN - k)) {
+      |                                                                   ^~~~~~~~~
+2 errors generated.

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    if (n == 0U) {
+        return 1U;
+    }
+    if ((n & (n + 1U)) == 0U) {
+        return n;
+    }
+    return n | (n + 1U);
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    unsigned int result = 0U;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%u", &value) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = set_rightmost_unset_bit(value);
+    printf("Input:  %u\n", value);
+    printf("Output: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The failing test case (`expected 15, got 31`) reveals the flaw: for an input like `15` (binary `1111`), all significant bits are already set. The original code only guarded against `UINT_MAX`, so it treated the next higher zero bit as "unset" and produced `31` (`11111`).
+
+The corrected version uses the check `(n & (n + 1U)) == 0U`, which is true exactly when `n` is of the form `2^k - 1` (all bits set: 1, 3, 7, 15, 31, ...), including `UINT_MAX` itself since `n + 1U` wraps to `0`. In those cases the number is returned unchanged, matching the expected behavior.
+
+An explicit guard for `n == 0U` returns `1U`, since zero's rightmost unset bit is bit 0 and it would otherwise be swallowed by the all-bits-set check.

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void rearrange(int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return;
+    }
+
+    size_t left = 0;
+    size_t right = size - 1;
+
+    while (left < right) {
+        while (left < right && array[left] < 0) {
+            left++;
+        }
+
+        while (left < right && array[right] >= 0) {
+            right--;
+        }
+
+        if (left < right) {
+            int temp = array[left];
+            array[left] = array[right];
+            array[right] = temp;
+            left++;
+            right--;
+        }
+    }
+}
+
+int main(void) {
+    int array[] = {-1, 2, -3, 4, 0, -5, 6, -7};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    rearrange(array, size);
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

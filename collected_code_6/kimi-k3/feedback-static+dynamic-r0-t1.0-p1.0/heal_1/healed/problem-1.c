@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+int min(int x, int y, int z) {
+    if (x < y) {
+        return (x < z) ? x : z;
+    } else {
+        return (y < z) ? y : z;
+    }
+}
+
+int minCost(int cost[MAX_SIZE][MAX_SIZE], int m, int n) {
+    int i, j;
+    int tc[MAX_SIZE][MAX_SIZE];
+
+    if (m < 0 || n < 0 || m >= MAX_SIZE || n >= MAX_SIZE) {
+        return -1;
+    }
+
+    tc[0][0] = cost[0][0];
+
+    for (i = 1; i <= m; i++) {
+        tc[i][0] = tc[i - 1][0] + cost[i][0];
+    }
+
+    for (j = 1; j <= n; j++) {
+        tc[0][j] = tc[0][j - 1] + cost[0][j];
+    }
+
+    for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+            tc[i][j] = min(tc[i - 1][j - 1], tc[i - 1][j], tc[i][j - 1]) + cost[i][j];
+        }
+    }
+
+    return tc[m][n];
+}
+
+int main(void) {
+    int cost[MAX_SIZE][MAX_SIZE];
+    int m, n;
+    int i, j;
+    int result;
+
+    printf("Enter the number of rows and columns: ");
+    if (scanf("%d %d", &m, &n) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (m <= 0 || n <= 0 || m > MAX_SIZE || n > MAX_SIZE) {
+        fprintf(stderr, "Invalid dimensions\n");
+        return 1;
+    }
+
+    printf("Enter the cost matrix:\n");
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            if (scanf("%d", &cost[i][j]) != 1) {
+                fprintf(stderr, "Invalid input\n");
+                return 1;
+            }
+        }
+    }
+
+    result = minCost(cost, m - 1, n - 1);
+    if (result != -1) {
+        printf("Minimum cost: %d\n", result);
+    } else {
+        fprintf(stderr, "Error in calculation\n");
+        return 1;
+    }
+
+    return 0;
+}

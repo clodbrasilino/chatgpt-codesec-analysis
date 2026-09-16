@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double find_geometric_term(double a, double r, int n) {
+    if (n < 1) {
+        return 0.0;
+    }
+    return a * pow(r, n - 1);
+}
+
+int main(void) {
+    double a;
+    double r;
+    int n;
+    double result;
+    int scan_result;
+
+    scan_result = scanf("%lf %lf %d", &a, &r, &n);
+    if (scan_result != 3) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1) {
+        fprintf(stderr, "Term number must be greater than or equal to 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_geometric_term(a, r, n);
+    printf("%f\n", result);
+
+    return EXIT_SUCCESS;
+}

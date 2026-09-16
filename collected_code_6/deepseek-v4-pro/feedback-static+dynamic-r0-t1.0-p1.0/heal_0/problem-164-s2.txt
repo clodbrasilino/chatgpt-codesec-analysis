@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_divisors(int n) {
+    if (n <= 0) return 0;
+    int sum = 0;
+    for (int i = 1; i <= n / 2; i++) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int check_same_divisor_sum(int a, int b) {
+    if (a <= 0 || b <= 0) return -1;
+    return sum_of_divisors(a) == sum_of_divisors(b);
+}
+
+int main(void) {
+    int num1, num2;
+    printf("Enter two positive integers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (num1 <= 0 || num2 <= 0) {
+        printf("Numbers must be positive\n");
+        return 1;
+    }
+    int result = check_same_divisor_sum(num1, num2);
+    if (result == 1) {
+        printf("The sum of divisors is the same.\n");
+    } else {
+        printf("The sum of divisors is different.\n");
+    }
+    return 0;
+}
+```

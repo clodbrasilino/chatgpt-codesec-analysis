@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+int findOddOccurringElement(const int arr[], int n) {
+    int result = 0;
+    for (int i = 0; i < n; i++) {
+        result = result ^ arr[i];
+    }
+    return result;
+}
+
+int main() {
+    const int arr[] = {2, 3, 5, 4, 5, 2, 4, 3, 5, 2, 4, 4, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int oddOccurrence = findOddOccurringElement(arr, n);
+    printf("The element occurring an odd number of times is: %d\n", oddOccurrence);
+    return 0;
+}

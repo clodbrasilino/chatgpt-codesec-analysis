@@ -4,57 +4,52 @@
 typedef struct {
     int value;
     int count;
-} ItemFreq;
+} ItemFrequency;
 
 int compare(const void *a, const void *b) {
-    return ((ItemFreq *)b)->count - ((ItemFreq *)a)->count;
+    return ((ItemFrequency*)b)->count - ((ItemFrequency*)a)->count;
 }
 
-ItemFreq* findMaxFrequency(const int *arr, int n, int *maxCount) {
-    ItemFreq *freq = (ItemFreq *)calloc(n, sizeof(ItemFreq));
-    if (freq == NULL) {
-        return NULL;
-    }
+ItemFrequency* findMaxFrequency(const int* list, int len) {
+    if (len == 0) return NULL;
 
-    for (int i = 0; i < n; ++i) {
-        freq[i].value = arr[i];
-        freq[i].count = 1;
-        for (int j = 0; j < i; ++j) {
-            if (arr[i] == arr[j]) {
-                freq[i].count = 0;
+    ItemFrequency* freqs = malloc(len * sizeof(ItemFrequency));
+    if (!freqs) return NULL;
+
+    for (int i = 0; i < len; i++) {
+        int found = 0;
+        for (int j = 0; j < i; j++) {
+            if (list[i] == freqs[j].value) {
+                freqs[j].count++;
+                found = 1;
                 break;
             }
         }
+        if (!found) {
+            freqs[i].value = list[i];
+            freqs[i].count = 1;
+        }
     }
 
-    qsort(freq, n, sizeof(ItemFreq), compare);
-
-    int k = 0;
-    while (k < n && freq[k].count > 0) {
-        k++;
+    qsort(freqs, len, sizeof(ItemFrequency), compare);
+    ItemFrequency* maxFreq = malloc(sizeof(ItemFrequency));
+    if (maxFreq) {
+        *maxFreq = freqs[0];
     }
-
-    ItemFreq *result = (ItemFreq *)realloc(freq, k * sizeof(ItemFreq));
-    if (result == NULL) {
-        free(freq);
-        return NULL;
-    }
-
-    *maxCount = result[0].count;
-    return result;
+    free(freqs);
+    return maxFreq;
 }
 
 int main() {
-    int arr[] = {1, 3, 2, 1, 2, 3, 3, 1};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int maxCount;
+    const int list[] = {1, 3, 2, 1, 4, 1, 3, 2, 3};
+    const int len = sizeof(list) / sizeof(list[0]);
 
-    ItemFreq *result = findMaxFrequency(arr, n, &maxCount);
-    if (result != NULL && maxCount > 0) {
-        printf("Max frequency item: %d, Count: %d\n", result[0].value, result[0].count);
+    ItemFrequency* result = findMaxFrequency(list, len);
+    if (result) {
+        printf("Item: %d, Frequency: %d\n", result->value, result->count);
         free(result);
     } else {
-        printf("No items found.\n");
+        printf("No item found.\n");
     }
 
     return 0;

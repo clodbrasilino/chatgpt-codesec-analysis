@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t find_divisible(const int *numbers, size_t count, int m, int n, int *result, size_t result_capacity)
+{
+    size_t found = 0;
+
+    if (numbers == NULL || result == NULL || m == 0 || n == 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if ((numbers[i] % m == 0) && (numbers[i] % n == 0)) {
+            if (found < result_capacity) {
+                result[found] = numbers[i];
+                found++;
+            }
+        }
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = {12, 15, 30, 45, 60, 7, 90, 22, 120, 8};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int m = 3;
+    int n = 5;
+    int *result;
+    size_t found;
+
+    result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    found = find_divisible(numbers, count, m, n, result, count);
+
+    if (found == 0) {
+        printf("No numbers divisible by both %d and %d were found.\n", m, n);
+    } else {
+        printf("Numbers divisible by both %d and %d:\n", m, n);
+        for (size_t i = 0; i < found; i++) {
+            printf("%d\n", result[i]);
+        }
+    }
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `[variableScope]` warning: the loop counter `i` is no longer declared at function scope in `main` (or in `find_divisible`), but instead is declared directly within the `for` statements where it is used. This reduces its scope to the minimum required, which prevents accidental reuse of a stale value elsewhere and makes the code easier to reason about. Note this requires C99 or later (e.g., compile with `-std=c99` or newer); everything else — the NULL checks, division-by-zero guards on `m` and `n`, capacity bounds checking, allocation failure handling, and freeing of `result` — was already sound and remains unchanged.

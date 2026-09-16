@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <limits.h>
+
+int minCoins(const int coins[], int n, int value) {
+    if (value < 0) {
+        return -1;
+    }
+    
+    int dp[value + 1];
+    dp[0] = 0;
+    
+    for (int i = 1; i <= value; i++) {
+        dp[i] = INT_MAX;
+        for (int j = 0; j < n; j++) {
+            if (coins[j] <= i && dp[i - coins[j]] != INT_MAX) {
+                int prev = dp[i - coins[j]] + 1;
+                if (prev < dp[i]) {
+                    dp[i] = prev;
+                }
+            }
+        }
+    }
+    
+    if (dp[value] == INT_MAX) {
+        return -1;
+    }
+    
+    return dp[value];
+}
+
+int main(void) {
+    int coins[] = {1, 5, 10, 25};
+    int n = sizeof(coins) / sizeof(coins[0]);
+    int value;
+    
+    printf("Enter value: ");
+    if (scanf("%d", &value) != 1) {
+        return 1;
+    }
+    
+    int result = minCoins(coins, n, value);
+    
+    if (result == -1) {
+        printf("Cannot make change for %d\n", value);
+    } else {
+        printf("Minimum coins for %d: %d\n", value, result);
+    }
+    
+    return 0;
+}

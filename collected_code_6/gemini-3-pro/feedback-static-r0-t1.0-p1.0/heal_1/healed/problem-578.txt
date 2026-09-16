@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head_ref, int data) {
+    struct Node* newNode = createNode(data);
+    struct Node* last = *head_ref;
+
+    if (*head_ref == NULL) {
+        *head_ref = newNode;
+        return;
+    }
+
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = newNode;
+}
+
+struct Node* interleaveLists(struct Node* list1, struct Node* list2) {
+    if (list1 == NULL) {
+        return list2;
+    }
+    if (list2 == NULL) {
+        return list1;
+    }
+
+    struct Node* head = NULL;
+    struct Node* tail = NULL;
+    struct Node* current1 = list1;
+    struct Node* current2 = list2;
+    struct Node* temp = NULL;
+
+    while (current1 != NULL && current2 != NULL) {
+        temp = createNode(current1->data);
+        if (head == NULL) {
+            head = temp;
+            tail = head;
+        } else {
+            tail->next = temp;
+            tail = tail->next;
+        }
+
+        temp = createNode(current2->data);
+        tail->next = temp;
+        tail = tail->next;
+
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+
+    return head;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    while (head != NULL) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct Node* list1 = NULL;
+    struct Node* list2 = NULL;
+    struct Node* interleavedList = NULL;
+
+    appendNode(&list1, 1);
+    appendNode(&list1, 3);
+    appendNode(&list1, 5);
+
+    appendNode(&list2, 2);
+    appendNode(&list2, 4);
+    appendNode(&list2, 6);
+
+    interleavedList = interleaveLists(list1, list2);
+
+    printList(interleavedList);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(interleavedList);
+
+    return EXIT_SUCCESS;
+}
+```

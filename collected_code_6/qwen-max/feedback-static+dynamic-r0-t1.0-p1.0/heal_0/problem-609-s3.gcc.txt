@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-609-s3.c: In function 'find_minimum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-609-s3.c:11:22: error: 'DBL_MAX' undeclared (first use in this function)
+   11 |     double min_val = DBL_MAX;
+      |                      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-609-s3.c:3:1: note: 'DBL_MAX' is defined in header '<float.h>'; this is probably fixable by adding '#include <float.h>'
+    2 | #include <limits.h>
+  +++ |+#include <float.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-609-s3.c:11:22: note: each undeclared identifier is reported only once for each function it appears in
+   11 |     double min_val = DBL_MAX;
+      |                      ^~~~~~~

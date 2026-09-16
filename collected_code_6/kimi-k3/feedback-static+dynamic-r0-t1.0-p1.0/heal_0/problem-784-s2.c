@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int find_first_even_odd_product(const int *arr, size_t size, long long *result)
+{
+    size_t i;
+    int first_even = 0;
+    int first_odd = 0;
+    int found_even = 0;
+    int found_odd = 0;
+
+    if (arr == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (!found_even && arr[i] % 2 == 0) {
+            first_even = arr[i];
+            found_even = 1;
+        }
+        if (!found_odd && arr[i] % 2 != 0) {
+            first_odd = arr[i];
+            found_odd = 1;
+        }
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    if (!found_even || !found_odd) {
+        return -1;
+    }
+
+    *result = (long long)first_even * (long long)first_odd;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {3, 7, 8, 12, 5, 10};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    long long result = 0;
+
+    if (find_first_even_odd_product(arr, size, &result) == 0) {
+        printf("Product of first even and first odd: %lld\n", result);
+    } else {
+        printf("Could not find both an even and an odd number in the list.\n");
+    }
+
+    return 0;
+}

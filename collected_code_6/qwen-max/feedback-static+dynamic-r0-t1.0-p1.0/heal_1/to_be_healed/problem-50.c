@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *data;
+    size_t length;
+} List;
+
+List *create_list(size_t len) {
+    List *new_list = (List *)malloc(sizeof(List));
+    if (new_list == NULL) {
+        return NULL;
+    }
+    new_list->data = (int *)malloc(len * sizeof(int));
+    if (new_list->data == NULL) {
+        free(new_list);
+        return NULL;
+    }
+    new_list->length = len;
+    for (size_t i = 0; i < len; ++i) {
+        new_list->data[i] = 0;
+    }
+    return new_list;
+}
+
+void free_list(List *list) {
+    if (list != NULL) {
+        free(list->data);
+        free(list);
+    }
+}
+
+List* find_min_length_list(List **lists, size_t count) {
+    if (count == 0 || lists == NULL) {
+        return NULL;
+    }
+    List *min_list = lists[0];
+    for (size_t i = 1; i < count; ++i) {
+        if (lists[i]->length < min_list->length) {
+            min_list = lists[i];
+        }
+    }
+    return min_list;
+}
+
+int main() {
+    List *list1 = create_list(5);
+    List *list2 = create_list(3);
+    List *list3 = create_list(7);
+
+    List *lists[] = {list1, list2, list3};
+    /* Possible weaknesses found:
+     *  Variable 'min_list' can be declared as pointer to const [constVariablePointer]
+     */
+    List *min_list = find_min_length_list(lists, 3);
+
+    if (min_list != NULL) {
+        printf("Minimum length is %zu\n", min_list->length);
+    } else {
+        printf("No list found.\n");
+    }
+
+    free_list(list1);
+    free_list(list2);
+    free_list(list3);
+
+    return 0;
+}

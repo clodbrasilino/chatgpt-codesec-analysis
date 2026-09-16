@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long multiply_list(const long long *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+    
+    long long result = 1;
+    for (size_t i = 0; i < size; i++) {
+        result *= arr[i];
+    }
+    return result;
+}
+
+int main(void) {
+    long long numbers[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    
+    long long result = multiply_list(numbers, size);
+    printf("Product: %lld\n", result);
+    
+    return 0;
+}

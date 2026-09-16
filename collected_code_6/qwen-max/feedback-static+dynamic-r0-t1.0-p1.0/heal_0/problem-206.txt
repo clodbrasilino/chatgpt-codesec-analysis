@@ -3,66 +3,47 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *concat_adjacent(const char *s1, const char *s2) {
-    char *result;
-    int length = strlen(s1) + strlen(s2) + 1;
-    result = (char *)malloc(length * sizeof(char));
+char* concatenate(const char *a, const char *b) {
+    char *result = malloc(strlen(a) + strlen(b) + 1);
     if (result == NULL) {
         return NULL;
     }
-    strcpy(result, s1);
-    strcat(result, s2);
+    strcpy(result, a);
+    strcat(result, b);
     return result;
 }
 
-void free_tuples(char **tuples, int n) {
-    for (int i = 0; i < n; i++) {
-        if (tuples[i] != NULL) {
-            free(tuples[i]);
+void processTuples(char **tuples, int n, char ***output) {
+    *output = malloc(n * sizeof(char *));
+    if (*output == NULL) {
+        return;
+    }
+    for (int i = 0; i < n; ++i) {
+        (*output)[i] = concatenate(tuples[i], tuples[i + 1]);
+        if ((*output)[i] == NULL) {
+            for (int j = 0; j < i; ++j) {
+                free((*output)[j]);
+            }
+            free(*output);
+            *output = NULL;
+            return;
         }
     }
-    free(tuples);
-}
-
-char **concatenate_adjacent_elements(char **tuples, int n, int *new_n) {
-    if (n < 2) {
-        *new_n = n;
-        return tuples;
-    }
-
-    *new_n = n - 1;
-    char **result = (char **)malloc((*new_n) * sizeof(char *));
-    if (result == NULL) {
-        return NULL;
-    }
-
-    for (int i = 0; i < *new_n; i++) {
-        result[i] = concat_adjacent(tuples[i], tuples[i + 1]);
-        if (result[i] == NULL) {
-            free_tuples(result, i);
-            return NULL;
-        }
-    }
-
-    free_tuples(tuples, n);
-    return result;
 }
 
 int main() {
-    char *tuples[] = {"one", "two", "three", "four"};
     int n = 4;
-    int new_n;
+    char *tuples[] = {"one", "two", "three", "four", "five"};
+    char **output = NULL;
 
-    char **new_tuples = concatenate_adjacent_elements(tuples, n, &new_n);
+    processTuples(tuples, n - 1, &output);
 
-    if (new_tuples != NULL) {
-        for (int i = 0; i < new_n; i++) {
-            printf("%s\n", new_tuples[i]);
-            free(new_tuples[i]);
+    if (output != NULL) {
+        for (int i = 0; i < n - 1; ++i) {
+            printf("%s\n", output[i]);
+            free(output[i]);
         }
-        free(new_tuples);
-    } else {
-        printf("Error: Memory allocation failed.\n");
+        free(output);
     }
 
     return 0;

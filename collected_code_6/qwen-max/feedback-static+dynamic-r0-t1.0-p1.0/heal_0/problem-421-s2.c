@@ -2,36 +2,45 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* join_tuple(const char **tuple, int size, const char *delimiter) {
-    if (size <= 0 || !tuple || !delimiter) return NULL;
+char* concatenate_with_delimiter(const char* tuple[], size_t length, const char* delimiter) {
+    if (length == 0) return NULL;
 
-    int total_len = 0;
-    for (int i = 0; i < size; ++i) {
-        if (tuple[i]) total_len += strlen(tuple[i]);
+    size_t delimiter_length = strlen(delimiter);
+    size_t total_length = 0;
+    for (size_t i = 0; i < length; ++i) {
+        total_length += strlen(tuple[i]);
     }
-    int delimiter_len = strlen(delimiter);
-    int result_len = total_len + delimiter_len * (size - 1) + 1;
+    total_length += delimiter_length * (length - 1);
 
-    char *result = (char *)malloc(result_len * sizeof(char));
-    if (!result) return NULL;
+    char* result = (char*)malloc(total_length + 1);
+    if (result == NULL) return NULL;
 
-    result[0] = '\0';
-    for (int i = 0; i < size; ++i) {
-        if (i > 0) strcat(result, delimiter);
-        if (tuple[i]) strcat(result, tuple[i]);
+    snprintf(result, total_length + 1, "%s", tuple[0]);
+    for (size_t i = 1; i < length; ++i) {
+        strncat(result, delimiter, delimiter_length);
+        strncat(result, tuple[i], total_length);
     }
 
     return result;
 }
 
-int main() {
-    const char *tuple[] = {"one", "two", "three"};
-    const char *delimiter = "-";
+void free_concatenated_string(char* str) {
+    if (str != NULL) {
+        free(str);
+    }
+}
 
-    char *result = join_tuple(tuple, 3, delimiter);
-    if (result) {
+int main() {
+    const char* tuple[] = {"Hello", "World", "C", "Programming"};
+    size_t length = sizeof(tuple) / sizeof(tuple[0]);
+    const char* delimiter = "-";
+
+    char* result = concatenate_with_delimiter(tuple, length, delimiter);
+    if (result != NULL) {
         printf("%s\n", result);
-        free(result);
+        free_concatenated_string(result);
+    } else {
+        fprintf(stderr, "Memory allocation failed.\n");
     }
 
     return 0;

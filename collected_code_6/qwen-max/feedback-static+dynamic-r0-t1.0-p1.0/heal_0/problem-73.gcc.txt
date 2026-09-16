@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c: In function 'split_string':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:14:11: error: implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+   14 |     str = strdup(input);
+      |           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:25:9: error: implicit declaration of function 'strtok'; did you mean 'strtoq'? [-Wimplicit-function-declaration]
+   25 |     p = strtok(str, delimiters);
+      |         ^~~~~~
+      |         strtoq
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:25:7: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   25 |     p = strtok(str, delimiters);
+      |       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:27:15: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   27 |         len = strlen(p);
+      |               ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <regex.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:29:9: error: implicit declaration of function 'strncpy' [-Wimplicit-function-declaration]
+   29 |         strncpy(result[i], p, len);
+      |         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:29:9: note: include '<string.h>' or provide a declaration of 'strncpy'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-73.c:31:11: error: assignment to 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+   31 |         p = strtok(NULL, delimiters);
+      |           ^

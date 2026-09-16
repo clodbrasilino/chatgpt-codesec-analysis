@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long sumOfThreeLowestPositives(const int *arr, size_t size) {
+    if (arr == NULL || size < 3) {
+        return -1; 
+    }
+
+    int min1 = INT_MAX;
+    int min2 = INT_MAX;
+    int min3 = INT_MAX;
+    size_t positive_count = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] > 0) {
+            positive_count++;
+            if (arr[i] < min1) {
+                min3 = min2;
+                min2 = min1;
+                min1 = arr[i];
+            } else if (arr[i] < min2) {
+                min3 = min2;
+                min2 = arr[i];
+            } else if (arr[i] < min3) {
+                min3 = arr[i];
+            }
+        }
+    }
+
+    if (positive_count < 3) {
+        return -1;
+    }
+
+    return (long long)min1 + min2 + min3;
+}
+
+int main(void) {
+    int arr[] = {4, -1, 2, 9, -5, 1, 8, 3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    long long sum = sumOfThreeLowestPositives(arr, size);
+
+    if (sum != -1) {
+        printf("%lld\n", sum);
+    } else {
+        printf("Error: Not enough positive numbers.\n");
+    }
+
+    return 0;
+}

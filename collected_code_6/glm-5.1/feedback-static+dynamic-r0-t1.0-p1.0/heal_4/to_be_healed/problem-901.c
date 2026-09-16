@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long gcd(unsigned long long a, unsigned long long b) {
+    while (b != 0) {
+        unsigned long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 360360, got <no output>
+  *  test case 1 failed: expected 2, got <no output>
+  *  test case 2 failed: expected 1, got <no output>
+  */
+
+unsigned long long smallest_multiple(int n) {
+    if (n < 1) {
+        return 0;
+    }
+    unsigned long long result = 1;
+    for (int i = 2; i <= n; ++i) {
+        unsigned long long current_gcd = gcd(result, (unsigned long long)i);
+        if (result > ULLONG_MAX / ((unsigned long long)i / current_gcd)) {
+            return 0;
+        }
+        result *= (unsigned long long)i / current_gcd;
+    }
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+    if (endptr == argv[1] || *endptr != '\0' || val < 1 || val > 40) {
+        return EXIT_FAILURE;
+    }
+    unsigned long long res = smallest_multiple((int)val);
+    if (res == 0) {
+        return EXIT_FAILURE;
+    }
+    printf("%llu\n", res);
+    return EXIT_SUCCESS;
+}

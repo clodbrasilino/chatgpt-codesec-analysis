@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSubset(const int *arr1, int size1, const int *arr2, int size2) {
+    for (int i = 0; i < size2; i++) {
+        bool found = false;
+        for (int j = 0; j < size1; j++) {
+            if (arr2[i] == arr1[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int arr2[] = {2, 3, 5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (isSubset(arr1, size1, arr2, size2)) {
+        printf("arr2 is a subset of arr1\n");
+    } else {
+        printf("arr2 is not a subset of arr1\n");
+    }
+
+    int arr3[] = {1, 2, 3, 4, 5};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int arr4[] = {6, 7};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+
+    if (isSubset(arr3, size3, arr4, size4)) {
+        printf("arr4 is a subset of arr3\n");
+    } else {
+        printf("arr4 is not a subset of arr3\n");
+    }
+
+    int arr5[] = {1, 2, 3, 4, 5};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    int arr6[] = {1, 2};
+    int size6 = sizeof(arr6) / sizeof(arr6[0]);
+
+    if (isSubset(arr5, size5, arr6, size6)) {
+        printf("arr6 is a subset of arr5\n");
+    } else {
+        printf("arr6 is not a subset of arr5\n");
+    }
+
+    return 0;
+}

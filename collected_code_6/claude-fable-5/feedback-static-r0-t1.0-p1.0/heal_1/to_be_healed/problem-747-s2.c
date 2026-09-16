@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int max3(int a, int b, int c)
+{
+    int m = a;
+    if (b > m) {
+        m = b;
+    }
+    if (c > m) {
+        m = c;
+    }
+    return m;
+}
+
+static char *lcs3(const char *s1, const char *s2, const char *s3)
+{
+    size_t l1;
+    size_t l2;
+    size_t l3;
+    size_t total;
+    int ***dp;
+    size_t i;
+    size_t j;
+    size_t k;
+    char *result;
+    size_t len;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'pos' can be reduced. [variableScope]
+     */
+    size_t pos;
+
+    if (s1 == NULL || s2 == NULL || s3 == NULL) {
+        return NULL;
+    }
+
+    l1 = strlen(s1);
+    l2 = strlen(s2);
+    l3 = strlen(s3);
+
+    if (l1 > 1000U || l2 > 1000U || l3 > 1000U) {
+        return NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  Assignment 'total=(l1+1U)*(l2+1U)*(l3+1U)', assigned value is greater than 0
+     */
+    total = (l1 + 1U) * (l2 + 1U) * (l3 + 1U);
+    /* Possible weaknesses found:
+     *  Condition 'total==0U' is always false [knownConditionTrueFalse]
+     *  Condition 'total==0U' is always false
+     */
+    if (total == 0U) {
+        return NULL;
+    }
+
+    dp = malloc((l1 + 1U) * sizeof(int **));
+    if (dp == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i <= l1; i++) {
+        dp[i] = malloc((l2 + 1U) * sizeof(int *));
+        if (dp[i] == NULL) {
+            for (j = 0U; j < i; j++) {
+                for (k = 0U; k <= l2; k++) {
+                    free(dp[j][k]);
+                }
+                free(dp[j]);
+            }
+            free(dp);
+            return NULL;
+        }
+        for (j = 0U; j <= l2; j++) {
+            dp[i][j] = calloc(l3 + 1U, sizeof(int));
+            if (dp[i][j] == NULL) {
+                for (k = 0U; k < j; k++) {
+                    free(dp[i][k]);
+                }
+                free(dp[i]);
+                for (k = 0U; k < i; k++) {
+                    size_t m;
+                    for (m = 0U; m <= l2; m++) {
+                        free(dp[k][m]);
+                    }
+                    free(dp[k]);
+                }
+                free(dp);
+                return NULL;
+            }
+        }
+    }
+
+    for (i = 1U; i <= l1; i++) {
+        for (j = 1U; j <= l2; j++) {
+            for (k = 1U; k <= l3; k++) {
+                if (s1[i - 1U] == s2[j - 1U] && s2[j - 1U] == s3[k - 1U]) {
+                    dp[i][j][k] = dp[i - 1U][j - 1U][k - 1U] + 1;
+                } else {
+                    dp[i][j][k] = max3(dp[i - 1U][j][k],
+                                       dp[i][j - 1U][k],
+                                       dp[i][j][k - 1U]);
+                }
+            }
+        }
+    }
+
+    len = (size_t)dp[l1][l2][l3];
+    result = malloc(len + 1U);
+    if (result != NULL) {
+        result[len] = '\0';
+        pos = len;
+        i = l1;
+        j = l2;
+        k = l3;
+        while (i > 0U && j > 0U && k > 0U && pos > 0U) {
+            if (s1[i - 1U] == s2[j - 1U] && s2[j - 1U] == s3[k - 1U]) {
+                pos--;
+                result[pos] = s1[i - 1U];
+                i--;
+                j--;
+                k--;
+            } else if (dp[i - 1U][j][k] == dp[i][j][k]) {
+                i--;
+            } else if (dp[i][j - 1U][k] == dp[i][j][k]) {
+                j--;
+            } else {
+                k--;
+            }
+        }
+    }
+
+    for (i = 0U; i <= l1; i++) {
+        for (j = 0U; j <= l2; j++) {
+            free(dp[i][j]);
+        }
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *a = "AGGT12";
+    const char *b = "12TXAYB";
+    const char *c = "12XBA";
+    char *lcs;
+
+    lcs = lcs3(a, b, c);
+    if (lcs == NULL) {
+        if (fprintf(stderr, "Failed to compute LCS\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("LCS of %s, %s and %s is: %s (length %zu)\n",
+               a, b, c, lcs, strlen(lcs)) < 0) {
+        free(lcs);
+        return EXIT_FAILURE;
+    }
+
+    free(lcs);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int countSubstringsWithSameStartEnd(const char *str) {
+    int n = strlen(str);
+    int count = 0;
+    
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (str[i] == str[j]) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    const char *input = "abcab";
+    int result = countSubstringsWithSameStartEnd(input);
+    printf("%d\n", result);
+    return 0;
+}

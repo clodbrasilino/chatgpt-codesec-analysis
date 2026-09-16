@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+double calculate_polygon_area(int sides, double side_length)
+{
+    const double pi = 3.14159265358979323846;
+    double angle;
+    double area;
+    
+    if (sides < 3 || side_length <= 0.0 || !isfinite(side_length)) {
+        return -1.0;
+    }
+    
+    angle = pi / (double)sides;
+    area = ((double)sides * side_length * side_length) / (4.0 * tan(angle));
+    
+    return area;
+}
+
+int main(void)
+{
+    char input_buffer[256];
+    char *end_ptr;
+    long sides_long;
+    double side_length;
+    double area;
+    
+    printf("Enter the number of sides (minimum 3): ");
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    sides_long = strtol(input_buffer, &end_ptr, 10);
+    if (errno != 0 || end_ptr == input_buffer || *end_ptr != '\n' || 
+        sides_long < 3 || sides_long > INT_MAX) {
+        fprintf(stderr, "Invalid number of sides\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the side length (positive value): ");
+    if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    side_length = strtod(input_buffer, &end_ptr);
+    if (errno != 0 || end_ptr == input_buffer || *end_ptr != '\n' || 
+        side_length <= 0.0 || !isfinite(side_length)) {
+        fprintf(stderr, "Invalid side length\n");
+        return EXIT_FAILURE;
+    }
+    
+    area = calculate_polygon_area((int)sides_long, side_length);
+    if (area < 0.0) {
+        fprintf(stderr, "Calculation error\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Area of the regular polygon: %.6f\n", area);
+    
+    return EXIT_SUCCESS;
+}

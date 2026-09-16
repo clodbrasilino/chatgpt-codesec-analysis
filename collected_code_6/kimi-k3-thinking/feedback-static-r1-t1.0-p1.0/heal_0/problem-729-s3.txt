@@ -1,0 +1,141 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+static struct ListNode *create_node(int val)
+{
+    struct ListNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+static void free_list(struct ListNode *head)
+{
+    while (head != NULL) {
+        struct ListNode *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static int append_node(struct ListNode **head, int val)
+{
+    struct ListNode *node;
+    struct ListNode *cur;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    node = create_node(val);
+    if (node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+
+    cur = *head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return 0;
+}
+
+struct ListNode *add_two_lists(const struct ListNode *l1, const struct ListNode *l2)
+{
+    struct ListNode dummy;
+    struct ListNode *tail = &dummy;
+    int carry = 0;
+
+    dummy.val = 0;
+    dummy.next = NULL;
+
+    while (l1 != NULL || l2 != NULL || carry != 0) {
+        int sum = carry;
+        struct ListNode *node;
+
+        if (l1 != NULL) {
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        if (l2 != NULL) {
+            sum += l2->val;
+            l2 = l2->next;
+        }
+
+        carry = sum / 10;
+        node = create_node(sum % 10);
+        if (node == NULL) {
+            free_list(dummy.next);
+            return NULL;
+        }
+
+        tail->next = node;
+        tail = node;
+    }
+
+    return dummy.next;
+}
+
+static void print_list(const struct ListNode *head)
+{
+    while (head != NULL) {
+        printf("%d", head->val);
+        if (head->next != NULL) {
+            printf(" -> ");
+        }
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    struct ListNode *l1 = NULL;
+    struct ListNode *l2 = NULL;
+    struct ListNode *sum = NULL;
+
+    if (append_node(&l1, 2) != 0 ||
+        append_node(&l1, 4) != 0 ||
+        append_node(&l1, 3) != 0 ||
+        append_node(&l2, 5) != 0 ||
+        append_node(&l2, 6) != 0 ||
+        append_node(&l2, 4) != 0) {
+        fprintf(stderr, "Failed to build input lists\n");
+        free_list(l1);
+        free_list(l2);
+        return EXIT_FAILURE;
+    }
+
+    sum = add_two_lists(l1, l2);
+    if (sum == NULL) {
+        fprintf(stderr, "Failed to add lists\n");
+        free_list(l1);
+        free_list(l2);
+        return EXIT_FAILURE;
+    }
+
+    print_list(l1);
+    print_list(l2);
+    print_list(sum);
+
+    free_list(l1);
+    free_list(l2);
+    free_list(sum);
+
+    return EXIT_SUCCESS;
+}
+```

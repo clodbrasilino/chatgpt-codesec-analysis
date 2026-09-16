@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int minAddToMakeSumEven(int arr[], int n) {
+    int sum = 0;
+    for (int i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+    
+    if (sum % 2 == 0) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Minimum number to add: %d\n", minAddToMakeSumEven(arr1, n1));
+    
+    int arr2[] = {2, 4, 6, 8};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Minimum number to add: %d\n", minAddToMakeSumEven(arr2, n2));
+    
+    int arr3[] = {-1, -2, -3};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Minimum number to add: %d\n", minAddToMakeSumEven(arr3, n3));
+    
+    int arr4[] = {0, 0, 0};
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("Minimum number to add: %d\n", minAddToMakeSumEven(arr4, n4));
+    
+    int arr5[] = {7};
+    int n5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("Minimum number to add: %d\n", minAddToMakeSumEven(arr5, n5));
+    
+    return 0;
+}

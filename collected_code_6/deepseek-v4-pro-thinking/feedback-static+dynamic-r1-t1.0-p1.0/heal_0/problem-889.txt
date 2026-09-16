@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+
+struct ListNode {
+    int value;
+    struct ListNode *next;
+};
+
+struct ListOfLists {
+    struct ListNode *head;
+    struct ListOfLists *next;
+};
+
+struct ListNode *reverse_list(struct ListNode *head) {
+    struct ListNode *prev = NULL;
+    struct ListNode *curr = head;
+    struct ListNode *next = NULL;
+
+    while (curr != NULL) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+
+    return prev;
+}
+
+void reverse_each_list(struct ListOfLists *head) {
+    while (head != NULL) {
+        head->head = reverse_list(head->head);
+        head = head->next;
+    }
+}
+
+void print_list(struct ListNode *head) {
+    while (head != NULL) {
+        printf("%d ", head->value);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void print_lists(struct ListOfLists *head) {
+    while (head != NULL) {
+        print_list(head->head);
+        head = head->next;
+    }
+}
+
+int main(void) {
+    struct ListNode a1 = {1, NULL};
+    struct ListNode a2 = {2, NULL};
+    struct ListNode a3 = {3, NULL};
+    a1.next = &a2;
+    a2.next = &a3;
+
+    struct ListNode b1 = {4, NULL};
+    struct ListNode b2 = {5, NULL};
+    b1.next = &b2;
+
+    struct ListOfLists list1 = {&a1, NULL};
+    struct ListOfLists list2 = {&b1, &list1};
+
+    print_lists(&list2);
+    reverse_each_list(&list2);
+    print_lists(&list2);
+
+    return 0;
+}
+```

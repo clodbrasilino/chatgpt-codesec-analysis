@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool contains(const int *arr, size_t len, int value)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return false;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (arr[i] == value) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static int extract_common(const int *src, size_t src_len,
+                          const int *other, size_t other_len,
+                          int **out, size_t *out_len)
+{
+    int *buffer = NULL;
+    size_t count = 0;
+    size_t i;
+
+    if (out == NULL || out_len == NULL) {
+        return -1;
+    }
+
+    *out = NULL;
+    *out_len = 0;
+
+    if (src == NULL || other == NULL || src_len == 0 || other_len == 0) {
+        return 0;
+    }
+
+    buffer = malloc(src_len * sizeof(*buffer));
+    if (buffer == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < src_len; i++) {
+        if (contains(other, other_len, src[i])) {
+            buffer[count] = src[i];
+            count++;
+        }
+    }
+
+    *out = buffer;
+    *out_len = count;
+
+    return 0;
+}
+
+static int same_order(const int *list1, size_t len1,
+                      const int *list2, size_t len2,
+                      bool *result)
+{
+    int *common1 = NULL;
+    int *common2 = NULL;
+    size_t clen1 = 0;
+    size_t clen2 = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+    int status = 0;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    *result = false;
+
+    if (extract_common(list1, len1, list2, len2, &common1, &clen1) != 0) {
+        return -1;
+    }
+
+    if (extract_common(list2, len2, list1, len1, &common2, &clen2) != 0) {
+        free(common1);
+        return -1;
+    }
+
+    if (clen1 == clen2) {
+        *result = true;
+        for (i = 0; i < clen1; i++) {
+            if (common1[i] != common2[i]) {
+                *result = false;
+                break;
+            }
+        }
+    }
+
+    free(common1);
+    free(common2);
+
+    return status;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 7, 9};
+    int list2[] = {9, 2, 4, 3, 5, 7};
+    int list3[] = {2, 3, 4, 7, 9};
+    bool result = false;
+
+    if (same_order(list1, sizeof(list1) / sizeof(list1[0]),
+                   list2, sizeof(list2) / sizeof(list2[0]),
+                   &result) != 0) {
+        fprintf(stderr, "Error processing lists\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("List1 and List2 common elements in same order: %s\n",
+           result ? "true" : "false");
+
+    if (same_order(list1, sizeof(list1) / sizeof(list1[0]),
+                   list3, sizeof(list3) / sizeof(list3[0]),
+                   &result) != 0) {
+        fprintf(stderr, "Error processing lists\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("List1 and List3 common elements in same order: %s\n",
+           result ? "true" : "false");
+
+    return EXIT_SUCCESS;
+}

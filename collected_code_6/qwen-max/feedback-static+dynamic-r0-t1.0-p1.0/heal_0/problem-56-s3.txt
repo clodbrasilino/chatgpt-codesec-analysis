@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int reverse_number(int num) {
+    int rev = 0;
+    while (num > 0) {
+        rev = rev * 10 + num % 10;
+        num /= 10;
+    }
+    return rev;
+}
+
+int is_one_less_than_twice_reverse(int number) {
+    int reversed = reverse_number(number);
+    return number == 2 * reversed - 1;
+}
+
+int main() {
+    int test_number;
+    printf("Enter a number: ");
+    if (scanf("%d", &test_number) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_one_less_than_twice_reverse(test_number)) {
+        printf("The number is one less than twice its reverse.\n");
+    } else {
+        printf("The number is not one less than twice its reverse.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

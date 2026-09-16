@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+static void sort_sides(double *a, double *b, double *c)
+{
+    double tmp;
+
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+    if (*b > *c) {
+        tmp = *b;
+        *b = *c;
+        *c = tmp;
+    }
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+}
+
+int is_valid_triangle(double a, double b, double c)
+{
+    double diff;
+    double tolerance;
+
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
+        return 0;
+    }
+
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+
+    sort_sides(&a, &b, &c);
+
+    diff = (a + b) - c;
+    tolerance = DBL_EPSILON * fmax(fmax(a, b), c) * 4.0;
+
+    if (diff > tolerance) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes address the two reported failures, which both stem from naive floating-point comparison in the triangle inequality check:
+
+1. **False positive (expected False, got 1):** Inputs such as `0.1 0.2 0.3` describe a degenerate (flat) triangle, but due to binary floating-point representation, `0.1 + 0.2` evaluates to `0.30000000000000004`, which is strictly greater than `0.3`. The original strict `>` comparison therefore wrongly accepted it. The fix compares the difference against a relative tolerance (`DBL_EPSILON` scaled by the largest side), so near-degenerate results within rounding error are rejected.
+
+2. **False negative (expected True, got 0):** Conversely, rounding in the sum can make a genuinely valid triangle appear degenerate or fail one of the redundant inequality checks. By sorting the sides first, only the single meaningful inequality (`smallest + middle > largest`) needs to be evaluated, eliminating spurious failures from the other two comparisons and reducing accumulated rounding error.
+
+Sorting also makes the check numerically cleaner: once `c` is the largest side, `a + b > c` is the only condition that can fail, so the code performs exactly one tolerance-aware comparison instead of three exact ones.

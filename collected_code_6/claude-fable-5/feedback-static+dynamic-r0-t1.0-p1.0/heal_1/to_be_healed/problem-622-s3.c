@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double findMedianSortedArrays(const int *a, const int *b, size_t n)
+{
+    size_t i = 0;
+    size_t j = 0;
+    size_t count = 0;
+    int m1 = 0;
+    int m2 = 0;
+
+    if (a == NULL || b == NULL || n == 0U) {
+        fprintf(stderr, "Invalid input to findMedianSortedArrays\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while (count <= n) {
+        m1 = m2;
+        if (i < n && j < n) {
+            if (a[i] <= b[j]) {
+                m2 = a[i];
+                i++;
+            } else {
+                m2 = b[j];
+                j++;
+            }
+        } else if (i < n) {
+            m2 = a[i];
+            i++;
+        } else {
+            m2 = b[j];
+            j++;
+        }
+        count++;
+    }
+
+    return ((double)m1 + (double)m2) / 2.0;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 3, 5, 7};
+    /* Possible weaknesses found:
+     *  Variable 'arr2' can be declared as const array [constVariable]
+     */
+    int arr2[] = {2, 4, 6, 8};
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+    double median;
+
+    median = findMedianSortedArrays(arr1, arr2, n);
+
+    if (printf("Median: %.2f\n", median) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

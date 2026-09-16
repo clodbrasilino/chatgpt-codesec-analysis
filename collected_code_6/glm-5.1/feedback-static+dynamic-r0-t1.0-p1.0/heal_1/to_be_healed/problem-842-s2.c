@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int find_odd_occurrence(int *arr, size_t size) {
+    if (size == 0) {
+        return -1;
+    }
+    int result = 0;
+    for (size_t i = 0; i < size; i++) {
+        result ^= arr[i];
+    }
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        return 1;
+    }
+    size_t size = argc - 1;
+    int *arr = malloc(size * sizeof(int));
+    if (arr == NULL) {
+        return 1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = atoi(argv[i + 1]);
+    }
+    int result = find_odd_occurrence(arr, size);
+    printf("%d\n", result);
+    free(arr);
+    return 0;
+}

@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int all_bits_set_in_range(unsigned int n, unsigned int l, unsigned int r)
+{
+    unsigned int mask;
+    unsigned int width;
+
+    if (l == 0U || r == 0U) {
+        return -1;
+    }
+    if (l > r) {
+        return -1;
+    }
+    if (r > (unsigned int)(sizeof(unsigned int) * CHAR_BIT)) {
+        return -1;
+    }
+
+    width = r - l + 1U;
+    if (width >= (unsigned int)(sizeof(unsigned int) * CHAR_BIT)) {
+        mask = UINT_MAX;
+    } else {
+        mask = ((1U << width) - 1U) << (l - 1U);
+    }
+
+    if ((n & mask) == mask) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int left = 0U;
+    unsigned int right = 0U;
+    int result;
+
+    printf("Enter the number: ");
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Invalid input for number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the left position (1-based): ");
+    if (scanf("%u", &left) != 1) {
+        fprintf(stderr, "Invalid input for left position.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the right position (1-based): ");
+    if (scanf("%u", &right) != 1) {
+        fprintf(stderr, "Invalid input for right position.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = all_bits_set_in_range(number, left, right);
+    if (result < 0) {
+        fprintf(stderr, "Invalid range specified.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("All bits in range [%u, %u] are set.\n", left, right);
+    } else {
+        printf("Not all bits in range [%u, %u] are set.\n", left, right);
+    }
+
+    return EXIT_SUCCESS;
+}

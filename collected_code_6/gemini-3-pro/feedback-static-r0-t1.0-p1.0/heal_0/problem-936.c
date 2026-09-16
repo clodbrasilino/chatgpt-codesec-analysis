@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[50];
+    int value;
+} Tuple;
+
+int find_order_index(const char** order_list, int order_size, const char* key) {
+    if (!order_list || !key) return -1;
+    for (int i = 0; i < order_size; i++) {
+        if (strcmp(order_list[i], key) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void rearrange_tuples(Tuple* tuples, int tuple_count, const char** order_list, int order_size) {
+    if (!tuples || !order_list || tuple_count <= 0 || order_size <= 0) return;
+
+    Tuple* temp = (Tuple*)malloc(tuple_count * sizeof(Tuple));
+    if (!temp) return;
+
+    int current_index = 0;
+
+    for (int i = 0; i < order_size; i++) {
+        for (int j = 0; j < tuple_count; j++) {
+            if (strcmp(tuples[j].key, order_list[i]) == 0) {
+                temp[current_index++] = tuples[j];
+            }
+        }
+    }
+
+    for (int i = 0; i < tuple_count; i++) {
+        int found = 0;
+        for (int j = 0; j < order_size; j++) {
+            if (strcmp(tuples[i].key, order_list[j]) == 0) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            temp[current_index++] = tuples[i];
+        }
+    }
+
+    for (int i = 0; i < tuple_count; i++) {
+        tuples[i] = temp[i];
+    }
+
+    free(temp);
+}
+
+int main() {
+    Tuple tuples[] = {
+        {"apple", 5},
+        {"banana", 3},
+        {"cherry", 7},
+        {"date", 2}
+    };
+    int tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+
+    const char* order_list[] = {"cherry", "apple"};
+    int order_size = sizeof(order_list) / sizeof(order_list[0]);
+
+    rearrange_tuples(tuples, tuple_count, order_list, order_size);
+
+    for (int i = 0; i < tuple_count; i++) {
+        printf("%s: %d\n", tuples[i].key, tuples[i].value);
+    }
+
+    return 0;
+}

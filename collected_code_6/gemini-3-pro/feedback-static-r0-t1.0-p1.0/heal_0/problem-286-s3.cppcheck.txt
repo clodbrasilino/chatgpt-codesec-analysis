@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c:12:25: warning: Invalid test for overflow 'val>curr_max+val'; signed integer overflow is undefined behavior. Some mainstream compilers removes handling of overflows when optimising the code and change the code to 'curr_max<0'. [invalidTestForOverflow]
+        curr_max = (val > curr_max + val) ? val : curr_max + val;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c:18:43: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+long long int maxSubArraySumModified(int* arr, int n, int k) {
+                                          ^

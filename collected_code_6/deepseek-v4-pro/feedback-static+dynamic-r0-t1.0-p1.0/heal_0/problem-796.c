@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct DictNode {
+    char *key;
+    int value;
+    struct DictNode *next;
+} DictNode;
+
+typedef struct {
+    DictNode *head;
+    int size;
+} Dictionary;
+
+Dictionary *create_dictionary(void) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    dict->size = 0;
+    return dict;
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    DictNode *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            current->value = value;
+            return 0;
+        }
+        current = current->next;
+    }
+
+    DictNode *new_node = (DictNode *)malloc(sizeof(DictNode));
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    new_node->key = (char *)malloc(strlen(key) + 1);
+    if (new_node->key == NULL) {
+        free(new_node);
+        return -1;
+    }
+    strcpy(new_node->key, key);
+    new_node->value = value;
+    new_node->next = dict->head;
+    dict->head = new_node;
+    dict->size++;
+
+    return 0;
+}
+
+int sum_dictionary_values(const Dictionary *dict) {
+    if (dict == NULL) {
+        return 0;
+    }
+
+    int sum = 0;
+    DictNode *current = dict->head;
+    while (current != NULL) {
+        sum += current->value;
+        current = current->next;
+    }
+
+    return sum;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    DictNode *current = dict->head;
+    while (current != NULL) {
+        DictNode *next = current->next;
+        free(current->key);
+        free(current);
+        current = next;
+    }
+
+    free(dict);
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to allocate dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(dict, "item1", 10) != 0 ||
+        dict_add(dict, "item2", 20) != 0 ||
+        dict_add(dict, "item3", 30) != 0 ||
+        dict_add(dict, "item4", 40) != 0 ||
+        dict_add(dict, "item5", 50) != 0) {
+        fprintf(stderr, "Failed to add items to dictionary\n");
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+
+    int total = sum_dictionary_values(dict);
+    printf("Sum of all items: %d\n", total);
+
+    free_dictionary(dict);
+    return EXIT_SUCCESS;
+}

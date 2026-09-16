@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_LIST
+} NodeType;
+
+typedef struct Node {
+    NodeType type;
+    union {
+        int value;
+        struct List* list;
+    } data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+} List;
+
+Node* create_int_node(int value) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->type = TYPE_INT;
+    node->data.value = value;
+    node->next = NULL;
+    return node;
+}
+
+Node* create_list_node(List* list) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->type = TYPE_LIST;
+    node->data.list = list;
+    node->next = NULL;
+    return node;
+}
+
+List* create_list() {
+    List* list = (List*)malloc(sizeof(List));
+    if (!list) return NULL;
+    list->head = NULL;
+    return list;
+}
+
+void append_node(List* list, Node* node) {
+    if (!list || !node) return;
+    if (!list->head) {
+        list->head = node;
+    } else {
+        Node* curr = list->head;
+        while (curr->next) {
+            curr = curr->next;
+        }
+        curr->next = node;
+    }
+}
+
+void free_list(List* list) {
+    if (!list) return;
+    Node* curr = list->head;
+    while (curr) {
+        Node* next = curr->next;
+        if (curr->type == TYPE_LIST) {
+            free_list(curr->data.list);
+        }
+        free(curr);
+        curr = next;
+    }
+    free(list);
+}
+
+bool is_equal(Node* n1, Node* n2);
+
+bool is_subset(List* l1, List* l2) {
+    if (!l1 || !l2) return false;
+    
+    Node* curr1 = l1->head;
+    while (curr1) {
+        bool found = false;
+        Node* curr2 = l2->head;
+        while (curr2) {
+            if (is_equal(curr1, curr2)) {
+                found = true;
+                break;
+            }
+            curr2 = curr2->next;
+        }
+        if (!found) return false;
+        curr1 = curr1->next;
+    }
+    return true;
+}
+
+bool is_equal(Node* n1, Node* n2) {
+    if (!n1 && !n2) return true;
+    if (!n1 || !n2) return false;
+    if (n1->type != n2->type) return false;
+    
+    if (n1->type == TYPE_INT) {
+        return n1->data.value == n2->data.value;
+    } else {
+        return is_subset(n1->data.list, n2->data.list) && is_subset(n2->data.list, n1->data.list);
+    }
+}
+
+int main() {
+    List* l1 = create_list();
+    List* l2 = create_list();
+    
+    if (!l1 || !l2) {
+        free_list(l1);
+        free_list(l2);
+        return 1;
+    }
+
+    append_node(l1, create_int_node(1));
+    append_node(l1, create_int_node(2));
+    
+    append_node(l2, create_int_node(1));
+    append_node(l2, create_int_node(2));
+    append_node(l2, create_int_node(3));
+    
+    List* sublist1 = create_list();
+    if (sublist1) {
+        append_node(sublist1, create_int_node(4));
+        append_node(l1, create_list_node(sublist1));
+    }
+    
+    List* sublist2 = create_list();
+    if (sublist2) {
+        append_node(sublist2, create_int_node(4));
+        append_node(l2, create_list_node(sublist2));
+    }
+
+    if (is_subset(l1, l2)) {
+        printf("l1 is a subset of l2\n");
+    } else {
+        printf("l1 is not a subset of l2\n");
+    }
+
+    free_list(l1);
+    free_list(l2);
+
+    return 0;
+}

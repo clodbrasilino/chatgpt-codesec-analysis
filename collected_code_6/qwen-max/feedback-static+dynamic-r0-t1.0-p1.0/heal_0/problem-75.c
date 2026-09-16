@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+} TupleList;
+
+bool isDivisibleByK(int num, int k) {
+    return (num % k == 0);
+}
+
+bool allElementsDivisibleByK(Tuple tuple, int k) {
+    for (size_t i = 0; i < tuple.length; ++i) {
+        if (!isDivisibleByK(tuple.elements[i], k)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void findTuplesDivisibleByK(TupleList list, int k) {
+    for (size_t i = 0; i < list.count; ++i) {
+        if (allElementsDivisibleByK(list.tuples[i], k)) {
+            for (size_t j = 0; j < list.tuples[i].length; ++j) {
+                printf("%d ", list.tuples[i].elements[j]);
+            }
+            printf("\n");
+        }
+    }
+}
+
+int main() {
+    int k = 3;
+    TupleList list = { .count = 3 };
+    list.tuples = (Tuple*)malloc(list.count * sizeof(Tuple));
+
+    list.tuples[0] = (Tuple){ .elements = (int[]){3, 6, 9}, .length = 3 };
+    list.tuples[1] = (Tuple){ .elements = (int[]){2, 4, 8}, .length = 3 };
+    list.tuples[2] = (Tuple){ .elements = (int[]){15, 30, 45}, .length = 3 };
+
+    findTuplesDivisibleByK(list, k);
+
+    free(list.tuples);
+
+    return 0;
+}

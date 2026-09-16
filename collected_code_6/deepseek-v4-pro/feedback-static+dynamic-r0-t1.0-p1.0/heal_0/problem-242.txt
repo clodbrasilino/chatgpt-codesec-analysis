@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+size_t count_characters(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    return strlen(str);
+}
+
+int main(void) {
+    const char *test1 = "Hello, World!";
+    const char *test2 = "";
+    const char *test3 = NULL;
+    
+    printf("Test 1: %zu\n", count_characters(test1));
+    printf("Test 2: %zu\n", count_characters(test2));
+    printf("Test 3: %zu\n", count_characters(test3));
+    
+    return 0;
+}
+```

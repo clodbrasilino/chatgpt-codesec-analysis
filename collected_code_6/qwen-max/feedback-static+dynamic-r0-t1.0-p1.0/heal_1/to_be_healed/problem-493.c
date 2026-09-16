@@ -1,81 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
- /* Possible weaknesses found:
-  *  include '<math.h>' or provide a declaration of 'cos'
-  */
 
 typedef struct {
     double x;
     double y;
 } Point;
 
-typedef struct {
-    int size;
-    Point *points;
-} PointsList;
+typedef Point* PointList[6];
 
-PointsList* create_hexagon(double center_x, double center_y, double radius) {
-    PointsList* hex = (PointsList*)malloc(sizeof(PointsList));
-    if (hex == NULL) {
+PointList* calculateHexagonGrid(int rows, int cols, double size) {
+    PointList* hexGrid = (PointList*)malloc(rows * cols * sizeof(PointList));
+    if (hexGrid == NULL) {
         return NULL;
     }
-    hex->size = 6;
-    hex->points = (Point*)malloc(hex->size * sizeof(Point));
-    if (hex->points == NULL) {
-        free(hex);
-        return NULL;
+    
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            /* Possible weaknesses found:
+             *  cast specifies array type
+             *  used type 'PointList' (aka 'Point *[6]') where arithmetic or pointer type is required
+             */
+            hexGrid[i * cols + j] = (PointList)malloc(6 * sizeof(Point*));
+            if (hexGrid[i * cols + j] == NULL) {
+                for (int k = 0; k < i * cols + j; ++k) {
+                    free(hexGrid[k]);
+                }
+                free(hexGrid);
+                return NULL;
+            }
+            for (int k = 0; k < 6; ++k) {
+                hexGrid[i * cols + j][k] = (Point*)malloc(sizeof(Point));
+                if (hexGrid[i * cols + j][k] == NULL) {
+                    for (int l = 0; l < k; ++l) {
+                        free(hexGrid[i * cols + j][l]);
+                    }
+                    free(hexGrid[i * cols + j]);
+                    for (int m = 0; m < i * cols + j; ++m) {
+                        for (int n = 0; n < 6; ++n) {
+                            free(hexGrid[m][n]);
+                        }
+                        free(hexGrid[m]);
+                    }
+                    free(hexGrid);
+                    return NULL;
+                }
+            }
+            
+            double y_offset = i * (size * 1.5) + ((j % 2) ? (size * 0.75) : 0);
+            double x_offset = j * size * 1.5;
+            hexGrid[i * cols + j][0]->x = x_offset;
+            hexGrid[i * cols + j][0]->y = y_offset;
+            hexGrid[i * cols + j][1]->x = x_offset + size * 0.5;
+            hexGrid[i * cols + j][1]->y = y_offset - (size * 0.866);
+            hexGrid[i * cols + j][2]->x = x_offset + size * 1.5;
+            hexGrid[i * cols + j][2]->y = y_offset;
+            hexGrid[i * cols + j][3]->x = x_offset + size * 1.5;
+            hexGrid[i * cols + j][3]->y = y_offset + (size * 0.866);
+            hexGrid[i * cols + j][4]->x = x_offset + size * 0.5;
+            hexGrid[i * cols + j][4]->y = y_offset + (size * 1.732);
+            hexGrid[i * cols + j][5]->x = x_offset;
+            hexGrid[i * cols + j][5]->y = y_offset + (size * 0.866);
+        }
     }
-
-    for (int i = 0; i < 6; ++i) {
-        double angle_deg = 60 * i - 30;
-        /* Possible weaknesses found:
-         *  'M_PI' undeclared (first use in this function)
-         *  each undeclared identifier is reported only once for each function it appears in
-         *  use of undeclared identifier 'M_PI'
-         */
-        double angle_rad = angle_deg * M_PI / 180.0;
-        /* Possible weaknesses found:
-         *  include the header <math.h> or explicitly provide a declaration for 'cos'
-         *  implicit declaration of function 'cos' [-Wimplicit-function-declaration]
-         *  call to undeclared library function 'cos' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-         */
-        hex->points[i].x = center_x + radius * cos(angle_rad);
-        /* Possible weaknesses found:
-         *  call to undeclared library function 'sin' with type 'double (double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-         *  include the header <math.h> or explicitly provide a declaration for 'sin'
-         *  include '<math.h>' or provide a declaration of 'sin'
-         *  implicit declaration of function 'sin' [-Wimplicit-function-declaration]
-         */
-        hex->points[i].y = center_y + radius * sin(angle_rad);
-    }
-
-    return hex;
+    return hexGrid;
 }
 
-void print_hexagon(PointsList *hex) {
-    for (int i = 0; i < hex->size; ++i) {
-        printf("(%.2f, %.2f)\n", hex->points[i].x, hex->points[i].y);
+void printHexagonGrid(PointList* hexGrid, int rows, int cols) {
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            printf("Hexagon at (%d, %d):\n", i, j);
+            for (int k = 0; k < 6; ++k) {
+                printf("  Vertex %d: (%.2f, %.2f)\n", k, hexGrid[i * cols + j][k]->x, hexGrid[i * cols + j][k]->y);
+            }
+        }
     }
 }
 
-void free_points_list(PointsList *list) {
-    free(list->points);
-    free(list);
+void freeHexagonGrid(PointList* hexGrid, int rows, int cols) {
+    for (int i = 0; i < rows * cols; ++i) {
+        for (int j = 0; j < 6; ++j) {
+            free(hexGrid[i][j]);
+        }
+        free(hexGrid[i]);
+    }
+    free(hexGrid);
 }
 
 int main() {
-    double center_x = 0.0;
-    double center_y = 0.0;
-    double radius = 1.0;
-
-    PointsList *hex = create_hexagon(center_x, center_y, radius);
-    if (hex != NULL) {
-        print_hexagon(hex);
-        free_points_list(hex);
+    int rows = 2;
+    int cols = 3;
+    double size = 2.0;
+    
+    PointList* hexGrid = calculateHexagonGrid(rows, cols, size);
+    if (hexGrid != NULL) {
+        printHexagonGrid(hexGrid, rows, cols);
+        freeHexagonGrid(hexGrid, rows, cols);
     } else {
-        fprintf(stderr, "Failed to create hexagon\n");
-        return 1;
+        printf("Memory allocation failed.\n");
     }
-
+    
     return 0;
 }

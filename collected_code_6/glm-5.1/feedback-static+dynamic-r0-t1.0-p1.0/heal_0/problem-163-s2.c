@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+bool calculate_regular_polygon_area(int num_sides, double side_length, double *area) {
+    if (num_sides < 3 || side_length <= 0.0 || area == NULL) {
+        return false;
+    }
+    *area = (num_sides * side_length * side_length) / (4.0 * tan(M_PI / num_sides));
+    return true;
+}
+
+int main(void) {
+    int sides = 6;
+    double length = 5.0;
+    double area;
+
+    if (calculate_regular_polygon_area(sides, length, &area)) {
+        printf("%f\n", area);
+    } else {
+        return 1;
+    }
+
+    return 0;
+}

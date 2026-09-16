@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 11, got <no output>
+  *  test case 0 failed: expected 4, got <no output>
+  *  test case 2 failed: expected 26, got <no output>
+  */
+
+int eulerian(int n, int m) {
+    long long a[n + 1][m + 1];
+    for (int i = 0; i <= n; i++) {
+        a[i][0] = 1;
+    }
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            if (i < j) {
+                a[i][j] = 0;
+            } else {
+                a[i][j] = (i - j) * a[i - 1][j - 1] + (j + 1) * a[i - 1][j];
+            }
+        }
+    }
+    return a[n][m];
+}
+
+int main() {
+    int n = 4, m = 2;
+    /* Possible weaknesses found:
+     *  %lld in format string (no. 3) requires 'long long' but the argument type is 'signed int'. [invalidPrintfArgType_sint]
+     */
+    printf("Eulerian number A(%d, %d) is %lld\n", n, m, eulerian(n, m));
+    return 0;
+}

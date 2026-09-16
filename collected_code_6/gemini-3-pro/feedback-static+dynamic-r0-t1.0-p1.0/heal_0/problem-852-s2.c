@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+size_t remove_negatives(int *array, size_t size);
+
+size_t remove_negatives(int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    size_t new_size = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (array[i] >= 0) {
+            array[new_size] = array[i];
+            new_size++;
+        }
+    }
+
+    return new_size;
+}
+
+int main(void) {
+    int my_list[] = {5, -3, 8, -1, 0, 12, -7, 4};
+    size_t original_size = sizeof(my_list) / sizeof(my_list[0]);
+
+    size_t new_size = remove_negatives(my_list, original_size);
+
+    for (size_t i = 0; i < new_size; i++) {
+        printf("%d ", my_list[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

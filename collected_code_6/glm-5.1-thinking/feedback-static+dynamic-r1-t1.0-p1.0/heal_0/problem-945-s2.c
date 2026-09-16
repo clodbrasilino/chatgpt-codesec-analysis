@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *tuple_to_set(const int *tuple, size_t tuple_size, size_t *set_size) {
+    if (tuple == NULL || set_size == NULL || tuple_size == 0) {
+        if (set_size != NULL) {
+            *set_size = 0;
+        }
+        return NULL;
+    }
+
+    int *set = (int *)malloc(tuple_size * sizeof(int));
+    if (set == NULL) {
+        *set_size = 0;
+        return NULL;
+    }
+
+    size_t current_set_size = 0;
+    for (size_t i = 0; i < tuple_size; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < current_set_size; j++) {
+            if (set[j] == tuple[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            set[current_set_size] = tuple[i];
+            current_set_size++;
+        }
+    }
+
+    if (current_set_size == 0) {
+        free(set);
+        *set_size = 0;
+        return NULL;
+    }
+
+    int *shrunk_set = (int *)realloc(set, current_set_size * sizeof(int));
+    if (shrunk_set != NULL) {
+        set = shrunk_set;
+    }
+
+    *set_size = current_set_size;
+    return set;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 2, 3, 1, 4, 5, 4};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t set_size = 0;
+
+    int *set = tuple_to_set(tuple, tuple_size, &set_size);
+
+    if (set != NULL) {
+        for (size_t i = 0; i < set_size; i++) {
+            printf("%d ", set[i]);
+        }
+        printf("\n");
+        free(set);
+    } else {
+        printf("Empty set or allocation failed.\n");
+    }
+
+    return 0;
+}

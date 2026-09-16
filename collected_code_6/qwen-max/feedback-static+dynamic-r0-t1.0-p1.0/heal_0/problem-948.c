@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int *items;
+    size_t length;
+} Tuple;
+
+Tuple* create_tuple(size_t length) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->items = (int *)calloc(length, sizeof(int));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->length = length;
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    free(tuple->items);
+    free(tuple);
+}
+
+int get_item(Tuple *tuple, size_t index) {
+    if (index >= tuple->length || tuple == NULL || tuple->items == NULL) {
+        return -1; // Return an error code
+    }
+    return tuple->items[index];
+}
+
+int main() {
+    Tuple *tuple = create_tuple(3);
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return 1;
+    }
+
+    tuple->items[0] = 10;
+    tuple->items[1] = 20;
+    tuple->items[2] = 30;
+
+    printf("Item at index 1: %d\n", get_item(tuple, 1));
+
+    destroy_tuple(tuple);
+    return 0;
+}

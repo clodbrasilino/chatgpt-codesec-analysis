@@ -1,35 +1,33 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Possible weaknesses found:
- *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
- */
-void nth_items(int *list, int size, int n, int *result, int *resultSize) {
-    int count = 0;
-    for (int i = n - 1; i < size; i += n) {
-        result[count++] = list[i];
+void* select_nth_item(void** list, size_t n, size_t element_size) {
+    if (n >= ((size_t)(-1) / element_size)) {
+        return NULL;
     }
-    *resultSize = count;
+    return (char*)list + n * element_size;
 }
 
 int main() {
-    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    int size = sizeof(arr) / sizeof(arr[0]);
-    int n = 3;
-    int resultSize;
-    int *result = (int *)malloc(size * sizeof(int));
-    
-    if (result == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
+    int a[] = {10, 20, 30, 40, 50};
+    int* list = a;
+    size_t n = 2;
+
+    /* Possible weaknesses found:
+     *  Calling function 'select_nth_item' returns 0
+     *  Variable 'nth_item' can be declared as pointer to const [constVariablePointer]
+     *  Assignment 'nth_item=(int*)select_nth_item((void**)list,n,sizeof(int))', assigned value is 0
+     */
+    int* nth_item = (int*)select_nth_item((void**)list, n, sizeof(int));
+    /* Possible weaknesses found:
+     *  Condition 'nth_item!=NULL' is always false
+     *  Condition 'nth_item!=NULL' is always false [knownConditionTrueFalse]
+     */
+    if (nth_item != NULL) {
+        printf("%d\n", *nth_item);
+    } else {
+        fprintf(stderr, "Failed to retrieve the nth item.\n");
     }
-    
-    nth_items(arr, size, n, result, &resultSize);
-    
-    for (int i = 0; i < resultSize; i++) {
-        printf("%d ", result[i]);
-    }
-    
-    free(result);
+
     return 0;
 }

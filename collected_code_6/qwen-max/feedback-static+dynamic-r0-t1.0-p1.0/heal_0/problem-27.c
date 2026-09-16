@@ -3,36 +3,25 @@
 #include <string.h>
 #include <ctype.h>
 
-char **remove_digits(char **strings, size_t *arr_size) {
-    for (size_t i = 0; i < *arr_size; ++i) {
-        if (strings[i] == NULL) continue;
-
-        char *write_ptr = strings[i];
-        for (char *read_ptr = strings[i]; *read_ptr; ++read_ptr) {
-            if (!isdigit((unsigned char)*read_ptr)) {
-                *write_ptr++ = *read_ptr;
-            }
+void remove_digits(char *str) {
+    int i, j = 0;
+    int len = strlen(str);
+    for (i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)str[i])) {
+            str[j++] = str[i];
         }
-        *write_ptr = '\0';
     }
-
-    return strings;
+    str[j] = '\0';
 }
 
 int main() {
-    char *strings[] = {"hello123", "world456", "example789", "test123", NULL};
-    size_t arr_size = 4; // The number of strings
+    char *strings[] = {"123abc456", "789def012", "345ghi678"};
+    int num_strings = sizeof(strings) / sizeof(strings[0]);
 
-    strings = remove_digits(strings, &arr_size);
-
-    for (size_t i = 0; i < arr_size; ++i) {
+    for (int i = 0; i < num_strings; i++) {
+        remove_digits(strings[i]);
         printf("%s\n", strings[i]);
     }
-
-    for (size_t i = 0; i < arr_size; ++i) {
-        free(strings[i]);
-    }
-    free(strings);
 
     return 0;
 }

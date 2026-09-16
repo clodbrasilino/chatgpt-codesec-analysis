@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int bisect_left(const int *arr, int val, int size) {
+    int low = 0;
+    int high = size;
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] < val) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low;
+}
+
+int main() {
+    int arr[] = {1, 3, 4, 6, 8, 9, 11};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int val = 7;
+    int index = bisect_left(arr, val, size);
+    printf("The left insertion point for %d is at index %d\n", val, index);
+    return 0;
+}

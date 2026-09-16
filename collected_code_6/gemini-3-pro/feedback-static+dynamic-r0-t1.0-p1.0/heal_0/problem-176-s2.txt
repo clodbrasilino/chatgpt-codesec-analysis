@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_triangle_perimeter(double side_a, double side_b, double side_c) {
+    if (side_a <= 0.0 || side_b <= 0.0 || side_c <= 0.0) {
+        return -1.0; 
+    }
+    
+    if ((side_a + side_b <= side_c) || (side_a + side_c <= side_b) || (side_b + side_c <= side_a)) {
+        return -1.0;
+    }
+
+    return side_a + side_b + side_c;
+}
+
+int main(void) {
+    double side_a;
+    double side_b;
+    double side_c;
+    double perimeter;
+
+    if (scanf("%lf %lf %lf", &side_a, &side_b, &side_c) != 3) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    perimeter = calculate_triangle_perimeter(side_a, side_b, side_c);
+
+    if (perimeter < 0.0) {
+        fprintf(stderr, "Invalid triangle sides.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter: %.2lf\n", perimeter);
+
+    return EXIT_SUCCESS;
+}
+```

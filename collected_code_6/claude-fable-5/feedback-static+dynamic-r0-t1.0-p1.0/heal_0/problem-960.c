@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int count_tilings(int n, unsigned long long *result)
+{
+    unsigned long long prev;
+    unsigned long long curr;
+    unsigned long long next;
+    int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n == 0) {
+        *result = 1ULL;
+        return 0;
+    }
+
+    if (n == 1) {
+        *result = 1ULL;
+        return 0;
+    }
+
+    prev = 1ULL;
+    curr = 1ULL;
+
+    for (i = 2; i <= n; i++) {
+        if (curr > ULLONG_MAX - prev) {
+            return -1;
+        }
+        next = curr + prev;
+        prev = curr;
+        curr = next;
+    }
+
+    *result = curr;
+    return 0;
+}
+
+int main(void)
+{
+    int n;
+    unsigned long long ways;
+    int scan_status;
+
+    printf("Enter board length n (for a 2 x n board): ");
+
+    scan_status = scanf("%d", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || n > 90) {
+        fprintf(stderr, "Error: n must be between 0 and 90.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count_tilings(n, &ways) != 0) {
+        fprintf(stderr, "Error: computation failed or overflow occurred.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of ways to tile a 2 x %d board: %llu\n", n, ways);
+
+    return EXIT_SUCCESS;
+}

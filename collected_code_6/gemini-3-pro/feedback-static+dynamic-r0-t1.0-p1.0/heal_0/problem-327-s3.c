@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_valid_triangle(long long a, long long b, long long c);
+bool is_isosceles(long long a, long long b, long long c);
+
+bool is_valid_triangle(long long a, long long b, long long c) {
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return false;
+    }
+    if ((a + b > c) && (a + c > b) && (b + c > a)) {
+        return true;
+    }
+    return false;
+}
+
+bool is_isosceles(long long a, long long b, long long c) {
+    if (!is_valid_triangle(a, b, c)) {
+        return false;
+    }
+    return (a == b) || (a == c) || (b == c);
+}
+
+int main(void) {
+    long long a = 0;
+    long long b = 0;
+    long long c = 0;
+
+    if (scanf("%lld %lld %lld", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (!is_valid_triangle(a, b, c)) {
+        printf("Not a valid triangle\n");
+        return 1;
+    }
+
+    if (is_isosceles(a, b, c)) {
+        printf("Isosceles\n");
+    } else {
+        printf("Not isosceles\n");
+    }
+
+    return 0;
+}

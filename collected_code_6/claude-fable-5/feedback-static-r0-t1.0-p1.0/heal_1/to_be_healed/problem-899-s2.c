@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool canBeSorted(const int arr[], size_t n)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'left' can be reduced. [variableScope]
+     */
+    size_t left;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'right' can be reduced. [variableScope]
+     */
+    size_t right;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'last' can be reduced. [variableScope]
+     */
+    int last;
+    bool result;
+
+    result = true;
+
+    if (n > 0U)
+    {
+        left = 0U;
+        right = n - 1U;
+        last = (arr[left] <= arr[right]) ? arr[left] : arr[right];
+
+        while (left <= right)
+        {
+            if ((arr[left] <= arr[right]) && (arr[left] >= last))
+            {
+                last = arr[left];
+                left++;
+            }
+            else if (arr[right] >= last)
+            {
+                last = arr[right];
+                if (right == 0U)
+                {
+                    break;
+                }
+                right--;
+            }
+            else
+            {
+                result = false;
+                break;
+            }
+
+            if (right == (size_t)-1)
+            {
+                break;
+            }
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int arr1[] = {3, 2, 1, 2, 3};
+    int arr2[] = {2, 8, 5, 3};
+    size_t n1;
+    size_t n2;
+
+    n1 = sizeof(arr1) / sizeof(arr1[0]);
+    n2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (canBeSorted(arr1, n1))
+    {
+        (void)printf("Array 1: Yes\n");
+    }
+    else
+    {
+        (void)printf("Array 1: No\n");
+    }
+
+    if (canBeSorted(arr2, n2))
+    {
+        (void)printf("Array 2: Yes\n");
+    }
+    else
+    {
+        (void)printf("Array 2: No\n");
+    }
+
+    return 0;
+}

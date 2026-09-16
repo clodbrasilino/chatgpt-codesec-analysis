@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+typedef struct {
+    int id;
+    int value;
+} Tuple;
+
+void rearrange_tuples(Tuple *tuples, size_t tuple_count, const int *order, size_t order_count)
+{
+    if (tuples == NULL || order == NULL || tuple_count == 0 || order_count == 0) {
+        return;
+    }
+
+    size_t position = 0;
+
+    for (size_t i = 0; i < order_count && position < tuple_count; ++i) {
+        for (size_t j = position; j < tuple_count; ++j) {
+            if (tuples[j].id == order[i]) {
+                if (j != position) {
+                    Tuple temp = tuples[position];
+                    tuples[position] = tuples[j];
+                    tuples[j] = temp;
+                }
+                ++position;
+                break;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        { 3, 30 },
+        { 1, 10 },
+        { 2, 20 },
+        { 4, 40 }
+    };
+    int order[] = { 2, 1, 4, 3 };
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t order_count = sizeof(order) / sizeof(order[0]);
+
+    rearrange_tuples(tuples, tuple_count, order, order_count);
+
+    for (size_t i = 0; i < tuple_count; ++i) {
+        printf("%d:%d\n", tuples[i].id, tuples[i].value);
+    }
+
+    return 0;
+}
+```

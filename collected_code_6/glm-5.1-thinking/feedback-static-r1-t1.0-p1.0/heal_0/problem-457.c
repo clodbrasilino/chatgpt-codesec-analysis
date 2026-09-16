@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct SubListNode {
+    int value;
+    struct SubListNode *next;
+} SubListNode;
+
+typedef struct MainListNode {
+    SubListNode *sublist_head;
+    struct MainListNode *next;
+} MainListNode;
+
+size_t calculate_length(SubListNode *head) {
+    size_t length = 0;
+    SubListNode *current = head;
+    while (current != NULL) {
+        length++;
+        current = current->next;
+    }
+    return length;
+}
+
+SubListNode *find_min_length_sublist(MainListNode *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    SubListNode *min_sublist = NULL;
+    size_t min_length = SIZE_MAX;
+    MainListNode *current = head;
+
+    while (current != NULL) {
+        size_t current_length = calculate_length(current->sublist_head);
+        if (current_length < min_length) {
+            min_length = current_length;
+            min_sublist = current->sublist_head;
+            if (min_length == 0) {
+                break;
+            }
+        }
+        current = current->next;
+    }
+
+    return min_sublist;
+}
+
+SubListNode *create_sublist_node(int val) {
+    SubListNode *node = (SubListNode *)malloc(sizeof(SubListNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->value = val;
+    node->next = NULL;
+    return node;
+}
+
+MainListNode *create_main_list_node(SubListNode *sublist) {
+    MainListNode *node = (MainListNode *)malloc(sizeof(MainListNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->sublist_head = sublist;
+    node->next = NULL;
+    return node;
+}
+
+void free_sublist(SubListNode *head) {
+    SubListNode *current = head;
+    while (current != NULL) {
+        SubListNode *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void free_main_list(MainListNode *head) {
+    MainListNode *current = head;
+    while (current != NULL) {
+        MainListNode *next = current->next;
+        free_sublist(current->sublist_head);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    SubListNode *s1 = create_sublist_node(1);
+    s1->next = create_sublist_node(2);
+    s1->next->next = create_sublist_node(3);
+
+    SubListNode *s2 = create_sublist_node(4);
+    s2->next = create_sublist_node(5);
+
+    SubListNode *s3 = create_sublist_node(6);
+    s3->next = create_sublist_node(7);
+    s3->next->next = create_sublist_node(8);
+    s3->next->next->next = create_sublist_node(9);
+
+    MainListNode *m1 = create_main_list_node(s1);
+    MainListNode *m2 = create_main_list_node(s2);
+    MainListNode *m3 = create_main_list_node(s3);
+
+    m1->next = m2;
+    m2->next = m3;
+
+    SubListNode *min_list = find_min_length_sublist(m1);
+    if (min_list != NULL) {
+        printf("Minimum length sublist: ");
+        SubListNode *curr = min_list;
+        while (curr != NULL) {
+            printf("%d ", curr->value);
+            curr = curr->next;
+        }
+        printf("\n");
+    } else {
+        printf("No sublists found or minimum sublist is empty.\n");
+    }
+
+    free_main_list(m1);
+
+    return 0;
+}

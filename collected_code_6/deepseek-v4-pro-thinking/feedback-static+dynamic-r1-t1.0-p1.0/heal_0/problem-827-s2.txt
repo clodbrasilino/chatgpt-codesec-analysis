@@ -1,0 +1,49 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+
+int sum_column(const int * const *list, size_t rows, size_t cols, size_t col, int *result)
+{
+    if (result == NULL || col >= cols) {
+        return -1;
+    }
+
+    int sum = 0;
+
+    if (rows == 0) {
+        *result = sum;
+        return 0;
+    }
+
+    if (list == NULL) {
+        return -1;
+    }
+
+    for (size_t r = 0; r < rows; ++r) {
+        if (list[r] == NULL) {
+            return -1;
+        }
+        sum += list[r][col];
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    int row0[] = {1, 2, 3, 4};
+    int row1[] = {5, 6, 7, 8};
+    int row2[] = {9, 10, 11, 12};
+    const int *list[] = {row0, row1, row2};
+    int result = 0;
+
+    if (sum_column(list, 3, 4, 2, &result) != 0) {
+        fprintf(stderr, "sum_column failed\n");
+        return 1;
+    }
+
+    printf("%d\n", result);
+    return 0;
+}
+```

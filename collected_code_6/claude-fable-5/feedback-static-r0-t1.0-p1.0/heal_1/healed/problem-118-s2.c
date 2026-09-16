@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
+
+Node *create_node(char c)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = c;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+Node *string_to_list(const char *str)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+
+    for (i = 0; i < len; i++) {
+        Node *node = create_node(str[i]);
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+            tail = node;
+        } else {
+            tail->next = node;
+            tail = node;
+        }
+    }
+
+    return head;
+}
+
+void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        if (printf("%c -> ", current->data) < 0) {
+            return;
+        }
+        current = current->next;
+    }
+    if (printf("NULL\n") < 0) {
+        return;
+    }
+}
+
+int main(void)
+{
+    const char *input = "hello";
+    Node *list;
+
+    list = string_to_list(input);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to convert string to list\n");
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

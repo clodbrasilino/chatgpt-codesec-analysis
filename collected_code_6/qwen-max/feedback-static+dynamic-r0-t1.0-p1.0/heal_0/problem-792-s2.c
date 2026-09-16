@@ -1,39 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct List {
-    int data;
-    struct List *next;
-} List;
-
-int count_lists(List *lists[], int num_lists) {
-    int count = 0;
-    for (int i = 0; i < num_lists; ++i) {
-        if (lists[i] != NULL) {
-            count++;
-        }
+int count_lists(int num_lists) {
+    int *lists = malloc(num_lists * sizeof(int));
+    if (lists == NULL) {
+        return -1;
     }
-    return count;
+    free(lists);
+    return num_lists;
 }
 
 int main() {
-    List *list1 = (List *)malloc(sizeof(List));
-    List *list2 = (List *)malloc(sizeof(List));
-    List *list3 = NULL;
-
-    list1->data = 1;
-    list1->next = NULL;
-    list2->data = 2;
-    list2->next = NULL;
-
-    List *lists[] = {list1, list2, list3};
-    int num_lists = 3;
-
-    int result = count_lists(lists, num_lists);
-    printf("Number of lists: %d\n", result);
-
-    free(list1);
-    free(list2);
-
+    int num_lists = 5;
+    int result = count_lists(num_lists);
+    if (result != -1) {
+        printf("Number of lists: %d\n", result);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
     return 0;
 }

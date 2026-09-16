@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int find_tuple_inversions(Tuple *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return 0;
+    }
+
+    int inversions = 0;
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (list[i].a > list[j].a && list[i].b < list[j].b) {
+                inversions++;
+            } else if (list[i].a < list[j].a && list[i].b > list[j].b) {
+                inversions++;
+            }
+        }
+    }
+    return inversions;
+}
+
+int main(void) {
+    Tuple list[] = {{1, 3}, {2, 2}, {3, 1}};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    int result = find_tuple_inversions(list, size);
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

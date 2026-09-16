@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int calculate_parity(unsigned int n) {
+    int parity = 0;
+    while (n) {
+        parity = !parity;
+        n = n & (n - 1);
+    }
+    return parity;
+}
+
+int main() {
+    unsigned int num;
+    printf("Enter a number: ");
+    scanf("%u", &num);
+    int result = calculate_parity(num);
+    if (result) {
+        printf("The number has odd parity.\n");
+    } else {
+        printf("The number has even parity.\n");
+    }
+    return 0;
+}

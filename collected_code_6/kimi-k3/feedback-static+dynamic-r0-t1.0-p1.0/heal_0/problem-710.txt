@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Tuple *create_tuple(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+    
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    
+    t->data = (int *)malloc(size * sizeof(int));
+    if (t->data == NULL) {
+        free(t);
+        return NULL;
+    }
+    
+    t->size = size;
+    return t;
+}
+
+void destroy_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->data);
+        free(t);
+    }
+}
+
+int get_first(const Tuple *t, int *result) {
+    if (t == NULL || result == NULL || t->size == 0 || t->data == NULL) {
+        return -1;
+    }
+    *result = t->data[0];
+    return 0;
+}
+
+int get_last(const Tuple *t, int *result) {
+    if (t == NULL || result == NULL || t->size == 0 || t->data == NULL) {
+        return -1;
+    }
+    *result = t->data[t->size - 1];
+    return 0;
+}
+
+int main(void) {
+    Tuple *t = create_tuple(5);
+    if (t == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < t->size; i++) {
+        t->data[i] = (int)(i * 10);
+    }
+    
+    int first, last;
+    
+    if (get_first(t, &first) != 0) {
+        fprintf(stderr, "Failed to get first element\n");
+        destroy_tuple(t);
+        return EXIT_FAILURE;
+    }
+    
+    if (get_last(t, &last) != 0) {
+        fprintf(stderr, "Failed to get last element\n");
+        destroy_tuple(t);
+        return EXIT_FAILURE;
+    }
+    
+    printf("First: %d\n", first);
+    printf("Last: %d\n", last);
+    
+    destroy_tuple(t);
+    return EXIT_SUCCESS;
+}
+```

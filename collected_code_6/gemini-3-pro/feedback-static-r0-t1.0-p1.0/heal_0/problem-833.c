@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char* key;
+    char* value;
+    struct KeyValuePair* next;
+} KeyValuePair;
+
+typedef struct Dictionary {
+    KeyValuePair* head;
+} Dictionary;
+
+Dictionary* createDictionary() {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+void addKeyValuePair(Dictionary* dict, const char* key, const char* value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return;
+    }
+
+    KeyValuePair* pair = (KeyValuePair*)malloc(sizeof(KeyValuePair));
+    if (pair == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    pair->key = strdup(key);
+    if (pair->key == NULL) {
+        free(pair);
+        exit(EXIT_FAILURE);
+    }
+
+    pair->value = strdup(value);
+    if (pair->value == NULL) {
+        free(pair->key);
+        free(pair);
+        exit(EXIT_FAILURE);
+    }
+
+    pair->next = dict->head;
+    dict->head = pair;
+}
+
+char** getDictionaryKeys(Dictionary* dict, size_t* numKeys) {
+    if (dict == NULL || numKeys == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    KeyValuePair* current = dict->head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    if (count == 0) {
+        *numKeys = 0;
+        return NULL;
+    }
+
+    char** keys = (char**)malloc(count * sizeof(char*));
+    if (keys == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    current = dict->head;
+    size_t index = 0;
+    while (current != NULL) {
+        keys[index] = strdup(current->key);
+        if (keys[index] == NULL) {
+            for (size_t i = 0; i < index; i++) {
+                free(keys[i]);
+            }
+            free(keys);
+            exit(EXIT_FAILURE);
+        }
+        index++;
+        current = current->next;
+    }
+
+    *numKeys = count;
+    return keys;
+}
+
+void freeDictionary(Dictionary* dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    KeyValuePair* current = dict->head;
+    while (current != NULL) {
+        KeyValuePair* next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int main() {
+    Dictionary* dict = createDictionary();
+
+    addKeyValuePair(dict, "key1", "value1");
+    addKeyValuePair(dict, "key2", "value2");
+    addKeyValuePair(dict, "key3", "value3");
+
+    size_t numKeys = 0;
+    char** keys = getDictionaryKeys(dict, &numKeys);
+
+    if (keys != NULL) {
+        for (size_t i = 0; i < numKeys; i++) {
+            printf("%s\n", keys[i]);
+            free(keys[i]);
+        }
+        free(keys);
+    }
+
+    freeDictionary(dict);
+
+    return EXIT_SUCCESS;
+}

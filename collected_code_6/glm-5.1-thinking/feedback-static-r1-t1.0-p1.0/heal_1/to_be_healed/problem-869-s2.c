@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct ListOfLists {
+    Node *sublist;
+    struct ListOfLists *next;
+} ListOfLists;
+
+Node *create_node(int data) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (n == NULL) return NULL;
+    n->data = data;
+    n->next = NULL;
+    return n;
+}
+
+void free_sublist(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+Node *create_sublist(int *arr, int len) {
+    if (arr == NULL || len <= 0) return NULL;
+    Node *head = create_node(arr[0]);
+    if (head == NULL) return NULL;
+    Node *current = head;
+    for (int i = 1; i < len; i++) {
+        Node *n = create_node(arr[i]);
+        if (n == NULL) {
+            free_sublist(head);
+            return NULL;
+        }
+        current->next = n;
+        current = current->next;
+    }
+    return head;
+}
+
+ListOfLists *create_list_of_lists_node(Node *sublist) {
+    ListOfLists *l = (ListOfLists *)malloc(sizeof(ListOfLists));
+    if (l == NULL) {
+        free_sublist(sublist);
+        return NULL;
+    }
+    l->sublist = sublist;
+    l->next = NULL;
+    return l;
+}
+
+int sublist_length(Node *head) {
+    int len = 0;
+    while (head != NULL) {
+        len++;
+        head = head->next;
+    }
+    return len;
+}
+
+ListOfLists *remove_sublists_outside_range(ListOfLists *head, int min_len, int max_len) {
+    ListOfLists *current = head;
+    ListOfLists *prev = NULL;
+    ListOfLists *new_head = head;
+
+    while (current != NULL) {
+        int len = sublist_length(current->sublist);
+        if (len < min_len || len > max_len) {
+            ListOfLists *to_remove = current;
+            if (prev == NULL) {
+                new_head = current->next;
+            } else {
+                prev->next = current->next;
+            }
+            current = current->next;
+            free_sublist(to_remove->sublist);
+            free(to_remove);
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    return new_head;
+}
+
+void free_list_of_lists(ListOfLists *head) {
+    while (head != NULL) {
+        ListOfLists *temp = head;
+        head = head->next;
+        free_sublist(temp->sublist);
+        free(temp);
+    }
+}
+
+void print_list_of_lists(ListOfLists *head) {
+    while (head != NULL) {
+        Node *sub = head->sublist;
+        printf("[");
+        while (sub != NULL) {
+            printf("%d", sub->data);
+            if (sub->next != NULL) printf(", ");
+            sub = sub->next;
+        }
+        printf("] ");
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr1[] = {1, 2};
+    int arr2[] = {3, 4, 5, 6};
+    int arr3[] = {7, 8, 9};
+    int arr4[] = {10};
+
+    Node *s1 = create_sublist(arr1, 2);
+    Node *s2 = create_sublist(arr2, 4);
+    Node *s3 = create_sublist(arr3, 3);
+    Node *s4 = create_sublist(arr4, 1);
+
+    ListOfLists *l1 = create_list_of_lists_node(s1);
+    ListOfLists *l2 = create_list_of_lists_node(s2);
+    ListOfLists *l3 = create_list_of_lists_node(s3);
+    ListOfLists *l4 = create_list_of_lists_node(s4);
+
+    if (l1 != NULL) {
+        l1->next = l2;
+        if (l2 != NULL) {
+            l2->next = l3;
+            if (l3 != NULL) {
+                l3->next = l4;
+            }
+        }
+    }
+
+    printf("Original:\n");
+    print_list_of_lists(l1);
+
+    ListOfLists *filtered = remove_sublists_outside_range(l1, 2, 3);
+
+    printf("Filtered (min 2, max 3):\n");
+    print_list_of_lists(filtered);
+
+    free_list_of_lists(filtered);
+
+    return 0;
+}

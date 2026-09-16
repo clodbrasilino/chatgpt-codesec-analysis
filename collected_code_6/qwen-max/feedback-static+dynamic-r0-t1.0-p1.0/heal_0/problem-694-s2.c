@@ -1,72 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct {
-    int key;
-    int value;
-} DictEntry;
+struct KeyValue {
+    char *key;
+    void *value;
+};
 
-typedef struct {
-    DictEntry *entries;
-    int size;
-} Dictionary;
+struct Dictionary {
+    struct KeyValue *items;
+    size_t count;
+};
 
-int compare(const void *a, const void *b) {
-    return (*(DictEntry*)a).value - (*(DictEntry*)b).value;
+void dictionary_add(struct Dictionary *dict, const char *key, void *value) {
+    dict->items = realloc(dict->items, (dict->count + 1) * sizeof(struct KeyValue));
+    dict->items[dict->count].key = strdup(key);
+    dict->items[dict->count].value = value;
+    dict->count++;
 }
 
-int is_unique(const void *a, const void *b) {
-    return (*(DictEntry*)a).value == (*(DictEntry*)b).value;
+int is_in_list(void **list, size_t list_size, void *item) {
+    for (size_t i = 0; i < list_size; i++)
+        if (list[i] == item)
+            return 1;
+    return 0;
 }
 
-void extract_unique(Dictionary *dict, int **unique_values, int *unique_count) {
-    qsort(dict->entries, dict->size, sizeof(DictEntry), compare);
-    *unique_values = (int *)malloc(dict->size * sizeof(int));
-    if (*unique_values == NULL) {
-        exit(EXIT_FAILURE);
-    }
-    int prev_value = dict->entries[0].value;
-    (*unique_values)[0] = prev_value;
-    *unique_count = 1;
-    for (int i = 1; i < dict->size; ++i) {
-        if (dict->entries[i].value != prev_value) {
-            prev_value = dict->entries[i].value;
-            (*unique_values)[(*unique_count)++] = prev_value;
+void *extract_unique_values(struct Dictionary *dict, size_t *unique_count) {
+    void **unique_values = NULL;
+    *unique_count = 0;
+
+    for (size_t i = 0; i < dict->count; i++) {
+        if (!is_in_list(unique_values, *unique_count, dict->items[i].value)) {
+            unique_values = realloc(unique_values, (*unique_count + 1) * sizeof(void *));
+            unique_values[*unique_count] = dict->items[i].value;
+            (*unique_count)++;
         }
     }
-    *unique_values = (int *)realloc(*unique_values, *unique_count * sizeof(int));
-    if (*unique_values == NULL) {
-        exit(EXIT_FAILURE);
-    }
+
+    return unique_values;
 }
 
 int main() {
-    int values[] = {3, 1, 2, 4, 2, 3};
-    int keys[] = {10, 20, 30, 40, 50, 60};
-    Dictionary dict = {NULL, 0};
+    struct Dictionary dict = { .items = NULL, .count = 0 };
+    int val1 = 10, val2 = 10, val3 = 20, val4 = 30;
+    dictionary_add(&dict, "key1", &val1);
+    dictionary_add(&dict, "key2", &val2);
+    dictionary_add(&dict, "key3", &val3);
+    dictionary_add(&dict, "key4", &val4);
 
-    dict.size = 6;
-    dict.entries = (DictEntry *)malloc(dict.size * sizeof(DictEntry));
-    if (dict.entries == NULL) {
-        exit(EXIT_FAILURE);
+    size_t unique_count;
+    void **unique_values = extract_unique_values(&dict, &unique_count);
+
+    for (size_t i = 0; i < unique_count; i++)
+        printf("%d\n", *(int *)unique_values[i]);
+
+    for (size_t i = 0; i < dict.count; i++) {
+        free(dict.items[i].key);
     }
-    for (int i = 0; i < dict.size; ++i) {
-        dict.entries[i].key = keys[i];
-        dict.entries[i].value = values[i];
-    }
-
-    int *unique_values;
-    int unique_count;
-    
-    extract_unique(&dict, &unique_values, &unique_count);
-
-    for (int i = 0; i < unique_count; ++i) {
-        printf("%d ", unique_values[i]);
-    }
-    printf("\n");
-
-    free(dict.entries);
+    free(dict.items);
     free(unique_values);
-
     return 0;
 }

@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int height;
+    int width;
+} Student;
+
+bool filterStudents(Student students[], int count, int minHeight, int maxHeight, int minWidth, int maxWidth, Student filtered[]) {
+    int index = 0;
+    for (int i = 0; i < count; ++i) {
+        if (students[i].height >= minHeight && students[i].height <= maxHeight &&
+            students[i].width >= minWidth && students[i].width <= maxWidth) {
+            filtered[index++] = students[i];
+        }
+    }
+    return index > 0;
+}
+
+int main() {
+    Student students[] = {
+        {170, 50},
+        {180, 60},
+        {160, 45},
+        {190, 70},
+    };
+    int count = sizeof(students) / sizeof(students[0]);
+    Student filtered[10];
+    bool result = filterStudents(students, count, 170, 180, 50, 60, filtered);
+    if (result) {
+        for (int i = 0; i < 10; ++i) {
+            if (filtered[i].height == 0 && filtered[i].width == 0) break;
+            printf("Height: %d, Width: %d\n", filtered[i].height, filtered[i].width);
+        }
+    } else {
+        printf("No students found in the specified range.\n");
+    }
+    return 0;
+}

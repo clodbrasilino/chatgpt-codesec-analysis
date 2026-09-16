@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int even_binomial_sum(int n, unsigned long long *result)
+{
+    if (n < 0 || result == NULL) {
+        return -1;
+    }
+
+    if (n == 0) {
+        *result = 1ULL;
+        return 0;
+    }
+
+    if (n - 1 >= (int)(sizeof(unsigned long long) * CHAR_BIT)) {
+        return -1;
+    }
+
+    *result = 1ULL << (unsigned int)(n - 1);
+    return 0;
+}
+
+int main(void)
+{
+    int n = 0;
+    unsigned long long sum = 0ULL;
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (even_binomial_sum(n, &sum) != 0) {
+        fprintf(stderr, "Computation failed for n = %d\n", n);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of even index binomial coefficients for n = %d is %llu\n", n, sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

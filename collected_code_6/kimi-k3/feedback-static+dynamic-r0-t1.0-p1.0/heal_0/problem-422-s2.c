@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+double averageOfCubes(int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+    
+    double sum = 0.0;
+    for (int i = 1; i <= n; i++) {
+        sum += (double)i * i * i;
+    }
+    
+    return sum / n;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    
+    double result = averageOfCubes(n);
+    printf("Average of cubes of first %d natural numbers: %.2f\n", n, result);
+    
+    return 0;
+}

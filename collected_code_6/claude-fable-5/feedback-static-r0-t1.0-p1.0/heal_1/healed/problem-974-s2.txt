@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_triangle_path(const int *triangle, size_t rows, long *result)
+{
+    long *dp = NULL;
+    size_t i;
+    size_t j;
+    size_t base;
+
+    if (triangle == NULL || result == NULL || rows == 0U) {
+        return -1;
+    }
+
+    dp = malloc(rows * sizeof(*dp));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    base = (rows * (rows - 1U)) / 2U;
+    for (j = 0U; j < rows; j++) {
+        dp[j] = (long)triangle[base + j];
+    }
+
+    for (i = rows - 1U; i > 0U; i--) {
+        base = (i * (i - 1U)) / 2U;
+        for (j = 0U; j < i; j++) {
+            long left = dp[j];
+            long right = dp[j + 1U];
+            long best = (left < right) ? left : right;
+            dp[j] = best + (long)triangle[base + j];
+        }
+    }
+
+    *result = dp[0];
+    free(dp);
+    return 0;
+}
+
+int main(void)
+{
+    static const int triangle[] = {
+        2,
+        3, 4,
+        6, 5, 7,
+        4, 1, 8, 3
+    };
+    size_t rows = 4U;
+    long answer = 0L;
+
+    if (min_triangle_path(triangle, rows, &answer) != 0) {
+        (void)fprintf(stderr, "Error computing minimum path sum\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum total path sum: %ld\n", answer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **`constVariable` fix**: The `triangle` array in `main` is now declared as `static const int triangle[]`. Since the array is never modified and `min_triangle_path` already accepts a `const int *`, this is the correct qualification. Adding `static` also allows the compiler to place it in read-only storage rather than constructing it on the stack at each call.
+
+2. **Removed unused include**: `<string.h>` was included but no string functions were used, so it has been dropped.
+
+3. All comments removed as requested; the algorithm itself (bottom-up dynamic programming over a flattened triangle with O(rows) auxiliary space) was already correct and memory-safe, so no functional changes were needed.

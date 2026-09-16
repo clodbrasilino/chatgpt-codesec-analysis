@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    int diff = ((Tuple *)a)->second - ((Tuple *)b)->second;
+    if (diff == 0) {
+        return ((Tuple *)a)->first - ((Tuple *)b)->first;
+    }
+    return diff;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int count_inversions(Tuple *arr, int size) {
+    Tuple *temp = (Tuple *)malloc(size * sizeof(Tuple));
+    if (!temp) {
+        return -1;
+    }
+    for (int i = 0; i < size; i++) {
+        temp[i] = arr[i];
+    }
+    qsort(temp, size, sizeof(Tuple), compare);
+    int inversions = 0;
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (temp[i].second > temp[j].second) {
+                inversions++;
+            }
+        }
+    }
+    free(temp);
+    return inversions;
+}
+
+int main() {
+    Tuple tuples[] = {{2, 3}, {5, 1}, {3, 2}};
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    int result = count_inversions(tuples, size);
+    printf("Number of inversions: %d\n", result);
+    return 0;
+}

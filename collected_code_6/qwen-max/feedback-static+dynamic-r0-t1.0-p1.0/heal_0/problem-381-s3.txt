@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} List;
+
+int compare(const void *a, const void *b) {
+    List *listA = (List *)a;
+    List *listB = (List *)b;
+    return listA->data[index] - listB->data[index];
+}
+
+void free_lists(List *lists, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        free(lists[i].data);
+    }
+    free(lists);
+}
+
+int main() {
+    List lists[] = {
+        { .data = (int[]){3, 5, 2}, .size = 3 },
+        { .data = (int[]){1, 4, 6}, .size = 3 },
+        { .data = (int[]){9, 8, 7}, .size = 3 }
+    };
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+    int index = 1;
+
+    qsort(lists, count, sizeof(List), compare);
+
+    for (size_t i = 0; i < count; i++) {
+        for (size_t j = 0; j < lists[i].size; j++) {
+            printf("%d ", lists[i].data[j]);
+        }
+        printf("\n");
+    }
+
+    // Free the memory if dynamically allocated
+    // free_lists(lists, count);
+
+    return 0;
+}
+```

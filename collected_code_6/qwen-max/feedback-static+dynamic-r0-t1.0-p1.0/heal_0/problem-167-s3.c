@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+int smallest_power_of_two(int n) {
+    if (n <= 0) return 1;
+    int power = 1;
+    while (power < n) {
+        power <<= 1;
+    }
+    return power;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    int result = smallest_power_of_two(n);
+    printf("The smallest power of 2 greater than or equal to %d is %d\n", n, result);
+    return 0;
+}

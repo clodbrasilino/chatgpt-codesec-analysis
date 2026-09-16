@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+double distance(Point p1, Point p2) {
+    return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+}
+
+double triangle_perimeter(Point a, Point b, Point c) {
+    double side1 = distance(a, b);
+    double side2 = distance(b, c);
+    double side3 = distance(c, a);
+    
+    if (side1 <= 0 || side2 <= 0 || side3 <= 0) {
+        return -1.0;
+    }
+    
+    if (side1 + side2 <= side3 || side2 + side3 <= side1 || side3 + side1 <= side2) {
+        return -1.0;
+    }
+    
+    return side1 + side2 + side3;
+}
+
+int main(void) {
+    Point p1, p2, p3;
+    
+    printf("Enter coordinates of first point (x y): ");
+    if (scanf("%lf %lf", &p1.x, &p1.y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter coordinates of second point (x y): ");
+    if (scanf("%lf %lf", &p2.x, &p2.y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter coordinates of third point (x y): ");
+    if (scanf("%lf %lf", &p3.x, &p3.y) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    double perimeter = triangle_perimeter(p1, p2, p3);
+    
+    if (perimeter < 0) {
+        fprintf(stderr, "Invalid triangle\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Perimeter: %.2f\n", perimeter);
+    
+    return EXIT_SUCCESS;
+}

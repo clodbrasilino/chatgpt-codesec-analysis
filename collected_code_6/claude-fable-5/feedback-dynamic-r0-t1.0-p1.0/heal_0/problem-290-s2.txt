@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    const int *elements;
+    size_t length;
+} List;
+
+int find_max_length_list(const List *lists, size_t count, List *result)
+{
+    size_t i;
+    size_t max_index;
+
+    if ((lists == NULL) || (result == NULL) || (count == 0U)) {
+        return -1;
+    }
+
+    max_index = 0U;
+    for (i = 1U; i < count; i++) {
+        if (lists[i].elements == NULL) {
+            return -1;
+        }
+        if (lists[i].length > lists[max_index].length) {
+            max_index = i;
+        }
+    }
+
+    if (lists[max_index].elements == NULL) {
+        return -1;
+    }
+
+    result->elements = lists[max_index].elements;
+    result->length = lists[max_index].length;
+    return 0;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5, 6, 7, 8};
+    int c[] = {9, 10};
+    List lists[3];
+    List result;
+    size_t i;
+
+    lists[0].elements = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].elements = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].elements = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    if (find_max_length_list(lists, sizeof(lists) / sizeof(lists[0]), &result) != 0) {
+        (void)fprintf(stderr, "Failed to find list with maximum length\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum length: %zu\n", result.length) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("List with maximum length: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < result.length; i++) {
+        if (printf("%d ", result.elements[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

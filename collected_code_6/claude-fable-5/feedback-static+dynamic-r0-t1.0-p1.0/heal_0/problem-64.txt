@@ -1,0 +1,89 @@
+C does not have native lambda expressions, so the idiomatic and standards-compliant approach is to use `qsort` with a named comparator function:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+
+    if (ta->second < tb->second) {
+        return -1;
+    }
+    if (ta->second > tb->second) {
+        return 1;
+    }
+    if (ta->first < tb->first) {
+        return -1;
+    }
+    if (ta->first > tb->first) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_tuples(Tuple *tuples, size_t count)
+{
+    if (tuples == NULL || count == 0U) {
+        return -1;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        (void)printf("(%d, %d)\n", tuples[i].first, tuples[i].second);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {3, 9},
+        {1, 4},
+        {5, 1},
+        {2, 4},
+        {4, 7}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (sort_tuples(tuples, count) != 0) {
+        (void)fprintf(stderr, "Failed to sort tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuples(tuples, count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the design decisions:
+
+- **No lambdas in C**: Unlike C++ or Python, standard C (C89 through C23) has no lambda syntax. GCC offers nested functions as a non-standard extension, but using them would violate CWE-710 (improper adherence to coding standards), so a named `static` comparator is the correct choice.
+- **CWE-703 mitigation**: `sort_tuples` validates its inputs and returns an error code, and `main` checks that return value before proceeding.
+- **CWE-664 mitigation**: The array is stack-allocated with automatic storage duration, so there is no dynamic memory to leak, double-free, or use after its lifetime ends.
+- **Comparator safety**: The comparator uses explicit comparisons rather than `ta->second - tb->second`, which could overflow with large values (undefined behavior).
+
+**Output:**
+```
+(5, 1)
+(1, 4)
+(2, 4)
+(4, 7)
+(3, 9)
+```

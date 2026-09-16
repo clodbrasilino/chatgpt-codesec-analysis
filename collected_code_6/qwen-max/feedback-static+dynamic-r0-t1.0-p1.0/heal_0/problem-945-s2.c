@@ -1,80 +1,71 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-typedef struct Tuple {
-    int first;
-    int second;
-} Tuple;
+typedef struct {
+    int value;
+    int is_present;
+} tuple;
 
-typedef struct Set {
-    Tuple *items;
-    size_t count;
-    size_t capacity;
-} Set;
+typedef struct {
+    int *elements;
+    int size;
+    int capacity;
+} set;
 
-Set* createSet(size_t initialCapacity) {
-    Set *set = (Set *)malloc(sizeof(Set));
-    if (set == NULL) {
-        exit(EXIT_FAILURE);
+set* create_set(int initial_capacity) {
+    set *s = (set*)malloc(sizeof(set));
+    if (!s) return NULL;
+    s->elements = (int*)calloc(initial_capacity, sizeof(int));
+    if (!s->elements) {
+        free(s);
+        return NULL;
     }
-    set->items = (Tuple *)malloc(initialCapacity * sizeof(Tuple));
-    if (set->items == NULL) {
-        free(set);
-        exit(EXIT_FAILURE);
-    }
-    set->count = 0;
-    set->capacity = initialCapacity;
-    return set;
+    s->size = 0;
+    s->capacity = initial_capacity;
+    return s;
 }
 
-int tupleExists(Set *set, Tuple tuple) {
-    for (size_t i = 0; i < set->count; ++i) {
-        if (tuple.first == set->items[i].first && tuple.second == set->items[i].second) {
-            return 1;
+void destroy_set(set *s) {
+    if (s) {
+        free(s->elements);
+        free(s);
+    }
+}
+
+int add_element(set *s, int element) {
+    for (int i = 0; i < s->size; ++i) {
+        if (s->elements[i] == element) return 0;
+    }
+    if (s->size >= s->capacity) {
+        s->capacity *= 2;
+        s->elements = (int*)realloc(s->elements, s->capacity * sizeof(int));
+        if (!s->elements) return -1;
+    }
+    s->elements[s->size++] = element;
+    return 1;
+}
+
+set* convert_tuples_to_set(tuple *tuples, int count) {
+    set *s = create_set(count);
+    if (!s) return NULL;
+    for (int i = 0; i < count; ++i) {
+        if (tuples[i].is_present && add_element(s, tuples[i].value) == -1) {
+            destroy_set(s);
+            return NULL;
         }
     }
-    return 0;
+    return s;
 }
 
-void addTupleToSet(Set *set, Tuple tuple) {
-    if (set->count >= set->capacity) {
-        set->capacity *= 2;
-        set->items = (Tuple *)realloc(set->items, set->capacity * sizeof(Tuple));
-        if (set->items == NULL) {
-            free(set);
-            exit(EXIT_FAILURE);
+int main() {
+    tuple tuples[] = {{1, 1}, {2, 1}, {3, 0}, {4, 1}, {5, 1}};
+    int count = sizeof(tuples) / sizeof(tuples[0]);
+    set *s = convert_tuples_to_set(tuples, count);
+    if (s) {
+        for (int i = 0; i < s->size; ++i) {
+            printf("%d ", s->elements[i]);
         }
+        destroy_set(s);
     }
-    if (!tupleExists(set, tuple)) {
-        set->items[set->count++] = tuple;
-    }
-}
-
-void printSet(Set *set) {
-    printf("Set: { ");
-    for (size_t i = 0; i < set->count; ++i) {
-        printf("(%d, %d) ", set->items[i].first, set->items[i].second);
-    }
-    printf("}\n");
-}
-
-void deleteSet(Set *set) {
-    free(set->items);
-    free(set);
-}
-
-int main(void) {
-    Set *set = createSet(4);
-
-    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}};
-    for (size_t i = 0; i < sizeof(tuples) / sizeof(tuples[0]); ++i) {
-        addTupleToSet(set, tuples[i]);
-    }
-
-    printSet(set);
-
-    deleteSet(set);
-
     return 0;
 }

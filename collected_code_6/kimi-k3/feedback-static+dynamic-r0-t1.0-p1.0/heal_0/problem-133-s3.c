@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long sum_negative_numbers(const int *arr, size_t size, int *error) {
+    long long sum = 0;
+    size_t i;
+    
+    if (error == NULL) {
+        return 0;
+    }
+    
+    *error = 0;
+    
+    if (arr == NULL) {
+        *error = 1;
+        return 0;
+    }
+    
+    for (i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            if (sum < LLONG_MIN - arr[i]) {
+                *error = 2;
+                return 0;
+            }
+            sum += arr[i];
+        }
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int *numbers = NULL;
+    size_t count = 0;
+    size_t i;
+    int error = 0;
+    long long result;
+    int input_value;
+    
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &count) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (count == 0) {
+        printf("Sum of negative numbers: 0\n");
+        return EXIT_SUCCESS;
+    }
+    
+    numbers = malloc(count * sizeof(*numbers));
+    if (numbers == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter %zu integers:\n", count);
+    for (i = 0; i < count; i++) {
+        if (scanf("%d", &input_value) != 1) {
+            fprintf(stderr, "Invalid input at element %zu\n", i);
+            free(numbers);
+            numbers = NULL;
+            return EXIT_FAILURE;
+        }
+        numbers[i] = input_value;
+    }
+    
+    result = sum_negative_numbers(numbers, count, &error);
+    
+    if (error == 1) {
+        fprintf(stderr, "Invalid array pointer\n");
+        free(numbers);
+        numbers = NULL;
+        return EXIT_FAILURE;
+    } else if (error == 2) {
+        fprintf(stderr, "Integer overflow detected\n");
+        free(numbers);
+        numbers = NULL;
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of negative numbers: %lld\n", result);
+    
+    free(numbers);
+    numbers = NULL;
+    
+    return EXIT_SUCCESS;
+}

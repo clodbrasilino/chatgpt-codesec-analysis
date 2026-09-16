@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void reverse_array_upto_position(int *arr, size_t size, size_t pos) {
+    if (arr == NULL || size == 0 || pos >= size) {
+        return;
+    }
+
+    size_t start = 0;
+    size_t end = pos;
+
+    while (start < end) {
+        int temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+int main(void) {
+    size_t size = 10;
+    int *arr = (int *)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        arr[i] = (int)(i + 1);
+    }
+
+    size_t pos = 4;
+    reverse_array_upto_position(arr, size, pos);
+
+    for (size_t i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

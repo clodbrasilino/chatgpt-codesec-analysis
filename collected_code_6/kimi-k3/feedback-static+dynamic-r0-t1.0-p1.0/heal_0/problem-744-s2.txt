@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+} Tuple;
+
+bool has_none(const Tuple *t) {
+    if (t == NULL || (t->size > 0 && t->elements == NULL)) {
+        return false;
+    }
+    for (size_t i = 0; i < t->size; i++) {
+        if (t->elements[i] == NULL) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int a = 1;
+    int b = 2;
+    int c = 3;
+    
+    void *elems1[] = {&a, &b, &c};
+    Tuple t1 = {elems1, 3};
+    
+    void *elems2[] = {&a, NULL, &c};
+    Tuple t2 = {elems2, 3};
+    
+    printf("Tuple 1 has none: %s\n", has_none(&t1) ? "true" : "false");
+    printf("Tuple 2 has none: %s\n", has_none(&t2) ? "true" : "false");
+    
+    return EXIT_SUCCESS;
+}
+```

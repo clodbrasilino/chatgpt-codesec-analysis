@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool is_decreasing(const int *arr, size_t len)
+{
+    if (arr == NULL || len == 0) {
+        return false;
+    }
+
+    for (size_t i = 1; i < len; i++) {
+        if (arr[i] >= arr[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int seq1[] = {9, 7, 5, 3, 1};
+    int seq2[] = {10, 8, 8, 4, 2};
+    int seq3[] = {5};
+
+    size_t len1 = sizeof(seq1) / sizeof(seq1[0]);
+    size_t len2 = sizeof(seq2) / sizeof(seq2[0]);
+    size_t len3 = sizeof(seq3) / sizeof(seq3[0]);
+
+    if (is_decreasing(seq1, len1)) {
+        printf("Sequence 1 is decreasing\n");
+    } else {
+        printf("Sequence 1 is not decreasing\n");
+    }
+
+    if (is_decreasing(seq2, len2)) {
+        printf("Sequence 2 is decreasing\n");
+    } else {
+        printf("Sequence 2 is not decreasing\n");
+    }
+
+    if (is_decreasing(seq3, len3)) {
+        printf("Sequence 3 is decreasing\n");
+    } else {
+        printf("Sequence 3 is not decreasing\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,152 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple *tuple_create(const int *values, size_t size)
+{
+    Tuple *t;
+
+    if (values == NULL || size == 0) {
+        return NULL;
+    }
+
+    t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+
+    t->elements = malloc(size * sizeof(int));
+    if (t->elements == NULL) {
+        free(t);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        t->elements[i] = values[i];
+    }
+    t->size = size;
+
+    return t;
+}
+
+void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+Tuple *concatenate_tuples(const Tuple *a, const Tuple *b)
+{
+    Tuple *result;
+    size_t total;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    if (a->size > SIZE_MAX - b->size) {
+        return NULL;
+    }
+
+    total = a->size + b->size;
+
+    result = malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->elements = malloc(total * sizeof(int));
+    if (result->elements == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < a->size; i++) {
+        result->elements[i] = a->elements[i];
+    }
+    for (size_t i = 0; i < b->size; i++) {
+        result->elements[a->size + i] = b->elements[i];
+    }
+    result->size = total;
+
+    return result;
+}
+
+void tuple_print_nested(const Tuple *a, const Tuple *b, const Tuple *combined)
+{
+    if (a == NULL || b == NULL || combined == NULL) {
+        return;
+    }
+
+    printf("((");
+    for (size_t i = 0; i < a->size; i++) {
+        printf("%d", combined->elements[i]);
+        if (i + 1 < a->size) {
+            printf(", ");
+        }
+    }
+    printf("), (");
+    for (size_t i = 0; i < b->size; i++) {
+        printf("%d", combined->elements[a->size + i]);
+        if (i + 1 < b->size) {
+            printf(", ");
+        }
+    }
+    printf("))\n");
+}
+
+int main(void)
+{
+    int first[] = {3, 4};
+    int second[] = {5, 6};
+    Tuple *t1;
+    Tuple *t2;
+    Tuple *nested;
+
+    t1 = tuple_create(first, sizeof(first) / sizeof(first[0]));
+    if (t1 == NULL) {
+        fprintf(stderr, "Failed to create first tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    t2 = tuple_create(second, sizeof(second) / sizeof(second[0]));
+    if (t2 == NULL) {
+        fprintf(stderr, "Failed to create second tuple\n");
+        tuple_destroy(t1);
+        return EXIT_FAILURE;
+    }
+
+    nested = concatenate_tuples(t1, t2);
+    if (nested == NULL) {
+        fprintf(stderr, "Failed to concatenate tuples\n");
+        tuple_destroy(t1);
+        tuple_destroy(t2);
+        return EXIT_FAILURE;
+    }
+
+    tuple_print_nested(t1, t2, nested);
+
+    tuple_destroy(t1);
+    tuple_destroy(t2);
+    tuple_destroy(nested);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: You'll need to add `#include <stdint.h>` for `SIZE_MAX`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+```
+
+The code handles resource lifetimes properly (every allocation is paired with a free, including on error paths), checks all exceptional conditions (NULL pointers, allocation failures, size overflow), and adheres to standard C conventions (uses `size_t` for sizes, `EXIT_SUCCESS`/`EXIT_FAILURE`, `main(void)` signature).

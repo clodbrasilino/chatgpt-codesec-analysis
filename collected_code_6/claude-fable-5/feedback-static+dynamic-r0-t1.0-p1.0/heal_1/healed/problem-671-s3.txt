@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    if ((n & (n + 1U)) == 0U) {
+        return n;
+    }
+    return n | (n + 1U);
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    int result = 0;
+
+    printf("Enter an unsigned integer: ");
+    result = scanf("%u", &value);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original value: %u\n", value);
+    printf("After setting rightmost unset bit: %u\n", set_rightmost_unset_bit(value));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fixes:**
+
+1. **Test case failure (`expected 15, got 31`):** The original implementation unconditionally computed `n | (n + 1U)`, which for a value like `15` (binary `1111`) appends a *new* higher bit, producing `31` (binary `11111`). The intended semantics are that a value whose set bits are already contiguous from bit 0 (i.e., of the form 2^k − 1) has no unset bit *within* its significant bits, so it should be returned unchanged. The check `(n & (n + 1U)) == 0U` detects exactly this class of values (`0`, `1`, `3`, `7`, `15`, ..., `UINT_MAX`) and returns them as-is.
+
+2. **Cppcheck `knownConditionTrueFalse` warning:** The original guard `if (~n == 0U)` only covered the `UINT_MAX` case and triggered a static-analysis false positive. The new guard `(n & (n + 1U)) == 0U` subsumes the `UINT_MAX` case (since `UINT_MAX + 1U` wraps to `0` under well-defined unsigned arithmetic), eliminating both the warning and the redundant special case.
+
+3. The rest of the program (input validation on `scanf`, use of `EXIT_SUCCESS`/`EXIT_FAILURE`, unsigned format specifiers) was already sound and is retained unchanged.

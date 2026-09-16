@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double periodic_function(double x) {
+    return sin(x) + cos(2 * x);
+}
+
+double find_minimum(double start, double end, double step) {
+    if (step <= 0 || start >= end) {
+        fprintf(stderr, "Error: Invalid parameters for search.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    double min_value = periodic_function(start);
+    double current_x = start + step;
+
+    while (current_x <= end) {
+        double current_value = periodic_function(current_x);
+        if (current_value < min_value) {
+            min_value = current_value;
+        }
+        current_x += step;
+    }
+
+    return min_value;
+}
+
+int main(void) {
+    double start = 0.0;
+    double end = 2 * PI;
+    double step = 0.0001;
+
+    double min_val = find_minimum(start, end, step);
+
+    printf("%.6f\n", min_val);
+
+    return 0;
+}
+```

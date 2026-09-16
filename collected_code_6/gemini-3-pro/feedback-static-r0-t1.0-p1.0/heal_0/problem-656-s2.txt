@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int compare(const void *a, const void *b) {
+    int int_a = *((int *)a);
+    int int_b = *((int *)b);
+    
+    if (int_a == int_b) {
+        return 0;
+    } else if (int_a < int_b) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+
+long long min_sum_abs_diff(int *arr1, int *arr2, size_t n) {
+    if (arr1 == NULL || arr2 == NULL || n == 0) {
+        return -1;
+    }
+
+    qsort(arr1, n, sizeof(int), compare);
+    qsort(arr2, n, sizeof(int), compare);
+
+    long long sum = 0;
+    for (size_t i = 0; i < n; i++) {
+        sum += llabs((long long)arr1[i] - (long long)arr2[i]);
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int arr1[] = {4, 1, 8, 7};
+    int arr2[] = {2, 3, 6, 5};
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+
+    if (n != sizeof(arr2) / sizeof(arr2[0])) {
+        fprintf(stderr, "Arrays must be of the same size.\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = min_sum_abs_diff(arr1, arr2, n);
+    if (result == -1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sort_by_index(int **list, size_t rows, size_t cols, size_t index);
+static void free_list(int **list, size_t rows);
+
+int sort_by_index(int **list, size_t rows, size_t cols, size_t index)
+{
+    size_t i;
+    size_t j;
+    int *key;
+
+    if (list == NULL || index >= cols) {
+        return -1;
+    }
+
+    for (i = 0; i < rows; i++) {
+        if (list[i] == NULL) {
+            return -1;
+        }
+    }
+
+    for (i = 1; i < rows; i++) {
+        key = list[i];
+        j = i;
+        while (j > 0 && list[j - 1][index] > key[index]) {
+            list[j] = list[j - 1];
+            j--;
+        }
+        list[j] = key;
+    }
+
+    return 0;
+}
+
+static void free_list(int **list, size_t rows)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < rows; i++) {
+        free(list[i]);
+        list[i] = NULL;
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const size_t rows = 4;
+    const size_t cols = 3;
+    const size_t sort_index = 1;
+    const int data[4][3] = {
+        {5, 9, 2},
+        {1, 3, 8},
+        {7, 1, 4},
+        {2, 6, 0}
+    };
+    int **list;
+    size_t i;
+    size_t j;
+
+    list = malloc(rows * sizeof(int *));
+    if (list == NULL) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < rows; i++) {
+        list[i] = malloc(cols * sizeof(int));
+        if (list[i] == NULL) {
+            fprintf(stderr, "Allocation failure\n");
+            free_list(list, i);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < cols; j++) {
+            list[i][j] = data[i][j];
+        }
+    }
+
+    if (sort_by_index(list, rows, cols, sort_index) != 0) {
+        fprintf(stderr, "Sort failed\n");
+        free_list(list, rows);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            printf("%d ", list[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_list(list, rows);
+    return EXIT_SUCCESS;
+}

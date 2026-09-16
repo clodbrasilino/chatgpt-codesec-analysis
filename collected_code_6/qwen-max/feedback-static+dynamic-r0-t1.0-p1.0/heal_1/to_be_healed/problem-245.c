@@ -8,54 +8,51 @@ int max(int a, int b) {
 /* Possible weaknesses found:
  *  Parameter 'arr' can be declared as const array [constParameter]
  */
-int* fill_max_sum_increasing(int arr[], int n) {
-    int *max_incr = (int*)malloc(n * sizeof(int));
-    for (int i = 0; i < n; ++i) {
-        max_incr[i] = arr[i];
-        for (int j = 0; j < i; ++j) {
-            if (arr[i] > arr[j] && max_incr[i] < max_incr[j] + arr[i]) {
-                max_incr[i] = max_incr[j] + arr[i];
+int findMaxSumBiTonicSubsequence(int arr[], int n) {
+    int i, j, k, *inc, *dec, max_sum = 0;
+    
+    inc = (int *)malloc(n * sizeof(int));
+    dec = (int *)malloc(n * sizeof(int));
+
+    for (i = 0; i < n; i++) {
+        inc[i] = arr[i];
+    }
+
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && inc[i] < inc[j] + arr[i]) {
+                inc[i] = inc[j] + arr[i];
             }
         }
     }
-    return max_incr;
-}
 
-/* Possible weaknesses found:
- *  Parameter 'arr' can be declared as const array [constParameter]
- */
-int* fill_max_sum_decreasing(int arr[], int n) {
-    int *max_decr = (int*)malloc(n * sizeof(int));
-    for (int i = n - 1; i >= 0; --i) {
-        max_decr[i] = arr[i];
-        for (int j = i + 1; j < n; ++j) {
-            if (arr[i] > arr[j] && max_decr[i] < max_decr[j] + arr[i]) {
-                max_decr[i] = max_decr[j] + arr[i];
+    for (i = n - 1; i >= 0; i--) {
+        for (k = n - 1; k > i; k--) {
+            if (arr[i] > arr[k] && dec[i] < dec[k] + arr[i]) {
+                dec[i] = dec[k] + arr[i];
             }
         }
-    }
-    return max_decr;
-}
-
-int max_sum_bi_tonic_subseq(int arr[], int n) {
-    int *max_incr = fill_max_sum_increasing(arr, n);
-    int *max_decr = fill_max_sum_decreasing(arr, n);
-
-    int max_sum = 0;
-    for (int i = 0; i < n; ++i) {
-        max_sum = max(max_sum, max_incr[i] + max_decr[i] - arr[i]);
+        if (dec[i] == 0) {
+            dec[i] = arr[i];
+        }
     }
 
-    free(max_incr);
-    free(max_decr);
+    for (i = 0; i < n; i++) {
+        if (max_sum < (inc[i] + dec[i] - arr[i])) {
+            max_sum = inc[i] + dec[i] - arr[i];
+        }
+    }
+
+    free(inc);
+    free(dec);
+
     return max_sum;
 }
 
 int main() {
     int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
     int n = sizeof(arr) / sizeof(arr[0]);
-
-    printf("Maximum sum of bi-tonic subsequence: %d\n", max_sum_bi_tonic_subseq(arr, n));
-
+    int result = findMaxSumBiTonicSubsequence(arr, n);
+    printf("%d\n", result);
     return 0;
 }

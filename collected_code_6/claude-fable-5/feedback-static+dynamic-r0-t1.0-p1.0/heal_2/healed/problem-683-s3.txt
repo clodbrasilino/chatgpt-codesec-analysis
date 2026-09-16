@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+static long long integer_sqrt(long long n)
+{
+    long long root = (long long)sqrt((double)n);
+
+    while (root > 0 && root * root > n) {
+        root--;
+    }
+    while ((root + 1) * (root + 1) <= n) {
+        root++;
+    }
+
+    return root;
+}
+
+static bool is_sum_of_two_squares(long long n)
+{
+    for (long long a = 0; a * a <= n; a++) {
+        long long remainder = n - a * a;
+        long long b = integer_sqrt(remainder);
+
+        if (b * b == remainder) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long number = 0;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_sum_of_two_squares(number)) {
+        printf("%lld can be represented as the sum of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as the sum of two squares.\n", number);
+    }
+
+    return 0;
+}
+```
+
+Key changes made to address the analyzer findings:
+
+1. **Removed the redundant `n < 0` check in `is_sum_of_two_squares`** — `main` already validates that the input is non-negative before calling the function, so the condition was unreachable in practice.
+
+2. **Removed the `remainder < 0` check** — the loop condition `a * a <= n` guarantees `n - a * a >= 0`, so the condition was always false (a `knownConditionTrueFalse` finding). Dead code eliminated.
+
+3. **Removed the redundant `b >= 0` guard** — since `integer_sqrt` is now only ever called with a non-negative argument (guaranteed by the loop invariant), the `-1` error path was removed from `integer_sqrt`, and its return value is always valid, so checking `b >= 0` before `b * b == remainder` was unnecessary.
+
+4. **Simplified `integer_sqrt`** — with the negative-input branch removed, the function is a pure non-negative integer square root, with the two correction loops retained to guard against floating-point rounding errors from `sqrt()` on large `long long` values.
+
+The remaining findings (`a = 0` assigned value 0, `remainder` assigned value greater than -1) were purely informational value-flow annotations rather than defects, so no change was required beyond removing the dead branches they made evident.

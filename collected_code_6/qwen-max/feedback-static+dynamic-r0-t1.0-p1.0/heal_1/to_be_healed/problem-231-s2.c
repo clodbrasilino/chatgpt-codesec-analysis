@@ -1,31 +1,13 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  include '<stdlib.h>' or provide a declaration of 'malloc'
+  */
 
-/* Possible weaknesses found:
- *  Parameter 'input' can be declared as const array [constParameter]
- */
-int** createTriangle(int n, int input[]) {
-    int **triangle = (int**)malloc(n * sizeof(int*));
-    for (int i = 0; i < n; ++i) {
-        triangle[i] = (int*)malloc((i + 1) * sizeof(int));
+int findMaxSum(int **triangle, int n) {
+    for (int i = n - 2; i >= 0; --i) {
         for (int j = 0; j <= i; ++j) {
-            triangle[i][j] = input[(i * (i + 1)) / 2 + j];
-        }
-    }
-    return triangle;
-}
-
-void freeTriangle(int** triangle, int n) {
-    for (int i = 0; i < n; ++i) {
-        free(triangle[i]);
-    }
-    free(triangle);
-}
-
-int maxSumRightTriangle(int** triangle, int n) {
-    for (int row = n - 2; row >= 0; --row) {
-        for (int col = 0; col <= row; ++col) {
-            triangle[row][col] += (triangle[row + 1][col] > triangle[row + 1][col + 1] ? triangle[row + 1][col] : triangle[row + 1][col + 1]);
+            triangle[i][j] += (triangle[i + 1][j] > triangle[i + 1][j + 1]) ? triangle[i + 1][j] : triangle[i + 1][j + 1];
         }
     }
     return triangle[0][0];
@@ -34,26 +16,39 @@ int maxSumRightTriangle(int** triangle, int n) {
 int main() {
     int n;
     scanf("%d", &n);
-    if (n <= 0) {
-        return 1;
-    }
     /* Possible weaknesses found:
-     * UBSan: signed integer overflow: 1277276104 * 1277276105 cannot be represented in type 'int'
+     *  implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+     *  call to undeclared library function 'malloc' with type 'void *(unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  include the header <stdlib.h> or explicitly provide a declaration for 'malloc'
      */
-    int size = (n * (n + 1)) / 2;
-    /* Possible weaknesses found:
-     * ASan: requested
-     */
-    int *input = (int*)malloc(size * sizeof(int));
-    for (int i = 0; i < size; ++i) {
-        scanf("%d", &input[i]);
+    int **triangle = (int **)malloc(n * sizeof(int *));
+    if (triangle == NULL) return 1;
+
+    for (int i = 0; i < n; ++i) {
+        triangle[i] = (int *)malloc((i + 1) * sizeof(int));
+        if (triangle[i] == NULL) {
+            /* Possible weaknesses found:
+             *  include the header <stdlib.h> or explicitly provide a declaration for 'free'
+             *  implicit declaration of function 'free' [-Wimplicit-function-declaration]
+             *  include '<stdlib.h>' or provide a declaration of 'free'
+             *  call to undeclared library function 'free' with type 'void (void *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+             */
+            for (int k = 0; k < i; ++k) free(triangle[k]);
+            free(triangle);
+            return 1;
+        }
+        for (int j = 0; j <= i; ++j) {
+            scanf("%d", &triangle[i][j]);
+        }
     }
 
-    int **triangle = createTriangle(n, input);
-    int max_sum = maxSumRightTriangle(triangle, n);
-    printf("%d\n", max_sum);
+    int maxSum = findMaxSum(triangle, n);
 
-    free(input);
-    freeTriangle(triangle, n);
+    for (int i = 0; i < n; ++i) {
+        free(triangle[i]);
+    }
+    free(triangle);
+
+    printf("%d\n", maxSum);
     return 0;
 }

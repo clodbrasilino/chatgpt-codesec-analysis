@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-738.c:15:18: error: call to undeclared library function 'ldexp' with type 'double (double, int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   15 |     return 2.0 - ldexp(1.0, -(n - 1));
+      |                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-738.c:15:18: note: include the header <math.h> or explicitly provide a declaration for 'ldexp'
+1 error generated.

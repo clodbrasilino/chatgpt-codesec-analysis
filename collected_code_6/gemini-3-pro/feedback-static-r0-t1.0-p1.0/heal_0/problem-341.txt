@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple* convert_to_tuples(const int *set, size_t set_size, size_t tuple_size, size_t *num_tuples) {
+    if (set == NULL || num_tuples == NULL || tuple_size == 0 || set_size == 0) {
+        return NULL;
+    }
+
+    *num_tuples = set_size / tuple_size;
+    if (*num_tuples == 0) {
+        return NULL;
+    }
+
+    Tuple *tuples = (Tuple *)malloc(*num_tuples * sizeof(Tuple));
+    if (tuples == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *num_tuples; i++) {
+        tuples[i].elements = (int *)malloc(tuple_size * sizeof(int));
+        if (tuples[i].elements == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuples[j].elements);
+            }
+            free(tuples);
+            return NULL;
+        }
+        tuples[i].size = tuple_size;
+        for (size_t k = 0; k < tuple_size; k++) {
+            tuples[i].elements[k] = set[i * tuple_size + k];
+        }
+    }
+
+    return tuples;
+}
+
+void free_tuples(Tuple *tuples, size_t num_tuples) {
+    if (tuples != NULL) {
+        for (size_t i = 0; i < num_tuples; i++) {
+            free(tuples[i].elements);
+        }
+        free(tuples);
+    }
+}
+
+int main(void) {
+    int set[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t set_size = sizeof(set) / sizeof(set[0]);
+    size_t tuple_size = 3;
+    size_t num_tuples = 0;
+
+    Tuple *tuples = convert_to_tuples(set, set_size, tuple_size, &num_tuples);
+
+    if (tuples != NULL) {
+        for (size_t i = 0; i < num_tuples; i++) {
+            printf("(");
+            for (size_t j = 0; j < tuples[i].size; j++) {
+                printf("%d%s", tuples[i].elements[j], j < tuples[i].size - 1 ? ", " : "");
+            }
+            printf(")\n");
+        }
+        free_tuples(tuples, num_tuples);
+    } else {
+        printf("Failed to create tuples.\n");
+    }
+
+    return 0;
+}
+```

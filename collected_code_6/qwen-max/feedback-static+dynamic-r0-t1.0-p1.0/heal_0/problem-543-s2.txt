@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+void addAndPrintDigits(int a, int b) {
+    int sum = a + b;
+    int digits = (sum == 0) ? 1 : (int) log10((double) sum) + 1;
+    printf("Sum: %d, Number of Digits: %d\n", sum, digits);
+}
+
+int main() {
+    int num1, num2;
+
+    printf("Enter first number: ");
+    if (scanf("%d", &num1) != 1) return 1;
+
+    printf("Enter second number: ");
+    if (scanf("%d", &num2) != 1) return 2;
+
+    addAndPrintDigits(num1, num2);
+
+    return 0;
+}
+```

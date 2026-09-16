@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+int check_profit_loss(int cost_price, int selling_price) {
+    if (cost_price > selling_price) {
+        return -1; // Loss
+    } else if (cost_price < selling_price) {
+        return 1; // Profit
+    } else {
+        return 0; // No profit and no loss
+    }
+}
+
+int main() {
+    int cost_price = 100;
+    int selling_price = 100;
+    int result = check_profit_loss(cost_price, selling_price);
+
+    switch (result) {
+        case 0:
+            printf("No profit and no loss.\n");
+            break;
+        case 1:
+            printf("There is a profit.\n");
+            break;
+        case -1:
+            printf("There is a loss.\n");
+            break;
+    }
+
+    return 0;
+}
+```

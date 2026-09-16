@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    size_t frequency;
+} TupleFreq;
+
+static int tuples_equal(const Tuple *a, const Tuple *b)
+{
+    return (a->first == b->first) && (a->second == b->second);
+}
+
+static TupleFreq *assign_frequency(const Tuple *tuples, size_t count, size_t *unique_count)
+{
+    TupleFreq *result = NULL;
+    size_t unique = 0;
+    size_t i;
+
+    if ((tuples == NULL) || (unique_count == NULL) || (count == 0U)) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < count; i++) {
+        int found = 0;
+        size_t j;
+        for (j = 0U; j < unique; j++) {
+            if (tuples_equal(&result[j].tuple, &tuples[i]) != 0) {
+                result[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (found == 0) {
+            result[unique].tuple = tuples[i];
+            result[unique].frequency = 1U;
+            unique++;
+        }
+    }
+
+    *unique_count = unique;
+    return result;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {3, 5}, {6, 7}, {3, 5}, {6, 7}, {3, 5}, {9, 1}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t unique_count = 0U;
+    size_t i;
+    TupleFreq *freqs = NULL;
+
+    freqs = assign_frequency(tuples, count, &unique_count);
+    if (freqs == NULL) {
+        fprintf(stderr, "Failed to compute tuple frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < unique_count; i++) {
+        if (printf("(%d, %d): %zu\n",
+                   freqs[i].tuple.first,
+                   freqs[i].tuple.second,
+                   freqs[i].frequency) < 0) {
+            free(freqs);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(freqs);
+    return EXIT_SUCCESS;
+}
+```
+
+The change made addresses the identified weakness: the variable `found` (and additionally the inner loop counter `j`) is now declared inside the outer `for` loop body, reducing its scope to the smallest region where it is used. This eliminates the `[variableScope]` warning, prevents accidental reuse of stale values across iterations, and improves readability and maintainability without altering the program's behavior.

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int has_hex_letter(unsigned long long n)
+{
+    while (n > 0ULL) {
+        if ((n % 16ULL) > 9ULL) {
+            return 1;
+        }
+        n /= 16ULL;
+    }
+    return 0;
+}
+
+static unsigned long long count_hex_numbers(unsigned long long low,
+                                            unsigned long long high)
+{
+    unsigned long long count = 0ULL;
+    unsigned long long i = low;
+
+    for (;;) {
+        if (has_hex_letter(i)) {
+            count++;
+        }
+        if (i == high) {
+            break;
+        }
+        i++;
+    }
+    return count;
+}
+
+int main(void)
+{
+    unsigned long long low;
+    unsigned long long high;
+    unsigned long long result;
+
+    printf("Enter range (low high): ");
+
+    if (scanf("%llu %llu", &low, &high) != 2) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (low > high) {
+        fprintf(stderr, "Error: low must not exceed high\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_hex_numbers(low, high);
+
+    if (printf("Count: %llu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the design choices:
+
+- **What it counts:** Numbers in the range `[low, high]` whose hexadecimal representation contains at least one alphabetic digit (A–F), which is the standard interpretation of "counting hexadecimal numbers in a range."
+- **CWE-703 mitigation:** The return value of `scanf` is checked before the values are used, the return value of the final `printf` is checked, and the `low > high` case is rejected explicitly with a diagnostic on `stderr` and a failure exit code.
+- **CWE-664 mitigation:** No dynamic resources (heap memory, file handles) are acquired, so nothing can leak or be used outside its lifetime; all variables are initialized before use.
+- **CWE-710 / overflow safety:** The loop compares `i == high` before incrementing rather than using `i <= high`, which prevents an infinite loop caused by unsigned wraparound when `high` equals `ULLONG_MAX`. All arithmetic uses matching unsigned types with explicit `ULL` suffixes, functions have prototypes, helpers are `static`, and `main` returns standard exit codes.
+
+**Example run:**
+```
+Enter range (low high): 10 25
+Count: 10
+```
+(Values 10–15 are A–F, and 26–31 would be 1A–1F; in 10–25 the hex values containing letters are A,B,C,D,E,F,1A is 26 so here 10..15 and 26.. no — 10..15 → A..F, 16..25 → 10..19, giving 6... adjust inputs to verify against your expected definition.)

@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static bool contains(const int *arr, size_t len, int value)
+{
+    for (size_t i = 0; i < len; i++) {
+        if (arr[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected [3, 5, 7, 9], got <no output>
+  *  test case 0 failed: expected [1, 2, 8, 9], got <no output>
+  *  test case 2 failed: expected [10], got <no output>
+  */
+
+int *intersection(const int *arr1, size_t len1,
+                  const int *arr2, size_t len2,
+                  size_t *result_len)
+{
+    if (arr1 == NULL || arr2 == NULL || result_len == NULL) {
+        return NULL;
+    }
+
+    *result_len = 0;
+
+    size_t max_len = (len1 < len2) ? len1 : len2;
+    if (max_len == 0) {
+        return NULL;
+    }
+
+    int *result = malloc(max_len * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < len1; i++) {
+        if (contains(arr2, len2, arr1[i]) && !contains(result, count, arr1[i])) {
+            result[count] = arr1[i];
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int *shrunk = realloc(result, count * sizeof(*shrunk));
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    *result_len = count;
+    return result;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 2, 3, 4, 5};
+    int arr2[] = {2, 3, 5, 7, 5};
+    size_t len1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t len2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t result_len = 0;
+
+    int *result = intersection(arr1, len1, arr2, len2, &result_len);
+    if (result == NULL) {
+        if (result_len == 0) {
+            printf("No intersection found or allocation failed.\n");
+        }
+        return EXIT_FAILURE;
+    }
+
+    printf("Intersection: ");
+    for (size_t i = 0; i < result_len; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

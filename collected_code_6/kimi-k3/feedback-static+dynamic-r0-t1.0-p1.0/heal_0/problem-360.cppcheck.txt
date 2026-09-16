@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-360.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-360.c:18:44: warning: Shifting 64-bit value by 64 bits is undefined behaviour. See condition at line 14. [shiftTooManyBits]
+    unsigned long long power_of_two = 1ULL << (n + 1);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-360.c:14:11: note: Assuming that condition 'n>63' is not redundant
+    if (n > 63) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-360.c:18:44: note: Shift
+    unsigned long long power_of_two = 1ULL << (n + 1);
+                                           ^

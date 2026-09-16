@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void append_node(Node **head, int data) {
+    Node *node = create_node(data);
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+}
+
+void print_list(Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+Node *rotate_right(Node *head, int k) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    Node *tail = head;
+    int length = 1;
+    while (tail->next != NULL) {
+        tail = tail->next;
+        length++;
+    }
+
+    int steps = k % length;
+    if (steps < 0) {
+        steps += length;
+    }
+    if (steps == 0) {
+        return head;
+    }
+
+    Node *new_tail = head;
+    for (int i = 0; i < length - steps - 1; i++) {
+        new_tail = new_tail->next;
+    }
+
+    Node *new_head = new_tail->next;
+    new_tail->next = NULL;
+    tail->next = head;
+
+    return new_head;
+}
+
+int main(void) {
+    Node *head = NULL;
+
+    append_node(&head, 1);
+    append_node(&head, 2);
+    append_node(&head, 3);
+    append_node(&head, 4);
+    append_node(&head, 5);
+
+    print_list(head);
+
+    head = rotate_right(head, 2);
+
+    print_list(head);
+
+    free_list(head);
+
+    return 0;
+}

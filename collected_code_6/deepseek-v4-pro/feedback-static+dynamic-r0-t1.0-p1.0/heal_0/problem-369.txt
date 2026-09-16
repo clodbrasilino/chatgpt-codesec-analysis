@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+
+double lateral_surface_area_cuboid(double length, double width, double height) {
+    return 2.0 * height * (length + width);
+}
+
+int main(void) {
+    double length, width, height, area;
+
+    printf("Enter length, width, and height of cuboid: ");
+    if (scanf("%lf %lf %lf", &length, &width, &height) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (length < 0.0 || width < 0.0 || height < 0.0) {
+        printf("Dimensions cannot be negative\n");
+        return 1;
+    }
+
+    area = lateral_surface_area_cuboid(length, width, height);
+    printf("Lateral surface area: %.2f\n", area);
+
+    return 0;
+}
+```

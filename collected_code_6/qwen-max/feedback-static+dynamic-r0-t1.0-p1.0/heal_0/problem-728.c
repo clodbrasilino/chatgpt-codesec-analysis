@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+Node* append(Node *head, int value) {
+    Node *new_node = create_node(value);
+    if (head == NULL) {
+        return new_node;
+    }
+    Node *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return head;
+}
+
+int sum_lists(Node *list1, Node *list2) {
+    int sum = 0;
+    while (list1 != NULL && list2 != NULL) {
+        sum += list1->value + list2->value;
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    return sum;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current->next;
+        free(current);
+        current = temp;
+    }
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    list1 = append(list1, 1);
+    list1 = append(list1, 2);
+    list1 = append(list1, 3);
+
+    list2 = append(list2, 4);
+    list2 = append(list2, 5);
+    list2 = append(list2, 6);
+
+    int result = sum_lists(list1, list2);
+    printf("Sum: %d\n", result);
+
+    free_list(list1);
+    free_list(list2);
+
+    return 0;
+}

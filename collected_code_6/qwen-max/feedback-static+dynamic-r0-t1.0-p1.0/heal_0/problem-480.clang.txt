@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-480.c:20:19: error: call to undeclared function 'findMaxOccuringChar'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   20 |     int maxChar = findMaxOccuringChar(input);
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-480.c:20:19: note: did you mean 'findMaxOccurringChar'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-480.c:5:5: note: 'findMaxOccurringChar' declared here
+    5 | int findMaxOccurringChar(const char *str) {
+      |     ^
+    6 |     int count[256] = {0};
+    7 |     int max = -1, result;
+    8 |     for (int i = 0; str[i]; i++) {
+    9 |         count[(unsigned char)str[i]]++;
+   10 |         if (max < count[(unsigned char)str[i]]) {
+   11 |             max = count[(unsigned char)str[i]];
+   12 |             result = (unsigned char)str[i];
+   13 |         }
+   14 |     }
+   15 |     return result;
+   16 | }
+   17 | 
+   18 | int main() {
+   19 |     const char *input = "test string";
+   20 |     int maxChar = findMaxOccuringChar(input);
+      |                   ~~~~~~~~~~~~~~~~~~~
+      |                   findMaxOccurringChar
+1 error generated.

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+bool check_k(const Tuple *tuples, size_t count, int k)
+{
+    if (tuples == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuples[i].first == k || tuples[i].second == k) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    Tuple tuples1[] = { {3, 4}, {5, 6}, {7, 8}, {9, 10} };
+    Tuple tuples2[] = { {1, 2}, {2, 3}, {4, 4} };
+    size_t count1 = sizeof(tuples1) / sizeof(tuples1[0]);
+    size_t count2 = sizeof(tuples2) / sizeof(tuples2[0]);
+
+    if (check_k(tuples1, count1, 7)) {
+        printf("Tuples contain %d\n", 7);
+    } else {
+        printf("Tuples do not contain %d\n", 7);
+    }
+
+    if (check_k(tuples2, count2, 9)) {
+        printf("Tuples contain %d\n", 9);
+    } else {
+        printf("Tuples do not contain %d\n", 9);
+    }
+
+    if (check_k(NULL, 0, 5)) {
+        printf("Tuples contain %d\n", 5);
+    } else {
+        printf("Tuples do not contain %d\n", 5);
+    }
+
+    return 0;
+}

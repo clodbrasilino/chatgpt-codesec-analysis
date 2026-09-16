@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} Tuple;
+
+bool tuples_have_equal_length(const Tuple *tuples, size_t count) {
+    if (count == 0) {
+        return true;
+    }
+    if (tuples == NULL) {
+        return false;
+    }
+    size_t first_length = tuples[0].length;
+    for (size_t i = 1; i < count; ++i) {
+        if (tuples[i].length != first_length) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5, 6};
+    int c[] = {7, 8, 9};
+    int d[] = {10, 11};
+
+    Tuple tuples1[] = {
+        {a, sizeof(a) / sizeof(a[0])},
+        {b, sizeof(b) / sizeof(b[0])},
+        {c, sizeof(c) / sizeof(c[0])}
+    };
+
+    Tuple tuples2[] = {
+        {a, sizeof(a) / sizeof(a[0])},
+        {d, sizeof(d) / sizeof(d[0])}
+    };
+
+    bool result1 = tuples_have_equal_length(tuples1, sizeof(tuples1) / sizeof(tuples1[0]));
+    bool result2 = tuples_have_equal_length(tuples2, sizeof(tuples2) / sizeof(tuples2[0]));
+
+    printf("%s\n", result1 ? "true" : "false");
+    printf("%s\n", result2 ? "true" : "false");
+
+    return 0;
+}

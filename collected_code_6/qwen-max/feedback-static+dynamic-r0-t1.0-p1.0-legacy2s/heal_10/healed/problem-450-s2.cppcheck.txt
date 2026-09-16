@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-450-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-450-s2.c:6:70: style: Checking if unsigned expression 'size' is less than zero. [unsignedLessThanZero]
+    if (source == NULL || count == 0 || output_count == NULL || size <= 0) return NULL;
+                                                                     ^

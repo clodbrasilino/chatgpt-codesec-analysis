@@ -1,0 +1,155 @@
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+static bool append_node(Node **head, Node **tail, int value)
+{
+    Node *node;
+
+    if (head == NULL || tail == NULL) {
+        return false;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return false;
+    }
+
+    node->value = value;
+    node->next = NULL;
+
+    if (*tail == NULL) {
+        *head = node;
+    } else {
+        (*tail)->next = node;
+    }
+
+    *tail = node;
+    return true;
+}
+
+void remove_negative_numbers(Node **head)
+{
+    Node **current;
+
+    if (head == NULL) {
+        return;
+    }
+
+    current = head;
+
+    while (*current != NULL) {
+        if ((*current)->value < 0) {
+            Node *node = *current;
+            *current = node->next;
+            free(node);
+        } else {
+            current = &(*current)->next;
+        }
+    }
+}
+
+static void free_list(Node **head)
+{
+    Node *current;
+
+    if (head == NULL) {
+        return;
+    }
+
+    current = *head;
+
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+
+    *head = NULL;
+}
+
+static bool print_list(const Node *head)
+{
+    const Node *current = head;
+    bool first = true;
+
+    while (current != NULL) {
+        if (!first && printf(" ") < 0) {
+            return false;
+        }
+
+        if (printf("%d", current->value) < 0) {
+            return false;
+        }
+
+        first = false;
+        current = current->next;
+    }
+
+    return putchar('\n') != EOF;
+}
+
+static bool parse_integer(const char *text, int *value)
+{
+    char *end;
+    long result;
+
+    if (text == NULL || value == NULL || *text == '\0') {
+        return false;
+    }
+
+    errno = 0;
+    end = NULL;
+    result = strtol(text, &end, 10);
+
+    if (errno == ERANGE || end == text || *end != '\0' ||
+        result < INT_MIN || result > INT_MAX) {
+        return false;
+    }
+
+    *value = (int)result;
+    return true;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+    int status = EXIT_SUCCESS;
+
+    for (int i = 1; i < argc; ++i) {
+        int value;
+
+        if (!parse_integer(argv[i], &value)) {
+            fprintf(stderr, "Invalid integer: %s\n", argv[i]);
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+
+        if (!append_node(&head, &tail, value)) {
+            fprintf(stderr, "Unable to allocate memory\n");
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+    }
+
+    remove_negative_numbers(&head);
+
+    if (!print_list(head)) {
+        status = EXIT_FAILURE;
+    }
+
+cleanup:
+    free_list(&head);
+    return status;
+}

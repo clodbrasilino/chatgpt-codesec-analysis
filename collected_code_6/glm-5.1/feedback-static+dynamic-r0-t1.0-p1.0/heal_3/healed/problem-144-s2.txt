@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_absolute_differences(const int *arr, size_t size) {
+    long long sum = 0;
+    size_t i, j;
+    if (size == 0) {
+        return 0;
+    }
+    for (i = 0; i < size; i++) {
+        for (j = i + 1; j < size; j++) {
+            int diff = arr[i] - arr[j];
+            sum += (diff > 0) ? diff : -diff;
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5};
+    long long result = sum_of_absolute_differences(arr, sizeof(arr) / sizeof(arr[0]));
+    printf("%lld\n", result);
+    return EXIT_SUCCESS;
+}

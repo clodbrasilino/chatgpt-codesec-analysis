@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stdarg.h>
+
+typedef struct {
+    int size;
+    int *elements;
+} Tuple;
+
+typedef struct {
+    int size;
+    Tuple *tuples;
+} TupleList;
+
+bool has_all_k_elements(const TupleList *list, int k, ...) {
+    if (!list || k <= 0) {
+        return false;
+    }
+
+    int *k_elements = (int *)malloc(k * sizeof(int));
+    if (!k_elements) {
+        return false;
+    }
+
+    va_list args;
+    va_start(args, k);
+    for (int i = 0; i < k; ++i) {
+        k_elements[i] = va_arg(args, int);
+    }
+    va_end(args);
+
+    bool all_found = true;
+
+    for (int i = 0; i < k; ++i) {
+        bool current_found = false;
+        for (int j = 0; j < list->size; ++j) {
+            for (int m = 0; m < list->tuples[j].size; ++m) {
+                if (list->tuples[j].elements[m] == k_elements[i]) {
+                    current_found = true;
+                    break;
+                }
+            }
+            if (current_found) {
+                break;
+            }
+        }
+        if (!current_found) {
+            all_found = false;
+            break;
+        }
+    }
+
+    free(k_elements);
+    return all_found;
+}
+
+Tuple create_tuple(int size, ...) {
+    Tuple tuple = {0, NULL};
+    if (size <= 0) return tuple;
+
+    tuple.size = size;
+    tuple.elements = (int *)malloc(size * sizeof(int));
+    if (!tuple.elements) {
+        tuple.size = 0;
+        return tuple;
+    }
+
+    va_list args;
+    va_start(args, size);
+    for (int i = 0; i < size; ++i) {
+        tuple.elements[i] = va_arg(args, int);
+    }
+    va_end(args);
+
+    return tuple;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (!list) return;
+    for (int i = 0; i < list->size; ++i) {
+        free(list->tuples[i].elements);
+    }
+    free(list->tuples);
+    list->size = 0;
+    list->tuples = NULL;
+}
+
+int main(void) {
+    TupleList list;
+    list.size = 3;
+    list.tuples = (Tuple *)malloc(list.size * sizeof(Tuple));
+    if (!list.tuples) {
+        return EXIT_FAILURE;
+    }
+
+    list.tuples[0] = create_tuple(2, 1, 2);
+    list.tuples[1] = create_tuple(3, 3, 4, 5);
+    list.tuples[2] = create_tuple(1, 6);
+
+    bool result1 = has_all_k_elements(&list, 2, 2, 5);
+    bool result2 = has_all_k_elements(&list, 3, 1, 6, 7);
+
+    printf("Result 1: %s\n", result1 ? "true" : "false");
+    printf("Result 2: %s\n", result2 ? "true" : "false");
+
+    free_tuple_list(&list);
+
+    return EXIT_SUCCESS;
+}

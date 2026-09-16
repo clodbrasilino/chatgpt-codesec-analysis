@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double round_and_sum_times_length(const double *numbers, size_t length)
+{
+    double sum = 0.0;
+    size_t i;
+
+    if (numbers == NULL || length == 0U) {
+        return 0.0;
+    }
+
+    for (i = 0U; i < length; i++) {
+        sum += round(numbers[i]);
+    }
+
+    return sum * (double)length;
+}
+
+int main(void)
+{
+    double numbers[] = { 1.4, 2.6, 3.5, -4.3, 5.9 };
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    double result;
+
+    result = round_and_sum_times_length(numbers, length);
+
+    if (printf("%.2f\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long find_remainder(int *arr, size_t size, unsigned long long n) {
+    if (n == 0) {
+        exit(EXIT_FAILURE);
+    }
+    if (arr == NULL && size > 0) {
+        exit(EXIT_FAILURE);
+    }
+    
+    unsigned long long result = 1;
+    
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            exit(EXIT_FAILURE);
+        }
+        result = (result * (unsigned long long)arr[i]) % n;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int arr[] = {100, 10, 5, 25, 35, 14};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    unsigned long long n = 11;
+    
+    unsigned long long rem = find_remainder(arr, size, n);
+    printf("%llu\n", rem);
+    
+    return 0;
+}
+```

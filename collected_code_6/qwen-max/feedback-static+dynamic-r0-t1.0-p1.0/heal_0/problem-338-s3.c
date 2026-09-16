@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+long countSubstrings(char *str) {
+    int n = strlen(str);
+    long count = 0;
+    int ascii[256] = {0};
+
+    for (int i = 0; i < n; i++) {
+        ascii[str[i]]++;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        if (ascii[i] > 0) {
+            count += (ascii[i] * (ascii[i] + 1L)) / 2;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    char str[] = "abcab";
+    printf("Total substrings: %ld\n", countSubstrings(str));
+    return 0;
+}

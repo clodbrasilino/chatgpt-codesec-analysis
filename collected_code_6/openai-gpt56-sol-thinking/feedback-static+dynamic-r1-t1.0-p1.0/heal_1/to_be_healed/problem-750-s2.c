@@ -1,0 +1,98 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdlib.h>
+
+typedef struct {
+    /* Possible weaknesses found:
+     *  struct member 'Tuple::first' is never used. [unusedStructMember]
+     */
+    int first;
+    /* Possible weaknesses found:
+     *  struct member 'Tuple::second' is never used. [unusedStructMember]
+     */
+    int second;
+} Tuple;
+
+typedef struct TupleNode {
+    Tuple value;
+    struct TupleNode *next;
+} TupleNode;
+
+typedef struct {
+    TupleNode *head;
+    TupleNode *tail;
+    size_t size;
+} TupleList;
+
+static void tuple_list_init(TupleList *list)
+{
+    if (list != NULL) {
+        list->head = NULL;
+        list->tail = NULL;
+        list->size = 0;
+    }
+}
+
+static bool tuple_list_add(TupleList *list, const Tuple *tuple)
+{
+    TupleNode *node;
+
+    if (list == NULL || tuple == NULL || list->size == SIZE_MAX) {
+        return false;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return false;
+    }
+
+    node->value = *tuple;
+    node->next = NULL;
+
+    if (list->tail == NULL) {
+        list->head = node;
+    } else {
+        list->tail->next = node;
+    }
+
+    list->tail = node;
+    ++list->size;
+
+    return true;
+}
+
+static void tuple_list_destroy(TupleList *list)
+{
+    TupleNode *current;
+
+    if (list == NULL) {
+        return;
+    }
+
+    current = list->head;
+    while (current != NULL) {
+        TupleNode *next = current->next;
+        free(current);
+        current = next;
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+}
+
+int main(void)
+{
+    TupleList list;
+    const Tuple tuple = {1, 2};
+
+    tuple_list_init(&list);
+
+    if (!tuple_list_add(&list, &tuple)) {
+        tuple_list_destroy(&list);
+        return EXIT_FAILURE;
+    }
+
+    tuple_list_destroy(&list);
+    return EXIT_SUCCESS;
+}

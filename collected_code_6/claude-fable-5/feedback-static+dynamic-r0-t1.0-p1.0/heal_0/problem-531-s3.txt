@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int min_coins(const int *coins, size_t num_coins, int value, int *result)
+{
+    int *dp = NULL;
+    size_t i;
+    int v;
+
+    if (coins == NULL || result == NULL || num_coins == 0 || value < 0) {
+        return -1;
+    }
+
+    dp = malloc(((size_t)value + 1U) * sizeof(*dp));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 0;
+    for (v = 1; v <= value; v++) {
+        dp[v] = INT_MAX;
+    }
+
+    for (v = 1; v <= value; v++) {
+        for (i = 0; i < num_coins; i++) {
+            if (coins[i] > 0 && coins[i] <= v) {
+                int sub = dp[v - coins[i]];
+                if (sub != INT_MAX && sub + 1 < dp[v]) {
+                    dp[v] = sub + 1;
+                }
+            }
+        }
+    }
+
+    if (dp[value] == INT_MAX) {
+        free(dp);
+        return -1;
+    }
+
+    *result = dp[value];
+    free(dp);
+    return 0;
+}
+
+int main(void)
+{
+    int coins[] = {1, 2, 5, 10};
+    size_t num_coins = sizeof(coins) / sizeof(coins[0]);
+    int value = 27;
+    int result = 0;
+
+    if (min_coins(coins, num_coins, value, &result) == 0) {
+        if (printf("Minimum coins required for %d: %d\n", value, result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "No solution possible for value %d\n", value) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

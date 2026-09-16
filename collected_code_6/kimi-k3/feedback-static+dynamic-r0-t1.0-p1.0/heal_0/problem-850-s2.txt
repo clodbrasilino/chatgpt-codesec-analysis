@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+
+int is_valid_triangle(int angle1, int angle2, int angle3) {
+    if (angle1 <= 0 || angle2 <= 0 || angle3 <= 0) {
+        return 0;
+    }
+    if (angle1 + angle2 + angle3 != 180) {
+        return 0;
+    }
+    return 1;
+}
+
+int main(void) {
+    int angle1;
+    int angle2;
+    int angle3;
+    int result;
+
+    printf("Enter three angles: ");
+    result = scanf("%d %d %d", &angle1, &angle2, &angle3);
+
+    if (result != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+
+    if (is_valid_triangle(angle1, angle2, angle3)) {
+        printf("Triangle with positive area is possible\n");
+    } else {
+        printf("Triangle with positive area is not possible\n");
+    }
+
+    return 0;
+}
+```

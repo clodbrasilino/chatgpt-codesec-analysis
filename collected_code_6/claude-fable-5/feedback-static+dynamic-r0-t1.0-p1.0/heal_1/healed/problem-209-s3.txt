@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEAP_SIZE 100
+
+typedef struct {
+    int data[MAX_HEAP_SIZE];
+    int size;
+} MinHeap;
+
+static void swap_ints(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(MinHeap *heap, int index)
+{
+    while (1) {
+        int smallest = index;
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+
+        if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        swap_ints(&heap->data[index], &heap->data[smallest]);
+        index = smallest;
+    }
+}
+
+static void sift_up(MinHeap *heap, int index)
+{
+    if (index < 0 || index >= heap->size || index >= MAX_HEAP_SIZE) {
+        return;
+    }
+
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+        if (heap->data[parent] <= heap->data[index]) {
+            break;
+        }
+        swap_ints(&heap->data[parent], &heap->data[index]);
+        index = parent;
+    }
+}
+
+int heap_insert(MinHeap *heap, int value)
+{
+    if (heap == NULL) {
+        return -1;
+    }
+    if (heap->size < 0 || heap->size >= MAX_HEAP_SIZE) {
+        return -1;
+    }
+    heap->data[heap->size] = value;
+    heap->size++;
+    sift_up(heap, heap->size - 1);
+    return 0;
+}
+
+int heap_delete_min_and_insert(MinHeap *heap, int new_value, int *deleted_value)
+{
+    if (heap == NULL || deleted_value == NULL) {
+        return -1;
+    }
+    if (heap->size <= 0 || heap->size > MAX_HEAP_SIZE) {
+        return -1;
+    }
+    *deleted_value = heap->data[0];
+    heap->data[0] = new_value;
+    sift_down(heap, 0);
+    return 0;
+}
+
+int main(void)
+{
+    MinHeap heap;
+    int values[] = { 15, 3, 9, 27, 6, 12 };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+    int deleted;
+    int rc;
+
+    heap.size = 0;
+
+    for (i = 0; i < count; i++) {
+        rc = heap_insert(&heap, values[i]);
+        if (rc != 0) {
+            fprintf(stderr, "Failed to insert %d into heap\n", values[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Heap before operation:");
+    for (i = 0; (int)i < heap.size; i++) {
+        printf(" %d", heap.data[i]);
+    }
+    printf("\n");
+
+    rc = heap_delete_min_and_insert(&heap, 8, &deleted);
+    if (rc != 0) {
+        fprintf(stderr, "Heap operation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Deleted smallest element: %d\n", deleted);
+    printf("Inserted new element: %d\n", 8);
+
+    printf("Heap after operation:");
+    for (i = 0; (int)i < heap.size; i++) {
+        printf(" %d", heap.data[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes addressing the identified weaknesses:**
+
+1. **`sift_up` out-of-bounds guard** — The analyzer warned that `heap->data[index]` could be accessed at index 100 (out of bounds) if `index` reached `MAX_HEAP_SIZE`. An explicit guard clause now rejects any `index` that is negative, beyond `heap->size`, or `>= MAX_HEAP_SIZE` before the loop runs. This makes the bounds invariant explicit to both the analyzer and future maintainers, rather than relying on the implicit contract with `heap_insert`.
+
+2. **Hardened `heap_insert`** — The size check was tightened to also reject a negative `heap->size` (possible if the struct is used uninitialized or corrupted), which was the root scenario under which the analyzer's out-of-bounds path became reachable.
+
+3. **Hardened `heap_delete_min_and_insert`** — Added an upper-bound sanity check (`heap->size > MAX_HEAP_SIZE`) so `sift_down` can never read past the array on a corrupted heap.
+
+The `index > 0` loop condition in `sift_up` is retained — it is not redundant; it is the correct termination condition — but the new precondition check resolves the analyzer's "either redundant or out-of-bounds" ambiguity by guaranteeing `index` is always a valid array index.

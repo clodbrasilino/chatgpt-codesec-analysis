@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int min_of(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
+static long sum_common_divisors(int a, int b)
+{
+    long sum = 0;
+    int limit;
+    int i;
+
+    if (a <= 0 || b <= 0) {
+        return 0;
+    }
+
+    limit = min_of(a, b);
+
+    for (i = 1; i <= limit; i++) {
+        if ((a % i == 0) && (b % i == 0)) {
+            sum += i;
+        }
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    long result;
+
+    printf("Enter first number: ");
+    if (scanf("%d", &a) != 1) {
+        fprintf(stderr, "Error: invalid input for first number.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%d", &b) != 1) {
+        fprintf(stderr, "Error: invalid input for second number.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (a <= 0 || b <= 0) {
+        fprintf(stderr, "Error: both numbers must be positive integers.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_common_divisors(a, b);
+
+    printf("Sum of common divisors of %d and %d is: %ld\n", a, b, result);
+
+    return EXIT_SUCCESS;
+}

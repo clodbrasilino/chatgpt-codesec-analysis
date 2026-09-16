@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areCommonElementsInOrder(const int *list1, int len1, const int *list2, int len2) {
+    int i = 0, j = 0;
+    while (i < len1 && j < len2) {
+        if (list1[i] == list2[j]) {
+            i++;
+            j++;
+        } else if (i > 0 && list1[i-1] == list2[j]) {
+            return false;
+        } else if (j > 0 && list1[i] == list2[j-1]) {
+            return false;
+        } else if (list1[i] < list2[j]) {
+            i++;
+        } else {
+            j++;
+        }
+    }
+    while (i < len1) {
+        if (list1[i] == list2[len2 - 1])
+            return false;
+        i++;
+    }
+    while (j < len2) {
+        if (list2[j] == list1[len1 - 1])
+            return false;
+        j++;
+    }
+    return true;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 4, 6, 8, 10};
+    int len1 = sizeof(list1) / sizeof(list1[0]);
+    int len2 = sizeof(list2) / sizeof(list2[0]);
+
+    bool result = areCommonElementsInOrder(list1, len1, list2, len2);
+    printf("Are common elements in order? %s\n", result ? "Yes" : "No");
+
+    return 0;
+}

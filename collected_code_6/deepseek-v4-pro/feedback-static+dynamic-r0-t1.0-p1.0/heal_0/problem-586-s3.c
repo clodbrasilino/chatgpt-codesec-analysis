@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void split_and_swap(int arr[], int n, int split_pos) {
+    if (arr == NULL || n <= 0 || split_pos <= 0 || split_pos >= n) {
+        return;
+    }
+
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return;
+    }
+
+    int i, j = 0;
+
+    for (i = split_pos; i < n; i++) {
+        temp[j++] = arr[i];
+    }
+
+    for (i = 0; i < split_pos; i++) {
+        temp[j++] = arr[i];
+    }
+
+    for (i = 0; i < n; i++) {
+        arr[i] = temp[i];
+    }
+
+    free(temp);
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int split_pos = 3;
+
+    split_and_swap(arr, n, split_pos);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

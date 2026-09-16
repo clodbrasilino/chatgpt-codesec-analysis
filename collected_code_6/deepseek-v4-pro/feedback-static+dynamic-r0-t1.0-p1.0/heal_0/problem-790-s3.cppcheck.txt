@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-790-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-790-s3.c:31:49: style: Condition 'check_even_indices_even(NULL,5)' is always false [knownConditionTrueFalse]
+    printf("NULL: %s\n", check_even_indices_even(NULL, 5) ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-790-s3.c:31:49: note: Calling function 'check_even_indices_even' returns 0
+    printf("NULL: %s\n", check_even_indices_even(NULL, 5) ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-790-s3.c:31:49: note: Condition 'check_even_indices_even(NULL,5)' is always false
+    printf("NULL: %s\n", check_even_indices_even(NULL, 5) ? "true" : "false");
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-790-s3.c:24:9: style: Variable 'empty' can be declared as const array [constVariable]
+    int empty[] = {};
+        ^

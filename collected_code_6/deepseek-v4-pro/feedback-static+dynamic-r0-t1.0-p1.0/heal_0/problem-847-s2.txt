@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct list {
+    int data;
+    struct list *next;
+};
+
+struct tuple {
+    struct list *list;
+};
+
+struct list *list_copy(struct list *src) {
+    if (src == NULL) {
+        return NULL;
+    }
+    
+    struct list *new_head = (struct list *)malloc(sizeof(struct list));
+    if (new_head == NULL) {
+        return NULL;
+    }
+    
+    new_head->data = src->data;
+    new_head->next = NULL;
+    
+    struct list *current_new = new_head;
+    struct list *current_src = src->next;
+    
+    while (current_src != NULL) {
+        struct list *new_node = (struct list *)malloc(sizeof(struct list));
+        if (new_node == NULL) {
+            struct list *temp;
+            while (new_head != NULL) {
+                temp = new_head;
+                new_head = new_head->next;
+                free(temp);
+            }
+            return NULL;
+        }
+        
+        new_node->data = current_src->data;
+        new_node->next = NULL;
+        current_new->next = new_node;
+        current_new = new_node;
+        current_src = current_src->next;
+    }
+    
+    return new_head;
+}
+
+struct list *copy_list_from_singleton_tuple(struct tuple *t) {
+    if (t == NULL || t->list == NULL) {
+        return NULL;
+    }
+    
+    return list_copy(t->list);
+}
+
+void list_free(struct list *head) {
+    struct list *current = head;
+    struct list *next;
+    
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void list_print(struct list *head) {
+    struct list *current = head;
+    
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    struct list *list = (struct list *)malloc(sizeof(struct list));
+    if (list == NULL) {
+        return 1;
+    }
+    list->data = 1;
+    
+    list->next = (struct list *)malloc(sizeof(struct list));
+    if (list->next == NULL) {
+        free(list);
+        return 1;
+    }
+    list->next->data = 2;
+    
+    list->next->next = (struct list *)malloc(sizeof(struct list));
+    if (list->next->next == NULL) {
+        free(list->next);
+        free(list);
+        return 1;
+    }
+    list->next->next->data = 3;
+    list->next->next->next = NULL;
+    
+    struct tuple t;
+    t.list = list;
+    
+    struct list *copied = copy_list_from_singleton_tuple(&t);
+    
+    if (copied != NULL) {
+        printf("Original list: ");
+        list_print(list);
+        printf("Copied list: ");
+        list_print(copied);
+        list_free(copied);
+    } else {
+        printf("Copy failed\n");
+    }
+    
+    list_free(list);
+    
+    return 0;
+}
+```

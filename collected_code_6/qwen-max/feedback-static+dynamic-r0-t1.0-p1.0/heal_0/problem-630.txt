@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x, y;
+} Coordinate;
+
+void find_adjacent_coords(Coordinate target, Coordinate adjacents[8]) {
+    adjacents[0] = (Coordinate){target.x-1, target.y-1};
+    adjacents[1] = (Coordinate){target.x  , target.y-1};
+    adjacents[2] = (Coordinate){target.x+1, target.y-1};
+    adjacents[3] = (Coordinate){target.x-1, target.y  };
+    adjacents[4] = (Coordinate){target.x+1, target.y  };
+    adjacents[5] = (Coordinate){target.x-1, target.y+1};
+    adjacents[6] = (Coordinate){target.x  , target.y+1};
+    adjacents[7] = (Coordinate){target.x+1, target.y+1};
+}
+
+int main() {
+    Coordinate target = {5, 5};
+    Coordinate adjacents[8];
+
+    find_adjacent_coords(target, adjacents);
+
+    for(int i = 0; i < 8; i++) {
+        printf("Adjacent %d: (%d, %d)\n", i + 1, adjacents[i].x, adjacents[i].y);
+    }
+
+    return 0;
+}
+```

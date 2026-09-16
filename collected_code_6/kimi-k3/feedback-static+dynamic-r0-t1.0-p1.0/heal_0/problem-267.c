@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t sum_of_squares_of_odds(unsigned int n) {
+    uint64_t sum = 0;
+    for (unsigned int i = 0; i < n; i++) {
+        uint64_t odd = 2 * (uint64_t)i + 1;
+        sum += odd * odd;
+    }
+    return sum;
+}
+
+int main(void) {
+    unsigned int n;
+    if (scanf("%u", &n) != 1) {
+        return 1;
+    }
+    printf("%llu\n", (unsigned long long)sum_of_squares_of_odds(n));
+    return 0;
+}

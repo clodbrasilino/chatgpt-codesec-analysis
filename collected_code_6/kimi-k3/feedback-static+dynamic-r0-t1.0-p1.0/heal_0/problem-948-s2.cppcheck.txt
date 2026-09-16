@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s2.c:65:10: style: Variable 'item0' can be declared as pointer to const [constVariablePointer]
+    int *item0 = tuple_get(t, 0);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s2.c:67:13: style: Variable 'item2' can be declared as pointer to const [constVariablePointer]
+    double *item2 = tuple_get(t, 2);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s2.c:75:11: style: Variable 'invalid' can be declared as pointer to const [constVariablePointer]
+    void *invalid = tuple_get(t, 5);
+          ^

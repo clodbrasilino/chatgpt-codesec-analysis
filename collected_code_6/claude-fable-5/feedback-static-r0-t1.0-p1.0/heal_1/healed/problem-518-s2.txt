@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long find_square_root(long long n)
+{
+    long long low;
+    long long high;
+    long long square;
+
+    if (n < 0) {
+        return -1;
+    }
+    if (n < 2) {
+        return n;
+    }
+
+    low = 1;
+    high = n / 2;
+
+    while (low <= high) {
+        long long mid = low + (high - low) / 2;
+        if (mid > n / mid) {
+            high = mid - 1;
+            continue;
+        }
+        square = mid * mid;
+        if (square == n) {
+            return mid;
+        }
+        if (square < n) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    long long number;
+    long long result;
+    int scan_status;
+
+    printf("Enter a perfect square number: ");
+    scan_status = scanf("%lld", &number);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: negative numbers are not allowed.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_square_root(number);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: %lld is not a perfect square.\n", number);
+        return EXIT_FAILURE;
+    }
+
+    printf("The square root of %lld is %lld\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `[variableScope]` warning: `mid` is now declared inside the `while` loop body, reducing its scope to where it is actually used. This is good practice because it makes the code easier to reason about, prevents accidental use of stale values outside the loop, and allows the compiler to optimize register allocation more effectively.
+
+A few additional observations on the code's quality:
+
+- **Overflow safety**: The check `mid > n / mid` before computing `mid * mid` is a solid guard against signed integer overflow (which would be undefined behavior), since it skips the multiplication whenever `mid * mid` would exceed `n`.
+- **Division by zero**: `mid` can never be zero because `low` starts at 1 and only increases, so `n / mid` is safe.
+- **Edge cases**: Negative inputs, 0, and 1 are all handled correctly before the binary search begins.
+- **Input validation**: The `scanf` return value is checked, and errors are properly reported to `stderr` with appropriate exit codes.
+
+The variable `square` could also arguably be moved into the loop for the same scope-reduction reason, but the reported weakness only concerned `mid`.

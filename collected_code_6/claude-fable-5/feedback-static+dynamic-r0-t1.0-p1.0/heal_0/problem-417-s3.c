@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    int key;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Group;
+
+static void free_groups(Group *groups, size_t group_count)
+{
+    size_t i;
+
+    if (groups == NULL) {
+        return;
+    }
+    for (i = 0; i < group_count; i++) {
+        free(groups[i].values);
+    }
+    free(groups);
+}
+
+static Group *group_tuples(const Tuple *tuples, size_t n, size_t *out_count)
+{
+    Group *groups = NULL;
+    size_t group_count = 0;
+    size_t group_capacity = 0;
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL || out_count == NULL || n == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        Group *target = NULL;
+
+        for (j = 0; j < group_count; j++) {
+            if (groups[j].key == tuples[i].first) {
+                target = &groups[j];
+                break;
+            }
+        }
+
+        if (target == NULL) {
+            if (group_count == group_capacity) {
+                size_t new_capacity = (group_capacity == 0) ? 4 : group_capacity * 2;
+                Group *tmp = realloc(groups, new_capacity * sizeof(Group));
+                if (tmp == NULL) {
+                    free_groups(groups, group_count);
+                    return NULL;
+                }
+                groups = tmp;
+                group_capacity = new_capacity;
+            }
+            target = &groups[group_count];
+            target->key = tuples[i].first;
+            target->count = 0;
+            target->capacity = 4;
+            target->values = malloc(target->capacity * sizeof(int));
+            if (target->values == NULL) {
+                free_groups(groups, group_count);
+                return NULL;
+            }
+            group_count++;
+        }
+
+        if (target->count == target->capacity) {
+            size_t new_capacity = target->capacity * 2;
+            int *tmp = realloc(target->values, new_capacity * sizeof(int));
+            if (tmp == NULL) {
+                free_groups(groups, group_count);
+                return NULL;
+            }
+            target->values = tmp;
+            target->capacity = new_capacity;
+        }
+        target->values[target->count] = tuples[i].second;
+        target->count++;
+    }
+
+    *out_count = group_count;
+    return groups;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {1, 10},
+        {2, 20},
+        {1, 30},
+        {3, 40},
+        {2, 50},
+        {1, 60}
+    };
+    size_t n = sizeof(tuples) / sizeof(tuples[0]);
+    size_t group_count = 0;
+    size_t i;
+    size_t j;
+    Group *groups;
+
+    groups = group_tuples(tuples, n, &group_count);
+    if (groups == NULL) {
+        fprintf(stderr, "Failed to group tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < group_count; i++) {
+        if (printf("(%d", groups[i].key) < 0) {
+            free_groups(groups, group_count);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < groups[i].count; j++) {
+            if (printf(", %d", groups[i].values[j]) < 0) {
+                free_groups(groups, group_count);
+                return EXIT_FAILURE;
+            }
+        }
+        if (printf(")\n") < 0) {
+            free_groups(groups, group_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_groups(groups, group_count);
+    return EXIT_SUCCESS;
+}

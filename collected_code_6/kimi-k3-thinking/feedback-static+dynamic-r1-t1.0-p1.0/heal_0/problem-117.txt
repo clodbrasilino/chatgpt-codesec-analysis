@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <ctype.h>
+
+size_t convert_to_float(const char **list, size_t count, float **out)
+{
+    float *results;
+    size_t converted = 0;
+    size_t i;
+
+    if (list == NULL || out == NULL)
+    {
+        return 0;
+    }
+
+    *out = NULL;
+
+    if (count == 0)
+    {
+        return 0;
+    }
+
+    results = (float *)malloc(count * sizeof(float));
+    if (results == NULL)
+    {
+        return 0;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        char *endptr = NULL;
+        float value;
+
+        if (list[i] == NULL)
+        {
+            continue;
+        }
+
+        errno = 0;
+        value = strtof(list[i], &endptr);
+
+        if (endptr == list[i] || errno == ERANGE)
+        {
+            continue;
+        }
+
+        while (*endptr != '\0' && isspace((unsigned char)*endptr))
+        {
+            endptr++;
+        }
+
+        if (*endptr != '\0')
+        {
+            continue;
+        }
+
+        results[converted] = value;
+        converted++;
+    }
+
+    if (converted == 0)
+    {
+        free(results);
+        results = NULL;
+        return 0;
+    }
+
+    *out = results;
+    return converted;
+}
+
+int main(void)
+{
+    const char *list[] = {"3.14", "hello", "42", "-2.5", "abc", "1e3", "0.5", "12x", NULL};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    float *floats = NULL;
+    size_t num_converted;
+    size_t i;
+
+    num_converted = convert_to_float(list, count, &floats);
+
+    printf("Converted %zu element(s) to float:\n", num_converted);
+    for (i = 0; i < num_converted; i++)
+    {
+        printf("%f\n", floats[i]);
+    }
+
+    free(floats);
+    floats = NULL;
+
+    return 0;
+}
+```

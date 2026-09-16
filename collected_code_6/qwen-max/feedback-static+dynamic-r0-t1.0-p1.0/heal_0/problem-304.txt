@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int getElementAtIndexAfterRotations(int *arr, int n, int rotations, int index) {
+    if (arr == NULL || n <= 0 || rotations < 0 || index < 0 || index >= n) {
+        return -1;
+    }
+    int effectiveIndex = (index + rotations) % n;
+    return arr[effectiveIndex];
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int rotations = 2;
+    int index = 3;
+
+    int result = getElementAtIndexAfterRotations(arr, n, rotations, index);
+    printf("Element at index %d after %d rotations: %d\n", index, rotations, result);
+
+    return 0;
+}
+```

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c:4:16: style: Parameter 'arr' can be declared as const array [constParameter]
+int kadane(int arr[], int n) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c:16:18: style: Parameter 'arr' can be declared as const array [constParameter]
+int sumArray(int arr[], int n) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-286-s3.c:25:44: style: Variable 'max_suffix_sum' is assigned a value that is never used. [unreadVariable]
+    int max_prefix_sum = 0, max_suffix_sum = 0, prefix_sum = 0, suffix_sum = 0;
+                                           ^

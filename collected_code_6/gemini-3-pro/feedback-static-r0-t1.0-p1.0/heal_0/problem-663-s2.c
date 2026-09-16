@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long find_largest_k(long long x, long long y, long long n) {
+    if (x <= 0 || y < 0 || y >= x || n < y) {
+        return -1;
+    }
+
+    long long q = (n - y) / x;
+    long long k = q * x + y;
+
+    return k;
+}
+
+int main(void) {
+    long long x;
+    long long y;
+    long long n;
+
+    if (scanf("%lld %lld %lld", &x, &y, &n) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = find_largest_k(x, y, n);
+
+    if (result == -1) {
+        fprintf(stderr, "Invalid parameters or no such k exists in the given range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

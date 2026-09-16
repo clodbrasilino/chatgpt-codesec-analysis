@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int longest_increasing_subsequence(const int *seq, int n) {
+    if (seq == NULL || n <= 0) {
+        return 0;
+    }
+    int *tails = (int *)malloc((size_t)n * sizeof(int));
+    if (tails == NULL) {
+        return -1;
+    }
+    int len = 0;
+    for (int i = 0; i < n; ++i) {
+        int lo = 0;
+        int hi = len;
+        while (lo < hi) {
+            int mid = lo + (hi - lo) / 2;
+            if (tails[mid] < seq[i]) {
+                lo = mid + 1;
+            } else {
+                hi = mid;
+            }
+        }
+        tails[lo] = seq[i];
+        if (lo == len) {
+            ++len;
+        }
+    }
+    free(tails);
+    return len;
+}
+
+int main(void) {
+    int arr[] = {10, 22, 9, 33, 21, 50, 41, 60, 80};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+    int result = longest_increasing_subsequence(arr, n);
+    if (result < 0) {
+        return 1;
+    }
+    printf("%d\n", result);
+    return 0;
+}
+```

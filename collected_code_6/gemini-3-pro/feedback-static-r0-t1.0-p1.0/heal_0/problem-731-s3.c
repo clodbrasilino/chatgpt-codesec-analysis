@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double calculate_cone_lateral_surface_area(double radius, double slant_height) {
+    if (radius < 0.0 || slant_height < 0.0) {
+        return -1.0;
+    }
+    return M_PI * radius * slant_height;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double slant_height = 0.0;
+    double area = 0.0;
+
+    if (scanf("%lf", &radius) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%lf", &slant_height) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_cone_lateral_surface_area(radius, slant_height);
+
+    if (area < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", area);
+
+    return EXIT_SUCCESS;
+}

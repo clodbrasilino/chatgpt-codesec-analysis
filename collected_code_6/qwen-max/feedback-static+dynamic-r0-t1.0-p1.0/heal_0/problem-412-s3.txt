@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* createNode(int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) return NULL;
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(Node *head) {
+    Node *current = head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+Node* removeOddNumbers(Node *head) {
+    Node dummy;
+    dummy.next = head;
+    Node *prev = &dummy;
+    Node *current = head;
+    while (current != NULL) {
+        if (current->data % 2 != 0) {
+            prev->next = current->next;
+            free(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
+        }
+    }
+    return dummy.next;
+}
+
+int main() {
+    Node *head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+
+    head = removeOddNumbers(head);
+
+    for (Node *current = head; current != NULL; current = current->next) {
+        printf("%d ", current->data);
+    }
+
+    freeList(head);
+    return 0;
+}
+```

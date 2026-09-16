@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+double find_average(const int *list, size_t length)
+{
+    double sum = 0.0;
+    size_t i;
+    
+    if (list == NULL || length == 0) {
+        return 0.0;
+    }
+    
+    for (i = 0; i < length; i++) {
+        sum += list[i];
+    }
+    
+    return sum / (double)length;
+}
+
+int main(void)
+{
+    int numbers[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    double average;
+    
+    average = find_average(numbers, count);
+    
+    if (printf("Average: %.2f\n", average) < 0) {
+        return 1;
+    }
+    
+    return 0;
+}
+```

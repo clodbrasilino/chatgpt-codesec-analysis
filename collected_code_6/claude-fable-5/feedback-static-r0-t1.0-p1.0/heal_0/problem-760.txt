@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool has_only_one_distinct_element(const int *arr, size_t size)
+{
+    if (arr == NULL || size == 0) {
+        return false;
+    }
+
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] != arr[0]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int arr1[] = {5, 5, 5, 5, 5};
+    int arr2[] = {1, 2, 1, 1, 1};
+    int arr3[] = {7};
+
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    if (has_only_one_distinct_element(arr1, size1)) {
+        printf("arr1 contains only one distinct element\n");
+    } else {
+        printf("arr1 contains more than one distinct element\n");
+    }
+
+    if (has_only_one_distinct_element(arr2, size2)) {
+        printf("arr2 contains only one distinct element\n");
+    } else {
+        printf("arr2 contains more than one distinct element\n");
+    }
+
+    if (has_only_one_distinct_element(arr3, size3)) {
+        printf("arr3 contains only one distinct element\n");
+    } else {
+        printf("arr3 contains more than one distinct element\n");
+    }
+
+    return 0;
+}
+```

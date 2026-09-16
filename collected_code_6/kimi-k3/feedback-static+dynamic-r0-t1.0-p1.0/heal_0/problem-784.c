@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdbool.h>
+
+#define MIN_LIST_SIZE 2
+
+static bool find_first_even_odd(const int *list, size_t size, int *first_even, int *first_odd)
+{
+    bool found_even = false;
+    bool found_odd = false;
+    size_t i;
+
+    if (list == NULL || first_even == NULL || first_odd == NULL || size < MIN_LIST_SIZE)
+    {
+        return false;
+    }
+
+    for (i = 0U; i < size; i++)
+    {
+        if (!found_even && (list[i] % 2 == 0))
+        {
+            *first_even = list[i];
+            found_even = true;
+        }
+        else if (!found_odd && (list[i] % 2 != 0))
+        {
+            *first_odd = list[i];
+            found_odd = true;
+        }
+
+        if (found_even && found_odd)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool safe_multiply(int a, int b, long *result)
+{
+    long product;
+
+    if (result == NULL)
+    {
+        return false;
+    }
+
+    product = (long)a * (long)b;
+
+    if (product > INT_MAX || product < INT_MIN)
+    {
+        return false;
+    }
+
+    *result = product;
+    return true;
+}
+
+int main(void)
+{
+    int test_list[] = {3, 7, 8, 12, 5, 10};
+    size_t list_size = sizeof(test_list) / sizeof(test_list[0]);
+    int first_even = 0;
+    int first_odd = 0;
+    long product = 0L;
+
+    if (!find_first_even_odd(test_list, list_size, &first_even, &first_odd))
+    {
+        (void)fprintf(stderr, "Error: Could not find both even and odd numbers in the list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!safe_multiply(first_even, first_odd, &product))
+    {
+        (void)fprintf(stderr, "Error: Integer overflow detected during multiplication\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("First even number: %d\n", first_even);
+    (void)printf("First odd number: %d\n", first_odd);
+    (void)printf("Product: %ld\n", product);
+
+    return EXIT_SUCCESS;
+}

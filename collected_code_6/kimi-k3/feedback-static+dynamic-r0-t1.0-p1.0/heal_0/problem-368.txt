@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* repeat_tuple(const int* tuple, size_t tuple_size, size_t n) {
+    if (tuple == NULL || tuple_size == 0 || n == 0) {
+        return NULL;
+    }
+    if (n > SIZE_MAX / tuple_size) {
+        return NULL;
+    }
+    size_t total_size = tuple_size * n;
+    int* result = (int*)malloc(total_size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < tuple_size; j++) {
+            result[i * tuple_size + j] = tuple[j];
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t n = 3;
+    int* result = repeat_tuple(tuple, tuple_size, n);
+    if (result == NULL) {
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < tuple_size * n; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

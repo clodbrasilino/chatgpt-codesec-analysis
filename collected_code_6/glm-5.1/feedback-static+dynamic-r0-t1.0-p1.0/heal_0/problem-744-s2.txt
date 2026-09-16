@@ -1,0 +1,41 @@
+```c
+#include <stddef.h>
+#include <stdbool.h>
+
+struct Tuple {
+    int *first;
+    int *second;
+};
+
+bool has_none(const struct Tuple *t) {
+    if (t == NULL) {
+        return true;
+    }
+    if (t->first == NULL || t->second == NULL) {
+        return true;
+    }
+    return false;
+}
+
+int main(void) {
+    int a = 1, b = 2;
+    struct Tuple t1 = {&a, &b};
+    struct Tuple t2 = {&a, NULL};
+    struct Tuple t3 = {NULL, &b};
+    struct Tuple t4 = {NULL, NULL};
+    
+    bool r1 = has_none(&t1);
+    bool r2 = has_none(&t2);
+    bool r3 = has_none(&t3);
+    bool r4 = has_none(&t4);
+    bool r5 = has_none(NULL);
+    
+    (void)r1;
+    (void)r2;
+    (void)r3;
+    (void)r4;
+    (void)r5;
+
+    return 0;
+}
+```

@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define EARTH_RADIUS_KM 6371.0088
+#define DEG_TO_RAD (M_PI / 180.0)
+
+static int validate_coordinates(double lat, double lon)
+{
+    if (isnan(lat) || isnan(lon) || isinf(lat) || isinf(lon)) {
+        return 0;
+    }
+    if (lat < -90.0 || lat > 90.0) {
+        return 0;
+    }
+    if (lon < -180.0 || lon > 180.0) {
+        return 0;
+    }
+    return 1;
+}
+
+static int haversine_distance(double lat1, double lon1,
+                              double lat2, double lon2,
+                              double *result)
+{
+    double phi1;
+    double phi2;
+    double delta_phi;
+    double delta_lambda;
+    double a;
+    double c;
+
+    if (result == NULL) {
+        return -1;
+    }
+    if (!validate_coordinates(lat1, lon1) || !validate_coordinates(lat2, lon2)) {
+        return -1;
+    }
+
+    phi1 = lat1 * DEG_TO_RAD;
+    phi2 = lat2 * DEG_TO_RAD;
+    delta_phi = (lat2 - lat1) * DEG_TO_RAD;
+    delta_lambda = (lon2 - lon1) * DEG_TO_RAD;
+
+    a = sin(delta_phi / 2.0) * sin(delta_phi / 2.0) +
+        cos(phi1) * cos(phi2) *
+        sin(delta_lambda / 2.0) * sin(delta_lambda / 2.0);
+
+    if (a < 0.0) {
+        a = 0.0;
+    }
+    if (a > 1.0) {
+        a = 1.0;
+    }
+
+    c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+    *result = EARTH_RADIUS_KM * c;
+
+    return 0;
+}
+
+int main(void)
+{
+    double lat1 = 40.7128;
+    double lon1 = -74.0060;
+    double lat2 = 51.5074;
+    double lon2 = -0.1278;
+    double distance = 0.0;
+
+    if (haversine_distance(lat1, lon1, lat2, lon2, &distance) != 0) {
+        if (fprintf(stderr, "Error: invalid coordinates provided.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Distance between (%.4f, %.4f) and (%.4f, %.4f): %.4f km\n",
+               lat1, lon1, lat2, lon2, distance) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

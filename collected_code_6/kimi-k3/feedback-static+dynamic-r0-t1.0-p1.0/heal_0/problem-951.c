@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int find_max_similar_indices(Tuple *list1, Tuple *list2, size_t size1, size_t size2, int *result) {
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (size1 == 0 || size2 == 0) {
+        return -1;
+    }
+    
+    size_t min_size = (size1 < size2) ? size1 : size2;
+    int max_value = list1[0].first;
+    int found = 0;
+    
+    for (size_t i = 0; i < min_size; i++) {
+        int val1_first = list1[i].first;
+        int val1_second = list1[i].second;
+        int val2_first = list2[i].first;
+        int val2_second = list2[i].second;
+        
+        if (val1_first == val2_first && val1_second == val2_second) {
+            if (!found || val1_first > max_value) {
+                max_value = val1_first;
+                found = 1;
+            }
+        }
+    }
+    
+    if (!found) {
+        return -1;
+    }
+    
+    *result = max_value;
+    return 0;
+}
+
+int main(void) {
+    Tuple list1[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    Tuple list2[] = {{1, 2}, {3, 5}, {5, 6}, {9, 10}};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    
+    int result;
+    if (find_max_similar_indices(list1, list2, size1, size2, &result) == 0) {
+        printf("Maximum value at similar indices: %d\n", result);
+    } else {
+        printf("No similar indices found or error occurred\n");
+    }
+    
+    return 0;
+}

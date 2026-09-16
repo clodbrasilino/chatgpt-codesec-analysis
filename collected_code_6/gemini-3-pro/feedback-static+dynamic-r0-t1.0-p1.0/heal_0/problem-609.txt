@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+#define PI 3.14159265358979323846
+
+typedef double (*PeriodicFunction)(double);
+
+double find_minimum_periodic(PeriodicFunction func, double period, double step_size) {
+    if (func == NULL || period <= 0.0 || step_size <= 0.0) {
+        return NAN;
+    }
+
+    double min_val = func(0.0);
+    double x;
+
+    for (x = step_size; x <= period; x += step_size) {
+        double current_val = func(x);
+        if (current_val < min_val) {
+            min_val = current_val;
+        }
+    }
+
+    return min_val;
+}
+
+double sample_function(double x) {
+    return sin(x) + 0.5 * cos(2 * x);
+}
+
+int main(void) {
+    double period = 2 * PI;
+    double step_size = 0.001;
+
+    double min_value = find_minimum_periodic(sample_function, period, step_size);
+
+    if (isnan(min_value)) {
+        fprintf(stderr, "Error: Invalid parameters provided to function.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum value: %f\n", min_value);
+
+    return EXIT_SUCCESS;
+}
+```

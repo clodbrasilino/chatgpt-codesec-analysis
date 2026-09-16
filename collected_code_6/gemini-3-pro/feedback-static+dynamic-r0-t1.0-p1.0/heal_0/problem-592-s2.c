@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    unsigned long long res = 1;
+    for (int i = 0; i < k; ++i) {
+        res *= (n - i);
+        res /= (i + 1);
+    }
+    return res;
+}
+
+unsigned long long sum_of_product_of_binomial_coefficients(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    return binomial_coefficient(2 * n, n);
+}
+
+int main(void) {
+    int n = 5;
+    
+    unsigned long long result = sum_of_product_of_binomial_coefficients(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

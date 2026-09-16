@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_difference_of_squares(long long n) {
+    if (n < 0) {
+        n = -n;
+    }
+    return n % 4 != 2;
+}
+
+int main(void) {
+    long long num;
+    int scan_result;
+    
+    printf("Enter a number: ");
+    scan_result = scanf("%lld", &num);
+    
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (is_difference_of_squares(num)) {
+        printf("%lld can be represented as difference of two squares\n", num);
+    } else {
+        printf("%lld cannot be represented as difference of two squares\n", num);
+    }
+    
+    return 0;
+}

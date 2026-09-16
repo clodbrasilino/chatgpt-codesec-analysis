@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int multiply_lists(const int *list1, const int *list2, int *result, size_t length)
+{
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        result[i] = list1[i] * list2[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t length = 5;
+    /* Possible weaknesses found:
+     *  Variable 'list1' can be declared as const array [constVariable]
+     */
+    int list1[] = {1, 2, 3, 4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'list2' can be declared as const array [constVariable]
+     */
+    int list2[] = {10, 20, 30, 40, 50};
+    int *result;
+    size_t i;
+
+    result = malloc(length * sizeof(*result));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (multiply_lists(list1, list2, result, length) != 0) {
+        fprintf(stderr, "Multiplication failed\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < length; i++) {
+        printf("%d", result[i]);
+        if (i < length - 1) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

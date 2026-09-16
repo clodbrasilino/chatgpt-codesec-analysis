@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+    return (x > y) - (x < y);
+}
+
+int *largestDivisibleSubset(int *nums, int numsSize, int *returnSize) {
+    if (!returnSize) {
+        return NULL;
+    }
+    if (!nums || numsSize <= 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    qsort(nums, numsSize, sizeof(int), compare);
+
+    int *dp = malloc((size_t)numsSize * sizeof(*dp));
+    int *prev = malloc((size_t)numsSize * sizeof(*prev));
+    if (!dp || !prev) {
+        free(dp);
+        free(prev);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < numsSize; ++i) {
+        dp[i] = 1;
+        prev[i] = -1;
+    }
+
+    int maxIndex = 0;
+    for (int i = 1; i < numsSize; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (nums[j] != 0 && nums[i] % nums[j] == 0 && dp[j] + 1 > dp[i]) {
+                dp[i] = dp[j] + 1;
+                prev[i] = j;
+            }
+        }
+        if (dp[i] > dp[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+
+    int subsetSize = dp[maxIndex];
+    int *result = malloc((size_t)subsetSize * sizeof(*result));
+    if (!result) {
+        free(dp);
+        free(prev);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int current = maxIndex;
+    for (int i = subsetSize - 1; i >= 0; --i) {
+        result[i] = nums[current];
+        current = prev[current];
+    }
+
+    free(dp);
+    free(prev);
+    *returnSize = subsetSize;
+    return result;
+}
+
+int main(void) {
+    int nums[] = {1, 2, 4, 8, 9, 72};
+    int numsSize = (int)(sizeof(nums) / sizeof(nums[0]));
+    int returnSize = 0;
+    int *subset = largestDivisibleSubset(nums, numsSize, &returnSize);
+
+    if (subset) {
+        for (int i = 0; i < returnSize; ++i) {
+            printf("%d ", subset[i]);
+        }
+        printf("\n");
+        free(subset);
+    } else {
+        printf("No subset\n");
+    }
+
+    return 0;
+}

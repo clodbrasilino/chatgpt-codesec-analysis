@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-307-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-307-s2.c:13:31: error: Overflow in pointer arithmetic, NULL pointer is subtracted. [nullPointerArithmetic]
+    char *result = malloc(end - start + 1);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-307-s2.c:7:23: note: Assignment 'end=NULL', assigned value is 0
+    const char *end = NULL;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-307-s2.c:8:23: note: Assuming condition is false
+    for (int i = 0; i < n; ++i) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-307-s2.c:13:31: note: Null pointer subtraction
+    char *result = malloc(end - start + 1);
+                              ^

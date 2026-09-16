@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSumNoAdjacent(int grid[2][100], int n) {
+    if (n == 0) return 0;
+    if (n == 1) return (grid[0][0] > grid[1][0]) ? grid[0][0] : grid[1][0];
+    
+    int prev2 = 0;
+    int prev1 = (grid[0][0] > grid[1][0]) ? grid[0][0] : grid[1][0];
+    int curr = prev1;
+    
+    for (int i = 1; i < n; i++) {
+        int maxCol = (grid[0][i] > grid[1][i]) ? grid[0][i] : grid[1][i];
+        curr = (prev1 > prev2 + maxCol) ? prev1 : prev2 + maxCol;
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    
+    return curr;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1 || n <= 0 || n > 100) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int grid[2][100];
+    
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < n; j++) {
+            if (scanf("%d", &grid[i][j]) != 1) {
+                fprintf(stderr, "Invalid input\n");
+                return EXIT_FAILURE;
+            }
+        }
+    }
+    
+    int result = maxSumNoAdjacent(grid, n);
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

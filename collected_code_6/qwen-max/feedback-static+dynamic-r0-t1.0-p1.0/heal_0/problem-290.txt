@@ -2,68 +2,93 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct List {
+typedef struct {
     int *data;
     size_t length;
-} List;
+} IntList;
 
-List* findMaxLists(List lists[], size_t count) {
-    if (count == 0) return NULL;
+typedef struct {
+    IntList **lists;
+    size_t count;
+} ListOfLists;
 
-    size_t max_length = 0;
+ListOfLists* create_list_of_lists(size_t count) {
+    ListOfLists *lol = (ListOfLists *)malloc(sizeof(ListOfLists));
+    lol->count = count;
+    lol->lists = (IntList **)malloc(count * sizeof(IntList *));
     for (size_t i = 0; i < count; ++i) {
-        if (lists[i].length > max_length) {
-            max_length = lists[i].length;
+        lol->lists[i] = NULL;
+    }
+    return lol;
+}
+
+IntList* create_int_list(int *data, size_t length) {
+    IntList *list = (IntList *)malloc(sizeof(IntList));
+    list->data = data;
+    list->length = length;
+    return list;
+}
+
+void add_list(ListOfLists *lol, IntList *list, size_t index) {
+    if (index < lol->count) {
+        lol->lists[index] = list;
+    }
+}
+
+IntList* find_max_length_list(ListOfLists *lol) {
+    if (!lol || lol->count == 0) {
+        return NULL;
+    }
+
+    IntList *max_list = NULL;
+    for (size_t i = 0; i < lol->count; ++i) {
+        if (lol->lists[i] && (max_list == NULL || max_list->length < lol->lists[i]->length)) {
+            max_list = lol->lists[i];
         }
     }
+    return max_list;
+}
 
-    size_t max_count = 0;
-    for (size_t i = 0; i < count; ++i) {
-        if (lists[i].length == max_length) {
-            ++max_count;
+void free_list(IntList *list) {
+    free(list->data);
+    free(list);
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    for (size_t i = 0; i < lol->count; ++i) {
+        if (lol->lists[i]) {
+            free_list(lol->lists[i]);
         }
     }
-
-    List *result = (List *)malloc(max_count * sizeof(List));
-    if (result == NULL) {
-        exit(EXIT_FAILURE);
-    }
-
-    size_t result_index = 0;
-    for (size_t i = 0; i < count; ++i) {
-        if (lists[i].length == max_length) {
-            result[result_index++] = lists[i];
-        }
-    }
-
-    return result;
+    free(lol->lists);
+    free(lol);
 }
 
 int main() {
-    List lists[] = {
-        { .data = (int []){1, 2, 3}, .length = 3 },
-        { .data = (int []){4, 5}, .length = 2 },
-        { .data = (int []){6, 7, 8, 9}, .length = 4 },
-        { .data = (int []){10, 11, 12, 13, 14}, .length = 5 },
-        { .data = (int []){15, 16, 17, 18, 19, 20}, .length = 6 },
-        { .data = (int []){21, 22, 23, 24, 25, 26, 27}, .length = 7 },
-        { .data = (int []){28, 29, 30, 31, 32, 33, 34}, .length = 7 },
-    };
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5};
+    int data3[] = {6, 7, 8, 9};
 
-    size_t count = sizeof(lists) / sizeof(lists[0]);
+    ListOfLists *lol = create_list_of_lists(3);
+    add_list(lol, create_int_list(data1, 3), 0);
+    add_list(lol, create_int_list(data2, 2), 1);
+    add_list(lol, create_int_list(data3, 4), 2);
 
-    List *max_lists = findMaxLists(lists, count);
-
-    for (size_t i = 0; i < 2; ++i) {
-        if (max_lists[i].length > 0) {
-            for (size_t j = 0; j < max_lists[i].length; ++j) {
-                printf("%d ", max_lists[i].data[j]);
+    IntList *max_list = find_max_length_list(lol);
+    if (max_list) {
+        printf("Max length list: [");
+        for (size_t i = 0; i < max_list->length; ++i) {
+            printf("%d", max_list->data[i]);
+            if (i < max_list->length - 1) {
+                printf(", ");
             }
-            printf("\n");
         }
+        printf("]\n");
+    } else {
+        printf("No lists found.\n");
     }
 
-    free(max_lists);
+    free_list_of_lists(lol);
     return 0;
 }
 ```

@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double max_cuboid_volume(double side_sum);
+
+double max_cuboid_volume(double side_sum)
+{
+    double side;
+
+    if (side_sum <= 0.0) {
+        return 0.0;
+    }
+
+    side = side_sum / 3.0;
+    return side * side * side;
+}
+
+int main(void)
+{
+    double sum_of_sides;
+    double volume;
+    int result;
+
+    printf("Enter the sum of the three sides of the cuboid: ");
+
+    result = scanf("%lf", &sum_of_sides);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_of_sides <= 0.0) {
+        fprintf(stderr, "Error: sum of sides must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    volume = max_cuboid_volume(sum_of_sides);
+    printf("Maximum volume: %.6f\n", volume);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The mathematical basis: for a cuboid with sides `a + b + c = S`, the volume `a * b * c` is maximized (by AM-GM inequality) when all sides are equal, i.e., `a = b = c = S/3`, giving a maximum volume of `(S/3)³`.
+
+Key safety measures taken:
+- The return value of `scanf` is checked before using the input (avoids CWE-703).
+- Input is validated to be positive before computation, and the function itself guards against non-positive values (defensive handling of exceptional conditions).
+- No dynamic resources (memory, files) are acquired, so there is nothing to leak or misuse (avoids CWE-664).
+- The code uses `int main(void)`, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, a forward declaration for the function, and errors reported to `stderr`, adhering to standard C coding conventions (avoids CWE-710).

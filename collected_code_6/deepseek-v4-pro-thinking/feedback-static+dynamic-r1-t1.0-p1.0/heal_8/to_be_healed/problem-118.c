@@ -1,0 +1,189 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stddef.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
+  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
+  */
+
+Node *string_to_list(const char *str) {
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*str) {
+        while (*str && isspace((unsigned char)*str)) {
+            str++;
+        }
+        if (*str == '\0') {
+            break;
+        }
+
+        const char *start = str;
+        while (*str && !isspace((unsigned char)*str)) {
+            str++;
+        }
+        size_t len = str - start;
+
+        char *word = malloc(len + 1);
+        if (word == NULL) {
+            while (head != NULL) {
+                Node *tmp = head;
+                head = head->next;
+                free(tmp->data);
+                free(tmp);
+            }
+            return NULL;
+        }
+        memcpy(word, start, len);
+        word[len] = '\0';
+
+        Node *new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            free(word);
+            while (head != NULL) {
+                Node *tmp = head;
+                head = head->next;
+                free(tmp->data);
+                free(tmp);
+            }
+            return NULL;
+        }
+
+        new_node->data = word;
+        new_node->next = NULL;
+
+        if (head == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    return head;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+void print_list(const Node *head) {
+    const Node *current = head;
+    putchar('[');
+    while (current != NULL) {
+        printf("'%s'", current->data);
+        current = current->next;
+        if (current != NULL) {
+            printf(", ");
+        }
+    }
+    putchar(']');
+    putchar('\n');
+    fflush(stdout);
+}
+
+static char *read_line_from_stdin(void) {
+    size_t capacity = 64;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    int c;
+    while ((c = getchar()) != EOF && c != '\n') {
+        if (length + 1 >= capacity) {
+            capacity *= 2;
+            char *new_buffer = realloc(buffer, capacity);
+            if (new_buffer == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = new_buffer;
+        }
+        buffer[length++] = (char)c;
+    }
+
+    if (c == EOF && length == 0) {
+        free(buffer);
+        return NULL;
+    }
+
+    buffer[length] = '\0';
+    return buffer;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    Node *list;
+    char *combined = NULL;
+    int free_combined = 0;
+
+    if (argc >= 2) {
+        size_t total_len = 0;
+        for (int i = 1; i < argc; i++) {
+            total_len += strlen(argv[i]);
+        }
+        total_len += (argc - 2);
+
+        combined = malloc(total_len + 1);
+        if (combined == NULL) {
+            fprintf(stderr, "Failed to allocate memory for argument combination\n");
+            return EXIT_FAILURE;
+        }
+        free_combined = 1;
+
+        char *p = combined;
+        for (int i = 1; i < argc; i++) {
+            if (i > 1) {
+                *p++ = ' ';
+            }
+            size_t len = strlen(argv[i]);
+            memcpy(p, argv[i], len);
+            p += len;
+        }
+        *p = '\0';
+    } else {
+        combined = read_line_from_stdin();
+        free_combined = 1;
+    }
+
+    if (combined == NULL) {
+        print_list(NULL);
+        return EXIT_SUCCESS;
+    }
+
+    list = string_to_list(combined);
+    if (list == NULL && combined[0] != '\0') {
+        fprintf(stderr, "Failed to allocate list\n");
+        free(combined);
+        return EXIT_FAILURE;
+    }
+
+    print_list(list);
+    free_list(list);
+    if (free_combined) {
+        free(combined);
+    }
+
+    return EXIT_SUCCESS;
+}

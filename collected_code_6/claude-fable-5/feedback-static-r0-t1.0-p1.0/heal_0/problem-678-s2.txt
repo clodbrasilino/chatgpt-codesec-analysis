@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_spaces(char *str)
+{
+    size_t i;
+    size_t j;
+
+    if (str == NULL) {
+        return;
+    }
+
+    j = 0;
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] != ' ') {
+            str[j] = str[i];
+            j++;
+        }
+    }
+    str[j] = '\0';
+}
+
+int main(void)
+{
+    char input[] = "Hello World, this is a test string.";
+
+    printf("Before: \"%s\"\n", input);
+    remove_spaces(input);
+    printf("After:  \"%s\"\n", input);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation is safe with respect to the listed weaknesses:
+
+- **CWE-664**: No dynamic memory is allocated, so there are no resources to leak or misuse; the string is modified in-place within its own valid lifetime and bounds (the write index `j` never exceeds the read index `i`).
+- **CWE-703**: The function explicitly checks for a `NULL` pointer before dereferencing, and `main` returns a well-defined status code.
+- **CWE-710**: The code uses standard headers, `size_t` for indexing, `int main(void)` per the C standard, and avoids undefined behavior such as modifying string literals (the test string is a mutable array, not a pointer to a literal).

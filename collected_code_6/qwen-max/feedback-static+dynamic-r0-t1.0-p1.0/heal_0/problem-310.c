@@ -3,42 +3,44 @@
 #include <string.h>
 
 typedef struct {
-    int length;
     char *str;
+    size_t len;
 } StringTuple;
 
-StringTuple* convertToTuple(const char *input) {
-    StringTuple *tuple = (StringTuple*)malloc(sizeof(StringTuple));
+StringTuple *stringToTuple(const char *input) {
+    if (input == NULL) {
+        return NULL;
+    }
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
     if (tuple == NULL) {
         return NULL;
     }
-    tuple->length = strlen(input);
-    tuple->str = (char*)malloc((tuple->length + 1) * sizeof(char));
+    tuple->len = strlen(input);
+    tuple->str = (char *)malloc((tuple->len + 1) * sizeof(char));
     if (tuple->str == NULL) {
         free(tuple);
         return NULL;
     }
-    strcpy(tuple->str, input);
+    strncpy(tuple->str, input, tuple->len);
+    tuple->str[tuple->len] = '\0';
     return tuple;
 }
 
 void freeTuple(StringTuple *tuple) {
     if (tuple != NULL) {
-        if (tuple->str != NULL) {
-            free(tuple->str);
-        }
+        free(tuple->str);
         free(tuple);
     }
 }
 
 int main() {
     const char *input = "Hello, World!";
-    StringTuple *result = convertToTuple(input);
-    if (result != NULL) {
-        printf("(%d, %s)\n", result->length, result->str);
-        freeTuple(result);
+    StringTuple *tuple = stringToTuple(input);
+    if (tuple != NULL) {
+        printf("Converted to tuple: %s\n", tuple->str);
+        freeTuple(tuple);
     } else {
-        printf("Failed to allocate memory.\n");
+        fprintf(stderr, "Failed to create tuple\n");
     }
     return 0;
 }

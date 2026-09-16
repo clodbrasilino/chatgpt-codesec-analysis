@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} TupleKey;
+
+typedef struct {
+    TupleKey key;
+    int frequency;
+} TupleFreq;
+
+static int keys_equal(const TupleKey *a, const TupleKey *b) {
+    return a->first == b->first && a->second == b->second;
+}
+
+TupleFreq *assign_frequencies(const TupleKey *tuples, size_t count, size_t *unique_count) {
+    if (tuples == NULL || unique_count == NULL) {
+        if (unique_count != NULL) {
+            *unique_count = 0;
+        }
+        return NULL;
+    }
+
+    if (count == 0) {
+        *unique_count = 0;
+        return NULL;
+    }
+
+    TupleFreq *result = (TupleFreq *)malloc(count * sizeof(TupleFreq));
+    if (result == NULL) {
+        *unique_count = 0;
+        return NULL;
+    }
+
+    int *visited = (int *)calloc(count, sizeof(int));
+    if (visited == NULL) {
+        free(result);
+        *unique_count = 0;
+        return NULL;
+    }
+
+    size_t ucount = 0;
+
+    for (size_t i = 0; i < count; i++) {
+        if (visited[i]) {
+            continue;
+        }
+
+        visited[i] = 1;
+        int freq = 1;
+
+        for (size_t j = i + 1; j < count; j++) {
+            if (!visited[j] && keys_equal(&tuples[i], &tuples[j])) {
+                freq++;
+                visited[j] = 1;
+            }
+        }
+
+        result[ucount].key = tuples[i];
+        result[ucount].frequency = freq;
+        ucount++;
+    }
+
+    free(visited);
+    visited = NULL;
+
+    if (ucount == 0) {
+        free(result);
+        *unique_count = 0;
+        return NULL;
+    }
+
+    TupleFreq *trimmed = (TupleFreq *)realloc(result, ucount * sizeof(TupleFreq));
+    if (trimmed != NULL) {
+        result = trimmed;
+    }
+
+    *unique_count = ucount;
+    return result;
+}
+
+int main(void) {
+    TupleKey tuples[] = {
+        {1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}, {3, 4}, {7, 8}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    size_t unique_count = 0;
+    TupleFreq *freqs = assign_frequencies(tuples, count, &unique_count);
+
+    if (freqs != NULL) {
+        for (size_t i = 0; i < unique_count; i++) {
+            printf("(%d, %d) -> frequency: %d\n",
+                   freqs[i].key.first, freqs[i].key.second, freqs[i].frequency);
+        }
+        free(freqs);
+        freqs = NULL;
+    } else {
+        fprintf(stderr, "Error: failed to compute frequencies\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

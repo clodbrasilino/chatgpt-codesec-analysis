@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_sum(int n, int *memo) {
+    if (n == 0 || n == 1) {
+        return n;
+    }
+
+    if (memo[n] != -1) {
+        return memo[n];
+    }
+
+    int a = n / 2;
+    int b = n / 3;
+    int c = n / 4;
+
+    int sum_parts = max_sum(a, memo) + max_sum(b, memo) + max_sum(c, memo);
+
+    int result = (n > sum_parts) ? n : sum_parts;
+
+    memo[n] = result;
+    return result;
+}
+
+int maximum_sum(int n) {
+    if (n < 0) {
+        return 0;
+    }
+
+    int *memo = (int *)malloc((n + 1) * sizeof(int));
+    if (memo == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i <= n; i++) {
+        memo[i] = -1;
+    }
+
+    int result = max_sum(n, memo);
+
+    free(memo);
+    return result;
+}
+
+int main(void) {
+    int n;
+
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    if (n < 0) {
+        printf("Please enter a non-negative number.\n");
+        return 1;
+    }
+
+    int result = maximum_sum(n);
+    printf("Maximum sum: %d\n", result);
+
+    return 0;
+}

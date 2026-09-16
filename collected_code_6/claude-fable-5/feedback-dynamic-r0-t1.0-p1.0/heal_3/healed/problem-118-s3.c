@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct node {
+    char *data;
+    struct node *next;
+};
+
+static struct node *create_node(const char *word)
+{
+    struct node *n = malloc(sizeof(struct node));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->data = malloc(strlen(word) + 1);
+    if (n->data == NULL) {
+        free(n);
+        return NULL;
+    }
+    strcpy(n->data, word);
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(struct node *head)
+{
+    while (head != NULL) {
+        struct node *tmp = head;
+        head = head->next;
+        free(tmp->data);
+        free(tmp);
+    }
+}
+
+static struct node *string_to_list(const char *str)
+{
+    struct node *head = NULL;
+    struct node *tail = NULL;
+    char *copy;
+    char *token;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    copy = malloc(strlen(str) + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    strcpy(copy, str);
+
+    token = strtok(copy, " \t\r\n");
+    while (token != NULL) {
+        struct node *n = create_node(token);
+        if (n == NULL) {
+            free_list(head);
+            free(copy);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = n;
+            tail = n;
+        } else {
+            tail->next = n;
+            tail = n;
+        }
+        token = strtok(NULL, " \t\r\n");
+    }
+
+    free(copy);
+    return head;
+}
+
+static void print_list(const struct node *head)
+{
+    const struct node *cur = head;
+    printf("[");
+    while (cur != NULL) {
+        printf("'%s'", cur->data);
+        if (cur->next != NULL) {
+            printf(", ");
+        }
+        cur = cur->next;
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(int argc, char *argv[])
+{
+    char input[1024];
+    struct node *list;
+
+    input[0] = '\0';
+
+    if (argc > 1) {
+        size_t total = 0;
+        int i;
+        for (i = 1; i < argc; i++) {
+            size_t len = strlen(argv[i]);
+            if (total + len + 2 >= sizeof(input)) {
+                break;
+            }
+            if (i > 1) {
+                strcat(input, " ");
+                total++;
+            }
+            strcat(input, argv[i]);
+            total += len;
+        }
+    } else {
+        if (fgets(input, sizeof(input), stdin) == NULL) {
+            input[0] = '\0';
+        }
+        input[strcspn(input, "\r\n")] = '\0';
+    }
+
+    list = string_to_list(input);
+
+    print_list(list);
+    free_list(list);
+
+    return EXIT_SUCCESS;
+}

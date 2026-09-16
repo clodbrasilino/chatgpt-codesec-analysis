@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-837-s3.c: In function 'cube_sum_odd_natural':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-837-s3.c:15:42: error: 'LLONG_MAX' undeclared (first use in this function)
+   15 |         if (cube < 0 || sum > (long long)LLONG_MAX - cube) {
+      |                                          ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-837-s3.c:3:1: note: 'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    2 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    3 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-837-s3.c:15:42: note: each undeclared identifier is reported only once for each function it appears in
+   15 |         if (cube < 0 || sum > (long long)LLONG_MAX - cube) {
+      |                                          ^~~~~~~~~

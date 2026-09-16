@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long calculate_odd_squares_sum(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    if (n > 1000000) {
+        return 0; 
+    }
+
+    unsigned long long sum = 0;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'current_odd' can be reduced. [variableScope]
+     */
+    unsigned int current_odd;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'square' can be reduced. [variableScope]
+     */
+    unsigned long long square;
+    
+    for (unsigned int i = 0; i < n; i++) {
+        current_odd = 2 * i + 1;
+        square = (unsigned long long)current_odd * current_odd;
+        
+        if (ULLONG_MAX - sum < square) {
+            return 0;
+        }
+        
+        sum += square;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int input;
+    unsigned int n;
+    
+    if (scanf("%d", &input) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (input < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    n = (unsigned int)input;
+    
+    unsigned long long result = calculate_odd_squares_sum(n);
+    
+    if (result == 0 && n != 0) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

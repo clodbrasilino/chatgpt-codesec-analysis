@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int ia = *(const int *)a;
+    int ib = *(const int *)b;
+    if (ia < ib) return -1;
+    if (ia > ib) return 1;
+    return 0;
+}
+
+static bool contains_consecutive(const int *list, size_t len)
+{
+    if (list == NULL || len < 2) {
+        return false;
+    }
+
+    int *sorted = malloc(len * sizeof(*sorted));
+    if (sorted == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        sorted[i] = list[i];
+    }
+
+    qsort(sorted, len, sizeof(*sorted), compare_ints);
+
+    bool found = false;
+    for (size_t i = 1; i < len; i++) {
+        if (sorted[i] == sorted[i - 1] + 1) {
+            found = true;
+            break;
+        }
+    }
+
+    free(sorted);
+    return found;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 5, 7};
+    int list2[] = {10, 20, 30, 40};
+    int list3[] = {5, 3, 4, 9, 1};
+
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    size_t len3 = sizeof(list3) / sizeof(list3[0]);
+
+    printf("List 1: %s\n", contains_consecutive(list1, len1) ? "true" : "false");
+    printf("List 2: %s\n", contains_consecutive(list2, len2) ? "true" : "false");
+    printf("List 3: %s\n", contains_consecutive(list3, len3) ? "true" : "false");
+
+    return EXIT_SUCCESS;
+}

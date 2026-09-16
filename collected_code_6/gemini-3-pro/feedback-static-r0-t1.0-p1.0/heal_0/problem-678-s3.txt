@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void removeSpaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (str[i] != ' ') {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+int main() {
+    char str[] = "H e l l o   W o r l d !";
+    
+    printf("Original string: '%s'\n", str);
+    
+    removeSpaces(str);
+    
+    printf("String without spaces: '%s'\n", str);
+    
+    return 0;
+}
+```

@@ -6,40 +6,60 @@ typedef struct {
     int value;
 } Tuple;
 
-Tuple* extractSingles(Tuple *tuples, int length, int *outLength) {
-    int *counts = (int*)calloc(1024, sizeof(int));
-    if (counts == NULL) exit(EXIT_FAILURE);
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->key - ((Tuple *)b)->key;
+}
 
-    for (int i = 0; i < length; i++) {
-        counts[tuples[i].key]++;
+void extract_singles(Tuple *tuples, int size, Tuple **result, int *result_size) {
+    if (size <= 0) {
+        *result = NULL;
+        *result_size = 0;
+        return;
     }
 
-    for (int i = 0, index = 0; i < length; i++) {
-        if (counts[tuples[i].key] == 1) {
-            tuples[index].key = tuples[i].key;
-            tuples[index].value = tuples[i].value;
-            index++;
+    qsort(tuples, size, sizeof(Tuple), compare);
+
+    int capacity = 1;
+    *result = malloc(capacity * sizeof(Tuple));
+    if (*result == NULL) {
+        *result_size = 0;
+        return;
+    }
+    *result_size = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (i + 1 < size && tuples[i].key == tuples[i + 1].key) {
+            continue;
         }
+        if (i > 0 && tuples[i].key == tuples[i - 1].key) {
+            continue;
+        }
+        if (*result_size >= capacity) {
+            capacity *= 2;
+            *result = realloc(*result, capacity * sizeof(Tuple));
+            if (*result == NULL) {
+                *result_size = 0;
+                return;
+            }
+        }
+        (*result)[*result_size] = tuples[i];
+        (*result_size)++;
     }
-
-    *outLength = 0;
-    for (int i = 0; i < 1024; i++) {
-        if (counts[i] == 1) (*outLength)++;
-    }
-
-    free(counts);
-    return tuples;
 }
 
 int main() {
-    Tuple tuples[] = {{1, 10}, {2, 20}, {3, 30}, {2, 20}, {1, 10}};
-    int length = 5;
-    int newLength;
-    Tuple *result = extractSingles(tuples, length, &newLength);
-
-    for (int i = 0; i < newLength; i++) {
-        printf("(%d, %d) ", result[i].key, result[i].value);
+    Tuple tuples[] = {{1, 10}, {2, 20}, {3, 30}, {2, 25}, {4, 40}, {1, 15}};
+    int size = 6;
+    
+    Tuple *result = NULL;
+    int result_size = 0;
+    
+    extract_singles(tuples, size, &result, &result_size);
+    
+    for (int i = 0; i < result_size; i++) {
+        printf("%d: %d\n", result[i].key, result[i].value);
     }
-
+    
+    free(result);
     return 0;
 }

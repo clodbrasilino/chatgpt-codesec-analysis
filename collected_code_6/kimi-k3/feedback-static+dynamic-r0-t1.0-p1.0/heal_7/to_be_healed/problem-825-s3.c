@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected [2, 4, 9], got <no output>
+  *  test case 1 failed: expected [2, 3], got <no output>
+  *  test case 2 failed: expected [1, 0], got <no output>
+  */
+
+int* access_elements(const int* list, size_t list_size, const size_t* indices, size_t indices_count, size_t* result_size) {
+    if (list == NULL || indices == NULL || result_size == NULL) {
+        return NULL;
+    }
+    
+    if (indices_count == 0) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int* result = malloc(indices_count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < indices_count; i++) {
+        if (indices[i] >= list_size) {
+            free(result);
+            return NULL;
+        }
+        result[i] = list[indices[i]];
+    }
+    
+    *result_size = indices_count;
+    return result;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t list_size = sizeof(list) / sizeof(list[0]);
+    
+    size_t indices0[] = {1, 3, 8};
+    size_t indices_count0 = sizeof(indices0) / sizeof(indices0[0]);
+    
+    size_t indices1[] = {1, 2};
+    size_t indices_count1 = sizeof(indices1) / sizeof(indices1[0]);
+    
+    size_t indices2[] = {0, 9};
+    size_t indices_count2 = sizeof(indices2) / sizeof(indices2[0]);
+    
+    size_t result_size = 0;
+    int* result;
+    
+    result = access_elements(list, list_size, indices0, indices_count0, &result_size);
+    if (result != NULL) {
+        printf("[");
+        for (size_t i = 0; i < result_size; i++) {
+            printf("%d", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+    
+    result = access_elements(list, list_size, indices1, indices_count1, &result_size);
+    if (result != NULL) {
+        printf("[");
+        for (size_t i = 0; i < result_size; i++) {
+            printf("%d", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+    
+    result = access_elements(list, list_size, indices2, indices_count2, &result_size);
+    if (result != NULL) {
+        printf("[");
+        for (size_t i = 0; i < result_size; i++) {
+            printf("%d", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+    
+    return 0;
+}

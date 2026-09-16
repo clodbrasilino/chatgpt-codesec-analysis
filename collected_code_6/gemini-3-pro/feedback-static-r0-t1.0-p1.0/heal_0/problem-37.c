@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int int_val;
+        char *str_val;
+    } data;
+} MixedElement;
+
+int compare_mixed_elements(const void *a, const void *b) {
+    const MixedElement *elem1 = (const MixedElement *)a;
+    const MixedElement *elem2 = (const MixedElement *)b;
+
+    if (elem1->type != elem2->type) {
+        return elem1->type - elem2->type;
+    }
+
+    if (elem1->type == TYPE_INT) {
+        if (elem1->data.int_val < elem2->data.int_val) return -1;
+        if (elem1->data.int_val > elem2->data.int_val) return 1;
+        return 0;
+    } else {
+        return strcmp(elem1->data.str_val, elem2->data.str_val);
+    }
+}
+
+void sort_mixed_list(MixedElement *list, size_t size) {
+    if (list != NULL && size > 0) {
+        qsort(list, size, sizeof(MixedElement), compare_mixed_elements);
+    }
+}
+
+MixedElement* create_int_element(int value) {
+    MixedElement *elem = (MixedElement *)malloc(sizeof(MixedElement));
+    if (elem == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    elem->type = TYPE_INT;
+    elem->data.int_val = value;
+    return elem;
+}
+
+MixedElement* create_string_element(const char *value) {
+    MixedElement *elem = (MixedElement *)malloc(sizeof(MixedElement));
+    if (elem == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    elem->type = TYPE_STRING;
+    elem->data.str_val = strdup(value);
+    if (elem->data.str_val == NULL) {
+        free(elem);
+        exit(EXIT_FAILURE);
+    }
+    return elem;
+}
+
+void free_mixed_element(MixedElement *elem) {
+    if (elem != NULL) {
+        if (elem->type == TYPE_STRING) {
+            free(elem->data.str_val);
+        }
+        free(elem);
+    }
+}
+
+void print_mixed_list(const MixedElement *list, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i].type == TYPE_INT) {
+            printf("%d ", list[i].data.int_val);
+        } else {
+            printf("\"%s\" ", list[i].data.str_val);
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    size_t size = 5;
+    MixedElement *list = (MixedElement *)malloc(size * sizeof(MixedElement));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    MixedElement *elem1 = create_int_element(10);
+    MixedElement *elem2 = create_string_element("apple");
+    MixedElement *elem3 = create_int_element(5);
+    MixedElement *elem4 = create_string_element("banana");
+    MixedElement *elem5 = create_int_element(20);
+
+    list[0] = *elem1; free(elem1);
+    list[1] = *elem2; free(elem2);
+    list[2] = *elem3; free(elem3);
+    list[3] = *elem4; free(elem4);
+    list[4] = *elem5; free(elem5);
+
+    print_mixed_list(list, size);
+
+    sort_mixed_list(list, size);
+
+    print_mixed_list(list, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i].type == TYPE_STRING) {
+            free(list[i].data.str_val);
+        }
+    }
+    free(list);
+
+    return EXIT_SUCCESS;
+}

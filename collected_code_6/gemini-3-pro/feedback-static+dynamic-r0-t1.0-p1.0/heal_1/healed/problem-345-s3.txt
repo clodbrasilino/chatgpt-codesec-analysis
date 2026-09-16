@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_differences(const int* arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return NULL;
+    }
+
+    int* differences = (int*)malloc((size - 1) * sizeof(int));
+    if (differences == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size - 1; ++i) {
+        differences[i] = arr[i + 1] - arr[i];
+    }
+
+    return differences;
+}
+
+int main(void) {
+    int arr[] = {10, 15, 23, 34, 40};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int* diffs = find_differences(arr, size);
+    if (diffs == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size - 1; ++i) {
+        printf("%d ", diffs[i]);
+    }
+    printf("\n");
+
+    free(diffs);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int is_valid_url(const char *url) {
+    regex_t regex;
+    int ret;
+    const char *pattern = "^(https?|ftp)://[a-zA-Z0-9.-]+(:[0-9]+)?(/[a-zA-Z0-9._~:/?#@!$&'()*+,;=-]*)?$";
+
+    if (url == NULL || strlen(url) == 0) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, url, 0, NULL, 0);
+    regfree(&regex);
+
+    return (ret == 0) ? 1 : 0;
+}
+
+int main(void) {
+    const char *test_urls[] = {
+        "https://www.example.com",
+        "http://example.com/path/to/page",
+        "ftp://ftp.example.com:21/files",
+        "https://sub.domain.co.uk/path?query=1#fragment",
+        "invalid-url",
+        "http://",
+        "https://example .com",
+        NULL
+    };
+
+    for (size_t i = 0; test_urls[i] != NULL; i++) {
+        printf("%-50s : %s\n", test_urls[i], is_valid_url(test_urls[i]) ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}
+```

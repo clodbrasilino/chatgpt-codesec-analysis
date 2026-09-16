@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findPeakElement(const int arr[], int n)
+{
+    int left = 0;
+    int right = n - 1;
+    int mid;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    if (n == 1) {
+        return arr[0];
+    }
+
+    while (left <= right) {
+        mid = left + (right - left) / 2;
+
+        if ((mid == 0 || arr[mid] >= arr[mid - 1]) &&
+            (mid == n - 1 || arr[mid] >= arr[mid + 1])) {
+            return arr[mid];
+        }
+
+        if (mid > 0 && arr[mid - 1] > arr[mid]) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int n;
+    int *arr = NULL;
+    int peak;
+    int i;
+
+    printf("Enter number of elements: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = (int *)malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %d elements:\n", n);
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    peak = findPeakElement(arr, n);
+    if (peak != -1) {
+        printf("Peak element: %d\n", peak);
+    } else {
+        printf("No peak element found\n");
+    }
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

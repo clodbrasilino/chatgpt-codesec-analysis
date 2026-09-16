@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool is_integer(const char *str) {
+    if (*str == '-' || *str == '+') str++;
+    if (*str == '\0') return false;
+
+    while (*str) {
+        if (!isdigit(*str)) return false;
+        str++;
+    }
+    return true;
+}
+
+int main() {
+    const char *test_strings[] = {"123", "-123", "+123", "abc", "12.3", ""};
+    for (int i = 0; i < 6; i++) {
+        printf("%s: %s\n", test_strings[i], is_integer(test_strings[i]) ? "true" : "false");
+    }
+    return 0;
+}

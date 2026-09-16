@@ -1,0 +1,186 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
+
+static int compare_lists(const IntList *first, const IntList *second, size_t index)
+{
+    int first_value = 0;
+    int second_value = 0;
+
+    if ((first->data != NULL) && (index < first->length)) {
+        first_value = first->data[index];
+    }
+    if ((second->data != NULL) && (index < second->length)) {
+        second_value = second->data[index];
+    }
+
+    if (first_value < second_value) {
+        return -1;
+    }
+    if (first_value > second_value) {
+        return 1;
+    }
+    return 0;
+}
+
+static void merge_ranges(IntList *lists, IntList *temp, size_t left, size_t middle, size_t right, size_t index)
+{
+    size_t i = left;
+    size_t j = middle;
+    size_t k = left;
+
+    while ((i < middle) && (j < right)) {
+        if (compare_lists(&lists[i], &lists[j], index) <= 0) {
+            temp[k] = lists[i];
+            i++;
+        } else {
+            temp[k] = lists[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < middle) {
+        temp[k] = lists[i];
+        i++;
+        k++;
+    }
+    while (j < right) {
+        temp[k] = lists[j];
+        j++;
+        k++;
+    }
+    for (i = left; i < right; i++) {
+        lists[i] = temp[i];
+    }
+}
+
+static void merge_sort_ranges(IntList *lists, IntList *temp, size_t left, size_t right, size_t index)
+{
+    size_t middle;
+
+    if ((right - left) < 2U) {
+        return;
+    }
+    middle = left + ((right - left) / 2U);
+    merge_sort_ranges(lists, temp, left, middle, index);
+    merge_sort_ranges(lists, temp, middle, right, index);
+    merge_ranges(lists, temp, left, middle, right, index);
+}
+
+int sort_lists_by_index(IntList *lists, size_t count, size_t index)
+{
+    IntList *temp;
+
+    if ((lists == NULL) && (count > 0U)) {
+        return -1;
+    }
+    if (count < 2U) {
+        return 0;
+    }
+    if (count > (SIZE_MAX / sizeof(IntList))) {
+        return -1;
+    }
+
+    temp = (IntList *)malloc(count * sizeof(IntList));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    merge_sort_ranges(lists, temp, 0U, count, index);
+
+    free(temp);
+    temp = NULL;
+    return 0;
+}
+
+static void print_lists(const IntList *lists, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        (void)printf("[");
+        for (j = 0U; j < lists[i].length; j++) {
+            (void)printf("%d", lists[i].data[j]);
+            if ((j + 1U) < lists[i].length) {
+                (void)printf(", ");
+            }
+        }
+        (void)printf("]\n");
+    }
+}
+
+static void free_lists(IntList *lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+    for (i = 0U; i < count; i++) {
+        free(lists[i].data);
+        lists[i].data = NULL;
+        lists[i].length = 0U;
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    static const int values[][3] = {
+        {5, 3, 9},
+        {1, 8, 2},
+        {4, 1, 7},
+        {2, 6, 0}
+    };
+    const size_t count = sizeof(values) / sizeof(values[0]);
+    const size_t columns = sizeof(values[0]) / sizeof(values[0][0]);
+    const size_t sort_index = 1U;
+    IntList *lists;
+    size_t i;
+    size_t j;
+    int status = EXIT_SUCCESS;
+
+    lists = (IntList *)calloc(count, sizeof(IntList));
+    if (lists == NULL) {
+        (void)fprintf(stderr, "Failed to allocate memory for the list of lists\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        lists[i].data = (int *)malloc(columns * sizeof(int));
+        if (lists[i].data == NULL) {
+            (void)fprintf(stderr, "Failed to allocate memory for row %zu\n", i);
+            free_lists(lists, count);
+            return EXIT_FAILURE;
+        }
+        lists[i].length = columns;
+        for (j = 0U; j < columns; j++) {
+            lists[i].data[j] = values[i][j];
+        }
+    }
+
+    (void)printf("Before sorting:\n");
+    print_lists(lists, count);
+
+    if (sort_lists_by_index(lists, count, sort_index) != 0) {
+        (void)fprintf(stderr, "Failed to sort the list of lists\n");
+        status = EXIT_FAILURE;
+    } else {
+        (void)printf("\nAfter sorting by index %zu:\n", sort_index);
+        print_lists(lists, count);
+    }
+
+    free_lists(lists, count);
+    lists = NULL;
+
+    return status;
+}

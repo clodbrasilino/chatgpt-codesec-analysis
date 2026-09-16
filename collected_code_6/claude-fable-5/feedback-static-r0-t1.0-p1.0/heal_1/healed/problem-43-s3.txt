@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int match_lowercase_underscore(const char *text)
+{
+    regex_t regex;
+    int ret;
+
+    if (text == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "^[a-z]+_[a-z]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[128];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, text, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+    if (ret == REG_NOMATCH) {
+        return 0;
+    }
+
+    fprintf(stderr, "Regex execution failed\n");
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "aab_cbbbc",
+        "aab_Abbbc",
+        "Aaab_abbbc",
+        "hello_world",
+        "no_underscore_here_ok"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = match_lowercase_underscore(tests[i]);
+        if (result < 0) {
+            fprintf(stderr, "Error processing string: %s\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": Found a match!\n", tests[i]);
+        } else {
+            printf("\"%s\": Not matched!\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The two `variableScope` weaknesses have been addressed:
+
+1. **`errbuf`** — moved inside the `if (ret != 0)` block in `match_lowercase_underscore`, since it is only used when `regcomp` fails. This avoids allocating stack space on the common success path and makes the variable's purpose clearer.
+
+2. **`result`** — moved inside the `for` loop body in `main`, since its value is never carried across iterations. Declaring it at the point of use limits its lifetime to a single iteration and prevents accidental reuse of a stale value.
+
+All other behavior is preserved: the function still returns `1` on match, `0` on no match, and `-1` on error (NULL input, compilation failure, or execution failure), with `regfree` correctly called after `regexec` to avoid memory leaks.

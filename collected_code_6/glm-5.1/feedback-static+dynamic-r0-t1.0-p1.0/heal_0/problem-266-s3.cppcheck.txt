@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-266-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-266-s3.c:13:14: style: Condition 'area==-1' is always false [knownConditionTrueFalse]
+    if (area == -1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-266-s3.c:11:16: note: Assignment 'side=5', assigned value is 5
+    int side = 5;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-266-s3.c:12:36: note: Calling function 'lateral_surface_area' returns 100
+    int area = lateral_surface_area(side);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-266-s3.c:12:36: note: Assignment 'area=lateral_surface_area(side)', assigned value is 100
+    int area = lateral_surface_area(side);
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-266-s3.c:13:14: note: Condition 'area==-1' is always false
+    if (area == -1) {
+             ^

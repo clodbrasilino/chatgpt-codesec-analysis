@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long pell(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    
+    unsigned long long prev2 = 0;
+    unsigned long long prev1 = 1;
+    unsigned long long current = 0;
+    int i;
+    
+    for (i = 2; i <= n; i++) {
+        if (prev1 > (ULLONG_MAX - prev2) / 2) {
+            return 0;
+        }
+        current = 2 * prev1 + prev2;
+        prev2 = prev1;
+        prev1 = current;
+    }
+    
+    return current;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    int n;
+    char *endptr;
+    long val;
+    unsigned long long result;
+    
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    val = strtol(argv[1], &endptr, 10);
+    
+    if (errno != 0 || *endptr != '\0' || endptr == argv[1]) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (val < 0 || val > INT_MAX) {
+        fprintf(stderr, "Error: Input out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    n = (int)val;
+    result = pell(n);
+    
+    if (result == 0 && n > 1) {
+        fprintf(stderr, "Error: Overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-903-s3.c:1:8: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+    1 | sscanf(argv[1], "%u %c", &n, &extra) != 1
+      |        ^
+      |        int
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-903-s3.c:1:17: error: expected parameter declarator
+    1 | sscanf(argv[1], "%u %c", &n, &extra) != 1
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-903-s3.c:1:17: error: expected ')'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-903-s3.c:1:7: note: to match this '('
+    1 | sscanf(argv[1], "%u %c", &n, &extra) != 1
+      |       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-903-s3.c:1:38: error: expected function body after function declarator
+    1 | sscanf(argv[1], "%u %c", &n, &extra) != 1
+      |                                      ^
+4 errors generated.

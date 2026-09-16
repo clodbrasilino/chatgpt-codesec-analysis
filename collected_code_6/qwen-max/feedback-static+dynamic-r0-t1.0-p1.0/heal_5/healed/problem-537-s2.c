@@ -1,48 +1,45 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
-char* firstRepeatedWord(const char* str) {
-    const int maxWords = 100;
-    char* words[maxWords];
-    int wordCount = 0;
+#define MAX_WORDS 100
+#define WORD_LEN 256
 
-    for (int i = 0; i < maxWords; ++i) {
-        words[i] = NULL;
-    }
+char* find_first_repeated_word(const char *str) {
+    char words[MAX_WORDS][WORD_LEN] = {""};
+    int word_count = 0;
+    const char *p = str, *q;
 
-    char* token = strtok((char*)str, " ");
-    while (token != NULL && wordCount < maxWords) {
-        for (int i = 0; i < wordCount; ++i) {
-            if (strcmp(words[i], token) == 0) {
-                for (int j = 0; j < wordCount; ++j) {
-                    free(words[j]);
-                }
-                return strdup(token);
-            }
+    while (*p) {
+        while (*p && (*p == ' ' || *p == '\t' || *p == '\n' || *p == ',')) p++;
+        if (!*p) break;
+        q = p;
+        while (*q && *q != ' ' && *q != '\t' && *q != '\n' && *q != ',') q++;
+        int len = q - p;
+        for (int i = 0; i < word_count; i++) {
+            if (strncmp(words[i], p, len) == 0 && (words[i][len] == '\0')) return (char *)p;
         }
-        words[wordCount++] = strdup(token);
-        token = strtok(NULL, " ");
+        if (word_count < MAX_WORDS) {
+            strncpy(words[word_count], p, len);
+            words[word_count][len] = '\0';
+            word_count++;
+        }
+        p = q;
     }
-
-    for (int i = 0; i < wordCount; ++i) {
-        free(words[i]);
-    }
-
     return NULL;
 }
 
 int main() {
-    const char* input = "the quick brown fox jumps over the lazy dog the";
-    char* result = firstRepeatedWord(input);
+    const char *test_cases[] = {"", "ab", "ca ab bc ca", "the quick brown fox jumps over the lazy dog"};
+    const char *expected[] = {"None", "None", "ca", "the"};
 
-    if (result != NULL) {
-        printf("First repeated word: %s\n", result);
-        free(result);
-    } else {
-        printf("No repeated word found.\n");
+    for (int i = 0; i < 4; i++) {
+        char *result = find_first_repeated_word(test_cases[i]);
+        if (result) {
+            printf("First repeated word: %s\n", result);
+        } else {
+            printf("No repeated words found.\n");
+        }
     }
-
     return 0;
 }

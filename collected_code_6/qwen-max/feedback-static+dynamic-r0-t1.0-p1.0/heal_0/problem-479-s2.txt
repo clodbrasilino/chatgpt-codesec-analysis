@@ -1,0 +1,20 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int get_first_digit(long n) {
+    if (n == 0) return 0;
+    n = (n < 0) ? -n : n; 
+    while (n >= 10) {
+        n /= 10;
+    }
+    return n;
+}
+
+int main() {
+    long number = 12345;
+    int first_digit = get_first_digit(number);
+    printf("First digit: %d\n", first_digit);
+    return 0;
+}
+```

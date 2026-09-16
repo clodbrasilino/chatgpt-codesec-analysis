@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double tetrahedron_volume(double edge)
+{
+    return (edge * edge * edge) / (6.0 * sqrt(2.0));
+}
+
+int main(void)
+{
+    double edge = 0.0;
+    double volume = 0.0;
+    int result = 0;
+
+    printf("Enter the edge length of the tetrahedron: ");
+    result = scanf("%lf", &edge);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (edge <= 0.0 || !isfinite(edge)) {
+        fprintf(stderr, "Error: edge length must be a positive finite number.\n");
+        return EXIT_FAILURE;
+    }
+
+    volume = tetrahedron_volume(edge);
+
+    if (!isfinite(volume)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Volume of the tetrahedron: %.6f\n", volume);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified weaknesses:
+
+- **CWE-664**: No dynamic resources (memory, files) are allocated, so there is nothing to leak or misuse; all variables are stack-based with well-defined lifetimes.
+- **CWE-703**: The return value of `scanf` is checked, the input is validated for positivity and finiteness, and the computed result is checked for overflow with `isfinite` before use.
+- **CWE-710**: The code follows standard conventions — `int main(void)` signature, all variables initialized, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, errors reported to `stderr`, and proper standard headers included.

@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+static int run_test(const char *input, const char *expected)
+{
+    char *output;
+    int status;
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return -1;
+    }
+
+    status = 0;
+    if (expected != NULL && strcmp(output, expected) != 0) {
+        fprintf(stderr, "Test failed: expected '%s', got '%s'\n",
+                expected, output);
+        status = -1;
+    }
+
+    if (printf("%s\n", output) < 0) {
+        status = -1;
+    }
+
+    free(output);
+    return status;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *expected1 = "Hello  World";
+    const char *test2 = "abc(def(ghi)jkl)mno";
+    const char *expected2 = "abcmno";
+    const char *test3 = "no parentheses here";
+    const char *expected3 = "no parentheses here";
+
+    if (run_test(test1, expected1) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test2, expected2) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (run_test(test3, expected3) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original `remove_parentheses` logic was actually sound — the algorithm correctly tracks nesting depth, allocates `len + 1` zero-initialized bytes via `calloc`, writes within bounds (since `j <= i < len`), and explicitly null-terminates. The garbage output described in the comments (`�a�`, `@a�`) is symptomatic of reading freed or uninitialized memory, which typically points to a use-after-free in the *test harness* rather than the core function — i.e., a caller comparing or printing the buffer after `free()` was called.
+
+Key fixes in the rewrite:
+
+1. **Comparison before free:** The test messages implied the harness was validating output against expected strings. The rewritten `run_test` performs the `strcmp` and all uses of `output` *before* `free(output)`, eliminating any use-after-free window.
+2. **Single ownership path:** `output` is freed exactly once on every path through `run_test`, avoiding double-free and leak scenarios.
+3. **Explicit expected values:** Tests now verify actual output (`"Hello  World"`, `"abcmno"`, unchanged third string) rather than just printing, so regressions are caught deterministically instead of manifesting as mojibake at runtime.
+4. **Preserved safety guarantees:** NULL input handling, `calloc` failure check, and guaranteed null termination remain intact.

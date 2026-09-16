@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_extra_element_index(const int arr1[], const int arr2[], size_t n1, size_t n2)
+{
+    if (arr1 == NULL || arr2 == NULL || n1 == 0 || n2 == 0)
+    {
+        return -1;
+    }
+    
+    if (n1 == n2)
+    {
+        return -1;
+    }
+    
+    if (n1 > n2)
+    {
+        if (n1 != n2 + 1)
+        {
+            return -1;
+        }
+        
+        size_t left = 0;
+        size_t right = n2 - 1;
+        
+        while (left <= right)
+        {
+            size_t mid = left + (right - left) / 2;
+            
+            if (arr1[mid] == arr2[mid])
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                if (mid == 0 || arr1[mid - 1] == arr2[mid - 1])
+                {
+                    return (int)mid;
+                }
+                right = mid - 1;
+            }
+        }
+        
+        return (int)n2;
+    }
+    else
+    {
+        if (n2 != n1 + 1)
+        {
+            return -1;
+        }
+        
+        size_t left = 0;
+        size_t right = n1 - 1;
+        
+        while (left <= right)
+        {
+            size_t mid = left + (right - left) / 2;
+            
+            if (arr1[mid] == arr2[mid])
+            {
+                left = mid + 1;
+            }
+            else
+            {
+                if (mid == 0 || arr1[mid - 1] == arr2[mid - 1])
+                {
+                    return (int)mid;
+                }
+                right = mid - 1;
+            }
+        }
+        
+        return (int)n1;
+    }
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 3, 4, 5, 6, 7};
+    int arr2[] = {1, 2, 3, 5, 6, 7};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    int result = find_extra_element_index(arr1, arr2, n1, n2);
+    
+    if (result >= 0)
+    {
+        printf("Extra element found at index: %d\n", result);
+    }
+    else
+    {
+        printf("No extra element found or invalid input\n");
+    }
+    
+    int arr3[] = {1, 2, 3, 4, 5};
+    int arr4[] = {1, 2, 3, 4, 5, 6};
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+    size_t n4 = sizeof(arr4) / sizeof(arr4[0]);
+    
+    result = find_extra_element_index(arr3, arr4, n3, n4);
+    
+    if (result >= 0)
+    {
+        printf("Extra element found at index: %d\n", result);
+    }
+    else
+    {
+        printf("No extra element found or invalid input\n");
+    }
+    
+    return 0;
+}

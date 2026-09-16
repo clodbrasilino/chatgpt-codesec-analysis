@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    /* Possible weaknesses found:
+     *  struct member 'DictEntry::key' is never used. [unusedStructMember]
+     */
+    char* key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    int* values;
+    size_t size;
+} UniqueValues;
+
+UniqueValues* extract_unique_values(DictEntry* dict, size_t size) {
+    if (dict == NULL || size == 0) {
+        return NULL;
+    }
+
+    UniqueValues* unique_vals = malloc(sizeof(UniqueValues));
+    if (unique_vals == NULL) {
+        return NULL;
+    }
+
+    unique_vals->values = malloc(size * sizeof(int));
+    if (unique_vals->values == NULL) {
+        free(unique_vals);
+        return NULL;
+    }
+
+    unique_vals->size = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        int current_value = dict[i].value;
+        int is_unique = 1;
+
+        for (size_t j = 0; j < unique_vals->size; ++j) {
+            if (unique_vals->values[j] == current_value) {
+                is_unique = 0;
+                break;
+            }
+        }
+
+        if (is_unique) {
+            unique_vals->values[unique_vals->size] = current_value;
+            unique_vals->size++;
+        }
+    }
+
+    int* resized_values = realloc(unique_vals->values, unique_vals->size * sizeof(int));
+    if (resized_values != NULL || unique_vals->size == 0) {
+        unique_vals->values = resized_values;
+    } else {
+        free(unique_vals->values);
+        free(unique_vals);
+        return NULL;
+    }
+
+    return unique_vals;
+}
+
+void free_unique_values(UniqueValues* unique_vals) {
+    if (unique_vals != NULL) {
+        free(unique_vals->values);
+        free(unique_vals);
+    }
+}
+
+int main(void) {
+    DictEntry dict[] = {
+        {"a", 1},
+        {"b", 2},
+        {"c", 1},
+        {"d", 3},
+        {"e", 2}
+    };
+    size_t dict_size = sizeof(dict) / sizeof(dict[0]);
+
+    UniqueValues* unique_vals = extract_unique_values(dict, dict_size);
+
+    if (unique_vals != NULL) {
+        for (size_t i = 0; i < unique_vals->size; ++i) {
+            printf("%d ", unique_vals->values[i]);
+        }
+        printf("\n");
+
+        free_unique_values(unique_vals);
+    }
+
+    return 0;
+}

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <string.h>
+
+int max_diff_sub(char *str) {
+    int len = strlen(str);
+    int diff, max_diff = 0, count = 0;
+
+    for (int i = 0; i < len; i++) {
+        count += (str[i] == '0') ? 1 : -1;
+        if (count < 0) count = 0;
+        if (count > max_diff) max_diff = count;
+    }
+
+    count = 0;
+    for (int i = len - 1; i >= 0; i--) {
+        count += (str[i] == '1') ? 1 : -1;
+        if (count < 0) count = 0;
+        if (count > max_diff) max_diff = count;
+    }
+
+    return max_diff;
+}
+
+int main() {
+    char str[] = "100010001";
+    int result = max_diff_sub(str);
+    printf("Maximum difference: %d\n", result);
+    return 0;
+}

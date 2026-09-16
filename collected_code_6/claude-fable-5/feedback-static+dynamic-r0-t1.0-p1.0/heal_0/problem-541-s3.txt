@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+static bool is_abundant(unsigned long n)
+{
+    unsigned long sum;
+    unsigned long i;
+
+    if (n < 12UL) {
+        return false;
+    }
+
+    sum = 1UL;
+    for (i = 2UL; i * i <= n; i++) {
+        if (n % i == 0UL) {
+            sum += i;
+            if (i != n / i) {
+                sum += n / i;
+            }
+            if (sum > n) {
+                return true;
+            }
+        }
+    }
+
+    return sum > n;
+}
+
+int main(void)
+{
+    unsigned long num;
+    int result;
+
+    printf("Enter a positive integer: ");
+    result = scanf("%lu", &num);
+
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (num == 0UL) {
+        fprintf(stderr, "Input must be a positive integer\n");
+        return 1;
+    }
+
+    if (is_abundant(num)) {
+        printf("%lu is an abundant number\n", num);
+    } else {
+        printf("%lu is not an abundant number\n", num);
+    }
+
+    return 0;
+}
+```

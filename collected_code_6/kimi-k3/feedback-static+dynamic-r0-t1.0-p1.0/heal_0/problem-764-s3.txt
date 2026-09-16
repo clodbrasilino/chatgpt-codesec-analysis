@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+int count_numeric_values(const char *str)
+{
+    if (str == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    size_t i = 0;
+    size_t len = strlen(str);
+
+    while (i < len) {
+        if (isdigit((unsigned char)str[i])) {
+            count++;
+            while (i < len && (isdigit((unsigned char)str[i]) || str[i] == '.')) {
+                i++;
+            }
+        } else {
+            i++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *test_string = "There are 3 apples, 12.5 oranges, and 100 grapes.";
+    int result = count_numeric_values(test_string);
+
+    if (result >= 0) {
+        printf("Number of numeric values: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    return 0;
+}
+```

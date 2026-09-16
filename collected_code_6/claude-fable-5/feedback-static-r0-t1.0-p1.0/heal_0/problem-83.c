@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char get_char(const char *str)
+{
+    unsigned long sum = 0;
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return '\0';
+    }
+
+    len = strlen(str);
+    if (len == 0) {
+        return '\0';
+    }
+
+    for (i = 0; i < len; i++) {
+        sum += (unsigned long)(unsigned char)str[i];
+    }
+
+    return (char)((sum % 26UL) + (unsigned long)'a');
+}
+
+int main(void)
+{
+    const char *input = "abc";
+    char result;
+
+    result = get_char(input);
+    if (result == '\0') {
+        fprintf(stderr, "Invalid input string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %c\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

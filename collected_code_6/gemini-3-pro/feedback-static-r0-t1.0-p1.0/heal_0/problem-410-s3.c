@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int i_val;
+        float f_val;
+        double d_val;
+    } data;
+} ListItem;
+
+typedef struct {
+    ListItem* items;
+    size_t size;
+} HeterogeneousList;
+
+double get_value_as_double(const ListItem* item) {
+    if (!item) {
+        return 0.0;
+    }
+    switch (item->type) {
+        case TYPE_INT:
+            return (double)item->data.i_val;
+        case TYPE_FLOAT:
+            return (double)item->data.f_val;
+        case TYPE_DOUBLE:
+            return item->data.d_val;
+        default:
+            return 0.0;
+    }
+}
+
+int find_minimum_value(const HeterogeneousList* list, double* min_val) {
+    if (!list || !list->items || list->size == 0 || !min_val) {
+        return -1;
+    }
+
+    *min_val = get_value_as_double(&list->items[0]);
+
+    for (size_t i = 1; i < list->size; i++) {
+        double current_val = get_value_as_double(&list->items[i]);
+        if (current_val < *min_val) {
+            *min_val = current_val;
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    HeterogeneousList list;
+    list.size = 4;
+    list.items = (ListItem*)malloc(list.size * sizeof(ListItem));
+
+    if (!list.items) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    list.items[0].type = TYPE_INT;
+    list.items[0].data.i_val = 10;
+
+    list.items[1].type = TYPE_FLOAT;
+    list.items[1].data.f_val = 3.14f;
+
+    list.items[2].type = TYPE_DOUBLE;
+    list.items[2].data.d_val = -2.5;
+
+    list.items[3].type = TYPE_INT;
+    list.items[3].data.i_val = 42;
+
+    double min_value;
+    if (find_minimum_value(&list, &min_value) == 0) {
+        printf("Minimum value: %f\n", min_value);
+    } else {
+        printf("Failed to find minimum value or list is empty.\n");
+    }
+
+    free(list.items);
+    list.items = NULL;
+    list.size = 0;
+
+    return 0;
+}

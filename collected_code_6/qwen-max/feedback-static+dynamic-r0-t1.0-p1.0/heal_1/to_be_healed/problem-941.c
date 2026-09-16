@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int data;
+} Element;
+
+typedef struct {
+    Element *elements;
+    size_t element_count;
+} List;
+
+/* Possible weaknesses found:
+ *  Parameter 'e' can be declared as pointer to const [constParameterPointer]
+ */
+bool is_tuple(Element *e) {
+    return e->data == -1;  // Assuming -1 is a special value for a tuple
+}
+
+size_t count_until_tuple(const List *list) {
+    for (size_t i = 0; i < list->element_count; ++i) {
+        if (is_tuple(&list->elements[i])) {
+            return i;
+        }
+    }
+    return list->element_count;
+}
+
+int main() {
+    Element elements[] = {{1}, {2}, {3}, {-1}, {4}};
+    List list = {elements, sizeof(elements) / sizeof(elements[0])};
+
+    size_t count = count_until_tuple(&list);
+    printf("Count until tuple: %zu\n", count);
+
+    return 0;
+}

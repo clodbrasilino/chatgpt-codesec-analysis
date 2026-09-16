@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int findTetrahedralNumber(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned long long int n_ull = n;
+    unsigned long long int result = (n_ull * (n_ull + 1) * (n_ull + 2)) / 6;
+    
+    return result;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long int tetrahedral_number = findTetrahedralNumber(n);
+    printf("%llu\n", tetrahedral_number);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+size_t count_uppercase(const char *str)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isupper((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *text = "Hello World, This Is A Test String!";
+    size_t result;
+
+    result = count_uppercase(text);
+
+    if (printf("Uppercase count: %zu\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+Key safety points in this implementation:
+
+1. **CWE-664 avoidance**: No dynamic memory allocation is used, so there are no resource lifetime issues. The string pointer is only read, never modified or freed.
+
+2. **CWE-703 avoidance**: The function checks for a `NULL` pointer before dereferencing, and the return value of `printf` is checked for output errors.
+
+3. **CWE-710 avoidance**: The code adheres to standards by casting to `unsigned char` before passing to `isupper()` (passing a plain `char` with a negative value is undefined behavior), using `size_t` for counting to avoid overflow issues with long strings, declaring `main` as `int main(void)`, and returning explicit exit statuses.

@@ -2,62 +2,77 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    int val;
+    int value;
     struct Node *next;
 } Node;
 
-Node* flatten(Node *head) {
-    if (head == NULL || head->next == NULL) {
-        return head;
+Node* createNode(int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
     }
-    Node *tail = head;
-    while (tail->next != NULL) {
-        tail = tail->next;
-    }
-    Node *current = head;
-    while (current != NULL) {
-        if (current->val > 0) {
-            Node *nestedHead = flatten(current->next);
-            if (nestedHead != NULL) {
-                current->next = nestedHead;
-                Node *nestedTail = nestedHead;
-                while (nestedTail->next != NULL) {
-                    nestedTail = nestedTail->next;
-                }
-                nestedTail->next = current->next;
-                current = nestedTail;
-            }
-        } else {
-            current = current->next;
-        }
-    }
-    return head;
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-int main() {
-    Node *head = (Node*)malloc(sizeof(Node));
-    head->val = 1;
-    head->next = (Node*)malloc(sizeof(Node));
-    head->next->val = -2;
-    head->next->next = (Node*)malloc(sizeof(Node));
-    head->next->next->val = 3;
-    head->next->next->next = (Node*)malloc(sizeof(Node));
-    head->next->next->next->val = -4;
-    head->next->next->next->next = NULL;
+void appendToList(Node **head, int value) {
+    Node *newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
 
-    head = flatten(head);
+Node* flattenList(Node *head) {
+    Node *flatList = NULL;
+    Node *stack[100];
+    int top = -1;
+    stack[++top] = head;
 
+    while (top >= 0) {
+        Node *current = stack[top--];
+        if (current == NULL) continue;
+        appendToList(&flatList, current->value);
+        if (current->next != NULL) {
+            stack[++top] = current->next;
+        }
+    }
+
+    return flatList;
+}
+
+void printList(Node *head) {
     Node *current = head;
     while (current != NULL) {
-        printf("%d ", current->val);
+        printf("%d ", current->value);
         current = current->next;
     }
     printf("\n");
+}
 
-    // Free memory
-    while (head != NULL) {
-        Node *temp = head;
-        head = head->next;
+int main() {
+    Node *head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+
+    Node *nestedHead = createNode(10);
+    nestedHead->next = createNode(20);
+    nestedHead->next->next = head;
+
+    Node *flattened = flattenList(nestedHead);
+    printList(flattened);
+
+    Node *current = flattened;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
         free(temp);
     }
 

@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int count_divisors(int n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    if (n < 0) {
+        if (n == -2147483648) {
+            n = 2147483647; 
+        } else {
+            n = -n;
+        }
+    }
+
+    int count = 0;
+    int limit = (int)sqrt((double)n);
+
+    for (int i = 1; i <= limit; i++) {
+        if (n % i == 0) {
+            if (n / i == i) {
+                count++;
+            } else {
+                count += 2;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int num;
+    
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int divisors = count_divisors(num);
+    printf("%d\n", divisors);
+
+    return EXIT_SUCCESS;
+}

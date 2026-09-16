@@ -1,53 +1,49 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <string.h>
 
 typedef struct List {
-    int *data;
-    size_t size;
+    int *items;
+    int size;
 } List;
 
-bool are_lists_equal(List a, List b) {
-    if (a.size != b.size) return false;
-    for (size_t i = 0; i < a.size; i++) {
-        if (a.data[i] != b.data[i]) return false;
-    }
-    return true;
+int compare_lists(const void *a, const void *b) {
+    /* Possible weaknesses found:
+     *  Variable 'list1' can be declared as pointer to const [constVariablePointer]
+     */
+    List *list1 = (List *)a;
+    /* Possible weaknesses found:
+     *  Variable 'list2' can be declared as pointer to const [constVariablePointer]
+     */
+    List *list2 = (List *)b;
+    if (list1->size != list2->size) return 0;
+    return memcmp(list1->items, list2->items, list1->size * sizeof(int)) == 0;
 }
 
-/* Possible weaknesses found:
- *  Parameter 'lists' can be declared as pointer to const [constParameterPointer]
- */
-int count_unique_lists(List *lists, size_t list_count) {
+int count_unique_lists(List *lists, int num_lists) {
     int unique_count = 0;
-    for (size_t i = 0; i < list_count; i++) {
-        bool is_unique = true;
-        for (size_t j = 0; j < i; j++) {
-            if (are_lists_equal(lists[i], lists[j])) {
-                is_unique = false;
+    for (int i = 0; i < num_lists; i++) {
+        int is_duplicate = 0;
+        for (int j = 0; j < i; j++) {
+            if (compare_lists(&lists[i], &lists[j])) {
+                is_duplicate = 1;
                 break;
             }
         }
-        if (is_unique) {
-            unique_count++;
-        }
+        if (!is_duplicate) unique_count++;
     }
     return unique_count;
 }
 
-int main(void) {
+int main() {
     List lists[] = {
-        { (int[2]){1, 2}, 2 },
-        { (int[2]){3, 4}, 2 },
-        { (int[2]){1, 2}, 2 },
-        { (int[3]){5, 6, 7}, 3 }
+        { .items = (int[]){1, 2, 3}, .size = 3 },
+        { .items = (int[]){4, 5, 6}, .size = 3 },
+        { .items = (int[]){1, 2, 3}, .size = 3 },
+        { .items = (int[]){7, 8, 9}, .size = 3 }
     };
-    
-    size_t list_count = sizeof(lists) / sizeof(lists[0]);
-    
-    int unique_count = count_unique_lists(lists, list_count);
-    
-    printf("Number of unique lists: %d\n", unique_count);
-    
+    int num_lists = sizeof(lists) / sizeof(lists[0]);
+    int unique_count = count_unique_lists(lists, num_lists);
+    printf("Unique lists: %d\n", unique_count);
     return 0;
 }

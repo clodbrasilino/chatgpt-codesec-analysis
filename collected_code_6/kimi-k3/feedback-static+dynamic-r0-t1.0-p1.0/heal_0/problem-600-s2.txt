@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+
+int isEven(int num) {
+    return !(num & 1);
+}
+
+int main() {
+    int num;
+    int result;
+    
+    printf("Enter a number: ");
+    
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    result = isEven(num);
+    
+    if (result) {
+        printf("%d is even\n", num);
+    } else {
+        printf("%d is odd\n", num);
+    }
+    
+    return 0;
+}
+```

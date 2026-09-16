@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_cubes(int n, int k) {
+    if (n < 0 || k <= 0 || k > n) {
+        return 0;
+    }
+    
+    unsigned long long diff = (unsigned long long)(n - k + 1);
+    return diff * diff * diff;
+}
+
+int main(void) {
+    int n = 0;
+    int k = 0;
+
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || k <= 0 || k > n) {
+        fprintf(stderr, "Invalid cube dimensions.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = count_cubes(n, k);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

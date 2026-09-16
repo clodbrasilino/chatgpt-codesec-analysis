@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap_adjacent(int *arr, size_t length) {
+    if (arr == NULL || length < 2) {
+        return;
+    }
+
+    for (size_t i = 0; i < length - 1; i += 2) {
+        int temp = arr[i];
+        arr[i] = arr[i + 1];
+        arr[i + 1] = temp;
+    }
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t length = sizeof(arr) / sizeof(arr[0]);
+
+    swap_adjacent(arr, length);
+
+    for (size_t i = 0; i < length; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```

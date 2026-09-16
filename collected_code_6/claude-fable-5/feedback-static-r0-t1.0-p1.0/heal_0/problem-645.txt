@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int product_of_kth_index(const int tuples[][3], size_t num_tuples, size_t tuple_size, size_t k, long long *result)
+{
+    if (tuples == NULL || result == NULL) {
+        return -1;
+    }
+    if (num_tuples == 0U || k >= tuple_size) {
+        return -1;
+    }
+
+    long long product = 1;
+    for (size_t i = 0U; i < num_tuples; i++) {
+        long long value = (long long)tuples[i][k];
+        if (value != 0LL) {
+            if (llabs(product) > (LLONG_MAX / llabs(value))) {
+                return -1;
+            }
+        }
+        product *= value;
+    }
+
+    *result = product;
+    return 0;
+}
+
+int main(void)
+{
+    const int tuples[][3] = {
+        {5, 6, 7},
+        {1, 3, 5},
+        {8, 9, 19}
+    };
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    size_t tuple_size = sizeof(tuples[0]) / sizeof(tuples[0][0]);
+    size_t k = 2U;
+    long long result = 0;
+
+    if (product_of_kth_index(tuples, num_tuples, tuple_size, k, &result) != 0) {
+        (void)fprintf(stderr, "Error: invalid input or overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Product of index %zu: %lld\n", k, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct sublist {
+    int *items;
+    size_t length;
+};
+
+static int max_sublist_length(const struct sublist *lists, size_t count, size_t *result)
+{
+    size_t i;
+    size_t max;
+
+    if (lists == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    max = lists[0].length;
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length > max) {
+            max = lists[i].length;
+        }
+    }
+
+    *result = max;
+    return 0;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5};
+    int c[] = {6, 7, 8, 9, 10};
+    struct sublist lists[3];
+    size_t max_len = 0U;
+
+    lists[0].items = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].items = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].items = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    if (max_sublist_length(lists, sizeof(lists) / sizeof(lists[0]), &max_len) != 0) {
+        (void)fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Maximum sublist length: %zu\n", max_len) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

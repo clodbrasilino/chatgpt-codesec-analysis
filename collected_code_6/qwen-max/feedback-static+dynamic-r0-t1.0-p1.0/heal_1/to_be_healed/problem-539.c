@@ -1,40 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int data;
-    struct Node *next;
-} Node;
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
 
-Node* createNode(int data) {
-    Node *newNode = (Node*)malloc(sizeof(Node));
-    newNode->data = data;
+ListNode *createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
+    }
+    newNode->value = value;
     newNode->next = NULL;
     return newNode;
 }
 
-Node* prependNode(Node *head, int data) {
-    Node *newNode = createNode(data);
-    if (head == NULL) {
-        return newNode;
-    }
-    newNode->next = head;
-    return newNode;
-}
-
-void freeList(Node *head) {
-    /* Possible weaknesses found:
-     *  The scope of the variable 'temp' can be reduced. [variableScope]
-     */
-    Node *temp;
-    while (head != NULL) {
-        temp = head;
-        head = head->next;
-        free(temp);
+void appendToList(ListNode **list, int value) {
+    ListNode *newNode = createNode(value);
+    if (*list == NULL) {
+        *list = newNode;
+    } else {
+        ListNode *current = *list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
     }
 }
 
 int power(int base, int exp) {
+    if (exp == 0) return 1;
     int result = 1;
     for (int i = 0; i < exp; ++i) {
         result *= base;
@@ -42,47 +39,43 @@ int power(int base, int exp) {
     return result;
 }
 
-Node* mapPower(Node *baseList, Node *expList) {
-    if (baseList == NULL || expList == NULL) {
-        return NULL;
+/* Possible weaknesses found:
+ *  Parameter 'bases' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+ */
+ListNode *mapPower(int *bases, int *indices, int size) {
+    ListNode *resultList = NULL;
+    for (int i = 0; i < size; ++i) {
+        appendToList(&resultList, power(bases[i], indices[i]));
     }
-
-    Node *resultList = NULL;
-    Node *currentBase = baseList;
-    Node *currentExp = expList;
-
-    while (currentBase != NULL && currentExp != NULL) {
-        resultList = prependNode(resultList, power(currentBase->data, currentExp->data));
-        currentBase = currentBase->next;
-        currentExp = currentExp->next;
-    }
-
     return resultList;
 }
 
-int main() {
-    Node *baseList = NULL;
-    Node *expList = NULL;
-    baseList = prependNode(baseList, 2);
-    baseList = prependNode(baseList, 3);
-    baseList = prependNode(baseList, 5);
-
-    expList = prependNode(expList, 3);
-    expList = prependNode(expList, 4);
-    expList = prependNode(expList, 2);
-
-    Node *resultList = mapPower(baseList, expList);
-
-    Node *current = resultList;
-    while (current != NULL) {
-        printf("%d ", current->data);
-        current = current->next;
+void printList(ListNode *list) {
+    while (list != NULL) {
+        printf("%d -> ", list->value);
+        list = list->next;
     }
-    printf("\n");
+    printf("NULL\n");
+}
 
-    freeList(baseList);
-    freeList(expList);
-    freeList(resultList);
+void freeList(ListNode *list) {
+    ListNode *current = list;
+    while (current != NULL) {
+        ListNode *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
 
+int main() {
+    int bases[] = {2, 3, 4};
+    int indices[] = {5, 3, 2};
+    int size = sizeof(bases) / sizeof(bases[0]);
+
+    ListNode *mappedList = mapPower(bases, indices, size);
+    printList(mappedList);
+
+    freeList(mappedList);
     return 0;
 }

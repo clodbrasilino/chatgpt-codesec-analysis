@@ -1,103 +1,88 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-
-#define TUPLE_SIZE 4
+#include <string.h>
 
 typedef struct {
-    int values[TUPLE_SIZE];
+    int *data;
+    size_t length;
 } Tuple;
 
-Tuple* create_tuple(int arr[]) {
-    Tuple *t = (Tuple*) malloc(sizeof(Tuple));
-    if (t) {
-        for (int i = 0; i < TUPLE_SIZE; ++i) {
-            t->values[i] = arr[i];
-        }
-    }
-    return t;
-}
-
-void free_tuple(Tuple *t) {
-    free(t);
-}
-
-int get_chunk_size(int total, int chunk_count) {
-    if (chunk_count <= 0 || total <= 0) {
-        return 0;
-    }
-    return (total + chunk_count - 1) / chunk_count;
-}
-
-Tuple** chunk_tuples(Tuple *tuples[], int count, int chunk_size, int *chunks_count) {
-    *chunks_count = get_chunk_size(count, chunk_size);
-
-    if (*chunks_count == 0) {
+Tuple* create_tuple(size_t n) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+    tuple->data = (int *)calloc(n, sizeof(int));
+    if (tuple->data == NULL) {
+        free(tuple);
         return NULL;
     }
+    tuple->length = n;
+    return tuple;
+}
 
-    Tuple **chunks = (Tuple**) malloc(*chunks_count * sizeof(Tuple*));
-    if (!chunks) {
-        return NULL;
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        if (tuple->data) free(tuple->data);
+        free(tuple);
     }
+}
 
-    for (int i = 0; i < *chunks_count; ++i) {
-        chunks[i] = (Tuple*) malloc(chunk_size * sizeof(Tuple));
-        if (!chunks[i]) {
-            while (i--) {
-                free(chunks[i]);
-            }
+Tuple** chunk_tuples(Tuple *source, size_t chunk_size) {
+    if (source == NULL || source->length == 0 || chunk_size == 0) return NULL;
+    
+    size_t num_chunks = (source->length + chunk_size - 1) / chunk_size;
+    Tuple **chunks = (Tuple **)calloc(num_chunks, sizeof(Tuple *));
+    if (chunks == NULL) return NULL;
+
+    for (size_t i = 0; i < num_chunks; ++i) {
+        chunks[i] = create_tuple(chunk_size);
+        if (chunks[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) free_tuple(chunks[j]);
             free(chunks);
             return NULL;
         }
-        int start = i * chunk_size;
-        int end = (i + 1) * chunk_size < count ? (i + 1) * chunk_size : count;
-        for (int j = start; j < end; ++j) {
-            chunks[i][j - start] = *tuples[j];
+        size_t start = i * chunk_size;
+        size_t end = (i + 1) * chunk_size > source->length ? source->length : (i + 1) * chunk_size;
+        for (size_t j = start; j < end; ++j) {
+            chunks[i]->data[j - start] = source->data[j];
         }
     }
+
     return chunks;
 }
 
+void print_tuple(Tuple *tuple) {
+    if (tuple == NULL || tuple->data == NULL) return;
+    for (size_t i = 0; i < tuple->length; ++i) {
+        printf("%d ", tuple->data[i]);
+    }
+    printf("\n");
+}
+
 int main() {
-    int data[5][TUPLE_SIZE] = {
-        {1, 2, 3, 4},
-        {5, 6, 7, 8},
-        {9, 10, 11, 12},
-        {13, 14, 15, 16},
-        {17, 18, 19, 20}
-    };
+    const size_t n = 10;
+    const size_t chunk_size = 3;
 
-    Tuple *tuples[5];
-    for (int i = 0; i < 5; ++i) {
-        tuples[i] = create_tuple(data[i]);
+    Tuple *source = create_tuple(n);
+    if (source == NULL) return 1;
+
+    for (size_t i = 0; i < n; ++i) {
+        source->data[i] = i + 1;
     }
 
-    int chunk_count;
-    Tuple **chunks = chunk_tuples(tuples, 5, 2, &chunk_count);
-
-    if (chunks) {
-        for (int i = 0; i < chunk_count; ++i) {
-            for (int j = 0; j < 2; ++j) {
-                for (int k = 0; k < TUPLE_SIZE; ++k) {
-                    printf("%d ", chunks[i][j].values[k]);
-                }
-                printf("\n");
-            }
-            printf("---\n");
-        }
-        for (int i = 0; i < 5; ++i) {
-            free_tuple(tuples[i]);
-        }
-        for (int i = 0; i < chunk_count; ++i) {
-            free(chunks[i]);
-        }
-        free(chunks);
-    } else {
-        for (int i = 0; i < 5; ++i) {
-            free_tuple(tuples[i]);
-        }
+    Tuple **chunks = chunk_tuples(source, chunk_size);
+    if (chunks == NULL) {
+        free_tuple(source);
+        return 1;
     }
+
+    for (size_t i = 0; i < (n + chunk_size - 1) / chunk_size; ++i) {
+        print_tuple(chunks[i]);
+        free_tuple(chunks[i]);
+    }
+
+    free(chunks);
+    free_tuple(source);
 
     return 0;
 }

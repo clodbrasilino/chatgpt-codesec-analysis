@@ -1,44 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-struct Record {
-    int key;
-    int value;
-};
+typedef struct {
+    char key[20];
+    int count;
+} Record;
 
 int compare(const void *a, const void *b) {
-    return ((struct Record *)a)->value - ((struct Record *)b)->value;
+    return strcmp(((Record *)a)->key, ((Record *)b)->key);
 }
 
-int countSimilarOccurrences(struct Record *records, int n) {
-    if (n == 0) {
-        return 0;
-    }
+int checkSimilarOccurrences(Record *records, int n) {
+    if (n <= 1) return 0;
 
-    qsort(records, n, sizeof(struct Record), compare);
-
-    int count = 1, maxCount = 1;
+    qsort(records, n, sizeof(Record), compare);
 
     for (int i = 1; i < n; ++i) {
-        if (records[i].value == records[i - 1].value) {
-            count++;
-            if (count > maxCount) {
-                maxCount = count;
+        if (records[i].count != records[i - 1].count) continue;
+
+        int j = i + 1;
+        while (j < n && records[j].count == records[i].count) {
+            if (strcmp(records[j].key, records[j - 1].key) != 0) {
+                return 1;
             }
-        } else {
-            count = 1;
+            ++j;
         }
+        i = j - 1;
     }
 
-    return maxCount;
+    return 0;
 }
 
 int main() {
-    struct Record records[] = {{1, 2}, {2, 3}, {3, 2}, {4, 3}, {5, 2}};
+    Record records[] = {
+        {"apple", 3},
+        {"banana", 3},
+        {"cherry", 2},
+        {"date", 2}
+    };
     int n = sizeof(records) / sizeof(records[0]);
 
-    int result = countSimilarOccurrences(records, n);
-    printf("The maximum number of similar occurrences: %d\n", result);
+    int result = checkSimilarOccurrences(records, n);
+
+    if (result) {
+        printf("Records with the same count have different keys.\n");
+    } else {
+        printf("All records with the same count have the same keys.\n");
+    }
 
     return 0;
 }

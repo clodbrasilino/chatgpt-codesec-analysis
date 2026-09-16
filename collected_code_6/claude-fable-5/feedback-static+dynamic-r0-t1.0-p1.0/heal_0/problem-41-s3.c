@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int filter_even(const int *input, size_t input_len, int **output, size_t *output_len)
+{
+    size_t count = 0;
+    size_t i;
+    int *result = NULL;
+
+    if (input == NULL || output == NULL || output_len == NULL) {
+        return -1;
+    }
+
+    *output = NULL;
+    *output_len = 0;
+
+    for (i = 0; i < input_len; i++) {
+        if (input[i] % 2 == 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return 0;
+    }
+
+    result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        return -1;
+    }
+
+    count = 0;
+    for (i = 0; i < input_len; i++) {
+        if (input[i] % 2 == 0) {
+            result[count] = input[i];
+            count++;
+        }
+    }
+
+    *output = result;
+    *output_len = count;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t numbers_len = sizeof(numbers) / sizeof(numbers[0]);
+    int *evens = NULL;
+    size_t evens_len = 0;
+    size_t i;
+
+    if (filter_even(numbers, numbers_len, &evens, &evens_len) != 0) {
+        fprintf(stderr, "Failed to filter even numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Even numbers:");
+    for (i = 0; i < evens_len; i++) {
+        printf(" %d", evens[i]);
+    }
+    printf("\n");
+
+    free(evens);
+    evens = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-453.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-453.c:25:15: style: Condition 'n%2==0' is always true [knownConditionTrueFalse]
+    if (n % 2 == 0 && n != 2) sum += n;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-453.c:6:15: note: Assuming that condition 'n%2!=0' is not redundant
+    if (n % 2 != 0) return 0;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-453.c:25:15: note: Condition 'n%2==0' is always true
+    if (n % 2 == 0 && n != 2) sum += n;
+              ^

@@ -1,100 +1,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int data;
-    struct Node *next;
-} Node;
+#define MAX_LISTS 100
+#define MAX_LIST_SIZE 10
 
-typedef struct List {
-    Node *head;
-} List;
+typedef struct {
+    int data[MAX_LIST_SIZE];
+    int size;
+} IntList;
 
-List* createList() {
-    return (List*)calloc(1, sizeof(List));
-}
-
-Node* createNode(int data) {
-    Node *newNode = (Node*)malloc(sizeof(Node));
-    if (newNode == NULL) exit(1);
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
-}
-
-void addToList(List *list, int data) {
-    Node *newNode = createNode(data);
-    if (list->head == NULL) {
-        list->head = newNode;
-    } else {
-        Node *temp = list->head;
-        while (temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
+int compare_lists(IntList *a, IntList *b) {
+    if (a->size != b->size) return 0;
+    for (int i = 0; i < a->size; i++) {
+        if (a->data[i] != b->data[i]) return 0;
     }
+    return 1;
 }
 
-int areListsEqual(List *list1, List *list2) {
-    Node *temp1 = list1->head;
-    Node *temp2 = list2->head;
-    
-    while (temp1 != NULL && temp2 != NULL) {
-        if (temp1->data != temp2->data) {
-            return 0;
-        }
-        temp1 = temp1->next;
-        temp2 = temp2->next;
+int is_unique(IntList **lists, int list_count, IntList *new_list) {
+    for (int i = 0; i < list_count; i++) {
+        if (compare_lists(lists[i], new_list)) return 0;
     }
-    
-    return temp1 == NULL && temp2 == NULL;
+    return 1;
 }
 
-int countUniqueLists(List **lists, int size) {
+int count_unique_lists(IntList **lists, int list_count) {
     int count = 0;
-    for (int i = 0; i < size; i++) {
-        int isUnique = 1;
-        for (int j = 0; j < i; j++) {
-            if (areListsEqual(lists[i], lists[j])) {
-                isUnique = 0;
-                break;
-            }
-        }
-        if (isUnique) {
-            count++;
+    IntList *unique_lists[MAX_LISTS] = {0};
+    for (int i = 0; i < list_count; i++) {
+        if (is_unique(unique_lists, count, lists[i])) {
+            unique_lists[count++] = lists[i];
         }
     }
     return count;
 }
 
 int main() {
-    List *list1 = createList();
-    List *list2 = createList();
-    List *list3 = createList();
+    IntList lists[] = {
+        {{1, 2, 3}, 3},
+        {{4, 5}, 2},
+        {{1, 2, 3}, 3},
+        {{6, 7, 8, 9}, 4},
+        {{1, 2, 3, 4}, 4},
+    };
+    int list_count = sizeof(lists) / sizeof(lists[0]);
     
-    addToList(list1, 1);
-    addToList(list1, 2);
-    addToList(list2, 1);
-    addToList(list2, 2);
-    addToList(list3, 3);
-    addToList(list3, 4);
-    
-    List *lists[] = {list1, list2, list3};
-    int size = 3;
-    
-    int uniqueCount = countUniqueLists(lists, size);
-    
-    printf("Number of unique lists: %d\n", uniqueCount);
-    
-    for (int i = 0; i < size; i++) {
-        Node *current = lists[i]->head;
-        while (current != NULL) {
-            Node *next = current->next;
-            free(current);
-            current = next;
-        }
-        free(lists[i]);
-    }
-    
+    int unique_count = count_unique_lists((IntList **)lists, list_count);
+    printf("Number of unique lists: %d\n", unique_count);
+
     return 0;
 }

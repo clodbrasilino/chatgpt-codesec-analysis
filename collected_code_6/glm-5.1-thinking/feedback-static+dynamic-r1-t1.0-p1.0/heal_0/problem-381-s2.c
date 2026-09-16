@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} InnerList;
+
+int sort_list_of_lists(InnerList *lists, int count, int sort_index) {
+    if (lists == NULL || count < 0) {
+        return -1;
+    }
+    if (count <= 1) {
+        return 0;
+    }
+    if (sort_index < 0) {
+        return -1;
+    }
+    for (int i = 0; i < count; i++) {
+        if (lists[i].data == NULL || lists[i].size <= sort_index) {
+            return -1;
+        }
+    }
+    for (int i = 1; i < count; i++) {
+        InnerList key = lists[i];
+        int j = i - 1;
+        while (j >= 0 && lists[j].data[sort_index] > key.data[sort_index]) {
+            lists[j + 1] = lists[j];
+            j--;
+        }
+        lists[j + 1] = key;
+    }
+    return 0;
+}
+
+int main(void) {
+    int count = 3;
+    int sort_index = 1;
+    InnerList *lists = malloc(count * sizeof(InnerList));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+    for (int i = 0; i < count; i++) {
+        lists[i].size = 3;
+        lists[i].data = malloc(lists[i].size * sizeof(int));
+        if (lists[i].data == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(lists[j].data);
+            }
+            free(lists);
+            return EXIT_FAILURE;
+        }
+    }
+    lists[0].data[0] = 3; lists[0].data[1] = 2; lists[0].data[2] = 1;
+    lists[1].data[0] = 1; lists[1].data[1] = 5; lists[1].data[2] = 6;
+    lists[2].data[0] = 2; lists[2].data[1] = 4; lists[2].data[2] = 0;
+
+    int result = sort_list_of_lists(lists, count, sort_index);
+    if (result == 0) {
+        for (int i = 0; i < count; i++) {
+            for (int j = 0; j < lists[i].size; j++) {
+                printf("%d ", lists[i].data[j]);
+            }
+            printf("\n");
+        }
+    }
+
+    for (int i = 0; i < count; i++) {
+        free(lists[i].data);
+    }
+    free(lists);
+
+    return EXIT_SUCCESS;
+}

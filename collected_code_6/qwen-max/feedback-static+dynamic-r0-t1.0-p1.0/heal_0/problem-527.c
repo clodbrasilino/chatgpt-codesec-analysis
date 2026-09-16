@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_pairs(int *arr, int n, int sum) {
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] + arr[j] == sum) {
+                printf("%d + %d = %d\n", arr[i], arr[j], sum);
+            }
+        }
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int sum = 7;
+    find_pairs(arr, n, sum);
+    return 0;
+}

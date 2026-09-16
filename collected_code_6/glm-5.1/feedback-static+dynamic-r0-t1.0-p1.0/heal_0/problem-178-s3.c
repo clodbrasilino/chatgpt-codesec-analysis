@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int *search_strings(const char *haystack, const char **needles, size_t needle_count, size_t *result_count) {
+    if (haystack == NULL || needles == NULL || result_count == NULL) {
+        return NULL;
+    }
+
+    int *results = (int *)malloc(needle_count * sizeof(int));
+    if (results == NULL) {
+        return NULL;
+    }
+
+    *result_count = needle_count;
+
+    for (size_t i = 0; i < needle_count; i++) {
+        if (needles[i] == NULL) {
+            results[i] = 0;
+            continue;
+        }
+
+        if (strstr(haystack, needles[i]) != NULL) {
+            results[i] = 1;
+        } else {
+            results[i] = 0;
+        }
+    }
+
+    return results;
+}
+
+int main(void) {
+    const char *haystack = "The quick brown fox jumps over the lazy dog";
+    const char *needles[] = {"quick", "fox", "dog", "cat"};
+    size_t needle_count = sizeof(needles) / sizeof(needles[0]);
+    size_t result_count = 0;
+
+    int *results = search_strings(haystack, needles, needle_count, &result_count);
+
+    if (results == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < result_count; i++) {
+        printf("%s: %s\n", needles[i], results[i] ? "Found" : "Not Found");
+    }
+
+    free(results);
+    results = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equal_pairs(const int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    int *freq = (int *)calloc(100001, sizeof(int));
+    if (freq == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] >= 0 && arr[i] <= 100000) {
+            count += freq[arr[i]];
+            freq[arr[i]]++;
+        }
+    }
+
+    free(freq);
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 1, 3, 2, 1, 4, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = count_equal_pairs(arr, n);
+    printf("%d\n", result);
+
+    int arr2[] = {5, 5, 5, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = count_equal_pairs(arr2, n2);
+    printf("%d\n", result2);
+
+    return 0;
+}

@@ -1,0 +1,23 @@
+#include <ctype.h>
+#include <string.h>
+#include <stdio.h>
+
+void filter_alphanumeric(char *str) {
+    char *src = str;
+    char *dst = str;
+    while (*src) {
+        if (isalnum((unsigned char)*src)) {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char test_str[] = "Hello, World! 123";
+    printf("Original: %s\n", test_str);
+    filter_alphanumeric(test_str);
+    printf("Filtered: %s\n", test_str);
+    return 0;
+}

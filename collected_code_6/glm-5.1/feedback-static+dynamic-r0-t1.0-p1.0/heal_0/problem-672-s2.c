@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int find_maximum(int a, int b, int c) {
+    int max = a;
+    if (b > max) {
+        max = b;
+    }
+    if (c > max) {
+        max = c;
+    }
+    return max;
+}
+
+int main(void) {
+    int a = 10;
+    int b = 25;
+    int c = 15;
+    int max = find_maximum(a, b, c);
+    printf("%d\n", max);
+    return 0;
+}

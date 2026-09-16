@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int longestConsecutive(int *arr, int n) {
+    if (n <= 0) return 0;
+
+    int *hash = (int *)calloc(n, sizeof(int));
+    for (int i = 0; i < n; ++i) {
+        hash[arr[i] - arr[0]] = 1;
+    }
+
+    int maxLength = 0;
+    int currentLength = 0;
+    for (int i = 0; i < n; ++i) {
+        if (hash[i] == 1) {
+            currentLength++;
+            if (currentLength > maxLength) {
+                maxLength = currentLength;
+            }
+        } else {
+            currentLength = 0;
+        }
+    }
+
+    free(hash);
+    return maxLength;
+}
+
+int main() {
+    int arr[] = {13, 2, 3, 14, 5, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = longestConsecutive(arr, n);
+    printf("Length of the longest consecutive subsequence is %d\n", result);
+    return 0;
+}

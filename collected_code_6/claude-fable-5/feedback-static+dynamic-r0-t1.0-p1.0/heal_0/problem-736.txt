@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+size_t left_insertion_point(const int *arr, size_t n, int value)
+{
+    size_t low = 0;
+    size_t high = n;
+
+    if (arr == NULL) {
+        return 0;
+    }
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (arr[mid] < value) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low;
+}
+
+int main(void)
+{
+    int data[] = {1, 3, 3, 5, 7, 9, 11};
+    size_t n = sizeof(data) / sizeof(data[0]);
+    int targets[] = {3, 0, 6, 11, 15};
+    size_t m = sizeof(targets) / sizeof(targets[0]);
+    size_t i;
+
+    for (i = 0; i < m; i++) {
+        size_t pos = left_insertion_point(data, n, targets[i]);
+        if (printf("Left insertion point for %d is %zu\n", targets[i], pos) < 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+```

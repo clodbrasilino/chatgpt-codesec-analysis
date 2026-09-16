@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_strings_numerically(const void *a, const void *b) {
+    const char *str_a = *(const char **)a;
+    const char *str_b = *(const char **)b;
+    
+    char *endptr_a;
+    char *endptr_b;
+    
+    long val_a = strtol(str_a, &endptr_a, 10);
+    long val_b = strtol(str_b, &endptr_b, 10);
+    
+    if (val_a < val_b) {
+        return -1;
+    } else if (val_a > val_b) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void sort_numeric_strings(char **array, size_t size) {
+    if (array == NULL || size == 0) {
+        return;
+    }
+    
+    qsort(array, size, sizeof(char *), compare_strings_numerically);
+}
+
+int main(void) {
+    const char *initial_strings[] = {"100", "5", "50", "1", "10", "2"};
+    size_t size = sizeof(initial_strings) / sizeof(initial_strings[0]);
+    
+    char **array = malloc(size * sizeof(char *));
+    if (array == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < size; ++i) {
+        array[i] = strdup(initial_strings[i]);
+        if (array[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(array[j]);
+            }
+            free(array);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    sort_numeric_strings(array, size);
+    
+    for (size_t i = 0; i < size; ++i) {
+        printf("%s\n", array[i]);
+    }
+    
+    for (size_t i = 0; i < size; ++i) {
+        free(array[i]);
+    }
+    free(array);
+    
+    return EXIT_SUCCESS;
+}
+```

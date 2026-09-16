@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FIB_INDEX 92
+
+static unsigned long long fibonacci(unsigned int n)
+{
+    if (n < 2U) {
+        return (unsigned long long)n;
+    }
+    return fibonacci(n - 1U) + fibonacci(n - 2U);
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result = 0;
+
+    printf("Enter a non-negative integer (0-%d): ", MAX_FIB_INDEX);
+
+    result = scanf("%u", &n);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > (unsigned int)MAX_FIB_INDEX) {
+        fprintf(stderr, "Error: input exceeds maximum supported index of %d.\n", MAX_FIB_INDEX);
+        return EXIT_FAILURE;
+    }
+
+    printf("fibonacci(%u) = %llu\n", n, fibonacci(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety measures in this implementation:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to ensure valid input was actually read, and an error path with a diagnostic message and failure exit code is provided.
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there are no resources to leak. The input is bounded to index 92, which is the largest Fibonacci number that fits in an `unsigned long long`, preventing integer overflow and runaway recursion depth.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, `static` linkage for the internal function, unsigned types matched consistently with their format specifiers (`%u`, `%llu`), variable initialization at declaration, and braces on all control statements.

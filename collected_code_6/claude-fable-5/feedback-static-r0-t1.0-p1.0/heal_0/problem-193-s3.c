@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool contains(const int *arr, size_t len, int value)
+{
+    for (size_t i = 0; i < len; i++) {
+        if (arr[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static int *remove_duplicates(const int *input, size_t input_len, size_t *output_len)
+{
+    if (input == NULL || output_len == NULL || input_len == 0) {
+        if (output_len != NULL) {
+            *output_len = 0;
+        }
+        return NULL;
+    }
+
+    int *result = malloc(input_len * sizeof(int));
+    if (result == NULL) {
+        *output_len = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < input_len; i++) {
+        if (!contains(result, count, input[i])) {
+            result[count] = input[i];
+            count++;
+        }
+    }
+
+    if (count < input_len) {
+        int *shrunk = realloc(result, count * sizeof(int));
+        if (shrunk != NULL) {
+            result = shrunk;
+        }
+    }
+
+    *output_len = count;
+    return result;
+}
+
+int main(void)
+{
+    int tuple[] = {1, 3, 5, 2, 3, 5, 1, 1, 3};
+    size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_len = 0;
+
+    int *result = remove_duplicates(tuple, tuple_len, &result_len);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to remove duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: ");
+    for (size_t i = 0; i < tuple_len; i++) {
+        printf("%d ", tuple[i]);
+    }
+    printf("\n");
+
+    printf("Without duplicates: ");
+    for (size_t i = 0; i < result_len; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

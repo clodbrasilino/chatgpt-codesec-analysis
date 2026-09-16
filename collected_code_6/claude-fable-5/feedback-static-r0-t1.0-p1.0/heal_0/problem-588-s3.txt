@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int array_min_max_diff(const int *arr, size_t len, long long *result)
+{
+    size_t i;
+    int min_val;
+    int max_val;
+
+    if (arr == NULL || len == 0 || result == NULL) {
+        return -1;
+    }
+
+    min_val = arr[0];
+    max_val = arr[0];
+
+    for (i = 1; i < len; i++) {
+        if (arr[i] < min_val) {
+            min_val = arr[i];
+        }
+        if (arr[i] > max_val) {
+            max_val = arr[i];
+        }
+    }
+
+    *result = (long long)max_val - (long long)min_val;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 34, -7, 89, 2, 56, -23, 71, 0 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long difference;
+
+    if (array_min_max_diff(numbers, count, &difference) != 0) {
+        fprintf(stderr, "Error: invalid input to array_min_max_diff\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Difference between largest and smallest: %lld\n", difference) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

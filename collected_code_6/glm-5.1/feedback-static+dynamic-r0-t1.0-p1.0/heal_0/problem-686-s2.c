@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int frequency;
+} Element;
+
+void find_frequency(const int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return;
+    }
+
+    Element *elements = malloc(size * sizeof(Element));
+    if (elements == NULL) {
+        return;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        int found = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (elements[j].value == list[i]) {
+                elements[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            elements[unique_count].value = list[i];
+            elements[unique_count].frequency = 1;
+            unique_count++;
+        }
+    }
+
+    for (size_t i = 0; i < unique_count; i++) {
+        printf("%d -> %d\n", elements[i].value, elements[i].frequency);
+    }
+
+    free(elements);
+}
+
+int main(void) {
+    int list[] = {1, 2, 2, 3, 4, 4, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    
+    find_frequency(list, size);
+    
+    return 0;
+}

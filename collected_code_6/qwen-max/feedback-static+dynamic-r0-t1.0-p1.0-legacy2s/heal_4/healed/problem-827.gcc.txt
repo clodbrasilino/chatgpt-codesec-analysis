@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-827.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-827.c:16:23: error: variable-sized object may not be initialized except with an empty initializer
+   16 |     int data1[cols] = {1, 2, 3, 4};
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-827.c:17:23: error: variable-sized object may not be initialized except with an empty initializer
+   17 |     int data2[cols] = {5, 6, 7, 8};
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-827.c:18:23: error: variable-sized object may not be initialized except with an empty initializer
+   18 |     int data3[cols] = {9, 10, 11, 12};
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-827.c:20:23: error: variable-sized object may not be initialized except with an empty initializer
+   20 |     int *list[rows] = {data1, data2, data3};
+      |                       ^

@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void find_adverbs(const char *sentence) {
+    regex_t regex;
+    regmatch_t match[1];
+    /* Possible weaknesses found:
+     *  The scope of the variable 'reti' can be reduced. [variableScope]
+     */
+    int reti;
+
+    if (regcomp(&regex, "\\b\\w+ly\\b", REG_EXTENDED|REG_NOSUB) != 0) {
+        return;
+    }
+
+    for (size_t i = 0; i < strlen(sentence); i++) {
+        reti = regexec(&regex, sentence + i, 1, match, 0);
+        if (!reti) {
+            size_t start = match[0].rm_so + i;
+            size_t end = match[0].rm_eo + i;
+            printf("Adverb: %.*s at position %zu to %zu\n", (int)(end - start), sentence + start, start, end - 1);
+            i += end - start - 1;
+        } else if (reti == REG_NOMATCH) {
+            continue;
+        } else {
+            regfree(&regex);
+            return;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    const char *sentence = "He quickly and quietly walked away.";
+    find_adverbs(sentence);
+    return 0;
+}

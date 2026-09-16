@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+int check_first_last_equal(const char *str)
+{
+    size_t len;
+    
+    if (str == NULL)
+        return 0;
+    
+    len = strlen(str);
+    
+    if (len == 0)
+        return 0;
+    
+    return (str[0] == str[len - 1]);
+}
+
+int main(void)
+{
+    char str1[] = "helloh";
+    char str2[] = "world";
+    char str3[] = "";
+    
+    printf("String: \"%s\" - First and last characters are %s\n", 
+           str1, check_first_last_equal(str1) ? "equal" : "not equal");
+    
+    printf("String: \"%s\" - First and last characters are %s\n", 
+           str2, check_first_last_equal(str2) ? "equal" : "not equal");
+    
+    printf("String: \"%s\" - First and last characters are %s\n", 
+           str3, check_first_last_equal(str3) ? "equal" : "not equal");
+    
+    return 0;
+}

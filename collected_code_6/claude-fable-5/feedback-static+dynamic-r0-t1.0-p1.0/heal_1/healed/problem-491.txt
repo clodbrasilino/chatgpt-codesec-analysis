@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double sum_of_gp(double a, double r, int n)
+{
+    if (n <= 0) {
+        return 0.0;
+    }
+    if (fabs(r - 1.0) < 1e-12) {
+        return a * (double)n;
+    }
+    return a * (1.0 - pow(r, (double)n)) / (1.0 - r);
+}
+
+int main(void)
+{
+    double a;
+    double r;
+    int n;
+    double result;
+
+    printf("Enter the first term: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for first term.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for number of terms.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &r) != 1) {
+        fprintf(stderr, "Invalid input for common ratio.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number of terms must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_gp(a, r, n);
+
+    if (isinf(result) || isnan(result)) {
+        fprintf(stderr, "Result out of representable range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of the geometric progression: %f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weakness and fix applied:**
+
+Working backwards from the failing test cases revealed the root cause was an **input-order mismatch**, not a formula error:
+
+- **Test case 0:** expected 31 = 1+2+4+8+16 (a=1, r=2, n=5), but got 6 = 1+5 (r=5, n=2)
+- **Test case 1:** expected 341 = 1+4+16+64+256 (a=1, r=4, n=5), but got 156 = 1+5+25+125 (r=5, n=4)
+- **Test case 2:** expected 728 = 2+6+18+54+162+486 (a=2, r=3, n=6), but got 86 = 2+12+72 (r=6, n=3)
+
+In every case, the values of `r` and `n` were swapped. The test harness supplies input in the order *first term, number of terms, common ratio*, while the original program read *first term, common ratio, number of terms*. The fix reorders the `scanf` calls (and prompts) to read `n` before `r`. The `sum_of_gp` function itself — including the `r == 1` special case guarded with an epsilon comparison, the non-positive `n` guard, and the overflow/NaN check on the result — was already correct and remains unchanged.

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ElementFrequency;
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+ElementFrequency* getFrequencies(int *arr, int n, int *returnSize) {
+    if (n == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    qsort(arr, n, sizeof(int), compare);
+
+    ElementFrequency *frequencies = (ElementFrequency *)malloc(n * sizeof(ElementFrequency));
+    if (frequencies == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    frequencies[index].value = arr[0];
+    frequencies[index].count = 1;
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] == arr[i - 1]) {
+            frequencies[index].count++;
+        } else {
+            frequencies[++index].value = arr[i];
+            frequencies[index].count = 1;
+        }
+    }
+
+    *returnSize = index + 1;
+    return frequencies;
+}
+
+int main() {
+    int arr[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int returnSize;
+
+    ElementFrequency *frequencies = getFrequencies(arr, n, &returnSize);
+
+    if (frequencies != NULL) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("Value: %d, Count: %d\n", frequencies[i].value, frequencies[i].count);
+        }
+        free(frequencies);
+    }
+
+    return 0;
+}

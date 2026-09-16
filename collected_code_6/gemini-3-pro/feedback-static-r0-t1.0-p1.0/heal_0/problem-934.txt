@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint64_t calculate_delannoy(uint32_t n, uint32_t m);
+
+uint64_t get_nth_delannoy(uint32_t n) {
+    return calculate_delannoy(n, n);
+}
+
+uint64_t calculate_delannoy(uint32_t n, uint32_t m) {
+    if (n == 0 || m == 0) {
+        return 1;
+    }
+
+    uint64_t **dp = (uint64_t **)malloc((n + 1) * sizeof(uint64_t *));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (uint32_t i = 0; i <= n; i++) {
+        dp[i] = (uint64_t *)malloc((m + 1) * sizeof(uint64_t));
+        if (dp[i] == NULL) {
+            for (uint32_t j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+
+    for (uint32_t i = 0; i <= n; i++) {
+        dp[i][0] = 1;
+    }
+    for (uint32_t j = 0; j <= m; j++) {
+        dp[0][j] = 1;
+    }
+
+    for (uint32_t i = 1; i <= n; i++) {
+        for (uint32_t j = 1; j <= m; j++) {
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1] + dp[i - 1][j - 1];
+        }
+    }
+
+    uint64_t result = dp[n][m];
+
+    for (uint32_t i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void) {
+    uint32_t n = 3;
+    uint64_t delannoy = get_nth_delannoy(n);
+    if (delannoy != 0 || n == 0) {
+        printf("%llu\n", (unsigned long long)delannoy);
+    } else {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

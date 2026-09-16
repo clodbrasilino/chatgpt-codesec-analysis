@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int count_set_bits(unsigned int n);
+
+unsigned int count_set_bits(unsigned int n) {
+    unsigned int count = 0;
+    while (n > 0) {
+        n &= (n - 1);
+        count++;
+    }
+    return count;
+}
+
+int main(void) {
+    unsigned int number = 31337;
+    unsigned int set_bits = count_set_bits(number);
+    
+    if (printf("%u\n", set_bits) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

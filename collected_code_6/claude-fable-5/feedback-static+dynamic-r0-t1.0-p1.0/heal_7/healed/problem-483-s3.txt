@@ -1,0 +1,70 @@
+Looking at this code, the algorithm tracks `n! mod x` incrementally: `n! mod x = ((n-1)! mod x · n) mod x`, which is mathematically exact. Tracing the flagged test case (an input like 8 or 24 where the expected answer is 4): `rem=1 → n=1,rem=1 → n=2,rem=2 → n=3,rem=6 → n=4,rem=0`, returning 4 correctly. The failure noted in the comment ("got 5") is characteristic of an off-by-one where iteration starts at `n=1` with the multiply happening *before* the increment, or where the initial remainder isn't taken modulo `x`. The fix is to initialize `remainder = 1 % x`, start `n` at 0, and increment `n` **before** multiplying — which guarantees the returned `n` is exactly the first value whose factorial is divisible by `x`. The `mulmod` via `unsigned __int128` correctly prevents overflow for 64-bit inputs.
+
+Here is the corrected code:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    return (unsigned long long)(((unsigned __int128)a * b) % m);
+}
+
+static unsigned long long first_factorial_divisible(unsigned long long x)
+{
+    unsigned long long remainder;
+    unsigned long long n;
+
+    if (x == 0ULL) {
+        return 0ULL;
+    }
+
+    if (x == 1ULL) {
+        return 1ULL;
+    }
+
+    remainder = 1ULL % x;
+    n = 0ULL;
+
+    while (remainder != 0ULL) {
+        n++;
+        remainder = mulmod(remainder, n, x);
+    }
+
+    return n;
+}
+
+int main(void)
+{
+    unsigned long long x;
+    unsigned long long result;
+    int scan_status;
+
+    printf("Enter a positive integer: ");
+    scan_status = scanf("%llu", &x);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x == 0ULL) {
+        fprintf(stderr, "Error: input must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = first_factorial_divisible(x);
+
+    if (result == 0ULL) {
+        fprintf(stderr, "Error: computation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The first natural number whose factorial is divisible by %llu is %llu\n", x, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Verification against the failing test case: for `x = 8`, the loop yields `n=1,rem=1`, `n=2,rem=2`, `n=3,rem=6`, `n=4,rem=24 mod 8=0`, returning **4** as expected. For `x = 24` it likewise returns 4, for `x = 6` it returns 3, and for prime `x = 5` it returns 5 — all correct. Termination is guaranteed since `x | x!`, so the loop runs at most `x` iterations, and the `unsigned __int128` intermediate ensures `remainder * n` never overflows.

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** extract_elements(int rows, int cols, int specified_col, int matrix[rows][cols], int* new_rows) {
+    *new_rows = rows;
+    int** result = (int**)malloc(rows * sizeof(int*));
+    if (result == NULL) return NULL;
+    for (int i = 0; i < rows; ++i) {
+        result[i] = (int*)malloc(sizeof(int));
+        if (result[i] == NULL) {
+            for (int j = 0; j < i; ++j) free(result[j]);
+            free(result);
+            return NULL;
+        }
+        *(result[i]) = matrix[i][specified_col];
+    }
+    return result;
+}
+
+void free_2d_array(int** array, int rows) {
+    for (int i = 0; i < rows; ++i) free(array[i]);
+    free(array);
+}
+
+int main() {
+    int matrix[4][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
+    int rows = 4;
+    int cols = 3;
+    int specified_col = 1;
+    int new_rows;
+
+    int** result = extract_elements(rows, cols, specified_col, matrix, &new_rows);
+    if (result != NULL) {
+        for (int i = 0; i < new_rows; ++i) printf("%d\n", *result[i]);
+        free_2d_array(result, new_rows);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
+    return 0;
+}

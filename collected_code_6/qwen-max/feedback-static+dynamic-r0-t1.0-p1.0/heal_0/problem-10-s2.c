@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+void get_n_smallest(int *data, int data_size, int *result, int n) {
+    qsort(data, data_size, sizeof(int), compare);
+    for (int i = 0; i < n && i < data_size; i++) {
+        result[i] = data[i];
+    }
+}
+
+int main() {
+    int data[] = {10, 7, 8, 9, 1, 5, 3, 6, 4, 2};
+    int data_size = sizeof(data) / sizeof(data[0]);
+    int n = 5;
+    int *result = (int *)malloc(n * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    get_n_smallest(data, data_size, result, n);
+
+    for (int i = 0; i < n; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

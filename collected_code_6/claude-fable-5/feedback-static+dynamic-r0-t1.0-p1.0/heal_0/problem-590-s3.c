@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Rectangular;
+
+typedef struct {
+    double r;
+    double theta;
+} Polar;
+
+Rectangular polar_to_rectangular(Polar p)
+{
+    Rectangular result;
+
+    result.x = p.r * cos(p.theta);
+    result.y = p.r * sin(p.theta);
+
+    return result;
+}
+
+int main(void)
+{
+    Polar input;
+    Rectangular output;
+
+    printf("Enter radius: ");
+    if (scanf("%lf", &input.r) != 1) {
+        fprintf(stderr, "Error: invalid input for radius\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input.r < 0.0) {
+        fprintf(stderr, "Error: radius must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter angle in radians: ");
+    if (scanf("%lf", &input.theta) != 1) {
+        fprintf(stderr, "Error: invalid input for angle\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(input.r) || !isfinite(input.theta)) {
+        fprintf(stderr, "Error: input values must be finite\n");
+        return EXIT_FAILURE;
+    }
+
+    output = polar_to_rectangular(input);
+
+    if (!isfinite(output.x) || !isfinite(output.y)) {
+        fprintf(stderr, "Error: computation resulted in non-finite values\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rectangular coordinates: x = %.6f, y = %.6f\n", output.x, output.y);
+
+    return EXIT_SUCCESS;
+}

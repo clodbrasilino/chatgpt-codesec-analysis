@@ -1,0 +1,1 @@
+(void)setvbuf(stdout, NULL, _IONBF, 0);

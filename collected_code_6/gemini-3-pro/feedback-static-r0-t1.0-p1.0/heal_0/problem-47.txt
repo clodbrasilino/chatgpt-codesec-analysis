@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLastDigit(long long a, long long b) {
+    if (a < 0 || b < 0 || a > b) {
+        return -1;
+    }
+    
+    if (a == b) {
+        return 1;
+    }
+    
+    if (b - a >= 5) {
+        return 0;
+    }
+    
+    long long result = 1;
+    for (long long i = a + 1; i <= b; ++i) {
+        result = (result * (i % 10)) % 10;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    long long a = 0;
+    long long b = 0;
+    
+    if (scanf("%lld %lld", &a, &b) != 2) {
+        return EXIT_FAILURE;
+    }
+    
+    int lastDigit = findLastDigit(a, b);
+    
+    if (lastDigit == -1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", lastDigit);
+    
+    return EXIT_SUCCESS;
+}
+```

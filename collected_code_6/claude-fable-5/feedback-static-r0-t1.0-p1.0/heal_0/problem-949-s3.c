@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_TUPLE_SIZE 4
+
+typedef struct {
+    int values[MAX_TUPLE_SIZE];
+    size_t count;
+} Tuple;
+
+static size_t digit_count(int n)
+{
+    size_t count = 0;
+    long v = n;
+
+    if (v < 0) {
+        v = -v;
+    }
+    if (v == 0) {
+        return 1;
+    }
+    while (v > 0) {
+        count++;
+        v /= 10;
+    }
+    return count;
+}
+
+static size_t tuple_digit_total(const Tuple *t)
+{
+    size_t total = 0;
+    size_t i;
+
+    for (i = 0; i < t->count; i++) {
+        total += digit_count(t->values[i]);
+    }
+    return total;
+}
+
+static int compare_tuples(const void *a, const void *b)
+{
+    const Tuple *ta = (const Tuple *)a;
+    const Tuple *tb = (const Tuple *)b;
+    size_t da = tuple_digit_total(ta);
+    size_t db = tuple_digit_total(tb);
+
+    if (da < db) {
+        return -1;
+    }
+    if (da > db) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_tuples_by_digits(Tuple *tuples, size_t n)
+{
+    if (tuples == NULL || n == 0) {
+        return -1;
+    }
+    qsort(tuples, n, sizeof(Tuple), compare_tuples);
+    return 0;
+}
+
+static void print_tuples(const Tuple *tuples, size_t n)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < n; i++) {
+        printf("(");
+        for (j = 0; j < tuples[i].count; j++) {
+            printf("%d", tuples[i].values[j]);
+            if (j + 1 < tuples[i].count) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        { {3, 4, 6, 723}, 4 },
+        { {1, 2}, 2 },
+        { {12, 1456, 4, 9}, 4 },
+        { {56}, 1 }
+    };
+    size_t n = sizeof(tuples) / sizeof(tuples[0]);
+
+    if (sort_tuples_by_digits(tuples, n) != 0) {
+        fprintf(stderr, "Error: invalid input to sort function\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sorted tuples by total digit count:\n");
+    print_tuples(tuples, n);
+
+    return EXIT_SUCCESS;
+}

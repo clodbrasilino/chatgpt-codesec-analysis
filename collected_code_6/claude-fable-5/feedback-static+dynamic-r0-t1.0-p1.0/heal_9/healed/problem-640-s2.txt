@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(outer (inner) text)ing",
+        "alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            free(output);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The symptoms described in the original comments (garbage characters like `�"?` in the output) are classic signs of reading uninitialized or non-null-terminated memory. The likely weaknesses in an earlier version of this code would have been:
+
+1. **Using `malloc` instead of `calloc`** without null-terminating the result — the buffer would contain indeterminate bytes, producing the garbage output seen in the failing test cases.
+2. **Missing the explicit `result[j] = '\0';`** terminator after the copy loop.
+3. **Undersized allocation** (e.g., `malloc(len)` instead of `len + 1`), causing a heap buffer overflow when writing the terminator.
+
+The fixes present in the rewritten version:
+
+- `calloc(len + 1, sizeof(char))` zero-initializes the entire buffer, guaranteeing null termination even before the explicit terminator is written.
+- `result[j] = '\0';` explicitly terminates the string as defense in depth.
+- `NULL` input and allocation failure are both checked, avoiding undefined behavior from `strlen(NULL)` or writing through a null pointer.
+- Every allocation is freed on both success and failure paths, so there are no memory leaks.
+- `depth > 0` guard prevents unbalanced closing parentheses from driving `depth` negative and corrupting the filtering logic.
+
+With these in place, all three test cases produce `python`, `string`, and `alpha` as expected, and the program exits with `EXIT_SUCCESS`.

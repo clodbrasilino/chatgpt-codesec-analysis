@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void extract_elements(int **array, int size, int col, int *result) {
+    for (int i = 0; i < size; ++i) {
+        if (col >= 0 && array[i] != NULL) {
+            result[i] = array[i][col];
+        }
+    }
+}
+
+int main() {
+    int rows = 3;
+    int cols = 4;
+    int col_index = 1;
+
+    int **matrix = (int **)malloc(rows * sizeof(int *));
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = (int *)malloc(cols * sizeof(int));
+        for (int j = 0; j < cols; ++j) {
+            matrix[i][j] = i * cols + j;
+        }
+    }
+
+    int *result = (int *)malloc(rows * sizeof(int));
+
+    extract_elements(matrix, rows, col_index, result);
+
+    for (int i = 0; i < rows; ++i) {
+        printf("%d\n", result[i]);
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    free(result);
+
+    return 0;
+}

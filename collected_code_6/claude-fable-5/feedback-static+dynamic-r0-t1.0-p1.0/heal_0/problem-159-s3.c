@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int days_in_month(int month)
+{
+    static const int days[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
+    if (month < 1 || month > 12) {
+        return 0;
+    }
+    return days[month - 1];
+}
+
+static const char *get_season(int month, int day)
+{
+    if (month < 1 || month > 12) {
+        return NULL;
+    }
+    if (day < 1 || day > days_in_month(month)) {
+        return NULL;
+    }
+
+    if ((month == 3 && day >= 20) || month == 4 || month == 5 ||
+        (month == 6 && day < 21)) {
+        return "Spring";
+    }
+    if ((month == 6 && day >= 21) || month == 7 || month == 8 ||
+        (month == 9 && day < 22)) {
+        return "Summer";
+    }
+    if ((month == 9 && day >= 22) || month == 10 || month == 11 ||
+        (month == 12 && day < 21)) {
+        return "Autumn";
+    }
+    return "Winter";
+}
+
+static int print_season(int month, int day)
+{
+    const char *season = get_season(month, day);
+
+    if (season == NULL) {
+        if (fprintf(stderr, "Invalid date: month=%d day=%d\n", month, day) < 0) {
+            return -1;
+        }
+        return -1;
+    }
+    if (printf("The season is: %s\n", season) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int month = 0;
+    int day = 0;
+
+    if (printf("Enter month (1-12): ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%d", &month) != 1) {
+        if (fprintf(stderr, "Failed to read month\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Enter day: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%d", &day) != 1) {
+        if (fprintf(stderr, "Failed to read day\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (print_season(month, day) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

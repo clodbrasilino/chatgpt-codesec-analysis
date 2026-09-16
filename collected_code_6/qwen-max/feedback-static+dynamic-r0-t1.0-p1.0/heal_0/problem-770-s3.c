@@ -1,0 +1,27 @@
+#include <stdio.h>
+
+long long sum_of_fourth_powers(int n) {
+    long long sum = 0;
+    int count = 0;
+    for (int i = 1; count < n; i += 2) {
+        sum += (long long)i * i * i * i;
+        count++;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    printf("Enter the number of first odd natural numbers: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    if (n <= 0) {
+        printf("Number must be positive.\n");
+        return 1;
+    }
+    long long result = sum_of_fourth_powers(n);
+    printf("Sum of the fourth power of the first %d odd natural numbers: %lld\n", n, result);
+    return 0;
+}

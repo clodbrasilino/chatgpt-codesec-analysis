@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long perrin_sum(int n, int *error)
+{
+    long long p0 = 3;
+    long long p1 = 0;
+    long long p2 = 2;
+    long long sum = 0;
+    int i;
+
+    *error = 0;
+
+    if (n < 0) {
+        *error = 1;
+        return 0;
+    }
+
+    if (n >= 1) {
+        sum += p0;
+    }
+    if (n >= 2) {
+        sum += p1;
+    }
+    if (n >= 3) {
+        sum += p2;
+    }
+
+    for (i = 3; i < n; i++) {
+        long long next;
+
+        if (p0 > LLONG_MAX - p1) {
+            *error = 1;
+            return 0;
+        }
+        next = p0 + p1;
+
+        if (sum > LLONG_MAX - next) {
+            *error = 1;
+            return 0;
+        }
+        sum += next;
+
+        p0 = p1;
+        p1 = p2;
+        p2 = next;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    int n;
+    int error;
+    long long result;
+
+    printf("Enter the number of Perrin terms to sum: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number of terms must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = perrin_sum(n, &error);
+    if (error != 0) {
+        fprintf(stderr, "Overflow or invalid argument detected.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of the first %d Perrin numbers: %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}

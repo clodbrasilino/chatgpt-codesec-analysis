@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long digit_distance(int num1, int num2) {
+    long long distance = 0;
+    long long val1 = num1;
+    long long val2 = num2;
+
+    if (val1 < 0) {
+        val1 = -val1;
+    }
+    if (val2 < 0) {
+        val2 = -val2;
+    }
+
+    if (val1 == 0 && val2 == 0) {
+        return 0;
+    }
+
+    while (val1 > 0 || val2 > 0) {
+        int d1 = val1 % 10;
+        int d2 = val2 % 10;
+        
+        int diff = d1 - d2;
+        if (diff < 0) {
+            diff = -diff;
+        }
+        distance += diff;
+        
+        val1 /= 10;
+        val2 /= 10;
+    }
+
+    return distance;
+}
+
+int main(void) {
+    int n1, n2;
+    
+    if (scanf("%d %d", &n1, &n2) != 2) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = digit_distance(n1, n2);
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

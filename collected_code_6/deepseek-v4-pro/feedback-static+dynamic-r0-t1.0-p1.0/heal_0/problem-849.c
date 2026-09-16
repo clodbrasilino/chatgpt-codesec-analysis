@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_prime(int n) {
+    if (n < 2) return 0;
+    if (n == 2) return 1;
+    if (n % 2 == 0) return 0;
+    for (int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) return 0;
+    }
+    return 1;
+}
+
+int sum_prime_divisors(int n) {
+    if (n <= 1) return 0;
+    
+    int sum = 0;
+    int temp = n;
+    
+    for (int i = 2; i * i <= temp; i++) {
+        if (temp % i == 0) {
+            if (is_prime(i)) {
+                sum += i;
+            }
+            while (temp % i == 0) {
+                temp /= i;
+            }
+        }
+    }
+    
+    if (temp > 1 && is_prime(temp)) {
+        sum += temp;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int number;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = sum_prime_divisors(number);
+    printf("Sum of prime divisors: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+}
+
+void print_list(Node *head) {
+    Node *temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->value);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+void find_greater_values(Node *head, int threshold) {
+    Node *temp = head;
+    while (temp != NULL) {
+        if (temp->value > threshold) {
+            printf("%d\n", temp->value);
+        }
+        temp = temp->next;
+    }
+}
+
+int main() {
+    Node *list = NULL;
+
+    append_node(&list, 10);
+    append_node(&list, 20);
+    append_node(&list, 5);
+    append_node(&list, 30);
+    append_node(&list, 15);
+
+    printf("List: ");
+    print_list(list);
+
+    int threshold = 15;
+    printf("Values greater than %d:\n", threshold);
+    find_greater_values(list, threshold);
+
+    Node *current = list;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+
+    return 0;
+}
+```

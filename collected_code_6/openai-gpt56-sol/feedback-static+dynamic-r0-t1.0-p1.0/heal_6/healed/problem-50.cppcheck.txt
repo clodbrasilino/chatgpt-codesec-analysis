@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-50.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-50.c:27:46: style: Parameter 'lists' can be declared as const array [constParameter]
+static size_t find_shortest_list(Node *const lists[const], size_t count)
+                                             ^

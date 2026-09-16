@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int find_remainder(int dividend, int divisor) {
+    if (divisor == 0) {
+        return -1;
+    }
+    return dividend % divisor;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter two numbers: ");
+    scanf("%d %d", &num1, &num2);
+    
+    int result = find_remainder(num1, num2);
+    if (result == -1) {
+        printf("Error: Division by zero\n");
+    } else {
+        printf("Remainder of %d divided by %d is %d\n", num1, num2, result);
+    }
+
+    return 0;
+}

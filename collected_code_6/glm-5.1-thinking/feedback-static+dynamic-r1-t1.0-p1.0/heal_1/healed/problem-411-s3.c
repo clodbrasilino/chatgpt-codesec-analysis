@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <ctype.h>
+
+char *snake_to_camel(const char *snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake_str);
+    char *camel_str = malloc(len + 1);
+    if (camel_str == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "_([a-z])", REG_EXTENDED);
+    if (ret != 0) {
+        free(camel_str);
+        return NULL;
+    }
+
+    size_t src_idx = 0;
+    size_t dst_idx = 0;
+
+    if (len > 0 && islower((unsigned char)snake_str[0])) {
+        camel_str[dst_idx++] = toupper((unsigned char)snake_str[0]);
+        src_idx++;
+    }
+
+    regmatch_t pmatch[2];
+
+    while (src_idx < len) {
+        int exec_ret = regexec(&regex, snake_str + src_idx, 2, pmatch, 0);
+        if (exec_ret == REG_NOMATCH) {
+            strcpy(camel_str + dst_idx, snake_str + src_idx);
+            dst_idx += len - src_idx;
+            break;
+        }
+
+        if (pmatch[0].rm_so == -1) {
+            break;
+        }
+
+        size_t match_start = src_idx + pmatch[0].rm_so;
+        size_t group_start = src_idx + pmatch[1].rm_so;
+
+        size_t copy_len = match_start - src_idx;
+        memcpy(camel_str + dst_idx, snake_str + src_idx, copy_len);
+        dst_idx += copy_len;
+
+        camel_str[dst_idx++] = toupper((unsigned char)snake_str[group_start]);
+
+        src_idx = src_idx + pmatch[0].rm_eo;
+    }
+
+    camel_str[dst_idx] = '\0';
+    regfree(&regex);
+    return camel_str;
+}
+
+int main(void) {
+    const char *input1 = "convert_snake_to_camel";
+    char *output1 = snake_to_camel(input1);
+    if (output1 != NULL) {
+        printf("%s -> %s\n", input1, output1);
+        free(output1);
+    }
+
+    const char *input2 = "alreadycamelcase";
+    char *output2 = snake_to_camel(input2);
+    if (output2 != NULL) {
+        printf("%s -> %s\n", input2, output2);
+        free(output2);
+    }
+
+    const char *input3 = "multiple_words_in_string";
+    char *output3 = snake_to_camel(input3);
+    if (output3 != NULL) {
+        printf("%s -> %s\n", input3, output3);
+        free(output3);
+    }
+
+    return 0;
+}

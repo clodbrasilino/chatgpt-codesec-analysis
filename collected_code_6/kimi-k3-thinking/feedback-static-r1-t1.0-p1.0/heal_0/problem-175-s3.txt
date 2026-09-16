@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+static bool is_opening(char c)
+{
+    return c == '(' || c == '[' || c == '{';
+}
+
+static bool is_closing(char c)
+{
+    return c == ')' || c == ']' || c == '}';
+}
+
+static bool is_matching(char open, char close)
+{
+    return (open == '(' && close == ')') ||
+           (open == '[' && close == ']') ||
+           (open == '{' && close == '}');
+}
+
+bool is_valid_parentheses(const char *s)
+{
+    if (s == NULL)
+    {
+        return false;
+    }
+
+    size_t len = strlen(s);
+    size_t capacity = (len == 0) ? 1 : len;
+    char *stack = malloc(capacity * sizeof(*stack));
+    if (stack == NULL)
+    {
+        return false;
+    }
+
+    size_t top = 0;
+    bool valid = true;
+
+    for (size_t i = 0; i < len; i++)
+    {
+        char c = s[i];
+        if (is_opening(c))
+        {
+            stack[top] = c;
+            top++;
+        }
+        else if (is_closing(c))
+        {
+            if (top == 0 || !is_matching(stack[top - 1], c))
+            {
+                valid = false;
+                break;
+            }
+            top--;
+        }
+    }
+
+    if (top != 0)
+    {
+        valid = false;
+    }
+
+    free(stack);
+    return valid;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "()",
+        "()[]{}",
+        "(]",
+        "([)]",
+        "{[]}",
+        "",
+        "(",
+        ")))",
+        "((()))"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+
+    for (size_t i = 0; i < count; i++)
+    {
+        printf("\"%s\" -> %s\n", tests[i],
+               is_valid_parentheses(tests[i]) ? "valid" : "invalid");
+    }
+
+    return 0;
+}
+```
+
+Key points addressing the CWE concerns:
+
+- **CWE-664**: The heap-allocated stack is freed on every exit path of `is_valid_parentheses`, the allocation size is bounded by the input length so the stack can never overflow, and `malloc(0)` is avoided by enforcing a minimum capacity.
+- **CWE-703**: `NULL` input and `malloc` failure are both checked and handled, empty strings are treated as valid, and the underflow case (closing bracket with an empty stack) is explicitly guarded.
+- **CWE-710**: The code is strictly conforming C99 — no implicit declarations, `main` has an explicit `int` return, sizes use `size_t`, `const`-correctness is applied, and helper functions have internal linkage via `static`.

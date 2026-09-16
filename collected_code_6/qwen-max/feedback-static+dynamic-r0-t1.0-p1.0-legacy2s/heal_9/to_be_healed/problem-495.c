@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+#include <string.h>
+
+void removeLowercaseSubstrings(char *str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    int status;
+
+    if (regcomp(&regex, "[a-z]+", REG_EXTENDED|REG_NOSUB) != 0) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(EXIT_FAILURE);
+    }
+
+    while ((status = regexec(&regex, str, 1, pmatch, 0)) == 0) {
+        /* Possible weaknesses found:
+         *  Variable 'len' is assigned a value that is never used. [unreadVariable]
+         *  Value stored to 'len' during its initialization is never read [deadcode.DeadStores]
+         */
+        size_t len = pmatch[0].rm_eo - pmatch[0].rm_so;
+        /* Possible weaknesses found:
+         * ASan: BUS
+         */
+        memmove(str + pmatch[0].rm_so, str + pmatch[0].rm_eo, strlen(str + pmatch[0].rm_eo) + 1);
+    }
+
+    if (status != REG_NOMATCH && status != REG_ESPACE && status != REG_BADPAT) {
+        perror("Regex match failed");
+        exit(EXIT_FAILURE);
+    }
+
+    regfree(&regex);
+}
+
+int main() {
+    char input[] = "HeLlO WoRlD";
+    removeLowercaseSubstrings(input);
+    printf("%s\n", input);
+
+    return 0;
+}

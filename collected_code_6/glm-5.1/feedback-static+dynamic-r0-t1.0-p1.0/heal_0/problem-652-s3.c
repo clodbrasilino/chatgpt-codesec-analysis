@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple* data;
+    int size;
+} TupleList;
+
+TupleList flatten_matrix(Tuple** matrix, int rows, int cols) {
+    TupleList list;
+    if (rows <= 0 || cols <= 0) {
+        list.data = NULL;
+        list.size = 0;
+        return list;
+    }
+
+    list.data = (Tuple*)malloc(rows * cols * sizeof(Tuple));
+    if (!list.data) {
+        list.size = 0;
+        return list;
+    }
+    list.size = rows * cols;
+
+    int index = 0;
+    for (int c = 0; c < cols; ++c) {
+        for (int r = 0; r < rows; ++r) {
+            list.data[index++] = matrix[r][c];
+        }
+    }
+
+    return list;
+}
+
+int main() {
+    int rows = 3;
+    int cols = 2;
+
+    Tuple** matrix = (Tuple**)malloc(rows * sizeof(Tuple*));
+    if (!matrix) {
+        return 1;
+    }
+
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = (Tuple*)malloc(cols * sizeof(Tuple));
+        if (!matrix[i]) {
+            for (int j = 0; j < i; ++j) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return 1;
+        }
+        for (int j = 0; j < cols; ++j) {
+            matrix[i][j].a = i * cols + j;
+            matrix[i][j].b = (i * cols + j) * 10;
+        }
+    }
+
+    TupleList flat_list = flatten_matrix(matrix, rows, cols);
+
+    for (int i = 0; i < flat_list.size; ++i) {
+        printf("(%d, %d)\n", flat_list.data[i].a, flat_list.data[i].b);
+    }
+
+    free(flat_list.data); 
+    for (int i = 0; i < rows; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
+    return 0;
+}

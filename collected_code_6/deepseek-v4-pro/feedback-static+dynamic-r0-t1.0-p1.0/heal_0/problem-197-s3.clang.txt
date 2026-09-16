@@ -1,0 +1,25 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:16:32: error: use of undeclared identifier 'INT_MAX'
+   16 |     if (a > 0 && b > 0 && a > (INT_MAX / b)) return -1;
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:17:32: error: use of undeclared identifier 'INT_MIN'
+   17 |     if (a > 0 && b < 0 && b < (INT_MIN / a)) return -1;
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:18:32: error: use of undeclared identifier 'INT_MIN'
+   18 |     if (a < 0 && b > 0 && a < (INT_MIN / b)) return -1;
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:19:32: error: use of undeclared identifier 'INT_MAX'
+   19 |     if (a < 0 && b < 0 && a < (INT_MAX / b)) return -1;
+      |                                ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:40:26: error: use of undeclared identifier 'INT_MAX'
+   40 |             if (result > INT_MAX || result < INT_MIN) {
+      |                          ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:40:46: error: use of undeclared identifier 'INT_MIN'
+   40 |             if (result > INT_MAX || result < INT_MIN) {
+      |                                              ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:48:21: error: use of undeclared identifier 'INT_MAX'
+   48 |             if (b > INT_MAX || b < INT_MIN) {
+      |                     ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s3.c:48:36: error: use of undeclared identifier 'INT_MIN'
+   48 |             if (b > INT_MAX || b < INT_MIN) {
+      |                                    ^~~~~~~
+8 errors generated.

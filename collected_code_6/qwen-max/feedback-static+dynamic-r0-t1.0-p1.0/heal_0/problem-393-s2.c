@@ -1,19 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct ListNode {
     int value;
-    struct Node *next;
-} Node;
+    struct ListNode *next;
+} ListNode;
 
-Node* create_node(int value) {
-    Node *new_node = (Node*)malloc(sizeof(Node));
-    new_node->value = value;
-    new_node->next = NULL;
-    return new_node;
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-int list_length(Node *head) {
+int listLength(ListNode *head) {
     int length = 0;
     while (head != NULL) {
         length++;
@@ -22,56 +25,37 @@ int list_length(Node *head) {
     return length;
 }
 
-Node* find_max_length_list(Node **lists, int num_lists) {
-    if (num_lists == 0) return NULL;
-
-    Node *max_list = lists[0];
-    int max_length = list_length(lists[0]);
-
-    for (int i = 1; i < num_lists; i++) {
-        int current_length = list_length(lists[i]);
-        if (current_length > max_length) {
-            max_length = current_length;
-            max_list = lists[i];
-        }
-    }
-
-    return max_list;
+ListNode* findMaxList(ListNode *list1, ListNode *list2) {
+    int len1 = listLength(list1);
+    int len2 = listLength(list2);
+    return len1 > len2 ? list1 : list2;
 }
 
 int main() {
-    Node *list1 = create_node(1);
-    list1->next = create_node(2);
-    list1->next->next = create_node(3);
+    ListNode *list1 = createNode(1);
+    list1->next = createNode(2);
+    list1->next->next = createNode(3);
 
-    Node *list2 = create_node(4);
-    list2->next = create_node(5);
+    ListNode *list2 = createNode(4);
+    list2->next = createNode(5);
 
-    Node *list3 = create_node(6);
-    list3->next = create_node(7);
-    list3->next->next = create_node(8);
-    list3->next->next->next = create_node(9);
+    ListNode *maxList = findMaxList(list1, list2);
 
-    Node *lists[] = {list1, list2, list3};
-    int num_lists = 3;
-
-    Node *max_list = find_max_length_list(lists, num_lists);
-
-    printf("Max Length List: ");
-    while (max_list != NULL) {
-        printf("%d -> ", max_list->value);
-        max_list = max_list->next;
+    for (ListNode *current = maxList; current != NULL; current = current->next) {
+        printf("%d ", current->value);
     }
-    printf("NULL\n");
+    printf("\n");
 
-    // Clean up
-    for (int i = 0; i < num_lists; i++) {
-        Node *current = lists[i];
-        while (current != NULL) {
-            Node *temp = current;
-            current = current->next;
-            free(temp);
-        }
+    while (list1 != NULL) {
+        ListNode *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
+
+    while (list2 != NULL) {
+        ListNode *temp = list2;
+        list2 = list2->next;
+        free(temp);
     }
 
     return 0;

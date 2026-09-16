@@ -4,91 +4,81 @@
 typedef struct {
     int *array;
     size_t size;
-    size_t count;
-} MinHeap;
+    size_t capacity;
+} Heap;
 
-void minHeapify(MinHeap *heap, size_t i) {
-    size_t smallest = i;
-    size_t left = 2 * i + 1;
-    size_t right = 2 * i + 2;
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
 
-    if (left < heap->count && heap->array[left] < heap->array[smallest])
+void heapify_up(Heap *h, size_t index) {
+    while (index > 0 && h->array[(index - 1) / 2] > h->array[index]) {
+        swap(&h->array[(index - 1) / 2], &h->array[index]);
+        index = (index - 1) / 2;
+    }
+}
+
+void heapify_down(Heap *h, size_t index) {
+    size_t smallest = index;
+    size_t left = 2 * index + 1;
+    size_t right = 2 * index + 2;
+
+    if (left < h->size && h->array[left] < h->array[smallest])
         smallest = left;
-
-    if (right < heap->count && heap->array[right] < heap->array[smallest])
+    if (right < h->size && h->array[right] < h->array[smallest])
         smallest = right;
 
-    if (smallest != i) {
-        int temp = heap->array[i];
-        heap->array[i] = heap->array[smallest];
-        heap->array[smallest] = temp;
-        minHeapify(heap, smallest);
+    if (smallest != index) {
+        swap(&h->array[index], &h->array[smallest]);
+        heapify_down(h, smallest);
     }
 }
 
-void push(MinHeap *heap, int val) {
-    if (heap->count == heap->size) {
-        heap->size *= 2;
-        heap->array = realloc(heap->array, heap->size * sizeof(int));
+void push(Heap *h, int value) {
+    if (h->size == h->capacity) {
+        h->capacity *= 2;
+        h->array = realloc(h->array, h->capacity * sizeof(int));
     }
-    heap->array[heap->count] = val;
-    size_t i = heap->count;
-    while (i != 0 && heap->array[(i - 1) / 2] > heap->array[i]) {
-        int temp = heap->array[i];
-        heap->array[i] = heap->array[(i - 1) / 2];
-        heap->array[(i - 1) / 2] = temp;
-        i = (i - 1) / 2;
-    }
-    heap->count++;
+    h->array[h->size++] = value;
+    heapify_up(h, h->size - 1);
 }
 
-int pop(MinHeap *heap) {
-    if (heap->count == 0) {
-        return -1; // Assuming -1 indicates an error
+int pop(Heap *h) {
+    if (h->size == 0) {
+        return -1; // Error case
     }
-    int root = heap->array[0];
-    heap->array[0] = heap->array[heap->count - 1];
-    heap->count--;
-    minHeapify(heap, 0);
-    return root;
+    int ret = h->array[0];
+    h->array[0] = h->array[--h->size];
+    heapify_down(h, 0);
+    return ret;
 }
 
-MinHeap *createHeap(size_t initialSize) {
-    MinHeap *heap = (MinHeap *)malloc(sizeof(MinHeap));
-    if (!heap) exit(EXIT_FAILURE);
-    heap->array = (int *)malloc(initialSize * sizeof(int));
-    if (!heap->array) {
-        free(heap);
-        exit(EXIT_FAILURE);
-    }
-    heap->size = initialSize;
-    heap->count = 0;
-    return heap;
+void init_heap(Heap *h) {
+    h->size = 0;
+    h->capacity = 16;
+    h->array = malloc(h->capacity * sizeof(int));
 }
 
-void freeHeap(MinHeap *heap) {
-    free(heap->array);
-    free(heap);
+void free_heap(Heap *h) {
+    free(h->array);
 }
 
 int main() {
-    MinHeap *heap = createHeap(5);
+    int values[] = {20, 15, 10, 5, 25, 30, 35};
+    Heap h;
+    init_heap(&h);
 
-    int values[] = {3, 1, 8, 2, 5};
-    for (size_t i = 0; i < 5; ++i) {
-        push(heap, values[i]);
+    for (size_t i = 0; i < sizeof(values) / sizeof(values[0]); ++i) {
+        push(&h, values[i]);
     }
 
-    for (size_t i = 0; i < 5; ++i) {
-        int val = pop(heap);
-        if (val != -1) {
-            printf("%d ", val);
-        } else {
-            break;
-        }
+    while (h.size > 0) {
+        printf("%d ", pop(&h));
     }
     printf("\n");
 
-    freeHeap(heap);
+    free_heap(&h);
     return 0;
 }

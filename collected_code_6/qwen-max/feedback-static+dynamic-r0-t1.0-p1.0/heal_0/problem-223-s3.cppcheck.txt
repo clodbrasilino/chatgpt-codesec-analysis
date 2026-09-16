@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-223-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-223-s3.c:12:27: style: Expression is always true because 'else if' condition is opposite to previous condition at line 9. [multiCondition]
+        } else if (arr[i] != candidate) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-223-s3.c:9:20: note: first condition
+        if (arr[i] == candidate) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-223-s3.c:12:27: note: else if condition is opposite to first condition
+        } else if (arr[i] != candidate) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-223-s3.c:4:24: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+bool has_majority(int *arr, int n) {
+                       ^

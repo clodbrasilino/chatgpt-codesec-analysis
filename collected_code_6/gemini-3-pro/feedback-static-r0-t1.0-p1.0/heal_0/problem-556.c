@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_odd_xor_pairs(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    long long even_count = 0;
+    long long odd_count = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            even_count++;
+        } else {
+            odd_count++;
+        }
+    }
+
+    return even_count * odd_count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    long long result = count_odd_xor_pairs(arr, size);
+
+    printf("Number of pairs with odd XOR: %lld\n", result);
+
+    return 0;
+}

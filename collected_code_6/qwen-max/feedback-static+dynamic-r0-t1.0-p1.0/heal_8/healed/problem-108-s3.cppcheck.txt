@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-108-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-108-s3.c:121:22: error: Using pointer to local variable 'new_head' that is out of scope. [invalidLifetime]
+            if (heads[i] == min_node) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-108-s3.c:123:46: note: Address of variable taken here.
+                heads[i] = iterators[i].next(&new_head);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-108-s3.c:123:46: note: Passed to initializer list.
+                heads[i] = iterators[i].next(&new_head);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-108-s3.c:122:23: note: Variable created here.
+                Node *new_head = NULL;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-108-s3.c:121:22: note: Using pointer to local variable 'new_head' that is out of scope.
+            if (heads[i] == min_node) {
+                     ^

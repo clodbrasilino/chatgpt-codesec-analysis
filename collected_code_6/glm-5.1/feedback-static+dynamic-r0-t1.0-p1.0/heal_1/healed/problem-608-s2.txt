@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long binomial(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    unsigned long long res = 1;
+    for (int i = 0; i < k; i++) {
+        res *= (unsigned long long)(n - i);
+        res /= (unsigned long long)(i + 1);
+    }
+    return res;
+}
+
+unsigned long long find_nth_bell_number(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+
+    unsigned long long *bell = (unsigned long long *)malloc((n + 1) * sizeof(unsigned long long));
+    if (bell == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    bell[0] = 1;
+
+    for (int i = 1; i <= n; i++) {
+        bell[i] = 0;
+        for (int j = 0; j < i; j++) {
+            bell[i] += (bell[j] * binomial(i - 1, j));
+        }
+    }
+
+    unsigned long long result = bell[n];
+    free(bell);
+    return result;
+}
+
+int main(void) {
+    int n = 10;
+    unsigned long long result = find_nth_bell_number(n);
+    printf("%llu\n", result);
+    return 0;
+}

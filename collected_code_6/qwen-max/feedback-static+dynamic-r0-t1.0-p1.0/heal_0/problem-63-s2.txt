@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMaxDifference(int **tuples, int n) {
+    if (n < 2) return -1;
+    int maxDiff = tuples[0][1] - tuples[0][0];
+    for (int i = 1; i < n; i++) {
+        int diff = tuples[i][1] - tuples[i][0];
+        if (diff > maxDiff) {
+            maxDiff = diff;
+        }
+    }
+    return maxDiff;
+}
+
+int main() {
+    int n = 5;
+    int *tuples[] = {
+        (int[]){3, 8},
+        (int[]){5, 2},
+        (int[]){7, 10},
+        (int[]){11, 14},
+        (int[]){1, 5}
+    };
+    
+    int result = findMaxDifference(tuples, n);
+    printf("Maximum difference: %d\n", result);
+    return 0;
+}
+```

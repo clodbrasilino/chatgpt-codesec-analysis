@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <limits.h>
+
+int is_integer(const char *str)
+{
+    char *endptr;
+    long value;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    if (value > INT_MAX || value < INT_MIN) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "123",
+        "-456",
+        "+789",
+        "12.5",
+        "abc",
+        "",
+        "  42  ",
+        "2147483648",
+        "-2147483648",
+        "99x"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (is_integer(tests[i])) {
+            if (printf("\"%s\" is an integer\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("\"%s\" is not an integer\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

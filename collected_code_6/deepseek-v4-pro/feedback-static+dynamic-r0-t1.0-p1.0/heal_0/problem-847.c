@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *item;
+} SingletonTuple;
+
+Node *copy_list_from_singleton_tuple(SingletonTuple tuple) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    Node *current = tuple.item;
+
+    while (current != NULL) {
+        Node *new_node = (Node *)malloc(sizeof(Node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                Node *temp = head;
+                head = head->next;
+                free(temp);
+            }
+            return NULL;
+        }
+        new_node->data = current->data;
+        new_node->next = NULL;
+
+        if (tail == NULL) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+        current = current->next;
+    }
+    return head;
+}
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *original = create_node(10);
+    original->next = create_node(20);
+    original->next->next = create_node(30);
+
+    SingletonTuple tuple;
+    tuple.item = original;
+
+    Node *copied = copy_list_from_singleton_tuple(tuple);
+
+    if (copied == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_list(original);
+        return 1;
+    }
+
+    Node *current = copied;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+
+    free_list(original);
+    free_list(copied);
+
+    return 0;
+}

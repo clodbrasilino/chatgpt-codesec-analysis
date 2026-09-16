@@ -1,4 +1,7 @@
-Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-539.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-539.c:26:11: style: The scope of the variable 'temp' can be reduced. [variableScope]
-    Node *temp;
-          ^
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-539.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-539.c:42:25: style: Parameter 'bases' can be declared as pointer to const [constParameterPointer]
+ListNode *mapPower(int *bases, int *indices, int size) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-539.c:42:37: style: Parameter 'indices' can be declared as pointer to const [constParameterPointer]
+ListNode *mapPower(int *bases, int *indices, int size) {
+                                    ^

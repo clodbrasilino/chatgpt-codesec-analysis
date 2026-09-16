@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <regex.h>
+
+int check_same_start_end(const char *str) {
+    int ret;
+    regex_t regex;
+    const char *pattern = "^(.).*\\1$";
+
+    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB) != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    const char *test_strings[] = {"hello", "aba", "12321", "a", "abc"};
+    int size = sizeof(test_strings) / sizeof(test_strings[0]);
+    for (int i = 0; i < size; ++i) {
+        int result = check_same_start_end(test_strings[i]);
+        printf("%s: %s\n", test_strings[i], result == 1 ? "True" : "False");
+    }
+    return 0;
+}

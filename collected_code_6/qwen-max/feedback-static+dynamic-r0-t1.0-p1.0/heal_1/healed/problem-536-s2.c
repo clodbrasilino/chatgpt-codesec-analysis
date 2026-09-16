@@ -1,32 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void nth_items(const int *list, int size, int n, int *result, int *resultSize) {
-    int count = 0;
-    for (int i = n - 1; i < size; i += n) {
-        result[count++] = list[i];
+void* select_nth_item(const void** list, size_t n, size_t element_size) {
+    if (n >= ((size_t)(-1) / element_size)) {
+        return NULL;
     }
-    *resultSize = count;
+    return (const char*)list + n * element_size;
 }
 
 int main() {
-    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    int size = sizeof(arr) / sizeof(arr[0]);
-    int n = 3;
-    int resultSize;
-    int *result = malloc(size * sizeof(int));
-    
-    if (result == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
+    int a[] = {10, 20, 30, 40, 50};
+    const int* list = a;
+    size_t n = 2;
+
+    const int* nth_item = (const int*)select_nth_item((const void**)list, n, sizeof(int));
+    if (nth_item != NULL) {
+        printf("%d\n", *nth_item);
+    } else {
+        fprintf(stderr, "Failed to retrieve the nth item.\n");
     }
-    
-    nth_items(arr, size, n, result, &resultSize);
-    
-    for (int i = 0; i < resultSize; i++) {
-        printf("%d ", result[i]);
-    }
-    
-    free(result);
+
     return 0;
 }

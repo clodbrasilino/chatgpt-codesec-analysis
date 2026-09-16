@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+static struct Node *create_node(int value)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = value;
+    node->next = NULL;
+    return node;
+}
+
+static struct Node *append(struct Node *head, int value)
+{
+    struct Node *node = create_node(value);
+    if (head == NULL) {
+        return node;
+    }
+    struct Node *cur = head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return head;
+}
+
+static struct Node *merge_sorted(struct Node *a, struct Node *b)
+{
+    struct Node dummy;
+    struct Node *tail = &dummy;
+    dummy.next = NULL;
+
+    while (a != NULL && b != NULL) {
+        if (a->data <= b->data) {
+            tail->next = a;
+            a = a->next;
+        } else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != NULL) {
+        tail->next = a;
+    } else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+static void print_list(const struct Node *head)
+{
+    const struct Node *cur = head;
+    while (cur != NULL) {
+        printf("%d ", cur->data);
+        cur = cur->next;
+    }
+    printf("\n");
+}
+
+static void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    struct Node *list1 = NULL;
+    struct Node *list2 = NULL;
+    struct Node *merged = NULL;
+
+    list1 = append(list1, 1);
+    list1 = append(list1, 3);
+    list1 = append(list1, 5);
+    list1 = append(list1, 7);
+
+    list2 = append(list2, 2);
+    list2 = append(list2, 4);
+    list2 = append(list2, 6);
+    list2 = append(list2, 8);
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+
+    merged = merge_sorted(list1, list2);
+
+    printf("Merged: ");
+    print_list(merged);
+
+    free_list(merged);
+
+    return EXIT_SUCCESS;
+}
+```

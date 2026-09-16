@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *abbreviate_road(const char *input);
+
+char *abbreviate_road(const char *input)
+{
+    size_t len;
+    size_t i = 0;
+    size_t j = 0;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    while (input[i] != '\0') {
+        if (strncmp(&input[i], "road", 4U) == 0) {
+            result[j] = 'r';
+            j++;
+            result[j] = 'd';
+            j++;
+            result[j] = '.';
+            j++;
+            i += 4U;
+        } else {
+            result[j] = input[i];
+            j++;
+            i++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "Take the main road until the road ends.";
+    char *abbreviated;
+
+    abbreviated = abbreviate_road(text);
+    if (abbreviated == NULL) {
+        (void)fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original:    %s\n", text) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Abbreviated: %s\n", abbreviated) < 0) {
+        free(abbreviated);
+        return EXIT_FAILURE;
+    }
+
+    free(abbreviated);
+    abbreviated = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions addressing the specified CWEs:**
+
+- **CWE-664 (Resource lifetime):** The allocated buffer is freed exactly once on every exit path, and the pointer is set to `NULL` after freeing to prevent dangling-pointer misuse. Ownership of the returned buffer is clearly transferred to the caller.
+
+- **CWE-703 (Exceptional conditions):** Every fallible operation is checked — `malloc` return value, `NULL` input parameter, and even `printf` return values. Failure paths clean up resources before returning `EXIT_FAILURE`.
+
+- **CWE-710 (Coding standards):** The code follows strict conventions: full function prototype declared before use, `int main(void)` signature, no implicit conversions (unsigned literals for `size_t` arithmetic), explicit `(void)` cast for the intentionally-ignored `fprintf` return in the error path, single-purpose statements, and standard exit codes via `EXIT_SUCCESS`/`EXIT_FAILURE`.
+
+Note that since `"rd."` (3 chars) is shorter than `"road"` (4 chars), the output can never exceed the input length, so allocating `len + 1` bytes is provably sufficient with no risk of buffer overflow.

@@ -1,0 +1,15 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double degrees_to_radians(double degrees) {
+    return degrees * (M_PI / 180.0);
+}
+
+int main(void) {
+    double deg = 180.0;
+    double rad = degrees_to_radians(deg);
+    printf("%f\n", rad);
+    return 0;
+}
+```

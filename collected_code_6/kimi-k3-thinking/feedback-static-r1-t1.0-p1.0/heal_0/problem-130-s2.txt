@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int findMaxFrequency(const int *arr, size_t size, int *result)
+{
+    size_t i;
+    size_t j;
+    size_t maxCount;
+    int maxItem;
+
+    if (arr == NULL || result == NULL || size == 0)
+    {
+        return -1;
+    }
+
+    maxItem = arr[0];
+    maxCount = 0;
+
+    for (i = 0; i < size; i++)
+    {
+        size_t count = 0;
+
+        for (j = 0; j < size; j++)
+        {
+            if (arr[j] == arr[i])
+            {
+                count++;
+            }
+        }
+
+        if (count > maxCount)
+        {
+            maxCount = count;
+            maxItem = arr[i];
+        }
+    }
+
+    *result = maxItem;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 3, 2, 3, 4, 3, 2, 2, 2, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int maxFreqItem = 0;
+
+    if (findMaxFrequency(arr, size, &maxFreqItem) != 0)
+    {
+        fprintf(stderr, "Error: invalid input provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Item with maximum frequency: %d\n", maxFreqItem);
+
+    return EXIT_SUCCESS;
+}
+```

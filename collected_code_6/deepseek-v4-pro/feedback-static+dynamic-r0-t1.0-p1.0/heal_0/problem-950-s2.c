@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+const char *get_chinese_zodiac(int year) {
+    const char *zodiac[] = {
+        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
+        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
+    };
+    
+    int index = (year - 4) % 12;
+    if (index < 0) {
+        index += 12;
+    }
+    
+    return zodiac[index];
+}
+
+void display_chinese_zodiac(int year) {
+    printf("Year %d: %s\n", year, get_chinese_zodiac(year));
+}
+
+int main(void) {
+    int years[] = {2024, 2000, 1988, 1976, 1964, 0};
+    size_t count = sizeof(years) / sizeof(years[0]);
+    
+    for (size_t i = 0; i < count; i++) {
+        display_chinese_zodiac(years[i]);
+    }
+    
+    return EXIT_SUCCESS;
+}

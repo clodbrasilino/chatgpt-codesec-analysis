@@ -1,0 +1,44 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c: In function 'calculateHexagonGrid':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:31:37: error: request for member 'x' in something not a structure or union
+   31 |             hexGrid[i * cols + j][0].x = x_offset;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:32:37: error: request for member 'y' in something not a structure or union
+   32 |             hexGrid[i * cols + j][0].y = y_offset;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:34:37: error: request for member 'x' in something not a structure or union
+   34 |             hexGrid[i * cols + j][1].x = x_offset + size * 0.5;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:35:37: error: request for member 'y' in something not a structure or union
+   35 |             hexGrid[i * cols + j][1].y = y_offset - (size * 0.866);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:37:37: error: request for member 'x' in something not a structure or union
+   37 |             hexGrid[i * cols + j][2].x = x_offset + size * 1.5;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:38:37: error: request for member 'y' in something not a structure or union
+   38 |             hexGrid[i * cols + j][2].y = y_offset;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:40:37: error: request for member 'x' in something not a structure or union
+   40 |             hexGrid[i * cols + j][3].x = x_offset + size * 1.5;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:41:37: error: request for member 'y' in something not a structure or union
+   41 |             hexGrid[i * cols + j][3].y = y_offset + (size * 0.866);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:43:37: error: request for member 'x' in something not a structure or union
+   43 |             hexGrid[i * cols + j][4].x = x_offset + size * 0.5;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:44:37: error: request for member 'y' in something not a structure or union
+   44 |             hexGrid[i * cols + j][4].y = y_offset + (size * 1.732);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:46:37: error: request for member 'x' in something not a structure or union
+   46 |             hexGrid[i * cols + j][5].x = x_offset;
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:47:37: error: request for member 'y' in something not a structure or union
+   47 |             hexGrid[i * cols + j][5].y = y_offset + (size * 0.866);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c: In function 'printHexagonGrid':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:58:82: error: request for member 'x' in something not a structure or union
+   58 |                 printf("  Vertex %d: (%.2f, %.2f)\n", k, hexGrid[i * cols + j][k].x, hexGrid[i * cols + j][k].y);
+      |                                                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-493.c:58:110: error: request for member 'y' in something not a structure or union
+   58 |                 printf("  Vertex %d: (%.2f, %.2f)\n", k, hexGrid[i * cols + j][k].x, hexGrid[i * cols + j][k].y);
+      |                                                                                                              ^

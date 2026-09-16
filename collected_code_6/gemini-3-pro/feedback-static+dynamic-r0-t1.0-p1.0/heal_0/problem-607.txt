@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void find_literal_regex(const char *text, const char *pattern) {
+    if (text == NULL || pattern == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int ret;
+    regmatch_t match[1];
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return;
+    }
+
+    const char *cursor = text;
+    while (regexec(&regex, cursor, 1, match, 0) == 0) {
+        regoff_t start = match[0].rm_so;
+        regoff_t end = match[0].rm_eo;
+        
+        if (start == -1 || end == -1) {
+            break;
+        }
+
+        regoff_t absolute_start = cursor - text + start;
+        regoff_t absolute_end = cursor - text + end;
+
+        printf("Found '%.*s' at [%jd, %jd]\n", 
+               (int)(end - start), cursor + start, 
+               (intmax_t)absolute_start, (intmax_t)absolute_end);
+        
+        cursor += end;
+        if (start == end) {
+            cursor++;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The fox is quick.";
+    const char *pattern = "fox";
+    
+    find_literal_regex(text, pattern);
+    
+    return 0;
+}
+```

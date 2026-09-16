@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_max_occurrences(int *list, size_t size) {
+    if (list == NULL || size == 0) {
+        return INT_MIN;
+    }
+
+    int min_val = list[0];
+    int max_val = list[0];
+
+    for (size_t i = 1; i < size; i++) {
+        if (list[i] < min_val) {
+            min_val = list[i];
+        }
+        if (list[i] > max_val) {
+            max_val = list[i];
+        }
+    }
+
+    size_t range = (size_t)(max_val - min_val + 1);
+
+    size_t *counts = (size_t *)calloc(range, sizeof(size_t));
+    if (counts == NULL) {
+        return INT_MIN;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        counts[list[i] - min_val]++;
+    }
+
+    size_t max_count = 0;
+    int max_item = list[0];
+
+    for (size_t i = 0; i < range; i++) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+            max_item = (int)(i + min_val);
+        }
+    }
+
+    free(counts);
+
+    return max_item;
+}
+
+int main(void) {
+    int list[] = {1, 3, 2, 3, 4, 3, 2, 2, 2};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    int result = find_max_occurrences(list, size);
+
+    if (result != INT_MIN) {
+        printf("%d\n", result);
+    }
+
+    return 0;
+}

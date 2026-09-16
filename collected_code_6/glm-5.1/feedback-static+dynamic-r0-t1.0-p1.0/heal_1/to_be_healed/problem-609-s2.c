@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+
+double periodic_function(double x) {
+    return sin(x) + 0.5 * cos(2 * x) - 0.2 * sin(3 * x);
+}
+
+double find_minimum(double (*f)(double), double lower_bound, double upper_bound, double step) {
+    double min_val = DBL_MAX;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'current_val' can be reduced. [variableScope]
+     */
+    double current_val;
+    double x;
+
+    for (x = lower_bound; x <= upper_bound; x += step) {
+        current_val = f(x);
+        if (current_val < min_val) {
+            min_val = current_val;
+        }
+    }
+
+    return min_val;
+}
+
+int main(void) {
+    double lower = 0.0;
+    double upper = 2.0 * M_PI;
+    double step = 0.0001;
+    double result;
+
+    if (step <= 0.0) {
+        return 1;
+    }
+
+    result = find_minimum(periodic_function, lower, upper, step);
+
+    printf("%f\n", result);
+
+    return 0;
+}

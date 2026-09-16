@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+size_t max_sublist_length(const size_t *lengths, size_t count)
+{
+    size_t max_len = 0;
+    size_t i;
+
+    if (lengths == NULL || count == 0U) {
+        return 0U;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if (lengths[i] > max_len) {
+            max_len = lengths[i];
+        }
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    static const int sublist1[] = { 1, 2, 3 };
+    static const int sublist2[] = { 4, 5, 6, 7, 8 };
+    static const int sublist3[] = { 9 };
+    static const int sublist4[] = { 10, 11 };
+
+    const int *lists[] = { sublist1, sublist2, sublist3, sublist4 };
+    const size_t lengths[] = {
+        sizeof(sublist1) / sizeof(sublist1[0]),
+        sizeof(sublist2) / sizeof(sublist2[0]),
+        sizeof(sublist3) / sizeof(sublist3[0]),
+        sizeof(sublist4) / sizeof(sublist4[0])
+    };
+    const size_t count = sizeof(lists) / sizeof(lists[0]);
+    size_t result;
+    size_t i;
+    size_t j;
+
+    for (i = 0U; i < count; i++) {
+        if (printf("Sublist %zu: ", i + 1U) < 0) {
+            return EXIT_FAILURE;
+        }
+        for (j = 0U; j < lengths[i]; j++) {
+            if (printf("%d ", lists[i][j]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+        if (printf("\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = max_sublist_length(lengths, count);
+
+    if (printf("Maximum sublist length: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation:
+
+- **Avoids CWE-664** by using only statically allocated arrays, so there are no dynamically allocated resources whose lifetime could be mismanaged (no `malloc`/`free` pairs to get wrong).
+- **Avoids CWE-703** by validating the input pointer against `NULL` and checking `count` before use, and by checking the return values of `printf` calls, returning a failure status if output fails.
+- **Avoids CWE-710** by adhering to standard practices: using `size_t` for sizes and indices, `const`-qualifying read-only data, declaring `main(void)` per the C standard, using `EXIT_SUCCESS`/`EXIT_FAILURE`, and avoiding magic numbers via `sizeof` computations.

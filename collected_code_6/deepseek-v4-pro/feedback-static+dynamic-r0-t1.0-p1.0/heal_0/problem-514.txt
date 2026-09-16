@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int sum_tuple_elements(Tuple *tuples, int tuple_count) {
+    if (tuples == NULL || tuple_count <= 0) {
+        return 0;
+    }
+    
+    int total_sum = 0;
+    for (int i = 0; i < tuple_count; i++) {
+        if (tuples[i].elements != NULL && tuples[i].size > 0) {
+            for (int j = 0; j < tuples[i].size; j++) {
+                total_sum += tuples[i].elements[j];
+            }
+        }
+    }
+    
+    return total_sum;
+}
+
+int main(void) {
+    Tuple *tuple_list = NULL;
+    int tuple_count = 0;
+    
+    printf("Enter number of tuples: ");
+    if (scanf("%d", &tuple_count) != 1 || tuple_count <= 0) {
+        fprintf(stderr, "Invalid tuple count\n");
+        return 1;
+    }
+    
+    tuple_list = (Tuple *)malloc((size_t)tuple_count * sizeof(Tuple));
+    if (tuple_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < tuple_count; i++) {
+        tuple_list[i].elements = NULL;
+        tuple_list[i].size = 0;
+        
+        printf("Enter size of tuple %d: ", i);
+        if (scanf("%d", &tuple_list[i].size) != 1 || tuple_list[i].size <= 0) {
+            fprintf(stderr, "Invalid tuple size\n");
+            for (int j = 0; j < i; j++) {
+                free(tuple_list[j].elements);
+            }
+            free(tuple_list);
+            return 1;
+        }
+        
+        tuple_list[i].elements = (int *)malloc((size_t)tuple_list[i].size * sizeof(int));
+        if (tuple_list[i].elements == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (int j = 0; j < i; j++) {
+                free(tuple_list[j].elements);
+            }
+            free(tuple_list);
+            return 1;
+        }
+        
+        printf("Enter %d elements for tuple %d: ", tuple_list[i].size, i);
+        for (int j = 0; j < tuple_list[i].size; j++) {
+            if (scanf("%d", &tuple_list[i].elements[j]) != 1) {
+                fprintf(stderr, "Invalid element input\n");
+                for (int k = 0; k <= i; k++) {
+                    free(tuple_list[k].elements);
+                }
+                free(tuple_list);
+                return 1;
+            }
+        }
+    }
+    
+    int result = sum_tuple_elements(tuple_list, tuple_count);
+    printf("Total sum: %d\n", result);
+    
+    for (int i = 0; i < tuple_count; i++) {
+        free(tuple_list[i].elements);
+    }
+    free(tuple_list);
+    
+    return 0;
+}
+```

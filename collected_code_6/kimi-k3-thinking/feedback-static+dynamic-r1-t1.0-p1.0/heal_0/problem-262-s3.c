@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+int append_node(Node **head, int data)
+{
+    if (head == NULL) {
+        return -1;
+    }
+    Node *new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+void split_list(Node *head, size_t first_len, Node **first_part, Node **second_part)
+{
+    if (first_part == NULL || second_part == NULL) {
+        return;
+    }
+    *first_part = NULL;
+    *second_part = NULL;
+    if (head == NULL) {
+        return;
+    }
+    if (first_len == 0) {
+        *second_part = head;
+        return;
+    }
+    Node *current = head;
+    size_t count = 1;
+    while (current->next != NULL && count < first_len) {
+        current = current->next;
+        count++;
+    }
+    *first_part = head;
+    *second_part = current->next;
+    current->next = NULL;
+}
+
+void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    int values[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < num_values; i++) {
+        if (append_node(&head, values[i]) != 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    size_t first_len = 3;
+    Node *first_part = NULL;
+    Node *second_part = NULL;
+
+    split_list(head, first_len, &first_part, &second_part);
+
+    printf("First part (length %zu): ", first_len);
+    print_list(first_part);
+
+    printf("Second part: ");
+    print_list(second_part);
+
+    free_list(first_part);
+    free_list(second_part);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,20 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+bool are_all_numbers_unique(const int *numbers, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        for (size_t j = i + 1; j < count; ++j) {
+            if (numbers[i] == numbers[j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+int main() {
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    return are_all_numbers_unique(numbers, count) ? 0 : 1;
+}

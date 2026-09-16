@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int findInversions(const Tuple *tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return 0;
+    }
+    
+    int inversions = 0;
+    
+    for (size_t i = 0; i < size - 1; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (tuples[i].first > tuples[j].first && 
+                tuples[i].second < tuples[j].second) {
+                inversions++;
+            }
+        }
+    }
+    
+    return inversions;
+}
+
+int main(void) {
+    Tuple tuples[] = {{1, 5}, {2, 3}, {4, 6}, {3, 2}};
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    
+    int result = findInversions(tuples, size);
+    
+    printf("Number of inversions: %d\n", result);
+    
+    return 0;
+}
+```

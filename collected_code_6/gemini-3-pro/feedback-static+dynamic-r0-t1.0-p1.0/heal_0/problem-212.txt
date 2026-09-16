@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int sum_of_fourth_powers(unsigned int n) {
+    unsigned long long int sum = 0;
+    for (unsigned int i = 1; i <= n; i++) {
+        unsigned long long int i_ull = i;
+        sum += i_ull * i_ull * i_ull * i_ull;
+    }
+    return sum;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long int result = sum_of_fourth_powers(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

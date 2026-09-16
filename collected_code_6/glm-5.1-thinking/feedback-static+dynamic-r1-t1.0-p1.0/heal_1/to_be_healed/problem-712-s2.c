@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} InnerList;
+
+typedef struct {
+    InnerList *lists;
+    size_t count;
+} ListOfLists;
+
+bool are_equal(const InnerList *a, const InnerList *b) {
+    if (a->size != b->size) {
+        return false;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        if (a->data[i] != b->data[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void remove_duplicates(ListOfLists *lol) {
+    if (lol == NULL || lol->lists == NULL || lol->count == 0) {
+        return;
+    }
+
+    for (size_t i = 0; i < lol->count; i++) {
+        for (size_t j = i + 1; j < lol->count; ) {
+            if (are_equal(&lol->lists[i], &lol->lists[j])) {
+                free(lol->lists[j].data);
+                lol->lists[j].data = NULL;
+                
+                for (size_t k = j; k < lol->count - 1; k++) {
+                    lol->lists[k] = lol->lists[k + 1];
+                }
+                lol->count--;
+            } else {
+                j++;
+            }
+        }
+    }
+
+    if (lol->count > 0) {
+        InnerList *temp = realloc(lol->lists, lol->count * sizeof(InnerList));
+        if (temp != NULL) {
+            lol->lists = temp;
+        }
+    } else {
+        free(lol->lists);
+        lol->lists = NULL;
+    }
+}
+
+InnerList create_inner_list(const int *data, size_t size) {
+    InnerList list;
+    list.size = size;
+    if (size > 0) {
+        list.data = malloc(size * sizeof(int));
+        if (list.data != NULL) {
+            for (size_t i = 0; i < size; i++) {
+                list.data[i] = data[i];
+            }
+        } else {
+            list.size = 0;
+        }
+    } else {
+        list.data = NULL;
+    }
+    return list;
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    if (lol == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < lol->count; i++) {
+        free(lol->lists[i].data);
+    }
+    free(lol->lists);
+    lol->lists = NULL;
+    lol->count = 0;
+}
+
+void print_list_of_lists(const ListOfLists *lol) {
+    for (size_t i = 0; i < lol->count; i++) {
+        printf("[");
+        for (size_t j = 0; j < lol->lists[i].size; j++) {
+            printf("%d", lol->lists[i].data[j]);
+            if (j < lol->lists[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'd1' can be declared as const array [constVariable]
+     */
+    int d1[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'd2' can be declared as const array [constVariable]
+     */
+    int d2[] = {4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'd3' can be declared as const array [constVariable]
+     */
+    int d3[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'd4' can be declared as const array [constVariable]
+     */
+    int d4[] = {1, 2, 3, 4};
+    /* Possible weaknesses found:
+     *  Variable 'd5' can be declared as const array [constVariable]
+     */
+    int d5[] = {4, 5};
+
+    ListOfLists lol;
+    lol.count = 5;
+    lol.lists = malloc(lol.count * sizeof(InnerList));
+    if (lol.lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    lol.lists[0] = create_inner_list(d1, 3);
+    lol.lists[1] = create_inner_list(d2, 2);
+    lol.lists[2] = create_inner_list(d3, 3);
+    lol.lists[3] = create_inner_list(d4, 4);
+    lol.lists[4] = create_inner_list(d5, 2);
+
+    printf("Before:\n");
+    print_list_of_lists(&lol);
+
+    remove_duplicates(&lol);
+
+    printf("After:\n");
+    print_list_of_lists(&lol);
+
+    free_list_of_lists(&lol);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static int append_node(Node **head, int data)
+{
+    if (head == NULL) {
+        return -1;
+    }
+    Node *new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+static size_t list_length(const Node *head)
+{
+    size_t count = 0;
+    const Node *current = head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+static void rotate_left(Node **head, size_t positions)
+{
+    if (head == NULL || *head == NULL || (*head)->next == NULL) {
+        return;
+    }
+    size_t length = list_length(*head);
+    positions %= length;
+    if (positions == 0) {
+        return;
+    }
+    Node *current = *head;
+    for (size_t i = 1; i < positions; i++) {
+        current = current->next;
+    }
+    Node *new_head = current->next;
+    current->next = NULL;
+    Node *tail = new_head;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    tail->next = *head;
+    *head = new_head;
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+static void free_list(Node **head)
+{
+    if (head == NULL) {
+        return;
+    }
+    Node *current = *head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+    *head = NULL;
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    int values[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t size = sizeof(values) / sizeof(values[0]);
+    size_t positions = 3;
+
+    for (size_t i = 0; i < size; i++) {
+        if (append_node(&head, values[i]) != 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(&head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    rotate_left(&head, positions);
+
+    printf("List after rotating left by %zu: ", positions);
+    print_list(head);
+
+    free_list(&head);
+
+    return EXIT_SUCCESS;
+}

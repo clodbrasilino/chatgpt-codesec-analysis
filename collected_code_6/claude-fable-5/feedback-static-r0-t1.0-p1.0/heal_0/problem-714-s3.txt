@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_distinct_prime_power_factors(long long n)
+{
+    int count = 0;
+    long long divisor = 2;
+
+    if (n < 2)
+    {
+        return 0;
+    }
+
+    while (divisor * divisor <= n)
+    {
+        if (n % divisor == 0)
+        {
+            int exponent = 0;
+            while (n % divisor == 0)
+            {
+                n /= divisor;
+                exponent++;
+            }
+            count += exponent;
+        }
+        divisor++;
+    }
+
+    if (n > 1)
+    {
+        count += 1;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long number = 0;
+    int result = 0;
+
+    printf("Enter a positive integer: ");
+    if (scanf("%lld", &number) != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number < 1)
+    {
+        fprintf(stderr, "Error: input must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_distinct_prime_power_factors(number);
+    printf("Number of distinct prime power factors of %lld: %d\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:** For a number `n = p1^a1 * p2^a2 * ... * pk^ak`, the distinct prime power factors are `p1, p1^2, ..., p1^a1, p2, p2^2, ..., pk^ak`, so the total count is `a1 + a2 + ... + ak`. For example, `n = 24 = 2^3 * 3^1` has distinct prime power factors `{2, 4, 8, 3}`, giving a count of `4`.
+
+The code validates the `scanf` return value and input range to satisfy CWE-703, uses no dynamically allocated or shared resources (CWE-664), and follows consistent standards-compliant style with `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE`, and full brace usage (CWE-710).

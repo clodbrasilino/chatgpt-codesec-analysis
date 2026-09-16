@@ -6,49 +6,58 @@ typedef struct List {
     size_t length;
 } List;
 
-int compareLengths(const void *a, const void *b) {
-    List *listA = (List *)a;
-    List *listB = (List *)b;
-    return (listB->length - listA->length);
+List* create_list(size_t length) {
+    List *list = (List *)malloc(sizeof(List));
+    list->data = (int *)malloc(length * sizeof(int));
+    list->length = length;
+    for (size_t i = 0; i < length; ++i) {
+        list->data[i] = i;
+    }
+    return list;
 }
 
-List* findLongestLists(List *lists, size_t num_lists, size_t *max_length, size_t *num_longest) {
-    qsort(lists, num_lists, sizeof(List), compareLengths);
-    *max_length = lists[0].length;
-    for (*num_longest = 1; *num_longest < num_lists && lists[*num_longest].length == *max_length; ++*num_longest);
-    
-    return lists;
+void free_list(List *list) {
+    free(list->data);
+    free(list);
 }
 
-List createList(int *arr, size_t len) {
-    List l;
-    l.data = arr;
-    l.length = len;
-    return l;
+void find_max_length_lists(List **lists, size_t num_lists, List ***max_lists, size_t *max_lists_count) {
+    size_t max_length = 0;
+    *max_lists_count = 0;
+    *max_lists = NULL;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        if (lists[i]->length > max_length) {
+            max_length = lists[i]->length;
+            *max_lists_count = 1;
+            *max_lists = (List **)realloc(*max_lists, (*max_lists_count) * sizeof(List *));
+            (*max_lists)[0] = lists[i];
+        } else if (lists[i]->length == max_length) {
+            (*max_lists_count)++;
+            *max_lists = (List **)realloc(*max_lists, (*max_lists_count) * sizeof(List *));
+            (*max_lists)[*max_lists_count - 1] = lists[i];
+        }
+    }
 }
 
 int main() {
-    int arr1[] = {1, 2, 3};
-    int arr2[] = {4, 5, 6, 7, 8};
-    int arr3[] = {9, 10};
-    int arr4[] = {11, 12, 13, 14, 15};
+    size_t num_lists = 5;
+    List *lists[5] = {create_list(3), create_list(5), create_list(2), create_list(5), create_list(4)};
 
-    List lists[] = {
-        createList(arr1, 3),
-        createList(arr2, 5),
-        createList(arr3, 2),
-        createList(arr4, 5)
-    };
+    List **max_lists;
+    size_t max_lists_count;
 
-    size_t max_length, num_longest;
-    List *result = findLongestLists(lists, 4, &max_length, &num_longest);
+    find_max_length_lists(lists, num_lists, &max_lists, &max_lists_count);
 
-    for (size_t i = 0; i < num_longest; ++i) {
-        printf("List with length %zu: ", result[i].length);
-        for (size_t j = 0; j < result[i].length; ++j) {
-            printf("%d ", result[i].data[j]);
-        }
-        printf("\n");
+    for (size_t i = 0; i < max_lists_count; ++i) {
+        printf("List with max length: %zu\n", (max_lists[i])->length);
+        free_list(max_lists[i]);
+    }
+
+    free(max_lists);
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        free_list(lists[i]);
     }
 
     return 0;

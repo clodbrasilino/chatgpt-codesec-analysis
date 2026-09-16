@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+int find_quadratic_solutions(double a, double b, double c) {
+    if (fabs(a) < 1e-12) {
+        if (fabs(b) < 1e-12) {
+            return (fabs(c) < 1e-12) ? -1 : 0;
+        }
+        return 1;
+    }
+
+    double discriminant = b * b - 4.0 * a * c;
+
+    if (fabs(discriminant) < 1e-12) {
+        return 1;
+    } else if (discriminant > 0.0) {
+        return 2;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    double a, b, c;
+    int result;
+
+    printf("Enter coefficients a, b, c: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    result = find_quadratic_solutions(a, b, c);
+
+    if (result == -1) {
+        printf("Infinite number of solutions\n");
+    } else {
+        printf("Number of real solutions: %d\n", result);
+    }
+
+    return 0;
+}
+```

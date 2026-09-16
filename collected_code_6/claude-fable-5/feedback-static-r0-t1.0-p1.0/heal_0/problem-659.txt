@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+void print_duplicates(const int *arr, size_t len)
+{
+    if (arr == NULL || len < 2U) {
+        return;
+    }
+
+    for (size_t i = 0U; i < len; i++) {
+        bool already_reported = false;
+
+        for (size_t j = 0U; j < i; j++) {
+            if (arr[j] == arr[i]) {
+                already_reported = true;
+                break;
+            }
+        }
+
+        if (already_reported) {
+            continue;
+        }
+
+        for (size_t j = i + 1U; j < len; j++) {
+            if (arr[j] == arr[i]) {
+                if (printf("%d\n", arr[i]) < 0) {
+                    exit(EXIT_FAILURE);
+                }
+                break;
+            }
+        }
+    }
+}
+
+int main(void)
+{
+    const int numbers[] = {4, 2, 7, 2, 9, 4, 1, 7, 4};
+    const size_t count = sizeof(numbers) / sizeof(numbers[0]);
+
+    print_duplicates(numbers, count);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation:
+
+- **CWE-664 avoidance**: Uses no dynamic memory or file handles, so there are no resources to leak or misuse across their lifetime. The array is stack-allocated with a well-defined scope.
+- **CWE-703 avoidance**: Validates the input pointer for `NULL` and checks the length before processing. The return value of `printf` is checked, and failure terminates with a proper exit status.
+- **CWE-710 avoidance**: Follows coding standards by using `size_t` for sizes and indices (no signed/unsigned mismatches), `const`-correct parameters, explicit `void` in `main`'s parameter list, braces on all control structures, and `EXIT_SUCCESS`/`EXIT_FAILURE` instead of magic numbers.
+
+The algorithm runs in O(n²) time with O(1) extra space, printing each duplicate value exactly once. For the sample input, the output is:
+
+```
+4
+2
+7
+```

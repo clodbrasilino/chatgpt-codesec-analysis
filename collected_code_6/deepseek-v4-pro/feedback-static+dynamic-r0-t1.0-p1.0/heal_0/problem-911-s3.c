@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static void heapify_min(int *heap, int size, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    if (left < size && heap[left] < heap[smallest]) smallest = left;
+    if (right < size && heap[right] < heap[smallest]) smallest = right;
+    if (smallest != i) {
+        int temp = heap[i];
+        heap[i] = heap[smallest];
+        heap[smallest] = temp;
+        heapify_min(heap, size, smallest);
+    }
+}
+
+static void heapify_max(int *heap, int size, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    if (left < size && heap[left] > heap[largest]) largest = left;
+    if (right < size && heap[right] > heap[largest]) largest = right;
+    if (largest != i) {
+        int temp = heap[i];
+        heap[i] = heap[largest];
+        heap[largest] = temp;
+        heapify_max(heap, size, largest);
+    }
+}
+
+static void build_min_heap(int *heap, int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) heapify_min(heap, size, i);
+}
+
+static void build_max_heap(int *heap, int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) heapify_max(heap, size, i);
+}
+
+static void min_heap_insert(int *heap, int *size, int value, int capacity) {
+    if (*size < capacity) {
+        heap[*size] = value;
+        (*size)++;
+        int i = *size - 1;
+        while (i > 0 && heap[(i - 1) / 2] > heap[i]) {
+            int temp = heap[i];
+            heap[i] = heap[(i - 1) / 2];
+            heap[(i - 1) / 2] = temp;
+            i = (i - 1) / 2;
+        }
+    } else if (value > heap[0]) {
+        heap[0] = value;
+        heapify_min(heap, *size, 0);
+    }
+}
+
+static void max_heap_insert(int *heap, int *size, int value, int capacity) {
+    if (*size < capacity) {
+        heap[*size] = value;
+        (*size)++;
+        int i = *size - 1;
+        while (i > 0 && heap[(i - 1) / 2] < heap[i]) {
+            int temp = heap[i];
+            heap[i] = heap[(i - 1) / 2];
+            heap[(i - 1) / 2] = temp;
+            i = (i - 1) / 2;
+        }
+    } else if (value < heap[0]) {
+        heap[0] = value;
+        heapify_max(heap, *size, 0);
+    }
+}
+
+int maximumProduct(int* nums, int numsSize) {
+    if (numsSize < 3) return 0;
+    int *max_heap = (int*)malloc(3 * sizeof(int));
+    int *min_heap = (int*)malloc(2 * sizeof(int));
+    if (max_heap == NULL || min_heap == NULL) {
+        free(max_heap);
+        free(min_heap);
+        return 0;
+    }
+    int max_size = 0;
+    int min_size = 0;
+    for (int i = 0; i < numsSize; i++) {
+        min_heap_insert(max_heap, &max_size, nums[i], 3);
+        max_heap_insert(min_heap, &min_size, nums[i], 2);
+    }
+    int max1 = max_heap[0];
+    int max2, max3;
+    if (max_size == 3) {
+        max2 = max_heap[1] > max_heap[2] ? max_heap[1] : max_heap[2];
+        max3 = max_heap[1] > max_heap[2] ? max_heap[2] : max_heap[1];
+    } else {
+        max2 = max_heap[1];
+        max3 = max_heap[2];
+    }
+    int min1 = min_heap[0];
+    int min2 = min_heap[1];
+    free(max_heap);
+    free(min_heap);
+    int product1 = max1 * max2 * max3;
+    int product2 = min1 * min2 * max1;
+    return product1 > product2 ? product1 : product2;
+}
+
+int main(void) {
+    int nums1[] = {1, 2, 3};
+    int size1 = 3;
+    printf("%d\n", maximumProduct(nums1, size1));
+    int nums2[] = {1, 2, 3, 4};
+    int size2 = 4;
+    printf("%d\n", maximumProduct(nums2, size2));
+    int nums3[] = {-1, -2, -3};
+    int size3 = 3;
+    printf("%d\n", maximumProduct(nums3, size3));
+    int nums4[] = {-100, -98, -1, 2, 3, 4};
+    int size4 = 6;
+    printf("%d\n", maximumProduct(nums4, size4));
+    int nums5[] = {-10, -10, 5, 2};
+    int size5 = 4;
+    printf("%d\n", maximumProduct(nums5, size5));
+    return 0;
+}

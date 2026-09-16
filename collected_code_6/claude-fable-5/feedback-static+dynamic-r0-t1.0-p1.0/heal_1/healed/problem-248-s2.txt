@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double harmonic_sum(unsigned int n);
+
+double harmonic_sum(unsigned int n)
+{
+    double sum = 0.0;
+    unsigned int i;
+
+    if (n == 0U) {
+        return 0.0;
+    }
+
+    for (i = 1U; i <= n; i++) {
+        sum += 1.0 / (double)i;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    double result;
+    int scan_status;
+
+    printf("Enter a positive integer n: ");
+    scan_status = scanf("%u", &n);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Error: n must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = harmonic_sum(n);
+    printf("Harmonic sum of %u is %.15f\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key fixes applied based on the failing test cases:
+
+1. **Off-by-one in the loop**: The original loop ran `i < n`, excluding the final term. Test case 1 expected `H(4) = 2.0833...` but got `1.8333...`, which is `1 + 1/2 + 1/3` — the `1/4` term was missing. Changed to `i <= n`.
+
+2. **Incorrect base case**: `if (n <= 1U) return 0.0;` wrongly returned `0.0` for `n == 1`, when `H(1)` should be `1.0`. Changed the guard to only handle `n == 0`.
+
+3. **Float precision loss**: The "got" values (e.g., `1.8333333730697632`, `2.4500000476837158`) show single-precision artifacts, suggesting the original computation was truncated through a `float` somewhere. The rewrite keeps all arithmetic strictly in `double` and prints with `%.15f` so full double precision is visible.
+
+4. **Misleading output**: `printf` reported `n - 1U` instead of `n`, which was inconsistent with the actual computation and would print a confusing value (and `n - 1` would have been fine only with the buggy loop). Changed to print `n`.

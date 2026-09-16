@@ -2,10 +2,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int count_and_square_lists(void **list, int size) {
+int count_and_square_lists(const void **list, size_t list_length) {
     int count = 0;
-    for (int i = 0; i < size; i++) {
-        if (list[i] != NULL) {
+    for (size_t i = 0; i < list_length; ++i) {
+        if (*(const void **)list[i] != NULL) {
             count++;
         }
     }
@@ -13,11 +13,16 @@ int count_and_square_lists(void **list, int size) {
 }
 
 int main() {
-    int list_size = 5;
-    void *list[list_size] = { (void*)1, (void*)2, (void*)3, (void*)4, (void*)5 };
+    const void *nested_list[] = {
+        (const void *)NULL,
+        (const void *)NULL,
+        (const void *)NULL,
+        (const void *)NULL,
+        (const void *)NULL
+    };
 
-    int result = count_and_square_lists(list, list_size);
-    printf("Result: %d\n", result);
+    int num_lists = count_and_square_lists(nested_list, sizeof(nested_list) / sizeof(nested_list[0]));
+    printf("%d\n", num_lists);
 
     return 0;
 }

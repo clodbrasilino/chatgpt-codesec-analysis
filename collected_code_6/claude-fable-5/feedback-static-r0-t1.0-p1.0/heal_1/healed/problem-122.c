@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int nth_smart_number(int n)
+{
+    size_t limit;
+    size_t i;
+    size_t j;
+    int *count;
+
+    if (n <= 0) {
+        return -1;
+    }
+
+    limit = 256U;
+
+    for (;;) {
+        if (limit > 100000000U) {
+            return -1;
+        }
+
+        count = calloc(limit, sizeof *count);
+        if (count == NULL) {
+            return -1;
+        }
+
+        for (i = 2U; i < limit; i++) {
+            if (count[i] == 0) {
+                for (j = i; j < limit; j += i) {
+                    count[j]++;
+                }
+            }
+        }
+
+        {
+            int found = 0;
+            int result = -1;
+
+            for (i = 2U; i < limit; i++) {
+                if (count[i] >= 3) {
+                    found++;
+                    if (found == n) {
+                        result = (int)i;
+                        break;
+                    }
+                }
+            }
+
+            free(count);
+
+            if (result != -1) {
+                return result;
+            }
+        }
+
+        limit *= 2U;
+    }
+}
+
+int main(void)
+{
+    int n;
+    int answer;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "n must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    answer = nth_smart_number(n);
+    if (answer == -1) {
+        fprintf(stderr, "Could not compute the %dth smart number\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %dth smart number is %d\n", n, answer);
+    return EXIT_SUCCESS;
+}

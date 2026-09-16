@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-706.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-706.c:4:53: style: Parameter 'subSet' can be declared as pointer to const [constParameterPointer]
+bool isSubset(int* superSet, int superSetSize, int* subSet, int subSetSize) {
+                                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-706.c:4:20: style: Parameter 'superSet' can be declared as pointer to const [constParameterPointer]
+bool isSubset(int* superSet, int superSetSize, int* subSet, int subSetSize) {
+                   ^

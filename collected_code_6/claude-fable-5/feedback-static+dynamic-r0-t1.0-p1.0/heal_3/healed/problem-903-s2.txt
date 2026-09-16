@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i);
+        if (i == n)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses:**
+
+The comments indicate two failed test cases:
+- Test case 1: expected 4, got 2 — this corresponds to n=3, where the correct cumulative total is 1+1+2 = 4, but a buggy version apparently returned `count_set_bits(3)` = 2 (only the bits of n itself, not the running total).
+- Test case 2: expected 17, got 3 — this corresponds to n=10, where the correct cumulative total is 17, but the buggy version again returned only the popcount of a single value rather than the sum.
+
+**Key points about the fix:**
+
+1. **`total_set_bits` correctly accumulates** — the loop iterates from 1 through n inclusive and adds each value's popcount to `total`, which resolves both failing test cases (n=3 → 4, n=10 → 17).
+
+2. **The `break` at `i == n` is retained deliberately** — while it looks redundant, it guards against an infinite loop when `n == UINT_MAX`. Without it, `i` would wrap around after `UINT_MAX` and `i <= n` would remain true forever. This is a subtle but real defensive measure.
+
+3. **Overflow safety** — the accumulator is `unsigned long long`, which is sufficient since the maximum total (for n = UINT_MAX on 32-bit unsigned) is roughly 32 × 2³² ≈ 2³⁷, well within 64-bit range.
+
+4. **Input validation** — the return value of `scanf` is checked, and n=0 is rejected as required, both returning `EXIT_FAILURE` with diagnostics on `stderr`.

@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+void to_lowercase(char *str);
+bool has_31_days(const char *month);
+
+void to_lowercase(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char)str[i]);
+    }
+}
+
+bool has_31_days(const char *month) {
+    if (month == NULL) {
+        return false;
+    }
+
+    char lower_month[32];
+    strncpy(lower_month, month, sizeof(lower_month) - 1);
+    lower_month[sizeof(lower_month) - 1] = '\0';
+    
+    to_lowercase(lower_month);
+
+    if (strcmp(lower_month, "january") == 0 ||
+        strcmp(lower_month, "march") == 0 ||
+        strcmp(lower_month, "may") == 0 ||
+        strcmp(lower_month, "july") == 0 ||
+        strcmp(lower_month, "august") == 0 ||
+        strcmp(lower_month, "october") == 0 ||
+        strcmp(lower_month, "december") == 0) {
+        return true;
+    }
+    
+    return false;
+}
+
+int main(void) {
+    char input[64];
+    
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = strlen(input);
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+        
+        if (has_31_days(input)) {
+            printf("Yes\n");
+        } else {
+            printf("No\n");
+        }
+    } else {
+        return 1;
+    }
+    
+    return 0;
+}

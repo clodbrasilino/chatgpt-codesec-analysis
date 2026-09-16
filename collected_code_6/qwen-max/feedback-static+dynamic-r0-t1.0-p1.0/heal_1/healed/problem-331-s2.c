@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <limits.h>
+
+int count_set_bits(unsigned int num) {
+    int set_bits = 0;
+    for (int i = 0; i < sizeof(num) * CHAR_BIT; ++i) {
+        if (num & (1U << i)) {
+            ++set_bits;
+        }
+    }
+    return set_bits;
+}
+
+int main() {
+    unsigned int number = 0xAAAAAAAA;
+    int unset_bits = sizeof(number) * CHAR_BIT - count_set_bits(number);
+    printf("Number of unset bits: %d\n", unset_bits);
+    return 0;
+}

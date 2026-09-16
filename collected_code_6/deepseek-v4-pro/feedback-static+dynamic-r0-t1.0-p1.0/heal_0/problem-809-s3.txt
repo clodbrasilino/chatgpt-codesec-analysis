@@ -1,0 +1,36 @@
+```c
+#include <stddef.h>
+#include <stdbool.h>
+#include <stdio.h>
+
+bool check_elements(const int *first_tuple, size_t first_len,
+                    const int *second_tuple, size_t second_len) {
+    if (first_tuple == NULL || second_tuple == NULL) {
+        return false;
+    }
+    if (second_len > first_len) {
+        return false;
+    }
+    for (size_t i = 0; i < second_len; ++i) {
+        if (second_tuple[i] >= first_tuple[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int first_tuple[] = {5, 10, 15, 20};
+    int second_tuple[] = {1, 2, 3};
+    size_t first_len = sizeof(first_tuple) / sizeof(first_tuple[0]);
+    size_t second_len = sizeof(second_tuple) / sizeof(second_tuple[0]);
+
+    if (check_elements(first_tuple, first_len, second_tuple, second_len)) {
+        printf("All elements pass the condition.\n");
+    } else {
+        printf("Condition failed.\n");
+    }
+
+    return 0;
+}
+```

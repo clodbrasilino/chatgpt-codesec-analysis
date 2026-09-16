@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+long sum_of_evens(long l, long r) {
+    long sum = 0;
+    if (l % 2 != 0) l++;
+    for (long i = l; i <= r; i += 2) {
+        sum += i;
+    }
+    return sum;
+}
+
+int main() {
+    long l, r;
+    printf("Enter the range (l r): ");
+    scanf("%ld %ld", &l, &r);
+    if (l > r) {
+        printf("Invalid range. Please ensure l is less than or equal to r.\n");
+        return 1;
+    }
+    long result = sum_of_evens(l, r);
+    printf("Sum of even numbers between %ld and %ld: %ld\n", l, r, result);
+    return 0;
+}

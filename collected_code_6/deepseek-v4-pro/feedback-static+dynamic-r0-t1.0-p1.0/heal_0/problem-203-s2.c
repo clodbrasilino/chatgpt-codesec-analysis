@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int hamming_distance(int a, int b) {
+    int xor_result = a ^ b;
+    int distance = 0;
+    
+    while (xor_result != 0) {
+        distance += xor_result & 1;
+        xor_result >>= 1;
+    }
+    
+    return distance;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <int1> <int2>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr1;
+    char *endptr2;
+    
+    long num1 = strtol(argv[1], &endptr1, 10);
+    long num2 = strtol(argv[2], &endptr2, 10);
+    
+    if (*endptr1 != '\0' || *endptr2 != '\0') {
+        fprintf(stderr, "Error: Invalid integer input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (num1 > 2147483647 || num1 < -2147483648 || 
+        num2 > 2147483647 || num2 < -2147483648) {
+        fprintf(stderr, "Error: Integer overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = hamming_distance((int)num1, (int)num2);
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

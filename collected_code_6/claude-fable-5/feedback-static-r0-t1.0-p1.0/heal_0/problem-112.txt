@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double cylinder_perimeter(double radius, double height)
+{
+    return 2.0 * ((2.0 * radius) + height);
+}
+
+int main(void)
+{
+    double radius;
+    double height;
+    double perimeter;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0 || height < 0.0) {
+        fprintf(stderr, "Error: radius and height must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    perimeter = cylinder_perimeter(radius, height);
+    printf("Perimeter of the cylinder: %.2f\n", perimeter);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code addresses the specified weaknesses:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked on every call to ensure the input was successfully parsed, and negative values are rejected before computation. Error paths print a diagnostic to `stderr` and exit with a failure status.
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources to leak or misuse; all variables are stack-local with clearly bounded lifetimes.
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, declares the helper function with a full prototype, and avoids implicit conversions or undeclared identifiers.
+
+The formula used treats the cylinder's perimeter as that of its rectangular cross-section through the axis: `2 * (diameter + height)`, i.e., `2 * (2r + h)`.

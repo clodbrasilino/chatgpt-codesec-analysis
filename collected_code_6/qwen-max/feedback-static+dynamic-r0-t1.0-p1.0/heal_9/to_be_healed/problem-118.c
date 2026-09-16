@@ -2,129 +2,92 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct ListNode {
-    char *data;
-    struct ListNode *next;
-} ListNode;
+struct List {
+    char *item;
+    struct List *next;
+};
  /* Possible weaknesses found:
-  *  test case 0 failed: expected ['python', 'programming'], got ["python",""
+  *  test case 0 failed: expected ['python', 'programming'], got <no output>
   *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
   *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
   */
 
-ListNode *stringToList(const char *str) {
-    if (str == NULL) return NULL;
-
-    ListNode *head = NULL;
-    ListNode *current = NULL;
-    const char *start = str;
-
-    while (*str) {
-        if (*str == ' ') {
-            if (start != str) {
-                size_t length = str - start;
-                char *item = (char *)malloc((length + 1) * sizeof(char));
-                if (item == NULL) return NULL;
-                memcpy(item, start, length);
-                item[length] = '\0';
-
-                ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-                if (newNode == NULL) {
-                    free(item);
-                    return NULL;
-                }
-                newNode->data = item;
-                newNode->next = NULL;
-
-                if (head == NULL) {
-                    head = current = newNode;
-                } else {
-                    current->next = newNode;
-                    current = newNode;
-                }
-            }
-            start = str + 1;
-        }
-        ++str;
+struct List* string_to_list(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return NULL;
     }
 
-    if (start != str) {
-        size_t length = str - start;
-        char *item = (char *)malloc((length + 1) * sizeof(char));
-        if (item == NULL) return NULL;
-        memcpy(item, start, length);
-        item[length] = '\0';
+    struct List *head = NULL, *current = NULL;
 
-        ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-        if (newNode == NULL) {
-            free(item);
+    char *str_copy = strdup(str);
+    if (str_copy == NULL) {
+        return NULL;
+    }
+
+    for (char *token = strtok(str_copy, " "); token; token = strtok(NULL, " ")) {
+        struct List *new_item = (struct List *)malloc(sizeof(struct List));
+        if (new_item == NULL) {
+            free(str_copy);
+            while (head != NULL) {
+                current = head;
+                head = head->next;
+                free(current->item);
+                free(current);
+            }
             return NULL;
         }
-        newNode->data = item;
-        newNode->next = NULL;
+
+        new_item->item = strdup(token);
+        if (new_item->item == NULL) {
+            free(new_item);
+            free(str_copy);
+            while (head != NULL) {
+                current = head;
+                head = head->next;
+                free(current->item);
+                free(current);
+            }
+            return NULL;
+        }
+
+        new_item->next = NULL;
 
         if (head == NULL) {
-            head = newNode;
+            head = new_item;
+            current = new_item;
         } else {
-            current->next = newNode;
-            /* Possible weaknesses found:
-             *  Variable 'current' is assigned a value that is never used. [unreadVariable]
-             *  Value stored to 'current' is never read [deadcode.DeadStores]
-             */
-            current = newNode;
+            current->next = new_item;
+            current = new_item;
         }
     }
 
+    free(str_copy);
     return head;
 }
 
-void printList(ListNode *head) {
-    ListNode *current = head;
-    while (current != NULL) {
-        printf("%s -> ", current->data);
-        current = current->next;
-    }
-    printf("NULL\n");
-}
-
-void freeList(ListNode *head) {
-    ListNode *current = head;
-    while (current != NULL) {
-        ListNode *temp = current;
-        current = current->next;
-        free(temp->data);
+void free_list(struct List *list) {
+    while (list != NULL) {
+        struct List *temp = list;
+        list = list->next;
+        free(temp->item);
         free(temp);
     }
 }
 
 int main() {
-    const char *input1 = "lists tuples strings";
-    const char *input2 = "write a program";
-    const char *input3 = "python programming";
+    const char *input_strings[] = {"python programming", "write a program", "lists tuples strings"};
+    int num_strings = sizeof(input_strings) / sizeof(input_strings[0]);
 
-    ListNode *list1 = stringToList(input1);
-    if (list1 == NULL) {
-        fprintf(stderr, "Error in creating list\n");
-        return EXIT_FAILURE;
+    for (int i = 0; i < num_strings; ++i) {
+        struct List *list = string_to_list(input_strings[i]);
+        if (list != NULL) {
+            for (struct List *current = list; current != NULL; current = current->next) {
+                printf("%s ", current->item);
+            }
+            printf("\n");
+        }
+        free_list(list);
     }
-    printList(list1);
-    freeList(list1);
 
-    ListNode *list2 = stringToList(input2);
-    if (list2 == NULL) {
-        fprintf(stderr, "Error in creating list\n");
-        return EXIT_FAILURE;
-    }
-    printList(list2);
-    freeList(list2);
-
-    ListNode *list3 = stringToList(input3);
-    if (list3 == NULL) {
-        fprintf(stderr, "Error in creating list\n");
-        return EXIT_FAILURE;
-    }
-    printList(list3);
-    freeList(list3);
-
-    return EXIT_SUCCESS;
+    return 0;
 }

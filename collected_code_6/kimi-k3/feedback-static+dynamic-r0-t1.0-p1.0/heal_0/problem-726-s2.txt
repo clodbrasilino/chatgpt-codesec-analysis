@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* multiply_adjacent(const int* tuple, size_t size, size_t* result_size) {
+    if (tuple == NULL || result_size == NULL || size < 2) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    *result_size = size - 1;
+    int* result = (int*)malloc(*result_size * sizeof(int));
+    
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < *result_size; i++) {
+        result[i] = tuple[i] * tuple[i + 1];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int tuple[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    size_t result_size = 0;
+
+    int* result = multiply_adjacent(tuple, size, &result_size);
+
+    if (result != NULL) {
+        printf("Result: ");
+        for (size_t i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Error: Unable to process tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

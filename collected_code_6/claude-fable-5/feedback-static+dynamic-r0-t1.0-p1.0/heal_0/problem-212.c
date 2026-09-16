@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long sum_of_fourth_powers(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++) {
+        unsigned long long term = (unsigned long long)i * i;
+        term = term * term;
+        if (sum > ULLONG_MAX - term) {
+            return 0ULL;
+        }
+        sum += term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long result;
+
+    printf("Enter n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_fourth_powers(n);
+    if (n > 0U && result == 0ULL) {
+        fprintf(stderr, "Overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fourth powers of first %u natural numbers: %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

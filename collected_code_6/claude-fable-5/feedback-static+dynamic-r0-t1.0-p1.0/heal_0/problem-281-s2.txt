@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool all_unique(const int *arr, size_t n)
+{
+    if (arr == NULL || n < 2U) {
+        return true;
+    }
+
+    for (size_t i = 0U; i < n - 1U; i++) {
+        for (size_t j = i + 1U; j < n; j++) {
+            if (arr[i] == arr[j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int list1[] = { 1, 2, 3, 4, 5 };
+    int list2[] = { 1, 2, 3, 2, 5 };
+    size_t n1 = sizeof(list1) / sizeof(list1[0]);
+    size_t n2 = sizeof(list2) / sizeof(list2[0]);
+
+    if (all_unique(list1, n1)) {
+        if (printf("List 1: all elements are unique\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("List 1: elements are not unique\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (all_unique(list2, n2)) {
+        if (printf("List 2: all elements are unique\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("List 2: elements are not unique\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

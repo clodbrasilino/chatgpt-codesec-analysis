@@ -1,0 +1,208 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int rows;
+    int cols;
+} TupleMatrix;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+void init_tuple(Tuple *t, int size) {
+    if (t == NULL || size <= 0) {
+        return;
+    }
+    t->data = (int *)malloc((size_t)size * sizeof(int));
+    if (t->data == NULL) {
+        t->size = 0;
+        return;
+    }
+    t->size = size;
+}
+
+void free_tuple(Tuple *t) {
+    if (t == NULL) {
+        return;
+    }
+    if (t->data != NULL) {
+        free(t->data);
+        t->data = NULL;
+    }
+    t->size = 0;
+}
+
+int init_matrix(TupleMatrix *matrix, int rows, int cols) {
+    if (matrix == NULL || rows <= 0 || cols <= 0) {
+        return -1;
+    }
+    
+    matrix->tuples = (Tuple *)malloc((size_t)rows * sizeof(Tuple));
+    if (matrix->tuples == NULL) {
+        return -1;
+    }
+    
+    matrix->rows = rows;
+    matrix->cols = cols;
+    
+    for (int i = 0; i < rows; i++) {
+        init_tuple(&matrix->tuples[i], cols);
+        if (matrix->tuples[i].data == NULL) {
+            for (int j = 0; j < i; j++) {
+                free_tuple(&matrix->tuples[j]);
+            }
+            free(matrix->tuples);
+            matrix->tuples = NULL;
+            return -1;
+        }
+    }
+    
+    return 0;
+}
+
+void free_matrix(TupleMatrix *matrix) {
+    if (matrix == NULL) {
+        return;
+    }
+    
+    if (matrix->tuples != NULL) {
+        for (int i = 0; i < matrix->rows; i++) {
+            free_tuple(&matrix->tuples[i]);
+        }
+        free(matrix->tuples);
+        matrix->tuples = NULL;
+    }
+    
+    matrix->rows = 0;
+    matrix->cols = 0;
+}
+
+int flatten_matrix_to_columns(const TupleMatrix *matrix, TupleList *result) {
+    if (matrix == NULL || result == NULL || matrix->tuples == NULL) {
+        return -1;
+    }
+    
+    if (matrix->rows <= 0 || matrix->cols <= 0) {
+        return -1;
+    }
+    
+    result->tuples = (Tuple *)malloc((size_t)matrix->cols * sizeof(Tuple));
+    if (result->tuples == NULL) {
+        return -1;
+    }
+    
+    result->count = matrix->cols;
+    
+    for (int i = 0; i < matrix->cols; i++) {
+        init_tuple(&result->tuples[i], matrix->rows);
+        if (result->tuples[i].data == NULL) {
+            for (int j = 0; j < i; j++) {
+                free_tuple(&result->tuples[j]);
+            }
+            free(result->tuples);
+            result->tuples = NULL;
+            result->count = 0;
+            return -1;
+        }
+    }
+    
+    for (int col = 0; col < matrix->cols; col++) {
+        for (int row = 0; row < matrix->rows; row++) {
+            if (matrix->tuples[row].data != NULL && col < matrix->tuples[row].size) {
+                result->tuples[col].data[row] = matrix->tuples[row].data[col];
+            }
+        }
+    }
+    
+    return 0;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    
+    if (list->tuples != NULL) {
+        for (int i = 0; i < list->count; i++) {
+            free_tuple(&list->tuples[i]);
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+    }
+    
+    list->count = 0;
+}
+
+void print_tuple(const Tuple *t) {
+    if (t == NULL || t->data == NULL) {
+        printf("()\n");
+        return;
+    }
+    
+    printf("(");
+    for (int i = 0; i < t->size; i++) {
+        printf("%d", t->data[i]);
+        if (i < t->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    TupleMatrix matrix;
+    TupleList result;
+    
+    matrix.tuples = NULL;
+    matrix.rows = 0;
+    matrix.cols = 0;
+    
+    result.tuples = NULL;
+    result.count = 0;
+    
+    int rows = 3;
+    int cols = 4;
+    
+    if (init_matrix(&matrix, rows, cols) != 0) {
+        fprintf(stderr, "Failed to initialize matrix\n");
+        return EXIT_FAILURE;
+    }
+    
+    int value = 1;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            matrix.tuples[i].data[j] = value++;
+        }
+    }
+    
+    printf("Original Matrix:\n");
+    for (int i = 0; i < rows; i++) {
+        print_tuple(&matrix.tuples[i]);
+    }
+    
+    if (flatten_matrix_to_columns(&matrix, &result) != 0) {
+        fprintf(stderr, "Failed to flatten matrix\n");
+        free_matrix(&matrix);
+        return EXIT_FAILURE;
+    }
+    
+    printf("\nFlattened Column Tuples:\n");
+    for (int i = 0; i < result.count; i++) {
+        print_tuple(&result.tuples[i]);
+    }
+    
+    free_matrix(&matrix);
+    free_tuple_list(&result);
+    
+    return EXIT_SUCCESS;
+}
+```

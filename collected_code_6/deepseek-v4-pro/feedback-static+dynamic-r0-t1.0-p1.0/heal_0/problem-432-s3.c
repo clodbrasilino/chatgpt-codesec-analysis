@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+    double d;
+} Trapezium;
+
+double trapezium_median(const Trapezium *t) {
+    if (t == NULL || t->a <= 0.0 || t->b <= 0.0) {
+        return NAN;
+    }
+    return (t->a + t->b) / 2.0;
+}
+
+int main(void) {
+    Trapezium trap;
+    double result;
+
+    if (scanf("%lf %lf %lf %lf", &trap.a, &trap.b, &trap.c, &trap.d) != 4) {
+        return EXIT_FAILURE;
+    }
+
+    result = trapezium_median(&trap);
+    if (isnan(result)) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.6f\n", result);
+    return EXIT_SUCCESS;
+}

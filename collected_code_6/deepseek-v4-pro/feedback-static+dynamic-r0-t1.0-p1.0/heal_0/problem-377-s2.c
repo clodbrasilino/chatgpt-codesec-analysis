@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+void remove_char(char *str, char ch) {
+    if (str == NULL) {
+        return;
+    }
+    
+    char *write = str;
+    char *read = str;
+    
+    while (*read != '\0') {
+        if (*read != ch) {
+            *write = *read;
+            write++;
+        }
+        read++;
+    }
+    
+    *write = '\0';
+}
+
+int main(void) {
+    char str1[] = "hello world";
+    char str2[] = "mississippi";
+    char str3[] = "aaaaaa";
+    char str4[] = "";
+    
+    remove_char(str1, 'o');
+    printf("Removing 'o' from \"hello world\": %s\n", str1);
+    
+    remove_char(str2, 's');
+    printf("Removing 's' from \"mississippi\": %s\n", str2);
+    
+    remove_char(str3, 'a');
+    printf("Removing 'a' from \"aaaaaa\": %s\n", str3);
+    
+    remove_char(str4, 'x');
+    printf("Removing 'x' from \"\": %s\n", str4);
+    
+    return 0;
+}

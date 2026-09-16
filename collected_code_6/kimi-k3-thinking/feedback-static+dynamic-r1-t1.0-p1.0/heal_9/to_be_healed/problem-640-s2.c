@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 'python', got ���
+  *  test case 1 failed: expected 'string', got ���
+  *  test case 2 failed: expected 'alpha', got 
+  */
+
+char *remove_parentheses(const char *str)
+{
+    char *result;
+    size_t i;
+    size_t j;
+    size_t len;
+
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    len = strlen(str);
+    result = (char *)malloc(len + 1);
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++)
+    {
+        if (str[i] != '(' && str[i] != ')')
+        {
+            result[j] = str[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(int argc, const char *argv[])
+{
+    char buffer[4096];
+    const char *input;
+    char *output;
+    size_t len;
+
+    input = NULL;
+
+    if (argc > 1)
+    {
+        input = argv[1];
+    }
+    else if (fgets(buffer, sizeof(buffer), stdin) != NULL)
+    {
+        len = strlen(buffer);
+        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r'))
+        {
+            buffer[len - 1] = '\0';
+            len--;
+        }
+        input = buffer;
+    }
+
+    if (input == NULL)
+    {
+        fprintf(stderr, "Error: no input provided\n");
+        return EXIT_FAILURE;
+    }
+
+    output = remove_parentheses(input);
+    if (output == NULL)
+    {
+        fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+
+    free(output);
+    output = NULL;
+
+    return EXIT_SUCCESS;
+}

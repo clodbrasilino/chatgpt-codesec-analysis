@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_squares(unsigned int m, unsigned int n);
+
+unsigned long long count_squares(unsigned int m, unsigned int n) {
+    unsigned long long total_squares = 0;
+    unsigned int min_dim = (m < n) ? m : n;
+    unsigned int k;
+
+    if (m == 0 || n == 0) {
+        return 0;
+    }
+
+    for (k = 1; k <= min_dim; ++k) {
+        unsigned long long current_squares = (unsigned long long)(m - k + 1) * (unsigned long long)(n - k + 1);
+        total_squares += current_squares;
+    }
+
+    return total_squares;
+}
+
+int main(void) {
+    unsigned int m = 0;
+    unsigned int n = 0;
+    int scan_result;
+
+    scan_result = scanf("%u %u", &m, &n);
+    
+    if (scan_result != 2) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", count_squares(m, n));
+
+    return EXIT_SUCCESS;
+}

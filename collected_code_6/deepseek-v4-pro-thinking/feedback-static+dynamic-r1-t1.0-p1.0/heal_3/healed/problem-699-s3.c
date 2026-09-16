@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+
+void minSwaps(const char *s1, const char *s2) {
+    if (s1 == NULL || s2 == NULL) {
+        printf("Not Possible\n");
+        return;
+    }
+
+    size_t len1 = strlen(s1);
+    size_t len2 = strlen(s2);
+
+    if (len1 != len2) {
+        printf("Not Possible\n");
+        return;
+    }
+
+    int ones1 = 0;
+    int ones2 = 0;
+    int mismatches = 0;
+
+    for (size_t i = 0; i < len1; ++i) {
+        if (s1[i] != '0' && s1[i] != '1') {
+            printf("Not Possible\n");
+            return;
+        }
+        if (s2[i] != '0' && s2[i] != '1') {
+            printf("Not Possible\n");
+            return;
+        }
+
+        if (s1[i] == '1') {
+            ++ones1;
+        }
+        if (s2[i] == '1') {
+            ++ones2;
+        }
+        if (s1[i] != s2[i]) {
+            ++mismatches;
+        }
+    }
+
+    if (ones1 != ones2) {
+        printf("Not Possible\n");
+        return;
+    }
+
+    printf("%d\n", mismatches / 2);
+}
+
+int main(int argc, char **argv) {
+    if (argc != 3) {
+        printf("Usage: program <binary_string1> <binary_string2>\n");
+        return 1;
+    }
+
+    minSwaps(argv[1], argv[2]);
+    return 0;
+}

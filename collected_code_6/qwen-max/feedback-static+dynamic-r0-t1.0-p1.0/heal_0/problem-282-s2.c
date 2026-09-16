@@ -1,103 +1,74 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct ListNode {
     int value;
-    struct Node* next;
-} Node;
+    struct ListNode *next;
+} ListNode;
 
-typedef struct {
-    Node* head;
-} List;
-
-List* create_list() {
-    List* list = (List*)malloc(sizeof(List));
-    list->head = NULL;
-    return list;
-}
-
-void free_list(List* list) {
-    while (list->head != NULL) {
-        Node* temp = list->head->next;
-        free(list->head);
-        list->head = temp;
+ListNode* createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (newNode == NULL) {
+        return NULL;
     }
-    free(list);
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-void append(List* list, int value) {
-    Node* new_node = (Node*)malloc(sizeof(Node));
-    new_node->value = value;
-    new_node->next = NULL;
-
-    if (list->head == NULL) {
-        list->head = new_node;
-    } else {
-        Node* current = list->head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = new_node;
+void freeList(ListNode *head) {
+    while (head != NULL) {
+        ListNode *temp = head;
+        head = head->next;
+        free(temp);
     }
 }
 
-List* subtract_lists(List* list1, List* list2) {
-    List* result = create_list();
-    Node* current1 = list1->head;
+ListNode* subtractLists(ListNode *list1, ListNode *list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return NULL;
+    }
 
-    while (current1 != NULL) {
+    ListNode *resultHead = NULL;
+    ListNode **current = &resultHead;
+
+    for (ListNode *ptr1 = list1; ptr1 != NULL; ptr1 = ptr1->next) {
         int found = 0;
-        Node* current2 = list2->head;
-
-        while (current2 != NULL && !found) {
-            if (current2->value == current1->value) {
+        for (ListNode *ptr2 = list2; ptr2 != NULL && !found; ptr2 = ptr2->next) {
+            if (ptr1->value == ptr2->value) {
                 found = 1;
             }
-            current2 = current2->next;
         }
-
         if (!found) {
-            append(result, current1->value);
+            *current = createNode(ptr1->value);
+            if (*current == NULL) {
+                return NULL;
+            }
+            current = &(*current)->next;
         }
-
-        current1 = current1->next;
     }
 
-    return result;
-}
-
-void print_list(List* list) {
-    Node* current = list->head;
-    while (current != NULL) {
-        printf("%d -> ", current->value);
-        current = current->next;
-    }
-    printf("NULL\n");
+    return resultHead;
 }
 
 int main() {
-    List* list1 = create_list();
-    append(list1, 1);
-    append(list1, 2);
-    append(list1, 3);
-    append(list1, 4);
+    ListNode *list1 = createNode(1);
+    list1->next = createNode(2);
+    list1->next->next = createNode(3);
 
-    List* list2 = create_list();
-    append(list2, 2);
-    append(list2, 4);
+    ListNode *list2 = createNode(2);
+    list2->next = createNode(4);
 
-    List* result = subtract_lists(list1, list2);
+    ListNode *result = subtractLists(list1, list2);
 
-    printf("List 1: ");
-    print_list(list1);
-    printf("List 2: ");
-    print_list(list2);
-    printf("Result: ");
-    print_list(result);
+    for (ListNode *ptr = result; ptr != NULL; ptr = ptr->next) {
+        printf("%d ", ptr->value);
+    }
+    printf("\n");
 
-    free_list(list1);
-    free_list(list2);
-    free_list(result);
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
 
     return 0;
 }

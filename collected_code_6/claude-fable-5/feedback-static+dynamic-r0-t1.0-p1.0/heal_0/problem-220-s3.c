@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t replace_with_colon(char *str, size_t n)
+{
+    size_t count = 0;
+    size_t i = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (str[i] != '\0' && count < n) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            count++;
+        }
+        i++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char text[] = "Hello world, this is. a test string, with punctuation.";
+    size_t max_replacements = 4;
+    size_t replaced;
+
+    printf("Original: %s\n", text);
+
+    replaced = replace_with_colon(text, max_replacements);
+
+    printf("Modified: %s\n", text);
+    printf("Replacements made: %zu\n", replaced);
+
+    return 0;
+}

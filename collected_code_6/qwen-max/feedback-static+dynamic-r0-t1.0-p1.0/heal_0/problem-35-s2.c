@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int nth_rectangular_number(int n) {
+    return n * (n + 1);
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    if (n <= 0) {
+        fprintf(stderr, "Input must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+    int result = nth_rectangular_number(n);
+    printf("The %d-th rectangular number is: %d\n", n, result);
+    return EXIT_SUCCESS;
+}

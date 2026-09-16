@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *data;
+    size_t size;
+} List;
+
+typedef struct {
+    int element;
+    size_t count;
+} ElementCount;
+
+void count_occurrences(const Tuple *tuple, const List *list, ElementCount *results) {
+    if (tuple == NULL || list == NULL || results == NULL) {
+        return;
+    }
+    
+    for (size_t i = 0; i < list->size; i++) {
+        results[i].element = list->data[i];
+        results[i].count = 0;
+        
+        for (size_t j = 0; j < tuple->size; j++) {
+            if (tuple->data[j] == list->data[i]) {
+                results[i].count++;
+            }
+        }
+    }
+}
+
+int main(void) {
+    int tuple_data[] = {1, 2, 3, 2, 4, 2, 5, 1, 3, 2};
+    int list_data[] = {1, 2, 3, 4, 5};
+    ElementCount *results = NULL;
+    int status = EXIT_SUCCESS;
+    
+    Tuple tuple = {tuple_data, sizeof(tuple_data) / sizeof(tuple_data[0])};
+    List list = {list_data, sizeof(list_data) / sizeof(list_data[0])};
+    
+    results = (ElementCount *)calloc(list.size, sizeof(ElementCount));
+    
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        status = EXIT_FAILURE;
+    } else {
+        count_occurrences(&tuple, &list, results);
+        
+        for (size_t i = 0; i < list.size; i++) {
+            printf("Element %d occurs %zu times\n", results[i].element, results[i].count);
+        }
+        
+        free(results);
+        results = NULL;
+    }
+    
+    return status;
+}

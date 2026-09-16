@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void replace_spaces(char *str, char replacement) {
+    if (str == NULL) return;
+    for (char *p = str; *p; p++) {
+        if (*p == ' ') {
+            *p = replacement;
+        }
+    }
+}
+
+int main() {
+    char str[] = "Hello World";
+    char replacement = '-';
+    
+    replace_spaces(str, replacement);
+    printf("%s\n", str);
+
+    return 0;
+}
+```

@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_spaces(char *str) {
+    char *src = str, *dst = str;
+    while (*src) {
+        if (*src != ' ') {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char input[100];
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        input[strcspn(input, "\n")] = 0; // Remove newline character
+        remove_spaces(input);
+        printf("String after removing spaces: %s\n", input);
+    } else {
+        perror("Input error");
+    }
+    return 0;
+}

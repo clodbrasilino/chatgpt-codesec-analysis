@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+uint64_t sumOfFourthPowerOfOddNumbers(uint32_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    uint64_t sum = 0;
+    for (uint32_t i = 1; i <= n; i++) {
+        uint64_t odd = 2 * i - 1;
+        sum += odd * odd * odd * odd;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    uint32_t n;
+    
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    uint64_t result = sumOfFourthPowerOfOddNumbers(n);
+    printf("%llu\n", (unsigned long long)result);
+    
+    return EXIT_SUCCESS;
+}

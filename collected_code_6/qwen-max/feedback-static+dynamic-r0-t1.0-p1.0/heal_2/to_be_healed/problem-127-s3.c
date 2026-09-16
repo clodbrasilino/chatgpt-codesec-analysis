@@ -1,0 +1,62 @@
+#include <stdio.h>
+ /* Possible weaknesses found:
+  *  'INT_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+int multiply(int a, int b) {
+    int result = 0;
+    int negative = 0;
+
+    if (b < 0) {
+        negative = 1;
+        b = -b;
+    }
+
+    while (b > 0) {
+        if (b & 1) {
+            result += a;
+        }
+        /* Possible weaknesses found:
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  'INT_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+         *  use of undeclared identifier 'INT_MIN'
+         *  'INT_MAX' undeclared (first use in this function)
+         *  'INT_MIN' undeclared (first use in this function)
+         *  use of undeclared identifier 'INT_MAX'
+         */
+        if (a > INT_MIN / 2 || a < INT_MAX / 2) {
+            a <<= 1;
+        }
+        b >>= 1;
+    }
+
+    if (negative) {
+        result = -result;
+    }
+
+    return result;
+}
+
+int main() {
+    int num1 = 5;
+    int num2 = 3;
+    int product = multiply(num1, num2);
+    printf("%d * %d = %d\n", num1, num2, product);
+
+    num1 = -5;
+    num2 = 3;
+    product = multiply(num1, num2);
+    printf("%d * %d = %d\n", num1, num2, product);
+
+    num1 = 5;
+    num2 = -3;
+    product = multiply(num1, num2);
+    printf("%d * %d = %d\n", num1, num2, product);
+
+    num1 = -5;
+    num2 = -3;
+    product = multiply(num1, num2);
+    printf("%d * %d = %d\n", num1, num2, product);
+
+    return 0;
+}

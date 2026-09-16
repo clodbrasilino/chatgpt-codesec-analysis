@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Sublist;
+
+typedef struct {
+    Sublist *sublists;
+    size_t count;
+} SublistArray;
+
+void free_sublists(SublistArray *arr) {
+    if (!arr) {
+        return;
+    }
+    if (arr->sublists) {
+        for (size_t i = 0; i < arr->count; i++) {
+            free(arr->sublists[i].data);
+        }
+        free(arr->sublists);
+    }
+    free(arr);
+}
+
+SublistArray* generate_sublists(const int *list, size_t n) {
+    if (!list && n > 0) {
+        return NULL;
+    }
+    if (n >= sizeof(size_t) * 8) {
+        return NULL;
+    }
+
+    size_t total_sublists = (size_t)1 << n;
+    SublistArray *result = malloc(sizeof(SublistArray));
+    if (!result) {
+        return NULL;
+    }
+
+    result->count = total_sublists;
+    result->sublists = calloc(total_sublists, sizeof(Sublist));
+    if (!result->sublists) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < total_sublists; i++) {
+        size_t current_len = 0;
+        for (size_t j = 0; j < n; j++) {
+            if ((i >> j) & 1) {
+                current_len++;
+            }
+        }
+
+        result->sublists[i].length = current_len;
+        if (current_len > 0) {
+            result->sublists[i].data = malloc(current_len * sizeof(int));
+            if (!result->sublists[i].data) {
+                free_sublists(result);
+                return NULL;
+            }
+
+            size_t index = 0;
+            for (size_t j = 0; j < n; j++) {
+                if ((i >> j) & 1) {
+                    result->sublists[i].data[index++] = list[j];
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3};
+    size_t n = sizeof(list) / sizeof(list[0]);
+
+    SublistArray *sublists = generate_sublists(list, n);
+    if (!sublists) {
+        fprintf(stderr, "Memory allocation failed or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < sublists->count; i++) {
+        printf("[");
+        for (size_t j = 0; j < sublists->sublists[i].length; j++) {
+            printf("%d", sublists->sublists[i].data[j]);
+            if (j < sublists->sublists[i].length - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+
+    free_sublists(sublists);
+    return EXIT_SUCCESS;
+}

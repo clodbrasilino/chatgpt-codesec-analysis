@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-144-s3.c:11:55: error: use of undeclared identifier 'INT_MAX'
+   11 |             if ((arr[i] > 0 && arr[j] < 0 && arr[i] > INT_MAX + arr[j]) ||
+      |                                                       ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-144-s3.c:12:55: error: use of undeclared identifier 'INT_MAX'
+   12 |                 (arr[i] < 0 && arr[j] > 0 && arr[j] > INT_MAX + arr[i])) {
+      |                                                       ^~~~~~~
+2 errors generated.

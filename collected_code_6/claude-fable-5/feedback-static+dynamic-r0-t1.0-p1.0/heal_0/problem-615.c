@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 4
+#define COLS 4
+
+static int column_averages(const double data[ROWS][COLS], size_t rows, size_t cols, double *result)
+{
+    size_t i;
+    size_t j;
+
+    if ((result == NULL) || (rows == 0U) || (cols == 0U)) {
+        return -1;
+    }
+
+    for (j = 0U; j < cols; j++) {
+        double sum = 0.0;
+        for (i = 0U; i < rows; i++) {
+            sum += data[i][j];
+        }
+        result[j] = sum / (double)rows;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const double data[ROWS][COLS] = {
+        {10.0, 10.0, 10.0, 12.0},
+        {30.0, 45.0, 56.0, 45.0},
+        {81.0, 80.0, 39.0, 32.0},
+        {1.0, 2.0, 3.0, 4.0}
+    };
+    double averages[COLS];
+    size_t j;
+    int status;
+
+    status = column_averages(data, (size_t)ROWS, (size_t)COLS, averages);
+    if (status != 0) {
+        (void)fprintf(stderr, "Error: unable to compute averages\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Column averages: ");
+    for (j = 0U; j < (size_t)COLS; j++) {
+        (void)printf("%.2f", averages[j]);
+        if (j < ((size_t)COLS - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf("\n");
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double polygon_area(unsigned int num_sides, double side_length)
+{
+    if (num_sides < 3U || side_length <= 0.0) {
+        return -1.0;
+    }
+    return ((double)num_sides * side_length * side_length) /
+           (4.0 * tan(M_PI / (double)num_sides));
+}
+
+int main(void)
+{
+    unsigned int num_sides = 0U;
+    double side_length = 0.0;
+    double area = 0.0;
+
+    printf("Enter number of sides: ");
+    if (scanf("%u", &num_sides) != 1) {
+        fprintf(stderr, "Invalid input for number of sides.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter side length: ");
+    if (scanf("%lf", &side_length) != 1) {
+        fprintf(stderr, "Invalid input for side length.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = polygon_area(num_sides, side_length);
+    if (area < 0.0) {
+        fprintf(stderr, "Invalid polygon parameters.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Area of the regular polygon: %.6f\n", area);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+
+double radians_to_degrees(double radians) {
+    return radians * (180.0 / M_PI);
+}
+
+int main(void) {
+    double radians;
+    
+    printf("Enter radians: ");
+    
+    if (scanf("%lf", &radians) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Input out of range\n");
+        return 1;
+    }
+    
+    double degrees = radians_to_degrees(radians);
+    printf("%.6f radians = %.6f degrees\n", radians, degrees);
+    
+    return 0;
+}

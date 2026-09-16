@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int find_triplet(int arr[], int n, int target) {
+    if (arr == NULL || n < 3) {
+        return 0;
+    }
+    
+    qsort(arr, n, sizeof(int), compare);
+    
+    for (int i = 0; i < n - 2; i++) {
+        int left = i + 1;
+        int right = n - 1;
+        
+        while (left < right) {
+            int sum = arr[i] + arr[left] + arr[right];
+            
+            if (sum == target) {
+                printf("Triplet found: %d, %d, %d\n", arr[i], arr[left], arr[right]);
+                return 1;
+            } else if (sum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    printf("No triplet found\n");
+    return 0;
+}
+
+int main() {
+    int arr[] = {12, 3, 4, 1, 6, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int target = 24;
+    
+    find_triplet(arr, n, target);
+    
+    int arr2[] = {1, 2, 3, 4, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int target2 = 100;
+    
+    find_triplet(arr2, n2, target2);
+    
+    return 0;
+}

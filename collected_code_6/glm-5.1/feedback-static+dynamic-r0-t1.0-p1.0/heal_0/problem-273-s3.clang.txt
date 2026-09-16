@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-273-s3.c:26:43: error: use of undeclared identifier 'INT_MAX'
+   26 |         if ((b.data[i] < 0 && a.data[i] > INT_MAX + b.data[i]) ||
+      |                                           ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-273-s3.c:27:43: error: use of undeclared identifier 'INT_MIN'
+   27 |             (b.data[i] > 0 && a.data[i] < INT_MIN + b.data[i])) {
+      |                                           ^~~~~~~
+2 errors generated.

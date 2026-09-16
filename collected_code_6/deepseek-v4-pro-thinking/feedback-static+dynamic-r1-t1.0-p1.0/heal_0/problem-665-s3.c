@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+void shift_first_to_end(struct Node **head);
+
+int main(void) {
+    struct Node *head = NULL;
+    struct Node *tail = NULL;
+    struct Node *new_node = NULL;
+    struct Node *cur = NULL;
+    struct Node *temp = NULL;
+    int values[] = {1, 2, 3, 4};
+    size_t i;
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    for (i = 0; i < count; i++) {
+        new_node = malloc(sizeof(*new_node));
+        if (new_node == NULL) {
+            while (head != NULL) {
+                temp = head;
+                head = head->next;
+                free(temp);
+            }
+            return 1;
+        }
+        new_node->data = values[i];
+        new_node->next = NULL;
+        if (head == NULL) {
+            head = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+    }
+
+    shift_first_to_end(&head);
+
+    for (cur = head; cur != NULL; cur = cur->next) {
+        printf("%d ", cur->data);
+    }
+    printf("\n");
+
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+
+    return 0;
+}
+
+void shift_first_to_end(struct Node **head) {
+    struct Node *first = NULL;
+    struct Node *tail = NULL;
+
+    if (head == NULL || *head == NULL || (*head)->next == NULL) {
+        return;
+    }
+
+    first = *head;
+    *head = first->next;
+    first->next = NULL;
+
+    tail = *head;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    tail->next = first;
+}

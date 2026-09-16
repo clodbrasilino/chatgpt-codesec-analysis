@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:16:10: style: Redundant initialization for 'area'. The initialized value is overwritten before it is read. [redundantInitialization]
+    area = lateral_surface_area_cylinder(radius, height);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:11:17: note: area is initialized
+    double area = lateral_surface_area_cylinder(radius, height);
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:16:10: note: area is overwritten
+    area = lateral_surface_area_cylinder(radius, height);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:21:10: style: Variable 'area' is reassigned a value before the old one has been used. [redundantAssignment]
+    area = lateral_surface_area_cylinder(radius, height);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:16:10: note: area is assigned
+    area = lateral_surface_area_cylinder(radius, height);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:21:10: note: area is overwritten
+    area = lateral_surface_area_cylinder(radius, height);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-233.c:21:10: style: Variable 'area' is assigned a value that is never used. [unreadVariable]
+    area = lateral_surface_area_cylinder(radius, height);
+         ^

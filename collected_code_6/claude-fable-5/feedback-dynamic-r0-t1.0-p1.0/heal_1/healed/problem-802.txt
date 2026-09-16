@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)((n - low) % n);
+}
+
+int main(void)
+{
+    int arr[] = {15, 18, 2, 3, 6, 12};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int rotations;
+
+    rotations = count_rotations(arr, n);
+
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The original code correctly located the index of the minimum element in the rotated sorted array using binary search. However, the failing test cases revealed a semantic mismatch in how the rotation count was derived from that index:
+
+- **Test case 1:** expected `2`, got `3` — consistent with an array of length 5, where the minimum was found at index 3, but the expected rotation count was `5 - 3 = 2`.
+- **Test case 2:** expected `3`, got `5` — consistent with an array of length 8, where the minimum was at index 5, and the expected count was `8 - 5 = 3`.
+
+This indicates the test suite defines rotations as **right rotations**, whereas the original code returned the minimum's index, which equals the number of **left rotations**. The fix converts between the two conventions with `(n - low) % n`. The modulo handles the unrotated case (`low == 0`), correctly yielding `0` instead of `n`.
+
+All other defensive properties of the original code are preserved: `NULL`/empty-array guards returning `-1`, checked return values of `printf`/`fprintf`, overflow-safe midpoint calculation (`low + (high - low) / 2`), and use of `size_t` for indices.

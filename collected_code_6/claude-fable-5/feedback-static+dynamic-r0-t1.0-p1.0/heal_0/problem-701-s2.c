@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long total_sum(const int *arr, size_t n)
+{
+    long long sum = 0;
+    size_t i;
+
+    for (i = 0; i < n; i++) {
+        sum += arr[i];
+    }
+    return sum;
+}
+
+long equilibrium_index(const int *arr, size_t n)
+{
+    long long total;
+    long long left_sum = 0;
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    total = total_sum(arr, n);
+
+    for (i = 0; i < n; i++) {
+        total -= arr[i];
+        if (left_sum == total) {
+            return (long)i;
+        }
+        left_sum += arr[i];
+    }
+    return -1;
+}
+
+int main(void)
+{
+    int arr[] = { -7, 1, 5, 2, -4, 3, 0 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long index;
+
+    index = equilibrium_index(arr, n);
+
+    if (index >= 0) {
+        if (printf("Equilibrium index: %ld\n", index) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No equilibrium index found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+int find_first_even(int *numbers, int length) {
+    for (int i = 0; i < length; i++) {
+        if (numbers[i] % 2 == 0) {
+            return numbers[i];
+        }
+    }
+    return -1; // Indicates no even number was found
+}
+
+int main() {
+    int numbers[] = {3, 5, 7, 8, 9, 14};
+    int length = sizeof(numbers) / sizeof(numbers[0]);
+    int firstEven = find_first_even(numbers, length);
+    if (firstEven != -1) {
+        printf("First even number: %d\n", firstEven);
+    } else {
+        printf("No even number found.\n");
+    }
+    return 0;
+}

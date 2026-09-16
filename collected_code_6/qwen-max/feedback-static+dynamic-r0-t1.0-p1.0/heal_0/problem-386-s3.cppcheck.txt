@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-386-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-386-s3.c:7:49: style: The scope of the variable 'currDiff' can be reduced. [variableScope]
+    int open = 0, close = 0, maxDiff = INT_MIN, currDiff = 0, swaps = 0;
+                                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-386-s3.c:7:58: style: Variable 'currDiff' is assigned a value that is never used. [unreadVariable]
+    int open = 0, close = 0, maxDiff = INT_MIN, currDiff = 0, swaps = 0;
+                                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-386-s3.c:22:22: style: Variable 'currDiff' is assigned a value that is never used. [unreadVariable]
+            currDiff = 0;
+                     ^

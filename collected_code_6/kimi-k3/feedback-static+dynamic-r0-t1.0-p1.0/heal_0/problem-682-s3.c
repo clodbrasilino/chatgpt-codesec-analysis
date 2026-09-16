@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data)
+{
+    Node *new_node = malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head)
+{
+    Node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node *multiply_lists(const Node *list1, const Node *list2)
+{
+    Node *result = NULL;
+    Node *result_tail = NULL;
+    const Node *ptr1;
+    const Node *ptr2;
+
+    if (list1 == NULL || list2 == NULL) {
+        return NULL;
+    }
+
+    ptr1 = list1;
+    while (ptr1 != NULL) {
+        ptr2 = list2;
+        while (ptr2 != NULL) {
+            Node *new_node = create_node(ptr1->data * ptr2->data);
+            if (new_node == NULL) {
+                free_list(result);
+                return NULL;
+            }
+            if (result == NULL) {
+                result = new_node;
+                result_tail = new_node;
+            } else {
+                result_tail->next = new_node;
+                result_tail = new_node;
+            }
+            ptr2 = ptr2->next;
+        }
+        ptr1 = ptr1->next;
+    }
+
+    return result;
+}
+
+void print_list(const Node *head)
+{
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+    Node *tail = NULL;
+    int values1[] = {1, 2, 3};
+    int values2[] = {4, 5, 6};
+    size_t i;
+
+    for (i = 0; i < sizeof(values1) / sizeof(values1[0]); i++) {
+        Node *new_node = create_node(values1[i]);
+        if (new_node == NULL) {
+            free_list(list1);
+            return EXIT_FAILURE;
+        }
+        if (list1 == NULL) {
+            list1 = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+
+    tail = NULL;
+    for (i = 0; i < sizeof(values2) / sizeof(values2[0]); i++) {
+        Node *new_node = create_node(values2[i]);
+        if (new_node == NULL) {
+            free_list(list1);
+            free_list(list2);
+            return EXIT_FAILURE;
+        }
+        if (list2 == NULL) {
+            list2 = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+    }
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+
+    result = multiply_lists(list1, list2);
+    if (result == NULL) {
+        free_list(list1);
+        free_list(list2);
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: ");
+    print_list(result);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return EXIT_SUCCESS;
+}

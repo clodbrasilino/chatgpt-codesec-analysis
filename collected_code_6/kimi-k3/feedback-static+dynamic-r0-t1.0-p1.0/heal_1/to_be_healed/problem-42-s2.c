@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int sumOfRepeatedElements(int arr[], int size) {
+    int sum = 0;
+    int *visited = (int *)calloc(size, sizeof(int));
+    if (visited == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (visited[i]) {
+            continue;
+        }
+        int count = 0;
+        for (int j = 0; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+                visited[j] = 1;
+            }
+        }
+        if (count > 1) {
+            sum += arr[i] * count;
+        }
+    }
+
+    free(visited);
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 2, 4, 1, 5, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = sumOfRepeatedElements(arr, size);
+    printf("Sum of repeated elements: %d\n", result);
+    return 0;
+}

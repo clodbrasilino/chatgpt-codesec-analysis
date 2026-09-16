@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+char*** generate_3d_array(int depth, int rows, int cols) {
+    if (depth <= 0 || rows <= 0 || cols <= 0) {
+        return NULL;
+    }
+
+    char ***array_3d = (char***)malloc(depth * sizeof(char**));
+    if (array_3d == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < depth; i++) {
+        array_3d[i] = (char**)malloc(rows * sizeof(char*));
+        if (array_3d[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                for (int k = 0; k < rows; k++) {
+                    free(array_3d[j][k]);
+                }
+                free(array_3d[j]);
+            }
+            free(array_3d);
+            return NULL;
+        }
+
+        for (int j = 0; j < rows; j++) {
+            array_3d[i][j] = (char*)malloc(cols * sizeof(char));
+            if (array_3d[i][j] == NULL) {
+                for (int k = 0; k < j; k++) {
+                    free(array_3d[i][k]);
+                }
+                free(array_3d[i]);
+                for (int m = 0; m < i; m++) {
+                    for (int n = 0; n < rows; n++) {
+                        free(array_3d[m][n]);
+                    }
+                    free(array_3d[m]);
+                }
+                free(array_3d);
+                return NULL;
+            }
+
+            for (int k = 0; k < cols; k++) {
+                array_3d[i][j][k] = '*';
+            }
+        }
+    }
+
+    return array_3d;
+}
+
+void free_3d_array(char*** array_3d, int depth, int rows) {
+    if (array_3d == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < depth; i++) {
+        for (int j = 0; j < rows; j++) {
+            free(array_3d[i][j]);
+        }
+        free(array_3d[i]);
+    }
+    free(array_3d);
+}
+
+int main(void) {
+    int depth = 3;
+    int rows = 4;
+    int cols = 5;
+
+    char*** my_array = generate_3d_array(depth, rows, cols);
+
+    if (my_array != NULL) {
+        for (int i = 0; i < depth; i++) {
+            for (int j = 0; j < rows; j++) {
+                for (int k = 0; k < cols; k++) {
+                    putchar(my_array[i][j][k]);
+                }
+                putchar('\n');
+            }
+            putchar('\n');
+        }
+
+        free_3d_array(my_array, depth, rows);
+    } else {
+        fprintf(stderr, "Failed to allocate 3D array.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+
+unsigned int highest_power_of_two(unsigned int n) {
+    unsigned int p = 1;
+    while (p <= n / 2) {
+        p <<= 1;
+    }
+    return p;
+}
+
+int main(void) {
+    unsigned int n;
+    printf("Enter a number: ");
+    if (scanf("%u", &n) != 1) {
+        return 1;
+    }
+    printf("%u\n", highest_power_of_two(n));
+    return 0;
+}
+```

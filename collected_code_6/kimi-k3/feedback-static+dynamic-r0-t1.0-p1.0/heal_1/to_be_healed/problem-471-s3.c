@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int arrayMultiplicationRemainder(int arr[], int size, int n) {
+    int result = 1;
+    for (int i = 0; i < size; i++) {
+        result = (result * arr[i]) % n;
+    }
+    return result;
+}
+
+int main() {
+    int size, n;
+    printf("Enter the size of the array: ");
+    scanf("%d", &size);
+    int *arr = (int *)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Enter the elements of the array: ");
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &arr[i]);
+    }
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+    if (n == 0) {
+        fprintf(stderr, "Division by zero is not allowed\n");
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    int remainder = arrayMultiplicationRemainder(arr, size, n);
+    printf("Remainder of array multiplication divided by %d is %d\n", n, remainder);
+    free(arr);
+    return EXIT_SUCCESS;
+}

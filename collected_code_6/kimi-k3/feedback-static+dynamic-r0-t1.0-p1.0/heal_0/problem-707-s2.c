@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+uint64_t count_set_bits_upto(uint32_t n)
+{
+    uint64_t total = 0;
+    uint64_t power_of_two = 1;
+    uint32_t i = 0;
+
+    while (i < 32 && power_of_two <= (uint64_t)n) {
+        uint64_t next_power = power_of_two << 1;
+        uint64_t full_cycles = (uint64_t)n / next_power;
+        uint64_t remainder = (uint64_t)n % next_power;
+
+        total += full_cycles * power_of_two;
+
+        if (remainder >= power_of_two) {
+            total += remainder - power_of_two + 1;
+        }
+
+        power_of_two = next_power;
+        i++;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    uint32_t n;
+    int scan_result;
+
+    printf("Enter a positive integer n: ");
+    scan_result = scanf("%u", &n);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (n == 0) {
+        printf("Total set bits from 1 to 0: 0\n");
+        return 0;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, (unsigned long long)count_set_bits_upto(n));
+
+    return 0;
+}

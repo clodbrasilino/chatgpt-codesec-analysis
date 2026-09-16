@@ -1,0 +1,6 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c:32:20: error: implicit declaration of function 'snake_to_camle'; did you mean 'snake_to_camel'? [-Wimplicit-function-declaration]
+   32 |     char *camel1 = snake_to_camle(test1);
+      |                    ^~~~~~~~~~~~~~
+      |                    snake_to_camel
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c:32:20: error: initialization of 'char *' from 'int' makes pointer from integer without a cast [-Wint-conversion]

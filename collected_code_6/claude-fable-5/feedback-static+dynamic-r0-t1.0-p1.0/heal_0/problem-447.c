@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long *cube_elements(const long long *arr, size_t n)
+{
+    long long *result;
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return NULL;
+    }
+
+    result = malloc(n * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        result[i] = arr[i] * arr[i] * arr[i];
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long numbers[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t i;
+    long long *cubes;
+
+    cubes = cube_elements(numbers, count);
+    if (cubes == NULL) {
+        fprintf(stderr, "Failed to compute cubes\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("%lld ", cubes[i]);
+    }
+    printf("\n");
+
+    free(cubes);
+    return EXIT_SUCCESS;
+}

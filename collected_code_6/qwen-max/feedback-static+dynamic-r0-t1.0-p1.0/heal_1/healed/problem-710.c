@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdint.h>
+
+typedef struct {
+    int8_t first;
+    int8_t last;
+} TupleRecord;
+
+int8_t get_initial(TupleRecord *record) {
+    if (record != NULL) {
+        return record->first;
+    }
+    return 0;
+}
+
+int8_t get_last(TupleRecord *record) {
+    if (record != NULL) {
+        return record->last;
+    }
+    return 0;
+}
+
+int main() {
+    TupleRecord my_record = {1, 3};
+
+    int8_t initial = get_initial(&my_record);
+    int8_t last = get_last(&my_record);
+
+    printf("Initial: %d\n", initial);
+    printf("Last: %d\n", last);
+
+    return 0;
+}

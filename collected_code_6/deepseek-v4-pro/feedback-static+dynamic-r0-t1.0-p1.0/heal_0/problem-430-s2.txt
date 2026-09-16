@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double h;
+    double k;
+    double p;
+    int direction;
+} Parabola;
+
+typedef struct {
+    int type;
+    double value;
+} Directrix;
+
+Directrix find_directrix(Parabola parabola) {
+    Directrix result;
+    
+    switch (parabola.direction) {
+        case 0:
+            result.type = 0;
+            result.value = parabola.h - parabola.p;
+            break;
+        case 1:
+            result.type = 0;
+            result.value = parabola.h + parabola.p;
+            break;
+        case 2:
+            result.type = 1;
+            result.value = parabola.k - parabola.p;
+            break;
+        case 3:
+            result.type = 1;
+            result.value = parabola.k + parabola.p;
+            break;
+        default:
+            result.type = -1;
+            result.value = NAN;
+            break;
+    }
+    
+    return result;
+}
+
+Parabola create_parabola(double h, double k, double p, int direction) {
+    Parabola parabola;
+    parabola.h = h;
+    parabola.k = k;
+    parabola.p = p;
+    parabola.direction = direction;
+    return parabola;
+}
+
+int main(void) {
+    Parabola parabola;
+    Directrix directrix;
+    double h, k, p;
+    int direction;
+    
+    printf("Enter vertex coordinates (h k): ");
+    if (scanf("%lf %lf", &h, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter focal parameter p: ");
+    if (scanf("%lf", &p) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (p == 0) {
+        fprintf(stderr, "p cannot be zero\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter direction (0: left, 1: right, 2: down, 3: up): ");
+    if (scanf("%d", &direction) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (direction < 0 || direction > 3) {
+        fprintf(stderr, "Invalid direction\n");
+        return EXIT_FAILURE;
+    }
+    
+    parabola = create_parabola(h, k, fabs(p), direction);
+    directrix = find_directrix(parabola);
+    
+    if (directrix.type == 0) {
+        printf("Directrix: x = %.2f\n", directrix.value);
+    } else if (directrix.type == 1) {
+        printf("Directrix: y = %.2f\n", directrix.value);
+    } else {
+        fprintf(stderr, "Error calculating directrix\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

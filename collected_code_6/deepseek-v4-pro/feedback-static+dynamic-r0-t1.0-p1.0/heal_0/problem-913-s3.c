@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+int number_at_end(const char *str, long *result) {
+    if (str == NULL || result == NULL) {
+        return 0;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+
+    size_t i = len;
+    while (i > 0 && isdigit((unsigned char)str[i - 1])) {
+        i--;
+    }
+
+    if (i == len) {
+        return 0;
+    }
+
+    if (i > 0 && (str[i - 1] == '-' || str[i - 1] == '+')) {
+        i--;
+    }
+
+    if (i == len) {
+        return 0;
+    }
+
+    char *endptr = NULL;
+    errno = 0;
+    long value = strtol(str + i, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr != str + len) {
+        return 0;
+    }
+
+    *result = value;
+    return 1;
+}
+
+int main(void) {
+    const char *test1 = "hello123";
+    const char *test2 = "hello";
+    const char *test3 = "123";
+    const char *test4 = "-42";
+    const char *test5 = "abc-42";
+    const char *test6 = "42abc";
+    const char *test7 = "";
+    const char *test8 = "number at end 999";
+    long result = 0;
+
+    if (number_at_end(test1, &result)) {
+        printf("%s -> %ld\n", test1, result);
+    } else {
+        printf("%s -> no number at end\n", test1);
+    }
+
+    if (number_at_end(test2, &result)) {
+        printf("%s -> %ld\n", test2, result);
+    } else {
+        printf("%s -> no number at end\n", test2);
+    }
+
+    if (number_at_end(test3, &result)) {
+        printf("%s -> %ld\n", test3, result);
+    } else {
+        printf("%s -> no number at end\n", test3);
+    }
+
+    if (number_at_end(test4, &result)) {
+        printf("%s -> %ld\n", test4, result);
+    } else {
+        printf("%s -> no number at end\n", test4);
+    }
+
+    if (number_at_end(test5, &result)) {
+        printf("%s -> %ld\n", test5, result);
+    } else {
+        printf("%s -> no number at end\n", test5);
+    }
+
+    if (number_at_end(test6, &result)) {
+        printf("%s -> %ld\n", test6, result);
+    } else {
+        printf("%s -> no number at end\n", test6);
+    }
+
+    if (number_at_end(test7, &result)) {
+        printf("%s -> %ld\n", test7, result);
+    } else {
+        printf("%s -> no number at end\n", test7);
+    }
+
+    if (number_at_end(test8, &result)) {
+        printf("%s -> %ld\n", test8, result);
+    } else {
+        printf("%s -> no number at end\n", test8);
+    }
+
+    return 0;
+}

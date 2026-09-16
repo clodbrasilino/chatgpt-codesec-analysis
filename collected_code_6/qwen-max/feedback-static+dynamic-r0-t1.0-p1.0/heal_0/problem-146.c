@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <string.h>
+
+int total_ascii_value(const char *str) {
+    int sum = 0;
+    while (*str) {
+        sum += (unsigned char)*str;
+        str++;
+    }
+    return sum;
+}
+
+int main() {
+    const char *test_str = "example";
+    int result = total_ascii_value(test_str);
+    printf("Total ASCII value: %d\n", result);
+    return 0;
+}

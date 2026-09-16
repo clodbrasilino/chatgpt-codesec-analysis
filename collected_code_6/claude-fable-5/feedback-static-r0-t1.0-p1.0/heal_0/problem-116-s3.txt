@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int tuple_to_int(const unsigned int *tuple, size_t count, long long *result)
+{
+    long long value = 0;
+
+    if (tuple == NULL || result == NULL || count == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        unsigned int element = tuple[i];
+        long long multiplier = 1;
+        unsigned int temp = element;
+
+        do {
+            if (multiplier > LLONG_MAX / 10) {
+                return -1;
+            }
+            multiplier *= 10;
+            temp /= 10;
+        } while (temp > 0);
+
+        if (value > (LLONG_MAX - (long long)element) / multiplier) {
+            return -1;
+        }
+
+        value = value * multiplier + (long long)element;
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int tuple[] = {1, 23, 456};
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    long long result = 0;
+
+    if (tuple_to_int(tuple, count, &result) != 0) {
+        if (fprintf(stderr, "Conversion failed\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This program converts the tuple `{1, 23, 456}` into the integer `123456` by concatenating the digits of each element. The `tuple_to_int` function validates its inputs, checks for arithmetic overflow before every multiplication and addition, and returns an error code rather than producing undefined behavior. The `main` function checks the return values of all I/O operations and propagates failures through proper exit codes.

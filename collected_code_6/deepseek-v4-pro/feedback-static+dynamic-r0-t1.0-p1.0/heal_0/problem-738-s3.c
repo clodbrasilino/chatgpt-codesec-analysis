@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+double geometric_sum(double a, double r, int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+    if (r == 1.0) {
+        return a * n;
+    }
+    return a * (1.0 - pow(r, n)) / (1.0 - r);
+}
+
+int main(void) {
+    double a = 1.0;
+    double r = 0.5;
+    int n = 10;
+
+    double sum = geometric_sum(a, r, n);
+    printf("%f\n", sum);
+
+    return 0;
+}

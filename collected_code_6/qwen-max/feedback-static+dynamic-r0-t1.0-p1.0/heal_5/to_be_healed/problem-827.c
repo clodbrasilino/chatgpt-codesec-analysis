@@ -1,44 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int sum_column(int **list, int rows, int cols, int col_index) {
+typedef struct {
+    int* data;
+    size_t size;
+} List;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 12, got <no output>
+  *  test case 2 failed: expected 9, got <no output>
+  *  test case 1 failed: expected 15, got <no output>
+  */
+
+int sum_column(const List* list, size_t column_index) {
+    if (list == NULL || list->data == NULL || column_index >= list->size / 2)
+        return -1;
+
     int sum = 0;
-    for (int i = 0; i < rows; ++i) {
-        sum += list[i][col_index];
+    for (size_t i = column_index; i < list->size; i += 2) {
+        sum += *(list->data + i);
     }
     return sum;
 }
 
 int main() {
-    int rows = 3;
-    int cols = 4;
+    List list = {NULL, 0};
+    const size_t row_size = 3;
+    const size_t col_size = 2;
+    list.size = row_size * col_size;
+    list.data = (int*)malloc(list.size * sizeof(int));
+    if (list.data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
 
-    /* Possible weaknesses found:
-     *  variable-sized object may not be initialized
-     *  variable-sized object may not be initialized except with an empty initializer
-     */
-    int data1[cols] = {1, 2, 3, 4};
-    /* Possible weaknesses found:
-     *  variable-sized object may not be initialized
-     *  variable-sized object may not be initialized except with an empty initializer
-     */
-    int data2[cols] = {5, 6, 7, 8};
-    /* Possible weaknesses found:
-     *  variable-sized object may not be initialized
-     *  variable-sized object may not be initialized except with an empty initializer
-     */
-    int data3[cols] = {9, 10, 11, 12};
+    const int values[6] = {1, 2, 3, 4, 5, 6};
+    for (size_t i = 0; i < list.size; ++i) {
+        list.data[i] = values[i];
+    }
 
-    /* Possible weaknesses found:
-     *  variable-sized object may not be initialized
-     *  variable-sized object may not be initialized except with an empty initializer
-     */
-    int *list[rows] = {data1, data2, data3};
+    for (size_t column_to_sum = 0; column_to_sum < col_size; ++column_to_sum) {
+        int result = sum_column(&list, column_to_sum);
+        printf("Sum of column %zu: %d\n", column_to_sum, result);
+    }
 
-    int col_index = 2;
-    int result = sum_column(list, rows, cols, col_index);
-
-    printf("Sum of column %d: %d\n", col_index, result);
-
-    return 0;
+    free(list.data);
+    return EXIT_SUCCESS;
 }

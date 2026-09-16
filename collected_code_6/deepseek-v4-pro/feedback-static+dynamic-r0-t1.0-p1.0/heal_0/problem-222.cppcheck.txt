@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c:36:64: style: Condition 'elements[i].type==TYPE_UNKNOWN' is always false [knownConditionTrueFalse]
+        if (elements[i].type != first_type || elements[i].type == TYPE_UNKNOWN) {
+                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c:68:46: style: Condition 'all_same_type(empty_tuple,0)' is always true [knownConditionTrueFalse]
+    printf("Empty tuple: %s\n", all_same_type(empty_tuple, 0) ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c:68:46: note: Calling function 'all_same_type' returns 1
+    printf("Empty tuple: %s\n", all_same_type(empty_tuple, 0) ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c:68:46: note: Condition 'all_same_type(empty_tuple,0)' is always true
+    printf("Empty tuple: %s\n", all_same_type(empty_tuple, 0) ? "true" : "false");
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c:22:7: style: struct member 'TupleElement::value' is never used. [unusedStructMember]
+    } value;
+      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-222.c:20:14: style: union member 'Anonymous0::char_val' is never used. [unusedStructMember]
+        char char_val;
+             ^

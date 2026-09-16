@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+#include <errno.h>
+#include <stdlib.h>
+
+uint64_t pell(unsigned int n, int *err)
+{
+    uint64_t a = 0;
+    uint64_t b = 1;
+    unsigned int i;
+
+    if (err == NULL) {
+        return 0;
+    }
+
+    *err = 0;
+
+    if (n > 41U) {
+        *err = ERANGE;
+        return 0;
+    }
+
+    if (n == 0U) {
+        return a;
+    }
+
+    for (i = 1U; i < n; ++i) {
+        uint64_t next = 2U * b + a;
+        a = b;
+        b = next;
+    }
+
+    return b;
+}
+
+int main(int argc, const char *argv[])
+{
+    char *end = NULL;
+    unsigned long input;
+    unsigned int n;
+    int err = 0;
+    uint64_t result;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input = strtoul(argv[1], &end, 10);
+
+    if (errno != 0 || end == argv[1] || *end != '\0' || input > 41UL) {
+        fprintf(stderr, "Invalid input: n must be an integer between 0 and 41\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (unsigned int)input;
+    result = pell(n, &err);
+
+    if (err != 0) {
+        fprintf(stderr, "Error: result out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%" PRIu64 "\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void find_five_char_words(const char *input) {
+    regex_t regex;
+    int ret;
+    regmatch_t matches[1];
+
+    ret = regcomp(&regex, "\\b\\w{5}\\b", REG_EXTENDED);
+    if (ret) {
+        fprintf(stderr, "Could not compile regex\n");
+        return;
+    }
+
+    const char *p = input;
+    while ((ret = regexec(&regex, p, 1, matches, 0)) == 0) {
+        printf("%.*s\n", (int)(matches[0].rm_eo - matches[0].rm_so), &p[matches[0].rm_so]);
+        p += matches[0].rm_eo;
+    }
+
+    if (ret != REG_NOMATCH) {
+        fprintf(stderr, "Regex match failed\n");
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *input = "These words are five chars long: apple, brown, green.";
+    find_five_char_words(input);
+    return 0;
+}

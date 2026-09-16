@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int search_string_regex(const char *haystack, const char *pattern, size_t *location) {
+    regex_t regex;
+    int ret;
+    regmatch_t match[1];
+
+    if (haystack == NULL || pattern == NULL || location == NULL) {
+        return -1;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return -2;
+    }
+
+    ret = regexec(&regex, haystack, 1, match, 0);
+    if (ret == 0) {
+        *location = (size_t)match[0].rm_so;
+        regfree(&regex);
+        return 0;
+    } else if (ret == REG_NOMATCH) {
+        *location = 0;
+        regfree(&regex);
+        return 1;
+    } else {
+        regfree(&regex);
+        return -3;
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <string> <pattern>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    size_t loc = 0;
+    int result = search_string_regex(argv[1], argv[2], &loc);
+
+    if (result == 0) {
+        printf("Pattern found at location: %zu\n", loc);
+        return EXIT_SUCCESS;
+    } else if (result == 1) {
+        printf("Pattern not found.\n");
+        return EXIT_SUCCESS;
+    } else {
+        fprintf(stderr, "Error during regex search (code: %d).\n", result);
+        return EXIT_FAILURE;
+    }
+}

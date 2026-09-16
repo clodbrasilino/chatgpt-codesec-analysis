@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+int sequential_search(const int arr[], int size, int target) {
+    if (arr == NULL || size <= 0) {
+        return -1;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int arr[] = {23, 45, 67, 12, 89, 34, 56, 78, 90, 11};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int target = 34;
+    
+    int result = sequential_search(arr, size, target);
+    
+    if (result != -1) {
+        printf("Element %d found at index %d\n", target, result);
+    } else {
+        printf("Element %d not found\n", target);
+    }
+    
+    int missing_target = 100;
+    int missing_result = sequential_search(arr, size, missing_target);
+    
+    if (missing_result != -1) {
+        printf("Element %d found at index %d\n", missing_target, missing_result);
+    } else {
+        printf("Element %d not found\n", missing_target);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_in_list(int val, const int* list, size_t size) {
+    if (list == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] == val) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int* list_difference(const int* list1, size_t size1, const int* list2, size_t size2, size_t* out_size) {
+    if (list1 == NULL || out_size == NULL) {
+        if (out_size != NULL) {
+            *out_size = 0;
+        }
+        return NULL;
+    }
+    
+    if (size1 == 0) {
+        *out_size = 0;
+        return NULL;
+    }
+    
+    int* diff = malloc(size1 * sizeof(int));
+    if (diff == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+    
+    size_t diff_size = 0;
+    for (size_t i = 0; i < size1; i++) {
+        if (!is_in_list(list1[i], list2, size2)) {
+            diff[diff_size] = list1[i];
+            diff_size++;
+        }
+    }
+    
+    *out_size = diff_size;
+    
+    if (diff_size == 0) {
+        free(diff);
+        return NULL;
+    }
+    
+    if (diff_size < size1) {
+        int* temp = realloc(diff, diff_size * sizeof(int));
+        if (temp != NULL) {
+            return temp;
+        }
+    }
+    
+    return diff;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5, 1};
+    int list2[] = {4, 5, 6, 7, 8};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t diff_size = 0;
+    
+    int* diff = list_difference(list1, size1, list2, size2, &diff_size);
+    
+    if (diff != NULL) {
+        for (size_t i = 0; i < diff_size; i++) {
+            printf("%d ", diff[i]);
+        }
+        printf("\n");
+        free(diff);
+    }
+    
+    return 0;
+}

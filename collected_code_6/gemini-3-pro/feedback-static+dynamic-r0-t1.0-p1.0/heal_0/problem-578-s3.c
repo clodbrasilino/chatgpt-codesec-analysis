@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+struct Node* interleaveLists(struct Node* list1, struct Node* list2) {
+    if (list1 == NULL) {
+        return list2;
+    }
+    if (list2 == NULL) {
+        return list1;
+    }
+
+    struct Node* head1 = list1;
+    struct Node* head2 = list2;
+    struct Node* next1;
+    struct Node* next2;
+
+    while (head1 != NULL && head2 != NULL) {
+        next1 = head1->next;
+        next2 = head2->next;
+
+        head1->next = head2;
+        if (next1 == NULL) {
+            break;
+        }
+        head2->next = next1;
+
+        head1 = next1;
+        head2 = next2;
+    }
+
+    return list1;
+}
+
+void printList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    struct Node* list1 = createNode(1);
+    list1->next = createNode(3);
+    list1->next->next = createNode(5);
+
+    struct Node* list2 = createNode(2);
+    list2->next = createNode(4);
+    list2->next->next = createNode(6);
+
+    struct Node* interleaved = interleaveLists(list1, list2);
+
+    printList(interleaved);
+
+    freeList(interleaved);
+
+    return 0;
+}

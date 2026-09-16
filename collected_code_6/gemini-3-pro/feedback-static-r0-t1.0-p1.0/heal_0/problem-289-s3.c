@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_leap_year(int year) {
+    if (year <= 0) {
+        return -1;
+    }
+    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+        return 1;
+    }
+    return 0;
+}
+
+int calculate_odd_days(int year) {
+    if (year <= 0) {
+        return -1;
+    }
+
+    int prev_year = year - 1;
+    int odd_days = 0;
+
+    odd_days = (prev_year % 400) % 7;
+    int centuries = (prev_year % 400) / 100;
+    
+    if (centuries == 1) odd_days = 5;
+    else if (centuries == 2) odd_days = 3;
+    else if (centuries == 3) odd_days = 1;
+    else odd_days = 0;
+
+    int remaining_years = prev_year % 100;
+    int leap_years = remaining_years / 4;
+    int ordinary_years = remaining_years - leap_years;
+
+    odd_days = (odd_days + (leap_years * 2) + ordinary_years) % 7;
+
+    int leap = is_leap_year(year);
+    if (leap == 1) {
+        odd_days = (odd_days + 2) % 7;
+    } else {
+        odd_days = (odd_days + 1) % 7;
+    }
+
+    return odd_days;
+}
+
+int main(void) {
+    int year;
+    int result;
+    
+    if (scanf("%d", &year) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    result = calculate_odd_days(year);
+    
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+
+    return EXIT_SUCCESS;
+}

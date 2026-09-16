@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <ctype.h>
+
+int is_integer(const char *str)
+{
+    char *endptr;
+    long value;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (str[0] == '\0') {
+        return 0;
+    }
+
+    if (isspace((unsigned char)str[0])) {
+        return 0;
+    }
+
+    errno = 0;
+    value = strtol(str, &endptr, 10);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    (void)value;
+    return 1;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    const char *tests[] = {
+        "123",
+        "-456",
+        "+789",
+        "12.5",
+        "abc",
+        "",
+        "  42",
+        "42  ",
+        "2147483647",
+        "99999999999999999999999999"
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    if (argc > 1) {
+        for (i = 1; i < (size_t)argc; i++) {
+            if (is_integer(argv[i])) {
+                printf("\"%s\" is an integer\n", argv[i]);
+            } else {
+                printf("\"%s\" is not an integer\n", argv[i]);
+            }
+        }
+        return EXIT_SUCCESS;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (is_integer(tests[i])) {
+            printf("\"%s\" is an integer\n", tests[i]);
+        } else {
+            printf("\"%s\" is not an integer\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

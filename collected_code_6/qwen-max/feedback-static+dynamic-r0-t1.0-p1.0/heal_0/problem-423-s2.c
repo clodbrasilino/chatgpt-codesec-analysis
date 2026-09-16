@@ -1,37 +1,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX 100
+
 int max(int a, int b) {
     return (a > b) ? a : b;
 }
 
-int goldMaxCollection(int goldTable[][10], int n, int m, int memo[10][10], int i, int j) {
-    if (i < 0 || i >= n || j < 0 || j >= m) return 0;
-    if (memo[i][j] != -1) return memo[i][j];
-    int right = goldMaxCollection(goldTable, n, m, memo, i, j + 1);
-    int rightUp = goldMaxCollection(goldTable, n, m, memo, i - 1, j + 1);
-    int rightDown = goldMaxCollection(goldTable, n, m, memo, i + 1, j + 1);
-    memo[i][j] = goldTable[i][j] + max(right, max(rightUp, rightDown));
-    return memo[i][j];
-}
+int gold_mine(int gold[MAX][MAX], int m, int n) {
+    int dp[MAX][MAX];
+    for (int col = n - 1; col >= 0; col--) {
+        for (int row = 0; row < m; row++) {
+            int right_up = (row == 0 || col == n - 1) ? 0 : dp[row - 1][col + 1];
+            int right = (col == n - 1) ? 0 : dp[row][col + 1];
+            int right_down = (row == m - 1 || col == n - 1) ? 0 : dp[row + 1][col + 1];
 
-int solveGoldMineProblem(int goldTable[][10], int n, int m) {
-    int memo[10][10];
-    for (int i = 0; i < 10; ++i) {
-        for (int j = 0; j < 10; ++j) {
-            memo[i][j] = -1;
+            dp[row][col] = gold[row][col] + max(max(right_up, right), right_down);
         }
     }
-    int res = 0;
-    for (int i = 0; i < n; ++i) {
-        res = max(res, goldMaxCollection(goldTable, n, m, memo, i, 0));
+
+    int max_gold = 0;
+    for (int i = 0; i < m; i++) {
+        if (dp[i][0] > max_gold) {
+            max_gold = dp[i][0];
+        }
     }
-    return res;
+    return max_gold;
 }
 
 int main() {
-    int m = 4, n = 4;
-    int goldTable[4][4] = {{1, 3, 1, 5}, {2, 2, 4, 1}, {5, 0, 2, 3}, {0, 6, 1, 2}};
-    printf("%d", solveGoldMineProblem(goldTable, n, m));
+    int m, n;
+    scanf("%d %d", &m, &n);
+
+    int gold[MAX][MAX];
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &gold[i][j]);
+        }
+    }
+
+    int result = gold_mine(gold, m, n);
+    printf("%d\n", result);
     return 0;
 }

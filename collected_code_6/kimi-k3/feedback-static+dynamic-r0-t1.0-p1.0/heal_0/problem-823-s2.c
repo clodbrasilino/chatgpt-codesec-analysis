@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int starts_with_regex(const char *str, const char *pattern) {
+    regex_t regex;
+    int ret;
+    regmatch_t match[1];
+    char *anchored_pattern;
+    int result = 0;
+
+    if (str == NULL || pattern == NULL) {
+        return 0;
+    }
+
+    anchored_pattern = malloc(strlen(pattern) + 2);
+    if (anchored_pattern == NULL) {
+        return 0;
+    }
+
+    anchored_pattern[0] = '^';
+    strcpy(anchored_pattern + 1, pattern);
+
+    ret = regcomp(&regex, anchored_pattern, REG_EXTENDED);
+    free(anchored_pattern);
+
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 1, match, 0);
+    if (ret == 0 && match[0].rm_so == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *str = "hello world";
+    const char *pattern = "hello";
+
+    if (starts_with_regex(str, pattern)) {
+        printf("String starts with the pattern.\n");
+    } else {
+        printf("String does not start with the pattern.\n");
+    }
+
+    return 0;
+}

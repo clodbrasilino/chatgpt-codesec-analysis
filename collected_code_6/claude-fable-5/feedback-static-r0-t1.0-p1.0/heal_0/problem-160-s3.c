@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long extended_gcd(long long a, long long b, long long *x, long long *y);
+int solve_equation(long long a, long long b, long long n, long long *x, long long *y);
+
+long long extended_gcd(long long a, long long b, long long *x, long long *y)
+{
+    if (b == 0) {
+        *x = 1;
+        *y = 0;
+        return a;
+    }
+    long long x1;
+    long long y1;
+    long long g = extended_gcd(b, a % b, &x1, &y1);
+    *x = y1;
+    *y = x1 - (a / b) * y1;
+    return g;
+}
+
+int solve_equation(long long a, long long b, long long n, long long *x, long long *y)
+{
+    if (x == NULL || y == NULL) {
+        return -1;
+    }
+    if (a == 0 && b == 0) {
+        if (n == 0) {
+            *x = 0;
+            *y = 0;
+            return 0;
+        }
+        return -1;
+    }
+    long long x0;
+    long long y0;
+    long long g = extended_gcd(a < 0 ? -a : a, b < 0 ? -b : b, &x0, &y0);
+    if (g == 0 || (n % g) != 0) {
+        return -1;
+    }
+    long long scale = n / g;
+    *x = x0 * scale;
+    *y = y0 * scale;
+    if (a < 0) {
+        *x = -(*x);
+    }
+    if (b < 0) {
+        *y = -(*y);
+    }
+    return 0;
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+    long long n;
+    long long x;
+    long long y;
+
+    printf("Enter a, b, n: ");
+    if (scanf("%lld %lld %lld", &a, &b, &n) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (solve_equation(a, b, n, &x, &y) != 0) {
+        fprintf(stderr, "No solution exists\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("x = %lld, y = %lld\n", x, y);
+    printf("Verification: %lld * %lld + %lld * %lld = %lld\n", a, x, b, y, a * x + b * y);
+
+    return EXIT_SUCCESS;
+}

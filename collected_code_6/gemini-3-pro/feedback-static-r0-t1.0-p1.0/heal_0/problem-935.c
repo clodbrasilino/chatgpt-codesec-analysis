@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_sum_of_squares(unsigned int n) {
+    unsigned long long n_ull = (unsigned long long)n;
+    return (n_ull * (n_ull + 1) * (2 * n_ull + 1)) / 6;
+}
+
+int main(void) {
+    int n = 0;
+    unsigned long long result = 0;
+
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || n > 2000000) {
+        return EXIT_FAILURE;
+    }
+
+    result = calculate_sum_of_squares((unsigned int)n);
+
+    if (printf("%llu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

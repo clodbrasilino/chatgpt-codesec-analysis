@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void comb_sort(int arr[], int n) {
+    if (arr == NULL || n <= 1) {
+        return;
+    }
+
+    int gap = n;
+    bool swapped = true;
+
+    while (gap > 1 || swapped) {
+        gap = (gap * 10) / 13;
+        if (gap < 1) {
+            gap = 1;
+        }
+
+        swapped = false;
+
+        for (int i = 0; i + gap < n; i++) {
+            if (arr[i] > arr[i + gap]) {
+                swap(&arr[i], &arr[i + gap]);
+                swapped = true;
+            }
+        }
+    }
+}
+
+int main(void) {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90, 5, 45, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    comb_sort(arr, n);
+
+    printf("Sorted array: ");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

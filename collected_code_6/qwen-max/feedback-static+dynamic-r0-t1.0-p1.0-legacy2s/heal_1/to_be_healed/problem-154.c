@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** create_matrix(int rows, int cols) {
+    int **matrix = (int**)malloc(rows * sizeof(int*));
+    for (int i = 0; i < rows; ++i) {
+        matrix[i] = (int*)malloc(cols * sizeof(int));
+    }
+    return matrix;
+}
+
+void free_matrix(int **matrix, int rows) {
+    for (int i = 0; i < rows; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+int* extract_elements(int **matrix, int rows, int cols, int element, int *output_size) {
+    int *result = NULL;
+    *output_size = 0;
+
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            if (matrix[r][c] == element) {
+                /* Possible weaknesses found:
+                 *  Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+                 */
+                result = (int*)realloc(result, (*output_size + 1) * sizeof(int));
+                result[*output_size] = element;
+                *output_size += 1;
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    int **matrix;
+    int rows = 4;
+    int cols = 4;
+
+    matrix = create_matrix(rows, cols);
+
+    for (int r = 0; r < rows; ++r) {
+        for (int c = 0; c < cols; ++c) {
+            matrix[r][c] = r * cols + c;
+        }
+    }
+
+    int element = 2;
+    int output_size;
+
+    int *result = extract_elements(matrix, rows, cols, element, &output_size);
+
+    printf("Extracted elements: ");
+    for (int i = 0; i < output_size; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    free_matrix(matrix, rows);
+
+    return 0;
+}

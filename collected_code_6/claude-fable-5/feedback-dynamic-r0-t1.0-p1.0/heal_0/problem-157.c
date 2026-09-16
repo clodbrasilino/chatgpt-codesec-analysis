@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RunLength;
+
+typedef struct {
+    RunLength *runs;
+    size_t size;
+} RunLengthResult;
+
+int run_length_encode(const int *list, size_t length, RunLengthResult *result)
+{
+    RunLength *runs;
+    size_t run_count;
+    size_t i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    result->runs = NULL;
+    result->size = 0;
+
+    if (list == NULL || length == 0) {
+        return -1;
+    }
+
+    runs = malloc(length * sizeof(RunLength));
+    if (runs == NULL) {
+        return -1;
+    }
+
+    run_count = 0;
+    runs[0].value = list[0];
+    runs[0].count = 1;
+    run_count = 1;
+
+    for (i = 1; i < length; i++) {
+        if (list[i] == runs[run_count - 1].value) {
+            runs[run_count - 1].count++;
+        } else {
+            runs[run_count].value = list[i];
+            runs[run_count].count = 1;
+            run_count++;
+        }
+    }
+
+    if (run_count < length) {
+        RunLength *shrunk = realloc(runs, run_count * sizeof(RunLength));
+        if (shrunk != NULL) {
+            runs = shrunk;
+        }
+    }
+
+    result->runs = runs;
+    result->size = run_count;
+    return 0;
+}
+
+void free_run_length_result(RunLengthResult *result)
+{
+    if (result != NULL) {
+        free(result->runs);
+        result->runs = NULL;
+        result->size = 0;
+    }
+}
+
+int main(void)
+{
+    int data[] = {1, 1, 1, 2, 2, 3, 4, 4, 4, 4, 5};
+    size_t length = sizeof(data) / sizeof(data[0]);
+    RunLengthResult result;
+    size_t i;
+
+    if (run_length_encode(data, length, &result) != 0) {
+        fprintf(stderr, "Encoding failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result.size; i++) {
+        if (printf("(%d, %zu)\n", result.runs[i].value, result.runs[i].count) < 0) {
+            free_run_length_result(&result);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_run_length_result(&result);
+    return EXIT_SUCCESS;
+}

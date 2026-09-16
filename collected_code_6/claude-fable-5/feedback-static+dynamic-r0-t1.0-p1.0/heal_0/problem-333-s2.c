@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 5
+#define COLS 2
+
+static int compare_by_second(const void *a, const void *b)
+{
+    const int *row_a = (const int *)a;
+    const int *row_b = (const int *)b;
+
+    if (row_a[1] < row_b[1]) {
+        return -1;
+    }
+    if (row_a[1] > row_b[1]) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_by_second(int list[][COLS], size_t rows)
+{
+    if (list == NULL || rows == 0U) {
+        return -1;
+    }
+    qsort(list, rows, sizeof(list[0]), compare_by_second);
+    return 0;
+}
+
+static void print_list(const int list[][COLS], size_t rows)
+{
+    size_t i;
+
+    for (i = 0U; i < rows; i++) {
+        if (printf("[%d, %d]\n", list[i][0], list[i][1]) < 0) {
+            (void)fprintf(stderr, "Output error\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+int main(void)
+{
+    int data[ROWS][COLS] = {
+        {1, 9},
+        {4, 3},
+        {2, 7},
+        {5, 1},
+        {3, 5}
+    };
+
+    if (printf("Before sorting:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    print_list(data, ROWS);
+
+    if (sort_by_second(data, ROWS) != 0) {
+        (void)fprintf(stderr, "Sorting failed: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("After sorting:\n") < 0) {
+        return EXIT_FAILURE;
+    }
+    print_list(data, ROWS);
+
+    return EXIT_SUCCESS;
+}

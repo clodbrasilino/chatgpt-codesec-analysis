@@ -1,0 +1,105 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c: In function 'tuple_add':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:37:30: error: incompatible types when assigning to type 'union <anonymous>' from type 'union <anonymous>'
+   37 |     t->data[t->size].value = value;
+      |                              ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c: In function 'remove_elements_by_type':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:49:23: error: invalid initializer
+   49 |             } value = t->data[i].value;
+      |                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:50:48: error: incompatible type for argument 3 of 'tuple_add'
+   50 |             tuple_add(result, t->data[i].type, value);
+      |                                                ^~~~~
+      |                                                |
+      |                                                union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:31:3: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   27 | void tuple_add(Tuple *t, int type, union {
+      |                                    ~~~~~~~
+   28 |     int i;
+      |     ~~~~~~
+   29 |     float f;
+      |     ~~~~~~~~
+   30 |     char c;
+      |     ~~~~~~~
+   31 | } value) {
+      | ~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:63:55: error: incompatible type for argument 3 of 'tuple_add'
+   63 |     tuple_add(t, 0, (union {int i; float f; char c; }){.i = 1});
+      |                                                       ^~~~~~~~
+      |                                                       |
+      |                                                       union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:31:3: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   27 | void tuple_add(Tuple *t, int type, union {
+      |                                    ~~~~~~~
+   28 |     int i;
+      |     ~~~~~~
+   29 |     float f;
+      |     ~~~~~~~~
+   30 |     char c;
+      |     ~~~~~~~
+   31 | } value) {
+      | ~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:64:55: error: incompatible type for argument 3 of 'tuple_add'
+   64 |     tuple_add(t, 1, (union {int i; float f; char c; }){.f = 2.5});
+      |                                                       ^~~~~~~~~~
+      |                                                       |
+      |                                                       union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:31:3: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   27 | void tuple_add(Tuple *t, int type, union {
+      |                                    ~~~~~~~
+   28 |     int i;
+      |     ~~~~~~
+   29 |     float f;
+      |     ~~~~~~~~
+   30 |     char c;
+      |     ~~~~~~~
+   31 | } value) {
+      | ~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:65:55: error: incompatible type for argument 3 of 'tuple_add'
+   65 |     tuple_add(t, 2, (union {int i; float f; char c; }){.c = 'a'});
+      |                                                       ^~~~~~~~~~
+      |                                                       |
+      |                                                       union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:31:3: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   27 | void tuple_add(Tuple *t, int type, union {
+      |                                    ~~~~~~~
+   28 |     int i;
+      |     ~~~~~~
+   29 |     float f;
+      |     ~~~~~~~~
+   30 |     char c;
+      |     ~~~~~~~
+   31 | } value) {
+      | ~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:66:55: error: incompatible type for argument 3 of 'tuple_add'
+   66 |     tuple_add(t, 0, (union {int i; float f; char c; }){.i = 3});
+      |                                                       ^~~~~~~~
+      |                                                       |
+      |                                                       union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:31:3: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   27 | void tuple_add(Tuple *t, int type, union {
+      |                                    ~~~~~~~
+   28 |     int i;
+      |     ~~~~~~
+   29 |     float f;
+      |     ~~~~~~~~
+   30 |     char c;
+      |     ~~~~~~~
+   31 | } value) {
+      | ~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:67:55: error: incompatible type for argument 3 of 'tuple_add'
+   67 |     tuple_add(t, 1, (union {int i; float f; char c; }){.f = 4.5});
+      |                                                       ^~~~~~~~~~
+      |                                                       |
+      |                                                       union <anonymous>
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-533.c:31:3: note: expected 'union <anonymous>' but argument is of type 'union <anonymous>'
+   27 | void tuple_add(Tuple *t, int type, union {
+      |                                    ~~~~~~~
+   28 |     int i;
+      |     ~~~~~~
+   29 |     float f;
+      |     ~~~~~~~~
+   30 |     char c;
+      |     ~~~~~~~
+   31 | } value) {
+      | ~~^~~~~

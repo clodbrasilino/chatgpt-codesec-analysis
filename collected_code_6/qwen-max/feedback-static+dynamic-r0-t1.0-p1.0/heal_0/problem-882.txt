@@ -1,0 +1,15 @@
+```c
+#include <stdio.h>
+
+double calculate_perimeter(double base, double side) {
+    return 2 * (base + side);
+}
+
+int main() {
+    double base = 5.0;
+    double side = 3.0;
+    double perimeter = calculate_perimeter(base, side);
+    printf("Perimeter of the parallelogram: %.2f\n", perimeter);
+    return 0;
+}
+```

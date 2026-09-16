@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_evens(int n) {
+    if (n < 2) {
+        return 0.0;
+    }
+
+    if (n % 2 != 0) {
+        n -= 1;
+    }
+
+    double sum = 0.0;
+    int count = 0;
+
+    for (int i = 2; i <= n; i += 2) {
+        sum += i;
+        count++;
+    }
+
+    if (count == 0) {
+        return 0.0;
+    }
+
+    return sum / count;
+}
+
+int main(void) {
+    int input;
+    
+    if (scanf("%d", &input) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    double average = average_of_evens(input);
+    printf("%.2f\n", average);
+
+    return EXIT_SUCCESS;
+}

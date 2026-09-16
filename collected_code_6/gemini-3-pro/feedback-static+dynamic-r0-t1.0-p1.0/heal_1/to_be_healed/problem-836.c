@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <limits.h>
+
+int maxSubArrayLen(const int *nums, int numsSize) {
+    if (nums == NULL || numsSize <= 0) {
+        return 0;
+    }
+
+    int maxSum = INT_MIN;
+    int currentSum = 0;
+    int maxLength = 0;
+    int currentLength = 0;
+
+    for (int i = 0; i < numsSize; i++) {
+        if (currentSum < 0) {
+            currentSum = nums[i];
+            currentLength = 1;
+        } else {
+            currentSum += nums[i];
+            currentLength++;
+        }
+
+        if (currentSum > maxSum) {
+            maxSum = currentSum;
+            maxLength = currentLength;
+        } else if (currentSum == maxSum && currentLength > maxLength) {
+            maxLength = currentLength;
+        }
+    }
+
+    return maxLength;
+}
+
+int main(void) {
+    int nums[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int length = maxSubArrayLen(nums, numsSize);
+    printf("%d\n", length);
+
+    /* Possible weaknesses found:
+     *  Variable 'nums2' can be declared as const array [constVariable]
+     */
+    int nums2[] = {1};
+    printf("%d\n", maxSubArrayLen(nums2, 1));
+
+    /* Possible weaknesses found:
+     *  Variable 'nums3' can be declared as const array [constVariable]
+     */
+    int nums3[] = {5, 4, -1, 7, 8};
+    printf("%d\n", maxSubArrayLen(nums3, 5));
+
+    return 0;
+}

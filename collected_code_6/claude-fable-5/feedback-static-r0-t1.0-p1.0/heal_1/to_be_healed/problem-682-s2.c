@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int multiply_lists(const int *a, const int *b, int *result, size_t length)
+{
+    size_t i;
+
+    if (a == NULL || b == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        long long product = (long long)a[i] * (long long)b[i];
+        if (product > INT_MAX || product < INT_MIN) {
+            return -2;
+        }
+        result[i] = (int)product;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'list2' can be declared as const array [constVariable]
+     */
+    int list2[] = {6, 7, 8, 9, 10};
+    size_t length = sizeof(list1) / sizeof(list1[0]);
+    int *result;
+    size_t i;
+    int status;
+
+    result = malloc(length * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = multiply_lists(list1, list2, result, length);
+    if (status != 0) {
+        fprintf(stderr, "Multiplication failed with error code %d\n", status);
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < length; i++) {
+        printf("%d", result[i]);
+        if (i < length - 1) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

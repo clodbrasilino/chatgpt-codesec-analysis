@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+static int multiply(int a, int b, int *result)
+{
+    int64_t acc = 0;
+    uint32_t ua;
+    uint32_t ub;
+    int negative = 0;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (a < 0) {
+        ua = (uint32_t)(-(int64_t)a);
+        negative = !negative;
+    } else {
+        ua = (uint32_t)a;
+    }
+
+    if (b < 0) {
+        ub = (uint32_t)(-(int64_t)b);
+        negative = !negative;
+    } else {
+        ub = (uint32_t)b;
+    }
+
+    while (ub > 0U) {
+        if ((ub & 1U) != 0U) {
+            acc += (int64_t)ua;
+            if (acc > ((int64_t)INT_MAX + 1)) {
+                return -1;
+            }
+        }
+        ub >>= 1;
+        if (ub > 0U) {
+            if (ua > (UINT32_MAX >> 1)) {
+                return -1;
+            }
+            ua <<= 1;
+        }
+    }
+
+    if (negative) {
+        acc = -acc;
+    }
+
+    if (acc > (int64_t)INT_MAX || acc < (int64_t)INT_MIN) {
+        return -1;
+    }
+
+    *result = (int)acc;
+    return 0;
+}
+
+int main(void)
+{
+    int a = 123;
+    int b = -456;
+    int product = 0;
+
+    if (multiply(a, b, &product) != 0) {
+        if (fprintf(stderr, "Multiplication overflow or error\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d * %d = %d\n", a, b, product) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

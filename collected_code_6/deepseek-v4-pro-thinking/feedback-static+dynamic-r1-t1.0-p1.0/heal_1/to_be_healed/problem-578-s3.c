@@ -1,0 +1,38 @@
+#include <stddef.h>
+#include <stdio.h>
+
+void interleave(const int *list1, const int *list2, int *result, size_t length)
+{
+    if (list1 == NULL || list2 == NULL || result == NULL || length == 0) {
+        return;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        result[i * 2] = list1[i];
+        result[i * 2 + 1] = list2[i];
+    }
+}
+
+int main(void)
+{
+    enum { LENGTH = 3 };
+    /* Possible weaknesses found:
+     *  Variable 'list1' can be declared as const array [constVariable]
+     */
+    int list1[LENGTH] = {1, 3, 5};
+    /* Possible weaknesses found:
+     *  Variable 'list2' can be declared as const array [constVariable]
+     */
+    int list2[LENGTH] = {2, 4, 6};
+    int result[LENGTH * 2];
+    size_t length = LENGTH;
+
+    interleave(list1, list2, result, length);
+
+    for (size_t i = 0; i < length * 2; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

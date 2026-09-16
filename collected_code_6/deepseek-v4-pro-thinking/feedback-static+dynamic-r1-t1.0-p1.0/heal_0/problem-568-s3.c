@@ -1,0 +1,91 @@
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char **keys;
+    char **values;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary **items;
+    size_t length;
+} DictionaryList;
+
+Dictionary *dictionary_create(void) {
+    Dictionary *dict = malloc(sizeof(*dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->keys = NULL;
+    dict->values = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+    return dict;
+}
+
+void dictionary_destroy(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    free(dict->keys);
+    free(dict->values);
+    free(dict);
+}
+
+DictionaryList *create_list_of_empty_dictionaries(size_t count) {
+    DictionaryList *list = malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->items = NULL;
+    list->length = 0;
+
+    if (count > 0) {
+        list->items = calloc(count, sizeof(*list->items));
+        if (list->items == NULL) {
+            free(list);
+            return NULL;
+        }
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        Dictionary *dict = dictionary_create();
+        if (dict == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                dictionary_destroy(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        list->items[i] = dict;
+        list->length++;
+    }
+
+    return list;
+}
+
+void dictionary_list_destroy(DictionaryList *list) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < list->length; i++) {
+        dictionary_destroy(list->items[i]);
+    }
+    free(list->items);
+    free(list);
+}
+
+int main(void) {
+    const size_t count = 5;
+    DictionaryList *list = create_list_of_empty_dictionaries(count);
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+    printf("Created %zu empty dictionaries.\n", list->length);
+    dictionary_list_destroy(list);
+    return EXIT_SUCCESS;
+}

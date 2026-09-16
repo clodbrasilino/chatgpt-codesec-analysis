@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_trapezium_area(double base1, double base2, double height) {
+    if (height < 0.0) {
+        fprintf(stderr, "Invalid input: height cannot be negative.\n");
+        exit(EXIT_FAILURE);
+    }
+    if (base1 < 0.0 || base2 < 0.0) {
+        fprintf(stderr, "Invalid input: bases cannot be negative.\n");
+        exit(EXIT_FAILURE);
+    }
+    return 0.5 * (base1 + base2) * height;
+}
+
+int main(void) {
+    double b1, b2, h;
+    
+    if (scanf("%lf %lf %lf", &b1, &b2, &h) != 3) {
+        fprintf(stderr, "Input error: expected three numeric values.\n");
+        return EXIT_FAILURE;
+    }
+    
+    double area = calculate_trapezium_area(b1, b2, h);
+    printf("%.6lf\n", area);
+    
+    return EXIT_SUCCESS;
+}
+```

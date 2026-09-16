@@ -1,0 +1,164 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    int key;
+    int *values;
+    size_t count;
+    size_t capacity;
+} Group;
+
+typedef struct {
+    Group *groups;
+    size_t count;
+    size_t capacity;
+} GroupList;
+
+static int group_list_init(GroupList *list)
+{
+    list->count = 0;
+    list->capacity = 4;
+    list->groups = malloc(list->capacity * sizeof(Group));
+    if (list->groups == NULL) {
+        return -1;
+    }
+    return 0;
+}
+
+static Group *group_list_find(GroupList *list, int key)
+{
+    size_t i;
+    for (i = 0; i < list->count; i++) {
+        if (list->groups[i].key == key) {
+            return &list->groups[i];
+        }
+    }
+    return NULL;
+}
+
+static Group *group_list_add(GroupList *list, int key)
+{
+    Group *g;
+    if (list->count == list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Group *tmp = realloc(list->groups, new_capacity * sizeof(Group));
+        if (tmp == NULL) {
+            return NULL;
+        }
+        list->groups = tmp;
+        list->capacity = new_capacity;
+    }
+    g = &list->groups[list->count];
+    g->key = key;
+    g->count = 0;
+    g->capacity = 4;
+    g->values = malloc(g->capacity * sizeof(int));
+    if (g->values == NULL) {
+        return NULL;
+    }
+    list->count++;
+    return g;
+}
+
+static int group_add_value(Group *g, int value)
+{
+    if (g->count == g->capacity) {
+        size_t new_capacity = g->capacity * 2;
+        int *tmp = realloc(g->values, new_capacity * sizeof(int));
+        if (tmp == NULL) {
+            return -1;
+        }
+        g->values = tmp;
+        g->capacity = new_capacity;
+    }
+    g->values[g->count] = value;
+    g->count++;
+    return 0;
+}
+
+static void group_list_free(GroupList *list)
+{
+    size_t i;
+    if (list->groups != NULL) {
+        for (i = 0; i < list->count; i++) {
+            free(list->groups[i].values);
+        }
+        free(list->groups);
+        list->groups = NULL;
+    }
+    list->count = 0;
+    list->capacity = 0;
+}
+
+static int assign_pair_elements(const Pair *pairs, size_t n, GroupList *result)
+{
+    size_t i;
+    if (pairs == NULL || result == NULL) {
+        return -1;
+    }
+    if (group_list_init(result) != 0) {
+        return -1;
+    }
+    for (i = 0; i < n; i++) {
+        Group *g = group_list_find(result, pairs[i].first);
+        if (g == NULL) {
+            g = group_list_add(result, pairs[i].first);
+            if (g == NULL) {
+                group_list_free(result);
+                return -1;
+            }
+        }
+        if (group_add_value(g, pairs[i].second) != 0) {
+            group_list_free(result);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void print_groups(const GroupList *list)
+{
+    size_t i;
+    size_t j;
+    for (i = 0; i < list->count; i++) {
+        printf("%d: [", list->groups[i].key);
+        for (j = 0; j < list->groups[i].count; j++) {
+            if (j > 0) {
+                printf(", ");
+            }
+            printf("%d", list->groups[i].values[j]);
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    Pair pairs[] = {
+        {5, 4},
+        {2, 3},
+        {5, 9},
+        {2, 5},
+        {7, 1},
+        {5, 2}
+    };
+    size_t n = sizeof(pairs) / sizeof(pairs[0]);
+    GroupList result;
+
+    if (assign_pair_elements(pairs, n, &result) != 0) {
+        fprintf(stderr, "Failed to process pairs\n");
+        return EXIT_FAILURE;
+    }
+
+    print_groups(&result);
+    group_list_free(&result);
+
+    return EXIT_SUCCESS;
+}
+```

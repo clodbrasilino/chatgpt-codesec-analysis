@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countDivisors(int n) {
+    int count = 0;
+    for (int i = 1; i * i <= n; ++i) {
+        if (n % i == 0) {
+            if (i * i == n) {
+                count++;
+            } else {
+                count += 2;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int number;
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input. Please enter an integer.\n");
+        return EXIT_FAILURE;
+    }
+    int divisors = countDivisors(number);
+    printf("The number of divisors of %d is: %d\n", number, divisors);
+    return EXIT_SUCCESS;
+}

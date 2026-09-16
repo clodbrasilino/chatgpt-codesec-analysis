@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (!prices || pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= pricesSize / 2) {
+        int profit = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    }
+
+    int *prev_dp = (int *)malloc(pricesSize * sizeof(int));
+    int *curr_dp = (int *)malloc(pricesSize * sizeof(int));
+
+    if (!prev_dp || !curr_dp) {
+        free(prev_dp);
+        free(curr_dp);
+        return 0;
+    }
+
+    for (int i = 0; i < pricesSize; i++) {
+        prev_dp[i] = 0;
+    }
+
+    for (int t = 1; t <= k; t++) {
+        int max_diff = -prices[0];
+        curr_dp[0] = 0;
+        for (int i = 1; i < pricesSize; i++) {
+            int sell = prices[i] + max_diff;
+            curr_dp[i] = curr_dp[i - 1] > sell ? curr_dp[i - 1] : sell;
+            int diff = prev_dp[i] - prices[i];
+            if (diff > max_diff) {
+                max_diff = diff;
+            }
+        }
+        int *temp = prev_dp;
+        prev_dp = curr_dp;
+        curr_dp = temp;
+    }
+
+    int result = prev_dp[pricesSize - 1];
+    free(prev_dp);
+    free(curr_dp);
+
+    return result;
+}
+
+int main() {
+    /* Possible weaknesses found:
+     *  Variable 'prices1' can be declared as const array [constVariable]
+     */
+    int prices1[] = {2, 4, 1};
+    int k1 = 2;
+    printf("%d\n", maxProfit(k1, prices1, 3));
+
+    /* Possible weaknesses found:
+     *  Variable 'prices2' can be declared as const array [constVariable]
+     */
+    int prices2[] = {3, 2, 6, 5, 0, 3};
+    int k2 = 2;
+    printf("%d\n", maxProfit(k2, prices2, 6));
+
+    return 0;
+}

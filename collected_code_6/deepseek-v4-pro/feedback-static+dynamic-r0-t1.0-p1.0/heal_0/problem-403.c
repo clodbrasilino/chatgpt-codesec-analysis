@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int is_valid_url(const char *url) {
+    if (url == NULL) {
+        return 0;
+    }
+    
+    regex_t regex;
+    int ret;
+    const char *pattern = "^(https?|ftp)://[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(:[0-9]+)?(/[^\\s]*)?$";
+    
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+    
+    ret = regexec(&regex, url, 0, NULL, 0);
+    regfree(&regex);
+    
+    return ret == 0;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <url>\n", argv[0]);
+        return 1;
+    }
+    
+    for (int i = 1; i < argc; i++) {
+        if (is_valid_url(argv[i])) {
+            printf("%s: valid\n", argv[i]);
+        } else {
+            printf("%s: invalid\n", argv[i]);
+        }
+    }
+    
+    return 0;
+}

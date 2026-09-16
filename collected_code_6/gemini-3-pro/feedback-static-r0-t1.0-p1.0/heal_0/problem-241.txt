@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char ***generate_3d_array(size_t x, size_t y, size_t z) {
+    if (x == 0 || y == 0 || z == 0) {
+        return NULL;
+    }
+
+    char ***array_3d = (char ***)malloc(x * sizeof(char **));
+    if (array_3d == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < x; ++i) {
+        array_3d[i] = (char **)malloc(y * sizeof(char *));
+        if (array_3d[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(array_3d[j]);
+            }
+            free(array_3d);
+            return NULL;
+        }
+
+        for (size_t j = 0; j < y; ++j) {
+            array_3d[i][j] = (char *)malloc(z * sizeof(char));
+            if (array_3d[i][j] == NULL) {
+                for (size_t k = 0; k < j; ++k) {
+                    free(array_3d[i][k]);
+                }
+                free(array_3d[i]);
+                for (size_t k = 0; k < i; ++k) {
+                    for (size_t l = 0; l < y; ++l) {
+                        free(array_3d[k][l]);
+                    }
+                    free(array_3d[k]);
+                }
+                free(array_3d);
+                return NULL;
+            }
+
+            for (size_t k = 0; k < z; ++k) {
+                array_3d[i][j][k] = '*';
+            }
+        }
+    }
+
+    return array_3d;
+}
+
+void free_3d_array(char ***array_3d, size_t x, size_t y) {
+    if (array_3d == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < x; ++i) {
+        if (array_3d[i] != NULL) {
+            for (size_t j = 0; j < y; ++j) {
+                free(array_3d[i][j]);
+            }
+            free(array_3d[i]);
+        }
+    }
+    free(array_3d);
+}
+
+int main(void) {
+    size_t dim_x = 3;
+    size_t dim_y = 3;
+    size_t dim_z = 3;
+
+    char ***my_array = generate_3d_array(dim_x, dim_y, dim_z);
+
+    if (my_array == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < dim_x; ++i) {
+        for (size_t j = 0; j < dim_y; ++j) {
+            for (size_t k = 0; k < dim_z; ++k) {
+                printf("%c ", my_array[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+
+    free_3d_array(my_array, dim_x, dim_y);
+
+    return EXIT_SUCCESS;
+}
+```

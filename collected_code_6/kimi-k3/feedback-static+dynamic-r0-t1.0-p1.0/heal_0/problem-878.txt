@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+bool tuple_contains_only_k_elements(const Tuple *tuple, size_t k) {
+    if (tuple == NULL) {
+        return false;
+    }
+    if (tuple->data == NULL && tuple->size > 0) {
+        return false;
+    }
+    return tuple->size == k;
+}
+
+int main(void) {
+    int values[] = {1, 2, 3, 4, 5};
+    Tuple tuple = {values, 5};
+    size_t k = 5;
+
+    if (tuple_contains_only_k_elements(&tuple, k)) {
+        printf("Tuple contains exactly %zu elements.\n", k);
+    } else {
+        printf("Tuple does not contain exactly %zu elements.\n", k);
+    }
+
+    return 0;
+}
+```

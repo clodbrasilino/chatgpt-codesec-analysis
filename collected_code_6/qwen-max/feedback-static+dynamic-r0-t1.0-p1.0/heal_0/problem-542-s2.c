@@ -1,34 +1,34 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <regex.h>
+#include <string.h>
 
-void replace_chars_with_colon(char *str) {
-    regex_t regex;
+int replace_chars_with_colon(char *str) {
+    regex_t reg;
+    if (regcomp(&reg, "[ ,.]", REG_EXTENDED | REG_NEWLINE) != 0) return -1;
+    
+    size_t nmatch = 1;
     regmatch_t pmatch[1];
-    int reti;
-    char *ptr = str;
-
-    if (regcomp(&regex, "[ ,.]", REG_EXTENDED) != 0) {
-        return;
+    int pos = 0;
+    char buffer[128];
+    
+    while (regexec(&reg, str + pos, nmatch, pmatch, 0) == 0) {
+        strncpy(buffer, str + pos, pmatch[0].rm_eo);
+        buffer[pmatch[0].rm_eo] = '\0';
+        strncat(buffer, ":", 1);
+        strcpy(str + pos, buffer);
+        pos += pmatch[0].rm_eo + 1;
     }
-
-    while ((reti = regexec(&regex, ptr, 1, pmatch, 0)) == 0) {
-        ptr[pmatch[0].rm_so] = ':';
-        ptr += pmatch[0].rm_eo;
-    }
-
-    if (reti != REG_NOMATCH) {
-        regfree(&regex);
-        return;
-    }
-
-    regfree(&regex);
+    
+    regfree(&reg);
+    return 0;
 }
 
 int main() {
-    char input[] = "Hello, World. This is a test string!";
-    printf("Original: %s\n", input);
-    replace_chars_with_colon(input);
-    printf("Modified: %s\n", input);
+    char input[] = "Hello, world. This is a test, of the system.";
+    if (replace_chars_with_colon(input) == 0) {
+        printf("%s\n", input);
+    } else {
+        printf("Replacement failed.\n");
+    }
     return 0;
 }

@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+void replace_characters(char *str) {
+    regex_t regex;
+    regmatch_t match[1];
+    /* Possible weaknesses found:
+     *  The scope of the variable 'ret' can be reduced. [variableScope]
+     */
+    int ret, pos = 0;
+
+    if (regcomp(&regex, "[ ,.]", REG_EXTENDED | REG_NEWLINE) != 0) {
+        return;
+    }
+
+    while (1) {
+        ret = regexec(&regex, str + pos, 1, match, 0);
+        if (ret == REG_NOMATCH || ret != 0) {
+            break;
+        }
+        if (match[0].rm_so == -1 || match[0].rm_eo == -1) {
+            break;
+        }
+        str[pos + match[0].rm_so] = ':';
+        pos += match[0].rm_so + 1;
+    }
+    regfree(&regex);
+}
+
+int main() {
+    char str[] = "Hello, World. This is a test string.";
+    replace_characters(str);
+    printf("%s\n", str);
+    return 0;
+}

@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long bell_number(int n) {
+    unsigned long long **bell = (unsigned long long**)malloc((n+1) * sizeof(unsigned long long*));
+    if (bell == NULL) return 0;
+    for (int i = 0; i <= n; i++) {
+        bell[i] = (unsigned long long*)calloc(n+1, sizeof(unsigned long long));
+        if (bell[i] == NULL) {
+            for (int k = 0; k < i; k++) free(bell[k]);
+            free(bell);
+            return 0;
+        }
+    }
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= i; j++) {
+            if (j == 0)
+                bell[i][j] = 1;
+            else
+                bell[i][j] = bell[i-1][j-1] + (j > 1 ? bell[i-1][j-2] : 0) + bell[i-1][j];
+        }
+    }
+    unsigned long long result = 0;
+    for (int j = 0; j <= n; j++) {
+        result += bell[n][j];
+    }
+    for (int i = 0; i <= n; i++) {
+        free(bell[i]);
+    }
+    free(bell);
+    return result;
+}
+
+int main() {
+    int n;
+    printf("Enter the number: ");
+    scanf("%d", &n);
+    if (n >= 0) {
+        unsigned long long result = bell_number(n);
+        printf("Bell Number B(%d) is %llu\n", n, result);
+    } else {
+        printf("Invalid input. Please enter a non-negative integer.\n");
+    }
+    return 0;
+}
+```

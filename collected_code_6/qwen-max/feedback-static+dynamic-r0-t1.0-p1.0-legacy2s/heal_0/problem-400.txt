@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *tuple;
+    int count;
+} TupleCount;
+
+int compareTuples(const void *a, const void *b) {
+    return strcmp(((TupleCount *)a)->tuple, ((TupleCount *)b)->tuple);
+}
+
+int findTuple(TupleCount *tupleCounts, int size, const char *tuple) {
+    for (int i = 0; i < size; ++i) {
+        if (strcmp(tupleCounts[i].tuple, tuple) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void extractFrequency(char **tuples, int n, TupleCount **result, int *resultSize) {
+    *result = (TupleCount *)malloc(n * sizeof(TupleCount));
+    *resultSize = 0;
+
+    for (int i = 0; i < n; ++i) {
+        int index = findTuple(*result, *resultSize, tuples[i]);
+        if (index != -1) {
+            (*result)[index].count++;
+        } else {
+            (*result)[*resultSize].tuple = strdup(tuples[i]);
+            (*result)[*resultSize].count = 1;
+            (*resultSize)++;
+        }
+    }
+
+    qsort(*result, *resultSize, sizeof(TupleCount), compareTuples);
+}
+
+void freeResult(TupleCount *result, int resultSize) {
+    for (int i = 0; i < resultSize; ++i) {
+        free(result[i].tuple);
+    }
+    free(result);
+}
+
+int main() {
+    char *tuples[] = {"(1, 2, 3)", "(4, 5, 6)", "(1, 2, 3)", "(7, 8, 9)", "(4, 5, 6)"};
+    int n = 5;
+
+    TupleCount *result;
+    int resultSize;
+
+    extractFrequency(tuples, n, &result, &resultSize);
+
+    for (int i = 0; i < resultSize; ++i) {
+        printf("%s: %d\n", result[i].tuple, result[i].count);
+    }
+
+    freeResult(result, resultSize);
+    return 0;
+}
+```

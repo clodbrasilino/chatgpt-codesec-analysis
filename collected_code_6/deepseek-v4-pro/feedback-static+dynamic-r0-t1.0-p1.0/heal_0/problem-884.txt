@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool all_bits_in_range(uint32_t value, unsigned int high, unsigned int low) {
+    if (low > 31 || high > 31 || low > high) {
+        return false;
+    }
+    
+    unsigned int num_bits = high - low + 1;
+    uint32_t mask = (num_bits == 32) ? 0xFFFFFFFFu : ((1u << num_bits) - 1u);
+    mask <<= low;
+    
+    return (value & ~mask) == 0;
+}
+
+int main(void) {
+    uint32_t test1 = 0x0000001E;
+    uint32_t test2 = 0x00000020;
+    uint32_t test3 = 0xFFFFFFFF;
+    
+    printf("%d\n", all_bits_in_range(test1, 4, 1));
+    printf("%d\n", all_bits_in_range(test2, 4, 1));
+    printf("%d\n", all_bits_in_range(test3, 31, 0));
+    printf("%d\n", all_bits_in_range(test1, 1, 4));
+    printf("%d\n", all_bits_in_range(test1, 32, 0));
+    
+    return 0;
+}
+```

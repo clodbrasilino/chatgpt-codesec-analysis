@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <regex.h>
+
+int find_pattern(const char *text, const char *pattern) {
+    int result;
+    regex_t regex;
+    regmatch_t match;
+
+    result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        return -1;
+    }
+
+    result = regexec(&regex, text, 1, &match, 0);
+    regfree(&regex);
+
+    if (result == 0) {
+        printf("Pattern found at offset: %d\n", (int)match.rm_so);
+        return match.rm_so;
+    } else {
+        return -1;
+    }
+}
+
+int main() {
+    const char *text = "Hello, world! This is a test string. Hello, again!";
+    const char *pattern = "Hello";
+
+    int pos = find_pattern(text, pattern);
+    if (pos == -1) {
+        printf("Pattern not found.\n");
+    }
+
+    return 0;
+}
+```

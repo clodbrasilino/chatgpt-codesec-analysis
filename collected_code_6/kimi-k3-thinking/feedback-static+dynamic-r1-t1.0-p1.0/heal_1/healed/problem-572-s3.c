@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+size_t remove_duplicates(int *arr, size_t n);
+
+size_t remove_duplicates(int *arr, size_t n)
+{
+    if (arr == NULL || n == 0)
+    {
+        return 0;
+    }
+
+    for (size_t i = 0; i < n; i++)
+    {
+        size_t j = i + 1;
+        while (j < n)
+        {
+            if (arr[i] == arr[j])
+            {
+                for (size_t k = j; k + 1 < n; k++)
+                {
+                    arr[k] = arr[k + 1];
+                }
+                n--;
+            }
+            else
+            {
+                j++;
+            }
+        }
+    }
+
+    return n;
+}
+
+int main(void)
+{
+    int *arr;
+    size_t n;
+    size_t new_size;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &n) != 1 || n == 0 || n > SIZE_MAX / sizeof(int))
+    {
+        fprintf(stderr, "Error: invalid number of elements.\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(*arr));
+    if (arr == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu integers: ", n);
+    for (size_t i = 0; i < n; i++)
+    {
+        if (scanf("%d", &arr[i]) != 1)
+        {
+            fprintf(stderr, "Error: invalid integer input.\n");
+            free(arr);
+            arr = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    new_size = remove_duplicates(arr, n);
+
+    printf("List after removing duplicates (%zu elements): ", new_size);
+    for (size_t i = 0; i < new_size; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    putchar('\n');
+
+    free(arr);
+    arr = NULL;
+
+    return EXIT_SUCCESS;
+}

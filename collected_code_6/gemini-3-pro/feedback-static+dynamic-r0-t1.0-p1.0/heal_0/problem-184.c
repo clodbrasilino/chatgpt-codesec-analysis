@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_greater_than(const int* list, size_t list_size, int threshold, size_t* result_size) {
+    if (list == NULL || result_size == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < list_size; ++i) {
+        if (list[i] > threshold) {
+            count++;
+        }
+    }
+
+    *result_size = count;
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    int* result = (int*)malloc(count * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < list_size; ++i) {
+        if (list[i] > threshold) {
+            result[index++] = list[i];
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int my_list[] = {1, 5, 10, 25, 3, 42, 8};
+    size_t list_size = sizeof(my_list) / sizeof(my_list[0]);
+    int threshold = 9;
+    size_t result_size = 0;
+
+    int* greater_values = find_greater_than(my_list, list_size, threshold, &result_size);
+
+    if (greater_values != NULL && result_size > 0) {
+        for (size_t i = 0; i < result_size; ++i) {
+            printf("%d ", greater_values[i]);
+        }
+        printf("\n");
+        free(greater_values);
+        greater_values = NULL;
+    } else {
+        printf("\n");
+    }
+
+    return 0;
+}

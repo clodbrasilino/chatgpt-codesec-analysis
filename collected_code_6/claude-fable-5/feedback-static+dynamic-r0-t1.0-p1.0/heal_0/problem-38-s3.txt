@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int div_even_odd(const int *arr, size_t size, double *result)
+{
+    size_t i;
+    int first_even = 0;
+    int first_odd = 0;
+    int found_even = 0;
+    int found_odd = 0;
+
+    if (arr == NULL || result == NULL || size == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < size; i++) {
+        if (!found_even && (arr[i] % 2 == 0)) {
+            first_even = arr[i];
+            found_even = 1;
+        }
+        if (!found_odd && (arr[i] % 2 != 0)) {
+            first_odd = arr[i];
+            found_odd = 1;
+        }
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    if (!found_even || !found_odd) {
+        return -1;
+    }
+
+    if (first_odd == 0) {
+        return -1;
+    }
+
+    *result = (double)first_even / (double)first_odd;
+    return 0;
+}
+
+int main(void)
+{
+    int list[] = {1, 3, 5, 7, 4, 1, 6, 8};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    double result = 0.0;
+
+    if (div_even_odd(list, size, &result) != 0) {
+        fprintf(stderr, "Error: could not compute division of first even and odd numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Division of first even and odd number: %f\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

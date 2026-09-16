@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef enum {
+    SIDE_HYPOTENUSE,
+    SIDE_LEG
+} SideType;
+
+double find_third_side(double a, double b, SideType type) {
+    if (a <= 0 || b <= 0) {
+        return -1;
+    }
+    
+    if (type == SIDE_HYPOTENUSE) {
+        return sqrt(a * a + b * b);
+    } else {
+        double max = a > b ? a : b;
+        double min = a < b ? a : b;
+        if (max <= min) {
+            return -1;
+        }
+        return sqrt(max * max - min * min);
+    }
+}
+
+int main(void) {
+    double a = 3.0;
+    double b = 4.0;
+    double h = find_third_side(a, b, SIDE_HYPOTENUSE);
+    double leg = find_third_side(5.0, 3.0, SIDE_LEG);
+    
+    printf("Hypotenuse: %.2f\n", h);
+    printf("Leg: %.2f\n", leg);
+    
+    return 0;
+}

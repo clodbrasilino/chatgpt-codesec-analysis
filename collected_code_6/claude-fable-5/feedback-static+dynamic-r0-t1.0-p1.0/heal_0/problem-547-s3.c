@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned long long value)
+{
+    unsigned int count = 0U;
+
+    while (value != 0ULL)
+    {
+        value &= (value - 1ULL);
+        count++;
+    }
+
+    return count;
+}
+
+static unsigned long long sum_hamming_distances(unsigned long long n)
+{
+    unsigned long long total = 0ULL;
+    unsigned long long i;
+
+    for (i = 0ULL; i < n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i ^ (i + 1ULL));
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned long long n = 0ULL;
+    unsigned long long result;
+    int scan_status;
+
+    printf("Enter a non-negative integer n: ");
+
+    scan_status = scanf("%llu", &n);
+    if (scan_status != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 100000000ULL)
+    {
+        fprintf(stderr, "Error: input too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_hamming_distances(n);
+
+    printf("Sum of hamming distances from 0 to %llu is %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int digit_sum(long long n) {
+    int sum = 0;
+    if (n < 0) {
+        n = -n;
+    }
+    while (n > 0) {
+        sum += (int)(n % 10);
+        n /= 10;
+    }
+    return sum;
+}
+
+void split_max_digit_sum(long long n, long long *a, long long *b) {
+    long long best_a = 0;
+    long long best_b = n;
+    int max_sum = digit_sum(n);
+    long long i;
+
+    if (a == NULL || b == NULL) {
+        return;
+    }
+
+    for (i = 0; i <= n; i++) {
+        int current_sum = digit_sum(i) + digit_sum(n - i);
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            best_a = i;
+            best_b = n - i;
+        }
+    }
+
+    *a = best_a;
+    *b = best_b;
+}
+
+int main(void) {
+    long long n;
+    long long a = 0;
+    long long b = 0;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    split_max_digit_sum(n, &a, &b);
+    printf("Split: %lld + %lld = %lld\n", a, b, a + b);
+    printf("Digit sum: %d + %d = %d\n", digit_sum(a), digit_sum(b), digit_sum(a) + digit_sum(b));
+
+    return EXIT_SUCCESS;
+}

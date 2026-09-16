@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **split_string_into_chars(const char *str, size_t *count) {
+    if (str == NULL || count == NULL) return NULL;
+
+    size_t length = strlen(str);
+    *count = length + 1; // Include a NULL terminator
+
+    char **result = (char **)malloc(*count * sizeof(char *));
+    if (result == NULL) return NULL;
+
+    for (size_t i = 0; i < length; ++i) {
+        result[i] = (char *)malloc(2 * sizeof(char));
+        if (result[i] == NULL) {
+            for (size_t j = 0; j < i; ++j) {
+                free(result[j]);
+            }
+            free(result);
+            return NULL;
+        }
+        result[i][0] = str[i];
+        result[i][1] = '\0';
+    }
+
+    result[length] = NULL;
+    return result;
+}
+
+void free_split_string(char **split_str, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        free(split_str[i]);
+    }
+    free(split_str);
+}
+
+int main() {
+    const char *test_str = "hello";
+    size_t count;
+
+    char **split_str = split_string_into_chars(test_str, &count);
+    if (split_str == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    for (size_t i = 0; split_str[i] != NULL; ++i) {
+        printf("%s\n", split_str[i]);
+    }
+
+    free_split_string(split_str, count);
+
+    return 0;
+}
+```

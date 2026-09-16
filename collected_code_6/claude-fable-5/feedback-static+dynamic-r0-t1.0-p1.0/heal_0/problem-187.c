@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static char *longest_common_subsequence(const char *a, const char *b)
+{
+    size_t m;
+    size_t n;
+    size_t i;
+    size_t j;
+    size_t idx;
+    int **dp;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    m = strlen(a);
+    n = strlen(b);
+
+    dp = malloc((m + 1) * sizeof(int *));
+    if (dp == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i <= m; i++) {
+        dp[i] = calloc(n + 1, sizeof(int));
+        if (dp[i] == NULL) {
+            while (i > 0) {
+                i--;
+                free(dp[i]);
+            }
+            free(dp);
+            return NULL;
+        }
+    }
+
+    for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+            if (a[i - 1] == b[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+                dp[i][j] = dp[i - 1][j];
+            } else {
+                dp[i][j] = dp[i][j - 1];
+            }
+        }
+    }
+
+    idx = (size_t)dp[m][n];
+    result = malloc(idx + 1);
+    if (result == NULL) {
+        for (i = 0; i <= m; i++) {
+            free(dp[i]);
+        }
+        free(dp);
+        return NULL;
+    }
+
+    result[idx] = '\0';
+    i = m;
+    j = n;
+    while (i > 0 && j > 0) {
+        if (a[i - 1] == b[j - 1]) {
+            idx--;
+            result[idx] = a[i - 1];
+            i--;
+            j--;
+        } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+            i--;
+        } else {
+            j--;
+        }
+    }
+
+    for (i = 0; i <= m; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *seq1 = "AGGTAB";
+    const char *seq2 = "GXTXAYB";
+    char *lcs;
+
+    lcs = longest_common_subsequence(seq1, seq2);
+    if (lcs == NULL) {
+        fprintf(stderr, "Failed to compute LCS\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sequence 1: %s\n", seq1) < 0 ||
+        printf("Sequence 2: %s\n", seq2) < 0 ||
+        printf("LCS: %s\n", lcs) < 0 ||
+        printf("Length: %zu\n", strlen(lcs)) < 0) {
+        free(lcs);
+        return EXIT_FAILURE;
+    }
+
+    free(lcs);
+    return EXIT_SUCCESS;
+}

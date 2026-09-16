@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int min_removals(int *arr, size_t n, int k)
+{
+    size_t left = 0;
+    size_t right = 0;
+    size_t best = 0;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    qsort(arr, n, sizeof(int), compare_ints);
+
+    for (right = 0; right < n; right++) {
+        while ((long long)arr[right] - (long long)arr[left] > (long long)k) {
+            left++;
+        }
+        if (right - left + 1 > best) {
+            best = right - left + 1;
+        }
+    }
+
+    return (int)(n - best);
+}
+
+int main(void)
+{
+    int arr[] = { 1, 3, 4, 9, 10, 11, 12, 17, 20 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int k = 4;
+    int result = 0;
+
+    result = min_removals(arr, n, k);
+
+    if (printf("Minimum removals: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

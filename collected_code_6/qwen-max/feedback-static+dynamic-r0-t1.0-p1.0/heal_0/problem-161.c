@@ -1,99 +1,89 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+struct node {
     int value;
-    struct Node *next;
-} Node;
+    struct node *next;
+};
 
-Node* createNode(int value) {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    if (newNode == NULL) {
-        exit(EXIT_FAILURE);
+typedef struct node Node;
+
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node **head, int value) {
+    Node *new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
     }
-    newNode->value = value;
-    newNode->next = NULL;
-    return newNode;
-}
-
-void push(Node** head, int value) {
-    Node *newNode = createNode(value);
-    newNode->next = *head;
-    *head = newNode;
-}
-
-void printList(Node* head) {
-    while (head != NULL) {
-        printf("%d -> ", head->value);
-        head = head->next;
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
     }
-    printf("NULL\n");
+    current->next = new_node;
 }
 
-void freeList(Node* head) {
-    while (head != NULL) {
-        Node *temp = head;
-        head = head->next;
-        free(temp);
-    }
-}
-
-int findValueInList(Node* head, int value) {
-    while (head != NULL) {
-        if (head->value == value) {
-            return 1;
-        }
-        head = head->next;
-    }
-    return 0;
-}
-
-Node* removeFromList(Node* head, Node* toRemove) {
-    Node *current = head;
+void remove_elements(Node **list1, const Node *list2) {
+    Node *current = *list1;
     Node *prev = NULL;
 
     while (current != NULL) {
-        if (findValueInList(toRemove, current->value) == 1) {
-            if (prev == NULL) {
-                head = current->next;
-            } else {
-                prev->next = current->next;
+        Node *runner = list2;
+        while (runner != NULL) {
+            if (current->value == runner->value) {
+                if (prev == NULL) {
+                    *list1 = current->next;
+                } else {
+                    prev->next = current->next;
+                }
+                free(current);
+                current = prev ? prev->next : *list1;
+                break;
             }
-            Node *temp = current;
-            current = current->next;
-            free(temp);
-        } else {
+            runner = runner->next;
+        }
+        if (runner == NULL) {
             prev = current;
             current = current->next;
         }
     }
-
-    return head;
 }
 
 int main() {
     Node *list1 = NULL;
     Node *list2 = NULL;
 
-    push(&list1, 10);
-    push(&list1, 20);
-    push(&list1, 30);
-    push(&list1, 40);
-    push(&list1, 50);
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
 
-    push(&list2, 30);
-    push(&list2, 40);
+    append(&list2, 2);
+    append(&list2, 3);
+    append(&list2, 5);
 
-    printf("Original List: ");
-    printList(list1);
+    remove_elements(&list1, list2);
 
-    list1 = removeFromList(list1, list2);
+    for (Node *tmp = list1; tmp != NULL; tmp = tmp->next) {
+        printf("%d ", tmp->value);
+    }
 
-    printf("Modified List: ");
-    printList(list1);
+    while (list1) {
+        Node *temp = list1;
+        list1 = list1->next;
+        free(temp);
+    }
 
-    freeList(list1);
-    freeList(list2);
+    while (list2) {
+        Node *temp = list2;
+        list2 = list2->next;
+        free(temp);
+    }
 
     return 0;
 }

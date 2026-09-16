@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    float value;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+
+    if (tuple_a->value < tuple_b->value) {
+        return -1;
+    } else if (tuple_a->value > tuple_b->value) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void sort_tuples(Tuple *tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+int main(void) {
+    size_t count = 5;
+    Tuple *tuples = (Tuple *)malloc(count * sizeof(Tuple));
+    
+    if (tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].id = 1; tuples[0].value = 3.5f;
+    tuples[1].id = 2; tuples[1].value = 1.2f;
+    tuples[2].id = 3; tuples[2].value = 4.8f;
+    tuples[3].id = 4; tuples[3].value = 2.1f;
+    tuples[4].id = 5; tuples[4].value = 1.2f;
+
+    sort_tuples(tuples, count);
+
+    for (size_t i = 0; i < count; ++i) {
+        printf("ID: %d, Value: %.2f\n", tuples[i].id, tuples[i].value);
+    }
+
+    free(tuples);
+    tuples = NULL;
+
+    return EXIT_SUCCESS;
+}

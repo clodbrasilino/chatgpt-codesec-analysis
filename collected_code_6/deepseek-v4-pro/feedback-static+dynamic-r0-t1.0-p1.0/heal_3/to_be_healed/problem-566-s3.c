@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 12, got <no output>
+  *  test case 2 failed: expected 16, got <no output>
+  *  test case 1 failed: expected 3, got <no output>
+  */
+
+int sum_of_digits(int n) {
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *const argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long value = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || value < 0 || value > 2147483647) {
+        fprintf(stderr, "Error: Input must be a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", sum_of_digits((int)value));
+    return EXIT_SUCCESS;
+}

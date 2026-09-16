@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char* decimalToBinary(int decimal) {
+    if (decimal == 0) {
+        char* zeroResult = (char*)malloc(2 * sizeof(char));
+        if (!zeroResult) return NULL;
+        zeroResult[0] = '0';
+        zeroResult[1] = '\0';
+        return zeroResult;
+    }
+
+    int temp = decimal;
+    int numBits = 0;
+    while (temp > 0) {
+        temp /= 2;
+        numBits++;
+    }
+
+    char* binaryStr = (char*)malloc((numBits + 1) * sizeof(char));
+    if (!binaryStr) return NULL;
+
+    binaryStr[numBits] = '\0';
+
+    temp = decimal;
+    for (int i = numBits - 1; i >= 0; i--) {
+        binaryStr[i] = (temp % 2) ? '1' : '0';
+        temp /= 2;
+    }
+
+    return binaryStr;
+}
+
+int main() {
+    int decimalNumber;
+    
+    if (scanf("%d", &decimalNumber) != 1) {
+        return 1;
+    }
+
+    if (decimalNumber < 0) {
+        return 1;
+    }
+
+    char* binaryResult = decimalToBinary(decimalNumber);
+    if (!binaryResult) {
+        return 1;
+    }
+
+    printf("%s\n", binaryResult);
+
+    free(binaryResult);
+
+    return 0;
+}
+```

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-116-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-116-s2.c:67:13: style: Condition 'ret==0' is always false [knownConditionTrueFalse]
+    if (ret == 0) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-116-s2.c:66:27: note: Calling function 'tuple_to_int' returns -1
+    int ret = tuple_to_int(NULL, 0, &result);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-116-s2.c:66:27: note: Assignment 'ret=tuple_to_int(NULL,0,&result)', assigned value is -1
+    int ret = tuple_to_int(NULL, 0, &result);
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-116-s2.c:67:13: note: Condition 'ret==0' is always false
+    if (ret == 0) {
+            ^

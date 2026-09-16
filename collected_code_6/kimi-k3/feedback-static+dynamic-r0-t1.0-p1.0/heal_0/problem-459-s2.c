@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+static char *remove_uppercase_substrings(const char *input)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    char *result;
+    size_t input_len;
+    size_t result_len;
+    size_t remaining;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "[A-Z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+    result = (char *)malloc(input_len + 1U);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    result_len = 0U;
+    remaining = input_len;
+
+    while (remaining > 0U) {
+        ret = regexec(&regex, cursor, 1U, &match, 0);
+        if (ret == REG_NOMATCH) {
+            break;
+        }
+        if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if (match.rm_so < 0 || match.rm_eo < 0 || match.rm_eo < match.rm_so) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+        if ((size_t)match.rm_eo > remaining) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        if (match.rm_so > 0) {
+            memcpy(result + result_len, cursor, (size_t)match.rm_so);
+            result_len += (size_t)match.rm_so;
+        }
+
+        cursor += match.rm_eo;
+        remaining -= (size_t)match.rm_eo;
+    }
+
+    if (remaining > 0U) {
+        memcpy(result + result_len, cursor, remaining);
+        result_len += remaining;
+    }
+    result[result_len] = '\0';
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "HelloWORLDThisISAtestSTRINGok";
+    char *output = remove_uppercase_substrings(input);
+
+    if (output == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", output);
+    free(output);
+    return EXIT_SUCCESS;
+}

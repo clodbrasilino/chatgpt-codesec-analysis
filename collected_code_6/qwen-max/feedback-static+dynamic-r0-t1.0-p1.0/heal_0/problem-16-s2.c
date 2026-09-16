@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
+
+bool is_valid_sequence(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+
+    bool has_underscore = false;
+    while (*str) {
+        if (islower((unsigned char)*str)) {
+            str++;
+        } else if (*str == '_' && !has_underscore) {
+            has_underscore = true;
+            str++;
+        } else {
+            return false;
+        }
+    }
+
+    return has_underscore;
+}
+
+int main() {
+    const char *test_strings[] = {
+        "hello_world",
+        "Hello_World",
+        "hello_world_123",
+        "hello_world_",
+        "_hello_world",
+        "hello__world",
+        "helloworld",
+        ""
+    };
+
+    for (size_t i = 0; i < sizeof(test_strings) / sizeof(test_strings[0]); i++) {
+        printf("'%s' -> %s\n", test_strings[i], is_valid_sequence(test_strings[i]) ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}

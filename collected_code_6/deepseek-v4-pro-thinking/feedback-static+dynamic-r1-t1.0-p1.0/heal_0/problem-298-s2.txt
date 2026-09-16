@@ -1,0 +1,202 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct NestedNode {
+    Node *list;
+    struct NestedNode *next;
+} NestedNode;
+
+static int list_append(Node **head, Node **tail, int data);
+static int contains(const Node *head, int value);
+static int nested_append(NestedNode **head, NestedNode **tail, Node *list);
+static void free_list(Node *head);
+static void free_nested(NestedNode *head);
+static void print_list(const Node *head);
+static int find_nested_elements(const NestedNode *nested, const Node *target, Node **result);
+
+int main(void) {
+    Node *target = NULL;
+    Node *target_tail = NULL;
+    Node *inner1 = NULL;
+    Node *inner1_tail = NULL;
+    Node *inner2 = NULL;
+    Node *inner2_tail = NULL;
+    Node *inner3 = NULL;
+    Node *inner3_tail = NULL;
+    NestedNode *nested = NULL;
+    NestedNode *nested_tail = NULL;
+    Node *result = NULL;
+
+    if (!list_append(&target, &target_tail, 2) ||
+        !list_append(&target, &target_tail, 4) ||
+        !list_append(&target, &target_tail, 6)) {
+        free_list(target);
+        return EXIT_FAILURE;
+    }
+
+    if (!list_append(&inner1, &inner1_tail, 1) ||
+        !list_append(&inner1, &inner1_tail, 2) ||
+        !list_append(&inner1, &inner1_tail, 3)) {
+        free_list(target);
+        free_list(inner1);
+        return EXIT_FAILURE;
+    }
+
+    if (!list_append(&inner2, &inner2_tail, 4) ||
+        !list_append(&inner2, &inner2_tail, 5)) {
+        free_list(target);
+        free_list(inner1);
+        free_list(inner2);
+        return EXIT_FAILURE;
+    }
+
+    if (!list_append(&inner3, &inner3_tail, 6) ||
+        !list_append(&inner3, &inner3_tail, 7) ||
+        !list_append(&inner3, &inner3_tail, 8)) {
+        free_list(target);
+        free_list(inner1);
+        free_list(inner2);
+        free_list(inner3);
+        return EXIT_FAILURE;
+    }
+
+    if (!nested_append(&nested, &nested_tail, inner1)) {
+        free_list(target);
+        free_list(inner1);
+        free_list(inner2);
+        free_list(inner3);
+        return EXIT_FAILURE;
+    }
+
+    if (!nested_append(&nested, &nested_tail, inner2)) {
+        free_nested(nested);
+        free_list(inner2);
+        free_list(inner3);
+        free_list(target);
+        return EXIT_FAILURE;
+    }
+
+    if (!nested_append(&nested, &nested_tail, inner3)) {
+        free_nested(nested);
+        free_list(inner3);
+        free_list(target);
+        return EXIT_FAILURE;
+    }
+
+    if (!find_nested_elements(nested, target, &result)) {
+        free_nested(nested);
+        free_list(target);
+        return EXIT_FAILURE;
+    }
+
+    print_list(result);
+
+    free_list(result);
+    free_nested(nested);
+    free_list(target);
+    return EXIT_SUCCESS;
+}
+
+static int list_append(Node **head, Node **tail, int data) {
+    Node *node = malloc(sizeof(*node));
+    if (!node) {
+        return 0;
+    }
+    node->data = data;
+    node->next = NULL;
+    if (*tail) {
+        (*tail)->next = node;
+    } else {
+        *head = node;
+    }
+    *tail = node;
+    return 1;
+}
+
+static int nested_append(NestedNode **head, NestedNode **tail, Node *list) {
+    NestedNode *node = malloc(sizeof(*node));
+    if (!node) {
+        return 0;
+    }
+    node->list = list;
+    node->next = NULL;
+    if (*tail) {
+        (*tail)->next = node;
+    } else {
+        *head = node;
+    }
+    *tail = node;
+    return 1;
+}
+
+static int contains(const Node *head, int value) {
+    const Node *current = head;
+    while (current) {
+        if (current->data == value) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+static int find_nested_elements(const NestedNode *nested, const Node *target, Node **result) {
+    Node *head = NULL;
+    Node *tail = NULL;
+    const NestedNode *outer = nested;
+
+    if (!result) {
+        return 0;
+    }
+    *result = NULL;
+
+    while (outer) {
+        const Node *inner = outer->list;
+        while (inner) {
+            if (contains(target, inner->data)) {
+                if (!list_append(&head, &tail, inner->data)) {
+                    free_list(head);
+                    return 0;
+                }
+            }
+            inner = inner->next;
+        }
+        outer = outer->next;
+    }
+
+    *result = head;
+    return 1;
+}
+
+static void free_list(Node *head) {
+    while (head) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static void free_nested(NestedNode *head) {
+    while (head) {
+        NestedNode *next = head->next;
+        free_list(head->list);
+        free(head);
+        head = next;
+    }
+}
+
+static void print_list(const Node *head) {
+    const Node *current = head;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+```

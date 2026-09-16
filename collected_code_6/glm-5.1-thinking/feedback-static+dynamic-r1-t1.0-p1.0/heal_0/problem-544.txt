@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+char *flatten_tuple_list(const Tuple *tuples, size_t count) {
+    if (tuples == NULL && count > 0) {
+        return NULL;
+    }
+
+    size_t total_len = 1;
+    for (size_t i = 0; i < count; i++) {
+        int n = snprintf(NULL, 0, "(%d, %d)", tuples[i].first, tuples[i].second);
+        if (n < 0) {
+            return NULL;
+        }
+        total_len += (size_t)n;
+        if (i < count - 1) {
+            total_len += 2;
+        }
+    }
+
+    char *result = malloc(total_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t offset = 0;
+    for (size_t i = 0; i < count; i++) {
+        int n = snprintf(result + offset, total_len - offset, "(%d, %d)", tuples[i].first, tuples[i].second);
+        if (n < 0) {
+            free(result);
+            return NULL;
+        }
+        offset += (size_t)n;
+
+        if (i < count - 1) {
+            n = snprintf(result + offset, total_len - offset, ", ");
+            if (n < 0) {
+                free(result);
+                return NULL;
+            }
+            offset += (size_t)n;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+
+    char *flattened = flatten_tuple_list(tuples, count);
+    if (flattened == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", flattened);
+    free(flattened);
+
+    return EXIT_SUCCESS;
+}
+```

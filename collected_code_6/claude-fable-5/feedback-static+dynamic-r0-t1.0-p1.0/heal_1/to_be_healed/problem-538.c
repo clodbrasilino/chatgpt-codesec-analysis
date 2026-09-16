@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(const char *const *list, size_t count);
+static void tuple_destroy(Tuple *tuple);
+static void tuple_print(const Tuple *tuple);
+
+static Tuple *tuple_create(const char *const *list, size_t count)
+{
+    Tuple *tuple = NULL;
+    size_t i = 0;
+
+    if (list == NULL || count == 0U) {
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(*tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = calloc(count, sizeof(*tuple->items));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->count = count;
+
+    for (i = 0U; i < count; i++) {
+        if (list[i] == NULL) {
+            tuple_destroy(tuple);
+            return NULL;
+        }
+        tuple->items[i] = malloc(strlen(list[i]) + 1U);
+        if (tuple->items[i] == NULL) {
+            tuple_destroy(tuple);
+            return NULL;
+        }
+        memcpy(tuple->items[i], list[i], strlen(list[i]) + 1U);
+    }
+
+    return tuple;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     *  Variable 'i' is assigned a value that is never used. [unreadVariable]
+     */
+    size_t i = 0U;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    if (tuple->items != NULL) {
+        for (i = 0U; i < tuple->count; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    free(tuple);
+}
+
+static void tuple_print(const Tuple *tuple)
+{
+    size_t i = 0U;
+
+    if (tuple == NULL || tuple->items == NULL) {
+        return;
+    }
+
+    if (printf("(") < 0) {
+        return;
+    }
+    for (i = 0U; i < tuple->count; i++) {
+        if (printf("'%s'", tuple->items[i]) < 0) {
+            return;
+        }
+        if (i + 1U < tuple->count) {
+            if (printf(", ") < 0) {
+                return;
+            }
+        }
+    }
+    if (printf(")\n") < 0) {
+        return;
+    }
+}
+
+int main(void)
+{
+    const char *const list[] = { "apple", "banana", "cherry", "date" };
+    const size_t count = sizeof(list) / sizeof(list[0]);
+    Tuple *tuple = NULL;
+
+    tuple = tuple_create(list, count);
+    if (tuple == NULL) {
+        (void)fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    tuple_print(tuple);
+    tuple_destroy(tuple);
+
+    return EXIT_SUCCESS;
+}

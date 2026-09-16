@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t left_rotate(uint32_t num, uint32_t shift) {
+    uint32_t bits = sizeof(num) * 8;
+    shift = shift % bits;
+    
+    if (shift == 0) {
+        return num;
+    }
+    
+    return (num << shift) | (num >> (bits - shift));
+}
+
+int main(void) {
+    uint32_t number = 0x12345678;
+    uint32_t shift_amount = 8;
+    uint32_t result = 0;
+
+    result = left_rotate(number, shift_amount);
+
+    printf("Original: 0x%08X\n", number);
+    printf("Rotated:  0x%08X\n", result);
+
+    return 0;
+}

@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#define TUPLE_SIZE 3U
+
+typedef struct {
+    int elements[TUPLE_SIZE];
+} Tuple;
+
+int extract_nth_element(const Tuple *tuples, size_t tuple_count, size_t n, int **result_out, size_t *result_count_out)
+{
+    int *result;
+    size_t i;
+
+    if (tuples == NULL || result_out == NULL || result_count_out == NULL) {
+        return -1;
+    }
+    if (n >= (size_t)TUPLE_SIZE) {
+        return -1;
+    }
+    if (tuple_count > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    *result_out = NULL;
+    *result_count_out = 0U;
+
+    if (tuple_count == 0U) {
+        return 0;
+    }
+
+    result = (int *)malloc(tuple_count * sizeof(*result));
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < tuple_count; i++) {
+        result[i] = tuples[i].elements[n];
+    }
+
+    *result_out = result;
+    *result_count_out = tuple_count;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {{1, 2, 3}},
+        {{4, 5, 6}},
+        {{7, 8, 9}},
+        {{10, 11, 12}}
+    };
+    const size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    const size_t n = 1U;
+    int *result = NULL;
+    size_t result_count = 0U;
+    size_t i;
+
+    if (extract_nth_element(tuples, tuple_count, n, &result, &result_count) != 0) {
+        (void)fprintf(stderr, "Failed to extract element at index %zu.\n", n);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < result_count; i++) {
+        (void)printf("%d ", result[i]);
+    }
+    (void)printf("\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

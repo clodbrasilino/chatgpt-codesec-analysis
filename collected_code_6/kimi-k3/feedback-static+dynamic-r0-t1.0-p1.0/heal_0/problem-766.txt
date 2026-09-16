@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void iterate_consecutive_pairs(const int *list, size_t size, void (*callback)(int, int)) {
+    size_t i;
+
+    if (list == NULL || callback == NULL || size < 2) {
+        return;
+    }
+
+    for (i = 0; i < size - 1; i++) {
+        callback(list[i], list[i + 1]);
+    }
+}
+
+void print_pair(int first, int second) {
+    printf("(%d, %d)\n", first, second);
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    iterate_consecutive_pairs(list, size, print_pair);
+
+    return 0;
+}
+```

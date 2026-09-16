@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+long long int findNthPoliteNumber(long long int n) {
+    if (n <= 0) {
+        return -1; 
+    }
+    long long int c = (long long int)log2((double)(n + 1));
+    return n + c + 1;
+}
+
+int main(void) {
+    long long int n;
+    
+    if (scanf("%lld", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        return EXIT_FAILURE;
+    }
+    
+    long long int result = findNthPoliteNumber(n);
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

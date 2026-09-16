@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-834-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-834-s3.c:135:18: error: passing argument 1 of 'print_matrix' from incompatible pointer type [-Wincompatible-pointer-types]
+  135 |     print_matrix(matrix, n);
+      |                  ^~~~~~
+      |                  |
+      |                  int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-834-s3.c:95:37: note: expected 'const int * const*' but argument is of type 'int **'
+   95 | void print_matrix(const int *const *matrix, int n)
+      |                   ~~~~~~~~~~~~~~~~~~^~~~~~

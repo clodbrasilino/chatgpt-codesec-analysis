@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef void (*MapFunc)(int value, void *context);
+
+static Node *list_append(Node *head, int value, int *error)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        *error = 1;
+        return head;
+    }
+    node->value = value;
+    node->next = NULL;
+
+    if (head == NULL) {
+        return node;
+    }
+
+    Node *cur = head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return head;
+}
+
+static void list_map(const Node *head, MapFunc fn, void *context)
+{
+    const Node *cur = head;
+    while (cur != NULL) {
+        fn(cur->value, context);
+        cur = cur->next;
+    }
+}
+
+static void list_free(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+static void print_element(int value, void *context)
+{
+    FILE *out = context;
+    if (fprintf(out, "%d ", value) < 0) {
+        exit(EXIT_FAILURE);
+    }
+}
+
+static int print_list_n_times(const Node *head, unsigned int n)
+{
+    unsigned int i;
+    for (i = 0; i < n; i++) {
+        list_map(head, print_element, stdout);
+        if (fputc('\n', stdout) == EOF) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    int error = 0;
+    int i;
+
+    for (i = 1; i <= 5; i++) {
+        head = list_append(head, i, &error);
+        if (error != 0) {
+            fprintf(stderr, "Memory allocation failed\n");
+            list_free(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (print_list_n_times(head, 3U) != 0) {
+        fprintf(stderr, "Output failed\n");
+        list_free(head);
+        return EXIT_FAILURE;
+    }
+
+    list_free(head);
+    return EXIT_SUCCESS;
+}

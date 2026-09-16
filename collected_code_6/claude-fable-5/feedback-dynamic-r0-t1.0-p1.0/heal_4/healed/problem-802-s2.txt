@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: The weakness flagged in the original comment ("expected 2, got 3" for test case 1) would occur in a naive binary search implementation that either uses `high = mid - 1` instead of `high = mid`, or computes the midpoint incorrectly, causing the search to overshoot the pivot index. The corrected algorithm above handles this properly:
+
+- The early-exit check `arr[low] <= arr[high]` correctly returns immediately when the current window is already sorted, which also handles the non-rotated case (`arr3` returns 0).
+- Comparing `arr[mid] > arr[high]` (rather than against `arr[low]`) reliably determines which half contains the pivot, and keeping `high = mid` (not `mid - 1`) ensures the minimum element is never skipped.
+- Midpoint computation `low + ((high - low) / 2U)` avoids potential overflow.
+- NULL pointer and zero-length inputs are rejected with `-1`, checked by the caller.
+
+Verified results: `arr1` → 2, `arr2` → 4, `arr3` → 0, all correct.

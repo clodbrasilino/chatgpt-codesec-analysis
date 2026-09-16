@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: I traced the binary-search logic against the failing test case mentioned in the comment (`arr1 = {15, 18, 2, 3, 6, 12}`, expected rotation count 2). The critical points that make this implementation return the correct value are:
+
+1. **`low = mid + 1U` only when `arr[mid] > arr[high]`** — this correctly excludes `mid` from the search space only when the minimum cannot be at `mid`. A common bug producing an off-by-one result (e.g., 3 instead of 2) is advancing `low` past the pivot or setting `high = mid - 1U`, which can skip the minimum element.
+
+2. **`high = mid` (not `mid - 1U`)** in the else branch — `arr[mid]` may itself be the minimum, so it must remain in the range. Using `mid - 1U` would both risk skipping the answer and cause `size_t` underflow if `mid == 0`.
+
+3. **Early exit `arr[low] <= arr[high]`** — correctly handles already-sorted subranges, including the fully sorted `arr3` (returns 0).
+
+4. **NULL/zero-length guard** returning `-1`, checked in `main` before printing, with overflow-safe midpoint computation `low + (high - low) / 2U`.
+
+Tracing arr1: `low=0, high=5` → `mid=2`, `arr[2]=2 ≤ arr[5]=12` → `high=2`; then `mid=1`, `arr[1]=18 > arr[2]=2` → `low=2`; loop ends, returns **2** as expected. arr2 returns 4, arr3 returns 0.

@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_remainder(int dividend, int divisor) {
+    if (divisor == 0) {
+        fprintf(stderr, "Error: Division by zero\n");
+        exit(EXIT_FAILURE);
+    }
+    return dividend % divisor;
+}
+
+int main(void) {
+    int a = 17;
+    int b = 5;
+    int result;
+    
+    result = find_remainder(a, b);
+    printf("%d\n", result);
+    
+    return 0;
+}

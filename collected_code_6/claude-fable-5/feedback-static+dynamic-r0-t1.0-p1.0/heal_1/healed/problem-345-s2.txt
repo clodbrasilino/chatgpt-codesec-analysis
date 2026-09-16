@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compute_differences(const int *list, size_t n, int *diffs)
+{
+    size_t i;
+
+    if (list == NULL || diffs == NULL || n < 2) {
+        return -1;
+    }
+
+    for (i = 0; i < n - 1; i++) {
+        diffs[i] = list[i + 1] - list[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {10, 15, 7, 22, 30, 28};
+    size_t n = sizeof(numbers) / sizeof(numbers[0]);
+    int *diffs;
+    size_t i;
+
+    diffs = malloc((n - 1) * sizeof(*diffs));
+    if (diffs == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (compute_differences(numbers, n, diffs) != 0) {
+        fprintf(stderr, "Failed to compute differences\n");
+        free(diffs);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n - 1; i++) {
+        if (printf("Difference %zu: %d\n", i + 1, diffs[i]) < 0) {
+            free(diffs);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(diffs);
+    diffs = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+1. **`Condition 'n<2' is always false [knownConditionTrueFalse]`** — Since `numbers` is a fixed-size array with 6 elements, `n` is a compile-time constant equal to 6. The check `if (n < 2)` in `main` was dead code and could never trigger. It has been removed. The runtime validation is still preserved where it actually matters: inside `compute_differences`, which is a reusable function that may be called with arbitrary inputs and therefore legitimately needs the `n < 2` guard.
+
+2. **`Assignment 'n=sizeof(numbers)/sizeof(numbers[0])', assigned value is 6`** — This is an informational finding rather than a defect; the idiom itself is correct and safe. It only becomes a problem when combined with redundant checks on a known constant, which the removal above resolves.
+
+The remaining structure is sound: the allocation size `(n - 1) * sizeof(*diffs)` is correct, the return values of `malloc`, `compute_differences`, and `printf` are all checked, `diffs` is freed on every exit path (no leaks), and the pointer is nulled after the final `free` to avoid dangling-pointer misuse.

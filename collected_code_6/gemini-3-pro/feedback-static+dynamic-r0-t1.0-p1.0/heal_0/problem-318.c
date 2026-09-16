@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <math.h>
+
+double find_max_volume(double sum_of_sides);
+
+int main(void) {
+    double sum = 24.0;
+    double max_volume = find_max_volume(sum);
+    
+    if (max_volume >= 0.0) {
+        printf("%.2f\n", max_volume);
+    } else {
+        printf("Invalid input\n");
+    }
+    
+    return 0;
+}
+
+double find_max_volume(double sum_of_sides) {
+    if (sum_of_sides <= 0.0) {
+        return -1.0;
+    }
+    
+    double side = sum_of_sides / 12.0;
+    return side * side * side;
+}

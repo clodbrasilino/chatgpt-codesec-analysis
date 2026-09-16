@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-721-s2.c:16:28: error: call to undeclared library function 'fmax' with type 'double (double, double)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   16 |                 dp[i][j] = fmax(dp[i-1][j], dp[i][j-1]) + matrix[i*n + j];
+      |                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-721-s2.c:16:28: note: include the header <math.h> or explicitly provide a declaration for 'fmax'
+1 error generated.

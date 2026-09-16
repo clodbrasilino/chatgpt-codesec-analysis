@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+float positive_ratio(int arr[], int size) {
+    if (size <= 0) {
+        return 0.0f;
+    }
+    
+    int positive_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            positive_count++;
+        }
+    }
+    
+    return (float)positive_count / (float)size;
+}
+
+int main(void) {
+    int numbers[] = {1, -2, 3, -4, 5, 6, -7};
+    int count = sizeof(numbers) / sizeof(numbers[0]);
+    
+    float result = positive_ratio(numbers, count);
+    printf("Ratio of positive numbers: %.2f\n", result);
+    
+    return 0;
+}

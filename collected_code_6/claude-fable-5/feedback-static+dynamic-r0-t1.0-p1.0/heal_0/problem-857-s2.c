@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef void (*string_func)(const char *);
+
+void print_string(const char *str)
+{
+    if (str != NULL)
+    {
+        if (printf("%s\n", str) < 0)
+        {
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+void map(const char *const *strings, size_t count, string_func func)
+{
+    size_t i;
+
+    if (strings == NULL || func == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        func(strings[i]);
+    }
+}
+
+int main(void)
+{
+    const char *const strings[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+
+    map(strings, count, print_string);
+
+    return EXIT_SUCCESS;
+}

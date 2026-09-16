@@ -1,39 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int nth_digit_proper_fraction(int numerator, int denominator, int n) {
-    if (denominator == 0 || n < 0) {
-        return -1;
-    }
-
-    long long remainder = numerator % denominator;
+int find_nth_digit(int numerator, int denominator, int n) {
+    long long remainder = numerator;
+    int digit;
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
     for (int i = 0; i < n; ++i) {
         remainder *= 10;
-        /* Possible weaknesses found:
-         *  Value stored to 'digit' during its initialization is never read [deadcode.DeadStores]
-         *  Variable 'digit' is assigned a value that is never used. [unreadVariable]
-         */
-        int digit = remainder / denominator;
+        digit = remainder / denominator;
         remainder %= denominator;
-        if (remainder == 0) {
-            break;
-        }
     }
-
-    remainder *= 10;
-    int digit = remainder / denominator;
+    /* Possible weaknesses found:
+     *  Uninitialized variable: digit
+     *  Uninitialized variable: digit [uninitvar]
+     */
     return digit;
 }
 
 int main() {
     int numerator = 1;
     int denominator = 7;
-    int n = 3;
-    int result = nth_digit_proper_fraction(numerator, denominator, n);
-    if (result != -1) {
-        printf("The %dth digit in the proper fraction of %d/%d is: %d\n", n, numerator, denominator, result);
-    } else {
-        printf("Invalid input or no such digit.\n");
-    }
+    int n = 5;
+    int result = find_nth_digit(numerator, denominator, n);
+    printf("The %dth digit of the fraction %d/%d is: %d\n", n, numerator, denominator, result);
     return 0;
 }

@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int isKeith(int num) {
+    if (num < 10) {
+        return 0;
+    }
+    
+    int temp = num;
+    int count = 0;
+    
+    while (temp > 0) {
+        temp /= 10;
+        count++;
+    }
+    
+    int *arr = (int *)malloc(count * sizeof(int));
+    if (arr == NULL) {
+        return 0;
+    }
+    
+    temp = num;
+    for (int i = count - 1; i >= 0; i--) {
+        arr[i] = temp % 10;
+        temp /= 10;
+    }
+    
+    int nextTerm = 0;
+    int i = count;
+    
+    while (nextTerm < num) {
+        nextTerm = 0;
+        for (int j = 1; j <= count; j++) {
+            nextTerm += arr[i - j];
+        }
+        
+        if (nextTerm == num) {
+            free(arr);
+            return 1;
+        }
+        
+        for (int j = 0; j < count - 1; j++) {
+            arr[j] = arr[j + 1];
+        }
+        arr[count - 1] = nextTerm;
+        i++;
+    }
+    
+    free(arr);
+    return 0;
+}
+
+int main() {
+    int num;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (isKeith(num)) {
+        printf("%d is a Keith number\n", num);
+    } else {
+        printf("%d is not a Keith number\n", num);
+    }
+    
+    return 0;
+}
+```

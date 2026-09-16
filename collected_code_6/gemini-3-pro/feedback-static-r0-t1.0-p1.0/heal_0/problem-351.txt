@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ElementCount {
+    int value;
+    int count;
+};
+
+int findFirstOccurrenceKTimes(int* arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k <= 0) {
+        return -1;
+    }
+
+    struct ElementCount* counts = (struct ElementCount*)calloc(n, sizeof(struct ElementCount));
+    if (counts == NULL) {
+        return -1;
+    }
+
+    int uniqueCount = 0;
+
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+        for (int j = 0; j < uniqueCount; j++) {
+            if (counts[j].value == arr[i]) {
+                counts[j].count++;
+                if (counts[j].count == k) {
+                    int result = arr[i];
+                    free(counts);
+                    return result;
+                }
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            counts[uniqueCount].value = arr[i];
+            counts[uniqueCount].count = 1;
+            if (k == 1) {
+                int result = arr[i];
+                free(counts);
+                return result;
+            }
+            uniqueCount++;
+        }
+    }
+
+    free(counts);
+    return -1;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 3, 3, 4, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+
+    int result = findFirstOccurrenceKTimes(arr, n, k);
+
+    if (result != -1) {
+        printf("First element occurring %d times is: %d\n", k, result);
+    } else {
+        printf("No element occurs %d times.\n", k);
+    }
+
+    return 0;
+}
+```

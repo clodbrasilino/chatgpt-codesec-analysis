@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+Tuple tuple_repeat(const Tuple *t, size_t n) {
+    Tuple result;
+    result.size = t->size * n;
+    result.data = (int *)malloc(result.size * sizeof(int));
+    
+    if (result.data == NULL) {
+        result.size = 0;
+        return result;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        memcpy(result.data + i * t->size, t->data, t->size * sizeof(int));
+    }
+    
+    return result;
+}
+
+void tuple_free(Tuple *t) {
+    if (t->data != NULL) {
+        free(t->data);
+        t->data = NULL;
+    }
+    t->size = 0;
+}
+
+Tuple tuple_create(const int *values, size_t size) {
+    Tuple t;
+    t.size = size;
+    t.data = (int *)malloc(size * sizeof(int));
+    
+    if (t.data == NULL) {
+        t.size = 0;
+        return t;
+    }
+    
+    if (size > 0 && values != NULL) {
+        memcpy(t.data, values, size * sizeof(int));
+    }
+    
+    return t;
+}
+
+int main(void) {
+    int values[] = {1, 2, 3};
+    Tuple t = tuple_create(values, 3);
+    
+    if (t.data == NULL && t.size != 0) {
+        return 1;
+    }
+    
+    Tuple repeated = tuple_repeat(&t, 4);
+    
+    if (repeated.data == NULL && repeated.size != 0) {
+        tuple_free(&t);
+        return 1;
+    }
+    
+    for (size_t i = 0; i < repeated.size; i++) {
+        printf("%d ", repeated.data[i]);
+    }
+    printf("\n");
+    
+    tuple_free(&repeated);
+    tuple_free(&t);
+    
+    return 0;
+}
+```

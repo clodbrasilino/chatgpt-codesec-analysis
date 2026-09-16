@@ -1,0 +1,207 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+int tuple_init(Tuple *t, const int *values, size_t length)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    if (t == NULL || (length > 0 && values == NULL)) {
+        return -1;
+    }
+    t->data = NULL;
+    t->length = 0;
+    if (length > 0) {
+        t->data = (int *)malloc(length * sizeof(int));
+        if (t->data == NULL) {
+            return -1;
+        }
+        for (i = 0; i < length; i++) {
+            t->data[i] = values[i];
+        }
+    }
+    t->length = length;
+    return 0;
+}
+
+void tuple_free(Tuple *t)
+{
+    if (t == NULL) {
+        return;
+    }
+    free(t->data);
+    t->data = NULL;
+    t->length = 0;
+}
+
+int list_init(TupleList *list, size_t capacity)
+{
+    if (list == NULL || capacity == 0 || capacity > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+    list->tuples = (Tuple *)malloc(capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        return -1;
+    }
+    list->count = 0;
+    list->capacity = capacity;
+    return 0;
+}
+
+void list_free(TupleList *list)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        tuple_free(&list->tuples[i]);
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+int list_append(TupleList *list, const int *values, size_t length)
+{
+    /* Possible weaknesses found:
+     *  The scope of the variable 'new_capacity' can be reduced. [variableScope]
+     */
+    size_t new_capacity;
+    Tuple *new_tuples;
+
+    if (list == NULL || (length > 0 && values == NULL)) {
+        return -1;
+    }
+    if (list->count == list->capacity) {
+        if (list->capacity > SIZE_MAX / 2) {
+            return -1;
+        }
+        new_capacity = (list->capacity == 0) ? 4 : list->capacity * 2;
+        if (new_capacity > SIZE_MAX / sizeof(Tuple)) {
+            return -1;
+        }
+        new_tuples = (Tuple *)realloc(list->tuples, new_capacity * sizeof(Tuple));
+        if (new_tuples == NULL) {
+            return -1;
+        }
+        list->tuples = new_tuples;
+        list->capacity = new_capacity;
+    }
+    if (tuple_init(&list->tuples[list->count], values, length) != 0) {
+        return -1;
+    }
+    list->count++;
+    return 0;
+}
+
+void remove_tuples_with_length(TupleList *list, size_t k)
+{
+    size_t read;
+    size_t write;
+
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    write = 0;
+    for (read = 0; read < list->count; read++) {
+        if (list->tuples[read].length == k) {
+            tuple_free(&list->tuples[read]);
+        } else {
+            if (write != read) {
+                list->tuples[write] = list->tuples[read];
+                list->tuples[read].data = NULL;
+                list->tuples[read].length = 0;
+            }
+            write++;
+        }
+    }
+    list->count = write;
+}
+
+void list_print(const TupleList *list)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        printf("(");
+        for (j = 0; j < list->tuples[i].length; j++) {
+            printf("%d", list->tuples[i].data[j]);
+            if (j + 1 < list->tuples[i].length) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+int main(void)
+{
+    TupleList list;
+    /* Possible weaknesses found:
+     *  Variable 'a' can be declared as const array [constVariable]
+     */
+    int a[] = {1, 2};
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {3, 4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'c' can be declared as const array [constVariable]
+     */
+    int c[] = {6};
+    /* Possible weaknesses found:
+     *  Variable 'd' can be declared as const array [constVariable]
+     */
+    int d[] = {7, 8};
+    /* Possible weaknesses found:
+     *  Variable 'e' can be declared as const array [constVariable]
+     */
+    int e[] = {9, 10, 11, 12};
+    size_t k = 2;
+
+    if (list_init(&list, 4) != 0) {
+        fprintf(stderr, "Failed to initialize tuple list\n");
+        return EXIT_FAILURE;
+    }
+    if (list_append(&list, a, 2) != 0 ||
+        list_append(&list, b, 3) != 0 ||
+        list_append(&list, c, 1) != 0 ||
+        list_append(&list, d, 2) != 0 ||
+        list_append(&list, e, 4) != 0) {
+        fprintf(stderr, "Failed to append tuple\n");
+        list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before removal:\n");
+    list_print(&list);
+
+    remove_tuples_with_length(&list, k);
+
+    printf("After removing tuples of length %zu:\n", k);
+    list_print(&list);
+
+    list_free(&list);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,99 @@
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct Tuple {
+    Node *list;
+} Tuple;
+
+Node *copy_list(Node *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node *new_head = (Node *)malloc(sizeof(Node));
+    if (new_head == NULL) {
+        return NULL;
+    }
+    new_head->data = head->data;
+
+    Node *current = head->next;
+    Node *new_current = new_head;
+
+    while (current != NULL) {
+        new_current->next = (Node *)malloc(sizeof(Node));
+        if (new_current->next == NULL) {
+            Node *temp = new_head;
+            while (temp != NULL) {
+                Node *next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            return NULL;
+        }
+        new_current = new_current->next;
+        new_current->data = current->data;
+        current = current->next;
+    }
+    new_current->next = NULL;
+    return new_head;
+}
+
+Node *copy_list_from_singleton_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return NULL;
+    }
+    return copy_list(tuple->list);
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    Node *n1 = (Node *)malloc(sizeof(Node));
+    Node *n2 = (Node *)malloc(sizeof(Node));
+    Node *n3 = (Node *)malloc(sizeof(Node));
+    if (n1 == NULL || n2 == NULL || n3 == NULL) {
+        free(n1);
+        free(n2);
+        free(n3);
+        return 1;
+    }
+    n1->data = 1;
+    n1->next = n2;
+    n2->data = 2;
+    n2->next = n3;
+    n3->data = 3;
+    n3->next = NULL;
+
+    Tuple t;
+    t.list = n1;
+
+    Node *copied_list = copy_list_from_singleton_tuple(&t);
+
+    if (copied_list != NULL) {
+        Node *curr = copied_list;
+        while (curr != NULL) {
+            printf("%d ", curr->data);
+            curr = curr->next;
+        }
+        printf("\n");
+    }
+
+    free_list(n1);
+    free_list(copied_list);
+
+    return 0;
+}
+```

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool find_max_occurrence(const int *list, size_t size, int *result)
+{
+    size_t i;
+    size_t j;
+    size_t max_count;
+    int max_item;
+
+    if ((list == NULL) || (result == NULL) || (size == 0U)) {
+        return false;
+    }
+
+    max_count = 0U;
+    max_item = list[0];
+
+    for (i = 0U; i < size; i++) {
+        size_t count = 0U;
+        for (j = 0U; j < size; j++) {
+            if (list[j] == list[i]) {
+                count++;
+            }
+        }
+        if (count > max_count) {
+            max_count = count;
+            max_item = list[i];
+        }
+    }
+
+    *result = max_item;
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = { 2, 3, 5, 3, 7, 3, 5, 2, 3, 9 };
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int max_item;
+
+    if (find_max_occurrence(numbers, size, &max_item)) {
+        if (printf("Item with maximum occurrences: %d\n", max_item) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

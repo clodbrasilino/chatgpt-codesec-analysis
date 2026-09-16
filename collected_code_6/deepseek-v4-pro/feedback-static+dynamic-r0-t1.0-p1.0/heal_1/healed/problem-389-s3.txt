@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long lucas_number(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: negative index\n");
+        exit(EXIT_FAILURE);
+    }
+    if (n == 0) return 2;
+    if (n == 1) return 1;
+
+    unsigned long long a = 2, b = 1;
+    for (int i = 2; i <= n; i++) {
+        unsigned long long c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Lucas number L%d = %llu\n", n, lucas_number(n));
+    return EXIT_SUCCESS;
+}
+```

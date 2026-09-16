@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-633-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-633-s3.c:25:11: style: Condition 'n<=0' is always false [knownConditionTrueFalse]
+    if (n <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-633-s3.c:23:25: note: Assignment 'n=sizeof(arr)/sizeof(arr[0])', assigned value is 3
+    int n = sizeof(arr) / sizeof(arr[0]);
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-633-s3.c:25:11: note: Condition 'n<=0' is always false
+    if (n <= 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-633-s3.c:4:22: style: Parameter 'arr' can be declared as const array [constParameter]
+long long sumXOR(int arr[], int n) {
+                     ^

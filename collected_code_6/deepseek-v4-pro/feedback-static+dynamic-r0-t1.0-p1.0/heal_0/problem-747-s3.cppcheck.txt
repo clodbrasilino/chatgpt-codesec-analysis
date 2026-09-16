@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:86:14: style: Local variable 'i' shadows outer variable [shadowVariable]
+    for (int i = 0; i <= m; i++) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:70:9: note: Shadowed declaration
+    int i = m, j = n, k = p;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:86:14: note: Shadow variable
+    for (int i = 0; i <= m; i++) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:87:18: style: Local variable 'j' shadows outer variable [shadowVariable]
+        for (int j = 0; j <= n; j++) free(dp[i][j]);
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:70:16: note: Shadowed declaration
+    int i = m, j = n, k = p;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:87:18: note: Shadow variable
+        for (int j = 0; j <= n; j++) free(dp[i][j]);
+                 ^

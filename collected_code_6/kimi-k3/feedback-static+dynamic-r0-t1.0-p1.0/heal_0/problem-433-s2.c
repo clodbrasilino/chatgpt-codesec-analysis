@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int check_greater(int num, int arr[], int size) {
+    int i;
+    for (i = 0; i < size; i++) {
+        if (num <= arr[i]) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    int size, i, num;
+    int *arr;
+    
+    printf("Enter the size of array: ");
+    if (scanf("%d", &size) != 1 || size <= 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    arr = (int *)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter %d elements: ", size);
+    for (i = 0; i < size; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            printf("Invalid input\n");
+            free(arr);
+            return 1;
+        }
+    }
+    
+    printf("Enter the number to check: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        free(arr);
+        return 1;
+    }
+    
+    if (check_greater(num, arr, size)) {
+        printf("%d is greater than all elements of the array\n", num);
+    } else {
+        printf("%d is not greater than all elements of the array\n", num);
+    }
+    
+    free(arr);
+    return 0;
+}

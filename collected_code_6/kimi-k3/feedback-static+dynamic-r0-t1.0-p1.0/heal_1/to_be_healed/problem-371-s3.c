@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_smallest_missing(const int *arr, size_t size)
+{
+    size_t left = 0;
+    size_t right = size;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'mid' can be reduced. [variableScope]
+     */
+    size_t mid;
+
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    while (left < right) {
+        mid = left + (right - left) / 2;
+        if ((size_t)arr[mid] == mid) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return (int)left;
+}
+
+int main(void)
+{
+    int arr[] = {0, 1, 2, 3, 4, 5, 6, 7, 9};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = find_smallest_missing(arr, size);
+    if (result >= 0) {
+        printf("Smallest missing element: %d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+
+    return 0;
+}

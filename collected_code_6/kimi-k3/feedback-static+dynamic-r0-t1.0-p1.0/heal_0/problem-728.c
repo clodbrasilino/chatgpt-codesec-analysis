@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int sum_lists(const int *list1, const int *list2, size_t size, long long *result)
+{
+    size_t i;
+    long long sum;
+
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (size == 0) {
+        return -1;
+    }
+
+    sum = 0;
+    for (i = 0; i < size; i++) {
+        sum += (long long)list1[i] + (long long)list2[i];
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    int *list1 = NULL;
+    int *list2 = NULL;
+    size_t size;
+    size_t i;
+    long long result;
+    int status;
+
+    printf("Enter the number of elements: ");
+    if (scanf("%zu", &size) != 1) {
+        fprintf(stderr, "Error: Invalid input for size.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (size == 0) {
+        fprintf(stderr, "Error: Size must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    list1 = (int *)malloc(size * sizeof(int));
+    if (list1 == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed for list1.\n");
+        return EXIT_FAILURE;
+    }
+
+    list2 = (int *)malloc(size * sizeof(int));
+    if (list2 == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed for list2.\n");
+        free(list1);
+        list1 = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu elements for list 1:\n", size);
+    for (i = 0; i < size; i++) {
+        printf("Element [%zu]: ", i);
+        if (scanf("%d", &list1[i]) != 1) {
+            fprintf(stderr, "Error: Invalid input for list1 element.\n");
+            free(list1);
+            free(list2);
+            list1 = NULL;
+            list2 = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Enter %zu elements for list 2:\n", size);
+    for (i = 0; i < size; i++) {
+        printf("Element [%zu]: ", i);
+        if (scanf("%d", &list2[i]) != 1) {
+            fprintf(stderr, "Error: Invalid input for list2 element.\n");
+            free(list1);
+            free(list2);
+            list1 = NULL;
+            list2 = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    status = sum_lists(list1, list2, size, &result);
+    if (status != 0) {
+        fprintf(stderr, "Error: Failed to compute sum.\n");
+        free(list1);
+        free(list2);
+        list1 = NULL;
+        list2 = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of all elements in both lists: %lld\n", result);
+
+    free(list1);
+    free(list2);
+    list1 = NULL;
+    list2 = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,92 +1,96 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct List {
-    int *data;
-    size_t size;
-} List;
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
 
-List *create_list(size_t size) {
-    List *list = (List *)malloc(sizeof(List));
-    if (!list) return NULL;
-    list->data = (int *)malloc(size * sizeof(int));
-    if (!list->data) {
-        free(list);
+Node* create_node(int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node **list, int value) {
+    Node *new_node = create_node(value);
+    if (*list == NULL) {
+        *list = new_node;
+    } else {
+        Node *current = *list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+Node* list_difference(Node *list1, Node *list2) {
+    if (list1 == NULL || list2 == NULL) {
         return NULL;
     }
-    list->size = size;
-    return list;
-}
 
-void free_list(List *list) {
-    if (list) {
-        free(list->data);
-        free(list);
-    }
-}
+    Node *head = NULL;
+    Node *current1 = list1;
+    Node *current2 = list2;
 
-List *difference_lists(const List *list1, const List *list2) {
-    size_t new_size = 0;
-    for (size_t i = 0; i < list1->size; ++i) {
+    while (current1 != NULL) {
         int found = 0;
-        for (size_t j = 0; j < list2->size; ++j) {
-            if (list1->data[i] == list2->data[j]) {
-                found = 1;
-                break;
-            }
-        }
-        if (!found) new_size++;
-    }
-
-    List *result = create_list(new_size);
-    if (!result) return NULL;
-
-    size_t index = 0;
-    for (size_t i = 0; i < list1->size; ++i) {
-        int found = 0;
-        for (size_t j = 0; j < list2->size; ++j) {
-            if (list1->data[i] == list2->data[j]) {
+        for (current2 = list2; current2 != NULL; current2 = current2->next) {
+            if (current1->value == current2->value) {
                 found = 1;
                 break;
             }
         }
         if (!found) {
-            result->data[index++] = list1->data[i];
+            append(&head, current1->value);
         }
+        current1 = current1->next;
     }
-    return result;
+
+    return head;
+}
+
+void print_list(Node *list) {
+    Node *current = list;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+void free_list(Node *list) {
+    Node *current = list;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
 }
 
 int main() {
-    List *list1 = create_list(5);
-    List *list2 = create_list(3);
+    Node *list1 = NULL;
+    Node *list2 = NULL;
 
-    if (!list1 || !list2) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
-    }
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
 
-    list1->data[0] = 1;
-    list1->data[1] = 2;
-    list1->data[2] = 3;
-    list1->data[3] = 4;
-    list1->data[4] = 5;
+    append(&list2, 3);
+    append(&list2, 4);
+    append(&list2, 5);
+    append(&list2, 6);
 
-    list2->data[0] = 2;
-    list2->data[1] = 4;
-    list2->data[2] = 6;
+    Node *diff = list_difference(list1, list2);
 
-    List *result = difference_lists(list1, list2);
-    if (result) {
-        for (size_t i = 0; i < result->size; ++i) {
-            printf("%d ", result->data[i]);
-        }
-        printf("\n");
-        free_list(result);
-    }
+    print_list(diff);
 
     free_list(list1);
     free_list(list2);
+    free_list(diff);
 
     return 0;
 }

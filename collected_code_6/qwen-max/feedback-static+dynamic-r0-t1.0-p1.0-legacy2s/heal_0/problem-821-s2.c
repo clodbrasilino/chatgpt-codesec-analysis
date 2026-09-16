@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
+    int size;
+    int capacity;
+} Dictionary;
+
+Dictionary* createDictionary(int capacity) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) return NULL;
+
+    dict->capacity = capacity > 0 ? capacity : 16;
+    dict->size = 0;
+    dict->entries = (DictionaryEntry*)calloc(dict->capacity, sizeof(DictionaryEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+int addEntry(Dictionary *dict, const char *key, int value) {
+    if (dict->size >= dict->capacity) {
+        int newCapacity = dict->capacity * 2;
+        DictionaryEntry *newEntries = (DictionaryEntry*)realloc(dict->entries, newCapacity * sizeof(DictionaryEntry));
+        if (newEntries == NULL) return -1;
+
+        dict->entries = newEntries;
+        dict->capacity = newCapacity;
+    }
+
+    char *keyCopy = (char*)malloc((strlen(key) + 1) * sizeof(char));
+    if (keyCopy == NULL) return -1;
+
+    strcpy(keyCopy, key);
+
+    dict->entries[dict->size].key = keyCopy;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+
+    return 0;
+}
+
+Dictionary* mergeDictionaries(Dictionary *dict1, Dictionary *dict2) {
+    Dictionary *result = createDictionary(dict1->size + dict2->size);
+    if (result == NULL) return NULL;
+
+    for (int i = 0; i < dict1->size; ++i) {
+        if (addEntry(result, dict1->entries[i].key, dict1->entries[i].value) != 0) {
+            freeDictionary(result);
+            return NULL;
+        }
+    }
+
+    for (int i = 0; i < dict2->size; ++i) {
+        if (addEntry(result, dict2->entries[i].key, dict2->entries[i].value) != 0) {
+            freeDictionary(result);
+            return NULL;
+        }
+    }
+
+    return result;
+}
+
+void printDictionary(const Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        printf("%s: %d\n", dict->entries[i].key, dict->entries[i].value);
+    }
+}
+
+int main() {
+    Dictionary *dict1 = createDictionary(16);
+    Dictionary *dict2 = createDictionary(16);
+
+    addEntry(dict1, "one", 1);
+    addEntry(dict1, "two", 2);
+    addEntry(dict2, "three", 3);
+    addEntry(dict2, "four", 4);
+
+    Dictionary *mergedDict = mergeDictionaries(dict1, dict2);
+    if (mergedDict != NULL) {
+        printDictionary(mergedDict);
+        freeDictionary(mergedDict);
+    }
+
+    freeDictionary(dict1);
+    freeDictionary(dict2);
+
+    return 0;
+}

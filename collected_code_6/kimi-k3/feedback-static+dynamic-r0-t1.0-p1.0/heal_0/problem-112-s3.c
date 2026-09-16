@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double cylinder_perimeter(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return 2.0 * PI * radius + 2.0 * height;
+}
+
+int main(void) {
+    double radius, height, result;
+    
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input for height\n");
+        return 1;
+    }
+    
+    result = cylinder_perimeter(radius, height);
+    
+    if (result < 0.0) {
+        fprintf(stderr, "Invalid dimensions: radius and height must be non-negative\n");
+        return 1;
+    }
+    
+    printf("Perimeter: %.6f\n", result);
+    
+    return 0;
+}

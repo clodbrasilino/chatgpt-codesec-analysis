@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compare(const void *x, const void *y) {
+    const Tuple *t1 = (const Tuple *)x;
+    const Tuple *t2 = (const Tuple *)y;
+    return (t1->b > t2->b) - (t1->b < t2->b);
+}
+
+void sort_tuples(Tuple *tuples, size_t n) {
+    if (tuples == NULL || n == 0) {
+        return;
+    }
+    qsort(tuples, n, sizeof(Tuple), compare);
+}
+
+int main(void) {
+    Tuple tuples[] = {{2, 8}, {3, 1}, {9, 5}, {4, 2}};
+    size_t n = sizeof(tuples) / sizeof(tuples[0]);
+
+    sort_tuples(tuples, n);
+
+    for (size_t i = 0; i < n; i++) {
+        printf("{%d, %d} ", tuples[i].a, tuples[i].b);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_sequences(long long m, long long n)
+{
+    if (n == 0) {
+        return 1;
+    }
+    if (m <= 0) {
+        return 0;
+    }
+    return count_sequences(m - 1, n) + count_sequences(m / 2, n - 1);
+}
+
+int main(void)
+{
+    long long m;
+    long long n;
+    long long result;
+
+    if (scanf("%lld %lld", &m, &n) != 2) {
+        fprintf(stderr, "Failed to read input values\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m < 0 || n < 0) {
+        fprintf(stderr, "Invalid input values\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_sequences(m, n);
+
+    if (printf("Number of possible sequences: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The static analyzer warnings all stemmed from a single root cause: `m` and `n` were hardcoded constants (`m = 10`, `n = 4`). Because the values were known at compile time, the subsequent validation `if (m < 0 || n < 0)` could never be true, triggering the `knownConditionTrueFalse` warnings — the check was effectively dead code.
+
+The fix replaces the hardcoded assignments with runtime input via `scanf`. This resolves all reported issues:
+
+1. **Hardcoded assignments removed** — `m` and `n` now come from user input, so their values are not statically known.
+2. **Dead conditions eliminated** — since inputs are unknown at compile time, the `m < 0 || n < 0` validation is now meaningful and reachable.
+3. **Added input validation** — the return value of `scanf` is checked to ensure both values were successfully parsed, guarding against use of uninitialized variables on malformed input.
+
+The recursive `count_sequences` logic is unchanged, as no weaknesses were flagged there; its base cases (`n == 0`, `m <= 0`) guarantee termination for the non-negative inputs enforced by the validation.

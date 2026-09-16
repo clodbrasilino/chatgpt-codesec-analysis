@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct NestedList {
+    int value;
+    bool is_integer;
+    struct NestedList **children;
+    int child_count;
+    int capacity;
+} NestedList;
+
+NestedList *create_integer_node(int value) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->value = value;
+    node->is_integer = true;
+    node->children = NULL;
+    node->child_count = 0;
+    node->capacity = 0;
+    return node;
+}
+
+NestedList *create_list_node(void) {
+    NestedList *node = (NestedList *)malloc(sizeof(NestedList));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->is_integer = false;
+    node->children = NULL;
+    node->child_count = 0;
+    node->capacity = 0;
+    return node;
+}
+
+bool add_child(NestedList *parent, NestedList *child) {
+    if (parent == NULL || child == NULL || parent->is_integer) {
+        return false;
+    }
+    if (parent->child_count == parent->capacity) {
+        int new_capacity = (parent->capacity == 0) ? 4 : parent->capacity * 2;
+        NestedList **new_children = (NestedList **)realloc(parent->children, sizeof(NestedList *) * new_capacity);
+        if (new_children == NULL) {
+            return false;
+        }
+        parent->children = new_children;
+        parent->capacity = new_capacity;
+    }
+    parent->children[parent->child_count++] = child;
+    return true;
+}
+
+void free_nested_list(NestedList *node) {
+    if (node == NULL) {
+        return;
+    }
+    if (!node->is_integer) {
+        for (int i = 0; i < node->child_count; i++) {
+            free_nested_list(node->children[i]);
+        }
+        free(node->children);
+    }
+    free(node);
+}
+
+bool is_subset_helper(NestedList *sub, NestedList *super) {
+    if (sub->is_integer && super->is_integer) {
+        return sub->value == super->value;
+    }
+    if (sub->is_integer != super->is_integer) {
+        return false;
+    }
+    if (sub->child_count > super->child_count) {
+        return false;
+    }
+    bool *used = (bool *)calloc(super->child_count, sizeof(bool));
+    if (used == NULL) {
+        return false;
+    }
+    for (int i = 0; i < sub->child_count; i++) {
+        bool found = false;
+        for (int j = 0; j < super->child_count; j++) {
+            if (!used[j] && is_subset_helper(sub->children[i], super->children[j])) {
+                used[j] = true;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            free(used);
+            return false;
+        }
+    }
+    free(used);
+    return true;
+}
+
+bool is_subset(NestedList *sub, NestedList *super) {
+    if (sub == NULL || super == NULL) {
+        return false;
+    }
+    return is_subset_helper(sub, super);
+}
+
+int main(void) {
+    NestedList *sub_list = create_list_node();
+    NestedList *sub_inner1 = create_list_node();
+    NestedList *sub_int1 = create_integer_node(1);
+    NestedList *sub_int2 = create_integer_node(2);
+    NestedList *sub_int3 = create_integer_node(3);
+    add_child(sub_inner1, sub_int1);
+    add_child(sub_inner1, sub_int2);
+    add_child(sub_list, sub_inner1);
+    add_child(sub_list, sub_int3);
+
+    NestedList *super_list = create_list_node();
+    NestedList *super_inner1 = create_list_node();
+    NestedList *super_inner2 = create_list_node();
+    NestedList *super_int1 = create_integer_node(1);
+    NestedList *super_int2 = create_integer_node(2);
+    NestedList *super_int3 = create_integer_node(3);
+    NestedList *super_int4 = create_integer_node(4);
+    add_child(super_inner1, super_int1);
+    add_child(super_inner1, super_int2);
+    add_child(super_inner2, super_int4);
+    add_child(super_list, super_inner1);
+    add_child(super_list, super_inner2);
+    add_child(super_list, super_int3);
+
+    printf("%s\n", is_subset(sub_list, super_list) ? "true" : "false");
+
+    free_nested_list(sub_list);
+    free_nested_list(super_list);
+    return 0;
+}
+```

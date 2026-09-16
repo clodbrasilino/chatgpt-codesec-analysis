@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+size_t count_char_in_repeated_string(const char *str, char c, size_t n) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t len = strlen(str);
+
+    if (len == 0) {
+        return 0;
+    }
+
+    size_t count_single = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (str[i] == c) {
+            count_single++;
+        }
+    }
+
+    if (n <= (SIZE_MAX / len)) {
+        size_t full_repeats = n / len;
+        size_t remainder = n % len;
+
+        size_t total_count = count_single * full_repeats;
+
+        for (size_t i = 0; i < remainder; i++) {
+            if (str[i] == c) {
+                total_count++;
+            }
+        }
+
+        return total_count;
+    } else {
+        size_t i = 0;
+        size_t total_count = 0;
+        while (i < n) {
+            for (size_t j = 0; j < len && i < n; j++) {
+                if (str[j] == c) {
+                    total_count++;
+                }
+                i++;
+            }
+        }
+        return total_count;
+    }
+}
+
+int main(void) {
+    const char *str = "abc";
+    char c = 'a';
+    size_t n = 10;
+
+    size_t count = count_char_in_repeated_string(str, c, n);
+    printf("%zu\n", count);
+
+    return 0;
+}

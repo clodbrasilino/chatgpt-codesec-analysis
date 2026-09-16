@@ -1,0 +1,180 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+typedef struct {
+    Item *data;
+    size_t size;
+    size_t capacity;
+} MaxHeap;
+
+static void swap_items(Item *a, Item *b)
+{
+    Item tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int heap_init(MaxHeap *heap, size_t capacity)
+{
+    if (heap == NULL || capacity == 0) {
+        return -1;
+    }
+    heap->data = (Item *)malloc(capacity * sizeof(Item));
+    if (heap->data == NULL) {
+        return -1;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+static void heap_free(MaxHeap *heap)
+{
+    if (heap != NULL) {
+        free(heap->data);
+        heap->data = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+static void heap_sift_up(MaxHeap *heap, size_t idx)
+{
+    while (idx > 0) {
+        size_t parent = (idx - 1) / 2;
+        if (heap->data[parent].price >= heap->data[idx].price) {
+            break;
+        }
+        swap_items(&heap->data[parent], &heap->data[idx]);
+        idx = parent;
+    }
+}
+
+static void heap_sift_down(MaxHeap *heap, size_t idx)
+{
+    for (;;) {
+        size_t left = 2 * idx + 1;
+        size_t right = 2 * idx + 2;
+        size_t largest = idx;
+
+        if (left < heap->size && heap->data[left].price > heap->data[largest].price) {
+            largest = left;
+        }
+        if (right < heap->size && heap->data[right].price > heap->data[largest].price) {
+            largest = right;
+        }
+        if (largest == idx) {
+            break;
+        }
+        swap_items(&heap->data[idx], &heap->data[largest]);
+        idx = largest;
+    }
+}
+
+static int heap_push(MaxHeap *heap, Item item)
+{
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->data[heap->size] = item;
+    heap->size++;
+    heap_sift_up(heap, heap->size - 1);
+    return 0;
+}
+
+static Item heap_pop(MaxHeap *heap)
+{
+    Item top = heap->data[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        heap_sift_down(heap, 0);
+    }
+    return top;
+}
+
+static void heap_replace_top(MaxHeap *heap, Item item)
+{
+    if (heap == NULL || heap->size == 0) {
+        return;
+    }
+    heap->data[0] = item;
+    heap_sift_down(heap, 0);
+}
+
+size_t find_n_cheapest(const Item *items, size_t count, size_t n, Item *result)
+{
+    if (items == NULL || result == NULL || n == 0 || count == 0) {
+        return 0;
+    }
+
+    if (n > count) {
+        n = count;
+    }
+
+    MaxHeap heap;
+    if (heap_init(&heap, n) != 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (heap.size < heap.capacity) {
+            if (heap_push(&heap, items[i]) != 0) {
+                heap_free(&heap);
+                return 0;
+            }
+        } else if (items[i].price < heap.data[0].price) {
+            heap_replace_top(&heap, items[i]);
+        }
+    }
+
+    size_t found = heap.size;
+    for (size_t i = found; i > 0; i--) {
+        result[i - 1] = heap_pop(&heap);
+    }
+
+    heap_free(&heap);
+    return found;
+}
+
+int main(void)
+{
+    Item items[] = {
+        {1, 12.50},
+        {2, 3.75},
+        {3, 25.00},
+        {4, 7.20},
+        {5, 1.99},
+        {6, 15.40},
+        {7, 9.99},
+        {8, 4.50}
+    };
+    size_t count = sizeof(items) / sizeof(items[0]);
+    size_t n = 3;
+
+    Item *result = (Item *)malloc(n * sizeof(Item));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t found = find_n_cheapest(items, count, n, result);
+    if (found == 0) {
+        fprintf(stderr, "Failed to retrieve cheapest items\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu cheapest items:\n", found);
+    for (size_t i = 0; i < found; i++) {
+        printf("Item %d: %.2f\n", result[i].id, result[i].price);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

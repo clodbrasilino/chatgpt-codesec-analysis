@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+
+double calculate_sphere_surface_area(double radius) {
+    if (radius < 0.0) {
+        errno = EDOM;
+        return NAN;
+    }
+    return 4.0 * M_PI * radius * radius;
+}
+
+int main(void) {
+    double radius = 5.0;
+    errno = 0;
+    double area = calculate_sphere_surface_area(radius);
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Invalid radius provided.\n");
+        return 1;
+    }
+    printf("Surface area: %f\n", area);
+    return 0;
+}
+```

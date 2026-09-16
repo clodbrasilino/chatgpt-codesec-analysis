@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_bitonic_sum(const int *arr, size_t n, int *result) {
+    if (arr == NULL || result == NULL || n == 0) {
+        return -1;
+    }
+
+    if (n == 1) {
+        *result = arr[0];
+        return 0;
+    }
+
+    int *inc = malloc(n * sizeof(int));
+    int *dec = malloc(n * sizeof(int));
+
+    if (inc == NULL || dec == NULL) {
+        free(inc);
+        free(dec);
+        return -1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        inc[i] = arr[i];
+    }
+
+    for (size_t i = 1; i < n; i++) {
+        for (size_t j = 0; j < i; j++) {
+            if (arr[j] < arr[i] && inc[i] < inc[j] + arr[i]) {
+                inc[i] = inc[j] + arr[i];
+            }
+        }
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        dec[i] = arr[i];
+    }
+
+    for (size_t i = n - 1; i > 0; i--) {
+        for (size_t j = n - 1; j > i; j--) {
+            if (arr[j] < arr[i] && dec[i] < dec[j] + arr[i]) {
+                dec[i] = dec[j] + arr[i];
+            }
+        }
+    }
+
+    *result = inc[0] + dec[0] - arr[0];
+
+    for (size_t i = 1; i < n; i++) {
+        int current = inc[i] + dec[i] - arr[i];
+        if (current > *result) {
+            *result = current;
+        }
+    }
+
+    free(inc);
+    free(dec);
+
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    if (max_bitonic_sum(arr, n, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        fprintf(stderr, "Error calculating bitonic sum\n");
+        return 1;
+    }
+
+    return 0;
+}

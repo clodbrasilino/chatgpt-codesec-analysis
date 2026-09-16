@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_first_duplicate(const int *arr, size_t size, int *result) {
+    if (arr == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                *result = arr[i];
+                return 0;
+            }
+        }
+    }
+
+    return 1;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 2, 5, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int duplicate;
+    int status;
+
+    status = find_first_duplicate(arr, size, &duplicate);
+
+    if (status == 0) {
+        printf("First duplicate: %d\n", duplicate);
+    } else if (status == 1) {
+        printf("No duplicates found.\n");
+    } else {
+        printf("Invalid input or error occurred.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

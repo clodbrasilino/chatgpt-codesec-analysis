@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_non_repeated(int *arr, int n) {
+    int sum = 0;
+    int *count = calloc(n, sizeof(int));
+
+    if (count == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        count[i] = 1;
+        for (int j = 0; j < n; j++) {
+            if (i != j && arr[i] == arr[j]) {
+                count[i]++;
+                break;
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (count[i] == 1) {
+            sum += arr[i];
+        }
+    }
+
+    free(count);
+    return sum;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 3, 2, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = sum_non_repeated(arr, n);
+
+    if (result == -1) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+
+    printf("%d\n", result);
+    return 0;
+}

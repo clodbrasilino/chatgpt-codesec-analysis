@@ -1,0 +1,23 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c: In function 'remove_tuples_with_length_k':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:49:24: error: incompatible types when initializing type 'Tuple *' using type 'Tuple'
+   49 |         Tuple *tuple = (*tuples)[i];
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:60:24: error: incompatible types when initializing type 'Tuple *' using type 'Tuple'
+   60 |         Tuple *tuple = (*tuples)[i];
+      |                        ^
+In file included from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:3:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:63:28: error: incompatible types when assigning to type 'Tuple' from type 'void *'
+   63 |             (*tuples)[i] = NULL;
+      |                            ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:66:36: error: incompatible types when assigning to type 'Tuple' from type 'Tuple *'
+   66 |                 (*tuples)[write] = tuple;
+      |                                    ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:67:32: error: incompatible types when assigning to type 'Tuple' from type 'void *'
+   67 |                 (*tuples)[i] = NULL;
+      |                                ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:73:24: error: incompatible types when assigning to type 'Tuple' from type 'void *'
+   73 |         (*tuples)[i] = NULL;
+      |                        ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:83:17: error: assignment to 'Tuple *' from incompatible pointer type 'Tuple **' [-Wincompatible-pointer-types]
+   83 |         *tuples = new_tuples;
+      |                 ^

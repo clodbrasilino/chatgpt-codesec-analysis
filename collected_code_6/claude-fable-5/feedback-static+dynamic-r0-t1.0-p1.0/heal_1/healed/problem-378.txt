@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *createNode(int data)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void appendNode(struct Node **head, int data)
+{
+    struct Node *node = createNode(data);
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    struct Node *cur = *head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+}
+
+void shiftLastToFirst(struct Node **head)
+{
+    if (head == NULL || *head == NULL || (*head)->next == NULL) {
+        return;
+    }
+    struct Node *cur = *head;
+    while (cur->next->next != NULL) {
+        cur = cur->next;
+    }
+    struct Node *last = cur->next;
+    cur->next = NULL;
+    last->next = *head;
+    *head = last;
+}
+
+void printList(const struct Node *head)
+{
+    const struct Node *cur = head;
+    while (cur != NULL) {
+        printf("%d ", cur->data);
+        cur = cur->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node **head)
+{
+    struct Node *cur = *head;
+    while (cur != NULL) {
+        struct Node *next = cur->next;
+        free(cur);
+        cur = next;
+    }
+    *head = NULL;
+}
+
+int main(void)
+{
+    struct Node *head = NULL;
+
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    appendNode(&head, 4);
+    appendNode(&head, 5);
+
+    printf("Original list: ");
+    printList(head);
+
+    shiftLastToFirst(&head);
+
+    printf("After shift:   ");
+    printList(head);
+
+    freeList(&head);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change is in `shiftLastToFirst`: instead of tracking a `prev` pointer initialized to `NULL` (which the static analyzer flagged as a potential null pointer dereference), the loop now walks to the second-to-last node directly using the condition `cur->next->next != NULL`. This is safe because the guard clause guarantees at least two nodes exist, so `cur->next` is never `NULL` on entry. The last node is then detached and relinked to the front without any pointer that could ever be `NULL` at dereference time, eliminating the reported weaknesses while preserving identical behavior.

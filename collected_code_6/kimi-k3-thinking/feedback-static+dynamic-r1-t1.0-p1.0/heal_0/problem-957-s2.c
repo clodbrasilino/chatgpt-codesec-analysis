@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int rightmost_set_bit_position(unsigned int n)
+{
+    int position = 1;
+
+    if (n == 0U)
+    {
+        return 0;
+    }
+
+    while ((n & 1U) == 0U)
+    {
+        n >>= 1;
+        position++;
+    }
+
+    return position;
+}
+
+int main(void)
+{
+    unsigned int test_values[] = {0U, 1U, 2U, 12U, 18U, 16U, 0x80000000U};
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+    int pos;
+
+    for (i = 0U; i < count; i++)
+    {
+        pos = rightmost_set_bit_position(test_values[i]);
+        if (pos == 0)
+        {
+            printf("Input: %u -> no set bits\n", test_values[i]);
+        }
+        else
+        {
+            printf("Input: %u -> rightmost set bit at position %d\n",
+                   test_values[i], pos);
+        }
+    }
+
+    return 0;
+}

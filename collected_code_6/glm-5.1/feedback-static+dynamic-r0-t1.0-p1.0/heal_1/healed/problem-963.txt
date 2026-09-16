@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_discriminant(double a, double b, double c) {
+    return (b * b) - (4.0 * a * c);
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 4) {
+        return EXIT_FAILURE;
+    }
+
+    char *endptr_a = NULL;
+    char *endptr_b = NULL;
+    char *endptr_c = NULL;
+
+    double a = strtod(argv[1], &endptr_a);
+    double b = strtod(argv[2], &endptr_b);
+    double c = strtod(argv[3], &endptr_c);
+
+    if (endptr_a == argv[1] || endptr_b == argv[2] || endptr_c == argv[3] ||
+        *endptr_a != '\0' || *endptr_b != '\0' || *endptr_c != '\0') {
+        return EXIT_FAILURE;
+    }
+
+    if (a == 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    double discriminant = calculate_discriminant(a, b, c);
+    printf("%f\n", discriminant);
+
+    return EXIT_SUCCESS;
+}

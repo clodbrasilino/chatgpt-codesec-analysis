@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct ListNode {
+    int value;
+    struct ListNode *next;
+} ListNode;
+
+typedef struct List {
+    ListNode *head;
+} List;
+
+ListNode *createNode(int value) {
+    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
+    if (!newNode) return NULL;
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+List *createList() {
+    List *list = (List *)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void addToList(List *list, int value) {
+    ListNode *newNode = createNode(value);
+    if (!newNode) return;
+    if (list->head == NULL) {
+        list->head = newNode;
+    } else {
+        ListNode *temp = list->head;
+        while (temp->next) temp = temp->next;
+        temp->next = newNode;
+    }
+}
+
+List *zipLists(List *list1, List *list2) {
+    List *zippedList = createList();
+    ListNode *l1 = list1->head;
+    ListNode *l2 = list2->head;
+    while (l1 || l2) {
+        if (l1) {
+            addToList(zippedList, l1->value);
+            l1 = l1->next;
+        }
+        if (l2) {
+            addToList(zippedList, l2->value);
+            l2 = l2->next;
+        }
+    }
+    return zippedList;
+}
+
+void printList(List *list) {
+    for (ListNode *node = list->head; node; node = node->next) {
+        printf("%d ", node->value);
+    }
+    printf("\n");
+}
+
+int main() {
+    List *list1 = createList();
+    List *list2 = createList();
+
+    addToList(list1, 1);
+    addToList(list1, 3);
+    addToList(list1, 5);
+    addToList(list2, 2);
+    addToList(list2, 4);
+    addToList(list2, 6);
+
+    printf("List 1: ");
+    printList(list1);
+    printf("List 2: ");
+    printList(list2);
+
+    List *zippedList = zipLists(list1, list2);
+
+    printf("Zipped List: ");
+    printList(zippedList);
+
+    // Cleanup
+    ListNode *current;
+    while (list1->head) {
+        current = list1->head;
+        list1->head = current->next;
+        free(current);
+    }
+    free(list1);
+    while (list2->head) {
+        current = list2->head;
+        list2->head = current->next;
+        free(current);
+    }
+    free(list2);
+    while (zippedList->head) {
+        current = zippedList->head;
+        zippedList->head = current->next;
+        free(current);
+    }
+    free(zippedList);
+
+    return 0;
+}
+```

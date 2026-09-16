@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_pairs(const int *arr, size_t n, int target)
+{
+    size_t i;
+    size_t j;
+    int found = 0;
+
+    if (arr == NULL || n < 2U) {
+        printf("No pairs found.\n");
+        return;
+    }
+
+    for (i = 0U; i < n - 1U; i++) {
+        for (j = i + 1U; j < n; j++) {
+            long sum = (long)arr[i] + (long)arr[j];
+            if (sum == (long)target) {
+                printf("Pair found: (%d, %d)\n", arr[i], arr[j]);
+                found = 1;
+            }
+        }
+    }
+
+    if (found == 0) {
+        printf("No pairs found.\n");
+    }
+}
+
+int main(void)
+{
+    int numbers[] = { 1, 5, 7, -1, 5, 3, 4, 2 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int target = 6;
+
+    printf("Array: ");
+    for (size_t i = 0U; i < count; i++) {
+        printf("%d ", numbers[i]);
+    }
+    printf("\nTarget sum: %d\n", target);
+
+    find_pairs(numbers, count, target);
+
+    return EXIT_SUCCESS;
+}

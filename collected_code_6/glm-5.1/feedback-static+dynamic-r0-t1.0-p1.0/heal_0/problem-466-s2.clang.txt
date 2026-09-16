@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-466-s2.c:15:58: error: use of undeclared identifier 'LONG_MIN'
+   15 |         long left_val = (mid > 0) ? (long)arr[mid - 1] : LONG_MIN;
+      |                                                          ^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-466-s2.c:16:63: error: use of undeclared identifier 'LONG_MIN'
+   16 |         long right_val = (mid < n - 1) ? (long)arr[mid + 1] : LONG_MIN;
+      |                                                               ^~~~~~~~
+2 errors generated.

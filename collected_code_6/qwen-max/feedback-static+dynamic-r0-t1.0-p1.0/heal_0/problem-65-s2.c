@@ -1,50 +1,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct node {
     int value;
-    struct Node *next;
+    struct node *next;
 } Node;
 
-Node* createNode(int value) {
-    Node *newNode = (Node*)malloc(sizeof(Node));
-    if (!newNode) {
-        fprintf(stderr, "Memory allocation failed\n");
+Node* create_node(int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
         exit(EXIT_FAILURE);
     }
-    newNode->value = value;
-    newNode->next = NULL;
-    return newNode;
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
 }
 
-void freeList(Node *head) {
-    while (head) {
-        Node *temp = head;
-        head = head->next;
-        free(temp);
-    }
-}
-
-int sumList(Node *head) {
+int list_sum(Node *head) {
     if (head == NULL) {
         return 0;
     }
-    return head->value + sumList(head->next);
+    return head->value + list_sum(head->next);
 }
 
 int main() {
-    Node *head = NULL, *second = NULL, *third = NULL;
-
-    head = createNode(1);
-    second = createNode(2);
-    third = createNode(3);
+    Node *head = create_node(1);
+    Node *second = create_node(2);
+    Node *third = create_node(3);
 
     head->next = second;
     second->next = third;
 
-    printf("Sum of list: %d\n", sumList(head));
+    printf("Sum of the linked list: %d\n", list_sum(head));
 
-    freeList(head);
+    free(head);
+    free(second);
+    free(third);
 
     return 0;
 }

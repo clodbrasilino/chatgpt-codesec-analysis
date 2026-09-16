@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-679.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-679.c:137:50: style: Condition 'dict_get_by_index(NULL,0,&key,&value)!=0' is always true [knownConditionTrueFalse]
+    if (dict_get_by_index(NULL, 0, &key, &value) != 0) {
+                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-679.c:137:26: note: Calling function 'dict_get_by_index' returns -1
+    if (dict_get_by_index(NULL, 0, &key, &value) != 0) {
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_1/healed/problem-679.c:137:50: note: Condition 'dict_get_by_index(NULL,0,&key,&value)!=0' is always true
+    if (dict_get_by_index(NULL, 0, &key, &value) != 0) {
+                                                 ^

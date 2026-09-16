@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **elements;
+    size_t size;
+} Tuple;
+
+long find_element_count_before_record(const Tuple *tuple, const char *record) {
+    if (tuple == NULL || tuple->elements == NULL || record == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i] != NULL && strcmp(tuple->elements[i], record) == 0) {
+            return (long)i;
+        }
+    }
+
+    return -1;
+}
+
+int main(void) {
+    Tuple my_tuple;
+    my_tuple.size = 5;
+    my_tuple.elements = malloc(my_tuple.size * sizeof(char *));
+
+    if (my_tuple.elements == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    my_tuple.elements[0] = strdup("apple");
+    my_tuple.elements[1] = strdup("banana");
+    my_tuple.elements[2] = strdup("cherry");
+    my_tuple.elements[3] = strdup("date");
+    my_tuple.elements[4] = strdup("elderberry");
+
+    for (size_t i = 0; i < my_tuple.size; i++) {
+        if (my_tuple.elements[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (size_t j = 0; j < i; j++) {
+                free(my_tuple.elements[j]);
+            }
+            free(my_tuple.elements);
+            return EXIT_FAILURE;
+        }
+    }
+
+    const char *target_record = "date";
+    long count = find_element_count_before_record(&my_tuple, target_record);
+
+    if (count != -1) {
+        printf("Elements before '%s': %ld\n", target_record, count);
+    } else {
+        printf("Record '%s' not found.\n", target_record);
+    }
+
+    for (size_t i = 0; i < my_tuple.size; i++) {
+        free(my_tuple.elements[i]);
+    }
+    free(my_tuple.elements);
+
+    return EXIT_SUCCESS;
+}

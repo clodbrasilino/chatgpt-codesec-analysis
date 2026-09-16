@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+    double z;
+} Point;
+
+double calculate_tetrahedron_volume(Point p1, Point p2, Point p3, Point p4) {
+    double ax = p2.x - p1.x;
+    double ay = p2.y - p1.y;
+    double az = p2.z - p1.z;
+
+    double bx = p3.x - p1.x;
+    double by = p3.y - p1.y;
+    double bz = p3.z - p1.z;
+
+    double cx = p4.x - p1.x;
+    double cy = p4.y - p1.y;
+    double cz = p4.z - p1.z;
+
+    double cross_x = by * cz - bz * cy;
+    double cross_y = bz * cx - bx * cz;
+    double cross_z = bx * cy - by * cx;
+
+    double dot_product = ax * cross_x + ay * cross_y + az * cross_z;
+
+    return fabs(dot_product) / 6.0;
+}
+
+int main(void) {
+    Point* points = malloc(4 * sizeof(Point));
+    if (points == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    points[0].x = 0.0; points[0].y = 0.0; points[0].z = 0.0;
+    points[1].x = 1.0; points[1].y = 0.0; points[1].z = 0.0;
+    points[2].x = 0.0; points[2].y = 1.0; points[2].z = 0.0;
+    points[3].x = 0.0; points[3].y = 0.0; points[3].z = 1.0;
+
+    double volume = calculate_tetrahedron_volume(points[0], points[1], points[2], points[3]);
+
+    int ret = printf("%f\n", volume);
+    
+    free(points);
+    points = NULL;
+
+    if (ret < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

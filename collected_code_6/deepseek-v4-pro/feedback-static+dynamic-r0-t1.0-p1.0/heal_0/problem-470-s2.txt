@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+int *pairwise_addition(const Tuple *t1, const Tuple *t2, int *result_size) {
+    if (t1 == NULL || t2 == NULL || result_size == NULL) {
+        return NULL;
+    }
+    
+    if (t1->size != t2->size) {
+        return NULL;
+    }
+    
+    if (t1->size <= 0) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    if (t1->elements == NULL || t2->elements == NULL) {
+        return NULL;
+    }
+    
+    int *result = (int *)malloc(sizeof(int) * t1->size);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < t1->size; i++) {
+        result[i] = t1->elements[i] + t2->elements[i];
+    }
+    
+    *result_size = t1->size;
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {10, 20, 30, 40, 50};
+    
+    Tuple t1 = {arr1, 5};
+    Tuple t2 = {arr2, 5};
+    
+    int result_size = 0;
+    int *result = pairwise_addition(&t1, &t2, &result_size);
+    
+    if (result != NULL) {
+        printf("Result: ");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Error: Invalid input or memory allocation failed\n");
+    }
+    
+    return 0;
+}
+```

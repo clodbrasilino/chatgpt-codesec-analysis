@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long count_sequences(int length, const int *values, int values_count)
+{
+    if (length < 0 || values_count < 0 || (values_count > 0 && values == NULL))
+        return 0;
+    if (length == 0)
+        return 1;
+    if (values_count == 0)
+        return 0;
+
+    int max_step = 0;
+    int i;
+
+    for (i = 0; i < values_count; i++) {
+        if (values[i] > max_step)
+            max_step = values[i];
+    }
+
+    size_t max_sum;
+    if (max_step > 0) {
+        if ((size_t)length > ((size_t)-1) / (size_t)max_step)
+            return 0;
+        max_sum = (size_t)length * (size_t)max_step;
+        if (max_sum == (size_t)-1)
+            return 0;
+    } else {
+        max_sum = 0;
+    }
+
+    unsigned long long *dp = calloc(max_sum + 1, sizeof(*dp));
+    if (dp == NULL)
+        return 0;
+    dp[0] = 1;
+
+    int step;
+    for (step = 0; step < length; step++) {
+        unsigned long long *next = calloc(max_sum + 1, sizeof(*next));
+        if (next == NULL) {
+            free(dp);
+            return 0;
+        }
+
+        size_t s;
+        for (s = 0; s <= max_sum; s++) {
+            if (dp[s] == 0)
+                continue;
+
+            for (i = 0; i < values_count; i++) {
+                size_t ns;
+
+                if (values[i] >= 0) {
+                    if ((size_t)values[i] > max_sum || s > max_sum - (size_t)values[i])
+                        continue;
+                    ns = s + (size_t)values[i];
+                } else {
+                    size_t abs_v = (size_t)(-(long long)values[i]);
+                    if (s < abs_v)
+                        continue;
+                    ns = s - abs_v;
+                }
+
+                if (ns > max_sum)
+                    continue;
+
+                if (next[ns] > ULLONG_MAX - dp[s]) {
+                    free(next);
+                    free(dp);
+                    return 0;
+                }
+                next[ns] += dp[s];
+            }
+        }
+
+        free(dp);
+        dp = next;
+    }
+
+    unsigned long long total = 0;
+    size_t s;
+    for (s = 0; s <= max_sum; s++) {
+        if (total > ULLONG_MAX - dp[s]) {
+            free(dp);
+            return 0;
+        }
+        total += dp[s];
+    }
+
+    free(dp);
+    return total;
+}
+
+int main(void)
+{
+    int length;
+    int values_count;
+
+    if (scanf("%d %d", &length, &values_count) != 2)
+        return 1;
+    if (length < 0 || values_count < 0)
+        return 1;
+
+    if (values_count > 0 && (size_t)values_count > ((size_t)-1) / sizeof(int))
+        return 1;
+
+    int *values = malloc((size_t)values_count * sizeof(*values));
+    if (values == NULL && values_count > 0)
+        return 1;
+
+    int i;
+    for (i = 0; i < values_count; i++) {
+        if (scanf("%d", &values[i]) != 1) {
+            free(values);
+            return 1;
+        }
+    }
+
+    unsigned long long result = count_sequences(length, values, values_count);
+    printf("%llu\n", result);
+
+    free(values);
+    return 0;
+}
+```

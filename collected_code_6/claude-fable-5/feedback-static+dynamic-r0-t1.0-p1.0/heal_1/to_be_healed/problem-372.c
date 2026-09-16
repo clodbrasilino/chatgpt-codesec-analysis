@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *arr, size_t start, size_t end)
+{
+    size_t root = start;
+
+    while ((2U * root) + 1U <= end) {
+        size_t child = (2U * root) + 1U;
+        size_t target = root;
+
+        if (arr[target] < arr[child]) {
+            target = child;
+        }
+        if ((child + 1U <= end) && (arr[target] < arr[child + 1U])) {
+            target = child + 1U;
+        }
+        if (target == root) {
+            return;
+        }
+        swap(&arr[root], &arr[target]);
+        root = target;
+    }
+}
+
+static void heap_sort(int *arr, size_t n)
+{
+    size_t start;
+    size_t end;
+
+    if ((arr == NULL) || (n < 2U)) {
+        return;
+    }
+
+    start = n / 2U;
+    while (start > 0U) {
+        start--;
+        sift_down(arr, start, n - 1U);
+    }
+
+    end = n - 1U;
+    while (end > 0U) {
+        swap(&arr[0], &arr[end]);
+        end--;
+        sift_down(arr, 0U, end);
+    }
+}
+
+int main(void)
+{
+    size_t n = 10U;
+    size_t i;
+    int *arr;
+    int status = EXIT_SUCCESS;
+    /* Possible weaknesses found:
+     *  Variable 'initial' can be declared as const array [constVariable]
+     */
+    int initial[10] = { 42, -7, 19, 0, 88, -23, 5, 61, 3, -1 };
+
+    arr = malloc(n * sizeof(*arr));
+    if (arr == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        arr[i] = initial[i];
+    }
+
+    heap_sort(arr, n);
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            status = EXIT_FAILURE;
+            break;
+        }
+    }
+
+    if (status == EXIT_SUCCESS) {
+        if (printf("\n") < 0) {
+            status = EXIT_FAILURE;
+        }
+    }
+
+    free(arr);
+    arr = NULL;
+
+    return status;
+}

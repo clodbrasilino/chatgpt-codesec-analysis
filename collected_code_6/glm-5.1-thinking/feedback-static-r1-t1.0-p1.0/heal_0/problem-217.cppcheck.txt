@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-217.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-217.c:51:14: style: Condition 'res4!=-1' is always false [knownConditionTrueFalse]
+    if (res4 != -1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-217.c:31:35: note: Calling function 'find_first_repeated' returns -1
+    int res4 = find_first_repeated(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-217.c:31:35: note: Assignment 'res4=find_first_repeated(NULL)', assigned value is -1
+    int res4 = find_first_repeated(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-217.c:51:14: note: Condition 'res4!=-1' is always false
+    if (res4 != -1) {
+             ^

@@ -1,0 +1,149 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    ELEM_INT,
+    ELEM_TUPLE
+} ElemType;
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct Node {
+    ElemType type;
+    union {
+        int value;
+        Tuple tuple;
+    } data;
+    struct Node *next;
+} Node;
+
+static Node *create_int_node(int value)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = ELEM_INT;
+    node->data.value = value;
+    node->next = NULL;
+    return node;
+}
+
+static Node *create_tuple_node(int first, int second)
+{
+    Node *node = malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = ELEM_TUPLE;
+    node->data.tuple.first = first;
+    node->data.tuple.second = second;
+    node->next = NULL;
+    return node;
+}
+
+static int append_node(Node **head, Node *node)
+{
+    Node *cur;
+
+    if (head == NULL || node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    cur = *head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return 0;
+}
+
+static size_t count_until_tuple(const Node *head)
+{
+    size_t count = 0;
+    const Node *cur = head;
+
+    while (cur != NULL) {
+        if (cur->type == ELEM_TUPLE) {
+            break;
+        }
+        count++;
+        cur = cur->next;
+    }
+    return count;
+}
+
+static void free_list(Node *head)
+{
+    Node *cur = head;
+
+    while (cur != NULL) {
+        Node *next = cur->next;
+        free(cur);
+        cur = next;
+    }
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    Node *node;
+    size_t count;
+    int status = EXIT_SUCCESS;
+
+    node = create_int_node(10);
+    if (node == NULL || append_node(&head, node) != 0) {
+        free(node);
+        free_list(head);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    node = create_int_node(20);
+    if (node == NULL || append_node(&head, node) != 0) {
+        free(node);
+        free_list(head);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    node = create_int_node(30);
+    if (node == NULL || append_node(&head, node) != 0) {
+        free(node);
+        free_list(head);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    node = create_tuple_node(1, 2);
+    if (node == NULL || append_node(&head, node) != 0) {
+        free(node);
+        free_list(head);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    node = create_int_node(40);
+    if (node == NULL || append_node(&head, node) != 0) {
+        free(node);
+        free_list(head);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    count = count_until_tuple(head);
+    if (printf("Elements before first tuple: %zu\n", count) < 0) {
+        status = EXIT_FAILURE;
+    }
+
+    free_list(head);
+    return status;
+}
+```

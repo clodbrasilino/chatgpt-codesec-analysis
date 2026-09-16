@@ -1,0 +1,154 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <regex.h>
+
+#define INITIAL_CAPACITY 8
+
+static char *copy_token(const char *start, size_t length)
+{
+    char *token = malloc(length + 1);
+    if (token == NULL) {
+        return NULL;
+    }
+    memcpy(token, start, length);
+    token[length] = '\0';
+    return token;
+}
+
+void free_tokens(char **tokens, size_t count)
+{
+    size_t i;
+
+    if (tokens == NULL) {
+        return;
+    }
+    for (i = 0; i < count; i++) {
+        free(tokens[i]);
+    }
+    free(tokens);
+}
+
+char **regex_split(const char *input, const char *pattern, size_t *token_count)
+{
+    regex_t regex;
+    regmatch_t match[1];
+    char **tokens = NULL;
+    size_t count = 0;
+    size_t capacity = 0;
+    const char *cursor;
+    int status;
+
+    if (input == NULL || pattern == NULL || token_count == NULL) {
+        return NULL;
+    }
+
+    *token_count = 0;
+
+    status = regcomp(&regex, pattern, REG_EXTENDED);
+    if (status != 0) {
+        return NULL;
+    }
+
+    cursor = input;
+
+    for (;;) {
+        char *token;
+        size_t token_length;
+
+        if (*cursor == '\0') {
+            token_length = 0;
+        } else {
+            status = regexec(&regex, cursor, 1, match, 0);
+            if (status == REG_NOMATCH) {
+                token_length = strlen(cursor);
+            } else if (status != 0) {
+                free_tokens(tokens, count);
+                regfree(&regex);
+                return NULL;
+            } else {
+                token_length = (size_t)match[0].rm_so;
+            }
+        }
+
+        if (count == capacity) {
+            size_t new_capacity;
+            char **new_tokens;
+
+            if (capacity > (SIZE_MAX / sizeof(*tokens)) / 2) {
+                free_tokens(tokens, count);
+                regfree(&regex);
+                return NULL;
+            }
+            new_capacity = (capacity == 0) ? INITIAL_CAPACITY : capacity * 2;
+            new_tokens = realloc(tokens, new_capacity * sizeof(*new_tokens));
+            if (new_tokens == NULL) {
+                free_tokens(tokens, count);
+                regfree(&regex);
+                return NULL;
+            }
+            tokens = new_tokens;
+            capacity = new_capacity;
+        }
+
+        token = copy_token(cursor, token_length);
+        if (token == NULL) {
+            free_tokens(tokens, count);
+            regfree(&regex);
+            return NULL;
+        }
+        tokens[count] = token;
+        count++;
+
+        if (*cursor == '\0' || status == REG_NOMATCH) {
+            break;
+        }
+
+        cursor += (match[0].rm_eo > 0) ? (size_t)match[0].rm_eo : 1;
+    }
+
+    regfree(&regex);
+    *token_count = count;
+    return tokens;
+}
+
+int main(void)
+{
+    const char *input = "apple, banana;cherry  grape|melon";
+    const char *pattern = "[,;|[:space:]]+";
+    char **tokens;
+    size_t count = 0;
+    size_t i;
+
+    tokens = regex_split(input, pattern, &count);
+    if (tokens == NULL) {
+        fprintf(stderr, "Failed to split the input string.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("Token %zu: '%s'\n", i, tokens[i]);
+    }
+
+    free_tokens(tokens, count);
+    return EXIT_SUCCESS;
+}
+```
+
+**Output:**
+```
+Token 0: 'apple'
+Token 1: 'banana'
+Token 2: 'cherry'
+Token 3: 'grape'
+Token 4: 'melon'
+```
+
+**Key points:**
+
+- **Regex-based splitting**: Since POSIX `<regex.h>` has no native split, `regexec` runs in a loop to locate delimiter matches; each token is the text between the current position and the next match. The pattern `[,;|[:space:]]+` treats runs of commas, semicolons, pipes, and whitespace as a single delimiter.
+- **CWE-664 (resource lifetime)**: Every successful `regcomp` is paired with exactly one `regfree` on all exit paths; every allocated token and the token array are freed on all success and failure paths; the caller owns the result and releases it via `free_tokens`.
+- **CWE-703 (exceptional conditions)**: All return values are validated — `regcomp`, `regexec` (distinguishing `REG_NOMATCH` from real errors), `malloc`, `realloc` (using a temporary pointer to avoid leaks), and NULL arguments. A zero-width regex match is handled by advancing one character to prevent an infinite loop.
+- **CWE-710 (coding standards)**: Consistent naming, a `static` internal helper, C99-compliant types (`size_t`, `%zu`), and an overflow guard before growing the array.

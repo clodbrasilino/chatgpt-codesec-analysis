@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+double sum_of_arithmetic_progression(int n, double a, double d) {
+    return (n * (2 * a + (n - 1) * d)) / 2.0;
+}
+
+int main() {
+    int n = 10;
+    double a = 1.0;
+    double d = 1.0;
+
+    double result = sum_of_arithmetic_progression(n, a, d);
+    printf("The sum of the arithmetic progression is: %.2f\n", result);
+
+    return 0;
+}

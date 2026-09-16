@@ -1,0 +1,189 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+static int count_digits(long long num)
+{
+    int count = 0;
+
+    if (num == 0) {
+        return 1;
+    }
+
+    while (num != 0) {
+        num /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+static bool is_armstrong(long long num)
+{
+    long long original;
+    long long sum = 0;
+    int digits;
+
+    if (num < 0) {
+        return false;
+    }
+
+    original = num;
+    digits = count_digits(num);
+
+    while (num != 0) {
+        long long digit = num % 10;
+        long long power = 1;
+        int i;
+
+        for (i = 0; i < digits; i++) {
+            if (power > LLONG_MAX_SAFE / (digit == 0 ? 1 : digit)) {
+                return false;
+            }
+            power *= digit;
+        }
+
+        if (sum > (long long)9e18 - power) {
+            return false;
+        }
+
+        sum += power;
+        num /= 10;
+    }
+
+    return sum == original;
+}
+
+int main(void)
+{
+    long long num;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    result = scanf("%lld", &num);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (num < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_armstrong(num)) {
+        printf("%lld is an Armstrong number.\n", num);
+    } else {
+        printf("%lld is not an Armstrong number.\n", num);
+    }
+
+    return 0;
+}
+```
+
+Wait — I referenced an undefined macro `LLONG_MAX_SAFE`. Here is the corrected, complete version:
+
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+static int count_digits(long long num)
+{
+    int count = 0;
+
+    if (num == 0) {
+        return 1;
+    }
+
+    while (num != 0) {
+        num /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+static bool safe_power(long long base, int exp, long long *out)
+{
+    long long result = 1;
+    int i;
+
+    for (i = 0; i < exp; i++) {
+        if (base != 0 && result > LLONG_MAX / base) {
+            return false;
+        }
+        result *= base;
+    }
+
+    *out = result;
+    return true;
+}
+
+static bool is_armstrong(long long num)
+{
+    long long original;
+    long long sum = 0;
+    int digits;
+
+    if (num < 0) {
+        return false;
+    }
+
+    original = num;
+    digits = count_digits(num);
+
+    while (num != 0) {
+        long long digit = num % 10;
+        long long power;
+
+        if (!safe_power(digit, digits, &power)) {
+            return false;
+        }
+
+        if (sum > LLONG_MAX - power) {
+            return false;
+        }
+
+        sum += power;
+        num /= 10;
+    }
+
+    return sum == original;
+}
+
+int main(void)
+{
+    long long num;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    result = scanf("%lld", &num);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (num < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_armstrong(num)) {
+        printf("%lld is an Armstrong number.\n", num);
+    } else {
+        printf("%lld is not an Armstrong number.\n", num);
+    }
+
+    return 0;
+}
+```
+
+Key safety measures addressing the specified CWEs:
+
+- **CWE-703**: The return value of `scanf` is checked, negative input is rejected explicitly, and integer overflow during power and sum computation is detected and handled rather than silently wrapping.
+- **CWE-664**: No dynamic resources (memory, files) are used, so nothing can leak; all state is stack-local with well-defined lifetimes.
+- **CWE-710**: Standard-compliant code — `int main(void)`, `static` internal linkage functions, explicit `return` values, no undefined behavior from signed overflow, and errors reported to `stderr` with a nonzero exit status.

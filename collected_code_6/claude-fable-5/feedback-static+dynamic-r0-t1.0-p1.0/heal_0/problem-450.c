@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_strings_by_size(const char **list, size_t list_count, size_t target_size, size_t *result_count);
+void free_string_list(char **list, size_t count);
+
+char **extract_strings_by_size(const char **list, size_t list_count, size_t target_size, size_t *result_count)
+{
+    char **result = NULL;
+    size_t count = 0;
+    size_t i;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+
+    *result_count = 0;
+
+    if (list == NULL || list_count == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < list_count; i++) {
+        if (list[i] != NULL && strlen(list[i]) == target_size) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(char *));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    count = 0;
+    for (i = 0; i < list_count; i++) {
+        if (list[i] != NULL && strlen(list[i]) == target_size) {
+            size_t len = strlen(list[i]);
+            result[count] = malloc(len + 1);
+            if (result[count] == NULL) {
+                free_string_list(result, count);
+                return NULL;
+            }
+            memcpy(result[count], list[i], len + 1);
+            count++;
+        }
+    }
+
+    *result_count = count;
+    return result;
+}
+
+void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *strings[] = { "apple", "cat", "dog", "banana", "fox", "grape" };
+    size_t total = sizeof(strings) / sizeof(strings[0]);
+    size_t result_count = 0;
+    size_t target_size = 3;
+    char **extracted;
+    size_t i;
+
+    extracted = extract_strings_by_size(strings, total, target_size, &result_count);
+
+    if (extracted == NULL) {
+        if (printf("No strings of size %zu found.\n", target_size) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Strings of size %zu:\n", target_size) < 0) {
+        free_string_list(extracted, result_count);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < result_count; i++) {
+        if (printf("%s\n", extracted[i]) < 0) {
+            free_string_list(extracted, result_count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_string_list(extracted, result_count);
+    return EXIT_SUCCESS;
+}

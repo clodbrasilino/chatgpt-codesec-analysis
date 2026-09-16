@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+static bool isPerfectSquare(unsigned long long x)
+{
+    unsigned long long lo;
+    unsigned long long hi;
+
+    if (x < 2ULL) {
+        return true;
+    }
+
+    lo = 1ULL;
+    hi = (x / 2ULL) + 1ULL;
+
+    while (lo <= hi) {
+        unsigned long long mid = lo + ((hi - lo) / 2ULL);
+        unsigned long long sq;
+
+        if (mid > (x / mid)) {
+            hi = mid - 1ULL;
+            continue;
+        }
+
+        sq = mid * mid;
+
+        if (sq == x) {
+            return true;
+        }
+
+        if (sq < x) {
+            lo = mid + 1ULL;
+        } else {
+            hi = mid - 1ULL;
+        }
+    }
+
+    return false;
+}
+
+static bool isProductOfTwoSquares(unsigned long long n)
+{
+    unsigned long long a;
+
+    if (n == 0ULL) {
+        return true;
+    }
+
+    for (a = 1ULL; a <= (n / a); a++) {
+        unsigned long long sq = a * a;
+
+        if ((n % sq) == 0ULL) {
+            if (isPerfectSquare(n / sq)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long input;
+    int rc;
+
+    printf("Enter a non-negative number: ");
+
+    rc = scanf("%lld", &input);
+    if (rc != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (input < 0LL) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (isProductOfTwoSquares((unsigned long long)input)) {
+        printf("%lld can be represented as a product of two squares.\n", input);
+    } else {
+        printf("%lld cannot be represented as a product of two squares.\n", input);
+    }
+
+    return 0;
+}

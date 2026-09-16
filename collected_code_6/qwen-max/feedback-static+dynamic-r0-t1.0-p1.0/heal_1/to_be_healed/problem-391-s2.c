@@ -1,93 +1,143 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  include '<string.h>' or provide a declaration of 'strcmp'
+  */
 
 typedef struct Node {
     char *key;
-    struct Node *value;  // For nested dictionaries, this will point to another Node
-    struct Node *next;   // For list of key-value pairs at the same level
+    struct Node *value;
+    struct Node *next;
 } Node;
 
-Node* create_node(char *key, char *value) {
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    /* Possible weaknesses found:
-     *  Possible null pointer dereference: key [nullPointer]
-     *  Null pointer dereference
-     *  Dereferencing argument key that is null
-     *  Null pointer dereference: key [ctunullpointer]
-     */
-    new_node->key = strdup(key);
-    /* Possible weaknesses found:
-     *  Calling function 'create_node', 1st argument 'NULL' value is 0
-     *  Calling function create_node, 1st argument is null
-     */
-    new_node->value = value ? create_node(NULL, value) : NULL;  // If value is a string, it's a leaf node
-    new_node->next = NULL;
-    return new_node;
-}
+typedef struct Dictionary {
+    Node *head;
+} Dictionary;
 
-void add_to_dict(Node **dict, char *key, char *value) {
-    if (*dict == NULL) {
-        *dict = create_node(key, value);
-    } else {
-        Node *current = *dict;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = create_node(key, value);
-    }
-}
-
-Node* list_to_dict(char *list[], int size) {
-    if (size % 2 != 0) return NULL;  // List should have even number of elements
-    Node *dict = NULL;
-    for (int i = 0; i < size; i += 2) {
-        add_to_dict(&dict, list[i], list[i + 1]);
-    }
+Dictionary *createDictionary() {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->head = NULL;
     return dict;
 }
 
-void print_dict(Node *dict, int indent) {
-    while (dict != NULL) {
-        for (int i = 0; i < indent; ++i) printf("  ");
-        printf("%s: ", dict->key);
-        if (dict->value && dict->value->key == NULL) {
-            printf("%s\n", dict->value->value->key);
-        } else {
-            printf("\n");
-            print_dict(dict->value, indent + 1);
+Node *createNode(char *key, Node *value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->key = key;
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void addEntry(Dictionary *dict, char *key, Node *value) {
+    Node *newNode = createNode(key, value);
+    newNode->next = dict->head;
+    dict->head = newNode;
+}
+
+Node *findEntry(Dictionary *dict, char *key) {
+    for (Node *curr = dict->head; curr != NULL; curr = curr->next) {
+        /* Possible weaknesses found:
+         *  include the header <string.h> or explicitly provide a declaration for 'strcmp'
+         *  call to undeclared library function 'strcmp' with type 'int (const char *, const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  implicit declaration of function 'strcmp' [-Wimplicit-function-declaration]
+         */
+        if (strcmp(curr->key, key) == 0) {
+            return curr;
         }
-        dict = dict->next;
+    }
+    return NULL;
+}
+
+void freeDictionary(Dictionary *dict) {
+    while (dict->head != NULL) {
+        Node *temp = dict->head;
+        dict->head = dict->head->next;
+        free(temp->key);
+        if (temp->value != NULL) {
+            freeDictionary((Dictionary *)temp->value);
+        }
+        free(temp);
+    }
+    free(dict);
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'node' can be declared as pointer to const [constParameterPointer]
+ */
+bool isList(Node *node) {
+    if (node == NULL || node->key != NULL) {
+        return false;
+    }
+    return true;
+}
+
+void printDictionary(Dictionary *dict, int level) {
+    for (int i = 0; i < level; i++) {
+        printf("  ");
+    }
+    for (Node *curr = dict->head; curr != NULL; curr = curr->next) {
+        if (isList(curr)) {
+            printf("[\n");
+            printDictionary((Dictionary *)curr->value, level + 1);
+            for (int i = 0; i < level; i++) {
+                printf("  ");
+            }
+            printf("]\n");
+        } else {
+            printf("%s: ", curr->key);
+            if (isList(curr->value)) {
+                printf("[\n");
+                printDictionary((Dictionary *)curr->value, level + 1);
+                for (int i = 0; i < level; i++) {
+                    printf("  ");
+                }
+                printf("]\n");
+            } else {
+                printf("{\n");
+                printDictionary((Dictionary *)curr->value, level + 1);
+                for (int i = 0; i < level; i++) {
+                    printf("  ");
+                }
+                printf("}\n");
+            }
+        }
     }
 }
 
-void free_dict(Node *dict) {
-    while (dict != NULL) {
-        Node *next = dict->next;
-        if (dict->value) {
-            if (dict->value->key) {
-                free_dict(dict->value);
-            } else {
-                free(dict->value);
-            }
+/* Possible weaknesses found:
+ *  Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+ */
+void convertListsToNestedDictionary(char ***lists, int *sizes, int listCount, Dictionary *dict) {
+    for (int i = 0; i < listCount; ++i) {
+        if (sizes[i] % 2 != 0) {
+            continue;
         }
-        free(dict->key);
-        free(dict);
-        dict = next;
+        Dictionary *subDict = createDictionary();
+        for (int j = 0; j < sizes[i]; j += 2) {
+            char *key = lists[i][j];
+            Node *value = (j + 1 < sizes[i]) ? createNode(NULL, NULL) : NULL;
+            addEntry(subDict, key, value);
+        }
+        addEntry(dict, (char *)"list", (Node *)subDict);
     }
 }
 
 int main() {
-    char *list1[] = {"key1", "value1", "key2", "value2"};
-    char *list2[] = {"key3", "value3", "key4", "value4"};
+    // Example usage
+    char *list1[] = {"a", "b", "c", "d"};
+    char *list2[] = {"e", "f", "g", "h"};
+    char *list3[] = {"i", "j", "k", "l"};
 
-    Node *dict1 = list_to_dict(list1, 4);
-    Node *dict2 = list_to_dict(list2, 4);
+    char **lists[3] = {list1, list2, list3};
+    int sizes[3] = {4, 4, 4};
+    int listCount = 3;
 
-    add_to_dict(&dict1, "nested", (char *)dict2);  // Treat dict2 as part of dict1
+    Dictionary *rootDict = createDictionary();
+    convertListsToNestedDictionary(lists, sizes, listCount, rootDict);
 
-    print_dict(dict1, 0);
+    printDictionary(rootDict, 0);
 
-    free_dict(dict1);
+    freeDictionary(rootDict);
     return 0;
 }

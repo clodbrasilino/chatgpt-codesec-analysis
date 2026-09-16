@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int hex_is_even(const char *str)
+{
+    size_t start = 0;
+    size_t end;
+    int last_value = 0;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    end = strlen(str);
+
+    while (start < end &&
+           (str[start] == ' ' || str[start] == '\t' ||
+            str[start] == '\n' || str[start] == '\r')) {
+        start++;
+    }
+
+    if (start < end && (str[start] == '+' || str[start] == '-')) {
+        start++;
+    }
+
+    if (start + 1 < end && str[start] == '0' &&
+        (str[start + 1] == 'x' || str[start + 1] == 'X')) {
+        start += 2;
+    }
+
+    while (end > start &&
+           (str[end - 1] == ' ' || str[end - 1] == '\t' ||
+            str[end - 1] == '\n' || str[end - 1] == '\r')) {
+        end--;
+    }
+
+    if (start == end) {
+        return -1;
+    }
+
+    for (size_t i = start; i < end; i++) {
+        char c = str[i];
+
+        if (c >= '0' && c <= '9') {
+            last_value = c - '0';
+        } else if (c >= 'a' && c <= 'f') {
+            last_value = c - 'a' + 10;
+        } else if (c >= 'A' && c <= 'F') {
+            last_value = c - 'A' + 10;
+        } else {
+            return -1;
+        }
+    }
+
+    return last_value % 2 == 0 ? 1 : 0;
+}
+
+int main(void)
+{
+    char input[256];
+    size_t len;
+    int result;
+
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+
+    len = strlen(input);
+
+    if (len == sizeof(input) - 1 && input[len - 1] != '\n') {
+        int ch = getchar();
+
+        if (ch != '\n' && ch != EOF) {
+            while (ch != '\n' && ch != EOF) {
+                ch = getchar();
+            }
+
+            printf("Invalid hexadecimal number\n");
+            return 1;
+        }
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    result = hex_is_even(input);
+
+    if (result < 0) {
+        printf("Invalid hexadecimal number\n");
+    } else if (result == 1) {
+        printf("Even\n");
+    } else {
+        printf("Odd\n");
+    }
+
+    return 0;
+}
+```

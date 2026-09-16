@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long perrin(int n);
+
+long long perrin(int n)
+{
+    if (n < 0) {
+        return -1;
+    }
+    if (n == 0) {
+        return 3;
+    }
+    if (n == 1) {
+        return 0;
+    }
+    if (n == 2) {
+        return 2;
+    }
+    return perrin(n - 2) + perrin(n - 3);
+}
+
+int main(void)
+{
+    int n = 0;
+    long long result = 0;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 90) {
+        fprintf(stderr, "Error: n too large, result would overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    result = perrin(n);
+    if (result < 0) {
+        fprintf(stderr, "Error: computation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perrin(%d) = %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}

@@ -3,7 +3,7 @@
 #include <string.h>
 
 typedef struct {
-    char *str;
+    char* key;
     int count;
 } StringCount;
 
@@ -11,43 +11,46 @@ int compare(const void *a, const void *b) {
     return ((StringCount *)b)->count - ((StringCount *)a)->count;
 }
 
-char* secondMostFrequent(char *strings[], int size) {
-    if (size < 2) {
-        return NULL;
-    }
+char* secondMostFrequent(char* strings[], int n) {
+    StringCount* counts = (StringCount*)malloc(n * sizeof(StringCount));
+    if (counts == NULL) return NULL;
 
-    StringCount *counts = (StringCount *)malloc(size * sizeof(StringCount));
-    for (int i = 0; i < size; i++) {
-        counts[i].str = strings[i];
-        counts[i].count = 1;
-        for (int j = i + 1; j < size; j++) {
-            if (strcmp(strings[i], strings[j]) == 0) {
-                counts[i].count++;
+    for (int i = 0; i < n; i++) {
+        int found = 0;
+        for (int j = 0; j < i; j++) {
+            if (strcmp(strings[i], counts[j].key) == 0) {
+                counts[j].count++;
+                found = 1;
+                break;
             }
+        }
+        if (!found) {
+            counts[i].key = strings[i];
+            counts[i].count = 1;
         }
     }
 
-    qsort(counts, size, sizeof(StringCount), compare);
+    qsort(counts, n, sizeof(StringCount), compare);
 
-    for (int i = 1; i < size; i++) {
+    char* result = NULL;
+    for (int i = 1; i < n; i++) {
         if (counts[i].count < counts[0].count) {
-            char *result = counts[i].str;
-            free(counts);
-            return result;
+            result = counts[i].key;
+            break;
         }
     }
 
     free(counts);
-    return NULL;
+    return result;
 }
 
 int main() {
-    char *strings[] = {"apple", "banana", "apple", "orange", "banana", "banana"};
-    int size = 6;
+    char* strings[] = {"apple", "banana", "apple", "orange", "banana", "banana"};
+    int n = 6;
 
-    char *secondMostFreq = secondMostFrequent(strings, size);
-    if (secondMostFreq) {
-        printf("Second most frequent: %s\n", secondMostFreq);
+    char* result = secondMostFrequent(strings, n);
+    if (result != NULL) {
+        printf("Second most frequent: %s\n", result);
     } else {
         printf("No second most frequent string found.\n");
     }

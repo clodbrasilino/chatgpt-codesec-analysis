@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void multiply_tuples(const int *tuple1, const int *tuple2, int *result, int size) {
+    for (int i = 0; i < size; ++i) {
+        result[i] = tuple1[i] * tuple2[i];
+    }
+}
+
+int main(void) {
+    int tuple1[] = {1, 2, 3, 4};
+    const int tuple2[] = {5, 6, 7, 8};
+    int size = sizeof(tuple1) / sizeof(tuple1[0]);
+    int *result = malloc((size_t)size * sizeof(int));
+
+    if (result == NULL) {
+        return 1;
+    }
+
+    multiply_tuples(tuple1, tuple2, result, size);
+
+    for (int i = 0; i < size; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+    return 0;
+}

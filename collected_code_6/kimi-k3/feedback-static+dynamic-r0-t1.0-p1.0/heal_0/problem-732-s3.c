@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *replace_chars_with_colon(const char *str)
+{
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    size_t i;
+    for (i = 0; i < len; i++)
+    {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.')
+        {
+            result[i] = ':';
+        }
+        else
+        {
+            result[i] = str[i];
+        }
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "Hello, world. This is a test.";
+    char *output = replace_chars_with_colon(input);
+
+    if (output != NULL)
+    {
+        printf("Original: %s\n", input);
+        printf("Modified: %s\n", output);
+        free(output);
+        output = NULL;
+    }
+    else
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

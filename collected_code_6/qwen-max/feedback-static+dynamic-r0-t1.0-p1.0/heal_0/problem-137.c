@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double zero_ratio(int *arr, size_t arr_size) {
+    if (arr_size == 0) return 0.0;
+    int zero_count = 0;
+    for (size_t i = 0; i < arr_size; ++i) {
+        if (arr[i] == 0) {
+            zero_count++;
+        }
+    }
+    return (double)zero_count / arr_size;
+}
+
+int main() {
+    int arr[] = {0, 1, 2, 0, 3, 0, 4, 5};
+    size_t arr_size = sizeof(arr) / sizeof(arr[0]);
+    double ratio = zero_ratio(arr, arr_size);
+    printf("Ratio of zeroes: %f\n", ratio);
+    return 0;
+}

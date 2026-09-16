@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-645-s2.c:30:31: error: use of undeclared identifier 'LLONG_MAX'
+   30 |                 if (product > LLONG_MAX / value) {
+      |                               ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-645-s2.c:33:34: error: use of undeclared identifier 'LLONG_MIN'
+   33 |             } else if (product < LLONG_MIN / value) {
+      |                                  ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-645-s2.c:38:29: error: use of undeclared identifier 'LLONG_MIN'
+   38 |                 if (value < LLONG_MIN / product) {
+      |                             ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-645-s2.c:41:48: error: use of undeclared identifier 'LLONG_MAX'
+   41 |             } else if (product != 0 && value < LLONG_MAX / product) {
+      |                                                ^~~~~~~~~
+4 errors generated.

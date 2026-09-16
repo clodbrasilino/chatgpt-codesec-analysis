@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t countSetBits(uint32_t n) {
+    uint32_t count = 0;
+    while (n) {
+        count += n & 1;
+        n >>= 1;
+    }
+    return count;
+}
+
+uint32_t hammingDistance(uint32_t x, uint32_t y) {
+    return countSetBits(x ^ y);
+}
+
+uint64_t sumHammingDistances(uint32_t n) {
+    uint64_t sum = 0;
+    for (uint32_t i = 0; i < n; ++i) {
+        sum += hammingDistance(i, i + 1);
+    }
+    return sum;
+}
+
+int main() {
+    uint32_t n = 10;
+    printf("Sum of Hamming distances from 0 to %u: %llu\n", n, (unsigned long long)sumHammingDistances(n));
+    return 0;
+}

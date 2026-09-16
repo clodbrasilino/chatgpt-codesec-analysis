@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int minDifference(int arr[], int n) {
+    if (n < 2) {
+        return -1;
+    }
+    
+    qsort(arr, n, sizeof(int), compare);
+    
+    int min_diff = INT_MAX;
+    for (int i = 1; i < n; i++) {
+        int diff = arr[i] - arr[i-1];
+        if (diff < min_diff) {
+            min_diff = diff;
+        }
+    }
+    
+    return min_diff;
+}
+
+int main() {
+    int arr[] = {45, 12, 78, 34, 89, 23};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = minDifference(arr, n);
+    
+    if (result != -1) {
+        printf("Minimum difference: %d\n", result);
+    } else {
+        printf("Array must contain at least two elements\n");
+    }
+    
+    return 0;
+}

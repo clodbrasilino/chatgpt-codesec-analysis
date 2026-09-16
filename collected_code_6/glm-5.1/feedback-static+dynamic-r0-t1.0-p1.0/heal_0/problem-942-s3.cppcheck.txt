@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942-s3.c:5:30: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+bool is_element_present(int *list, size_t list_size, int *elements, size_t elements_size) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942-s3.c:5:59: style: Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+bool is_element_present(int *list, size_t list_size, int *elements, size_t elements_size) {
+                                                          ^

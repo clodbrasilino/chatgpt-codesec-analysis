@@ -1,0 +1,120 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_digits(long long n)
+{
+    int count = 1;
+
+    if (n < 0) {
+        if (n == LLONG_MIN) {
+            n = LLONG_MAX;
+        } else {
+            n = -n;
+        }
+    }
+
+    while (n >= 10) {
+        n /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+static int same_digit_count(long long a, long long b)
+{
+    return count_digits(a) == count_digits(b);
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+
+    printf("Enter first number: ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%lld", &b) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (same_digit_count(a, b)) {
+        printf("The numbers have the same number of digits.\n");
+    } else {
+        printf("The numbers do not have the same number of digits.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — I used `LLONG_MIN`/`LLONG_MAX` without including `<limits.h>`. Here is the corrected version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int count_digits(long long n)
+{
+    int count = 1;
+
+    if (n < 0) {
+        if (n == LLONG_MIN) {
+            n = LLONG_MAX;
+        } else {
+            n = -n;
+        }
+    }
+
+    while (n >= 10) {
+        n /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+static int same_digit_count(long long a, long long b)
+{
+    return count_digits(a) == count_digits(b);
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+
+    printf("Enter first number: ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%lld", &b) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (same_digit_count(a, b)) {
+        printf("The numbers have the same number of digits.\n");
+    } else {
+        printf("The numbers do not have the same number of digits.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points regarding the avoided weaknesses:
+
+- **CWE-703**: The return value of every `scanf` call is checked, and the program exits with a failure status on invalid input. The `LLONG_MIN` edge case is handled explicitly since `-LLONG_MIN` would overflow (it has the same digit count as `LLONG_MAX`, so the substitution is correct).
+- **CWE-664**: No dynamic memory or file handles are used, so there are no resource lifetime issues; all variables are properly scoped and initialized before use.
+- **CWE-710**: The code follows standard conventions — `int main(void)`, `static` linkage for internal helpers, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, and all necessary headers included.

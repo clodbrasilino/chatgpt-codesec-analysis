@@ -3,61 +3,71 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    int value;
+    int data;
     struct Node *next;
 } Node;
 
-Node* create_node(int value) {
-    Node *new_node = (Node*)malloc(sizeof(Node));
+Node* create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
     if (new_node == NULL) {
         exit(EXIT_FAILURE);
     }
-    new_node->value = value;
+    new_node->data = data;
     new_node->next = NULL;
     return new_node;
+}
+
+void append(Node **head, int data) {
+    Node *new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
 }
 
 void shift_first_to_end(Node **head) {
     if (*head == NULL || (*head)->next == NULL) {
         return;
     }
-
+    Node *temp = *head;
+    *head = (*head)->next;
     Node *current = *head;
-    Node *second = (*head)->next;
-    Node *tail = *head;
-
-    while (tail->next != NULL) {
-        tail = tail->next;
+    while (current->next != NULL) {
+        current = current->next;
     }
-
-    *head = second;
-    tail->next = current;
-    current->next = NULL;
+    current->next = temp;
+    temp->next = NULL;
 }
 
-void free_list(Node *head) {
+void print_list(Node *head) {
     while (head != NULL) {
-        Node *temp = head;
+        printf("%d -> ", head->data);
         head = head->next;
-        free(temp);
     }
+    printf("NULL\n");
 }
 
 int main() {
-    Node *head = create_node(1);
-    head->next = create_node(2);
-    head->next->next = create_node(3);
+    Node *head = NULL;
+
+    append(&head, 1);
+    append(&head, 2);
+    append(&head, 3);
+    append(&head, 4);
+
+    printf("Original list: ");
+    print_list(head);
 
     shift_first_to_end(&head);
 
-    Node *current = head;
-    while (current != NULL) {
-        printf("%d ", current->value);
-        current = current->next;
-    }
-    printf("\n");
+    printf("List after shifting first to end: ");
+    print_list(head);
 
-    free_list(head);
     return 0;
 }
 ```

@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+long long sum_fifth_power_odd(int n) {
+    long long sum = 0;
+    for (int i = 0; i < n; i++) {
+        long long odd = 2LL * i + 1;
+        sum += odd * odd * odd * odd * odd;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    printf("Sum = %lld\n", sum_fifth_power_odd(n));
+    return 0;
+}

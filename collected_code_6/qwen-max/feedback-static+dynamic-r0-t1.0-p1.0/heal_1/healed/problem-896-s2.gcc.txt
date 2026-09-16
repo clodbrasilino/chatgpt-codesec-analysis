@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-896-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-896-s2.c:31:49: error: subscripted value is neither array nor pointer nor vector
+   31 |         printf("(%d, %d, %d)\n", (*list.data[i])[0], (*list.data[i])[1], (*list.data[i])[2]);
+      |                                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-896-s2.c:31:69: error: subscripted value is neither array nor pointer nor vector
+   31 |         printf("(%d, %d, %d)\n", (*list.data[i])[0], (*list.data[i])[1], (*list.data[i])[2]);
+      |                                                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-896-s2.c:31:89: error: subscripted value is neither array nor pointer nor vector
+   31 |         printf("(%d, %d, %d)\n", (*list.data[i])[0], (*list.data[i])[1], (*list.data[i])[2]);
+      |                                                                                         ^

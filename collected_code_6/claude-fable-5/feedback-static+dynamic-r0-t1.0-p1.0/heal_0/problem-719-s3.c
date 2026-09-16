@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int match_a_followed_by_bs(const char *str)
+{
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (str[0] != 'a') {
+        return 0;
+    }
+
+    for (i = 1U; str[i] != '\0'; i++) {
+        if (str[i] != 'b') {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "a",
+        "ab",
+        "abb",
+        "abbbbb",
+        "b",
+        "ac",
+        "abc",
+        "",
+        "aab"
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        if (match_a_followed_by_bs(test_strings[i]) == 1) {
+            if (printf("\"%s\" matches\n", test_strings[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("\"%s\" does not match\n", test_strings[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:87:34: style: Condition 'test5' is always false [knownConditionTrueFalse]
+    printf("Test 5: %s -> %s\n", test5 ? test5 : "(null)", res5 ? res5 : "(null)");
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:75:25: note: Assignment 'test5=NULL', assigned value is 0
+    const char *test5 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:87:34: note: Condition 'test5' is always false
+    printf("Test 5: %s -> %s\n", test5 ? test5 : "(null)", res5 ? res5 : "(null)");
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:87:60: style: Condition 'res5' is always false [knownConditionTrueFalse]
+    printf("Test 5: %s -> %s\n", test5 ? test5 : "(null)", res5 ? res5 : "(null)");
+                                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:81:47: note: Calling function 'replace_whitespace_underscore' returns 0
+    char *res5 = replace_whitespace_underscore(test5);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:81:47: note: Assignment 'res5=replace_whitespace_underscore(test5)', assigned value is 0
+    char *res5 = replace_whitespace_underscore(test5);
+                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s2.c:87:60: note: Condition 'res5' is always false
+    printf("Test 5: %s -> %s\n", test5 ? test5 : "(null)", res5 ? res5 : "(null)");
+                                                           ^

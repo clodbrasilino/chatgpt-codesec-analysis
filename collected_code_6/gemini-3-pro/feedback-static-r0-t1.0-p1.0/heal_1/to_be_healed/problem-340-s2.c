@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int sum_of_three_lowest_positive(int* arr, size_t size, int* result) {
+    if (arr == NULL || result == NULL || size < 3) {
+        return -1;
+    }
+
+    int min1 = INT_MAX;
+    int min2 = INT_MAX;
+    int min3 = INT_MAX;
+    int pos_count = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            pos_count++;
+            if (arr[i] < min1) {
+                min3 = min2;
+                min2 = min1;
+                min1 = arr[i];
+            } else if (arr[i] < min2) {
+                min3 = min2;
+                min2 = arr[i];
+            } else if (arr[i] < min3) {
+                min3 = arr[i];
+            }
+        }
+    }
+
+    if (pos_count < 3) {
+        return -1;
+    }
+
+    if (min1 > INT_MAX - min2) {
+        return -1;
+    }
+    int sum12 = min1 + min2;
+    if (sum12 > INT_MAX - min3) {
+        return -1;
+    }
+
+    *result = sum12 + min3;
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {4, 2, -5, 8, 1, 9, 3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int result = 0;
+
+    if (sum_of_three_lowest_positive(arr, size, &result) == 0) {
+        printf("Sum of the three lowest positive numbers: %d\n", result);
+    } else {
+        printf("Condition not met to calculate the sum.\n");
+    }
+
+    return 0;
+}

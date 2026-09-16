@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int isOdd(int num) {
+    return num & 1;
+}
+
+int main() {
+    int num;
+    int result;
+    
+    result = scanf("%d", &num);
+    
+    if (result != 1) {
+        return 1;
+    }
+    
+    if (isOdd(num)) {
+        printf("%d is odd\n", num);
+    } else {
+        printf("%d is not odd\n", num);
+    }
+    
+    return 0;
+}

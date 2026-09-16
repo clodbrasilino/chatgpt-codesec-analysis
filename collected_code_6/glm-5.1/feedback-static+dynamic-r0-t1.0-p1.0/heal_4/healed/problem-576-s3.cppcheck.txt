@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-576-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-576-s3.c:68:20: style: Condition 'is_subarray(null_arr,6,arr2,3)' is always false [knownConditionTrueFalse]
+    if (is_subarray(null_arr, 6, arr2, 3)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-576-s3.c:68:20: note: Calling function 'is_subarray' returns 0
+    if (is_subarray(null_arr, 6, arr2, 3)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-576-s3.c:68:20: note: Condition 'is_subarray(null_arr,6,arr2,3)' is always false
+    if (is_subarray(null_arr, 6, arr2, 3)) {
+                   ^

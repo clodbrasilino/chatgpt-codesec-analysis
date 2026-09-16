@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected -52, got -15
+  *  test case 0 failed: expected -32, got -17
+  *  test case 2 failed: expected -894, got -66
+  */
+
+/* Possible weaknesses found:
+ *  Parameter 'numbers' can be declared as pointer to const [constParameterPointer]
+ */
+int sum_negative_numbers(int *numbers, int size) {
+    int sum = 0;
+    for (int i = 0; i < size; ++i) {
+        if (numbers[i] < 0) {
+            sum += numbers[i];
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int numbers[] = {2, -3, 4, -1, -5, 6, 7, -2};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    int result = sum_negative_numbers(numbers, size);
+    printf("Sum of negative numbers: %d\n", result);
+    return 0;
+}

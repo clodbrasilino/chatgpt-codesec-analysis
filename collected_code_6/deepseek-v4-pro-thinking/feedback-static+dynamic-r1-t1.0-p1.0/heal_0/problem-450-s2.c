@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **extract_strings(const char **strings, size_t count, size_t length, size_t *out_count)
+{
+    if (out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+    if (strings == NULL || count == 0 || length == (size_t)-1) {
+        return NULL;
+    }
+
+    size_t matching_count = 0;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] != NULL && strlen(strings[i]) == length) {
+            matching_count++;
+        }
+    }
+
+    if (matching_count == 0) {
+        return NULL;
+    }
+
+    char **result = malloc(matching_count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t result_index = 0;
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] != NULL && strlen(strings[i]) == length) {
+            char *copy = malloc(length + 1);
+            if (copy == NULL) {
+                size_t k;
+                for (k = 0; k < result_index; k++) {
+                    free(result[k]);
+                }
+                free(result);
+                *out_count = 0;
+                return NULL;
+            }
+            memcpy(copy, strings[i], length);
+            copy[length] = '\0';
+            result[result_index] = copy;
+            result_index++;
+        }
+    }
+
+    *out_count = matching_count;
+    return result;
+}
+
+int main(void)
+{
+    const char *words[] = { "apple", "pear", "fig", "kiwi", "date", "plum", "" };
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    size_t extracted_count = 0;
+    size_t target_length = 4;
+
+    char **extracted = extract_strings(words, word_count, target_length, &extracted_count);
+
+    if (extracted == NULL) {
+        printf("No strings of length %zu found or allocation failed.\n", target_length);
+        return 0;
+    }
+
+    size_t i;
+    for (i = 0; i < extracted_count; i++) {
+        printf("%s\n", extracted[i]);
+        free(extracted[i]);
+    }
+    free(extracted);
+
+    return 0;
+}

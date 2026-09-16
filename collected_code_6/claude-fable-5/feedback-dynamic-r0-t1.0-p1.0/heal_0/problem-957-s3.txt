@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int get_rightmost_set_bit_position(unsigned int n)
+{
+    int position = 1;
+
+    if (n == 0U)
+    {
+        return -1;
+    }
+
+    while ((n & 1U) == 0U)
+    {
+        n >>= 1U;
+        position++;
+    }
+
+    return position;
+}
+
+int main(void)
+{
+    unsigned int values[] = { 18U, 12U, 1U, 0U, 40U };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++)
+    {
+        int pos = get_rightmost_set_bit_position(values[i]);
+
+        if (pos == -1)
+        {
+            if (printf("Number %u has no set bits\n", values[i]) < 0)
+            {
+                return EXIT_FAILURE;
+            }
+        }
+        else
+        {
+            if (printf("Rightmost set bit of %u is at position %d\n", values[i], pos) < 0)
+            {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+The function `get_rightmost_set_bit_position` takes an unsigned integer and returns the 1-based position of the least significant set bit. It first guards against the exceptional case where the input is `0` (no bits set), returning `-1` as a sentinel rather than looping forever or producing an undefined result. Otherwise, it shifts the value right until the lowest bit is `1`, counting positions along the way.
+
+**Safety considerations addressed:**
+
+- **CWE-703**: The zero-input edge case is explicitly checked, and the return value of `printf` is verified so I/O failures aren't silently ignored.
+- **CWE-710**: The code uses `unsigned int` for bit manipulation (avoiding implementation-defined behavior with signed shifts), unsigned literal suffixes, `main(void)` with proper return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, and consistent brace style.
+- **CWE-664**: No dynamically allocated resources are used, so there are no lifetime management issues; all data lives on the stack with well-defined scope.

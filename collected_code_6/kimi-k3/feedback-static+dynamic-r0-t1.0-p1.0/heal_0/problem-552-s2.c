@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_linear(const int *seq, size_t len) {
+    if (seq == NULL || len < 2) {
+        return 0;
+    }
+    int diff = seq[1] - seq[0];
+    for (size_t i = 2; i < len; i++) {
+        if (seq[i] - seq[i - 1] != diff) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main(void) {
+    size_t n;
+    if (scanf("%zu", &n) != 1 || n < 2) {
+        return EXIT_FAILURE;
+    }
+    int *seq = malloc(n * sizeof(int));
+    if (seq == NULL) {
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < n; i++) {
+        if (scanf("%d", &seq[i]) != 1) {
+            free(seq);
+            return EXIT_FAILURE;
+        }
+    }
+    printf("%s\n", is_linear(seq, n) ? "Linear" : "Not Linear");
+    free(seq);
+    return EXIT_SUCCESS;
+}

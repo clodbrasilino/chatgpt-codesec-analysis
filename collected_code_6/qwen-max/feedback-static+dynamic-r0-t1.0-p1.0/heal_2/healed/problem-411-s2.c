@@ -1,45 +1,40 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <regex.h>
 #include <ctype.h>
 
-char *snake_to_camel(const char *snake_str) {
-    regex_t regex;
-    regmatch_t matches[2];
-    if (regcomp(&regex, "_([a-z])", REG_EXTENDED) != 0) {
-        return NULL;
+char *snake_to_camel(const char *input) {
+    static char output[512];
+    memset(output, 0, sizeof(output));
+    regex_t preg;
+    regmatch_t pmatch[2];
+    if (regcomp(&preg, "_([a-z])", REG_EXTENDED|REG_NEWLINE) == 0) {
+        size_t dst = 0;
+        for (int i = 0; input[i] != '\0'; ++i) {
+            if (regexec(&preg, &input[i], 2, pmatch, 0) == 0) {
+                output[dst++] = toupper((unsigned char)input[i+1]);
+                i += pmatch[0].rm_eo - pmatch[0].rm_so - 1;
+            } else {
+                output[dst++] = input[i];
+            }
+        }
+        regfree(&preg);
     }
-
-    int len = strlen(snake_str);
-    char *camel_str = malloc(len + 1);
-    if (!camel_str) {
-        regfree(&regex);
-        return NULL;
-    }
-    strcpy(camel_str, snake_str);
-
-    int offset = 0;
-    while (regexec(&regex, camel_str + offset, 2, matches, 0) == 0) {
-        int match_pos = matches[1].rm_so + offset;
-        char *tmp = camel_str + match_pos - 1;
-        *tmp = toupper((unsigned char)*(tmp + 1));
-        memmove(tmp + 1, tmp + 2, strlen(tmp + 2) + 1);
-        offset = match_pos + 1;
-    }
-
-    regfree(&regex);
-    return camel_str;
+    return output;
 }
 
 int main() {
-    const char *test_strings[] = {"android_tv", "google_pixel", "apple_watch"};
-    for (size_t i = 0; i < 3; ++i) {
-        char *camel_str = snake_to_camel(test_strings[i]);
-        if (camel_str) {
-            printf("%s\n", camel_str);
-            free(camel_str);
-        }
-    }
+    const char *test0 = "android_tv";
+    const char *test1 = "google_pixel";
+    const char *test2 = "apple_watch";
+
+    char *camel0 = snake_to_camel(test0);
+    char *camel1 = snake_to_camle(test1);
+    char *camel2 = snake_to_camel(test2);
+
+    printf("Camel case 0: %s\n", camel0);
+    printf("Camel case 1: %s\n", camel1);
+    printf("Camel case 2: %s\n", camel2);
+
     return 0;
 }

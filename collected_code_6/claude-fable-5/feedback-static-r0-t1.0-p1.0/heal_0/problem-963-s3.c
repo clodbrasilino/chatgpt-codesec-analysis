@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_discriminant(double a, double b, double c)
+{
+    return (b * b) - (4.0 * a * c);
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+    double discriminant = 0.0;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1)
+    {
+        fprintf(stderr, "Invalid input for coefficient a\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1)
+    {
+        fprintf(stderr, "Invalid input for coefficient b\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient c: ");
+    if (scanf("%lf", &c) != 1)
+    {
+        fprintf(stderr, "Invalid input for coefficient c\n");
+        return EXIT_FAILURE;
+    }
+
+    discriminant = calculate_discriminant(a, b, c);
+
+    printf("Discriminant: %f\n", discriminant);
+
+    if (discriminant > 0.0)
+    {
+        printf("Two distinct real roots exist\n");
+    }
+    else if (discriminant == 0.0)
+    {
+        printf("One repeated real root exists\n");
+    }
+    else
+    {
+        printf("Two complex roots exist\n");
+    }
+
+    return EXIT_SUCCESS;
+}

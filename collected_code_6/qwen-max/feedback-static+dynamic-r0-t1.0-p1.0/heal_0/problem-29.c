@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+int findOddOccurrence(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        int count = 0;
+        for (int j = 0; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+            }
+        }
+        if (count % 2 != 0) {
+            return arr[i];
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {2, 3, 5, 4, 5, 2, 4, 3, 5, 2, 4, 4, 2};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = findOddOccurrence(arr, size);
+    printf("The number occurring odd number of times is: %d\n", result);
+    return 0;
+}

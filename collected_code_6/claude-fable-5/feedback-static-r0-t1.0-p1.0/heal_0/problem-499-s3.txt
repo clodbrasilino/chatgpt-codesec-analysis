@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double circle_diameter(double radius)
+{
+    return 2.0 * radius;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+
+    printf("Enter the radius of the circle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Diameter of the circle: %.6f\n", circle_diameter(radius));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation:
+- Validates the return value of `scanf` to handle exceptional input conditions (CWE-703)
+- Rejects negative radius values as a domain error
+- Uses `EXIT_SUCCESS`/`EXIT_FAILURE` and `int main(void)` per the C standard (CWE-710)
+- Writes error messages to `stderr` rather than `stdout`
+- Uses no dynamically allocated resources, avoiding lifetime management issues (CWE-664)

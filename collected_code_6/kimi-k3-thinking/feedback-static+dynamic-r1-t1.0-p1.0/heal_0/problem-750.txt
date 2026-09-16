@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    size_t size;
+    size_t capacity;
+} TupleList;
+
+int tuple_list_init(TupleList *list, size_t initial_capacity)
+{
+    if (list == NULL) {
+        return -1;
+    }
+    if (initial_capacity == 0) {
+        initial_capacity = 4;
+    }
+    list->data = (Tuple *)malloc(initial_capacity * sizeof(Tuple));
+    if (list->data == NULL) {
+        list->size = 0;
+        list->capacity = 0;
+        return -1;
+    }
+    list->size = 0;
+    list->capacity = initial_capacity;
+    return 0;
+}
+
+int tuple_list_add(TupleList *list, Tuple tuple)
+{
+    if (list == NULL || list->data == NULL) {
+        return -1;
+    }
+    if (list->size >= list->capacity) {
+        size_t new_capacity = list->capacity * 2;
+        Tuple *new_data = (Tuple *)realloc(list->data, new_capacity * sizeof(Tuple));
+        if (new_data == NULL) {
+            return -1;
+        }
+        list->data = new_data;
+        list->capacity = new_capacity;
+    }
+    list->data[list->size] = tuple;
+    list->size++;
+    return 0;
+}
+
+void tuple_list_free(TupleList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    free(list->data);
+    list->data = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+int main(void)
+{
+    TupleList list;
+    size_t i;
+
+    if (tuple_list_init(&list, 4) != 0) {
+        fprintf(stderr, "Error: failed to initialize list\n");
+        return EXIT_FAILURE;
+    }
+
+    Tuple t1 = {10, 20};
+    Tuple t2 = {30, 40};
+    Tuple t3 = {50, 60};
+    Tuple t4 = {70, 80};
+    Tuple t5 = {90, 100};
+
+    if (tuple_list_add(&list, t1) != 0 ||
+        tuple_list_add(&list, t2) != 0 ||
+        tuple_list_add(&list, t3) != 0 ||
+        tuple_list_add(&list, t4) != 0 ||
+        tuple_list_add(&list, t5) != 0) {
+        fprintf(stderr, "Error: failed to add tuple\n");
+        tuple_list_free(&list);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < list.size; i++) {
+        printf("(%d, %d)\n", list.data[i].first, list.data[i].second);
+    }
+
+    tuple_list_free(&list);
+    return EXIT_SUCCESS;
+}
+```

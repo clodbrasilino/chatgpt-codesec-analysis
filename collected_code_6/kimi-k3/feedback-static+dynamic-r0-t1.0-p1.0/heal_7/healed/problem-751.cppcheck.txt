@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-751.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-751.c:52:22: style: Condition 'null_arr!=NULL' is always false [knownConditionTrueFalse]
+           (null_arr != NULL && is_min_heap(null_arr, 5)) ? "true" : "false");
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-751.c:40:21: note: Assignment 'null_arr=NULL', assigned value is 0
+    int *null_arr = NULL;
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-751.c:52:22: note: Condition 'null_arr!=NULL' is always false
+           (null_arr != NULL && is_min_heap(null_arr, 5)) ? "true" : "false");
+                     ^

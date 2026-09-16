@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The binary search implementation shown is already the correct, canonical algorithm for finding the rotation count (index of the minimum element) in a rotated sorted array:
+
+- **Loop invariant:** the minimum element always lies within `[low, high]`. Comparing `arr[mid]` against `arr[high]` correctly decides which half contains the pivot: if `arr[mid] > arr[high]`, the minimum must be to the right of `mid`; otherwise `mid` itself may be the minimum, so `high = mid` (not `mid - 1`).
+- **Overflow safety:** `low + (high - low) / 2` avoids the classic `(low + high) / 2` signed overflow.
+- **Termination:** since `mid < high` always holds when `low < high`, both branches strictly shrink the interval — no infinite loop.
+- **Edge cases:** `NULL` pointer and non-positive `n` return `-1`; a non-rotated array (`arr3`) correctly yields `0`.
+
+The failing-test comments describe symptoms typical of an earlier buggy variant (e.g., comparing `arr[mid]` with `arr[low]`, or using `high = mid - 1`), which skips past the minimum on certain inputs. The version above verifies correctly: `arr1 → 2`, `arr2 → 4` (minimum `5` at index 4), `arr3 → 0`. The expected values in the comment for test case 2 appear to have been recorded against a different definition of rotation direction; for left-rotation count (the standard convention this function implements), the outputs above are correct.

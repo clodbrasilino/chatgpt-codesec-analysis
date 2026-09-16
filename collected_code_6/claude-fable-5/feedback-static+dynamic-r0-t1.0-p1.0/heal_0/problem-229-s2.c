@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static void swap_ints(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static int rearrange(int *arr, size_t n)
+{
+    size_t i;
+    size_t j;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    j = 0;
+    for (i = 0; i < n; i++) {
+        if (arr[i] < 0) {
+            if (i != j) {
+                swap_ints(&arr[i], &arr[j]);
+            }
+            j++;
+        }
+    }
+    return 0;
+}
+
+static int print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return -1;
+        }
+    }
+    if (printf("\n") < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    int data[] = { 12, -7, 5, -3, 0, -9, 8, -1 };
+    size_t n = sizeof(data) / sizeof(data[0]);
+
+    if (print_array(data, n) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (rearrange(data, n) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_array(data, n) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:49:32: style: Condition 'result' is always true [knownConditionTrueFalse]
+    printf("Empty list: %s\n", result ? "true" : "false");
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:48:23: note: Calling function 'is_sorted' returns 1
+    result = is_sorted(empty_list, empty_size);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:48:23: note: Assignment 'result=is_sorted(empty_list,empty_size)', assigned value is 1
+    result = is_sorted(empty_list, empty_size);
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:49:32: note: Condition 'result' is always true
+    printf("Empty list: %s\n", result ? "true" : "false");
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:51:18: style: Condition 'is_sorted(NULL,5)' is always false [knownConditionTrueFalse]
+    if (is_sorted(NULL, 5)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:51:18: note: Calling function 'is_sorted' returns 0
+    if (is_sorted(NULL, 5)) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-567-s2.c:51:18: note: Condition 'is_sorted(NULL,5)' is always false
+    if (is_sorted(NULL, 5)) {
+                 ^

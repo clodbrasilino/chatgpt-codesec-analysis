@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* snake_str) {
+    if (snake_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake_str);
+    char* result = malloc(len + 1);
+    
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t i = 0, j = 0;
+    int capitalize = 1;
+
+    while (i < len) {
+        if (snake_str[i] == '_') {
+            capitalize = 1;
+        } else {
+            if (capitalize) {
+                result[j++] = toupper((unsigned char)snake_str[i]);
+                capitalize = 0;
+            } else {
+                result[j++] = snake_str[i];
+            }
+        }
+        i++;
+    }
+    
+    result[j] = '\0';
+
+    return result;
+}
+
+int main() {
+    const char* snake = "this_is_a_snake_case_string";
+    char* camel = snake_to_camel(snake);
+
+    if (camel != NULL) {
+        printf("%s\n", camel);
+        free(camel);
+    }
+
+    return 0;
+}

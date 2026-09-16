@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_third_side(double side1, double side2, int is_hypotenuse_missing);
+
+double calculate_third_side(double side1, double side2, int is_hypotenuse_missing) {
+    if (side1 <= 0.0 || side2 <= 0.0) {
+        return -1.0;
+    }
+
+    if (is_hypotenuse_missing) {
+        return sqrt((side1 * side1) + (side2 * side2));
+    } else {
+        double hypotenuse = (side1 > side2) ? side1 : side2;
+        double leg = (side1 > side2) ? side2 : side1;
+
+        if (hypotenuse <= leg) {
+            return -1.0;
+        }
+
+        return sqrt((hypotenuse * hypotenuse) - (leg * leg));
+    }
+}
+
+int main(void) {
+    double side_a = 3.0;
+    double side_b = 4.0;
+    double result = calculate_third_side(side_a, side_b, 1);
+
+    if (result > 0.0) {
+        printf("Calculated hypotenuse: %f\n", result);
+    } else {
+        printf("Invalid input values.\n");
+    }
+
+    double hypotenuse = 5.0;
+    double leg = 3.0;
+    result = calculate_third_side(hypotenuse, leg, 0);
+
+    if (result > 0.0) {
+        printf("Calculated leg: %f\n", result);
+    } else {
+        printf("Invalid input values.\n");
+    }
+
+    return 0;
+}

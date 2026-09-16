@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int min_operations(int* nums, int numsSize) {
+    if (numsSize == 0) {
+        return 0;
+    }
+    
+    qsort(nums, numsSize, sizeof(int), compare);
+    
+    int median = nums[numsSize / 2];
+    int operations = 0;
+    
+    for (int i = 0; i < numsSize; i++) {
+        operations += abs(nums[i] - median);
+    }
+    
+    return operations;
+}
+
+int main() {
+    int nums1[] = {1, 2, 3};
+    int size1 = sizeof(nums1) / sizeof(nums1[0]);
+    int result1 = min_operations(nums1, size1);
+    printf("%d\n", result1);
+
+    int nums2[] = {1, 10, 2, 9};
+    int size2 = sizeof(nums2) / sizeof(nums2[0]);
+    int result2 = min_operations(nums2, size2);
+    printf("%d\n", result2);
+    
+    return 0;
+}

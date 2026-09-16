@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+void find_substrings(const char *str, const char *substr) {
+    int str_len = strlen(str);
+    int substr_len = strlen(substr);
+    for (int i = 0; i <= str_len - substr_len; i++) {
+        if (strncmp(str + i, substr, substr_len) == 0) {
+            printf("Found at position: %d\n", i);
+        }
+    }
+}
+
+int main() {
+    const char *str = "This is a test string to test substring search.";
+    const char *substr = "test";
+    find_substrings(str, substr);
+    return 0;
+}
+```

@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_and_average(unsigned int n, unsigned long long *sum, double *average)
+{
+    if (sum == NULL || average == NULL) {
+        return -1;
+    }
+    if (n == 0U || n > 1000000000U) {
+        return -1;
+    }
+    *sum = ((unsigned long long)n * ((unsigned long long)n + 1ULL)) / 2ULL;
+    *average = (double)*sum / (double)n;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long sum = 0ULL;
+    double average = 0.0;
+
+    printf("Enter a positive integer n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_and_average(n, &sum, &average) != 0) {
+        fprintf(stderr, "Error: n must be between 1 and 1000000000.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of first %u natural numbers: %llu\n", n, sum);
+    printf("Average of first %u natural numbers: %.2f\n", n, average);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation addresses the specified weaknesses as follows:
+
+**CWE-664 (Improper Control of a Resource Through its Lifetime):** All variables are initialized at declaration, pointer parameters are validated for `NULL` before dereferencing, and no dynamic resources are allocated that would require lifetime management.
+
+**CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to detect input failure, the function returns an error code that is checked by the caller, errors are reported to `stderr`, and appropriate exit codes are returned.
+
+**CWE-710 (Improper Adherence to Coding Standards):** Integer overflow is prevented by capping `n` at a safe bound and using `unsigned long long` arithmetic with the closed-form formula `n(n+1)/2`, `main` uses the standard `int main(void)` signature, standard exit macros are used, and all conversions are explicit.

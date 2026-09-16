@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sort_lists_by_index(int **lists, size_t num_lists, size_t inner_len, size_t sort_index)
+{
+    size_t i;
+    int *key;
+
+    if (lists == NULL) {
+        return -1;
+    }
+    if (sort_index >= inner_len) {
+        return -1;
+    }
+    for (i = 0; i < num_lists; i++) {
+        if (lists[i] == NULL) {
+            return -1;
+        }
+    }
+
+    for (i = 1; i < num_lists; i++) {
+        size_t j;
+        key = lists[i];
+        j = i;
+        while ((j > 0) && (lists[j - 1][sort_index] > key[sort_index])) {
+            lists[j] = lists[j - 1];
+            j--;
+        }
+        lists[j] = key;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t num_lists = 4;
+    size_t inner_len = 3;
+    size_t sort_index = 1;
+    size_t i;
+    size_t j;
+    int **lists;
+    int values[4][3] = {
+        {5, 9, 1},
+        {2, 3, 7},
+        {8, 6, 4},
+        {0, 1, 2}
+    };
+
+    lists = malloc(num_lists * sizeof(int *));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        lists[i] = malloc(inner_len * sizeof(int));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            for (j = 0; j < i; j++) {
+                free(lists[j]);
+            }
+            free(lists);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < inner_len; j++) {
+            lists[i][j] = values[i][j];
+        }
+    }
+
+    if (sort_lists_by_index(lists, num_lists, inner_len, sort_index) != 0) {
+        fprintf(stderr, "Sorting failed\n");
+        for (i = 0; i < num_lists; i++) {
+            free(lists[i]);
+        }
+        free(lists);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        for (j = 0; j < inner_len; j++) {
+            printf("%d ", lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (i = 0; i < num_lists; i++) {
+        free(lists[i]);
+    }
+    free(lists);
+
+    return EXIT_SUCCESS;
+}
+```

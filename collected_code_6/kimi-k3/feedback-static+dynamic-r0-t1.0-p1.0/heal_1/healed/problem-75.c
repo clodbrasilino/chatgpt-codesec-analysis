@@ -1,0 +1,205 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+typedef struct {
+    size_t *indices;
+    size_t count;
+    size_t capacity;
+} IndexList;
+
+int init_tuple_list(TupleList *list, size_t capacity) {
+    if (list == NULL || capacity == 0) {
+        return -1;
+    }
+    list->tuples = (Tuple *)malloc(capacity * sizeof(Tuple));
+    if (list->tuples == NULL) {
+        return -1;
+    }
+    list->count = 0;
+    list->capacity = capacity;
+    return 0;
+}
+
+int init_index_list(IndexList *list, size_t capacity) {
+    if (list == NULL || capacity == 0) {
+        return -1;
+    }
+    list->indices = (size_t *)malloc(capacity * sizeof(size_t));
+    if (list->indices == NULL) {
+        return -1;
+    }
+    list->count = 0;
+    list->capacity = capacity;
+    return 0;
+}
+
+int add_tuple(TupleList *list, const int *elements, size_t size) {
+    if (list == NULL || elements == NULL || size == 0) {
+        return -1;
+    }
+    if (list->count >= list->capacity) {
+        return -1;
+    }
+    list->tuples[list->count].elements = (int *)malloc(size * sizeof(int));
+    if (list->tuples[list->count].elements == NULL) {
+        return -1;
+    }
+    for (size_t i = 0; i < size; i++) {
+        list->tuples[list->count].elements[i] = elements[i];
+    }
+    list->tuples[list->count].size = size;
+    list->count++;
+    return 0;
+}
+
+int add_index(IndexList *list, size_t index) {
+    if (list == NULL) {
+        return -1;
+    }
+    if (list->count >= list->capacity) {
+        return -1;
+    }
+    list->indices[list->count] = index;
+    list->count++;
+    return 0;
+}
+
+int all_elements_divisible(const Tuple *tuple, int k) {
+    if (tuple == NULL || tuple->elements == NULL || tuple->size == 0 || k == 0) {
+        return 0;
+    }
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (tuple->elements[i] % k != 0) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int find_tuples_divisible_by_k(const TupleList *list, int k, IndexList *result) {
+    if (list == NULL || result == NULL || k == 0) {
+        return -1;
+    }
+    result->count = 0;
+    for (size_t i = 0; i < list->count; i++) {
+        if (all_elements_divisible(&list->tuples[i], k)) {
+            if (add_index(result, i) != 0) {
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+void free_tuple_list(TupleList *list) {
+    if (list == NULL) {
+        return;
+    }
+    if (list->tuples != NULL) {
+        for (size_t i = 0; i < list->count; i++) {
+            free(list->tuples[i].elements);
+            list->tuples[i].elements = NULL;
+        }
+        free(list->tuples);
+        list->tuples = NULL;
+    }
+    list->count = 0;
+    list->capacity = 0;
+}
+
+void free_index_list(IndexList *list) {
+    if (list == NULL) {
+        return;
+    }
+    free(list->indices);
+    list->indices = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+void print_tuple(const Tuple *tuple) {
+    if (tuple == NULL || tuple->elements == NULL) {
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->elements[i]);
+        if (i < tuple->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")");
+}
+
+int main(void) {
+    TupleList list;
+    IndexList result;
+    int k = 2;
+
+    if (init_tuple_list(&list, 10) != 0) {
+        fprintf(stderr, "Failed to initialize tuple list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (init_index_list(&result, 10) != 0) {
+        fprintf(stderr, "Failed to initialize index list\n");
+        free_tuple_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    const int t1[] = {2, 4, 6};
+    const int t2[] = {3, 6, 9};
+    const int t3[] = {4, 8, 12};
+    const int t4[] = {5, 10, 15};
+    const int t5[] = {6, 12, 18};
+
+    if (add_tuple(&list, t1, 3) != 0 ||
+        add_tuple(&list, t2, 3) != 0 ||
+        add_tuple(&list, t3, 3) != 0 ||
+        add_tuple(&list, t4, 3) != 0 ||
+        add_tuple(&list, t5, 3) != 0) {
+        fprintf(stderr, "Failed to add tuples\n");
+        free_index_list(&result);
+        free_tuple_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("All tuples:\n");
+    for (size_t i = 0; i < list.count; i++) {
+        print_tuple(&list.tuples[i]);
+        printf("\n");
+    }
+
+    if (find_tuples_divisible_by_k(&list, k, &result) != 0) {
+        fprintf(stderr, "Failed to find tuples divisible by %d\n", k);
+        free_index_list(&result);
+        free_tuple_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("\nTuples with all elements divisible by %d:\n", k);
+    if (result.count == 0) {
+        printf("None found\n");
+    } else {
+        for (size_t i = 0; i < result.count; i++) {
+            print_tuple(&list.tuples[result.indices[i]]);
+            printf("\n");
+        }
+    }
+
+    free_index_list(&result);
+    free_tuple_list(&list);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int convert_list_to_integer(const int *list, size_t count, long *result)
+{
+    size_t i;
+    long value = 0;
+
+    if (list == NULL || result == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (list[i] < 0 || list[i] > 9) {
+            return -1;
+        }
+        if (value > (LONG_MAX - list[i]) / 10) {
+            return -1;
+        }
+        value = value * 10 + list[i];
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long result = 0;
+
+    if (convert_list_to_integer(numbers, count, &result) != 0) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Converted integer: %ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation converts a list of single-digit integers into one combined integer. Key safety measures:
+
+- **CWE-664 avoidance**: No dynamic memory allocation is used; all resources are stack-based with well-defined lifetimes, and pointers are validated before use.
+- **CWE-703 avoidance**: The function checks for `NULL` pointers, empty input, invalid digit values, and integer overflow before each multiplication step. The return value of `printf` is also checked.
+- **CWE-710 avoidance**: The code follows standard C conventions with proper types (`size_t` for sizes, `long` with `LONG_MAX` bounds checking), explicit return statuses, `EXIT_SUCCESS`/`EXIT_FAILURE` macros, and errors reported to `stderr`.
+
+Running this program outputs: `Converted integer: 12345`

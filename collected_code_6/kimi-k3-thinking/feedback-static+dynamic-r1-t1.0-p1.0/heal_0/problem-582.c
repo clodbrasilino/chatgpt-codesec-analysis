@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+bool dict_init(Dictionary *dict, size_t capacity) {
+    if (dict == NULL || capacity == 0) {
+        return false;
+    }
+    dict->entries = malloc(capacity * sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        dict->size = 0;
+        dict->capacity = 0;
+        return false;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return true;
+}
+
+bool dict_is_empty(const Dictionary *dict) {
+    if (dict == NULL) {
+        return true;
+    }
+    return dict->size == 0;
+}
+
+bool dict_insert(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL || dict->entries == NULL) {
+        return false;
+    }
+    if (dict->size >= dict->capacity) {
+        return false;
+    }
+    size_t key_len = strlen(key);
+    char *key_copy = malloc(key_len + 1);
+    if (key_copy == NULL) {
+        return false;
+    }
+    memcpy(key_copy, key, key_len + 1);
+    dict->entries[dict->size].key = key_copy;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return true;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->entries[i].key);
+            dict->entries[i].key = NULL;
+        }
+        free(dict->entries);
+        dict->entries = NULL;
+    }
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int main(void) {
+    Dictionary dict;
+
+    if (!dict_init(&dict, 10)) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Dictionary is %s\n", dict_is_empty(&dict) ? "empty" : "not empty");
+
+    if (!dict_insert(&dict, "hello", 42)) {
+        fprintf(stderr, "Failed to insert into dictionary\n");
+        dict_free(&dict);
+        return EXIT_FAILURE;
+    }
+
+    printf("Dictionary is %s\n", dict_is_empty(&dict) ? "empty" : "not empty");
+
+    dict_free(&dict);
+
+    return EXIT_SUCCESS;
+}

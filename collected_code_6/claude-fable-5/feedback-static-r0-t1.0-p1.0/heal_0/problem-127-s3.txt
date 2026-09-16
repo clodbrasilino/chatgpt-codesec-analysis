@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+static bool multiply(int a, int b, int *result)
+{
+    if (result == NULL) {
+        return false;
+    }
+
+    if (a == 0 || b == 0) {
+        *result = 0;
+        return true;
+    }
+
+    bool negative = false;
+    uint32_t ua;
+    uint32_t ub;
+
+    if (a < 0) {
+        negative = !negative;
+        ua = (uint32_t)(-(int64_t)a);
+    } else {
+        ua = (uint32_t)a;
+    }
+
+    if (b < 0) {
+        negative = !negative;
+        ub = (uint32_t)(-(int64_t)b);
+    } else {
+        ub = (uint32_t)b;
+    }
+
+    uint64_t product = 0;
+    uint64_t multiplicand = (uint64_t)ua;
+
+    while (ub != 0U) {
+        if ((ub & 1U) != 0U) {
+            product += multiplicand;
+            if (product > ((uint64_t)INT_MAX + 1U)) {
+                return false;
+            }
+        }
+        multiplicand <<= 1;
+        ub >>= 1;
+        if (ub != 0U && multiplicand > ((uint64_t)INT_MAX + 1U)) {
+            return false;
+        }
+    }
+
+    if (negative) {
+        if (product > (uint64_t)INT_MAX + 1U) {
+            return false;
+        }
+        *result = (int)(-(int64_t)product);
+    } else {
+        if (product > (uint64_t)INT_MAX) {
+            return false;
+        }
+        *result = (int)product;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int a = 0;
+    int b = 0;
+    int result = 0;
+
+    if (scanf("%d %d", &a, &b) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!multiply(a, b, &result)) {
+        fprintf(stderr, "Overflow detected\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

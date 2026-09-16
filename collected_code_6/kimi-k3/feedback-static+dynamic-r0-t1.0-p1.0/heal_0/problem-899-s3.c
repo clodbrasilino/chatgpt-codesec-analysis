@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int canSortByCorners(int arr[], int n) {
+    if (n <= 1) {
+        return 1;
+    }
+
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        temp[i] = arr[i];
+    }
+
+    int left = 0;
+    int right = n - 1;
+
+    for (int i = 0; i < n; i++) {
+        if (temp[left] <= temp[right]) {
+            arr[i] = temp[left];
+            left++;
+        } else {
+            arr[i] = temp[right];
+            right--;
+        }
+    }
+
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < arr[i - 1]) {
+            free(temp);
+            return 0;
+        }
+    }
+
+    free(temp);
+    return 1;
+}
+
+int main(void) {
+    int n;
+    int result;
+
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = canSortByCorners(arr, n);
+
+    if (result == 1) {
+        printf("Yes\n");
+    } else if (result == 0) {
+        printf("No\n");
+    } else {
+        fprintf(stderr, "Error occurred\n");
+        free(arr);
+        return EXIT_FAILURE;
+    }
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void swap(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void sift_down(int *arr, size_t start, size_t end)
+{
+    size_t root = start;
+
+    while ((root * 2U) + 1U <= end) {
+        size_t child = (root * 2U) + 1U;
+        size_t target = root;
+
+        if (arr[target] < arr[child]) {
+            target = child;
+        }
+        if ((child + 1U <= end) && (arr[target] < arr[child + 1U])) {
+            target = child + 1U;
+        }
+        if (target == root) {
+            return;
+        }
+        swap(&arr[root], &arr[target]);
+        root = target;
+    }
+}
+
+static void heap_sort(int *arr, size_t n)
+{
+    size_t start;
+    size_t end;
+
+    if ((arr == NULL) || (n < 2U)) {
+        return;
+    }
+
+    start = (n - 2U) / 2U;
+    for (;;) {
+        sift_down(arr, start, n - 1U);
+        if (start == 0U) {
+            break;
+        }
+        start--;
+    }
+
+    end = n - 1U;
+    while (end > 0U) {
+        swap(&arr[0], &arr[end]);
+        end--;
+        sift_down(arr, 0U, end);
+    }
+}
+
+int main(void)
+{
+    size_t n = 8U;
+    size_t i;
+    int *data = malloc(n * sizeof(int));
+
+    if (data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    data[0] = 25;
+    data[1] = 35;
+    data[2] = 22;
+    data[3] = 85;
+    data[4] = 14;
+    data[5] = 65;
+    data[6] = 75;
+    data[7] = 22;
+
+    heap_sort(data, n);
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", data[i]) < 0) {
+            free(data);
+            return EXIT_FAILURE;
+        }
+    }
+    if (printf("\n") < 0) {
+        free(data);
+        return EXIT_FAILURE;
+    }
+
+    free(data);
+    return EXIT_SUCCESS;
+}

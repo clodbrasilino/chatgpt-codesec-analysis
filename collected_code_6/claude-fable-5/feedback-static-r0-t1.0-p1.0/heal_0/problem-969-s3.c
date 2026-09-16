@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+    size_t capacity;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+static int tuple_append(Tuple *t, int value)
+{
+    if (t->count == t->capacity) {
+        size_t new_capacity = (t->capacity == 0) ? 4U : t->capacity * 2U;
+        int *tmp = realloc(t->items, new_capacity * sizeof *tmp);
+        if (tmp == NULL) {
+            return -1;
+        }
+        t->items = tmp;
+        t->capacity = new_capacity;
+    }
+    t->items[t->count] = value;
+    t->count++;
+    return 0;
+}
+
+static Tuple *list_add_tuple(TupleList *list)
+{
+    if (list->count == list->capacity) {
+        size_t new_capacity = (list->capacity == 0) ? 4U : list->capacity * 2U;
+        Tuple *tmp = realloc(list->tuples, new_capacity * sizeof *tmp);
+        if (tmp == NULL) {
+            return NULL;
+        }
+        list->tuples = tmp;
+        list->capacity = new_capacity;
+    }
+    list->tuples[list->count].items = NULL;
+    list->tuples[list->count].count = 0;
+    list->tuples[list->count].capacity = 0;
+    list->count++;
+    return &list->tuples[list->count - 1U];
+}
+
+static void free_tuple_list(TupleList *list)
+{
+    size_t i;
+    if (list == NULL) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        free(list->tuples[i].items);
+        list->tuples[i].items = NULL;
+    }
+    free(list->tuples);
+    list->tuples = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+static int join_tuples(const int (*pairs)[2], size_t n, TupleList *result)
+{
+    size_t i;
+    Tuple *current = NULL;
+
+    if (pairs == NULL || result == NULL) {
+        return -1;
+    }
+
+    result->tuples = NULL;
+    result->count = 0;
+    result->capacity = 0;
+
+    for (i = 0; i < n; i++) {
+        if (current != NULL && current->count > 0 &&
+            current->items[0] == pairs[i][0]) {
+            if (tuple_append(current, pairs[i][1]) != 0) {
+                free_tuple_list(result);
+                return -1;
+            }
+        } else {
+            current = list_add_tuple(result);
+            if (current == NULL) {
+                free_tuple_list(result);
+                return -1;
+            }
+            if (tuple_append(current, pairs[i][0]) != 0 ||
+                tuple_append(current, pairs[i][1]) != 0) {
+                free_tuple_list(result);
+                return -1;
+            }
+        }
+    }
+    return 0;
+}
+
+static void print_tuple_list(const TupleList *list)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        return;
+    }
+    if (printf("[") < 0) {
+        return;
+    }
+    for (i = 0; i < list->count; i++) {
+        if (printf("(") < 0) {
+            return;
+        }
+        for (j = 0; j < list->tuples[i].count; j++) {
+            if (printf("%d", list->tuples[i].items[j]) < 0) {
+                return;
+            }
+            if (j + 1U < list->tuples[i].count) {
+                if (printf(", ") < 0) {
+                    return;
+                }
+            }
+        }
+        if (printf(")") < 0) {
+            return;
+        }
+        if (i + 1U < list->count) {
+            if (printf(", ") < 0) {
+                return;
+            }
+        }
+    }
+    if (printf("]\n") < 0) {
+        return;
+    }
+}
+
+int main(void)
+{
+    const int pairs[][2] = {
+        {5, 6},
+        {5, 7},
+        {6, 8},
+        {6, 10},
+        {7, 13}
+    };
+    size_t n = sizeof pairs / sizeof pairs[0];
+    TupleList result;
+
+    if (join_tuples(pairs, n, &result) != 0) {
+        if (fprintf(stderr, "Error: failed to join tuples\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    print_tuple_list(&result);
+    free_tuple_list(&result);
+
+    return EXIT_SUCCESS;
+}

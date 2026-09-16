@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double cylinder_surface_area(double radius)
+{
+    return M_PI * radius * radius;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double area = 0.0;
+
+    printf("Enter the radius of the cylinder: ");
+
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(radius)) {
+        fprintf(stderr, "Error: radius must be a finite number.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = cylinder_surface_area(radius);
+
+    if (!isfinite(area)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The top/bottom surface area of the cylinder is: %.6f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code addresses the specified weaknesses:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked, negative radius values are rejected, and both the input and the computed result are validated with `isfinite` to catch NaN/infinity cases.
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used; all variables are stack-allocated and initialized before use, so there are no resource lifetime issues.
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, standard exit codes via `EXIT_SUCCESS`/`EXIT_FAILURE`, error messages directed to `stderr`, and a portable `M_PI` fallback since it is not guaranteed by the C standard.
+
+Compile with: `gcc -Wall -Wextra -o cylinder cylinder.c -lm`

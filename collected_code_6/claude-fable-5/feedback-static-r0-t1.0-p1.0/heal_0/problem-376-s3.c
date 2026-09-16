@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+static bool seen_before(const int *arr, size_t index)
+{
+    size_t i;
+
+    for (i = 0U; i < index; i++) {
+        if (arr[i] == arr[index]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int replace_duplicates(int *arr, size_t len, int custom_value)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    if (len == 0U) {
+        return 0;
+    }
+
+    for (i = 1U; i < len; i++) {
+        if (seen_before(arr, i)) {
+            arr[i] = custom_value;
+        }
+    }
+
+    return 0;
+}
+
+static void print_array(const int *arr, size_t len)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    printf("(");
+    for (i = 0U; i < len; i++) {
+        printf("%d", arr[i]);
+        if (i < (len - 1U)) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void)
+{
+    int tuple[] = { 1, 3, 5, 3, 7, 1, 9, 5, 5 };
+    size_t len = sizeof(tuple) / sizeof(tuple[0]);
+    int custom_value = -1;
+    int result;
+
+    printf("Original: ");
+    print_array(tuple, len);
+
+    result = replace_duplicates(tuple, len, custom_value);
+    if (result != 0) {
+        fprintf(stderr, "Error: invalid input to replace_duplicates\n");
+        return 1;
+    }
+
+    printf("Modified: ");
+    print_array(tuple, len);
+
+    return 0;
+}

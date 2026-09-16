@@ -3,93 +3,52 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <float.h>
 
-typedef struct Node {
-    char *value;
-    struct Node *next;
-} Node;
+enum { MAX_LIST_SIZE = 100 };
 
-typedef struct LinkedList {
-    Node *head;
-} LinkedList;
+typedef struct {
+    char *str;
+    float value;
+    int is_float;
+} ListElement;
 
-void addNode(LinkedList *list, char *value) {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode->value = strdup(value);
-    newNode->next = list->head;
-    list->head = newNode;
+float str_to_float(const char *s) {
+    char *endptr;
+    float val = strtof(s, &endptr);
+    if (endptr == s || *endptr != '\0') return -1.0f; // Conversion failed
+    return val;
 }
 
-int isConvertibleToFloat(char *str) {
-    if (str == NULL || *str == '\0') return 0;
-
-    int hasDecimalPoint = 0;
-    while (*str) {
-        if (isdigit(*str)) {
-            str++;
-        } else if (*str == '.' && !hasDecimalPoint) {
-            hasDecimalPoint = 1;
-            str++;
-        } else if (*str == '-' || *str == '+') {
-            if (str != value) break; // Only one leading sign allowed
-        } else {
-            return 0;
+void convert_list_to_float(ListElement *list, int count) {
+    for (int i = 0; i < count; ++i) {
+        list[i].is_float = 0;
+        list[i].value = str_to_float(list[i].str);
+        if (list[i].value != -1.0f) {
+            list[i].is_float = 1;
         }
-    }
-
-    return 1;
-}
-
-void convertToFloat(LinkedList *list) {
-    Node *current = list->head;
-    while (current) {
-        if (isConvertibleToFloat(current->value)) {
-            float f = strtof(current->value, NULL);
-            char *newValue = (char *)malloc(50 * sizeof(char));
-            snprintf(newValue, 50, "%f", f);
-            free(current->value);
-            current->value = newValue;
-        }
-        current = current->next;
-    }
-}
-
-void printList(LinkedList *list) {
-    Node *current = list->head;
-    while (current) {
-        printf("%s -> ", current->value);
-        current = current->next;
-    }
-    printf("NULL\n");
-}
-
-void freeList(LinkedList *list) {
-    Node *current = list->head;
-    while (current) {
-        Node *temp = current;
-        free(temp->value);
-        current = current->next;
-        free(temp);
     }
 }
 
 int main() {
-    LinkedList list = { .head = NULL };
-    addNode(&list, "42");
-    addNode(&list, "3.14");
-    addNode(&list, "hello");
-    addNode(&list, "-7.2e-3");
+    ListElement list[MAX_LIST_SIZE] = {
+        {"123.45", 0, 0},
+        {"abc", 0, 0},
+        {"678", 0, 0},
+        {"9.10", 0, 0},
+        {"def", 0, 0}
+    };
+    int count = sizeof(list) / sizeof(list[0]);
 
-    printf("Original List: ");
-    printList(&list);
+    convert_list_to_float(list, count);
 
-    convertToFloat(&list);
+    for (int i = 0; i < count; ++i) {
+        if (list[i].is_float) {
+            printf("Converted: %s -> %.2f\n", list[i].str, list[i].value);
+        } else {
+            printf("Not convertible: %s\n", list[i].str);
+        }
+    }
 
-    printf("Converted List: ");
-    printList(&list);
-
-    freeList(&list);
     return 0;
 }
 ```

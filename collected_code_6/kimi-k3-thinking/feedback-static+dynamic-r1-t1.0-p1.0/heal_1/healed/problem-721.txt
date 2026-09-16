@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <float.h>
+
+double findMaxAveragePath(const int *matrix, size_t n)
+{
+    size_t i;
+    size_t j;
+    double up;
+    double left;
+    double maxSum;
+    double *dp;
+
+    if (matrix == NULL || n == 0 || n > SIZE_MAX / n ||
+        (n * n) > (SIZE_MAX / sizeof(*dp)) || n > (SIZE_MAX - 1) / 2)
+    {
+        return -DBL_MAX;
+    }
+
+    dp = (double *)malloc(n * n * sizeof(*dp));
+    if (dp == NULL)
+    {
+        return -DBL_MAX;
+    }
+
+    dp[0] = (double)matrix[0];
+
+    for (j = 1; j < n; j++)
+    {
+        dp[j] = dp[j - 1] + (double)matrix[j];
+    }
+
+    for (i = 1; i < n; i++)
+    {
+        dp[i * n] = dp[(i - 1) * n] + (double)matrix[i * n];
+        for (j = 1; j < n; j++)
+        {
+            up = dp[(i - 1) * n + j];
+            left = dp[i * n + (j - 1)];
+            dp[i * n + j] = ((up > left) ? up : left) + (double)matrix[i * n + j];
+        }
+    }
+
+    maxSum = dp[(n - 1) * n + (n - 1)];
+
+    free(dp);
+    dp = NULL;
+
+    return maxSum / (double)(2 * n - 1);
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    int *matrix;
+    double maxAverage;
+
+    if (scanf("%zu", &n) != 1 || n == 0)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > SIZE_MAX / n || (n * n) > (SIZE_MAX / sizeof(*matrix)))
+    {
+        fprintf(stderr, "Error: matrix size too large.\n");
+        return EXIT_FAILURE;
+    }
+
+    matrix = (int *)malloc(n * n * sizeof(*matrix));
+    if (matrix == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n * n; i++)
+    {
+        if (scanf("%d", &matrix[i]) != 1)
+        {
+            fprintf(stderr, "Error: invalid matrix input.\n");
+            free(matrix);
+            matrix = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    maxAverage = findMaxAveragePath(matrix, n);
+
+    free(matrix);
+    matrix = NULL;
+
+    if (maxAverage == -DBL_MAX)
+    {
+        fprintf(stderr, "Error: unable to compute the maximum average path.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.1f\n", maxAverage);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,77 @@
+Analysis: The algorithm is a binary search for the minimum element's index in a rotated sorted array, which equals the rotation count. The failure noted in the comment ("expected 2, got 3") typically arises from an off-by-one in the search bounds — e.g., setting `high = mid - 1` instead of `high = mid`, or using a strict comparison `arr[low] < arr[high]` which mishandles duplicates/boundaries. The fix is to keep `high = mid` when `arr[mid] <= arr[high]` (mid could itself be the pivot), use overflow-safe midpoint computation, and guard against `NULL`/empty input. Below is the corrected version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid;
+
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result != 2) {
+        fprintf(stderr, "Error computing rotations for arr1: expected 2, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result != 4) {
+        fprintf(stderr, "Error computing rotations for arr2: expected 4, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result != 0) {
+        fprintf(stderr, "Error computing rotations for arr3: expected 0, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points of the fixed implementation:
+
+1. **Early-exit optimization**: `arr[low] <= arr[high]` detects an already-sorted subarray, immediately returning `low` — this correctly handles the non-rotated case (`arr3`, expecting 0).
+2. **Pivot retention**: When `arr[mid] <= arr[high]`, the minimum may be at `mid` itself, so `high = mid` (not `mid - 1`) — this is the fix that prevents the off-by-one result of 3 instead of 2 for `arr1`.
+3. **Overflow-safe midpoint**: `low + (high - low) / 2` avoids the classic `(low + high) / 2` overflow pitfall.
+4. **Defensive input handling**: `NULL` pointer or zero-length input returns `-1` rather than invoking undefined behavior via `n - 1U` wraparound on an unsigned type.
+
+All three test cases now pass: `arr1` → 2, `arr2` → 4, `arr3` → 0.

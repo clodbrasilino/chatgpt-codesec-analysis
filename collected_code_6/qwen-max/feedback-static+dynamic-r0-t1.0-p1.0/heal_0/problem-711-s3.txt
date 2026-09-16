@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isProductEqual(int num) {
+    int productOdd = 1, productEven = 1;
+    int position = 1;
+    while (num > 0) {
+        if (position % 2 == 0) {
+            productEven *= num % 10;
+        } else {
+            productOdd *= num % 10;
+        }
+        num /= 10;
+        position++;
+    }
+    return productOdd == productEven;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    scanf("%d", &number);
+    if (isProductEqual(number)) {
+        printf("The products are equal.\n");
+    } else {
+        printf("The products are not equal.\n");
+    }
+    return 0;
+}
+```

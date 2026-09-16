@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int frequency;
+} ElementFreq;
+
+typedef struct {
+    ElementFreq* array;
+    size_t size;
+    size_t capacity;
+} FreqMap;
+
+FreqMap* create_freq_map(size_t initial_capacity) {
+    if (initial_capacity == 0) {
+        initial_capacity = 1;
+    }
+    
+    FreqMap* map = (FreqMap*)malloc(sizeof(FreqMap));
+    if (!map) return NULL;
+
+    map->array = (ElementFreq*)malloc(initial_capacity * sizeof(ElementFreq));
+    if (!map->array) {
+        free(map);
+        return NULL;
+    }
+
+    map->size = 0;
+    map->capacity = initial_capacity;
+    return map;
+}
+
+void free_freq_map(FreqMap* map) {
+    if (map) {
+        free(map->array);
+        free(map);
+    }
+}
+
+int add_frequency(FreqMap* map, int value) {
+    if (!map) return -1;
+
+    for (size_t i = 0; i < map->size; ++i) {
+        if (map->array[i].value == value) {
+            map->array[i].frequency++;
+            return 0;
+        }
+    }
+
+    if (map->size == map->capacity) {
+        size_t new_capacity = map->capacity * 2;
+        ElementFreq* new_array = (ElementFreq*)realloc(map->array, new_capacity * sizeof(ElementFreq));
+        if (!new_array) return -1;
+        
+        map->array = new_array;
+        map->capacity = new_capacity;
+    }
+
+    map->array[map->size].value = value;
+    map->array[map->size].frequency = 1;
+    map->size++;
+
+    return 0;
+}
+
+FreqMap* calculate_frequencies(const int* const* lists, const size_t* list_sizes, size_t num_lists) {
+    if (!lists || !list_sizes) return NULL;
+
+    FreqMap* map = create_freq_map(16);
+    if (!map) return NULL;
+
+    for (size_t i = 0; i < num_lists; ++i) {
+        if (!lists[i]) continue;
+        for (size_t j = 0; j < list_sizes[i]; ++j) {
+            if (add_frequency(map, lists[i][j]) != 0) {
+                free_freq_map(map);
+                return NULL;
+            }
+        }
+    }
+
+    return map;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 2};
+    int list2[] = {3, 4, 1, 5};
+    int list3[] = {2, 5, 5};
+
+    const int* lists[] = {list1, list2, list3};
+    const size_t sizes[] = {4, 4, 3};
+    size_t num_lists = 3;
+
+    FreqMap* result = calculate_frequencies(lists, sizes, num_lists);
+
+    if (result) {
+        for (size_t i = 0; i < result->size; ++i) {
+            printf("Element: %d, Frequency: %d\n", result->array[i].value, result->array[i].frequency);
+        }
+        free_freq_map(result);
+    } else {
+        printf("Failed to calculate frequencies.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int multiply_adjacent(const int *input, size_t input_len, long long *output, size_t output_len)
+{
+    size_t i;
+
+    if (input == NULL || output == NULL) {
+        return -1;
+    }
+
+    if (input_len < 2U || output_len < (input_len - 1U)) {
+        return -1;
+    }
+
+    for (i = 0U; i < input_len - 1U; i++) {
+        output[i] = (long long)input[i] * (long long)input[i + 1U];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    static const int tuple[] = {1, 5, 7, 8, 10};
+    const size_t tuple_len = sizeof(tuple) / sizeof(tuple[0]);
+    long long *result;
+    size_t result_len;
+    size_t i;
+
+    result_len = tuple_len - 1U;
+
+    result = (long long *)malloc(result_len * sizeof(long long));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (multiply_adjacent(tuple, tuple_len, result, result_len) != 0) {
+        fprintf(stderr, "Failed to multiply adjacent elements\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < result_len; i++) {
+        printf("%lld", result[i]);
+        if (i < result_len - 1U) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the static-analysis findings:
+
+1. **Removed the `tuple_len < 2U` check in `main`** — since `tuple_len` is derived from a fixed-size array at compile time (always 5), the condition is provably always false (`knownConditionTrueFalse`). The runtime validation is redundant in `main`, and the necessary defensive check is already correctly performed inside `multiply_adjacent`, where the length is a genuine runtime parameter.
+
+2. **Made `tuple` `static const` and `tuple_len` `const`** — this makes the compile-time-constant nature of the data explicit, signaling intent to both the compiler and analyzers, and prevents accidental modification.
+
+3. **Retained all validation in `multiply_adjacent`** — that function is a reusable API boundary, so its NULL and length checks are legitimate and should not be removed; the analyzer only flagged the caller-side dead condition.
+
+The error-handling paths, memory management (`malloc`/`free` pairing, freeing on the failure path), and output formatting are unchanged, as they were already correct.

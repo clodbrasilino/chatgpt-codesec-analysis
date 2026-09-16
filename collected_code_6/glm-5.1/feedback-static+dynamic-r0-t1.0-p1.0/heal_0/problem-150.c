@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isInSequence(long long a, long long d, long long num) {
+    if (d == 0) {
+        return a == num;
+    }
+    if ((num - a) % d != 0) {
+        return false;
+    }
+    long long n = (num - a) / d;
+    return n >= 0;
+}
+
+int main() {
+    long long a, d, num;
+    if (scanf("%lld %lld %lld", &a, &d, &num) != 3) {
+        return 1;
+    }
+    if (isInSequence(a, d, num)) {
+        printf("YES\n");
+    } else {
+        printf("NO\n");
+    }
+    return 0;
+}

@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+int convert_string_tuple_to_int_tuple(const char *const *strings, size_t count, int *results)
+{
+    size_t i;
+    char *endptr;
+    long value;
+
+    if (strings == NULL || results == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (strings[i] == NULL || strings[i][0] == '\0') {
+            return -1;
+        }
+
+        errno = 0;
+        endptr = NULL;
+        value = strtol(strings[i], &endptr, 10);
+
+        if (errno == ERANGE || value > INT_MAX || value < INT_MIN) {
+            return -1;
+        }
+
+        if (endptr == strings[i] || *endptr != '\0') {
+            return -1;
+        }
+
+        results[i] = (int)value;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *string_tuple[] = { "42", "-17", "1000", "0" };
+    size_t count = sizeof(string_tuple) / sizeof(string_tuple[0]);
+    int *int_tuple;
+    size_t i;
+
+    int_tuple = malloc(count * sizeof(int));
+    if (int_tuple == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (convert_string_tuple_to_int_tuple(string_tuple, count, int_tuple) != 0) {
+        fprintf(stderr, "Conversion failed\n");
+        free(int_tuple);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%d\n", int_tuple[i]) < 0) {
+            free(int_tuple);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(int_tuple);
+    return EXIT_SUCCESS;
+}
+```

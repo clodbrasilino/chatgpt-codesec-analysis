@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity > 0 ? capacity : 1);
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    memcpy(t->items, str, len);
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python3.0",
+        "item1",
+        "15.10"
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        Tuple *t = string_to_tuple(inputs[i]);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+
+        tuple_destroy(t);
+    }
+
+    fflush(stdout);
+    return EXIT_SUCCESS;
+}

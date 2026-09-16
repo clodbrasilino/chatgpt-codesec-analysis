@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static double largest_triangle_area(double radius)
+{
+    return radius * radius;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+
+    printf("Enter the radius of the semicircle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input, expected a number.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The largest inscribed triangle area is: %.6f\n",
+           largest_triangle_area(radius));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of the approach:**
+
+The largest triangle that can be inscribed in a semicircle of radius *r* has its base along the diameter (length 2*r*) and its apex at the top of the arc (height *r*). The area is therefore:
+
+Area = ½ × base × height = ½ × 2r × r = **r²**
+
+**How the code avoids the specified CWEs:**
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are allocated, so there are no resources that can leak or be used after release.
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to detect malformed input, and negative radius values are rejected with a clear error message and non-zero exit status.
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, `static` linkage for the internal helper function, initialized variables, and errors reported to `stderr`.

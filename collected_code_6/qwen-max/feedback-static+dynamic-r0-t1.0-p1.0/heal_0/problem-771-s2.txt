@@ -1,24 +1,20 @@
 ```c
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
-#include <ctype.h>
 
-bool isBalanced(const char *expr) {
-    int len = 0;
-    while (expr[len] != '\0') len++;
-    int stack[len];
+bool is_balanced(char *expression) {
+    int stack[100];
     int top = -1;
-
-    for (int i = 0; expr[i] != '\0'; i++) {
-        if (expr[i] == '(' || expr[i] == '[' || expr[i] == '{') {
-            if (top + 1 >= len) return false;
-            stack[++top] = expr[i];
-        } else if (expr[i] == ')' || expr[i] == ']' || expr[i] == '}') {
+    for (int i = 0; expression[i] != '\0'; i++) {
+        if (expression[i] == '(' || expression[i] == '[' || expression[i] == '{') {
+            stack[++top] = expression[i];
+        } else if (expression[i] == ')' || expression[i] == ']' || expression[i] == '}') {
             if (top == -1) return false;
-            char last = stack[top--];
-            if ((expr[i] == ')' && last != '(') ||
-                (expr[i] == ']' && last != '[') ||
-                (expr[i] == '}' && last != '{')) {
+            char c = stack[top--];
+            if ((expression[i] == ')' && c != '(') ||
+                (expression[i] == ']' && c != '[') ||
+                (expression[i] == '}' && c != '{')) {
                 return false;
             }
         }
@@ -27,20 +23,15 @@ bool isBalanced(const char *expr) {
 }
 
 int main() {
-    const char *expr1 = "((a + b) * [c / d])";
-    const char *expr2 = "([a + b) * (c / d)]";
+    char *test1 = "(a + b) * (c + d)";
+    char *test2 = "((a + b)";
+    char *test3 = "{[()]}";
+    char *test4 = "{[}]";
 
-    if (isBalanced(expr1)) {
-        printf("Expression 1 is balanced.\n");
-    } else {
-        printf("Expression 1 is not balanced.\n");
-    }
-
-    if (isBalanced(expr2)) {
-        printf("Expression 2 is balanced.\n");
-    } else {
-        printf("Expression 2 is not balanced.\n");
-    }
+    printf("%s: %s\n", test1, is_balanced(test1) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", test2, is_balanced(test2) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", test3, is_balanced(test3) ? "Balanced" : "Not Balanced");
+    printf("%s: %s\n", test4, is_balanced(test4) ? "Balanced" : "Not Balanced");
 
     return 0;
 }

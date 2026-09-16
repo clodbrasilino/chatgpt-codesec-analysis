@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define CHARSET_SIZE 256
+#define INPUT_BUFFER_SIZE 1024
+
+static void count_elements(const char *text, size_t counts[CHARSET_SIZE])
+{
+    size_t i;
+
+    for (i = 0; i < CHARSET_SIZE; i++) {
+        counts[i] = 0;
+    }
+
+    if (text == NULL) {
+        return;
+    }
+
+    for (i = 0; text[i] != '\0'; i++) {
+        counts[(unsigned char)text[i]]++;
+    }
+}
+
+static size_t find_max_count(const size_t counts[CHARSET_SIZE])
+{
+    size_t max = 0;
+    size_t i;
+
+    if (counts == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < CHARSET_SIZE; i++) {
+        if (counts[i] > max) {
+            max = counts[i];
+        }
+    }
+
+    return max;
+}
+
+int find_most_common_elements(const char *text)
+{
+    size_t counts[CHARSET_SIZE];
+    size_t max_count;
+    size_t i;
+
+    if (text == NULL) {
+        fprintf(stderr, "Error: input text is NULL.\n");
+        return -1;
+    }
+
+    count_elements(text, counts);
+    max_count = find_max_count(counts);
+
+    if (max_count == 0) {
+        printf("The text is empty; no elements found.\n");
+        return 0;
+    }
+
+    printf("Most common element(s) (count = %zu):\n", max_count);
+    for (i = 0; i < CHARSET_SIZE; i++) {
+        if (counts[i] == max_count) {
+            if (i >= 32 && i <= 126) {
+                printf("  '%c' : %zu\n", (int)i, counts[i]);
+            } else {
+                printf("  0x%02zX : %zu\n", i, counts[i]);
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    char buffer[INPUT_BUFFER_SIZE];
+
+    printf("Enter text: ");
+
+    if (fgets(buffer, sizeof buffer, stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    if (find_most_common_elements(buffer) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

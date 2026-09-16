@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <regex.h>
+#include <stdbool.h>
+
+bool is_valid_email(const char *email) {
+    const char *pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    regex_t reg;
+    int ret;
+
+    ret = regcomp(&reg, pattern, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        return false;
+    }
+
+    ret = regexec(&reg, email, 0, NULL, 0);
+    regfree(&reg);
+
+    return !ret;
+}
+
+int main() {
+    const char *test_emails[] = {
+        "example@example.com",
+        "user.name+tag+sorting@example.com",
+        "user.name@sub-domain.example.com",
+        "user.name@example",
+        "user.name@.example.com",
+        "username",
+        "@example.com",
+    };
+
+    for (size_t i = 0; i < sizeof(test_emails) / sizeof(test_emails[0]); ++i) {
+        printf("%s: %s\n", test_emails[i], is_valid_email(test_emails[i]) ? "Valid" : "Invalid");
+    }
+
+    return 0;
+}

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int count_set_bits(unsigned int num)
+{
+    unsigned int count = 0U;
+
+    while (num > 0U)
+    {
+        count += (num & 1U);
+        num >>= 1U;
+    }
+
+    return count;
+}
+
+static unsigned long long total_set_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_set_bits(i);
+
+        if (i == n)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U)
+    {
+        fprintf(stderr, "Error: n must be greater than 0\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, total_set_bits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses:**
+
+The failing test cases indicate the original implementation was only counting the set bits of `n` itself rather than accumulating the total across the full range `1..n`:
+
+- **Test case 1:** input `n = 3` → expected `4` (1 + 1 + 2), but got `2`, which is just `count_set_bits(3)`.
+- **Test case 2:** input `n = 10` → expected `17` (1+1+2+1+2+2+3+1+2+2), but got `3`, consistent with an off-by-one or single-value evaluation bug.
+
+**Fixes applied in the rewrite:**
+
+1. **Full range accumulation** — `total_set_bits` now iterates from `1` through `n` inclusive, summing `count_set_bits(i)` for every value, guaranteeing the expected results (`4` for n=3, `17` for n=10).
+2. **Loop safety** — the `i <= n` condition combined with the `i == n` break guard prevents unsigned integer wraparound if `n == UINT_MAX`, avoiding an infinite loop.
+3. **Input validation retained** — the `scanf` return value check and the `n == 0` rejection are preserved, so invalid or zero input fails cleanly with `EXIT_FAILURE`.
+4. **Overflow-safe accumulator** — the running total remains `unsigned long long`, which comfortably holds the maximum possible sum (~`32 * UINT_MAX` ≈ 2^37).

@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_first_k_occurrence(int *arr, size_t n, int k) {
+    if (arr == NULL || n == 0 || k <= 0) {
+        return -1;
+    }
+
+    size_t unique_count = 0;
+    int *keys = NULL;
+    size_t *counts = NULL;
+
+    for (size_t i = 0; i < n; i++) {
+        int found = 0;
+        for (size_t j = 0; j < unique_count; j++) {
+            if (keys[j] == arr[i]) {
+                counts[j]++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int *temp_keys = realloc(keys, (unique_count + 1) * sizeof(int));
+            if (temp_keys == NULL) {
+                free(keys);
+                free(counts);
+                return -1;
+            }
+            keys = temp_keys;
+
+            size_t *temp_counts = realloc(counts, (unique_count + 1) * sizeof(size_t));
+            if (temp_counts == NULL) {
+                free(keys);
+                free(counts);
+                return -1;
+            }
+            counts = temp_counts;
+
+            keys[unique_count] = arr[i];
+            counts[unique_count] = 1;
+            unique_count++;
+        }
+    }
+
+    int result = -1;
+    for (size_t i = 0; i < unique_count; i++) {
+        if (counts[i] == k) {
+            result = keys[i];
+            break;
+        }
+    }
+
+    free(keys);
+    free(counts);
+
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 1, 5, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+
+    int result = find_first_k_occurrence(arr, n, k);
+
+    printf("%d\n", result);
+
+    return 0;
+}
+```

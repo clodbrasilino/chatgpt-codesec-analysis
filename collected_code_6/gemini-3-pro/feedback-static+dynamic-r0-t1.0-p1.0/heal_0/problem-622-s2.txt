@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+double getMedian(int ar1[], int ar2[], int n) {
+    if (n <= 0)
+        return -1;
+    if (n == 1)
+        return (ar1[0] + ar2[0]) / 2.0;
+    if (n == 2)
+        return (max(ar1[0], ar2[0]) + min(ar1[1], ar2[1])) / 2.0;
+
+    int m1 = -1, m2 = -1;
+    if (n % 2 != 0) {
+        m1 = ar1[n / 2];
+        m2 = ar2[n / 2];
+    } else {
+        m1 = (ar1[n / 2] + ar1[n / 2 - 1]) / 2;
+        m2 = (ar2[n / 2] + ar2[n / 2 - 1]) / 2;
+    }
+
+    if (m1 == m2)
+        return m1;
+
+    if (m1 < m2) {
+        if (n % 2 != 0)
+            return getMedian(ar1 + n / 2, ar2, n - n / 2);
+        return getMedian(ar1 + n / 2 - 1, ar2, n - n / 2 + 1);
+    }
+
+    if (n % 2 != 0)
+        return getMedian(ar2 + n / 2, ar1, n - n / 2);
+    return getMedian(ar2 + n / 2 - 1, ar1, n - n / 2 + 1);
+}
+
+int main() {
+    int ar1[] = {1, 12, 15, 26, 38};
+    int ar2[] = {2, 13, 17, 30, 45};
+    int n1 = sizeof(ar1) / sizeof(ar1[0]);
+    int n2 = sizeof(ar2) / sizeof(ar2[0]);
+    
+    if (n1 == n2) {
+        double median = getMedian(ar1, ar2, n1);
+        if (median != -1) {
+            printf("%f\n", median);
+        } else {
+            printf("Arrays are empty.\n");
+        }
+    } else {
+        printf("Arrays are not of the same size.\n");
+    }
+    
+    return 0;
+}
+```

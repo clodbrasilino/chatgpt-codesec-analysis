@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+static int compare_desc(const void *a, const void *b)
+{
+    long long x = *(const long long *)a;
+    long long y = *(const long long *)b;
+
+    if (x < y) {
+        return 1;
+    }
+    if (x > y) {
+        return -1;
+    }
+    return 0;
+}
+
+int largest_products(const int *list1, size_t len1,
+                     const int *list2, size_t len2,
+                     size_t count, long long *result)
+{
+    long long *products = NULL;
+    size_t total = 0;
+    size_t i = 0;
+    size_t j;
+    size_t idx = 0;
+
+    if (list1 == NULL || list2 == NULL || result == NULL) {
+        return -1;
+    }
+    if (len1 == 0 || len2 == 0 || count == 0) {
+        return -1;
+    }
+    if (len2 > SIZE_MAX / len1) {
+        return -1;
+    }
+
+    total = len1 * len2;
+    if (count > total) {
+        return -1;
+    }
+    if (total > SIZE_MAX / sizeof(long long)) {
+        return -1;
+    }
+
+    products = malloc(total * sizeof(long long));
+    if (products == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        for (j = 0; j < len2; j++) {
+            products[idx] = (long long)list1[i] * (long long)list2[j];
+            idx++;
+        }
+    }
+
+    qsort(products, total, sizeof(long long), compare_desc);
+
+    for (i = 0; i < count; i++) {
+        result[i] = products[i];
+    }
+
+    free(products);
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5, 6};
+    int list2[] = {3, 6, 8, 9, 10, 6};
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    size_t count = 3;
+    long long *result = NULL;
+    size_t i = 0;
+
+    result = malloc(count * sizeof(long long));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (largest_products(list1, len1, list2, len2, count, result) != 0) {
+        fprintf(stderr, "Failed to compute largest products\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu largest products are: ", count);
+    for (i = 0; i < count; i++) {
+        printf("%lld", result[i]);
+        if (i + 1 < count) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

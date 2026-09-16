@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isIncreasingTrend(const int sequence[], size_t length) {
+    if (sequence == NULL || length < 2) {
+        return false;
+    }
+    
+    for (size_t i = 1; i < length; i++) {
+        if (sequence[i] <= sequence[i - 1]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    int sequence[] = {1, 3, 5, 7, 9, 11};
+    size_t length = sizeof(sequence) / sizeof(sequence[0]);
+    
+    if (isIncreasingTrend(sequence, length)) {
+        printf("The sequence has an increasing trend.\n");
+    } else {
+        printf("The sequence does not have an increasing trend.\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

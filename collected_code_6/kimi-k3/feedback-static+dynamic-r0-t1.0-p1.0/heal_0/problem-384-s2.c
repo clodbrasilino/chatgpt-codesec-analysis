@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_frequency_of_smallest(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    int smallest = INT_MAX;
+    int frequency = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] < smallest) {
+            smallest = arr[i];
+            frequency = 1;
+        } else if (arr[i] == smallest) {
+            frequency++;
+        }
+    }
+
+    return frequency;
+}
+
+int main(void) {
+    int arr[] = {4, 2, 8, 2, 5, 2, 9};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_frequency_of_smallest(arr, size);
+
+    if (result == -1) {
+        fprintf(stderr, "Error: Invalid array or size.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Frequency of the smallest value: %d\n", result);
+
+    return EXIT_SUCCESS;
+}

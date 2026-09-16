@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool areRootsOpposite(double a, double b, double c) {
+    double discriminant = b * b - 4 * a * c;
+    if (discriminant < 0) {
+        return false;
+    }
+    double root1 = (-b + sqrt(discriminant)) / (2 * a);
+    double root2 = (-b - sqrt(discriminant)) / (2 * a);
+    return root1 == -root2;
+}
+
+int main() {
+    double a, b, c;
+    printf("Enter coefficients a, b, c: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    if (areRootsOpposite(a, b, c)) {
+        printf("The roots are numerically equal but opposite in sign.\n");
+    } else {
+        printf("The roots are not numerically equal but opposite in sign.\n");
+    }
+    return 0;
+}
+```

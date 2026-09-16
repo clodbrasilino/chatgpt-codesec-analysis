@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *replace_chars(const char *str)
+{
+    if (str == NULL)
+    {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = (char *)malloc(len + 1);
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++)
+    {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.')
+        {
+            result[i] = ':';
+        }
+        else
+        {
+            result[i] = str[i];
+        }
+    }
+    result[len] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "Hello, world. This is a test, with spaces.";
+    char *output = replace_chars(input);
+
+    if (output == NULL)
+    {
+        fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original: %s\n", input);
+    printf("Modified: %s\n", output);
+
+    free(output);
+    output = NULL;
+
+    return EXIT_SUCCESS;
+}

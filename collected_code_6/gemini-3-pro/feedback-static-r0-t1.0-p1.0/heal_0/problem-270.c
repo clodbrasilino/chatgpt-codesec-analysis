@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_even_at_even_positions(const int *arr, size_t size) {
+    long long sum = 0;
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < size; i += 2) {
+        if (arr[i] % 2 == 0) {
+            sum += arr[i];
+        }
+    }
+
+    return sum;
+}
+
+int main(void) {
+    size_t size = 0;
+    
+    if (scanf("%zu", &size) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (size == 0) {
+        printf("0\n");
+        return EXIT_SUCCESS;
+    }
+
+    int *arr = (int *)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    long long sum = sum_even_at_even_positions(arr, size);
+    
+    printf("%lld\n", sum);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

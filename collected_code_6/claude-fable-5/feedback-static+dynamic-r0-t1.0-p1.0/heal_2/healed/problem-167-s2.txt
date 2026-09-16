@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+#include <string.h>
+
+static int smallest_power_of_two(unsigned long n, unsigned long *result)
+{
+    unsigned long power = 1UL;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n > (ULONG_MAX >> 1) + 1UL) {
+        return -1;
+    }
+
+    while (power < n) {
+        power <<= 1;
+    }
+
+    *result = power;
+    return 0;
+}
+
+int main(int argc, const char *const argv[])
+{
+    unsigned long n;
+    unsigned long result;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    n = strtoul(argv[1], &endptr, 10);
+
+    if (errno != 0 || endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Invalid input: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    if (strchr(argv[1], '-') != NULL) {
+        fprintf(stderr, "Negative input not allowed: %s\n", argv[1]);
+        return EXIT_FAILURE;
+    }
+
+    if (smallest_power_of_two(n, &result) != 0) {
+        fprintf(stderr, "Result would overflow for input: %lu\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("%lu\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis summary:**
+
+The original code is a well-written utility that computes the smallest power of two greater than or equal to a given non-negative integer. Its strengths include:
+
+- **Overflow protection**: The check `n > (ULONG_MAX >> 1) + 1UL` correctly guards against shifting `power` beyond the representable range, since the largest power of two in `unsigned long` is `(ULONG_MAX >> 1) + 1`.
+- **Robust input validation**: `errno` is reset before `strtoul`, and the code verifies that at least one digit was consumed (`endptr == argv[1]`) and that no trailing garbage exists (`*endptr != '\0'`).
+- **Negative input rejection**: Since `strtoul` silently accepts negative numbers by wrapping them, the explicit `strchr(argv[1], '-')` check closes that loophole.
+- **Defensive null check**: `smallest_power_of_two` validates its output pointer before use.
+
+**The fix applied**: The static analyzer (cppcheck's `constParameter`) flagged that `argv` is never modified, so its signature was strengthened from `char *const argv[]` to `const char *const argv[]`. This is compatible with all uses in the function — `strtoul` accepts a `const char *` as its first argument, and `strchr` likewise — so no other changes were required.

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+typedef struct {
+    double a;
+    double b;
+    double c;
+} Quadratic;
+
+typedef struct {
+    double x;
+    double y;
+} Vertex;
+
+int find_vertex(const Quadratic *quad, Vertex *vertex) {
+    if (quad == NULL || vertex == NULL) {
+        return -1;
+    }
+    
+    if (fabs(quad->a) < 1e-10) {
+        return -1;
+    }
+    
+    vertex->x = -quad->b / (2.0 * quad->a);
+    vertex->y = quad->a * vertex->x * vertex->x + quad->b * vertex->x + quad->c;
+    
+    return 0;
+}
+
+int main(void) {
+    Quadratic quad;
+    Vertex vertex;
+    int result;
+    
+    printf("Enter coefficients a, b, c for ax^2 + bx + c: ");
+    
+    if (scanf("%lf %lf %lf", &quad.a, &quad.b, &quad.c) != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = find_vertex(&quad, &vertex);
+    
+    if (result != 0) {
+        fprintf(stderr, "Error: Not a valid parabola (a cannot be zero)\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Vertex: (%.2f, %.2f)\n", vertex.x, vertex.y);
+    
+    return EXIT_SUCCESS;
+}

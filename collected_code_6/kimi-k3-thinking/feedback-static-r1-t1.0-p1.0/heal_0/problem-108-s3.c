@@ -1,0 +1,271 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    const int *data;
+    size_t size;
+    size_t pos;
+} IntIter;
+
+typedef struct {
+    int value;
+    size_t source;
+} HeapNode;
+
+typedef struct {
+    HeapNode *nodes;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+typedef struct {
+    IntIter *iters;
+    size_t num_iters;
+    MinHeap heap;
+} MergeIter;
+
+static void int_iter_init(IntIter *it, const int *data, size_t size)
+{
+    it->data = data;
+    it->size = size;
+    it->pos = 0;
+}
+
+static bool int_iter_has_next(const IntIter *it)
+{
+    return it != NULL && it->pos < it->size;
+}
+
+static int int_iter_next(IntIter *it)
+{
+    return it->data[it->pos++];
+}
+
+static void heap_node_swap(HeapNode *a, HeapNode *b)
+{
+    HeapNode tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static bool heap_node_less(const HeapNode *a, const HeapNode *b)
+{
+    if (a->value != b->value) {
+        return a->value < b->value;
+    }
+    return a->source < b->source;
+}
+
+static bool min_heap_init(MinHeap *heap, size_t capacity)
+{
+    if (heap == NULL) {
+        return false;
+    }
+    heap->nodes = NULL;
+    heap->size = 0;
+    heap->capacity = capacity;
+    if (capacity > 0) {
+        heap->nodes = malloc(capacity * sizeof(*heap->nodes));
+        if (heap->nodes == NULL) {
+            heap->capacity = 0;
+            return false;
+        }
+    }
+    return true;
+}
+
+static void min_heap_destroy(MinHeap *heap)
+{
+    if (heap == NULL) {
+        return;
+    }
+    free(heap->nodes);
+    heap->nodes = NULL;
+    heap->size = 0;
+    heap->capacity = 0;
+}
+
+static void min_heap_sift_up(MinHeap *heap, size_t idx)
+{
+    while (idx > 0) {
+        size_t parent = (idx - 1) / 2;
+        if (!heap_node_less(&heap->nodes[idx], &heap->nodes[parent])) {
+            break;
+        }
+        heap_node_swap(&heap->nodes[idx], &heap->nodes[parent]);
+        idx = parent;
+    }
+}
+
+static void min_heap_sift_down(MinHeap *heap, size_t idx)
+{
+    for (;;) {
+        size_t left = 2 * idx + 1;
+        size_t right = 2 * idx + 2;
+        size_t smallest = idx;
+        if (left < heap->size && heap_node_less(&heap->nodes[left], &heap->nodes[smallest])) {
+            smallest = left;
+        }
+        if (right < heap->size && heap_node_less(&heap->nodes[right], &heap->nodes[smallest])) {
+            smallest = right;
+        }
+        if (smallest == idx) {
+            break;
+        }
+        heap_node_swap(&heap->nodes[idx], &heap->nodes[smallest]);
+        idx = smallest;
+    }
+}
+
+static bool min_heap_push(MinHeap *heap, HeapNode node)
+{
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return false;
+    }
+    heap->nodes[heap->size] = node;
+    min_heap_sift_up(heap, heap->size);
+    heap->size++;
+    return true;
+}
+
+static bool min_heap_pop(MinHeap *heap, HeapNode *out)
+{
+    if (heap == NULL || out == NULL || heap->size == 0) {
+        return false;
+    }
+    *out = heap->nodes[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->nodes[0] = heap->nodes[heap->size];
+        min_heap_sift_down(heap, 0);
+    }
+    return true;
+}
+
+static bool merge_iter_init(MergeIter *mi, const int *const *arrays, const size_t *sizes, size_t num_iters)
+{
+    if (mi == NULL) {
+        return false;
+    }
+    mi->iters = NULL;
+    mi->num_iters = 0;
+    mi->heap.nodes = NULL;
+    mi->heap.size = 0;
+    mi->heap.capacity = 0;
+
+    if (num_iters == 0) {
+        return true;
+    }
+    if (arrays == NULL || sizes == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < num_iters; i++) {
+        if (arrays[i] == NULL && sizes[i] > 0) {
+            return false;
+        }
+    }
+
+    mi->iters = malloc(num_iters * sizeof(*mi->iters));
+    if (mi->iters == NULL) {
+        return false;
+    }
+    if (!min_heap_init(&mi->heap, num_iters)) {
+        free(mi->iters);
+        mi->iters = NULL;
+        return false;
+    }
+
+    for (size_t i = 0; i < num_iters; i++) {
+        int_iter_init(&mi->iters[i], arrays[i], sizes[i]);
+        if (int_iter_has_next(&mi->iters[i])) {
+            HeapNode node = { int_iter_next(&mi->iters[i]), i };
+            if (!min_heap_push(&mi->heap, node)) {
+                min_heap_destroy(&mi->heap);
+                free(mi->iters);
+                mi->iters = NULL;
+                return false;
+            }
+        }
+    }
+    mi->num_iters = num_iters;
+    return true;
+}
+
+static void merge_iter_destroy(MergeIter *mi)
+{
+    if (mi == NULL) {
+        return;
+    }
+    min_heap_destroy(&mi->heap);
+    free(mi->iters);
+    mi->iters = NULL;
+    mi->num_iters = 0;
+}
+
+static bool merge_iter_has_next(const MergeIter *mi)
+{
+    return mi != NULL && mi->heap.size > 0;
+}
+
+static bool merge_iter_next(MergeIter *mi, int *out)
+{
+    if (mi == NULL || out == NULL) {
+        return false;
+    }
+    HeapNode node;
+    if (!min_heap_pop(&mi->heap, &node)) {
+        return false;
+    }
+    *out = node.value;
+    IntIter *src = &mi->iters[node.source];
+    if (int_iter_has_next(src)) {
+        HeapNode next_node = { int_iter_next(src), node.source };
+        if (!min_heap_push(&mi->heap, next_node)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void)
+{
+    const int a[] = { 1, 4, 7, 10 };
+    const int b[] = { 2, 3, 8 };
+    const int c[] = { 5, 6, 9, 11, 12 };
+
+    const int *const arrays[] = { a, b, c, NULL };
+    const size_t sizes[] = {
+        sizeof(a) / sizeof(a[0]),
+        sizeof(b) / sizeof(b[0]),
+        sizeof(c) / sizeof(c[0]),
+        0
+    };
+    const size_t num_inputs = sizeof(arrays) / sizeof(arrays[0]);
+
+    MergeIter mi;
+    if (!merge_iter_init(&mi, arrays, sizes, num_inputs)) {
+        fprintf(stderr, "error: failed to initialize merge iterator\n");
+        return EXIT_FAILURE;
+    }
+
+    bool first = true;
+    int value;
+    while (merge_iter_has_next(&mi)) {
+        if (!merge_iter_next(&mi, &value)) {
+            fprintf(stderr, "error: iteration failed\n");
+            merge_iter_destroy(&mi);
+            return EXIT_FAILURE;
+        }
+        if (!first) {
+            putchar(' ');
+        }
+        printf("%d", value);
+        first = false;
+    }
+    putchar('\n');
+
+    merge_iter_destroy(&mi);
+    return EXIT_SUCCESS;
+}

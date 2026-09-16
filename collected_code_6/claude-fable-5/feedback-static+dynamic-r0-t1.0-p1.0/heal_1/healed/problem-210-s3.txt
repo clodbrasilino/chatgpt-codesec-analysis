@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int contains_only_allowed_chars(const char *str)
+{
+    regex_t regex;
+    int ret;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        return -1;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+
+    if (ret == 0) {
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        return 0;
+    } else {
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "Hello123",
+        "abcXYZ",
+        "hello world",
+        "test!",
+        "0123456789",
+        ""
+    };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = contains_only_allowed_chars(tests[i]);
+        if (result == 1) {
+            printf("\"%s\" -> valid\n", tests[i]);
+        } else if (result == 0) {
+            printf("\"%s\" -> invalid\n", tests[i]);
+        } else {
+            fprintf(stderr, "regex error while checking \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The only weakness flagged was `[variableScope]` on `result`, which is now fixed by declaring it inside the `for` loop body, limiting its scope to exactly where it is used. The rest of the code was already sound: `regcomp`/`regexec` return values are checked, the compiled regex is freed with `regfree` before returning, `NULL` input is handled, and the empty string correctly fails to match `^[a-zA-Z0-9]+$` due to the `+` quantifier.

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+long long min_tuple_product(const Tuple *tuples, size_t size) {
+    if (tuples == NULL || size == 0) {
+        return LLONG_MAX;
+    }
+
+    long long min_product = LLONG_MAX;
+    int has_valid_pair = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            long long product = (long long)tuples[i].first * tuples[i].second *
+                                tuples[j].first * tuples[j].second;
+            if (product < min_product) {
+                min_product = product;
+                has_valid_pair = 1;
+            }
+        }
+    }
+
+    if (!has_valid_pair) {
+        return LLONG_MAX;
+    }
+
+    return min_product;
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {1, 2},
+        {3, 4},
+        {-1, 5},
+        {2, -3},
+        {0, 7}
+    };
+
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    long long result = min_tuple_product(tuples, size);
+
+    if (result == LLONG_MAX) {
+        printf("No valid pairs found or input invalid\n");
+    } else {
+        printf("Minimum product: %lld\n", result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stddef.h>
+
+long long multiply_list(const long long *numbers, size_t count) {
+    if (count == 0) {
+        return 1;
+    }
+
+    long long result = 1;
+    for (size_t i = 0; i < count; ++i) {
+        result *= numbers[i];
+    }
+    return result;
+}
+
+int main(void) {
+    long long numbers[] = {2, 3, 4};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long product = multiply_list(numbers, count);
+
+    printf("%lld\n", product);
+    return 0;
+}

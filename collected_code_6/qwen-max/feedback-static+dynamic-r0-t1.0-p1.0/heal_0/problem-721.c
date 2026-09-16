@@ -2,46 +2,68 @@
 #include <stdlib.h>
 #include <float.h>
 
-#define MAX_N 100
+double max(double a, double b) {
+    return (a > b) ? a : b;
+}
 
-double getMaxPathAverage(int matrix[MAX_N][MAX_N], int n) {
-    double dp[n][n];
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            if (i == 0 && j == 0) {
-                dp[i][j] = matrix[i][j];
-            } else if (i == 0) {
-                dp[i][j] = dp[i][j - 1] + matrix[i][j];
-            } else if (j == 0) {
-                dp[i][j] = dp[i - 1][j] + matrix[i][j];
-            } else {
-                dp[i][j] = fmax(dp[i - 1][j], dp[i][j - 1]) + matrix[i][j];
-            }
+double findMaxAveragePath(int **grid, int n) {
+    double maxAvg = DBL_MIN;
+    for (int i = 0; i < n; i++) {
+        double sum = 0.0;
+        int count = 0;
+        for (int j = 0; j < n; j++) {
+            sum += grid[i][j];
+            count++;
+        }
+        if (count > 0) {
+            maxAvg = max(maxAvg, sum / count);
         }
     }
-    return dp[n - 1][n - 1] / (2 * n - 1);
+
+    for (int j = 0; j < n; j++) {
+        double sum = 0.0;
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            sum += grid[i][j];
+            count++;
+        }
+        if (count > 0) {
+            maxAvg = max(maxAvg, sum / count);
+        }
+    }
+
+    double diag1Sum = 0.0, diag2Sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        diag1Sum += grid[i][i];
+        diag2Sum += grid[i][n - 1 - i];
+    }
+    if (n > 0) {
+        maxAvg = max(maxAvg, diag1Sum / n);
+        maxAvg = max(maxAvg, diag2Sum / n);
+    }
+
+    return maxAvg;
 }
 
 int main() {
     int n;
-    printf("Enter the size of the matrix: ");
     scanf("%d", &n);
-    
-    if (n <= 0 || n > MAX_N) {
-        fprintf(stderr, "Invalid size!\n");
-        return 1;
-    }
 
-    int matrix[MAX_N][MAX_N];
-    printf("Enter the elements of the matrix:\n");
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            scanf("%d", &matrix[i][j]);
+    int **grid = malloc(n * sizeof(int *));
+    for (int i = 0; i < n; i++) {
+        grid[i] = malloc(n * sizeof(int));
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &grid[i][j]);
         }
     }
 
-    double maxAvg = getMaxPathAverage(matrix, n);
-    printf("Maximum average: %.2f\n", maxAvg);
+    double result = findMaxAveragePath(grid, n);
+    printf("%.2f\n", result);
+
+    for (int i = 0; i < n; i++) {
+        free(grid[i]);
+    }
+    free(grid);
 
     return 0;
 }

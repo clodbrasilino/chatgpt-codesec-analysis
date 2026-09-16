@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double calculate_sector_area(double radius, double angle_degrees) {
+    if (radius < 0.0) {
+        return -1.0;
+    }
+    if (angle_degrees < 0.0 || angle_degrees > 360.0) {
+        return -1.0;
+    }
+    double angle_radians = angle_degrees * (M_PI / 180.0);
+    return 0.5 * radius * radius * angle_radians;
+}
+
+int main(void) {
+    double radius = 5.0;
+    double angle = 90.0;
+    double area = calculate_sector_area(radius, angle);
+    if (area < 0.0) {
+        printf("Invalid input parameters.\n");
+        return 1;
+    }
+    printf("Area: %f\n", area);
+    return 0;
+}

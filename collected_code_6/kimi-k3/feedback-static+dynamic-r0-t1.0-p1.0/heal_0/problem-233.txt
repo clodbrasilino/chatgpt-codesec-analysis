@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+
+double calculate_lateral_surface_area(double radius, double height)
+{
+    const double pi = 3.14159265358979323846;
+    
+    if (radius < 0.0 || height < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    return 2.0 * pi * radius * height;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double height = 0.0;
+    double result = 0.0;
+    
+    printf("Enter radius: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Invalid input for radius\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Invalid input for height\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    result = calculate_lateral_surface_area(radius, height);
+    
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Radius and height must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Lateral surface area: %.2f\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -3,41 +3,69 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_STRINGS 100
-#define MAX_STRING_LENGTH 50
+typedef struct ListNode {
+    char *word;
+    struct ListNode *next;
+} ListNode;
 
-int compare_strings(const void *a, const void *b) {
-    return strcmp(*(const char **)a, *(const char **)b);
+ListNode *createNode(char *word) {
+    ListNode *node = (ListNode *)malloc(sizeof(ListNode));
+    node->word = strdup(word);
+    node->next = NULL;
+    return node;
 }
 
-int is_duplicate(char *strings[], int index) {
-    if (index == 0) return 0;
-    return strcmp(strings[index], strings[index-1]) == 0;
+void freeList(ListNode *head) {
+    while (head != NULL) {
+        ListNode *temp = head;
+        head = head->next;
+        free(temp->word);
+        free(temp);
+    }
 }
 
-void remove_duplicates(char *strings[], int *count) {
-    qsort(strings, *count, sizeof(char *), compare_strings);
-    int unique_index = 0;
-    for (int i = 0; i < *count; ++i) {
-        if (!is_duplicate(strings, i)) {
-            strings[unique_index++] = strings[i];
+ListNode *removeDuplicates(ListNode *head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    ListNode *current = head;
+    while (current != NULL && current->next != NULL) {
+        if (strcmp(current->word, current->next->word) == 0) {
+            ListNode *temp = current->next;
+            current->next = current->next->next;
+            free(temp->word);
+            free(temp);
+        } else {
+            current = current->next;
         }
     }
-    *count = unique_index;
+
+    return head;
 }
 
 int main() {
-    char *strings[MAX_STRINGS] = {
-        "apple", "banana", "apple", "orange", "banana", "grape", "grape"
-    };
-    int count = 7;
+    ListNode *head = createNode("the");
+    head->next = createNode("quick");
+    head->next->next = createNode("brown");
+    head->next->next->next = createNode("fox");
+    head->next->next->next->next = createNode("quick");
+    head->next->next->next->next->next = createNode("jumps");
+    head->next->next->next->next->next->next = createNode("over");
+    head->next->next->next->next->next->next->next = createNode("the");
+    head->next->next->next->next->next->next->next->next = createNode("lazy");
+    head->next->next->next->next->next->next->next->next->next = createNode("dog");
 
-    remove_duplicates(strings, &count);
+    head = removeDuplicates(head);
 
-    for (int i = 0; i < count; ++i) {
-        printf("%s\n", strings[i]);
+    ListNode *current = head;
+    while (current != NULL) {
+        printf("%s ", current->word);
+        current = current->next;
     }
+    printf("\n");
 
+    freeList(head);
     return 0;
 }
 ```

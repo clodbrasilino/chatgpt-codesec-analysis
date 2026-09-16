@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:77:20: style: Condition 'null_tuple==NULL' is always true [knownConditionTrueFalse]
+    if (null_tuple == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:66:33: note: Calling function 'tuple_get' returns 0
+    void *null_tuple = tuple_get(NULL, 0);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:66:33: note: Assignment 'null_tuple=tuple_get(NULL,0)', assigned value is 0
+    void *null_tuple = tuple_get(NULL, 0);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:77:20: note: Condition 'null_tuple==NULL' is always true
+    if (null_tuple == NULL) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:61:10: style: Variable 'first' can be declared as pointer to const [constVariablePointer]
+    int *first = (int*)tuple_get(&t, 0);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:62:10: style: Variable 'second' can be declared as pointer to const [constVariablePointer]
+    int *second = (int*)tuple_get(&t, 1);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:63:10: style: Variable 'third' can be declared as pointer to const [constVariablePointer]
+    int *third = (int*)tuple_get(&t, 2);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:65:11: style: Variable 'out_of_bounds' can be declared as pointer to const [constVariablePointer]
+    void *out_of_bounds = tuple_get(&t, 10);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948-s3.c:66:11: style: Variable 'null_tuple' can be declared as pointer to const [constVariablePointer]
+    void *null_tuple = tuple_get(NULL, 0);
+          ^

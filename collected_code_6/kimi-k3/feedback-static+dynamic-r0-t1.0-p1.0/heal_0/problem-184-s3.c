@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_greater_values(const int* list, size_t size, int threshold, size_t* result_size) {
+    if (list == NULL || result_size == NULL) {
+        return NULL;
+    }
+
+    int* result = malloc(size * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    *result_size = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] > threshold) {
+            result[*result_size] = list[i];
+            (*result_size)++;
+        }
+    }
+
+    if (*result_size == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int* resized_result = realloc(result, *result_size * sizeof(int));
+    if (resized_result == NULL) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+
+    return resized_result;
+}
+
+int main(void) {
+    int list[] = {1, 5, 8, 3, 10, 2, 7};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int threshold = 4;
+    size_t result_size = 0;
+
+    int* result = find_greater_values(list, size, threshold, &result_size);
+
+    if (result != NULL) {
+        printf("Values greater than %d:\n", threshold);
+        for (size_t i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No values greater than %d found or memory allocation failed.\n", threshold);
+    }
+
+    return 0;
+}

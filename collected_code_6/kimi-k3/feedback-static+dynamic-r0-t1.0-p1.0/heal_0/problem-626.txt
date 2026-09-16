@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+
+double calculate_largest_triangle_area(double radius)
+{
+    if (radius <= 0.0 || !isfinite(radius)) {
+        return -1.0;
+    }
+    return radius * radius;
+}
+
+int main(void)
+{
+    double radius;
+    double area;
+    int scan_result;
+
+    printf("Enter the radius of the semicircle: ");
+    scan_result = scanf("%lf", &radius);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: Invalid input format\n");
+        return 1;
+    }
+
+    area = calculate_largest_triangle_area(radius);
+
+    if (area < 0.0) {
+        fprintf(stderr, "Error: Radius must be a positive finite number\n");
+        return 1;
+    }
+
+    printf("Largest triangle area: %.6f\n", area);
+
+    return 0;
+}
+```

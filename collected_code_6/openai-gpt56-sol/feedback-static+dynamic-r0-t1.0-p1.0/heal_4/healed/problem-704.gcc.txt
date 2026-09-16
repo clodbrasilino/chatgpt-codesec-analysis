@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-704.c: In function 'harmonic_sum':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-704.c:19:18: error: 'ULONG_MAX' undeclared (first use in this function)
+   19 |         if (i == ULONG_MAX) {
+      |                  ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-704.c:5:1: note: 'ULONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <stdlib.h>
+  +++ |+#include <limits.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-704.c:19:18: note: each undeclared identifier is reported only once for each function it appears in
+   19 |         if (i == ULONG_MAX) {
+      |                  ^~~~~~~~~

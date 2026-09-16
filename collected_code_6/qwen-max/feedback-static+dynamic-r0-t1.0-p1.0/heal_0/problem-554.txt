@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_odds(int *arr, int size, int **odds, int *odds_count) {
+    *odds_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            (*odds_count)++;
+        }
+    }
+    *odds = (int *)malloc(*odds_count * sizeof(int));
+    if (*odds == NULL) return;
+    
+    int k = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] % 2 != 0) {
+            (*odds)[k++] = arr[i];
+        }
+    }
+}
+
+int main() {
+    int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int n = sizeof(array) / sizeof(array[0]);
+    int *odds;
+    int odds_count;
+
+    find_odds(array, n, &odds, &odds_count);
+
+    for (int i = 0; i < odds_count; i++) {
+        printf("%d ", odds[i]);
+    }
+
+    free(odds);
+    return 0;
+}
+```

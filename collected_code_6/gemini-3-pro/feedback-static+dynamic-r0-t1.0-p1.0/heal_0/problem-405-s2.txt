@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_STRING
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int i_val;
+        float f_val;
+        char *s_val;
+    } data;
+} TupleElement;
+
+typedef struct {
+    TupleElement *elements;
+    size_t size;
+} Tuple;
+
+bool element_exists(const Tuple *tuple, const TupleElement *target) {
+    if (!tuple || !tuple->elements || !target) {
+        return false;
+    }
+
+    for (size_t i = 0; i < tuple->size; ++i) {
+        if (tuple->elements[i].type == target->type) {
+            switch (target->type) {
+                case TYPE_INT:
+                    if (tuple->elements[i].data.i_val == target->data.i_val) {
+                        return true;
+                    }
+                    break;
+                case TYPE_FLOAT:
+                    if (tuple->elements[i].data.f_val == target->data.f_val) {
+                        return true;
+                    }
+                    break;
+                case TYPE_STRING:
+                    if (tuple->elements[i].data.s_val && target->data.s_val) {
+                        if (strcmp(tuple->elements[i].data.s_val, target->data.s_val) == 0) {
+                            return true;
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return false;
+}
+
+Tuple* create_tuple(size_t size) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    tuple->elements = calloc(size, sizeof(TupleElement));
+    if (!tuple->elements) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = size;
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (tuple) {
+        for (size_t i = 0; i < tuple->size; ++i) {
+            if (tuple->elements[i].type == TYPE_STRING && tuple->elements[i].data.s_val) {
+                free(tuple->elements[i].data.s_val);
+            }
+        }
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    Tuple *t = create_tuple(3);
+    if (!t) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    t->elements[0].type = TYPE_INT;
+    t->elements[0].data.i_val = 42;
+
+    t->elements[1].type = TYPE_FLOAT;
+    t->elements[1].data.f_val = 3.14f;
+
+    t->elements[2].type = TYPE_STRING;
+    t->elements[2].data.s_val = strdup("hello");
+    if (!t->elements[2].data.s_val) {
+        free_tuple(t);
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    TupleElement target1 = { .type = TYPE_INT, .data.i_val = 42 };
+    TupleElement target2 = { .type = TYPE_STRING, .data.s_val = "world" };
+
+    if (element_exists(t, &target1)) {
+        printf("Target 1 exists.\n");
+    } else {
+        printf("Target 1 does not exist.\n");
+    }
+
+    if (element_exists(t, &target2)) {
+        printf("Target 2 exists.\n");
+    } else {
+        printf("Target 2 does not exist.\n");
+    }
+
+    free_tuple(t);
+    return EXIT_SUCCESS;
+}
+```

@@ -2,58 +2,60 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Tuple {
-    char *str;
+typedef struct {
+    char *string;
     int *list;
     size_t list_size;
 } Tuple;
 
-Tuple* create_tuple(const char *s, const int *l, size_t list_size) {
-    Tuple *new_tuple = (Tuple *)malloc(sizeof(Tuple));
-    if (!new_tuple) return NULL;
+Tuple* create_tuple(const char *str, int *lst, size_t lst_size) {
+    if (str == NULL || lst == NULL || lst_size == 0) return NULL;
 
-    new_tuple->str = strdup(s);
-    if (!new_tuple->str) {
-        free(new_tuple);
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+
+    tuple->string = strdup(str);
+    if (tuple->string == NULL) {
+        free(tuple);
         return NULL;
     }
 
-    new_tuple->list = (int *)malloc(list_size * sizeof(int));
-    if (!new_tuple->list) {
-        free(new_tuple->str);
-        free(new_tuple);
+    tuple->list = (int *)malloc(lst_size * sizeof(int));
+    if (tuple->list == NULL) {
+        free(tuple->string);
+        free(tuple);
         return NULL;
     }
-    for (size_t i = 0; i < list_size; ++i) {
-        new_tuple->list[i] = l[i];
-    }
-    new_tuple->list_size = list_size;
 
-    return new_tuple;
+    for (size_t i = 0; i < lst_size; ++i) {
+        tuple->list[i] = lst[i];
+    }
+
+    tuple->list_size = lst_size;
+    return tuple;
 }
 
-void free_tuple(Tuple *t) {
-    if (t) {
-        free(t->str);
-        free(t->list);
-        free(t);
+void free_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->string);
+        free(tuple->list);
+        free(tuple);
     }
 }
 
 int main() {
-    const char *str = "example string";
-    int list[] = {1, 2, 3, 4, 5};
-    size_t list_size = sizeof(list) / sizeof(list[0]);
+    const char *str = "example";
+    int lst[] = {1, 2, 3};
+    size_t lst_size = sizeof(lst) / sizeof(lst[0]);
 
-    Tuple *tuple = create_tuple(str, list, list_size);
-    if (tuple) {
-        printf("Tuple created: %s [", tuple->str);
-        for (size_t i = 0; i < tuple->list_size; ++i) {
-            printf("%d", tuple->list[i]);
-            if (i < tuple->list_size - 1) printf(", ");
+    Tuple *t = create_tuple(str, lst, lst_size);
+    if (t != NULL) {
+        printf("Tuple: %s, List: ", t->string);
+        for (size_t i = 0; i < t->list_size; ++i) {
+            printf("%d, ", t->list[i]);
         }
-        printf("]\n");
-        free_tuple(tuple);
+        printf("\n");
+        free_tuple(t);
     } else {
         printf("Failed to create tuple.\n");
     }

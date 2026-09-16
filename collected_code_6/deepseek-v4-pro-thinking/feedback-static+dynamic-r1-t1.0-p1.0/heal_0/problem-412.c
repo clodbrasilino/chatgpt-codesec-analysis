@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *create_node(int data) {
+    struct Node *node = malloc(sizeof(*node));
+    if (node != NULL) {
+        node->data = data;
+        node->next = NULL;
+    }
+    return node;
+}
+
+int append_node(struct Node **head, int data) {
+    if (head == NULL) {
+        return 0;
+    }
+    struct Node *new_node = create_node(data);
+    if (new_node == NULL) {
+        return 0;
+    }
+    if (*head == NULL) {
+        *head = new_node;
+        return 1;
+    }
+    struct Node *tail = *head;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    tail->next = new_node;
+    return 1;
+}
+
+void remove_odd_numbers(struct Node **head) {
+    if (head == NULL || *head == NULL) {
+        return;
+    }
+    struct Node **current = head;
+    while (*current != NULL) {
+        if ((*current)->data % 2 != 0) {
+            struct Node *to_delete = *current;
+            *current = to_delete->next;
+            free(to_delete);
+        } else {
+            current = &(*current)->next;
+        }
+    }
+}
+
+void free_list(struct Node *head) {
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void) {
+    struct Node *head = NULL;
+    int values[] = {1, 2, 3, 4, 5, 6};
+    size_t n = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < n; ++i) {
+        if (!append_node(&head, values[i])) {
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    remove_odd_numbers(&head);
+
+    for (struct Node *current = head; current != NULL; current = current->next) {
+        printf("%d ", current->data);
+    }
+    printf("\n");
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static void swap_elements(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static int rearrange_numbers(int *arr, size_t size)
+{
+    size_t left = 0;
+    size_t right;
+
+    if (arr == NULL || size == 0U) {
+        return -1;
+    }
+
+    right = size - 1U;
+
+    while (left < right) {
+        while ((left < right) && (arr[left] < 0)) {
+            left++;
+        }
+        while ((left < right) && (arr[right] >= 0)) {
+            right--;
+        }
+        if (left < right) {
+            swap_elements(&arr[left], &arr[right]);
+        }
+    }
+
+    return 0;
+}
+
+static int print_array(const int *arr, size_t size)
+{
+    size_t i;
+
+    if (arr == NULL || size == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < size; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return -1;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { -1, 2, -3, 4, 5, 6, -7, 8, 9 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+
+    if (printf("Original array: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_array(numbers, count) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (rearrange_numbers(numbers, count) != 0) {
+        (void)fprintf(stderr, "Error: rearrangement failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Rearranged array: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (print_array(numbers, count) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

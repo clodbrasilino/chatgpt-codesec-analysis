@@ -1,0 +1,220 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple Tuple;
+
+typedef enum {
+    ELEM_INT,
+    ELEM_TUPLE
+} ElemType;
+
+typedef struct {
+    ElemType type;
+    union {
+        long value;
+        Tuple *tuple;
+    } data;
+} Element;
+
+struct Tuple {
+    size_t count;
+    Element *items;
+};
+
+typedef struct {
+    long value;
+    size_t count;
+} FreqEntry;
+
+typedef struct {
+    FreqEntry *entries;
+    size_t size;
+    size_t capacity;
+} FreqMap;
+
+static int freq_map_init(FreqMap *map)
+{
+    map->size = 0;
+    map->capacity = 8;
+    map->entries = malloc(map->capacity * sizeof(FreqEntry));
+    if (map->entries == NULL) {
+        map->capacity = 0;
+        return -1;
+    }
+    return 0;
+}
+
+static void freq_map_destroy(FreqMap *map)
+{
+    if (map != NULL) {
+        free(map->entries);
+        map->entries = NULL;
+        map->size = 0;
+        map->capacity = 0;
+    }
+}
+
+static int freq_map_add(FreqMap *map, long value)
+{
+    size_t i;
+
+    for (i = 0; i < map->size; i++) {
+        if (map->entries[i].value == value) {
+            map->entries[i].count++;
+            return 0;
+        }
+    }
+
+    if (map->size == map->capacity) {
+        size_t new_capacity = map->capacity * 2;
+        FreqEntry *tmp = realloc(map->entries, new_capacity * sizeof(FreqEntry));
+        if (tmp == NULL) {
+            return -1;
+        }
+        map->entries = tmp;
+        map->capacity = new_capacity;
+    }
+
+    map->entries[map->size].value = value;
+    map->entries[map->size].count = 1;
+    map->size++;
+    return 0;
+}
+
+static int count_frequencies(const Tuple *tuple, FreqMap *map)
+{
+    size_t i;
+
+    if (tuple == NULL || map == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < tuple->count; i++) {
+        const Element *elem = &tuple->items[i];
+        if (elem->type == ELEM_INT) {
+            if (freq_map_add(map, elem->data.value) != 0) {
+                return -1;
+            }
+        } else if (elem->type == ELEM_TUPLE) {
+            if (count_frequencies(elem->data.tuple, map) != 0) {
+                return -1;
+            }
+        } else {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static Tuple *tuple_create(size_t count)
+{
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->count = count;
+    if (count > 0) {
+        tuple->items = calloc(count, sizeof(Element));
+        if (tuple->items == NULL) {
+            free(tuple);
+            return NULL;
+        }
+    } else {
+        tuple->items = NULL;
+    }
+    return tuple;
+}
+
+static void tuple_destroy(Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+    for (i = 0; i < tuple->count; i++) {
+        if (tuple->items[i].type == ELEM_TUPLE) {
+            tuple_destroy(tuple->items[i].data.tuple);
+        }
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+static void set_int(Tuple *tuple, size_t index, long value)
+{
+    tuple->items[index].type = ELEM_INT;
+    tuple->items[index].data.value = value;
+}
+
+static void set_tuple(Tuple *tuple, size_t index, Tuple *child)
+{
+    tuple->items[index].type = ELEM_TUPLE;
+    tuple->items[index].data.tuple = child;
+}
+
+int main(void)
+{
+    Tuple *root;
+    Tuple *inner1;
+    Tuple *inner2;
+    Tuple *deep;
+    FreqMap map;
+    size_t i;
+
+    root = tuple_create(5);
+    if (root == NULL) {
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    inner1 = tuple_create(2);
+    inner2 = tuple_create(3);
+    deep = tuple_create(2);
+    if (inner1 == NULL || inner2 == NULL || deep == NULL) {
+        tuple_destroy(inner1);
+        tuple_destroy(inner2);
+        tuple_destroy(deep);
+        tuple_destroy(root);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    set_int(inner1, 0, 5);
+    set_int(inner1, 1, 6);
+
+    set_int(deep, 0, 5);
+    set_int(deep, 1, 7);
+
+    set_int(inner2, 0, 6);
+    set_int(inner2, 1, 9);
+    set_tuple(inner2, 2, deep);
+
+    set_int(root, 0, 5);
+    set_int(root, 1, 6);
+    set_tuple(root, 2, inner1);
+    set_tuple(root, 3, inner2);
+    set_int(root, 4, 9);
+
+    if (freq_map_init(&map) != 0) {
+        tuple_destroy(root);
+        fprintf(stderr, "Allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    if (count_frequencies(root, &map) != 0) {
+        freq_map_destroy(&map);
+        tuple_destroy(root);
+        fprintf(stderr, "Frequency counting failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Element frequencies:\n");
+    for (i = 0; i < map.size; i++) {
+        printf("%ld : %zu\n", map.entries[i].value, map.entries[i].count);
+    }
+
+    freq_map_destroy(&map);
+    tuple_destroy(root);
+    return EXIT_SUCCESS;
+}

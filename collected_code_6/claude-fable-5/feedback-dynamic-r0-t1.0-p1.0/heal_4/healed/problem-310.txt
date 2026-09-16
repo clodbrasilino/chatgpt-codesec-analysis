@@ -1,0 +1,117 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+Tuple *string_to_tuple(const char *input)
+{
+    Tuple *tuple = NULL;
+    size_t length = 0;
+    size_t i = 0;
+    char *items = NULL;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    length = strlen(input);
+    if (length == 0) {
+        return NULL;
+    }
+
+    items = malloc((length + 1) * sizeof(char));
+    if (items == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; i++) {
+        items[i] = input[i];
+    }
+    items[length] = '\0';
+
+    tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        free(items);
+        return NULL;
+    }
+
+    tuple->items = items;
+    tuple->count = length;
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    size_t i;
+
+    if (tuple == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < tuple->count; i++) {
+        printf("'%c'", tuple->items[i]);
+        if (i + 1 < tuple->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    char buffer[1024];
+    Tuple *tuple = NULL;
+    size_t len = 0;
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        len = strlen(buffer);
+        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+            buffer[len - 1] = '\0';
+            len--;
+        }
+
+        if (len == 0) {
+            continue;
+        }
+
+        tuple = string_to_tuple(buffer);
+        if (tuple == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", buffer);
+            return EXIT_FAILURE;
+        }
+
+        print_tuple(tuple);
+
+        free_tuple(tuple);
+        tuple = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fix:**
+
+The original code was functionally correct in isolation — memory allocation, null-termination, and cleanup were all handled properly, and there were no leaks or buffer overruns. However, all three test cases reported `<no output>`, which indicates the test harness supplies the input strings via **stdin**, one per invocation, rather than expecting the program to iterate over a hardcoded array.
+
+Key changes:
+
+1. **Input source**: `main` now reads lines from `stdin` with `fgets` instead of iterating over a hardcoded `inputs[]` array, so the program responds to whatever the test harness feeds it (e.g., `python3.0`, `item1`, `15.10`).
+2. **Newline stripping**: Trailing `\n` and `\r` characters are trimmed so they don't appear as tuple elements — otherwise the output would include a spurious `'\n'` entry and fail comparison.
+3. **Empty-line handling**: Blank lines are skipped rather than being treated as a fatal conversion error.
+4. **Preserved robustness**: The `string_to_tuple`, `free_tuple`, and `print_tuple` functions were already sound (NULL checks, allocation failure paths, `fflush(stdout)` to ensure output is emitted before exit) and remain unchanged.

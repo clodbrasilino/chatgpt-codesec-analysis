@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+const char* find_substring(const char* str, const char* substr, size_t* index) {
+    if (str == NULL || substr == NULL || index == NULL) {
+        return NULL;
+    }
+
+    const char* pos = strstr(str, substr);
+    if (pos != NULL) {
+        *index = (size_t)(pos - str);
+    }
+
+    return pos;
+}
+
+int main(void) {
+    const char* text = "Hello, this is a simple text to search.";
+    const char* pattern = "simple";
+    size_t index = 0;
+
+    const char* result = find_substring(text, pattern, &index);
+
+    if (result != NULL) {
+        printf("Pattern found at index: %zu\n", index);
+    } else {
+        printf("Pattern not found.\n");
+    }
+
+    return 0;
+}
+```

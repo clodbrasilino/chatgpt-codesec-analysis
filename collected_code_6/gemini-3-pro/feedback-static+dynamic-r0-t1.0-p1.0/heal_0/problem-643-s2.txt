@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool matches_inner_z(const char *word) {
+    if (word == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(word);
+    if (len < 3) {
+        return false;
+    }
+
+    if (word[0] == 'z' || word[len - 1] == 'z') {
+        return false;
+    }
+
+    for (size_t i = 1; i < len - 1; i++) {
+        if (word[i] == 'z') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *test_words[] = {
+        "zebra",
+        "buzz",
+        "hazel",
+        "z",
+        "pizza",
+        "maze",
+        "crazy",
+        NULL
+    };
+
+    for (size_t i = 0; test_words[i] != NULL; i++) {
+        bool result = matches_inner_z(test_words[i]);
+        printf("%s: %d\n", test_words[i], result);
+    }
+
+    return 0;
+}
+```

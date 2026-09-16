@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+static int find_min_platforms(const int *arrival, const int *departure, size_t n, int *result)
+{
+    int *arr_sorted;
+    int *dep_sorted;
+    size_t i = 0;
+    size_t j = 0;
+    int platforms = 0;
+    int max_platforms = 0;
+
+    if ((arrival == NULL) || (departure == NULL) || (result == NULL) || (n == 0U)) {
+        return -1;
+    }
+
+    if (n > (SIZE_MAX / sizeof(int))) {
+        return -1;
+    }
+
+    arr_sorted = malloc(n * sizeof(int));
+    if (arr_sorted == NULL) {
+        return -1;
+    }
+
+    dep_sorted = malloc(n * sizeof(int));
+    if (dep_sorted == NULL) {
+        free(arr_sorted);
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        arr_sorted[i] = arrival[i];
+        dep_sorted[i] = departure[i];
+    }
+
+    qsort(arr_sorted, n, sizeof(int), compare_ints);
+    qsort(dep_sorted, n, sizeof(int), compare_ints);
+
+    i = 0;
+    j = 0;
+    while ((i < n) && (j < n)) {
+        if (arr_sorted[i] <= dep_sorted[j]) {
+            platforms++;
+            if (platforms > max_platforms) {
+                max_platforms = platforms;
+            }
+            i++;
+        } else {
+            platforms--;
+            j++;
+        }
+    }
+
+    free(arr_sorted);
+    free(dep_sorted);
+
+    *result = max_platforms;
+    return 0;
+}
+
+int main(void)
+{
+    int arrival[] = { 900, 940, 950, 1100, 1500, 1800 };
+    int departure[] = { 910, 1200, 1120, 1130, 1900, 2000 };
+    size_t n = sizeof(arrival) / sizeof(arrival[0]);
+    int min_platforms = 0;
+
+    if (find_min_platforms(arrival, departure, n, &min_platforms) != 0) {
+        if (fprintf(stderr, "Error: failed to compute minimum platforms\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum number of platforms required: %d\n", min_platforms) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Note: You'll need to add `#include <stdint.h>` for `SIZE_MAX`. Here is the corrected includes section:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+```
+
+**How it works:** The function sorts copies of the arrival and departure times, then uses a two-pointer sweep. Each time a train arrives before the earliest pending departure, a platform is needed; each time a departure occurs first, a platform is freed. The peak concurrent count is the answer (3 for the sample data).
+
+**Safety measures taken:**
+- All allocations are checked, and memory is freed on every path (addresses CWE-664).
+- Input pointers, zero-length input, multiplication overflow in allocation size, and I/O return values are all validated (addresses CWE-703).
+- The comparator avoids the classic `x - y` integer overflow, input arrays are treated as `const` and copied rather than mutated, and the code uses consistent bracing and explicit types (addresses CWE-710).

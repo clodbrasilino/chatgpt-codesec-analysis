@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int array_gcd(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+    int result = arr[0] < 0 ? -arr[0] : arr[0];
+    for (size_t i = 1; i < size; i++) {
+        result = gcd(result, arr[i]);
+        if (result == 1) {
+            break;
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {24, 36, 48, 60};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("GCD of arr1: %d\n", array_gcd(arr1, size1));
+
+    int arr2[] = {12, 18, 24};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("GCD of arr2: %d\n", array_gcd(arr2, size2));
+
+    int arr3[] = {7, 11, 13};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("GCD of arr3: %d\n", array_gcd(arr3, size3));
+
+    int arr4[] = {-12, -18, -24};
+    size_t size4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("GCD of arr4: %d\n", array_gcd(arr4, size4));
+
+    int arr5[] = {0, 5, 10};
+    size_t size5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("GCD of arr5: %d\n", array_gcd(arr5, size5));
+
+    printf("GCD of NULL: %d\n", array_gcd(NULL, 5));
+    printf("GCD of empty: %d\n", array_gcd(arr1, 0));
+
+    return 0;
+}

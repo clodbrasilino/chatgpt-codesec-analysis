@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct SingletonTuple {
+    Node* list;
+} SingletonTuple;
+
+Node* copyList(Node* head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node* newHead = (Node*)malloc(sizeof(Node));
+    if (newHead == NULL) {
+        return NULL;
+    }
+
+    newHead->data = head->data;
+    newHead->next = NULL;
+
+    Node* current = head->next;
+    Node* newCurrent = newHead;
+
+    while (current != NULL) {
+        newCurrent->next = (Node*)malloc(sizeof(Node));
+        if (newCurrent->next == NULL) {
+            Node* temp = newHead;
+            while (temp != NULL) {
+                Node* next = temp->next;
+                free(temp);
+                temp = next;
+            }
+            return NULL;
+        }
+        newCurrent = newCurrent->next;
+        newCurrent->data = current->data;
+        newCurrent->next = NULL;
+        current = current->next;
+    }
+
+    return newHead;
+}
+
+Node* copyListFromTuple(SingletonTuple* tuple) {
+    if (tuple == NULL) {
+        return NULL;
+    }
+    return copyList(tuple->list);
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node* node3 = (Node*)malloc(sizeof(Node));
+    if (node3 == NULL) return 1;
+    node3->data = 3;
+    node3->next = NULL;
+
+    Node* node2 = (Node*)malloc(sizeof(Node));
+    if (node2 == NULL) {
+        freeList(node3);
+        return 1;
+    }
+    node2->data = 2;
+    node2->next = node3;
+
+    Node* node1 = (Node*)malloc(sizeof(Node));
+    if (node1 == NULL) {
+        freeList(node2);
+        return 1;
+    }
+    node1->data = 1;
+    node1->next = node2;
+
+    SingletonTuple tuple;
+    tuple.list = node1;
+
+    Node* copiedList = copyListFromTuple(&tuple);
+
+    Node* temp = copiedList;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+
+    freeList(tuple.list);
+    freeList(copiedList);
+
+    return 0;
+}
+```

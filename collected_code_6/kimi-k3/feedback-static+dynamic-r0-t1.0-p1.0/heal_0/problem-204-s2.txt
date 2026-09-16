@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int count_char(const char *str, char ch) {
+    int count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        if (*str == ch) {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    char str[100];
+    char ch;
+    int result;
+
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    size_t len = strlen(str);
+    if (len > 0 && str[len - 1] == '\n') {
+        str[len - 1] = '\0';
+    }
+
+    printf("Enter a character to count: ");
+    if (scanf(" %c", &ch) != 1) {
+        fprintf(stderr, "Error reading character\n");
+        return 1;
+    }
+
+    result = count_char(str, ch);
+    printf("The character '%c' occurs %d time(s) in the string.\n", ch, result);
+
+    return 0;
+}
+```

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int find_last_char(const char *str, char ch) {
+    int last_pos = -1;
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ch) {
+            last_pos = i;
+        }
+    }
+    return last_pos;
+}
+
+int main() {
+    const char *str = "example string for testing";
+    char ch = 'e';
+    int pos = find_last_char(str, ch);
+    if (pos != -1) {
+        printf("Last occurrence of '%c' is at position: %d\n", ch, pos);
+    } else {
+        printf("Character '%c' not found in the string.\n", ch);
+    }
+    return 0;
+}

@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t set_right_most_unset_bit(uint32_t n) {
+    return n | (n + 1);
+}
+
+int main() {
+    uint32_t n = 0b101010;
+    n = set_right_most_unset_bit(n);
+    printf("%u\n", n);
+    return 0;
+}

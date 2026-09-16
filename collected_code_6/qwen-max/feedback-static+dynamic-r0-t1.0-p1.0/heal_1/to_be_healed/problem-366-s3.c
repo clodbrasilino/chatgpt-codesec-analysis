@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int findMaxAdjacentProduct(int *arr, int n) {
+    if (n < 2) return INT_MIN;
+    int maxProduct = arr[0] * arr[1];
+    for (int i = 1; i < n - 1; ++i) {
+        int product = arr[i] * arr[i + 1];
+        if (product > maxProduct) {
+            maxProduct = product;
+        }
+    }
+    return maxProduct;
+}
+
+int main() {
+    int arr[] = {3, 6, -2, -5, 7, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findMaxAdjacentProduct(arr, n);
+    printf("The largest product of adjacent elements is: %d\n", result);
+    return 0;
+}

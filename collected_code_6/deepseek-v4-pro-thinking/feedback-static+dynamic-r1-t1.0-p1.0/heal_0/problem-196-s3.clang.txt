@@ -1,0 +1,22 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:49:16: error: initializing 'Tuple *' with an expression of incompatible type 'Tuple'; take the address with &
+   49 |         Tuple *tuple = (*tuples)[i];
+      |                ^       ~~~~~~~~~~~~
+      |                        &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:60:16: error: initializing 'Tuple *' with an expression of incompatible type 'Tuple'; take the address with &
+   60 |         Tuple *tuple = (*tuples)[i];
+      |                ^       ~~~~~~~~~~~~
+      |                        &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:63:26: error: assigning to 'Tuple' from incompatible type 'void *'
+   63 |             (*tuples)[i] = NULL;
+      |                          ^ ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:66:34: error: assigning to 'Tuple' from incompatible type 'Tuple *'; dereference with *
+   66 |                 (*tuples)[write] = tuple;
+      |                                  ^ ~~~~~
+      |                                    *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:67:30: error: assigning to 'Tuple' from incompatible type 'void *'
+   67 |                 (*tuples)[i] = NULL;
+      |                              ^ ~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-196-s3.c:73:22: error: assigning to 'Tuple' from incompatible type 'void *'
+   73 |         (*tuples)[i] = NULL;
+      |                      ^ ~~~~
+6 errors generated.

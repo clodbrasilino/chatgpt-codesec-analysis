@@ -1,0 +1,156 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_ints(const void* a, const void* b) {
+    int ia = *(const int*)a;
+    int ib = *(const int*)b;
+    if (ia < ib) return -1;
+    if (ia > ib) return 1;
+    return 0;
+}
+
+int largestDivisibleSubset(const int* nums, int numsSize, int** resultSubset, int* resultSize) {
+    if (numsSize < 0) return -1;
+    if (numsSize == 0) {
+        *resultSubset = NULL;
+        *resultSize = 0;
+        return 0;
+    }
+    if (nums == NULL) return -1;
+
+    int zeroExists = 0;
+    int nonZeroCount = 0;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] == 0) {
+            zeroExists = 1;
+        } else {
+            nonZeroCount++;
+        }
+    }
+
+    int* filtered = (int*)malloc(nonZeroCount * sizeof(int));
+    if (filtered == NULL) return -1;
+    int idx = 0;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] != 0) {
+            filtered[idx++] = nums[i];
+        }
+    }
+
+    if (nonZeroCount == 0) {
+        free(filtered);
+        if (zeroExists) {
+            *resultSubset = (int*)malloc(sizeof(int));
+            if (*resultSubset == NULL) return -1;
+            (*resultSubset)[0] = 0;
+            *resultSize = 1;
+        } else {
+            *resultSubset = NULL;
+            *resultSize = 0;
+        }
+        return 0;
+    }
+
+    qsort(filtered, nonZeroCount, sizeof(int), compare_ints);
+
+    int dedupSize = 1;
+    for (int i = 1; i < nonZeroCount; i++) {
+        if (filtered[i] != filtered[i-1]) {
+            filtered[dedupSize] = filtered[i];
+            dedupSize++;
+        }
+    }
+    nonZeroCount = dedupSize;
+
+    int* dp = (int*)malloc(nonZeroCount * sizeof(int));
+    int* prev = (int*)malloc(nonZeroCount * sizeof(int));
+    if (dp == NULL || prev == NULL) {
+        free(filtered);
+        if (dp) free(dp);
+        if (prev) free(prev);
+        return -1;
+    }
+
+    for (int i = 0; i < nonZeroCount; i++) {
+        dp[i] = 1;
+        prev[i] = -1;
+    }
+
+    int maxLen = 1;
+    int maxIdx = 0;
+    for (int i = 0; i < nonZeroCount; i++) {
+        for (int j = 0; j < i; j++) {
+            if (filtered[i] % filtered[j] == 0) {
+                if (dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
+                    prev[i] = j;
+                }
+            }
+        }
+        if (dp[i] > maxLen) {
+            maxLen = dp[i];
+            maxIdx = i;
+        }
+    }
+
+    int* chain = (int*)malloc(maxLen * sizeof(int));
+    if (chain == NULL) {
+        free(filtered);
+        free(dp);
+        free(prev);
+        return -1;
+    }
+    int ci = maxLen - 1;
+    int cur = maxIdx;
+    while (cur != -1) {
+        chain[ci--] = filtered[cur];
+        cur = prev[cur];
+    }
+
+    free(dp);
+    free(prev);
+    free(filtered);
+
+    if (zeroExists) {
+        int finalSize = maxLen + 1;
+        int* finalSubset = (int*)malloc(finalSize * sizeof(int));
+        if (finalSubset == NULL) {
+            free(chain);
+            return -1;
+        }
+        finalSubset[0] = 0;
+        memcpy(finalSubset + 1, chain, maxLen * sizeof(int));
+        free(chain);
+        *resultSubset = finalSubset;
+        *resultSize = finalSize;
+    } else {
+        *resultSubset = chain;
+        *resultSize = maxLen;
+    }
+
+    return 0;
+}
+
+int main() {
+    int arr[] = {1,2,3,4,6,8,12,24};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int* resultSubset = NULL;
+    int resultSize = 0;
+
+    if (largestDivisibleSubset(arr, size, &resultSubset, &resultSize) != 0) {
+        fprintf(stderr, "Error\n");
+        return 1;
+    }
+
+    printf("Largest divisible subset: ");
+    for (int i = 0; i < resultSize; i++) {
+        printf("%d ", resultSubset[i]);
+    }
+    printf("\n");
+
+    free(resultSubset);
+    return 0;
+}
+```

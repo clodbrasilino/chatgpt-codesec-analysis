@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *str;
+} StringData;
+
+void map(void *data, void (*func)(const void *)) {
+    if (data && func) {
+        func(data);
+    }
+}
+
+void printString(const void *data) {
+    const StringData *strData = (const StringData *)data;
+    if (strData->str) {
+        printf("%s\n", strData->str);
+    }
+}
+
+int main() {
+    StringData strings[] = {
+        {"Hello"},
+        {"World"},
+        {"C Programming"},
+        {NULL}
+    };
+
+    for (int i = 0; strings[i].str != NULL; ++i) {
+        map((void *)&strings[i], printString);
+    }
+
+    return 0;
+}

@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_occurrences(const int *tuple, size_t size, int target) {
+    if (tuple == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (tuple[i] == target) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int my_tuple[] = {1, 2, 3, 2, 4, 4, 2, 5};
+    size_t tuple_size = sizeof(my_tuple) / sizeof(my_tuple[0]);
+    int target_element = 2;
+
+    size_t occurrences = count_occurrences(my_tuple, tuple_size, target_element);
+
+    printf("%zu\n", occurrences);
+
+    return 0;
+}
+```

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare_numeric(const void *a, const void *b) {
+    const char *str_a = *(const char **)a;
+    const char *str_b = *(const char **)b;
+    long long num_a = strtoll(str_a, NULL, 10);
+    long long num_b = strtoll(str_b, NULL, 10);
+    
+    if (num_a < num_b) return -1;
+    if (num_a > num_b) return 1;
+    return 0;
+}
+
+void sort_numeric_strings(char **strings, size_t count) {
+    if (strings == NULL || count == 0) {
+        return;
+    }
+    qsort(strings, count, sizeof(char *), compare_numeric);
+}
+
+int main(void) {
+    char *numbers[] = {"123", "45", "6789", "10", "2", "999", "1"};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t i;
+    
+    printf("Original list:\n");
+    for (i = 0; i < count; i++) {
+        printf("%s ", numbers[i]);
+    }
+    printf("\n");
+    
+    sort_numeric_strings(numbers, count);
+    
+    printf("Sorted list:\n");
+    for (i = 0; i < count; i++) {
+        printf("%s ", numbers[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}

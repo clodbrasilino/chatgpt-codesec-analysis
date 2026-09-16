@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double find_largest_inscribed_triangle(double a, double b, double vertices[6]) {
+    if (!isfinite(a) || !isfinite(b) || a <= 0.0 || b <= 0.0) {
+        return -1.0;
+    }
+
+    if (vertices != NULL) {
+        double pi = acos(-1.0);
+        double step = 2.0 * pi / 3.0;
+        double angle = 0.0;
+
+        for (int i = 0; i < 3; i++) {
+            vertices[i * 2] = a * cos(angle + i * step);
+            vertices[i * 2 + 1] = b * sin(angle + i * step);
+        }
+    }
+
+    return (3.0 * sqrt(3.0) / 4.0) * a * b;
+}
+
+int main(void) {
+    double a = 5.0;
+    double b = 3.0;
+    double vertices[6];
+
+    double area = find_largest_inscribed_triangle(a, b, vertices);
+
+    if (area < 0.0) {
+        printf("Invalid ellipse parameters.\n");
+        return 1;
+    }
+
+    printf("Largest inscribed triangle area: %f\n", area);
+    for (int i = 0; i < 3; i++) {
+        printf("Vertex %d: (%f, %f)\n", i + 1, vertices[i * 2], vertices[i * 2 + 1]);
+    }
+
+    return 0;
+}
+```

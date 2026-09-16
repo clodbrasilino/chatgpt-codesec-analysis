@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int sum_list(const Node* head) {
+    int sum = 0;
+    const Node* current = head;
+    while (current != NULL) {
+        sum += current->data;
+        current = current->next;
+    }
+    return sum;
+}
+
+int sum_two_lists(const Node* list1, const Node* list2) {
+    return sum_list(list1) + sum_list(list2);
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    
+    append_node(&list1, 10);
+    append_node(&list1, 20);
+    append_node(&list1, 30);
+    
+    append_node(&list2, 5);
+    append_node(&list2, 15);
+    append_node(&list2, 25);
+    append_node(&list2, 35);
+    
+    int total = sum_two_lists(list1, list2);
+    printf("Total sum: %d\n", total);
+    
+    free_list(list1);
+    free_list(list2);
+    
+    return 0;
+}

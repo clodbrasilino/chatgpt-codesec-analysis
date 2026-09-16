@@ -1,0 +1,44 @@
+#include <stdio.h>
+
+double rhombus_perimeter(double side);
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 40, got <no output>
+  *  test case 2 failed: expected 16, got <no output>
+  *  test case 1 failed: expected 20, got <no output>
+  */
+
+double rhombus_perimeter(double side)
+{
+    if (side <= 0.0)
+    {
+        return -1.0;
+    }
+    return 4.0 * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+    double perimeter = 0.0;
+    int scan_result = 0;
+
+    scan_result = scanf("%lf", &side);
+
+    if (scan_result != 1)
+    {
+        printf("Error: Invalid input.\n");
+        return 1;
+    }
+
+    perimeter = rhombus_perimeter(side);
+
+    if (perimeter < 0.0)
+    {
+        printf("Error: Side length must be a positive value.\n");
+        return 1;
+    }
+
+    printf("%.2f\n", perimeter);
+
+    return 0;
+}

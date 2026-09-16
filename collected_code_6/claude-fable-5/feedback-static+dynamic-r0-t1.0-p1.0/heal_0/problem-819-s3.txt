@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RunEntry;
+
+static int count_consecutive_duplicates(const int *numbers, size_t length,
+                                        RunEntry **result, size_t *result_length)
+{
+    RunEntry *runs;
+    size_t run_count;
+    size_t i;
+
+    if (numbers == NULL || result == NULL || result_length == NULL) {
+        return -1;
+    }
+
+    if (length == 0) {
+        *result = NULL;
+        *result_length = 0;
+        return 0;
+    }
+
+    runs = malloc(length * sizeof(*runs));
+    if (runs == NULL) {
+        return -1;
+    }
+
+    run_count = 0;
+    runs[run_count].value = numbers[0];
+    runs[run_count].count = 1;
+
+    for (i = 1; i < length; i++) {
+        if (numbers[i] == runs[run_count].value) {
+            runs[run_count].count++;
+        } else {
+            run_count++;
+            runs[run_count].value = numbers[i];
+            runs[run_count].count = 1;
+        }
+    }
+    run_count++;
+
+    *result = runs;
+    *result_length = run_count;
+    return 0;
+}
+
+int main(void)
+{
+    const int numbers[] = {1, 1, 2, 3, 3, 3, 4, 4, 5, 1, 1};
+    const size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    RunEntry *runs = NULL;
+    size_t run_count = 0;
+    size_t i;
+
+    if (count_consecutive_duplicates(numbers, length, &runs, &run_count) != 0) {
+        fprintf(stderr, "Failed to count consecutive duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < run_count; i++) {
+        if (printf("Value %d appears %zu time(s) consecutively\n",
+                   runs[i].value, runs[i].count) < 0) {
+            free(runs);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(runs);
+    runs = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation is careful about the concerns you mentioned:
+
+- **CWE-664 (resource lifetime):** The allocated buffer has a single clear owner. It is freed exactly once on every exit path after allocation, and the pointer is nulled after freeing to avoid dangling references.
+- **CWE-703 (exceptional conditions):** All fallible operations are checked — `malloc` failure, `NULL` input pointers, zero-length input, and even the return value of `printf`. Errors propagate through return codes rather than being ignored.
+- **CWE-710 (coding standards):** The code uses `size_t` for sizes and indices, `const` correctness on inputs, `static` linkage for the internal helper, `sizeof(*ptr)` in allocations, `EXIT_SUCCESS`/`EXIT_FAILURE`, and `int main(void)` per the C standard.
+
+Example output:
+
+```
+Value 1 appears 2 time(s) consecutively
+Value 2 appears 1 time(s) consecutively
+Value 3 appears 3 time(s) consecutively
+Value 4 appears 2 time(s) consecutively
+Value 5 appears 1 time(s) consecutively
+Value 1 appears 2 time(s) consecutively
+```

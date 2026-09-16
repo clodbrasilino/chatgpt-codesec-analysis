@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int* prices, int pricesSize) {
+    if (prices == NULL || pricesSize <= 1 || k <= 0) {
+        return 0;
+    }
+
+    int n = pricesSize;
+
+    if (k >= n / 2) {
+        int profit = 0;
+        for (int i = 1; i < n; i++) {
+            if (prices[i] > prices[i - 1]) {
+                profit += prices[i] - prices[i - 1];
+            }
+        }
+        return profit;
+    }
+
+    int* dp_prev = malloc(n * sizeof(int));
+    int* dp_curr = malloc(n * sizeof(int));
+
+    if (dp_prev == NULL || dp_curr == NULL) {
+        free(dp_prev);
+        free(dp_curr);
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        dp_prev[i] = 0;
+        dp_curr[i] = 0;
+    }
+
+    for (int i = 1; i <= k; i++) {
+        int max_diff = -prices[0];
+        for (int j = 1; j < n; j++) {
+            if (prices[j] + max_diff > dp_curr[j - 1]) {
+                dp_curr[j] = prices[j] + max_diff;
+            } else {
+                dp_curr[j] = dp_curr[j - 1];
+            }
+            if (dp_prev[j - 1] - prices[j] > max_diff) {
+                max_diff = dp_prev[j - 1] - prices[j];
+            }
+        }
+
+        int* temp = dp_prev;
+        dp_prev = dp_curr;
+        dp_curr = temp;
+
+        for (int j = 0; j < n; j++) {
+            dp_curr[j] = 0;
+        }
+    }
+
+    int result = dp_prev[n - 1];
+
+    free(dp_prev);
+    free(dp_curr);
+
+    return result;
+}
+
+int main() {
+    int prices1[] = {2, 4, 1};
+    int k1 = 2;
+    int size1 = sizeof(prices1) / sizeof(prices1[0]);
+    printf("%d\n", maxProfit(k1, prices1, size1));
+
+    int prices2[] = {3, 2, 6, 5, 0, 3};
+    int k2 = 2;
+    int size2 = sizeof(prices2) / sizeof(prices2[0]);
+    printf("%d\n", maxProfit(k2, prices2, size2));
+
+    return 0;
+}

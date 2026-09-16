@@ -2,49 +2,53 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Tuple {
-    char **strs;
+typedef struct {
+    char **strings;
     int size;
-} Tuple;
+} StringTuple;
 
-Tuple create_tuple(int size) {
-    Tuple t;
-    t.size = size;
-    t.strs = (char **)malloc(size * sizeof(char *));
-    for (int i = 0; i < size; ++i) {
-        t.strs[i] = NULL;
+StringTuple *create_tuple(char *str[], int size) {
+    if (size < 0) return NULL;
+    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
+    if (!tuple) return NULL;
+    tuple->strings = (char **)malloc(size * sizeof(char *));
+    if (!tuple->strings) {
+        free(tuple);
+        return NULL;
     }
-    return t;
+    for (int i = 0; i < size; i++) {
+        tuple->strings[i] = strdup(str[i]);
+        if (!tuple->strings[i]) {
+            for (int j = 0; j < i; j++) {
+                free(tuple->strings[j]);
+            }
+            free(tuple->strings);
+            free(tuple);
+            return NULL;
+        }
+    }
+    tuple->size = size;
+    return tuple;
 }
 
-void free_tuple(Tuple *t) {
-    for (int i = 0; i < t->size; ++i) {
-        free(t->strs[i]);
+void free_tuple(StringTuple *tuple) {
+    if (!tuple) return;
+    for (int i = 0; i < tuple->size; i++) {
+        free(tuple->strings[i]);
     }
-    free(t->strs);
-    t->strs = NULL;
-    t->size = 0;
-}
-
-Tuple string_list_to_tuple(char *list[], int size) {
-    Tuple t = create_tuple(size);
-    for (int i = 0; i < size; ++i) {
-        t.strs[i] = strdup(list[i]);
-    }
-    return t;
+    free(tuple->strings);
+    free(tuple);
 }
 
 int main() {
-    char *strings[] = {"hello", "world", "tuple"};
+    char *list[] = {"one", "two", "three"};
     int size = 3;
-
-    Tuple t = string_list_to_tuple(strings, size);
-
-    for (int i = 0; i < t.size; ++i) {
-        printf("%s\n", t.strs[i]);
+    StringTuple *tuple = create_tuple(list, size);
+    if (tuple) {
+        for (int i = 0; i < tuple->size; i++) {
+            printf("%s\n", tuple->strings[i]);
+        }
+        free_tuple(tuple);
     }
-
-    free_tuple(&t);
-
     return 0;
 }

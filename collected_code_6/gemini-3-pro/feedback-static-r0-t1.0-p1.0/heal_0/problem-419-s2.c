@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <math.h>
+
+void calculate_and_print(const double* numbers, size_t length) {
+    if (numbers == NULL || length == 0) {
+        printf("0.00\n");
+        return;
+    }
+
+    double sum = 0.0;
+    for (size_t i = 0; i < length; ++i) {
+        sum += round(numbers[i]);
+    }
+
+    double result = sum * (double)length;
+    printf("%.2f\n", result);
+}
+
+int main(void) {
+    double numbers[] = {1.2, 2.5, 3.8, 4.1, 5.9};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+
+    calculate_and_print(numbers, length);
+
+    return 0;
+}

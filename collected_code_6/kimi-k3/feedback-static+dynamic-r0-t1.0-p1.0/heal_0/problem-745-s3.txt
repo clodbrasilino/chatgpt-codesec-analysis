@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+bool is_self_dividing(int num)
+{
+    if (num <= 0) {
+        return false;
+    }
+    
+    int original = num;
+    int temp = num;
+    
+    while (temp > 0) {
+        int digit = temp % 10;
+        if (digit == 0 || original % digit != 0) {
+            return false;
+        }
+        temp /= 10;
+    }
+    
+    return true;
+}
+
+void find_self_dividing_numbers(int lower, int upper)
+{
+    if (lower > upper || lower < 1) {
+        fprintf(stderr, "Invalid range: lower must be >= 1 and lower <= upper\n");
+        return;
+    }
+    
+    bool found = false;
+    
+    for (int i = lower; i <= upper; i++) {
+        if (is_self_dividing(i)) {
+            printf("%d ", i);
+            found = true;
+        }
+    }
+    
+    if (!found) {
+        printf("No self-dividing numbers found");
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int lower, upper;
+    
+    printf("Enter lower bound: ");
+    if (scanf("%d", &lower) != 1) {
+        fprintf(stderr, "Invalid input for lower bound\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter upper bound: ");
+    if (scanf("%d", &upper) != 1) {
+        fprintf(stderr, "Invalid input for upper bound\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (lower < 1 || upper < 1 || lower > upper) {
+        fprintf(stderr, "Invalid range: bounds must be positive and lower <= upper\n");
+        return EXIT_FAILURE;
+    }
+    
+    find_self_dividing_numbers(lower, upper);
+    
+    return EXIT_SUCCESS;
+}
+```

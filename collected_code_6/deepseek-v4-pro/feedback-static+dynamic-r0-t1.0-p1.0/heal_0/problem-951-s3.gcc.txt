@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-951-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-951-s3.c:69:61: error: passing argument 5 of 'max_of_similar_indices' from incompatible pointer type [-Wincompatible-pointer-types]
+   69 |     int status = max_of_similar_indices(list1, 4, list2, 3, &result, &result_size);
+      |                                                             ^~~~~~~
+      |                                                             |
+      |                                                             int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-951-s3.c:9:83: note: expected 'int *' but argument is of type 'int **'
+    9 | int max_of_similar_indices(Tuple *list1, int size1, Tuple *list2, int size2, int *result, int *result_size) {
+      |                                                                              ~~~~~^~~~~~

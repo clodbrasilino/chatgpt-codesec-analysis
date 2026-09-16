@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-194-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-194-s3.c:36:11: error: implicit declaration of function 'strcspn' [-Wimplicit-function-declaration]
+   36 |     input[strcspn(input, "\n")] = '\0';
+      |           ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-194-s3.c:5:1: note: include '<string.h>' or provide a declaration of 'strcspn'
+    4 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    5 | 

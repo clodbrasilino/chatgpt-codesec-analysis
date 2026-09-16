@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_non_prime(int n) {
+    if (n <= 1) {
+        return true;
+    }
+    if (n <= 3) {
+        return false;
+    }
+    if (n % 2 == 0 || n % 3 == 0) {
+        return true;
+    }
+    for (int i = 5; i * i <= n; i += 6) {
+        if (n % i == 0 || n % (i + 2) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int num;
+    while (scanf("%d", &num) == 1) {
+        if (is_non_prime(num)) {
+            printf("%d is a non-prime number\n", num);
+        } else {
+            printf("%d is a prime number\n", num);
+        }
+    }
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool are_roots_reciprocal(double a, double b, double c) {
+    if (a == 0.0) {
+        return false;
+    }
+    
+    double discriminant = b * b - 4.0 * a * c;
+    if (discriminant < 0.0) {
+        return false;
+    }
+    
+    double root1 = (-b + sqrt(discriminant)) / (2.0 * a);
+    double root2 = (-b - sqrt(discriminant)) / (2.0 * a);
+    
+    if (fabs(root1 * root2 - 1.0) < 1e-9) {
+        return true;
+    }
+    
+    return false;
+}
+
+int main(void) {
+    double a, b, c;
+    
+    printf("Enter coefficients a, b, c: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (are_roots_reciprocal(a, b, c)) {
+        printf("Roots are reciprocal of each other\n");
+    } else {
+        printf("Roots are not reciprocal of each other\n");
+    }
+    
+    return 0;
+}

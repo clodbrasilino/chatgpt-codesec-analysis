@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool can_tile(int n) {
+    if (n % 2 == 0 || n % 3 == 0) {
+        return true;
+    }
+    int twos = 0;
+    while (n > 1 && n % 2 == 0) {
+        n /= 2;
+        twos++;
+    }
+    if (n == 1 && twos != 1) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    int length;
+    printf("Enter the length of the board: ");
+    scanf("%d", &length);
+
+    if (can_tile(length)) {
+        printf("The board of length %d can be tiled.\n", length);
+    } else {
+        printf("The board of length %d cannot be tiled.\n", length);
+    }
+
+    return 0;
+}

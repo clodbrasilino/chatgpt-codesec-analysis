@@ -1,92 +1,112 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <limits.h>
 
 typedef struct {
-    int *heap;
-    int size;
+    int* array;
     int capacity;
-} minHeap;
+    int count;
+} MinHeap;
 
-int parent(int i) { return (i - 1) / 2; }
-int left(int i) { return 2 * i + 1; }
-int right(int i) { return 2 * i + 2; }
+MinHeap* createMinHeap(int capacity) {
+    MinHeap* minHeap = (MinHeap*)malloc(sizeof(MinHeap));
+    minHeap->array = (int*)malloc(capacity * sizeof(int));
+    minHeap->capacity = capacity;
+    minHeap->count = 0;
+    return minHeap;
+}
 
-void swap(int *a, int *b) {
+void swap(int* a, int* b) {
     int temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void minHeapify(minHeap *h, int i) {
-    int l = left(i);
-    int r = right(i);
-    int smallest = i;
-    if (l < h->size && h->heap[l] < h->heap[i])
-        smallest = l;
-    if (r < h->size && h->heap[r] < h->heap[smallest])
-        smallest = r;
-    if (smallest != i) {
-        swap(&h->heap[i], &h->heap[smallest]);
-        minHeapify(h, smallest);
+void heapify(MinHeap* minHeap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < minHeap->count && minHeap->array[left] < minHeap->array[smallest])
+        smallest = left;
+    if (right < minHeap->count && minHeap->array[right] < minHeap->array[smallest])
+        smallest = right;
+
+    if (smallest != idx) {
+        swap(&minHeap->array[idx], &minHeap->array[smallest]);
+        heapify(minHeap, smallest);
     }
 }
 
-void decreaseKey(minHeap *h, int i, int new_val) {
-    h->heap[i] = new_val;
-    while (i != 0 && h->heap[parent(i)] > h->heap[i]) {
-        swap(&h->heap[i], &h->heap[parent(i)]);
-        i = parent(i);
+void insertKey(MinHeap* minHeap, int key) {
+    if (minHeap->count == minHeap->capacity)
+        return;
+
+    int i = minHeap->count;
+    minHeap->array[i] = key;
+    minHeap->count++;
+    while (i != 0 && minHeap->array[(i - 1) / 2] > minHeap->array[i]) {
+        swap(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
+        i = (i - 1) / 2;
     }
 }
 
-void minHeapInsert(minHeap *h, int k) {
-    h->size++;
-    h->heap[h->size - 1] = INT_MAX;
-    decreaseKey(h, h->size - 1, k);
-}
-
-int extractMin(minHeap *h) {
-    if (h->size == 1) {
-        h->size--;
-        return h->heap[0];
+int extractMin(MinHeap* minHeap) {
+    if (minHeap->count <= 0)
+        return INT_MAX;
+    if (minHeap->count == 1) {
+        minHeap->count--;
+        return minHeap->array[0];
     }
-    int root = h->heap[0];
-    h->heap[0] = h->heap[h->size - 1];
-    h->size--;
-    minHeapify(h, 0);
+
+    int root = minHeap->array[0];
+    minHeap->array[0] = minHeap->array[minHeap->count - 1];
+    minHeap->count--;
+    heapify(minHeap, 0);
+
     return root;
 }
 
-minHeap *newMinHeap(int capacity) {
-    minHeap *h = (minHeap *)malloc(sizeof(minHeap));
-    h->heap = (int *)malloc(capacity * sizeof(int));
-    h->capacity = capacity;
-    h->size = 0;
-    return h;
+bool isUglyPresent(long long ugly, int k, const long long* uglyNumbers) {
+    for (int i = 0; i < k; i++) {
+        if (ugly == uglyNumbers[i])
+            return true;
+    }
+    return false;
 }
 
-int nthSuperUglyNumber(int n, const int* primes, int k) {
-    minHeap *h = newMinHeap(k * n + 1);
-    int ugly[n];
-    ugly[0] = 1;
+long long nthSuperUglyNumber(int n, const int* primes, int k) {
+    if (n == 1)
+        return 1;
+
+    long long* uglyNumbers = (long long*)malloc(n * sizeof(long long));
+    MinHeap* minHeap = createMinHeap(n * k);
+    uglyNumbers[0] = 1;
+    insertKey(minHeap, 1);
+
     for (int i = 1; i < n; i++) {
-        int next_ugly_no = INT_MAX;
+        uglyNumbers[i] = extractMin(minHeap);
         for (int j = 0; j < k; j++) {
-            minHeapInsert(h, ugly[i - 1] * primes[j]);
-            next_ugly_no = extractMin(h);
+            long long nextUgly = uglyNumbers[i] * primes[j];
+            if (!isUglyPresent(nextUgly, minHeap->count, uglyNumbers)) {
+                insertKey(minHeap, nextUgly);
+            }
         }
-        ugly[i] = next_ugly_no;
     }
-    free(h->heap);
-    free(h);
-    return ugly[n - 1];
+
+    free(uglyNumbers);
+    free(minHeap->array);
+    free(minHeap);
+
+    return uglyNumbers[n - 1];
 }
 
 int main() {
     int primes[] = {2, 3, 5};
     int k = 3;
     int n = 12;
-    printf("The %dth super ugly number is %d\n", n, nthSuperUglyNumber(n, primes, k));
+    long long result = nthSuperUglyNumber(n, primes, k);
+    printf("The %dth super ugly number is: %lld\n", n, result);
     return 0;
 }

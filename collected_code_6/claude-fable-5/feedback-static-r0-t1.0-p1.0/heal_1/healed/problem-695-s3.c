@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_greater(const int *tuple1, const int *tuple2, size_t length)
+{
+    size_t i;
+
+    if (tuple1 == NULL || tuple2 == NULL || length == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++) {
+        if (tuple2[i] <= tuple1[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const int first[] = {1, 2, 3, 4};
+    const int second[] = {2, 3, 4, 5};
+    const int third[] = {2, 3, 3, 5};
+    size_t length = sizeof(first) / sizeof(first[0]);
+    bool result;
+
+    result = check_greater(first, second, length);
+    if (result) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    result = check_greater(first, third, length);
+    if (result) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}

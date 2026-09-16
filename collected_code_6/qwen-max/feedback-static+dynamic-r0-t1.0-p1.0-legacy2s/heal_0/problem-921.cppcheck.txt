@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-921.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-921.c:10:32: style: Checking if unsigned expression 'n' is less than zero. [unsignedLessThanZero]
+    if (total_length == 0 || n <= 0) return NULL;
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-921.c:9:27: style: Parameter 'input' can be declared as pointer to const [constParameterPointer]
+TupleChunk* chunkify(int* input, size_t total_length, size_t n) {
+                          ^

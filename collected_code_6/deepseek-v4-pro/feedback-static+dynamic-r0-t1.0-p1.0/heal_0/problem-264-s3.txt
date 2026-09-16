@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_dog_age(double human_years) {
+    if (human_years < 0) {
+        fprintf(stderr, "Invalid input: age cannot be negative\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (human_years <= 2.0) {
+        return human_years * 10.5;
+    }
+
+    return 21.0 + (human_years - 2.0) * 4.0;
+}
+
+int main(void) {
+    double human_years;
+    double dog_years;
+
+    printf("Enter dog's age in human years: ");
+    if (scanf("%lf", &human_years) != 1) {
+        fprintf(stderr, "Invalid input: please enter a numeric value\n");
+        return EXIT_FAILURE;
+    }
+
+    dog_years = calculate_dog_age(human_years);
+
+    printf("Age in dog years: %.1f\n", dog_years);
+
+    return EXIT_SUCCESS;
+}
+```

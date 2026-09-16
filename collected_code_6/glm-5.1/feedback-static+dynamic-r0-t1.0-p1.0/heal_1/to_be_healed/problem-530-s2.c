@@ -1,0 +1,45 @@
+#include <stdio.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'array' can be declared as pointer to const [constParameterPointer]
+ */
+float find_negative_ratio(int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0.0f;
+    }
+
+    size_t negative_count = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (array[i] < 0) {
+            negative_count++;
+        }
+    }
+
+    return (float)negative_count / (float)size;
+}
+
+int main(void) {
+    int arr1[] = {1, -2, 3, -4, 5, -6};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    float ratio1 = find_negative_ratio(arr1, size1);
+    printf("Ratio: %f\n", ratio1);
+
+    int arr2[] = {0, 0, 0, 0};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    float ratio2 = find_negative_ratio(arr2, size2);
+    printf("Ratio: %f\n", ratio2);
+
+    int arr3[] = {-1, -2, -3};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    float ratio3 = find_negative_ratio(arr3, size3);
+    printf("Ratio: %f\n", ratio3);
+
+    float ratio4 = find_negative_ratio(NULL, 5);
+    printf("Ratio for NULL: %f\n", ratio4);
+
+    float ratio5 = find_negative_ratio(arr1, 0);
+    printf("Ratio for size 0: %f\n", ratio5);
+
+    return 0;
+}

@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_non_alphanumeric(char *str)
+{
+    if (str == NULL) {
+        return;
+    }
+
+    char *read_ptr = str;
+    char *write_ptr = str;
+
+    while (*read_ptr != '\0') {
+        if (isalnum((unsigned char)*read_ptr)) {
+            *write_ptr = *read_ptr;
+            write_ptr++;
+        }
+        read_ptr++;
+    }
+    *write_ptr = '\0';
+}
+
+int main(void)
+{
+    char test_string[] = "Hello, World! 123 @#$";
+    
+    printf("Original: %s\n", test_string);
+    remove_non_alphanumeric(test_string);
+    printf("Modified: %s\n", test_string);
+    
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long count_max_equilateral_triangles(int n)
+{
+    if (n <= 0)
+    {
+        return 0;
+    }
+
+    long long total = 0;
+    long long term1 = (long long)n * (n + 2);
+    long long term2 = (long long)(2 * n + 1);
+
+    if (n % 2 == 0)
+    {
+        total = term1 * term2 / 8;
+    }
+    else
+    {
+        total = (term1 * term2 - 1) / 8;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int n;
+
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0)
+    {
+        fprintf(stderr, "Error: Negative value not allowed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 1000000)
+    {
+        fprintf(stderr, "Error: Input too large, may cause overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = count_max_equilateral_triangles(n);
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}

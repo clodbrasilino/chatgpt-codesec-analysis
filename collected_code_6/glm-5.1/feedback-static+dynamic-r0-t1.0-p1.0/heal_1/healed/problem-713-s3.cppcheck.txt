@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-713-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-713-s3.c:12:18: warning: Logical disjunction always evaluates to true: t.a == 0 || t.a != 0. [incorrectLogicOperator]
+    if (t.a == 0 || t.a != 0) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-713-s3.c:12:18: style: Opposite expression on both sides of '||'. [oppositeExpression]
+    if (t.a == 0 || t.a != 0) {
+                 ^

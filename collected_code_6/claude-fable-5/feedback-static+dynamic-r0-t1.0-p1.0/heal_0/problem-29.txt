@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_odd_occurrence(const int *arr, size_t n, int *result)
+{
+    size_t i;
+    int acc;
+
+    if (arr == NULL || result == NULL || n == 0U) {
+        return -1;
+    }
+
+    acc = 0;
+    for (i = 0U; i < n; i++) {
+        acc ^= arr[i];
+    }
+
+    *result = acc;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = { 1, 2, 3, 2, 3, 1, 3 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    if (find_odd_occurrence(arr, n, &result) != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Element occurring odd number of times: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution uses the XOR-based approach: XOR-ing all elements together cancels out pairs, leaving only the element that occurs an odd number of times. It runs in O(n) time with O(1) space.
+
+Key defensive measures addressing the listed weaknesses:
+
+- **CWE-664**: No dynamic resources (heap allocations, file handles) are acquired, so there is nothing to leak or misuse across its lifetime; the array is stack-allocated with automatic cleanup.
+- **CWE-703**: All exceptional conditions are checked — `NULL` pointers, zero-length input, and the return values of `printf`/`fprintf` are validated, with errors reported via the return-code contract rather than being silently ignored.
+- **CWE-710**: The code adheres to standard conventions: `const`-correct parameters, `size_t` for sizes and indices, `main(void)` signature, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, braces on all control structures, and no implicit conversions between signed and unsigned types.

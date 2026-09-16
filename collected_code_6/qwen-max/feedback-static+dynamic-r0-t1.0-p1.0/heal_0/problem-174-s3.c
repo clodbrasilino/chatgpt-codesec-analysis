@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KeyValuePair;
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    char *key;
+    Node *head;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry **entries;
+    size_t capacity;
+    size_t size;
+} Dictionary;
+
+Node* createNode(char *value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) return NULL;
+    node->value = strdup(value);
+    if (node->value == NULL) {
+        free(node);
+        return NULL;
+    }
+    node->next = NULL;
+    return node;
+}
+
+void addValueToKey(Dictionary *dict, char *key, char *value) {
+    for (size_t i = 0; i < dict->size; ++i) {
+        if (strcmp(dict->entries[i]->key, key) == 0) {
+            Node *newNode = createNode(value);
+            if (newNode) {
+                newNode->next = dict->entries[i]->head;
+                dict->entries[i]->head = newNode;
+                return;
+            }
+        }
+    }
+
+    DictionaryEntry *entry = (DictionaryEntry *)malloc(sizeof(DictionaryEntry));
+    if (entry == NULL) return;
+
+    entry->key = strdup(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return;
+    }
+    entry->head = createNode(value);
+
+    if (dict->size >= dict->capacity) {
+        dict->capacity = (dict->capacity == 0) ? 1 : 2 * dict->capacity;
+        dict->entries = (DictionaryEntry **)realloc(dict->entries, dict->capacity * sizeof(DictionaryEntry *));
+        if (dict->entries == NULL) {
+            free(entry->key);
+            free(entry);
+            return;
+        }
+    }
+
+    dict->entries[dict->size++] = entry;
+}
+
+void printDictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->size; ++i) {
+        printf("%s: ", dict->entries[i]->key);
+        Node *current = dict->entries[i]->head;
+        while (current != NULL) {
+            printf("%s", current->value);
+            if (current->next != NULL) printf(", ");
+            current = current->next;
+        }
+        printf("\n");
+    }
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->size; ++i) {
+        Node *current = dict->entries[i]->head;
+        while (current != NULL) {
+            Node *temp = current;
+            current = current->next;
+            free(temp->value);
+            free(temp);
+        }
+        free(dict->entries[i]->key);
+        free(dict->entries[i]);
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->capacity = dict->size = 0;
+}
+
+int main() {
+    Dictionary dict = {NULL, 0, 0};
+
+    addValueToKey(&dict, "a", "1");
+    addValueToKey(&dict, "b", "2");
+    addValueToKey(&dict, "a", "3");
+    addValueToKey(&dict, "c", "4");
+
+    printDictionary(&dict);
+
+    freeDictionary(&dict);
+    return 0;
+}

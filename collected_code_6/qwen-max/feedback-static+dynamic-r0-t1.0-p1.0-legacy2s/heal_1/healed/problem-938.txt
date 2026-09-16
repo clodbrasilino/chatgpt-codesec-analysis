@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Triplet {
+    int first;
+    int second;
+    int third;
+};
+
+int min(const int x, const int y, const int z) {
+    return x < y ? (x < z ? x : z) : (y < z ? y : z);
+}
+
+int max(const int x, const int y, const int z) {
+    return x > y ? (x > z ? x : z) : (y > z ? y : z);
+}
+
+struct Triplet findClosest(const int *arr1, const int *arr2, const int *arr3, int n1, int n2, int n3) {
+    int i = 0, j = 0, k = 0;
+    struct Triplet closest = {arr1[0], arr2[0], arr3[0]};
+    int diff = abs(max(arr1[0], arr2[0], arr3[0]) - min(arr1[0], arr2[0], arr3[0]));
+
+    while (i < n1 && j < n2 && k < n3) {
+        int minimum = min(arr1[i], arr2[j], arr3[k]);
+        int maximum = max(arr1[i], arr2[j], arr3[k]);
+        int current_diff = maximum - minimum;
+
+        if (current_diff < diff) {
+            closest.first = arr1[i];
+            closest.second = arr2[j];
+            closest.third = arr3[k];
+            diff = current_diff;
+        }
+
+        if (arr1[i] == minimum)
+            ++i;
+        else if (arr2[j] == minimum)
+            ++j;
+        else
+            ++k;
+    }
+    return closest;
+}
+
+int main() {
+    int arr1[] = {1, 4, 10};
+    int arr2[] = {2, 15, 20};
+    int arr3[] = {10, 12};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    struct Triplet result = findClosest(arr1, arr2, arr3, n1, n2, n3);
+
+    printf("%d %d %d\n", result.first, result.second, result.third);
+
+    return 0;
+}
+```

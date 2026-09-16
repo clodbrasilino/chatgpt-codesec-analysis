@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int multiply(int a, int b) {
+    unsigned int ua = (unsigned int)a;
+    unsigned int ub = (unsigned int)b;
+    unsigned int result = 0u;
+
+    while (ub != 0u) {
+        if (ub & 1u) {
+            result += ua;
+        }
+        ua <<= 1;
+        ub >>= 1;
+    }
+
+    return (int)result;
+}
+
+int main(void) {
+    printf("%d\n", multiply(7, 8));
+    return 0;
+}

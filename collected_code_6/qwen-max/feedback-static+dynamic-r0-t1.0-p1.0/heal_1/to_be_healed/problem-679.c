@@ -2,87 +2,78 @@
 #include <stdlib.h>
 
 typedef struct {
-    char** keys;
-    void** values;
+    char *key;
+    void *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
     size_t count;
 } Dictionary;
 
-Dictionary* createDictionary() {
-    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
-    if (dict) {
-        dict->keys = NULL;
-        dict->values = NULL;
-        dict->count = 0;
-    }
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->count = 0;
+    dict->entries = NULL;
     return dict;
 }
 
-int insertDictionary(Dictionary* dict, const char* key, void* value) {
-    if (!dict || !key || !value) {
-        return -1;
+void add_entry(Dictionary *dict, const char *key, void *value) {
+    dict->entries = (DictionaryEntry*)realloc(dict->entries, (dict->count + 1) * sizeof(DictionaryEntry));
+    if (dict->entries) {
+        /* Possible weaknesses found:
+         *  call to undeclared library function 'strdup' with type 'char *(const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <string.h> or explicitly provide a declaration for 'strdup'
+         *  implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+         */
+        dict->entries[dict->count].key = strdup(key);
+        dict->entries[dict->count].value = value;
+        dict->count++;
     }
-
-    dict->count++;
-    dict->keys = (char**)realloc(dict->keys, sizeof(char*) * dict->count);
-    dict->values = (void**)realloc(dict->values, sizeof(void*) * dict->count);
-
-    if (!dict->keys || !dict->values) {
-        dict->count--;
-        return -1;
-    }
-
-    dict->keys[dict->count - 1] = (char*)key;
-    dict->values[dict->count - 1] = value;
-    return 0;
 }
 
-void* getElementByIndex(Dictionary* dict, size_t index) {
-    if (!dict || index >= dict->count) {
-        return NULL;
+void* get_entry_by_index(Dictionary *dict, size_t index) {
+    if (index < dict->count) {
+        return dict->entries[index].value;
     }
-
-    return dict->values[index];
+    return NULL;
 }
 
-void destroyDictionary(Dictionary* dict) {
-    free(dict->keys);
-    free(dict->values);
+void free_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
     free(dict);
 }
 
 int main() {
-    Dictionary* dict = createDictionary();
-    if (!dict) {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
         return 1;
     }
 
-    int a = 10;
-    int b = 20;
-    int c = 30;
+    int num1 = 42;
+    int num2 = 73;
+    add_entry(dict, "one", &num1);
+    add_entry(dict, "two", &num2);
 
-    if (insertDictionary(dict, "one", &a) != 0) {
-        destroyDictionary(dict);
-        return 1;
-    }
-    if (insertDictionary(dict, "two", &b) != 0) {
-        destroyDictionary(dict);
-        return 1;
-    }
-    if (insertDictionary(dict, "three", &c) != 0) {
-        destroyDictionary(dict);
-        return 1;
-    }
+    void *value1 = get_entry_by_index(dict, 0);
+    void *value2 = get_entry_by_index(dict, 1);
 
-    /* Possible weaknesses found:
-     *  Variable 'value' can be declared as pointer to const [constVariablePointer]
-     */
-    int* value = (int*)getElementByIndex(dict, 1);
-    if (value) {
-        printf("Value: %d\n", *value);
+    if (value1) {
+        printf("Value at index 0: %d\n", *(int*)value1);
     } else {
-        printf("Invalid index\n");
+        printf("No value found at index 0\n");
     }
 
-    destroyDictionary(dict);
+    if (value2) {
+        printf("Value at index 1: %d\n", *(int*)value2);
+    } else {
+        printf("No value found at index 1\n");
+    }
+
+    free_dictionary(dict);
     return 0;
 }

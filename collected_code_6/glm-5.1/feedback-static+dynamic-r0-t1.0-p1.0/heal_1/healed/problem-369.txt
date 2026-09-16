@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double lateral_surface_area_cuboid(double length, double width, double height) {
+    if (length <= 0.0 || width <= 0.0 || height <= 0.0) {
+        return -1.0;
+    }
+    return 2.0 * (length + width) * height;
+}
+
+int main(int argc, char * const argv[]) {
+    if (argc != 4) {
+        fprintf(stderr, "Usage: %s <length> <width> <height>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    double length = strtod(argv[1], NULL);
+    double width = strtod(argv[2], NULL);
+    double height = strtod(argv[3], NULL);
+
+    double area = lateral_surface_area_cuboid(length, width, height);
+
+    if (area < 0.0) {
+        fprintf(stderr, "Dimensions must be positive numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

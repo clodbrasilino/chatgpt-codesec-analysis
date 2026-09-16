@@ -4,80 +4,74 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_WORDS 1000
-#define MAX_WORD_LENGTH 100
+#define MAX_WORDS 1024
+#define MAX_WORD_LENGTH 64
 
 typedef struct {
-    char word[MAX_WORD_LENGTH];
-    bool exists;
-} Word;
+    char words[MAX_WORDS][MAX_WORD_LENGTH];
+    int count;
+} WordSet;
 
-Word dictionary[MAX_WORDS] = {0};
-
-int add_word(const char *word) {
-    for (int i = 0; i < MAX_WORDS; ++i) {
-        if (!dictionary[i].exists) {
-            strncpy(dictionary[i].word, word, MAX_WORD_LENGTH - 1);
-            dictionary[i].word[MAX_WORD_LENGTH - 1] = '\0';
-            dictionary[i].exists = true;
-            return i;
-        }
-    }
-    return -1;
+void init_word_set(WordSet *set) {
+    set->count = 0;
 }
 
-bool is_duplicate(const char *word) {
-    for (int i = 0; i < MAX_WORDS; ++i) {
-        if (dictionary[i].exists && strcmp(dictionary[i].word, word) == 0) {
-            return true;
-        }
+bool add_word(WordSet *set, const char *word) {
+    if (set->count >= MAX_WORDS) return false;
+    for (int i = 0; i < set->count; i++) {
+        if (strcmp(set->words[i], word) == 0) return true;
     }
+    strncpy(set->words[set->count], word, MAX_WORD_LENGTH - 1);
+    set->words[set->count][MAX_WORD_LENGTH - 1] = '\0';
+    set->count++;
     return false;
 }
 
-char* remove_duplicates(char *input) {
-    if (input == NULL) return NULL;
-
-    char *output = (char *)malloc(strlen(input) * 2 + 1);
-    if (output == NULL) return NULL;
-
-    output[0] = '\0';
-    char *token = strtok(strdup(input), " ");
+char* remove_duplicates(const char *input) {
+    WordSet set;
+    init_word_set(&set);
+    char *token, *output = NULL, *temp = strdup(input);
+    token = strtok(temp, " ");
     while (token != NULL) {
-        if (!is_duplicate(token)) {
-            int len = strlen(token);
-            strncat(output, token, len);
-            if (strlen(output) > 0 && output[strlen(output) - 1] != ' ') {
-                strncat(output, " ", 1);
+        if (!add_word(&set, token)) {
+            int new_len = (output ? strlen(output) : 0) + strlen(token) + 2;
+            char *new_output = realloc(output, new_len);
+            if (new_output == NULL) {
+                free(output);
+                free(temp);
+                return NULL;
             }
-            add_word(token);
+            output = new_output;
+            if (output) {
+                if (strlen(output) > 0) {
+                    strcat(output, " ");
+                }
+                strcat(output, token);
+            }
         }
         token = strtok(NULL, " ");
     }
-
-    if (strlen(output) > 0 && output[strlen(output) - 1] == ' ') {
-        output[strlen(output) - 1] = '\0';
-    }
-
+    free(temp);
     return output;
 }
 
 int main() {
-    char input[] = "Python Exercises Practice Solution";
+    const char *input = "Python Exercises Practice Solution";
     char *result = remove_duplicates(input);
-    printf("%s\n", result ? result : "");
-    free(result);
-
-    strcpy(input, "");
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("Error: Allocation failed.\n");
+    }
+    input = "this is a test this is only a test";
     result = remove_duplicates(input);
-    printf("%s\n", result ? result : "");
-    free(result);
-
-    strcpy(input, "Python Exercises Practice Solution");
-    result = remove_duplicates(input);
-    printf("%s\n", result ? result : "");
-    free(result);
-
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("Error: Allocation failed.\n");
+    }
     return 0;
 }
 ```

@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double tetrahedron_area(double edge)
+{
+    return sqrt(3.0) * edge * edge;
+}
+
+int main(void)
+{
+    double edge = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    printf("Enter the edge length of the tetrahedron: ");
+    result = scanf("%lf", &edge);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (edge <= 0.0 || !isfinite(edge)) {
+        fprintf(stderr, "Error: edge length must be a positive finite number.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = tetrahedron_area(edge);
+
+    if (!isfinite(area)) {
+        fprintf(stderr, "Error: computation overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Surface area of the tetrahedron: %f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This calculates the surface area of a **regular tetrahedron** using the formula √3 × a², where `a` is the edge length. Key safety measures addressing the CWEs you mentioned:
+
+- **CWE-703**: The return value of `scanf` is checked, input is validated for positivity and finiteness, and the computed result is verified with `isfinite` to catch overflow.
+- **CWE-664**: No dynamic resources (memory, files) are allocated, so there are no lifetime management issues; all variables are initialized at declaration.
+- **CWE-710**: The code follows standard conventions — `int main(void)`, explicit `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, errors reported to `stderr`, and consistent typing with `double` throughout.
+
+Compile with: `gcc -Wall -Wextra -o tetra tetra.c -lm`

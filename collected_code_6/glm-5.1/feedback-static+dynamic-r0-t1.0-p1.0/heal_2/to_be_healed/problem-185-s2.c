@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+Point find_parabola_focus(double a, double b, double c) {
+    Point focus;
+    double denominator = 4.0 * a;
+
+    if (denominator == 0.0 || isnan(a) || isnan(b) || isnan(c) || isinf(a)) {
+        exit(EXIT_FAILURE);
+    }
+
+    double h = -b / (2.0 * a);
+    double k = c - (b * b) / (4.0 * a);
+
+    focus.x = h;
+    focus.y = k + 1.0 / (4.0 * a);
+
+    return focus;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    if (argc != 4) {
+        return EXIT_FAILURE;
+    }
+
+    char *endptr_a, *endptr_b, *endptr_c;
+    double a = strtod(argv[1], &endptr_a);
+    double b = strtod(argv[2], &endptr_b);
+    double c = strtod(argv[3], &endptr_c);
+
+    if (*endptr_a != '\0' || *endptr_b != '\0' || *endptr_c != '\0') {
+        return EXIT_FAILURE;
+    }
+
+    Point focus = find_parabola_focus(a, b, c);
+
+    printf("Focus: (%.6f, %.6f)\n", focus.x, focus.y);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int count_divisors(int n) {
+    int count = 0;
+    for (int i = 1; i <= sqrt(n); i++) {
+        if (n % i == 0) {
+            if (n / i == i) {
+                count++;
+            } else {
+                count += 2;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int number;
+    printf("Enter an integer: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    int divisors_count = count_divisors(number);
+    printf("Number of divisors: %d\n", divisors_count);
+    return EXIT_SUCCESS;
+}

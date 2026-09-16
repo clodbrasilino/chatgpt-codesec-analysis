@@ -1,0 +1,36 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct {
+    void* data;
+    size_t size;
+} Dictionary;
+
+bool are_dictionaries_empty(Dictionary* dictionaries, size_t count) {
+    /* Possible weaknesses found:
+     *  Checking if unsigned expression 'count' is less than zero. [unsignedLessThanZero]
+     */
+    if (dictionaries == NULL || count <= 0) {
+        return true;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        if (dictionaries[i].data != NULL || dictionaries[i].size > 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    Dictionary dicts[3] = {{NULL, 0}, {NULL, 0}, {NULL, 0}};
+    size_t count = 3;
+
+    bool result = are_dictionaries_empty(dicts, count);
+    if (result) {
+        // All dictionaries are empty
+    } else {
+        // At least one dictionary is not empty
+    }
+
+    return 0;
+}

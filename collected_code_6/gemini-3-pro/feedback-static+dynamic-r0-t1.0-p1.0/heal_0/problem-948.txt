@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    void **items;
+    size_t size;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) {
+        return NULL;
+    }
+
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    tuple->items = (void **)malloc(size * sizeof(void *));
+    if (!tuple->items) {
+        free(tuple);
+        return NULL;
+    }
+
+    tuple->size = size;
+    for (size_t i = 0; i < size; ++i) {
+        tuple->items[i] = NULL;
+    }
+
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+int set_tuple_item(Tuple *tuple, size_t index, void *item) {
+    if (!tuple || index >= tuple->size) {
+        return -1;
+    }
+    tuple->items[index] = item;
+    return 0;
+}
+
+void* get_tuple_item(const Tuple *tuple, size_t index) {
+    if (!tuple || index >= tuple->size) {
+        return NULL;
+    }
+    return tuple->items[index];
+}
+
+int main(void) {
+    Tuple *my_tuple = create_tuple(3);
+    if (!my_tuple) {
+        return EXIT_FAILURE;
+    }
+
+    int a = 10;
+    double b = 3.14;
+    char c = 'Z';
+
+    if (set_tuple_item(my_tuple, 0, &a) != 0 ||
+        set_tuple_item(my_tuple, 1, &b) != 0 ||
+        set_tuple_item(my_tuple, 2, &c) != 0) {
+        destroy_tuple(my_tuple);
+        return EXIT_FAILURE;
+    }
+
+    int *p_a = (int *)get_tuple_item(my_tuple, 0);
+    double *p_b = (double *)get_tuple_item(my_tuple, 1);
+    char *p_c = (char *)get_tuple_item(my_tuple, 2);
+
+    if (p_a && p_b && p_c) {
+        printf("Item 0: %d\n", *p_a);
+        printf("Item 1: %f\n", *p_b);
+        printf("Item 2: %c\n", *p_c);
+    }
+
+    destroy_tuple(my_tuple);
+
+    return EXIT_SUCCESS;
+}
+```

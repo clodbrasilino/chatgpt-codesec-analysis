@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long digit_sum(unsigned long long n)
+{
+    unsigned long long sum = 0ULL;
+
+    while (n > 0ULL) {
+        sum += n % 10ULL;
+        n /= 10ULL;
+    }
+
+    return sum;
+}
+
+static unsigned long long max_split_digit_sum(unsigned long long n)
+{
+    unsigned long long nines = 0ULL;
+
+    if (n < 10ULL) {
+        return digit_sum(n);
+    }
+
+    while (nines * 10ULL + 9ULL <= n) {
+        nines = nines * 10ULL + 9ULL;
+    }
+
+    return digit_sum(nines) + digit_sum(n - nines);
+}
+
+int main(void)
+{
+    unsigned long long n = 0ULL;
+    int result = 0;
+
+    printf("Enter a non-negative number: ");
+
+    result = scanf("%llu", &n);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum digit sum of two parts: %llu\n", max_split_digit_sum(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:** To maximize the sum of digits when splitting `n` into two parts `a + b = n`, the optimal strategy is to make one part the largest number consisting entirely of 9s that is less than or equal to `n` (e.g., for `n = 35`, choose `9`, giving parts `9` and `26`, with digit sum `9 + 2 + 6 = 17`). The other part is simply the remainder.
+
+**Safety considerations addressed:**
+- The return value of `scanf` is checked, and the program exits with a failure status on invalid input (CWE-703).
+- No dynamic resources (heap memory, file handles) are used, so there is nothing to leak or misuse across its lifetime (CWE-664).
+- The code uses `int main(void)`, `static` internal linkage for helper functions, explicit initialization of all variables, standard exit codes, and unsigned arithmetic with consistent `ULL` suffixes to avoid signed overflow and adhere to coding standards (CWE-710).

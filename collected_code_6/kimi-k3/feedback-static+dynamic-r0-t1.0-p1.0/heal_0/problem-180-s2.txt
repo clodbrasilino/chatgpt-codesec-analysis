@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+#define EARTH_RADIUS_KM 6371.0
+#define PI 3.14159265358979323846
+
+double degrees_to_radians(double degrees) {
+    return degrees * PI / 180.0;
+}
+
+double calculate_distance(double lat1, double lon1, double lat2, double lon2) {
+    double dlat = degrees_to_radians(lat2 - lat1);
+    double dlon = degrees_to_radians(lon2 - lon1);
+    
+    double rad_lat1 = degrees_to_radians(lat1);
+    double rad_lat2 = degrees_to_radians(lat2);
+    
+    double a = sin(dlat / 2.0) * sin(dlat / 2.0) +
+               cos(rad_lat1) * cos(rad_lat2) *
+               sin(dlon / 2.0) * sin(dlon / 2.0);
+    
+    double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+    
+    return EARTH_RADIUS_KM * c;
+}
+
+int main(void) {
+    double lat1 = 40.7128;
+    double lon1 = -74.0060;
+    double lat2 = 51.5074;
+    double lon2 = -0.1278;
+    
+    double distance = calculate_distance(lat1, lon1, lat2, lon2);
+    
+    printf("Distance: %.2f km\n", distance);
+    
+    return 0;
+}
+```

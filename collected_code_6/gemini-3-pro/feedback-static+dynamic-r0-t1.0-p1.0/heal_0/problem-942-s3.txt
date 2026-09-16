@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isAnyElementPresent(const int* targetList, size_t targetSize, const int* checkList, size_t checkSize) {
+    if (targetList == NULL || checkList == NULL || targetSize == 0 || checkSize == 0) {
+        return false;
+    }
+
+    for (size_t i = 0; i < checkSize; i++) {
+        for (size_t j = 0; j < targetSize; j++) {
+            if (checkList[i] == targetList[j]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {5, 6, 7};
+    int list3[] = {8, 9, 10};
+
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t size3 = sizeof(list3) / sizeof(list3[0]);
+
+    bool result1 = isAnyElementPresent(list1, size1, list2, size2);
+    bool result2 = isAnyElementPresent(list1, size1, list3, size3);
+
+    if (result1) {
+        printf("Test 1 passed\n");
+    } else {
+        printf("Test 1 failed\n");
+    }
+
+    if (!result2) {
+        printf("Test 2 passed\n");
+    } else {
+        printf("Test 2 failed\n");
+    }
+
+    return 0;
+}
+```

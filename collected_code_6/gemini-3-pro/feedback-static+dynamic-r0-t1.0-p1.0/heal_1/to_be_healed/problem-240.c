@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void append(struct Node** head_ref, int new_data) {
+    if (!head_ref) return;
+    
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (!new_node) {
+        return;
+    }
+    
+    struct Node* last = *head_ref;
+    new_node->data = new_data;
+    new_node->next = NULL;
+    
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+    
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    
+    last->next = new_node;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'tmp' can be reduced. [variableScope]
+     */
+    struct Node* tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void replaceLastWithList(struct Node** list1, struct Node** list2) {
+    if (!list1 || !*list1) {
+        if (list1 && list2) {
+            *list1 = *list2;
+            *list2 = NULL;
+        }
+        return;
+    }
+    
+    if (!list2 || !*list2) {
+        return;
+    }
+    
+    struct Node* temp = *list1;
+    struct Node* prev = NULL;
+    
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+    
+    free(temp);
+    
+    if (prev == NULL) {
+        *list1 = *list2;
+    } else {
+        prev->next = *list2;
+    }
+    
+    *list2 = NULL;
+}
+
+int main() {
+    struct Node* head1 = NULL;
+    struct Node* head2 = NULL;
+    
+    append(&head1, 1);
+    append(&head1, 2);
+    append(&head1, 3);
+    
+    append(&head2, 4);
+    append(&head2, 5);
+    append(&head2, 6);
+    
+    replaceLastWithList(&head1, &head2);
+    
+    printList(head1);
+    
+    freeList(head1);
+    
+    return 0;
+}

@@ -1,30 +1,45 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <regex.h>
 
-void add_spaces_between_capital_words(char *input) {
-    regex_t reg;
-    regmatch_t matches[1];
-    const char *pattern = "([A-Z][^ ]*)";
+void add_spaces_between_capital_words(char **str) {
+    regex_t regex;
+    regmatch_t pmatch[1];
+    int reti;
+    char *ptr = *str;
+    char *new_str = (char *)malloc(strlen(*str) * 2 + 1);
+    int new_index = 0;
 
-    if (regcomp(&reg, pattern, REG_EXTENDED | REG_NEWLINE) != 0) return;
-
-    int offset = 0;
-    while (regexec(&reg, input + offset, 1, matches, 0) == 0) {
-        size_t start = matches[0].rm_so + offset;
-        size_t end = matches[0].rm_eo + offset;
-        size_t len = strlen(input);
-        memmove(input + start + 1, input + start, len - start + 1);
-        input[start] = ' ';
-        offset++;
+    if (regcomp(&regex, "([A-Z][a-z]*)", REG_EXTENDED) != 0) {
+        free(new_str);
+        return;
     }
 
-    regfree(&reg);
+    while ((reti = regexec(&regex, ptr, 1, pmatch, 0)) == 0) {
+        if (pmatch[0].rm_so > 0) {
+            for (int i = 0; i < pmatch[0].rm_so; i++) {
+                new_str[new_index++] = *ptr++;
+            }
+            new_str[new_index++] = ' ';
+        }
+        for (int i = 0; i < pmatch[0].rm_eo - pmatch[0].rm_so; i++) {
+            new_str[new_index++] = *ptr++;
+        }
+        ptr += pmatch[0].rm_eo - pmatch[0].rm_so;
+    }
+
+    strcpy(new_str + new_index, ptr);
+
+    regfree(&regex);
+    free(*str);
+    *str = (char *)realloc(new_str, strlen(new_str) + 1);
 }
 
 int main() {
-    char str[] = "HelloWorldThisIsATestString";
-    add_spaces_between_capital_words(str);
-    printf("%s\n", str);
+    char *input = strdup("HelloWorldThisIsATest");
+    add_spaces_between_capital_words(&input);
+    printf("%s\n", input);
+    free(input);
     return 0;
 }

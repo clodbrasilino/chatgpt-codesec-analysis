@@ -1,0 +1,33 @@
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+void clear_tuples(Tuple *tuples, size_t count) {
+    if (tuples == NULL) {
+        return;
+    }
+    memset(tuples, 0, count * sizeof(Tuple));
+}
+
+int main(void) {
+    Tuple *t = (Tuple *)malloc(3 * sizeof(Tuple));
+    if (t == NULL) {
+        return 1;
+    }
+
+    t[0].a = 1;
+    t[0].b = 2;
+    t[1].a = 3;
+    t[1].b = 4;
+    t[2].a = 5;
+    t[2].b = 6;
+
+    clear_tuples(t, 3);
+
+    free(t);
+    return 0;
+}

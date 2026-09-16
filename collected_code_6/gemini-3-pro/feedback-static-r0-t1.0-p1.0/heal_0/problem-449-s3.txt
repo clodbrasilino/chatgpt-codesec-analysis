@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <stdbool.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+bool isValidTriangle(Point p1, Point p2, Point p3) {
+    double area = 0.5 * fabs(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
+    return area > 1e-9;
+}
+
+int main(void) {
+    Point p1, p2, p3;
+
+    if (scanf("%lf %lf", &p1.x, &p1.y) != 2) {
+        fprintf(stderr, "Invalid input for point 1\n");
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%lf %lf", &p2.x, &p2.y) != 2) {
+        fprintf(stderr, "Invalid input for point 2\n");
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%lf %lf", &p3.x, &p3.y) != 2) {
+        fprintf(stderr, "Invalid input for point 3\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isValidTriangle(p1, p2, p3)) {
+        printf("The points form a valid triangle.\n");
+    } else {
+        printf("The points do not form a valid triangle.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

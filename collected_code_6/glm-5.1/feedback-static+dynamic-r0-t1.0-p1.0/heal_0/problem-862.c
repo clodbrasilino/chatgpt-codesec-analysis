@@ -1,0 +1,138 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+
+#define MAX_WORDS 100000
+#define MAX_WORD_LEN 256
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} WordCount;
+
+static WordCount word_counts[MAX_WORDS];
+static int num_words = 0;
+
+static int find_word(const char *word) {
+    for (int i = 0; i < num_words; i++) {
+        if (strcmp(word_counts[i].word, word) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static int add_word(const char *word) {
+    if (num_words >= MAX_WORDS) {
+        return -1;
+    }
+    strncpy(word_counts[num_words].word, word, MAX_WORD_LEN - 1);
+    word_counts[num_words].word[MAX_WORD_LEN - 1] = '\0';
+    word_counts[num_words].count = 1;
+    num_words++;
+    return 0;
+}
+
+static int cmp_word_count(const void *a, const void *b) {
+    const WordCount *wa = (const WordCount *)a;
+    const WordCount *wb = (const WordCount *)b;
+    if (wb->count != wa->count) {
+        return wb->count - wa->count;
+    }
+    return strcmp(wa->word, wb->word);
+}
+
+int find_n_most_common(const char *text, int n, WordCount *results) {
+    if (text == NULL || results == NULL || n <= 0) {
+        errno = EINVAL;
+        return -1;
+    }
+    
+    num_words = 0;
+    char current_word[MAX_WORD_LEN];
+    int cw_idx = 0;
+    
+    for (int i = 0; text[i] != '\0'; i++) {
+        if (isalpha((unsigned char)text[i])) {
+            if (cw_idx < MAX_WORD_LEN - 1) {
+                current_word[cw_idx++] = tolower((unsigned char)text[i]);
+            }
+        } else {
+            if (cw_idx > 0) {
+                current_word[cw_idx] = '\0';
+                int idx = find_word(current_word);
+                if (idx >= 0) {
+                    word_counts[idx].count++;
+                } else {
+                    if (add_word(current_word) != 0) {
+                        errno = ENOMEM;
+                        return -1;
+                    }
+                }
+                cw_idx = 0;
+            }
+        }
+    }
+    
+    if (cw_idx > 0) {
+        current_word[cw_idx] = '\0';
+        int idx = find_word(current_word);
+        if (idx >= 0) {
+            word_counts[idx].count++;
+        } else {
+            if (add_word(current_word) != 0) {
+                errno = ENOMEM;
+                return -1;
+            }
+        }
+    }
+    
+    qsort(word_counts, num_words, sizeof(WordCount), cmp_word_count);
+    
+    int result_count = n < num_words ? n : num_words;
+    
+    if (result_count > 0) {
+        memcpy(results, word_counts, result_count * sizeof(WordCount));
+    }
+    
+    return result_count;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s <n> <text>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr = NULL;
+    long n_long = strtol(argv[1], &endptr, 10);
+    if (endptr == argv[1] || *endptr != '\0' || n_long <= 0 || n_long > MAX_WORDS) {
+        fprintf(stderr, "Invalid value for n.\n");
+        return EXIT_FAILURE;
+    }
+    int n = (int)n_long;
+    
+    const char *text = argv[2];
+    
+    WordCount *results = (WordCount *)malloc(n * sizeof(WordCount));
+    if (results == NULL) {
+        perror("malloc");
+        return EXIT_FAILURE;
+    }
+    
+    int count = find_n_most_common(text, n, results);
+    if (count < 0) {
+        perror("find_n_most_common");
+        free(results);
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < count; i++) {
+        printf("%s: %d\n", results[i].word, results[i].count);
+    }
+    
+    free(results);
+    return EXIT_SUCCESS;
+}

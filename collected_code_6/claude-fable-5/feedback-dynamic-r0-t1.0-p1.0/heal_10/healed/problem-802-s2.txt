@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    if (result != 2) {
+        fprintf(stderr, "Test case 1 failed: expected 2, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    if (result != 4) {
+        fprintf(stderr, "Test case 2 failed: expected 4, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    if (result != 0) {
+        fprintf(stderr, "Test case 3 failed: expected 0, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weakness noted in the comment ("test case 1 failed: expected 2, got 3") points to an off-by-one error typical of binary-search rotation counting — usually caused by one of these mistakes in an earlier revision:
+
+1. **Using `low = mid` instead of `low = mid + 1U`** when `arr[mid] > arr[high]` — this can cause an infinite loop or overshoot the pivot index.
+2. **Using `high = mid - 1U`** instead of `high = mid` when `arr[mid] <= arr[high]` — since `arr[mid]` itself may be the minimum, decrementing past it skips the correct answer (and underflows `size_t` if `mid == 0`).
+3. **Missing the sorted-subarray early exit** (`arr[low] <= arr[high]`), which is needed both for correctness on non-rotated arrays and to terminate cleanly.
+
+The corrected version above:
+
+- Keeps `high = mid` (not `mid - 1`) because `mid` remains a candidate for the minimum, avoiding the +1 overshoot that produced `3` instead of `2` for `{15, 18, 2, 3, 6, 12}`.
+- Advances `low = mid + 1U` only when `arr[mid] > arr[high]`, guaranteeing the pivot lies strictly to the right and ensuring loop progress (no infinite loop).
+- Guards against `NULL` input and `n == 0` (returning `-1`), preventing the `n - 1U` unsigned underflow that would otherwise yield `SIZE_MAX` and an out-of-bounds read.
+- Computes `mid` as `low + (high - low) / 2U` to avoid any theoretical overflow in `(low + high)`.
+
+Verified traces: arr1 → 2, arr2 → 4, arr3 → 0 (early exit on the sorted-array check). All three test cases pass.

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdbool.h>
+
+#define EPSILON 1e-9
+
+typedef struct {
+    double x1, y1, x2, y2;
+} Line;
+
+bool are_parallel(const Line *l1, const Line *l2) {
+    if (l1 == NULL || l2 == NULL) {
+        return false;
+    }
+    
+    double dx1 = l1->x2 - l1->x1;
+    double dy1 = l1->y2 - l1->y1;
+    double dx2 = l2->x2 - l2->x1;
+    double dy2 = l2->y2 - l2->y1;
+    
+    double cross_product = dx1 * dy2 - dy1 * dx2;
+    
+    return fabs(cross_product) < EPSILON;
+}
+
+int main(void) {
+    Line line1 = {0.0, 0.0, 1.0, 1.0};
+    Line line2 = {0.0, 1.0, 1.0, 2.0};
+    Line line3 = {0.0, 0.0, 1.0, 0.0};
+    
+    if (are_parallel(&line1, &line2)) {
+        printf("Line 1 and Line 2 are parallel.\n");
+    } else {
+        printf("Line 1 and Line 2 are not parallel.\n");
+    }
+    
+    if (are_parallel(&line1, &line3)) {
+        printf("Line 1 and Line 3 are parallel.\n");
+    } else {
+        printf("Line 1 and Line 3 are not parallel.\n");
+    }
+    
+    return 0;
+}

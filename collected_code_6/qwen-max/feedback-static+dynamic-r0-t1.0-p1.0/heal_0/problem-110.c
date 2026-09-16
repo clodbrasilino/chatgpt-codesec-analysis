@@ -1,62 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 
 typedef struct {
     int start;
     int end;
 } Range;
 
-void sortRanges(Range *ranges, int n) {
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < n - i - 1; ++j) {
-            if (ranges[j].start > ranges[j + 1].start) {
-                Range temp = ranges[j];
-                ranges[j] = ranges[j + 1];
-                ranges[j + 1] = temp;
-            }
-        }
-    }
+int compare(const void *a, const void *b) {
+    return ((Range *)a)->start - ((Range *)b)->start;
 }
 
-void findMissingRanges(int *list, int listSize, int rangeStart, int rangeEnd, Range **result, int *resultSize) {
-    *result = (Range *)malloc((rangeEnd - rangeStart + 1) * sizeof(Range));
-    *resultSize = 0;
-
-    int current = rangeStart;
-
-    for (int i = 0; i < listSize; ++i) {
-        while (current < list[i]) {
-            (*result)[*resultSize].start = current;
-            (*result)[*resultSize].end = (list[i] - 1 < rangeEnd) ? list[i] - 1 : rangeEnd;
-            (*resultSize)++;
-            current = (list[i] < rangeEnd) ? list[i] : rangeEnd + 1;
+int* findMissingRanges(Range *ranges, int rangesSize, int start, int end, int *returnSize) {
+    int *missingRanges = (int *)malloc((end - start + 1) * sizeof(int));
+    int currentIndex = 0;
+    
+    for (int i = start; i <= end; i++) {
+        if (currentIndex < rangesSize && i >= ranges[currentIndex].start && i <= ranges[currentIndex].end) {
+            if (i == ranges[currentIndex].end) {
+                currentIndex++;
+            }
+        } else {
+            missingRanges[i - start] = i;
         }
-        current = (list[i] + 1 <= rangeEnd) ? list[i] + 1 : rangeEnd + 1;
     }
-
-    if (current <= rangeEnd) {
-        (*result)[*resultSize].start = current;
-        (*result)[*resultSize].end = rangeEnd;
-        (*resultSize)++;
+    
+    *returnSize = 0;
+    for (int i = 0; i <= end - start; i++) {
+        if (missingRanges[i] != 0) {
+            *returnSize += 1;
+        }
     }
+    
+    int *result = (int *)malloc(*returnSize * sizeof(int));
+    int resultIndex = 0;
+    for (int i = 0; i <= end - start; i++) {
+        if (missingRanges[i] != 0) {
+            result[resultIndex++] = missingRanges[i];
+        }
+    }
+    
+    free(missingRanges);
+    return result;
 }
 
 int main() {
-    int list[] = {2, 4, 7, 10};
-    int listSize = 4;
-    int rangeStart = 1;
-    int rangeEnd = 12;
-
-    Range *result;
-    int resultSize;
-
-    findMissingRanges(list, listSize, rangeStart, rangeEnd, &result, &resultSize);
-
-    for (int i = 0; i < resultSize; ++i) {
-        printf("(%d, %d)\n", result[i].start, result[i].end);
+    Range ranges[] = {{3, 5}, {20, 22}};
+    int rangesSize = 2;
+    int start = 1;
+    int end = 25;
+    int returnSize = 0;
+    
+    Range sortedRanges[2];
+    for (int i = 0; i < rangesSize; i++) {
+        sortedRanges[i] = ranges[i];
     }
-
-    free(result);
+    qsort(sortedRanges, rangesSize, sizeof(Range), compare);
+    
+    int *missingRanges = findMissingRanges(sortedRanges, rangesSize, start, end, &returnSize);
+    
+    for (int i = 0; i < returnSize; i++) {
+        printf("%d ", missingRanges[i]);
+    }
+    printf("\n");
+    
+    free(missingRanges);
     return 0;
 }

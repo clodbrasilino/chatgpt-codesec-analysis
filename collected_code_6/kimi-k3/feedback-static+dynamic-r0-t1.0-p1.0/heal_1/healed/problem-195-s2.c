@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int find_first_position(const int arr[], size_t size, int target, size_t *position)
+{
+    size_t left;
+    size_t right;
+
+    if (arr == NULL || position == NULL) {
+        return -1;
+    }
+
+    if (size == 0) {
+        return 0;
+    }
+
+    left = 0;
+    right = size;
+
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+
+        if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    if (left < size && arr[left] == target) {
+        *position = left;
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 2, 2, 3, 4, 5, 5, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int target = 2;
+    size_t position = 0;
+    int result;
+
+    result = find_first_position(arr, size, target, &position);
+
+    if (result == 1) {
+        printf("First position of %d: %zu\n", target, position);
+    } else if (result == 0) {
+        printf("Element %d not found\n", target);
+    } else {
+        printf("Invalid arguments\n");
+        return 1;
+    }
+
+    return 0;
+}

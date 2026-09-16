@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int subtract_tuples(const int *a, const int *b, int *result, size_t len)
+{
+    size_t i;
+
+    if (a == NULL || b == NULL || result == NULL || len == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        result[i] = a[i] - b[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const int tuple1[] = { 10, 20, 30, 40, 50 };
+    const int tuple2[] = { 1, 2, 3, 4, 5 };
+    size_t len = sizeof(tuple1) / sizeof(tuple1[0]);
+    int *result;
+    size_t i;
+    int status;
+
+    result = malloc(len * sizeof(*result));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = subtract_tuples(tuple1, tuple2, result, len);
+    if (status != 0) {
+        fprintf(stderr, "Subtraction failed\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Result: (");
+    for (i = 0U; i < len; i++) {
+        printf("%d", result[i]);
+        if (i < len - 1U) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of changes made:**
+
+The static analyzer (cppcheck, based on the `constVariable` message format) flagged `tuple2` because it is never modified after initialization and is only passed to a function taking a `const int *` parameter. The fix is to declare it `const int tuple2[]`.
+
+I applied the same treatment to `tuple1` for consistency, since it is subject to the identical condition — it is only read via `sizeof` and passed as a `const` pointer, so declaring it `const` is equally correct and improves const-correctness throughout.
+
+The rest of the code was already sound:
+- `subtract_tuples` validates all pointers and rejects zero-length input.
+- `malloc` return value is checked, and `sizeof(*result)` avoids type-mismatch bugs.
+- `free(result)` occurs on both the error path and the success path (no leak), and the pointer is nulled after the final free to prevent accidental use-after-free.
+- Unsigned loop indices (`size_t`) match the length type, avoiding signed/unsigned comparison warnings.

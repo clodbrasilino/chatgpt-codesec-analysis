@@ -1,0 +1,202 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char *key;
+    char *value;
+    struct KeyValuePair *next;
+} KeyValuePair;
+
+typedef struct Dictionary {
+    KeyValuePair *head;
+} Dictionary;
+
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+KeyValuePair* create_pair(const char *key, const char *value) {
+    if (!key || !value) {
+        return NULL;
+    }
+    
+    KeyValuePair *pair = (KeyValuePair*)malloc(sizeof(KeyValuePair));
+    if (!pair) {
+        return NULL;
+    }
+    
+    pair->key = strdup(key);
+    if (!pair->key) {
+        free(pair);
+        return NULL;
+    }
+    
+    pair->value = strdup(value);
+    if (!pair->value) {
+        free(pair->key);
+        free(pair);
+        return NULL;
+    }
+    
+    pair->next = NULL;
+    return pair;
+}
+
+int add_or_update(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) {
+        return 0;
+    }
+    
+    KeyValuePair *current = dict->head;
+    KeyValuePair *prev = NULL;
+    
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            char *new_value = strdup(value);
+            if (!new_value) {
+                return 0;
+            }
+            free(current->value);
+            current->value = new_value;
+            return 1;
+        }
+        prev = current;
+        current = current->next;
+    }
+    
+    KeyValuePair *new_pair = create_pair(key, value);
+    if (!new_pair) {
+        return 0;
+    }
+    
+    if (prev) {
+        prev->next = new_pair;
+    } else {
+        dict->head = new_pair;
+    }
+    
+    return 1;
+}
+
+Dictionary* merge_dictionaries(Dictionary *dict1, Dictionary *dict2) {
+    if (!dict1 && !dict2) return NULL;
+    
+    Dictionary *merged = create_dictionary();
+    if (!merged) return NULL;
+    
+    if (dict1) {
+        KeyValuePair *current = dict1->head;
+        while (current) {
+            if (!add_or_update(merged, current->key, current->value)) {
+                KeyValuePair *temp = merged->head;
+                while (temp) {
+                    KeyValuePair *next = temp->next;
+                    free(temp->key);
+                    free(temp->value);
+                    free(temp);
+                    temp = next;
+                }
+                free(merged);
+                return NULL;
+            }
+            current = current->next;
+        }
+    }
+    
+    if (dict2) {
+        KeyValuePair *current = dict2->head;
+        while (current) {
+            if (!add_or_update(merged, current->key, current->value)) {
+                KeyValuePair *temp = merged->head;
+                while (temp) {
+                    KeyValuePair *next = temp->next;
+                    free(temp->key);
+                    free(temp->value);
+                    free(temp);
+                    temp = next;
+                }
+                free(merged);
+                return NULL;
+            }
+            current = current->next;
+        }
+    }
+    
+    return merged;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    
+    KeyValuePair *current = dict->head;
+    while (current) {
+        KeyValuePair *next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+void print_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    
+    KeyValuePair *current = dict->head;
+    while (current) {
+        printf("%s: %s\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+int main() {
+    Dictionary *dict1 = create_dictionary();
+    if (!dict1) return 1;
+    
+    if (!add_or_update(dict1, "key1", "value1")) {
+        free_dictionary(dict1);
+        return 1;
+    }
+    if (!add_or_update(dict1, "key2", "value2")) {
+        free_dictionary(dict1);
+        return 1;
+    }
+    
+    Dictionary *dict2 = create_dictionary();
+    if (!dict2) {
+        free_dictionary(dict1);
+        return 1;
+    }
+    
+    if (!add_or_update(dict2, "key2", "new_value2")) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    if (!add_or_update(dict2, "key3", "value3")) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    Dictionary *merged = merge_dictionaries(dict1, dict2);
+    if (!merged) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return 1;
+    }
+    
+    print_dictionary(merged);
+    
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged);
+    
+    return 0;
+}

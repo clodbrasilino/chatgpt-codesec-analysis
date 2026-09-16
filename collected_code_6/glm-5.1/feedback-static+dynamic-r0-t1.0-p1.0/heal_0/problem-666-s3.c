@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_char(const char *str, char c) {
+    size_t count = 0;
+    if (str == NULL) {
+        return 0;
+    }
+    while (*str != '\0') {
+        if (*str == c) {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    const char *text = "Hello, World!";
+    char target = 'l';
+    size_t result = count_char(text, target);
+    printf("%zu\n", result);
+    return 0;
+}

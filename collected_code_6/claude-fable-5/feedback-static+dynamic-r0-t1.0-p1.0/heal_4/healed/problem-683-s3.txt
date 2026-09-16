@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+static long long integer_sqrt(long long n)
+{
+    long long root = (long long)sqrt((double)n);
+
+    while (root > 0 && root * root > n) {
+        root--;
+    }
+    while ((root + 1) * (root + 1) <= n) {
+        root++;
+    }
+
+    return root;
+}
+
+static bool is_sum_of_two_squares(long long n)
+{
+    for (long long a = 0; a * a <= n; a++) {
+        long long remainder = n - a * a;
+        long long b = integer_sqrt(remainder);
+
+        if (b * b == remainder) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_sum_of_two_squares(number)) {
+        printf("%lld can be represented as the sum of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as the sum of two squares.\n", number);
+    }
+
+    return 0;
+}
+```
+
+**Summary of changes:**
+
+1. **`integer_sqrt`**: Removed the `n < 0` guard — the only caller now guarantees a non-negative argument, so the check (and the `-1` sentinel return) was dead code.
+
+2. **`is_sum_of_two_squares`**:
+   - Removed the redundant `n < 0` check — `main` already validates the input before calling.
+   - Removed the always-false `remainder < 0` branch — since the loop condition enforces `a * a <= n`, `remainder = n - a * a` is provably `>= 0`, which is exactly what the static analyzer flagged (`knownConditionTrueFalse`).
+   - Removed the now-unnecessary `b >= 0` check, since `integer_sqrt` can no longer return `-1`.
+
+3. **`main`**: Dropped the redundant zero-initialization of `number` — `scanf`'s return value is checked, so the variable is never read uninitialized.
+
+The rewritten code is functionally identical for all valid inputs, but eliminates every dead branch and redundant assignment the analyzer reported, leaving a cleaner, warning-free implementation.

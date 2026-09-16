@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int isArmstrong(int num) {
+    if (num < 0) {
+        return 0;
+    }
+
+    int originalNum = num;
+    int sum = 0;
+    int digits = 0;
+
+    int temp = num;
+    while (temp != 0) {
+        digits++;
+        temp /= 10;
+    }
+
+    temp = num;
+    while (temp != 0) {
+        int remainder = temp % 10;
+        sum += (int)pow(remainder, digits);
+        temp /= 10;
+    }
+
+    return (sum == originalNum);
+}
+
+int main() {
+    int num;
+
+    if (scanf("%d", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (isArmstrong(num)) {
+        printf("Armstrong\n");
+    } else {
+        printf("Not Armstrong\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

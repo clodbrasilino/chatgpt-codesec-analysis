@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void print_combination(const int *arr, const int *indices, size_t k)
+{
+    size_t i;
+
+    printf("{ ");
+    for (i = 0; i < k; i++) {
+        printf("%d ", arr[indices[i]]);
+    }
+    printf("}\n");
+}
+
+static int combinations_of_size(const int *arr, size_t n, size_t k)
+{
+    int *indices;
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'pos' can be reduced. [variableScope]
+     */
+    size_t pos;
+
+    if (k == 0) {
+        printf("{ }\n");
+        return 0;
+    }
+
+    indices = malloc(k * sizeof(*indices));
+    if (indices == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < k; i++) {
+        indices[i] = (int)i;
+    }
+
+    for (;;) {
+        print_combination(arr, indices, k);
+
+        pos = k;
+        while (pos > 0) {
+            pos--;
+            if ((size_t)indices[pos] < n - (k - pos)) {
+                indices[pos]++;
+                for (i = pos + 1; i < k; i++) {
+                    indices[i] = indices[i - 1] + 1;
+                }
+                break;
+            }
+            if (pos == 0) {
+                free(indices);
+                return 0;
+            }
+        }
+    }
+}
+
+static int find_all_combinations(const int *arr, size_t n)
+{
+    size_t k;
+
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    for (k = 0; k <= n; k++) {
+        if (combinations_of_size(arr, n, k) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int list[] = { 1, 2, 3, 4 };
+    size_t n = sizeof(list) / sizeof(list[0]);
+
+    if (find_all_combinations(list, n) != 0) {
+        fprintf(stderr, "Failed to generate combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

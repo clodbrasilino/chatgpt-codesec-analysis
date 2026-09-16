@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct _Node {
+    int value;
+    struct _Node *next;
+} Node;
+
+typedef struct _NestedList {
+    int value;
+    struct _NestedList *next;
+    struct _NestedList *child;
+} NestedList;
+
+Node* newNode(int value) {
+    Node *node = (Node*)malloc(sizeof(Node));
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+void flatten(NestedList* head, Node** tail) {
+    if (head == NULL) return;
+    
+    *tail = newNode(head->value);
+    Node *currentTail = *tail;
+    
+    if (head->child != NULL) {
+        flatten(head->child, &currentTail->next);
+        while (currentTail->next != NULL) {
+            currentTail = currentTail->next;
+        }
+    }
+    
+    if (head->next != NULL) {
+        flatten(head->next, &currentTail->next);
+    }
+}
+
+int main() {
+    // Example usage
+    NestedList *nested = (NestedList*)malloc(sizeof(NestedList));
+    nested->value = 1;
+    nested->next = (NestedList*)malloc(sizeof(NestedList));
+    nested->next->value = 2;
+    nested->next->next = (NestedList*)malloc(sizeof(NestedList));
+    nested->next->next->value = 3;
+    nested->next->next->next = NULL;
+    nested->next->child = (NestedList*)malloc(sizeof(NestedList));
+    nested->next->child->value = 5;
+    nested->next->child->next = (NestedList*)malloc(sizeof(NestedList));
+    nested->next->child->next->value = 6;
+    nested->next->child->next->next = NULL;
+    nested->child = (NestedList*)malloc(sizeof(NestedList));
+    nested->child->value = 4;
+    nested->child->next = NULL;
+    nested->child->child = NULL;
+    
+    Node *flattenedList = NULL;
+    flatten(nested, &flattenedList);
+    
+    for (Node *ptr = flattenedList; ptr != NULL; ptr = ptr->next) {
+        printf("%d ", ptr->value);
+    }
+    printf("\n");
+    
+    // Free the allocated memory
+    Node *ptr = flattenedList;
+    while (ptr != NULL) {
+        Node *next = ptr->next;
+        free(ptr);
+        ptr = next;
+    }
+    
+    /* Possible weaknesses found:
+     *  assignment to 'Node *' {aka 'struct _Node *'} from incompatible pointer type 'NestedList *' {aka 'struct _NestedList *'} [-Wincompatible-pointer-types]
+     */
+    ptr = nested;
+    while (ptr != NULL) {
+        /* Possible weaknesses found:
+         *  initialization of 'NestedList *' {aka 'struct _NestedList *'} from incompatible pointer type 'struct _Node *' [-Wincompatible-pointer-types]
+         */
+        NestedList *next = ptr->next;
+        /* Possible weaknesses found:
+         *  no member named 'child' in 'struct _Node'
+         *  'Node' {aka 'struct _Node'} has no member named 'child'
+         */
+        if (ptr->child) {
+            /* Possible weaknesses found:
+             *  no member named 'child' in 'struct _Node'
+             *  'Node' {aka 'struct _Node'} has no member named 'child'
+             */
+            NestedList *child = ptr->child;
+            while (child != NULL) {
+                NestedList *childNext = child->next;
+                free(child);
+                child = childNext;
+            }
+        }
+        free(ptr);
+        /* Possible weaknesses found:
+         *  assignment to 'Node *' {aka 'struct _Node *'} from incompatible pointer type 'NestedList *' {aka 'struct _NestedList *'} [-Wincompatible-pointer-types]
+         */
+        ptr = next;
+    }
+    
+    return 0;
+}

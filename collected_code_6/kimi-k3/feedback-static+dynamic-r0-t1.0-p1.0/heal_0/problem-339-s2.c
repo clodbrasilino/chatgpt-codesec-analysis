@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int findMaxOccurringDivisor(int lower, int upper, int *result)
+{
+    int *count = NULL;
+    int range, i, j, maxIndex;
+    
+    if (result == NULL || lower > upper || lower < 1) {
+        return -1;
+    }
+    
+    range = upper - lower + 1;
+    count = (int *)calloc((size_t)range, sizeof(int));
+    if (count == NULL) {
+        return -1;
+    }
+    
+    for (i = 1; i <= upper; i++) {
+        int start = (lower + i - 1) / i;
+        int end = upper / i;
+        
+        if (start <= end) {
+            for (j = start; j <= end; j++) {
+                int idx = j * i - lower;
+                if (idx >= 0 && idx < range) {
+                    count[idx]++;
+                }
+            }
+        }
+    }
+    
+    maxIndex = 0;
+    for (i = 1; i < range; i++) {
+        if (count[i] > count[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+    
+    *result = lower + maxIndex;
+    free(count);
+    return 0;
+}
+
+int main(void)
+{
+    int lower, upper, result;
+    
+    printf("Enter lower bound: ");
+    if (scanf("%d", &lower) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter upper bound: ");
+    if (scanf("%d", &upper) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (findMaxOccurringDivisor(lower, upper, &result) != 0) {
+        fprintf(stderr, "Error: Invalid range or memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Maximum occurring divisor: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long centered_hexagonal(int n) {
+    if (n < 1) {
+        return -1;
+    }
+    return 3LL * n * (n - 1) + 1;
+}
+
+int main(int argc, char * const argv[]) {
+    int n;
+    
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <integer>\n", argv[0]);
+        return 1;
+    }
+    
+    n = atoi(argv[1]);
+    
+    long long result = centered_hexagonal(n);
+    
+    if (result < 0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("%lld\n", result);
+    return 0;
+}

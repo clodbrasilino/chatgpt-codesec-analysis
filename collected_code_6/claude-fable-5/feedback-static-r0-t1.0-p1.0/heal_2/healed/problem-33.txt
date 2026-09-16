@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int decimal_to_binary(long decimal, char *buffer, size_t buffer_size)
+{
+    size_t index;
+    size_t start;
+    size_t end;
+    unsigned long value;
+
+    if (buffer == NULL || buffer_size < 2) {
+        return -1;
+    }
+
+    index = 0;
+
+    if (decimal < 0) {
+        buffer[index] = '-';
+        index++;
+        value = (unsigned long)(-(decimal + 1)) + 1UL;
+    } else {
+        value = (unsigned long)decimal;
+    }
+
+    start = index;
+
+    if (value == 0UL) {
+        if (index + 1 >= buffer_size) {
+            return -1;
+        }
+        buffer[index] = '0';
+        index++;
+    } else {
+        while (value > 0UL) {
+            if (index + 1 >= buffer_size) {
+                return -1;
+            }
+            buffer[index] = (char)('0' + (char)(value % 2UL));
+            index++;
+            value /= 2UL;
+        }
+    }
+
+    buffer[index] = '\0';
+
+    end = index - 1;
+    while (start < end) {
+        char temp = buffer[start];
+        buffer[start] = buffer[end];
+        buffer[end] = temp;
+        start++;
+        end--;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long decimal = 0;
+    char binary[CHAR_BIT * sizeof(long) + 2];
+    int scan_result;
+
+    printf("Enter a decimal number: ");
+
+    scan_result = scanf("%ld", &decimal);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (decimal_to_binary(decimal, binary, sizeof(binary)) != 0) {
+        fprintf(stderr, "Error: conversion failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Binary representation: %s\n", binary);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Removed the redundant bounds check in the negative branch** — the static analyzer flagged `if (index + 1 >= buffer_size)` as always false (`knownConditionTrueFalse`). At that point `index` is guaranteed to be `0` and `buffer_size` is guaranteed to be `>= 2` by the guard clause at the top of the function, so `0 + 1 >= buffer_size` can never be true. Dead code removed.
+
+2. **Kept the `buffer_size < 2` guard** — the analyzer only noted it was *assuming* this check is not redundant; it is in fact essential, since the minimum valid output (`"0"` plus NUL terminator) requires 2 bytes. Removing it would reintroduce the possibility of a buffer overflow for tiny buffers.
+
+3. **Kept `index = 0`** — the finding "assigned value is 0" is informational context for the dead-condition diagnosis, not a defect in itself. The explicit initialization remains necessary for correctness.
+
+The rest of the function is sound: the `-(decimal + 1) + 1UL` idiom safely negates `LONG_MIN` without signed overflow, the terminator write is protected by the `index + 1 >= buffer_size` checks inside the loops, the buffer in `main` (`CHAR_BIT * sizeof(long) + 2`) is sized for the worst case (sign + all bits + NUL), and `scanf`'s return value is validated.

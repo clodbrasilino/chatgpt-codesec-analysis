@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI (22.0 / 7.0)
+
+double arc_length(double radius, double angle_degrees)
+{
+    return (angle_degrees / 360.0) * PI * radius;
+}
+
+int main(void)
+{
+    double radius;
+    double angle;
+    double result;
+
+    printf("Enter the radius of the circle: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the angle in degrees: ");
+    if (scanf("%lf", &angle) != 1) {
+        fprintf(stderr, "Error: invalid input for angle.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (angle < 0.0 || angle > 360.0) {
+        fprintf(stderr, "Error: angle must be between 0 and 360 degrees.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = arc_length(radius, angle);
+
+    if (isnan(result) || isinf(result)) {
+        fprintf(stderr, "Error: calculation resulted in an invalid value.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Arc length: %.6f\n", result);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple *repeat_tuple(const Tuple *input, size_t n)
+{
+    Tuple *result;
+    size_t total;
+    size_t i;
+    size_t j;
+
+    if (input == NULL || input->elements == NULL || input->size == 0U || n == 0U) {
+        return NULL;
+    }
+
+    if (input->size > SIZE_MAX / n) {
+        return NULL;
+    }
+
+    total = input->size * n;
+
+    if (total > SIZE_MAX / sizeof(int)) {
+        return NULL;
+    }
+
+    result = malloc(sizeof(Tuple));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    result->elements = malloc(total * sizeof(int));
+    if (result->elements == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    result->size = total;
+
+    for (i = 0U; i < n; i++) {
+        for (j = 0U; j < input->size; j++) {
+            result->elements[(i * input->size) + j] = input->elements[j];
+        }
+    }
+
+    return result;
+}
+
+void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+int main(void)
+{
+    int data[] = {1, 2, 3};
+    Tuple original;
+    Tuple *repeated;
+    size_t i;
+
+    original.elements = data;
+    original.size = sizeof(data) / sizeof(data[0]);
+
+    repeated = repeat_tuple(&original, 3U);
+    if (repeated == NULL) {
+        fprintf(stderr, "Failed to repeat tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0U; i < repeated->size; i++) {
+        printf("%d", repeated->elements[i]);
+        if (i + 1U < repeated->size) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free_tuple(repeated);
+
+    return EXIT_SUCCESS;
+}

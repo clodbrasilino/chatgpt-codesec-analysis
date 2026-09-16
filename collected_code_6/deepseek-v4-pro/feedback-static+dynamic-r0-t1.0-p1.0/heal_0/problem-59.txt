@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long octagonal_number(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    return (long long)n * (3 * n - 2);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return 1;
+    }
+
+    char *endptr;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || val <= 0 || val > 1000000) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    printf("%lld\n", octagonal_number((int)val));
+    return 0;
+}
+```

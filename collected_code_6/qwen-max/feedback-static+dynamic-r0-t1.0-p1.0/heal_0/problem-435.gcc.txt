@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-435.c: In function 'find_last_digit':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-435.c:4:12: error: implicit declaration of function 'abs' [-Wimplicit-function-declaration]
+    4 |     return abs(number) % 10;
+      |            ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-435.c:2:1: note: include '<stdlib.h>' or provide a declaration of 'abs'
+    1 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    2 | 

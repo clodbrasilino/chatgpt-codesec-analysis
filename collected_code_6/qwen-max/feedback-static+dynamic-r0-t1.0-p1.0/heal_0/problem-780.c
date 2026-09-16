@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->a - ((Tuple *)b)->a;
+}
+
+int findCombinations(Tuple *tuples, int n, int target, int *result, int *resultSize) {
+    qsort(tuples, n, sizeof(Tuple), compare);
+    int left = 0, right = n - 1;
+    while (left < right) {
+        int sum = tuples[left].a + tuples[right].a;
+        if (sum == target) {
+            result[(*resultSize)++] = tuples[left].b;
+            result[(*resultSize)++] = tuples[right].b;
+            left++;
+            right--;
+        } else if (sum < target) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return *resultSize > 0 ? 1 : 0;
+}
+
+int main() {
+    Tuple tuples[] = {{2, 1}, {3, 2}, {4, 3}, {5, 4}};
+    int n = 4;
+    int target = 7;
+    int result[8];
+    int resultSize = 0;
+    
+    if (findCombinations(tuples, n, target, result, &resultSize)) {
+        for (int i = 0; i < resultSize; i += 2) {
+            printf("(%d, %d) ", result[i], result[i + 1]);
+        }
+        printf("\n");
+    } else {
+        printf("No valid combinations found.\n");
+    }
+
+    return 0;
+}

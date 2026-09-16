@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-846.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-846.c:50:11: style: Condition 'n!=(int)(sizeof(departure)/sizeof(departure[0]))' is always false [knownConditionTrueFalse]
+    if (n != (int)(sizeof(departure) / sizeof(departure[0]))) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-846.c:48:13: note: Assignment 'n=(int)(sizeof(arrival)/sizeof(arrival[0]))', assigned value is 6
+    int n = (int)(sizeof(arrival) / sizeof(arrival[0]));
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-846.c:50:11: note: Condition 'n!=(int)(sizeof(departure)/sizeof(departure[0]))' is always false
+    if (n != (int)(sizeof(departure) / sizeof(departure[0]))) {
+          ^

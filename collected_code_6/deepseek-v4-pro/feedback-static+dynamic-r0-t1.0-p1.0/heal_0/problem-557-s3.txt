@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void toggle_case(char *str) {
+    while (*str) {
+        if (isupper((unsigned char)*str))
+            *str = tolower((unsigned char)*str);
+        else if (islower((unsigned char)*str))
+            *str = toupper((unsigned char)*str);
+        str++;
+    }
+}
+
+int main(void) {
+    char str[] = "Hello, World! 123 ABC abc";
+    
+    printf("Original: %s\n", str);
+    toggle_case(str);
+    printf("Toggled:  %s\n", str);
+    
+    return 0;
+}
+```

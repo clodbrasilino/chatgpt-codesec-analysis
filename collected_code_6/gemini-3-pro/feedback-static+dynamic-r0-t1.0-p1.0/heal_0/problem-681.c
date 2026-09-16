@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int smallest_prime_divisor(long long int n) {
+    if (n <= 1) {
+        return -1; 
+    }
+    
+    if (n % 2 == 0) {
+        return 2;
+    }
+    
+    for (long long int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            return i;
+        }
+    }
+    
+    return n;
+}
+
+int main(void) {
+    long long int num;
+    
+    if (scanf("%lld", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    long long int result = smallest_prime_divisor(num);
+    
+    if (result == -1) {
+        printf("-1\n");
+    } else {
+        printf("%lld\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}

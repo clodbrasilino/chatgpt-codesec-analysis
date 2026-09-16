@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-897.c: In function 'is_word_in_sentence':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-897.c:12:28: error: implicit declaration of function 'isalpha' [-Wimplicit-function-declaration]
+   12 |             if (i == 0 || !isalpha(sentence[i - 1])) {
+      |                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-897.c:4:1: note: include '<ctype.h>' or provide a declaration of 'isalpha'
+    3 | #include <stdbool.h>
+  +++ |+#include <ctype.h>
+    4 | 

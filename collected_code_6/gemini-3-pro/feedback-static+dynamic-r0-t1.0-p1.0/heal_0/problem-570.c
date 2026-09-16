@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_words(char **list, int *size, const char *target) {
+    if (list == NULL || size == NULL || target == NULL) {
+        return;
+    }
+
+    int i = 0;
+    while (i < *size) {
+        if (list[i] != NULL && strstr(list[i], target) != NULL) {
+            free(list[i]);
+            for (int j = i; j < *size - 1; j++) {
+                list[j] = list[j + 1];
+            }
+            list[*size - 1] = NULL;
+            (*size)--;
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    int size = 5;
+    char **list = (char **)malloc((size_t)size * sizeof(char *));
+    if (list == NULL) {
+        return 1;
+    }
+
+    list[0] = strdup("apple");
+    list[1] = strdup("banana");
+    list[2] = strdup("cherry");
+    list[3] = strdup("date");
+    list[4] = strdup("elderberry");
+
+    for (int i = 0; i < size; i++) {
+        if (list[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(list[j]);
+            }
+            free(list);
+            return 1;
+        }
+    }
+
+    remove_words(list, &size, "rr");
+
+    for (int i = 0; i < size; i++) {
+        printf("%s\n", list[i]);
+    }
+
+    for (int i = 0; i < size; i++) {
+        free(list[i]);
+    }
+    free(list);
+
+    return 0;
+}

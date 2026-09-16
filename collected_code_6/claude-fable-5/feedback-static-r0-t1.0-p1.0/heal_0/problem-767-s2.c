@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_pairs_with_sum(const int *arr, size_t n, int sum)
+{
+    int count = 0;
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || n < 2U) {
+        return 0;
+    }
+
+    for (i = 0U; i < n - 1U; i++) {
+        for (j = i + 1U; j < n; j++) {
+            if (arr[i] + arr[j] == sum) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int arr[] = {1, 5, 7, -1, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int sum = 6;
+    int result;
+
+    result = count_pairs_with_sum(arr, n, sum);
+
+    if (printf("Number of pairs with sum %d: %d\n", sum, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

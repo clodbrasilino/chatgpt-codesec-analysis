@@ -1,27 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void decode_rle(int *encoded, int encoded_size, int **decoded, int *decoded_size) {
-    *decoded = (int *)malloc(encoded_size * sizeof(int));
-    if (*decoded == NULL) return;
-    *decoded_size = 0;
-    
-    for (int i = 0; i < encoded_size; i += 2) {
-        for (int j = 0; j < encoded[i]; ++j) {
-            (*decoded)[(*decoded_size)++] = encoded[i + 1];
+typedef struct {
+    int value;
+    int count;
+} RLEPair;
+
+void decodeRLE(RLEPair *encoded, int length, int **decoded, int *decLength) {
+    *decLength = 0;
+    for (int i = 0; i < length; ++i) {
+        *decLength += encoded[i].count;
+    }
+    *decoded = (int *)malloc(*decLength * sizeof(int));
+    if (*decoded == NULL) {
+        return;
+    }
+    int index = 0;
+    for (int i = 0; i < length; ++i) {
+        for (int j = 0; j < encoded[i].count; ++j) {
+            (*decoded)[index++] = encoded[i].value;
         }
     }
 }
 
 int main() {
-    int encoded[] = {3, 2, 2, 5, 1, 7};
-    int encoded_size = 6;
+    RLEPair rleData[] = {{1, 3}, {2, 2}, {3, 5}};
+    int length = 3;
     int *decoded = NULL;
-    int decoded_size;
+    int decLength = 0;
 
-    decode_rle(encoded, encoded_size, &decoded, &decoded_size);
-    
-    for (int i = 0; i < decoded_size; ++i) {
+    decodeRLE(rleData, length, &decoded, &decLength);
+
+    for (int i = 0; i < decLength; ++i) {
         printf("%d ", decoded[i]);
     }
 

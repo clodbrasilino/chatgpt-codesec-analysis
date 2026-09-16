@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+int* extract_elements(int *list, int list_size, int start_index, int count, int *return_size) {
+    if (start_index < 0 || start_index >= list_size || count <= 0 || start_index + count > list_size) {
+        *return_size = 0;
+        return NULL;
+    }
+
+    int *result = (int *)malloc(count * sizeof(int));
+    if (result == NULL) {
+        *return_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < count; ++i) {
+        result[i] = list[start_index + i];
+    }
+
+    *return_size = count;
+    return result;
+}
+
+int main() {
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    int start_index = 2;
+    int count = 5;
+
+    int return_size;
+    int *extracted = extract_elements(list, list_size, start_index, count, &return_size);
+
+    if (extracted != NULL) {
+        for (int i = 0; i < return_size; ++i) {
+            printf("%d ", extracted[i]);
+        }
+        free(extracted);
+    } else {
+        printf("Failed to extract elements.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+
+int find_msb_position(unsigned int value)
+{
+    int position = -1;
+
+    while (value != 0U) {
+        value >>= 1U;
+        position++;
+    }
+
+    return position;
+}
+
+int main(void)
+{
+    unsigned int test_values[] = { 0U, 1U, 2U, 5U, 16U, 255U, 1024U, 4294967295U };
+    size_t count = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+
+    for (i = 0U; i < count; i++) {
+        int msb = find_msb_position(test_values[i]);
+
+        if (msb < 0) {
+            printf("Value %u has no set bits\n", test_values[i]);
+        } else {
+            printf("Value %u: most significant set bit is at position %d\n",
+                   test_values[i], msb);
+        }
+    }
+
+    return 0;
+}
+```
+
+This solution:
+
+- **Handles the zero case explicitly** (returns -1, checked before printing), avoiding CWE-703 issues with unhandled edge conditions.
+- **Uses `unsigned int`** to avoid undefined behavior from shifting signed values, in line with CWE-710 coding standards.
+- **Allocates no dynamic resources**, so there is no resource lifetime to mismanage (CWE-664).
+- **Uses `int main(void)` with an explicit return**, unsigned literal suffixes, and braces on all control structures for standards compliance.

@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <math.h>
+
+double pentagon_area(double side) {
+    return (sqrt(5 * (5 + 2 * sqrt(5))) * pow(side, 2)) / 4;
+}
+
+int main() {
+    double side = 5.0;
+    double area = pentagon_area(side);
+    printf("Area of the pentagon: %f\n", area);
+    return 0;
+}

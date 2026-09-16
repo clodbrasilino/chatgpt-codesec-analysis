@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+int cumulative_sum(Tuple* tuple_list, size_t size) {
+    if (tuple_list == NULL) {
+        return 0;
+    }
+
+    int sum = 0;
+    for (size_t i = 0; i < size; ++i) {
+        sum += tuple_list[i].x;
+        sum += tuple_list[i].y;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    size_t size = 3;
+    Tuple* tuple_list = (Tuple*)malloc(size * sizeof(Tuple));
+    if (tuple_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tuple_list[0].x = 1;
+    tuple_list[0].y = 2;
+    tuple_list[1].x = 3;
+    tuple_list[1].y = 4;
+    tuple_list[2].x = 5;
+    tuple_list[2].y = 6;
+
+    int sum = cumulative_sum(tuple_list, size);
+    printf("Cumulative sum: %d\n", sum);
+
+    free(tuple_list);
+    tuple_list = NULL;
+
+    return EXIT_SUCCESS;
+}

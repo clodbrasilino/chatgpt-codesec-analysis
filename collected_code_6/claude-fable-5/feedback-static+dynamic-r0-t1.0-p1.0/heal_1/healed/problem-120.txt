@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int max_product_from_pairs(const Pair *pairs, size_t count, long long *result)
+{
+    size_t i;
+    long long max;
+
+    if (pairs == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    max = (long long)pairs[0].first * (long long)pairs[0].second;
+
+    for (i = 1U; i < count; i++) {
+        const long long product = (long long)pairs[i].first * (long long)pairs[i].second;
+        if (product > max) {
+            max = product;
+        }
+    }
+
+    *result = max;
+    return 0;
+}
+
+int main(void)
+{
+    Pair pairs[] = {
+        {2, 7},
+        {2, 6},
+        {1, 8},
+        {4, 9}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+    long long result = 0LL;
+    int status;
+
+    status = max_product_from_pairs(pairs, count, &result);
+    if (status != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum product: %lld\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `[variableScope]` weakness identified by static analysis: the variable `product` was previously declared at function scope but only used inside the loop body. It has been moved into the loop and declared `const`, which minimizes its scope, prevents accidental reuse outside the loop, and makes the code easier to reason about. All other defensive properties of the original code (NULL-pointer checks, zero-count check, and widening casts to `long long` before multiplication to avoid signed integer overflow) have been preserved.

@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b);
+
+int main(void) {
+    int num1, num2;
+    
+    printf("Enter two integers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("GCD of %d and %d is %d\n", num1, num2, gcd(num1, num2));
+    
+    return EXIT_SUCCESS;
+}
+
+int gcd(int a, int b) {
+    if (b == 0) {
+        return abs(a);
+    }
+    return gcd(b, a % b);
+}
+```

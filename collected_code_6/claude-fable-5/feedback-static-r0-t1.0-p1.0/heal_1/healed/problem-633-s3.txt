@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_xor_all_pairs(const int *arr, size_t n)
+{
+    long long total = 0;
+    unsigned int bit;
+
+    if (arr == NULL || n < 2) {
+        return 0;
+    }
+
+    for (bit = 0; bit < 32; bit++) {
+        long long count_set = 0;
+        size_t i;
+
+        for (i = 0; i < n; i++) {
+            if (((unsigned int)arr[i] >> bit) & 1U) {
+                count_set++;
+            }
+        }
+
+        total += count_set * (long long)(n - count_set) * (long long)(1ULL << bit);
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int numbers[] = {7, 3, 5};
+    size_t n = sizeof(numbers) / sizeof(numbers[0]);
+    long long result;
+
+    result = sum_xor_all_pairs(numbers, n);
+
+    if (printf("Sum of XOR of all pairs: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key fixes applied:**
+
+1. **`shiftTooManyBitsSigned` fix:** The expression `arr[i] >> bit` shifted a *signed* `int` by up to 31 bits. Right-shifting a negative signed value is implementation-defined behavior. Casting to `unsigned int` before shifting (`(unsigned int)arr[i] >> bit`) makes the operation well-defined for all 32 bit positions.
+
+2. **Shift in the accumulation:** `1LL << bit` is safe for `bit < 32` on a 64-bit `long long`, but using `1ULL << bit` with an explicit cast back to `long long` removes any ambiguity about signed shift semantics and silences analyzers.
+
+3. **Loop counter type:** Changed `bit` from `int` to `unsigned int`, which is cleaner for bit-manipulation contexts and avoids signed/unsigned comparison concerns; the `bit < 32` bound remains as the intentional loop limit (it is not redundant — it defines the number of bits processed for a 32-bit integer).
+
+The program still computes the sum of XOR over all pairs (7^3 + 7^5 + 3^5 = 4 + 2 + 6 = 12) and prints `Sum of XOR of all pairs: 12`.

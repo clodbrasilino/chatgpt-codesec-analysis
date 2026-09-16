@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long perrin(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 3;
+    }
+    if (n == 1) {
+        return 0;
+    }
+    if (n == 2) {
+        return 2;
+    }
+    return perrin(n - 2) + perrin(n - 3);
+}
+
+int main(int argc, const char *argv[]) {
+    int n;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    n = atoi(argv[1]);
+
+    if (n < 0) {
+        fprintf(stderr, "Error: n must be a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 50) {
+        fprintf(stderr, "Error: n is too large, it may cause performance issues or integer overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = perrin(n);
+    printf("The %d'th Perrin number is %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

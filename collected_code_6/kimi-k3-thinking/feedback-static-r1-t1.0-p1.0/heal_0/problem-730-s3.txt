@@ -1,0 +1,104 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+static struct Node *create_node(int data)
+{
+    struct Node *new_node = (struct Node *)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static void append_node(struct Node **head, int data)
+{
+    struct Node *new_node = create_node(data);
+    struct Node *current;
+
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+static void remove_consecutive_duplicates(struct Node *head)
+{
+    struct Node *current = head;
+    struct Node *duplicate;
+
+    while (current != NULL && current->next != NULL) {
+        if (current->data == current->next->data) {
+            duplicate = current->next;
+            current->next = current->next->next;
+            free(duplicate);
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+static void print_list(const struct Node *head)
+{
+    const struct Node *current = head;
+
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+static void free_list(struct Node *head)
+{
+    struct Node *current = head;
+    struct Node *next;
+
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void)
+{
+    struct Node *head = NULL;
+    int values[] = {1, 1, 2, 3, 3, 3, 4, 5, 5, 6};
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < num_values; i++) {
+        append_node(&head, values[i]);
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    remove_consecutive_duplicates(head);
+
+    printf("After removing consecutive duplicates: ");
+    print_list(head);
+
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}
+```

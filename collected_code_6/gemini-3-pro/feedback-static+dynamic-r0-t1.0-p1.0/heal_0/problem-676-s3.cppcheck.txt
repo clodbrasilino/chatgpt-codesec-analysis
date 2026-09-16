@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:32:15: style: Condition 'input==NULL' is always false [knownConditionTrueFalse]
+    if (input == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:29:25: note: Assignment 'input="Hello, World! 123 @#$"', assigned value is "Hello, World! 123 @#$"
+    const char *input = "Hello, World! 123 @#$";
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:32:15: note: Condition 'input==NULL' is always false
+    if (input == NULL) {
+              ^

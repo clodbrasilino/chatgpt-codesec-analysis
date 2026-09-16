@@ -1,0 +1,25 @@
+#include <stdio.h>
+
+size_t count_numeric(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(int argc, char *argv[]) {
+    const char *test_str = "Hello123World456!";
+    size_t numeric_count = count_numeric(test_str);
+
+    printf("String: %s\n", test_str);
+    printf("Numeric count: %zu\n", numeric_count);
+
+    return 0;
+}

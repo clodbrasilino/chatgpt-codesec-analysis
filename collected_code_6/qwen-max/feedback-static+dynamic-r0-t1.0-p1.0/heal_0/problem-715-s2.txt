@@ -4,38 +4,62 @@
 #include <string.h>
 
 typedef struct {
-    int *data;
+    int *values;
     size_t length;
 } IntTuple;
 
-IntTuple parseStringToInts(const char *input) {
-    IntTuple result = {NULL, 0};
-    const char *delim = " ,";
-    char *token, *rest = (char *)input;
-    while ((token = strsep(&rest, delim)) != NULL && *token != '\0') {
-        ++result.length;
-        result.data = (int *)realloc(result.data, result.length * sizeof(int));
-        result.data[result.length - 1] = atoi(token);
+IntTuple stringToTuple(const char *str) {
+    IntTuple result;
+    result.length = 0;
+    result.values = NULL;
+
+    if (str == NULL || *str == '\0') {
+        return result;
     }
+
+    char *tempStr = strdup(str);
+    if (tempStr == NULL) {
+        return result;
+    }
+
+    char *token = strtok(tempStr, ", ");
+    while (token != NULL) {
+        int newLength = result.length + 1;
+        int *newValues = realloc(result.values, newLength * sizeof(int));
+        if (newValues == NULL) {
+            free(tempStr);
+            free(result.values);
+            result.values = NULL;
+            return result;
+        }
+        result.values = newValues;
+        result.values[result.length] = atoi(token);
+        result.length = newLength;
+        token = strtok(NULL, ", ");
+    }
+
+    free(tempStr);
     return result;
 }
 
-void freeIntTuple(IntTuple *tuple) {
-    free(tuple->data);
-    tuple->data = NULL;
+void freeTuple(IntTuple *tuple) {
+    if (tuple->values != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+    }
     tuple->length = 0;
 }
 
 int main() {
-    const char *input = "123 456,789 101,112";
-    IntTuple tuple = parseStringToInts(input);
-    
+    const char *input = "1, 2, 3, 4, 5";
+    IntTuple tuple = stringToTuple(input);
+
     for (size_t i = 0; i < tuple.length; ++i) {
-        printf("%d ", tuple.data[i]);
+        printf("%d ", tuple.values[i]);
     }
-    putchar('\n');
-    
-    freeIntTuple(&tuple);
+    printf("\n");
+
+    freeTuple(&tuple);
     return 0;
 }
 ```

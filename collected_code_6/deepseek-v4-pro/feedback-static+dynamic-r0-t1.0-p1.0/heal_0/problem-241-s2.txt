@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char*** generate_3d_array(int x, int y, int z) {
+    if (x <= 0 || y <= 0 || z <= 0) {
+        return NULL;
+    }
+    
+    char*** arr = (char***)malloc(x * sizeof(char**));
+    if (arr == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < x; i++) {
+        arr[i] = (char**)malloc(y * sizeof(char*));
+        if (arr[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                for (int k = 0; k < y; k++) {
+                    free(arr[j][k]);
+                }
+                free(arr[j]);
+            }
+            free(arr);
+            return NULL;
+        }
+        
+        for (int j = 0; j < y; j++) {
+            arr[i][j] = (char*)malloc(z * sizeof(char));
+            if (arr[i][j] == NULL) {
+                for (int k = 0; k < j; k++) {
+                    free(arr[i][k]);
+                }
+                free(arr[i]);
+                for (int l = 0; l < i; l++) {
+                    for (int m = 0; m < y; m++) {
+                        free(arr[l][m]);
+                    }
+                    free(arr[l]);
+                }
+                free(arr);
+                return NULL;
+            }
+            
+            for (int k = 0; k < z; k++) {
+                arr[i][j][k] = '*';
+            }
+        }
+    }
+    
+    return arr;
+}
+
+void free_3d_array(char*** arr, int x, int y) {
+    if (arr == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < x; i++) {
+        for (int j = 0; j < y; j++) {
+            free(arr[i][j]);
+        }
+        free(arr[i]);
+    }
+    free(arr);
+}
+
+int main() {
+    int x = 3, y = 4, z = 5;
+    char*** arr = generate_3d_array(x, y, z);
+    
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    for (int i = 0; i < x; i++) {
+        for (int j = 0; j < y; j++) {
+            for (int k = 0; k < z; k++) {
+                printf("%c ", arr[i][j][k]);
+            }
+            printf("\n");
+        }
+        printf("\n");
+    }
+    
+    free_3d_array(arr, x, y);
+    return 0;
+}
+```

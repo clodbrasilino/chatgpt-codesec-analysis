@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int convert_tuple_to_int(const unsigned int *tuple, size_t size, int *result)
+{
+    if (tuple == NULL || result == NULL || size == 0 || size > 10)
+    {
+        return -1;
+    }
+
+    long long value = 0;
+    size_t i;
+
+    for (i = 0; i < size; i++)
+    {
+        if (tuple[i] > 9)
+        {
+            return -1;
+        }
+
+        value = value * 10 + tuple[i];
+
+        if (value > INT_MAX)
+        {
+            return -1;
+        }
+    }
+
+    *result = (int)value;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int tuple[] = {1, 2, 3, 4};
+    size_t size = sizeof(tuple) / sizeof(tuple[0]);
+    int result = 0;
+
+    if (convert_tuple_to_int(tuple, size, &result) == 0)
+    {
+        printf("%d\n", result);
+    }
+    else
+    {
+        printf("Conversion failed\n");
+    }
+
+    return 0;
+}
+```

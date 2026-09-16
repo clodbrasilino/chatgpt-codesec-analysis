@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+bool find_triplet_sum(const int *arr, size_t n, int target_sum) {
+    if (arr == NULL || n < 3) {
+        return false;
+    }
+    
+    int *sorted = malloc(n * sizeof(int));
+    if (sorted == NULL) {
+        return false;
+    }
+    
+    for (size_t i = 0; i < n; i++) {
+        sorted[i] = arr[i];
+    }
+    
+    qsort(sorted, n, sizeof(int), compare_ints);
+    
+    bool found = false;
+    
+    for (size_t i = 0; i < n - 2 && !found; i++) {
+        size_t left = i + 1;
+        size_t right = n - 1;
+        
+        while (left < right) {
+            long long current_sum = (long long)sorted[i] + sorted[left] + sorted[right];
+            
+            if (current_sum == target_sum) {
+                found = true;
+                break;
+            } else if (current_sum < target_sum) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    free(sorted);
+    return found;
+}
+
+int main(void) {
+    int arr[] = {12, 3, 4, 1, 6, 9};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int target = 24;
+    
+    if (find_triplet_sum(arr, n, target)) {
+        printf("Triplet found with sum %d\n", target);
+    } else {
+        printf("No triplet found with sum %d\n", target);
+    }
+    
+    return 0;
+}
+```

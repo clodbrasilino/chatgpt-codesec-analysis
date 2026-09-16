@@ -1,0 +1,222 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t size;
+    size_t capacity;
+} Dict;
+
+static char *dup_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strlen(s) + 1U;
+    copy = malloc(len);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len);
+    return copy;
+}
+
+Dict *dict_create(void)
+{
+    Dict *d = malloc(sizeof(Dict));
+
+    if (d == NULL) {
+        return NULL;
+    }
+    d->size = 0U;
+    d->capacity = 8U;
+    d->entries = malloc(d->capacity * sizeof(Entry));
+    if (d->entries == NULL) {
+        free(d);
+        return NULL;
+    }
+    return d;
+}
+
+void dict_destroy(Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    for (i = 0U; i < d->size; i++) {
+        free(d->entries[i].key);
+        free(d->entries[i].value);
+    }
+    free(d->entries);
+    free(d);
+}
+
+static Entry *dict_find(const Dict *d, const char *key)
+{
+    size_t i;
+
+    for (i = 0U; i < d->size; i++) {
+        if (strcmp(d->entries[i].key, key) == 0) {
+            return &d->entries[i];
+        }
+    }
+    return NULL;
+}
+
+int dict_set(Dict *d, const char *key, const char *value)
+{
+    Entry *found;
+    char *new_key;
+    char *new_value;
+
+    if ((d == NULL) || (key == NULL) || (value == NULL)) {
+        return -1;
+    }
+
+    found = dict_find(d, key);
+    if (found != NULL) {
+        new_value = dup_string(value);
+        if (new_value == NULL) {
+            return -1;
+        }
+        free(found->value);
+        found->value = new_value;
+        return 0;
+    }
+
+    if (d->size == d->capacity) {
+        size_t new_capacity = d->capacity * 2U;
+        Entry *new_entries;
+
+        if (new_capacity <= d->capacity) {
+            return -1;
+        }
+        new_entries = realloc(d->entries, new_capacity * sizeof(Entry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        d->entries = new_entries;
+        d->capacity = new_capacity;
+    }
+
+    new_key = dup_string(key);
+    if (new_key == NULL) {
+        return -1;
+    }
+    new_value = dup_string(value);
+    if (new_value == NULL) {
+        free(new_key);
+        return -1;
+    }
+
+    d->entries[d->size].key = new_key;
+    d->entries[d->size].value = new_value;
+    d->size++;
+    return 0;
+}
+
+Dict *dict_merge_three(const Dict *a, const Dict *b, const Dict *c)
+{
+    Dict *result;
+    const Dict *sources[3];
+    size_t i;
+    size_t j;
+
+    if ((a == NULL) || (b == NULL) || (c == NULL)) {
+        return NULL;
+    }
+
+    result = dict_create();
+    if (result == NULL) {
+        return NULL;
+    }
+
+    sources[0] = a;
+    sources[1] = b;
+    sources[2] = c;
+
+    for (i = 0U; i < 3U; i++) {
+        for (j = 0U; j < sources[i]->size; j++) {
+            if (dict_set(result, sources[i]->entries[j].key,
+                         sources[i]->entries[j].value) != 0) {
+                dict_destroy(result);
+                return NULL;
+            }
+        }
+    }
+    return result;
+}
+
+void dict_print(const Dict *d)
+{
+    size_t i;
+
+    if (d == NULL) {
+        return;
+    }
+    printf("{");
+    for (i = 0U; i < d->size; i++) {
+        printf("\"%s\": \"%s\"", d->entries[i].key, d->entries[i].value);
+        if (i + 1U < d->size) {
+            printf(", ");
+        }
+    }
+    printf("}\n");
+}
+
+int main(void)
+{
+    Dict *d1;
+    Dict *d2;
+    Dict *d3;
+    Dict *merged;
+    int status = EXIT_FAILURE;
+
+    d1 = dict_create();
+    d2 = dict_create();
+    d3 = dict_create();
+
+    if ((d1 == NULL) || (d2 == NULL) || (d3 == NULL)) {
+        fprintf(stderr, "Failed to create dictionaries\n");
+        goto cleanup;
+    }
+
+    if ((dict_set(d1, "a", "1") != 0) ||
+        (dict_set(d1, "b", "2") != 0) ||
+        (dict_set(d2, "b", "20") != 0) ||
+        (dict_set(d2, "c", "3") != 0) ||
+        (dict_set(d3, "c", "30") != 0) ||
+        (dict_set(d3, "d", "4") != 0)) {
+        fprintf(stderr, "Failed to populate dictionaries\n");
+        goto cleanup;
+    }
+
+    merged = dict_merge_three(d1, d2, d3);
+    if (merged == NULL) {
+        fprintf(stderr, "Failed to merge dictionaries\n");
+        goto cleanup;
+    }
+
+    dict_print(merged);
+    dict_destroy(merged);
+    status = EXIT_SUCCESS;
+
+cleanup:
+    dict_destroy(d1);
+    dict_destroy(d2);
+    dict_destroy(d3);
+    return status;
+}
+```

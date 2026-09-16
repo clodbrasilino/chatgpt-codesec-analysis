@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    const char *name;
+} List;
+
+Node *create_node(int data) {
+    Node *n = (Node *)malloc(sizeof(Node));
+    if (n == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    n->data = data;
+    n->next = NULL;
+    return n;
+}
+
+List *create_list(const char *name, const int *values, int count) {
+    List *l = (List *)malloc(sizeof(List));
+    if (l == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    l->name = name;
+    l->head = NULL;
+    if (count <= 0 || values == NULL) {
+        return l;
+    }
+    l->head = create_node(values[0]);
+    Node *current = l->head;
+    for (int i = 1; i < count; i++) {
+        current->next = create_node(values[i]);
+        current = current->next;
+    }
+    return l;
+}
+
+int list_length(const List *l) {
+    if (l == NULL) {
+        return 0;
+    }
+    int count = 0;
+    Node *current = l->head;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+List *find_max_length_sublist(List **lists, int num_lists) {
+    if (lists == NULL || num_lists <= 0) {
+        return NULL;
+    }
+    List *max_list = lists[0];
+    int max_len = list_length(lists[0]);
+    for (int i = 1; i < num_lists; i++) {
+        if (lists[i] == NULL) {
+            continue;
+        }
+        int len = list_length(lists[i]);
+        if (len > max_len) {
+            max_len = len;
+            max_list = lists[i];
+        }
+    }
+    return max_list;
+}
+
+void free_list(List *l) {
+    if (l == NULL) {
+        return;
+    }
+    Node *current = l->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(l);
+}
+
+void print_list(const List *l) {
+    if (l == NULL) {
+        printf("NULL list\n");
+        return;
+    }
+    printf("%s: ", l->name);
+    Node *current = l->head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("(length: %d)\n", list_length(l));
+}
+
+int main(void) {
+    int vals1[] = {1, 2, 3};
+    int vals2[] = {4, 5, 6, 7, 8};
+    int vals3[] = {9, 10};
+
+    List *l1 = create_list("List1", vals1, 3);
+    List *l2 = create_list("List2", vals2, 5);
+    List *l3 = create_list("List3", vals3, 2);
+
+    List *lists[] = {l1, l2, l3};
+    int num_lists = 3;
+
+    List *max = find_max_length_sublist(lists, num_lists);
+
+    print_list(l1);
+    print_list(l2);
+    print_list(l3);
+    printf("\nSublist with maximum length:\n");
+    print_list(max);
+
+    free_list(l1);
+    free_list(l2);
+    free_list(l3);
+
+    return EXIT_SUCCESS;
+}

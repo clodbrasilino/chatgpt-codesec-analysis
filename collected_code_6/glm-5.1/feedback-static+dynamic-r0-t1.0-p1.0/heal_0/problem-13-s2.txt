@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *word;
+    int count;
+} WordCount;
+
+WordCount* count_most_common_words(char **dictionary, int size, int *result_size) {
+    if (dictionary == NULL || size <= 0 || result_size == NULL) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    WordCount *counts = (WordCount*)malloc(size * sizeof(WordCount));
+    if (counts == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    int unique_size = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (dictionary[i] == NULL) {
+            continue;
+        }
+
+        int found = 0;
+        for (int j = 0; j < unique_size; j++) {
+            if (strcmp(counts[j].word, dictionary[i]) == 0) {
+                counts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            counts[unique_size].word = (char*)malloc(strlen(dictionary[i]) + 1);
+            if (counts[unique_size].word == NULL) {
+                for (int k = 0; k < unique_size; k++) {
+                    free(counts[k].word);
+                }
+                free(counts);
+                *result_size = 0;
+                return NULL;
+            }
+            strcpy(counts[unique_size].word, dictionary[i]);
+            counts[unique_size].count = 1;
+            unique_size++;
+        }
+    }
+
+    for (int i = 0; i < unique_size - 1; i++) {
+        for (int j = i + 1; j < unique_size; j++) {
+            if (counts[i].count < counts[j].count) {
+                WordCount temp = counts[i];
+                counts[i] = counts[j];
+                counts[j] = temp;
+            } else if (counts[i].count == counts[j].count) {
+                if (strcmp(counts[i].word, counts[j].word) > 0) {
+                    WordCount temp = counts[i];
+                    counts[i] = counts[j];
+                    counts[j] = temp;
+                }
+            }
+        }
+    }
+
+    *result_size = unique_size;
+    return counts;
+}
+
+void free_word_counts(WordCount *counts, int size) {
+    if (counts == NULL) {
+        return;
+    }
+    for (int i = 0; i < size; i++) {
+        free(counts[i].word);
+    }
+    free(counts);
+}
+
+int main() {
+    char *dictionary[] = {
+        "apple", "banana", "apple", "orange", "banana", "apple", "grape",
+        "orange", "banana", "apple", "grape", "kiwi", "kiwi", "kiwi"
+    };
+    int size = sizeof(dictionary) / sizeof(dictionary[0]);
+    int result_size = 0;
+
+    WordCount *counts = count_most_common_words(dictionary, size, &result_size);
+
+    if (counts != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%s: %d\n", counts[i].word, counts[i].count);
+        }
+        free_word_counts(counts, result_size);
+    }
+
+    return 0;
+}
+```

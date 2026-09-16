@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+size_t remove_duplicate_words(char **words, size_t count) {
+    if (words == NULL) {
+        return 0;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            continue;
+        }
+
+        bool is_duplicate = false;
+
+        for (size_t j = 0; j < unique_count; j++) {
+            if (words[j] != NULL && strcmp(words[i], words[j]) == 0) {
+                is_duplicate = true;
+                break;
+            }
+        }
+
+        if (is_duplicate) {
+            free(words[i]);
+            words[i] = NULL;
+        } else {
+            words[unique_count] = words[i];
+            unique_count++;
+        }
+    }
+
+    return unique_count;
+}
+
+int main(void) {
+    size_t count = 5;
+    char **words = malloc(count * sizeof(char *));
+    
+    if (words == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    words[0] = strdup("apple");
+    words[1] = strdup("banana");
+    words[2] = strdup("apple");
+    words[3] = strdup("cherry");
+    words[4] = strdup("banana");
+
+    for (size_t i = 0; i < count; i++) {
+        if (words[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(words[j]);
+            }
+            free(words);
+            return EXIT_FAILURE;
+        }
+    }
+
+    size_t new_count = remove_duplicate_words(words, count);
+
+    for (size_t i = 0; i < new_count; i++) {
+        printf("%s\n", words[i]);
+        free(words[i]);
+    }
+
+    free(words);
+
+    return EXIT_SUCCESS;
+}
+```

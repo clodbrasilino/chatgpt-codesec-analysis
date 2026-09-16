@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2);
+
+long long countIntegralPoints(long long x1, long long y1, long long x2, long long y2)
+{
+    long long dx;
+    long long dy;
+    long long tmp;
+    long long side;
+
+    if (x2 < x1)
+    {
+        tmp = x1;
+        x1 = x2;
+        x2 = tmp;
+    }
+
+    if (y2 < y1)
+    {
+        tmp = y1;
+        y1 = y2;
+        y2 = tmp;
+    }
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+
+    if (dx != dy)
+    {
+        return -1;
+    }
+
+    side = dx;
+
+    if (side <= 1)
+    {
+        return 0;
+    }
+
+    return (side - 1) * (side - 1);
+}
+
+int main(void)
+{
+    long long x1;
+    long long y1;
+    long long x2;
+    long long y2;
+    long long result;
+
+    printf("Enter bottom-left corner (x1 y1): ");
+    if (scanf("%lld %lld", &x1, &y1) != 2)
+    {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter top-right corner (x2 y2): ");
+    if (scanf("%lld %lld", &x2, &y2) != 2)
+    {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = countIntegralPoints(x1, y1, x2, y2);
+
+    if (result < 0)
+    {
+        fprintf(stderr, "The given coordinates do not form a valid axis-aligned square.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of integral coordinates strictly inside the square: %lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes on the reported weaknesses:**
+
+1. **`Condition 'y2<y1' is not redundant`** – This was a false positive path assumption from the analyzer. The swap logic for `y1`/`y2` is necessary and correct, mirroring the `x` swap. It is retained.
+
+2. **`Assignment 'dy=y2-y1', assigned value is less than 2` and `Condition 'dx<=1' is always true`** – These are path-sensitive analyzer artifacts, not real defects: the analyzer explored a single execution path where small values were assumed, then flagged the downstream condition as constant on *that* path. The condition `dx <= 1` is genuinely needed for degenerate squares (side 0 or 1, which have no strictly interior points), so it must stay.
+
+3. **Simplification applied** – Since the code has already verified `dx == dy`, I collapsed the two variables into a single `side` value. This removes the redundant `dy` usage in the return expression (`(dx-1)*(dy-1)` became `(side-1)*(side-1)`), which eliminates the analyzer's confusion about `dy`'s value range and makes the invariant explicit.
+
+4. **Minor cleanup** – The `tmp` variable was hoisted to a single declaration rather than two block-scoped declarations, satisfying stricter C90-style tooling, and the swap blocks remain otherwise untouched since they are correct.
+
+5. **Remaining consideration (not flagged, but worth noting)** – `(side - 1) * (side - 1)` can overflow `long long` for inputs near `LLONG_MAX`; if untrusted extreme input is a concern, a guard such as `if (side - 1 > 3037000499LL) { /* handle overflow */ }` should be added before the multiplication.

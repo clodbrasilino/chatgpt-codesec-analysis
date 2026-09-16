@@ -2,121 +2,105 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct ListNode {
-    int val;
-    struct ListNode *next;
-} ListNode;
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
 
 typedef struct List {
-    ListNode *head;
-    ListNode *tail;
+    Node *head;
+    Node *tail;
 } List;
 
-List* create_list() {
-    List *list = (List*)malloc(sizeof(List));
-    if (list == NULL) exit(1);
-    list->head = NULL;
-    list->tail = NULL;
-    return list;
-}
+void insertNode(List *list, int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
 
-ListNode* create_node(int value) {
-    ListNode *node = (ListNode*)malloc(sizeof(ListNode));
-    if (node == NULL) exit(1);
-    node->val = value;
-    node->next = NULL;
-    return node;
-}
-
-void add_to_list(List *list, int value) {
-    ListNode *node = create_node(value);
     if (list->head == NULL) {
-        list->head = node;
-        list->tail = node;
+        list->head = newNode;
+        list->tail = newNode;
     } else {
-        list->tail->next = node;
-        list->tail = node;
+        list->tail->next = newNode;
+        list->tail = newNode;
     }
 }
 
-List** create_list_of_lists(int num_lists) {
-    List **lists = (List**)malloc(num_lists * sizeof(List*));
-    if (lists == NULL) exit(1);
-    for (int i = 0; i < num_lists; ++i) {
-        lists[i] = create_list();
-    }
-    return lists;
-}
+void reverseList(List *list) {
+    Node *prev = NULL;
+    Node *current = list->head;
+    Node *next = NULL;
 
-void reverse_list(List *list) {
-    ListNode *prev = NULL;
-    ListNode *current = list->head;
     while (current != NULL) {
-        ListNode *next = current->next;
+        next = current->next;
         current->next = prev;
         prev = current;
         current = next;
     }
+
     list->tail = list->head;
     list->head = prev;
 }
 
-void reverse_each_list_in(List **lists, int num_lists) {
-    for (int i = 0; i < num_lists; ++i) {
-        reverse_list(lists[i]);
-    }
-}
-
-void print_list(List *list) {
-    ListNode *current = list->head;
+void printList(const List *list) {
+    Node *current = list->head;
     while (current != NULL) {
-        printf("%d -> ", current->val);
+        printf("%d -> ", current->data);
         current = current->next;
     }
     printf("NULL\n");
 }
 
-void free_list(List *list) {
-    ListNode *current = list->head;
+void freeList(List *list) {
+    Node *current = list->head;
+    Node *temp;
+
     while (current != NULL) {
-        ListNode *next = current->next;
+        temp = current->next;
         free(current);
-        current = next;
+        current = temp;
     }
-    free(list);
+
+    list->head = NULL;
+    list->tail = NULL;
 }
 
-void free_list_of_lists(List **lists, int num_lists) {
-    for (int i = 0; i < num_lists; ++i) {
-        free_list(lists[i]);
+void reverseEachListInList(List *listOfLists) {
+    Node *current = listOfLists->head;
+    while (current != NULL) {
+        List *subList = (List *)current->data;
+        reverseList(subList);
+        current = current->next;
     }
-    free(lists);
 }
 
 int main() {
-    int num_lists = 3;
-    int values[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    List list1 = {NULL, NULL};
+    List list2 = {NULL, NULL};
 
-    List **lists = create_list_of_lists(num_lists);
+    insertNode(&list1, 1); insertNode(&list1, 2); insertNode(&list1, 3);
+    insertNode(&list2, 4); insertNode(&list2, 5); insertNode(&list2, 6);
 
-    int index = 0;
-    for (int i = 0; i < num_lists; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            add_to_list(lists[i], values[index++]);
-        }
-    }
+    List listOfLists = {NULL, NULL};
+    insertNode(&listOfLists, (int)&list1);
+    insertNode(&listOfLists, (int)&list2);
 
-    for (int i = 0; i < num_lists; ++i) {
-        print_list(lists[i]);
-    }
+    printf("Before reversing:\n");
+    printList(&list1);
+    printList(&list2);
 
-    reverse_each_list_in(lists, num_lists);
+    reverseEachListInList(&listOfLists);
 
-    for (int i = 0; i < num_lists; ++i) {
-        print_list(lists[i]);
-    }
+    printf("After reversing:\n");
+    printList(&list1);
+    printList(&list2);
 
-    free_list_of_lists(lists, num_lists);
+    freeList(&list1);
+    freeList(&list2);
+    freeList(&listOfLists);
 
     return 0;
 }

@@ -1,0 +1,91 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool has_subset_divisible_by_m(const int *arr, size_t n, int m)
+{
+    bool *dp;
+    bool *next;
+    size_t i;
+    int j;
+    bool result;
+
+    if (arr == NULL || m <= 0) {
+        return false;
+    }
+
+    if (n >= (size_t)m) {
+        return true;
+    }
+
+    dp = calloc((size_t)m, sizeof(bool));
+    if (dp == NULL) {
+        return false;
+    }
+
+    next = calloc((size_t)m, sizeof(bool));
+    if (next == NULL) {
+        free(dp);
+        return false;
+    }
+
+    result = false;
+
+    for (i = 0; i < n && !result; i++) {
+        int r = arr[i] % m;
+        if (r < 0) {
+            r += m;
+        }
+
+        for (j = 0; j < m; j++) {
+            next[j] = dp[j];
+        }
+
+        next[r] = true;
+
+        for (j = 0; j < m; j++) {
+            if (dp[j]) {
+                next[(j + r) % m] = true;
+            }
+        }
+
+        for (j = 0; j < m; j++) {
+            dp[j] = next[j];
+        }
+
+        if (dp[0]) {
+            result = true;
+        }
+    }
+
+    free(dp);
+    free(next);
+
+    return result;
+}
+
+int main(void)
+{
+    int arr1[] = {3, 1, 7, 5};
+    int arr2[] = {1, 6};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int m1 = 6;
+    int m2 = 5;
+
+    if (has_subset_divisible_by_m(arr1, n1, m1)) {
+        printf("Subset with sum divisible by %d exists\n", m1);
+    } else {
+        printf("No subset with sum divisible by %d exists\n", m1);
+    }
+
+    if (has_subset_divisible_by_m(arr2, n2, m2)) {
+        printf("Subset with sum divisible by %d exists\n", m2);
+    } else {
+        printf("No subset with sum divisible by %d exists\n", m2);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

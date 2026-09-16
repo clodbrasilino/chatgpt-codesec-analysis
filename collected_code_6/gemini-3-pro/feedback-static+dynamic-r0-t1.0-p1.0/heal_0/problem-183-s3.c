@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int countDistinctPairsWithDifferenceK(const int *arr, int n, int k) {
+    if (arr == NULL || n <= 0 || k < 0) {
+        return 0;
+    }
+
+    int *tempArr = (int *)malloc(n * sizeof(int));
+    if (tempArr == NULL) {
+        return 0;
+    }
+
+    for (int i = 0; i < n; i++) {
+        tempArr[i] = arr[i];
+    }
+
+    qsort(tempArr, n, sizeof(int), compare);
+
+    int count = 0;
+    int left = 0;
+    int right = 0;
+
+    while (right < n) {
+        int diff = tempArr[right] - tempArr[left];
+
+        if (diff == k) {
+            count++;
+            left++;
+            right++;
+
+            while (left < n && tempArr[left] == tempArr[left - 1]) {
+                left++;
+            }
+            while (right < n && tempArr[right] == tempArr[right - 1]) {
+                right++;
+            }
+        } else if (diff > k) {
+            left++;
+            if (left == right) {
+                right++;
+            }
+        } else {
+            right++;
+        }
+    }
+
+    free(tempArr);
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 5, 3, 4, 2, 2, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+
+    int result = countDistinctPairsWithDifferenceK(arr, n, k);
+    printf("%d\n", result);
+
+    return 0;
+}

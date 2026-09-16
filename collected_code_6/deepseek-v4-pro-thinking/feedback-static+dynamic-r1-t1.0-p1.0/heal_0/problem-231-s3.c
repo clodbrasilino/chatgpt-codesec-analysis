@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSumRightTriangle(int **triangle, int rows) {
+    int *dp;
+    int result;
+    int i;
+    int j;
+
+    if (triangle == NULL || rows <= 0) {
+        return 0;
+    }
+
+    for (i = 0; i < rows; ++i) {
+        if (triangle[i] == NULL) {
+            return 0;
+        }
+    }
+
+    dp = malloc((size_t)rows * sizeof(*dp));
+    if (dp == NULL) {
+        return 0;
+    }
+
+    for (i = 0; i < rows; ++i) {
+        dp[i] = triangle[rows - 1][i];
+    }
+
+    for (i = rows - 2; i >= 0; --i) {
+        for (j = 0; j <= i; ++j) {
+            int larger = dp[j] > dp[j + 1] ? dp[j] : dp[j + 1];
+            dp[j] = triangle[i][j] + larger;
+        }
+    }
+
+    result = dp[0];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int row0[] = {3};
+    int row1[] = {7, 4};
+    int row2[] = {2, 4, 6};
+    int row3[] = {8, 5, 9, 3};
+    int *triangle[] = {row0, row1, row2, row3};
+    int rows = (int)(sizeof(triangle) / sizeof(triangle[0]));
+
+    printf("%d\n", maxSumRightTriangle(triangle, rows));
+
+    return 0;
+}

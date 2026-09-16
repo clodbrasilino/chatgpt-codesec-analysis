@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long find_nth_number(long long n, long long m) {
+    if (n <= 0 || m <= 1) {
+        return -1; 
+    }
+    long long q = n / (m - 1);
+    long long r = n % (m - 1);
+    
+    if (r == 0) {
+        return q * m - 1;
+    } else {
+        return q * m + r;
+    }
+}
+
+int main(void) {
+    long long n = 10;
+    long long m = 3;
+    long long result = find_nth_number(n, m);
+    
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+    
+    return 0;
+}
+```

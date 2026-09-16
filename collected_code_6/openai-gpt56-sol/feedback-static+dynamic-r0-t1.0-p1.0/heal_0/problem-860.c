@@ -1,0 +1,52 @@
+#include <regex.h>
+#include <stdbool.h>
+#include <stdio.h>
+
+static int ends_with_alphanumeric(const char *string, bool *result)
+{
+    regex_t regex;
+    int status;
+
+    if (string == NULL || result == NULL) {
+        return -1;
+    }
+
+    status = regcomp(&regex, "[[:alnum:]]+$", REG_EXTENDED | REG_NOSUB);
+    if (status != 0) {
+        return -1;
+    }
+
+    status = regexec(&regex, string, 0, NULL, 0);
+    regfree(&regex);
+
+    if (status == 0) {
+        *result = true;
+        return 0;
+    }
+
+    if (status == REG_NOMATCH) {
+        *result = false;
+        return 0;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    char input[1024];
+    bool result;
+
+    if (fgets(input, sizeof input, stdin) == NULL) {
+        fputs("Failed to read input.\n", stderr);
+        return 1;
+    }
+
+    if (ends_with_alphanumeric(input, &result) != 0) {
+        fputs("Regex operation failed.\n", stderr);
+        return 1;
+    }
+
+    puts(result ? "true" : "false");
+    return 0;
+}

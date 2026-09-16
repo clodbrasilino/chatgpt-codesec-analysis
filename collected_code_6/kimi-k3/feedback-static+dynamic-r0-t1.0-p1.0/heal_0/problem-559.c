@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <errno.h>
+
+int find_max_subarray_sum(const int *arr, size_t size, int *result) {
+    size_t i;
+    int max_so_far;
+    int max_ending_here;
+    
+    if (arr == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+    
+    max_so_far = arr[0];
+    max_ending_here = arr[0];
+    
+    for (i = 1; i < size; i++) {
+        if (max_ending_here > INT_MAX - arr[i] && arr[i] > 0) {
+            max_ending_here = arr[i];
+        } else if (max_ending_here < INT_MIN - arr[i] && arr[i] < 0) {
+            max_ending_here = arr[i];
+        } else {
+            max_ending_here += arr[i];
+        }
+        
+        if (max_ending_here < arr[i]) {
+            max_ending_here = arr[i];
+        }
+        
+        if (max_so_far < max_ending_here) {
+            max_so_far = max_ending_here;
+        }
+    }
+    
+    *result = max_so_far;
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int result = 0;
+    int status;
+    
+    status = find_max_subarray_sum(arr, size, &result);
+    
+    if (status != 0) {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Largest sum of contiguous subarray: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int subset_sum_divisible_by_m(const int arr[], int n, int m) {
+    if (m <= 0) return 0;
+    if (n == 0) return 0;
+    
+    char *dp = (char *)calloc(m, sizeof(char));
+    if (dp == NULL) return 0;
+    
+    dp[0] = 1;
+    
+    for (int i = 0; i < n; i++) {
+        char *next = (char *)calloc(m, sizeof(char));
+        if (next == NULL) {
+            free(dp);
+            return 0;
+        }
+        
+        for (int j = 0; j < m; j++) {
+            if (dp[j]) {
+                next[j] = 1;
+                int new_mod = ((j + arr[i]) % m + m) % m;
+                next[new_mod] = 1;
+            }
+        }
+        
+        free(dp);
+        dp = next;
+        
+        if (dp[0]) {
+            free(dp);
+            return 1;
+        }
+    }
+    
+    int result = dp[0] ? 1 : 0;
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int m1 = 5;
+    printf("Test 1: %d\n", subset_sum_divisible_by_m(arr1, n1, m1));
+    
+    int arr2[] = {5, 10, 15};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int m2 = 7;
+    printf("Test 2: %d\n", subset_sum_divisible_by_m(arr2, n2, m2));
+    
+    int arr3[] = {4, 8, 12, 16};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int m3 = 6;
+    printf("Test 3: %d\n", subset_sum_divisible_by_m(arr3, n3, m3));
+    
+    int arr4[] = {3, 1, 7, 9};
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
+    int m4 = 5;
+    printf("Test 4: %d\n", subset_sum_divisible_by_m(arr4, n4, m4));
+    
+    int arr5[] = {1};
+    int n5 = sizeof(arr5) / sizeof(arr5[0]);
+    int m5 = 1;
+    printf("Test 5: %d\n", subset_sum_divisible_by_m(arr5, n5, m5));
+    
+    int arr6[] = {2, 4, 6, 8};
+    int n6 = sizeof(arr6) / sizeof(arr6[0]);
+    int m6 = 3;
+    printf("Test 6: %d\n", subset_sum_divisible_by_m(arr6, n6, m6));
+    
+    return 0;
+}

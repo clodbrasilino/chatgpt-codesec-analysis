@@ -1,21 +1,39 @@
 #include <stdio.h>
-#include <stdbool.h>
+#include <stdlib.h>
 
-bool is_hex_even(long hex_num) {
-    return (hex_num & 1) == 0;
+int is_hex_even(const char *hex) {
+    int len = 0;
+    while (hex[len] != '\0') {
+        if ((hex[len] >= '0' && hex[len] <= '9') || (hex[len] >= 'A' && hex[len] <= 'F') || (hex[len] >= 'a' && hex[len] <= 'f')) {
+            len++;
+        } else {
+            return -1; // Invalid character in the hexadecimal string
+        }
+    }
+
+    char last_char = hex[len - 1];
+    if (last_char == '0' || last_char == '2' || last_char == '4' || last_char == '6' || last_char == '8' ||
+        last_char == 'A' || last_char == 'C' || last_char == 'E' || last_char == 'a' || last_char == 'c' || last_char == 'e') {
+        return 1; // Even
+    } else if (last_char == '1' || last_char == '3' || last_char == '5' || last_char == '7' || last_char == '9' ||
+               last_char == 'B' || last_char == 'D' || last_char == 'F' || last_char == 'b' || last_char == 'd' || last_char == 'f') {
+        return 0; // Odd
+    } else {
+        return -1; // Invalid character in the hexadecimal string
+    }
 }
 
 int main() {
-    long hex_num;
-    printf("Enter a hexadecimal number: ");
-    if (scanf("%lx", &hex_num) != 1) {
-        printf("Invalid input\n");
-        return 1;
-    }
-    if (is_hex_even(hex_num)) {
+    const char *hex = "1A3F";
+    int result = is_hex_even(hex);
+
+    if (result == 1) {
         printf("The hexadecimal number is even.\n");
-    } else {
+    } else if (result == 0) {
         printf("The hexadecimal number is odd.\n");
+    } else {
+        printf("Invalid hexadecimal number.\n");
     }
+
     return 0;
 }

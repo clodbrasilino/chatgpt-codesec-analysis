@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_repeated(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    int *seen = malloc(size * sizeof(int));
+    if (seen == NULL) {
+        return 0;
+    }
+
+    size_t seen_size = 0;
+    int *counted = malloc(size * sizeof(int));
+    if (counted == NULL) {
+        free(seen);
+        return 0;
+    }
+
+    size_t counted_size = 0;
+    int sum = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        int is_counted = 0;
+        for (size_t j = 0; j < counted_size; j++) {
+            if (counted[j] == array[i]) {
+                is_counted = 1;
+                break;
+            }
+        }
+
+        if (is_counted) {
+            continue;
+        }
+
+        int is_seen = 0;
+        for (size_t j = 0; j < seen_size; j++) {
+            if (seen[j] == array[i]) {
+                is_seen = 1;
+                break;
+            }
+        }
+
+        if (is_seen) {
+            sum += array[i];
+            counted[counted_size++] = array[i];
+        } else {
+            seen[seen_size++] = array[i];
+        }
+    }
+
+    free(seen);
+    free(counted);
+    return sum;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 2, 4, 1, 5};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = sum_of_repeated(arr1, size1);
+    printf("%d\n", result1);
+
+    int arr2[] = {10, 20, 30, 40};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = sum_of_repeated(arr2, size2);
+    printf("%d\n", result2);
+
+    int arr3[] = {5, 5, 5, 5};
+    size_t size3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = sum_of_repeated(arr3, size3);
+    printf("%d\n", result3);
+
+    return 0;
+}

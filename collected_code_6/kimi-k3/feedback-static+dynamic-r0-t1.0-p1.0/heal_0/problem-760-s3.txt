@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool has_single_distinct_element(const int arr[], size_t size) {
+    if (arr == NULL || size == 0) {
+        return false;
+    }
+    
+    const int first = arr[0];
+    for (size_t i = 1; i < size; i++) {
+        if (arr[i] != first) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const int single[] = {5, 5, 5, 5};
+    const int multiple[] = {5, 5, 3, 5};
+    const int empty[] = {0};
+    
+    printf("%d\n", has_single_distinct_element(single, sizeof(single) / sizeof(single[0])));
+    printf("%d\n", has_single_distinct_element(multiple, sizeof(multiple) / sizeof(multiple[0])));
+    printf("%d\n", has_single_distinct_element(empty, 0));
+    
+    return 0;
+}
+```

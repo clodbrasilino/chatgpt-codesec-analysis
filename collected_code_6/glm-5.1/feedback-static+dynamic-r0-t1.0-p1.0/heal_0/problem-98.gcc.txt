@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-98.c:4:1: error: return type defaults to 'int' [-Wimplicit-int]
+    4 | doubleMultiplyAndDivide(double *array, size_t length) {
+      | ^~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-98.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-98.c:19:18: error: implicit declaration of function 'MultiplyAndDivide'; did you mean 'doubleMultiplyAndDivide'? [-Wimplicit-function-declaration]
+   19 |     double res = MultiplyAndDivide(data, len);
+      |                  ^~~~~~~~~~~~~~~~~
+      |                  doubleMultiplyAndDivide

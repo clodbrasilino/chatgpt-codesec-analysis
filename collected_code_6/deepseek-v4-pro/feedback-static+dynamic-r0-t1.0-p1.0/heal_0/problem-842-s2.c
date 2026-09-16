@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int findOddOccurrence(const int *arr, int size) {
+    int result = 0;
+    for (int i = 0; i < size; i++) {
+        result ^= arr[i];
+    }
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {2, 3, 5, 4, 5, 2, 4, 3, 5, 2, 4, 4, 2};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    
+    int arr2[] = {1, 1, 2, 2, 3, 3, 4};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    
+    int arr3[] = {7};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    
+    int arr4[] = {1, 1, 1, 1, 1};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    
+    printf("Odd occurring element in arr1: %d\n", findOddOccurrence(arr1, size1));
+    printf("Odd occurring element in arr2: %d\n", findOddOccurrence(arr2, size2));
+    printf("Odd occurring element in arr3: %d\n", findOddOccurrence(arr3, size3));
+    printf("Odd occurring element in arr4: %d\n", findOddOccurrence(arr4, size4));
+    
+    return 0;
+}

@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+int all_bits_unset_in_range(uint32_t num, unsigned int high, unsigned int low) {
+    if (low > 31 || high > 31 || low > high) {
+        return -1;
+    }
+    
+    uint32_t mask = 0;
+    unsigned int num_bits = high - low + 1;
+    
+    if (num_bits == 32) {
+        mask = 0xFFFFFFFF;
+    } else {
+        mask = ((1u << num_bits) - 1) << low;
+    }
+    
+    return (num & mask) == 0;
+}
+
+int main(void) {
+    uint32_t test1 = 0x0F00;
+    printf("%d\n", all_bits_unset_in_range(test1, 7, 0));
+    
+    uint32_t test2 = 0x0F00;
+    printf("%d\n", all_bits_unset_in_range(test2, 11, 8));
+    
+    uint32_t test3 = 0xFFFF;
+    printf("%d\n", all_bits_unset_in_range(test3, 31, 0));
+    
+    uint32_t test4 = 0x0;
+    printf("%d\n", all_bits_unset_in_range(test4, 31, 0));
+    
+    printf("%d\n", all_bits_unset_in_range(test1, 35, 0));
+    
+    printf("%d\n", all_bits_unset_in_range(test1, 10, 20));
+    
+    return 0;
+}
+```

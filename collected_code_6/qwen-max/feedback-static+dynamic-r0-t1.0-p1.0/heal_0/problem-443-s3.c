@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_largest_negative(int *arr, int size) {
+    int largest_negative = INT_MIN;
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] < 0 && arr[i] > largest_negative) {
+            largest_negative = arr[i];
+        }
+    }
+    return largest_negative == INT_MIN ? 0 : largest_negative;
+}
+
+int main() {
+    int arr[] = {3, -1, -7, 2, -4, 5, -3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = find_largest_negative(arr, size);
+    printf("The largest negative number is: %d\n", result == 0 ? 0 : result);
+    return 0;
+}

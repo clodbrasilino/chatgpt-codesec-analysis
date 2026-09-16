@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_electricity_bill(int units_consumed) {
+    if (units_consumed < 0) {
+        return -1;
+    }
+    
+    if (units_consumed <= 100) {
+        return units_consumed * 1.5;
+    }
+    else if (units_consumed <= 300) {
+        return 100 * 1.5 + (units_consumed - 100) * 2.5;
+    }
+    else if (units_consumed <= 500) {
+        return 100 * 1.5 + 200 * 2.5 + (units_consumed - 300) * 4.0;
+    }
+    else {
+        return 100 * 1.5 + 200 * 2.5 + 200 * 4.0 + (units_consumed - 500) * 6.0;
+    }
+}
+
+int main(void) {
+    int input;
+    double result;
+    char buffer[100];
+    char *endptr;
+    
+    printf("Enter units consumed: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    input = (int)strtol(buffer, &endptr, 10);
+    
+    if (endptr == buffer) {
+        fprintf(stderr, "Invalid input: no digits found\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (*endptr != '\n' && *endptr != '\0') {
+        fprintf(stderr, "Invalid input: non-numeric characters present\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = calculate_electricity_bill(input);
+    
+    if (result < 0) {
+        fprintf(stderr, "Invalid input: units cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Electricity bill: %.2f\n", result);
+    
+    return EXIT_SUCCESS;
+}

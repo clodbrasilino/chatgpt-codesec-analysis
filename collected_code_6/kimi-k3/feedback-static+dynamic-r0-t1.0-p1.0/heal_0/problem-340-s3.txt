@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define SUCCESS 0
+#define ERROR_NULL_POINTER -1
+#define ERROR_INSUFFICIENT_ELEMENTS -2
+#define ERROR_INSUFFICIENT_POSITIVE -3
+
+int sum_three_lowest_positive(const int *numbers, size_t count, long *result)
+{
+    size_t i;
+    int lowest = INT_MAX;
+    int second_lowest = INT_MAX;
+    int third_lowest = INT_MAX;
+    int positive_count = 0;
+    long sum;
+
+    if (numbers == NULL || result == NULL) {
+        return ERROR_NULL_POINTER;
+    }
+
+    if (count < 3) {
+        return ERROR_INSUFFICIENT_ELEMENTS;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (numbers[i] > 0) {
+            positive_count++;
+            if (numbers[i] < lowest) {
+                third_lowest = second_lowest;
+                second_lowest = lowest;
+                lowest = numbers[i];
+            } else if (numbers[i] < second_lowest) {
+                third_lowest = second_lowest;
+                second_lowest = numbers[i];
+            } else if (numbers[i] < third_lowest) {
+                third_lowest = numbers[i];
+            }
+        }
+    }
+
+    if (positive_count < 3) {
+        return ERROR_INSUFFICIENT_POSITIVE;
+    }
+
+    sum = (long)lowest + (long)second_lowest + (long)third_lowest;
+    *result = sum;
+
+    return SUCCESS;
+}
+
+int main(void)
+{
+    int numbers[] = {5, -2, 8, 1, -9, 3, 12, 4, -6, 7};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long result = 0;
+    int status;
+
+    status = sum_three_lowest_positive(numbers, count, &result);
+
+    if (status == SUCCESS) {
+        printf("Sum of three lowest positive numbers: %ld\n", result);
+    } else {
+        fprintf(stderr, "Error: %d\n", status);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

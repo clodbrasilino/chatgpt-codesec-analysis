@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+int all_items_equal(const char *list[], size_t count, const char *target)
+{
+    if (list == NULL || target == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] == NULL || strcmp(list[i], target) != 0) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    const char *items[] = {"apple", "apple", "apple"};
+    const char *target = "apple";
+    size_t count = sizeof(items) / sizeof(items[0]);
+
+    if (all_items_equal(items, count, target)) {
+        printf("All items are equal to \"%s\"\n", target);
+    } else {
+        printf("Not all items are equal to \"%s\"\n", target);
+    }
+
+    return 0;
+}

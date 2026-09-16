@@ -56,6 +56,67 @@ def _write_report(src: str, suffix: str, lines: list[str]) -> None:
         f.write("\n".join(lines) + "\n")
 
 
+def _compilable(src: str, clang: str | None) -> bool:
+    """Fast plain-compile pre-check (syntax only, no sanitizers/driver).
+
+    Non-compilable code must never be executed and must not burn driver-combo
+    attempts: its compile errors are already fed back to the LLM through the
+    static gate (.gcc.txt), which is the designated healing channel for them.
+    If the check itself errors, fall through to the normal path.
+    """
+    import shutil as _sh
+    import subprocess as _sp
+
+    cc = clang or _sh.which("clang") or "/usr/bin/clang"
+    try:
+        p = _sp.run([cc, "-fsyntax-only", "-w", src],
+                    capture_output=True, timeout=30)
+        return p.returncode == 0
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _fuzz_section(
+    src: str,
+    task_id: int,
+    sample: int,
+    basename: str,
+    fuzz_budget: int,
+    afl_bin: str,
+    afl_cc: str,
+    clang: str | None,
+    afl_lib: str | None,
+) -> list[str]:
+    """Run the AFL++ pass for one file and ALWAYS write a .fuzz.txt marker.
+
+    The marker (line-0 info lines are never comment targets) distinguishes
+    'fuzzed, nothing found' / 'no fuzzable interface' from 'not fuzzed yet',
+    which makes fuzz-aware caching idempotent.
+    """
+    if not _compilable(src, clang):
+        _write_report(src, FUZZ_SUFFIX,
+                      [f"{basename}.c:0:0: info: not fuzzed - not compilable"])
+        return []
+    if not detect_input_consumption(Path(src).read_text(errors="replace")):
+        _write_report(src, FUZZ_SUFFIX,
+                      [f"{basename}.c:0:0: info: no fuzzable input interface"])
+        return []
+    findings = fuzz_program(
+        src, task_id, sample,
+        afl_bin=afl_bin, afl_cc=afl_cc, clang=clang,
+        budget=fuzz_budget, afl_lib=afl_lib,
+    )
+    if findings:
+        lines = [
+            f"{basename}.c:{f['line']}:{f['col']}:{f['severity']}:{f['message']}"
+            for f in findings
+        ]
+    else:
+        lines = [f"{basename}.c:0:0: info: fuzzed - no sanitizer findings"]
+    _write_report(src, FUZZ_SUFFIX, lines)
+    return lines
+
+
 def _process_one(
     src: str,
     timeout: float,
@@ -71,11 +132,41 @@ def _process_one(
     if not m:
         return "skip", 0
     task_id, sample = int(m.group(1)), int(m.group(3) or 1)
-    spec = _spec_for(task_id)
     basename = Path(src).stem
+
+    # Fuzz-aware caching: a file is fully done when its .test.txt exists AND
+    # (fuzz off, or its .fuzz.txt marker exists). Partially-done files only
+    # run the missing part — a fuzz-only pass never re-runs the test oracle.
+    test_done = os.path.exists(src[:-2] + TEST_SUFFIX)
+    fuzz_done = os.path.exists(src[:-2] + FUZZ_SUFFIX)
+    if test_done and (not fuzz or fuzz_done):
+        return "already-done", 0
+    if test_done and fuzz and not fuzz_done:
+        _fuzz_section(src, task_id, sample, basename, fuzz_budget,
+                      afl_bin, afl_cc, clang, afl_lib)
+        return "fuzz-only", 1
+
+    # Non-compilable code is never executed and never analyzed dynamically:
+    # skip straight to the marker report. The compile errors themselves are
+    # returned to the LLM as healing feedback via the static channel
+    # (.gcc.txt), so 'not compilable' is an outcome the model must heal.
+    if not _compilable(src, clang):
+        _write_report(src, TEST_SUFFIX, [
+            f"{basename}.c:0:0: error: not compilable - dynamic analysis "
+            "skipped; compile errors are reported by the static channel"
+        ])
+        if fuzz:
+            _write_report(src, FUZZ_SUFFIX,
+                          [f"{basename}.c:0:0: info: not fuzzed - not compilable"])
+        return "not-compilable", 1
+
+    spec = _spec_for(task_id)
 
     if spec is None:
         _write_report(src, TEST_SUFFIX, [f"{basename}.c:0:0: error: no harness spec (unparseable task)"])
+        if fuzz:
+            _write_report(src, FUZZ_SUFFIX,
+                          [f"{basename}.c:0:0: info: not fuzzed - no harness spec"])
         return "no-spec", 1
 
     outcome = run_one(Path(src), spec, timeout=timeout, mem_mb=mem_mb)
@@ -108,17 +199,9 @@ def _process_one(
 
     # ---- fuzzing (.fuzz.txt) ----
     fuzz_lines: list[str] = []
-    if fuzz and detect_input_consumption(Path(src).read_text(errors="replace")):
-        findings = fuzz_program(
-            src, task_id, sample,
-            afl_bin=afl_bin, afl_cc=afl_cc, clang=clang,
-            budget=fuzz_budget, afl_lib=afl_lib,
-        )
-        fuzz_lines = [
-            f"{basename}.c:{f['line']}:{f['col']}:{f['severity']}:{f['message']}"
-            for f in findings
-        ]
-        _write_report(src, FUZZ_SUFFIX, fuzz_lines)
+    if fuzz and not fuzz_done:
+        fuzz_lines = _fuzz_section(src, task_id, sample, basename, fuzz_budget,
+                                   afl_bin, afl_cc, clang, afl_lib)
 
     return "ok", len(asan_lines) + len(test_lines) + len(fuzz_lines)
 
@@ -141,6 +224,17 @@ def analyze_dynamic(
     afl_lib = cfg.get("afl_lib")
 
     files = [f for f in sorted(os.listdir(source_dir)) if f.endswith(".c")]
+    # Skip fully-analyzed files — makes chain restarts cheap. Without fuzz a
+    # .test.txt report marks a processed file; with fuzz BOTH the test report
+    # and the .fuzz.txt marker must exist (partially-done files fall through
+    # and only the missing part runs inside _process_one).
+    def _fully_done(fname: str) -> bool:
+        base = os.path.join(source_dir, fname[:-2])
+        if not os.path.exists(base + TEST_SUFFIX):
+            return False
+        return (not fuzz) or os.path.exists(base + FUZZ_SUFFIX)
+
+    files = [f for f in files if not _fully_done(f)]
     if task_ids is not None:
         files = [
             f for f in files

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_products_of_subarrays(int *arr, int n) {
+    long long total_sum = 0;
+    for (int i = 0; i < n; i++) {
+        long long current_product = 1;
+        for (int j = i; j < n; j++) {
+            current_product *= arr[j];
+            total_sum += current_product;
+        }
+    }
+    return total_sum;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Error: Invalid input size.\n");
+        return EXIT_FAILURE;
+    }
+
+    int *arr = (int *)malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Error: Invalid array element.\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    long long result = sum_of_products_of_subarrays(arr, n);
+    printf("%lld\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

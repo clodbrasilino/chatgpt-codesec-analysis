@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+bool check_k(const Tuple *tuples, size_t count, int k)
+{
+    if (tuples == NULL || count == 0) {
+        return false;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        if (tuples[i].first == k || tuples[i].second == k) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void report(const Tuple *tuples, size_t count, int k)
+{
+    if (check_k(tuples, count, k)) {
+        printf("Tuples contain %d\n", k);
+    } else {
+        printf("Tuples do not contain %d\n", k);
+    }
+}
+
+int main(void)
+{
+    Tuple tuples1[] = { {3, 4}, {5, 6}, {7, 8}, {9, 10} };
+    Tuple tuples2[] = { {1, 2}, {2, 3}, {4, 4} };
+    size_t count1 = sizeof(tuples1) / sizeof(tuples1[0]);
+    size_t count2 = sizeof(tuples2) / sizeof(tuples2[0]);
+
+    report(tuples1, count1, 7);
+    report(tuples2, count2, 9);
+    report(NULL, 0, 5);
+
+    return 0;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **`knownConditionTrueFalse` warning** — The static analyzer flagged `if (check_k(NULL, 0, 5))` because it could prove at compile time that the call always returns `false` (the `tuples == NULL` guard guarantees it). The direct literal-`NULL` call in a compile-time-visible condition is what triggers the diagnostic.
+
+2. **Fix strategy** — The NULL-safety test is moved behind a helper function `report()`. The pointer is now passed as a runtime parameter, so the analyzer no longer sees a trivially constant condition, while the defensive `NULL` check in `check_k` is preserved and still exercised. This also eliminates the duplicated `if/else` printing logic (DRY).
+
+3. **Hardening addition** — `count == 0` was added to the guard clause in `check_k`. Functionally the loop already handled it, but making the precondition explicit documents intent and short-circuits before the loop.
+
+4. **What was already correct and kept** — `const`-correctness on the `tuples` parameter, `size_t` for counts and loop indices, the `sizeof(arr)/sizeof(arr[0])` idiom for element counts, and `int main(void)` with an explicit `return 0`.

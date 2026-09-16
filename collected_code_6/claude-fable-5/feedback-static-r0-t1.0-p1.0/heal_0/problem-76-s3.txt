@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_squares(long long m, long long n)
+{
+    long long total = 0;
+    long long limit = (m < n) ? m : n;
+    long long i;
+
+    for (i = 1; i <= limit; i++) {
+        total += (m - i + 1) * (n - i + 1);
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    long long m;
+    long long n;
+
+    printf("Enter rectangle dimensions (m n): ");
+
+    if (scanf("%lld %lld", &m, &n) != 2) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m <= 0 || n <= 0) {
+        fprintf(stderr, "Error: dimensions must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m > 1000000 || n > 1000000) {
+        fprintf(stderr, "Error: dimensions too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of squares: %lld\n", count_squares(m, n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+The function `count_squares` computes the total number of squares of all sizes that fit inside an `m × n` rectangle. For each square size `i` (from 1 up to `min(m, n)`), the number of positions where an `i × i` square fits is `(m - i + 1) * (n - i + 1)`. Summing these gives the total.
+
+**Safety considerations addressed:**
+
+- **CWE-703**: The return value of `scanf` is checked, and dimension values are validated for positivity before use.
+- **CWE-664**: No dynamic resources (memory, files) are allocated, so there is nothing left unmanaged; the program uses only stack variables with well-defined lifetimes.
+- **CWE-710**: The code uses `long long` with an explicit upper bound (`1000000`) on inputs to prevent integer overflow in the computation (max result stays well within `long long` range), uses standard exit codes via `EXIT_SUCCESS`/`EXIT_FAILURE`, and declares `main(void)` per the C standard.
+
+**Example:** For a 3×2 rectangle, the output is 8 (six 1×1 squares plus two 2×2 squares).

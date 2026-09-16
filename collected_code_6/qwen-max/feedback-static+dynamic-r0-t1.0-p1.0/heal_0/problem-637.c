@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int isBreakEven(int costPrice, int sellingPrice) {
+    return costPrice == sellingPrice;
+}
+
+int main() {
+    int costPrice, sellingPrice;
+    printf("Enter the cost price: ");
+    scanf("%d", &costPrice);
+    printf("Enter the selling price: ");
+    scanf("%d", &sellingPrice);
+
+    if (isBreakEven(costPrice, sellingPrice)) {
+        printf("The transaction is break-even.\n");
+    } else {
+        printf("The transaction is not break-even.\n");
+    }
+
+    return 0;
+}

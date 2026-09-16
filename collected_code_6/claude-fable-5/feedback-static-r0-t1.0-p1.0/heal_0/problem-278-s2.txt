@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    ELEM_INT,
+    ELEM_RECORD
+} ElemType;
+
+typedef struct {
+    int fields[4];
+    size_t field_count;
+} Record;
+
+typedef struct {
+    ElemType type;
+    union {
+        int value;
+        Record record;
+    } data;
+} Element;
+
+static int count_before_record(const Element *tuple, size_t length, size_t *count)
+{
+    size_t i;
+
+    if (tuple == NULL || count == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < length; i++) {
+        if (tuple[i].type == ELEM_RECORD) {
+            *count = i;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    Element tuple[5];
+    size_t count = 0;
+    int status;
+
+    tuple[0].type = ELEM_INT;
+    tuple[0].data.value = 1;
+
+    tuple[1].type = ELEM_INT;
+    tuple[1].data.value = 5;
+
+    tuple[2].type = ELEM_INT;
+    tuple[2].data.value = 7;
+
+    tuple[3].type = ELEM_RECORD;
+    tuple[3].data.record.fields[0] = 4;
+    tuple[3].data.record.fields[1] = 6;
+    tuple[3].data.record.field_count = 2;
+
+    tuple[4].type = ELEM_INT;
+    tuple[4].data.value = 10;
+
+    status = count_before_record(tuple, sizeof(tuple) / sizeof(tuple[0]), &count);
+
+    if (status != 0) {
+        if (fprintf(stderr, "No record found in the tuple\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Elements before the record: %zu\n", count) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

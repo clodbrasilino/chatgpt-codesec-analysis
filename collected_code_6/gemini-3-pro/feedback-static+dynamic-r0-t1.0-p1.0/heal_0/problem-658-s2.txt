@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ElementCount {
+    int value;
+    int count;
+};
+
+int findMaxOccurrence(const int *arr, size_t size, int *result) {
+    if (arr == NULL || size == 0 || result == NULL) {
+        return -1;
+    }
+
+    struct ElementCount *counts = (struct ElementCount *)malloc(size * sizeof(struct ElementCount));
+    if (counts == NULL) {
+        return -1;
+    }
+
+    size_t uniqueCount = 0;
+    int maxCount = 0;
+    int maxElement = arr[0];
+
+    for (size_t i = 0; i < size; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < uniqueCount; ++j) {
+            if (counts[j].value == arr[i]) {
+                counts[j].count++;
+                if (counts[j].count > maxCount) {
+                    maxCount = counts[j].count;
+                    maxElement = counts[j].value;
+                }
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            counts[uniqueCount].value = arr[i];
+            counts[uniqueCount].count = 1;
+            if (1 > maxCount) {
+                maxCount = 1;
+                maxElement = arr[i];
+            }
+            uniqueCount++;
+        }
+    }
+
+    free(counts);
+    *result = maxElement;
+    return 0;
+}
+
+int main(void) {
+    int list[] = {2, 3, 2, 5, 2, 3, 8, 3, 3};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int maxItem;
+
+    if (findMaxOccurrence(list, size, &maxItem) == 0) {
+        printf("Item with maximum occurrences: %d\n", maxItem);
+    } else {
+        printf("Error finding the item with maximum occurrences.\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void countingSort(const int arr[], int size, int max, int *sortedArr) {
+    int *count = (int *)calloc(max + 1, sizeof(int));
+    if (!count) exit(EXIT_FAILURE);
+
+    for (int i = 0; i < size; i++) {
+        count[arr[i]]++;
+    }
+
+    for (int i = 1; i <= max; i++) {
+        count[i] += count[i - 1];
+    }
+
+    for (int i = size - 1; i >= 0; i--) {
+        sortedArr[count[arr[i]] - 1] = arr[i];
+        count[arr[i]]--;
+    }
+
+    free(count);
+}
+
+int findMax(const int arr[], int size) {
+    int max = arr[0];
+    for (int i = 1; i < size; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+int main() {
+    const int arr[] = {4, 2, 2, 8, 3, 3, 1};
+    int size = sizeof(arr)/sizeof(arr[0]);
+    int max = findMax(arr, size);
+
+    int *sortedArr = (int *)malloc(size * sizeof(int));
+    if (!sortedArr) exit(EXIT_FAILURE);
+
+    countingSort(arr, size, max, sortedArr);
+
+    for (int i = 0; i < size; i++) {
+        printf("%d ", sortedArr[i]);
+    }
+    printf("\n");
+
+    free(sortedArr);
+
+    return 0;
+}
+```

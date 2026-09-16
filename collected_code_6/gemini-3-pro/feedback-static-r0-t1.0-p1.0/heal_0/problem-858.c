@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    void* data;
+    struct Node* next;
+} Node;
+
+unsigned long long count_and_square_lists(Node* list_of_lists) {
+    if (list_of_lists == NULL) {
+        return 0;
+    }
+
+    unsigned long long count = 0;
+    Node* current = list_of_lists;
+
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+
+    return count * count;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node* head = (Node*)malloc(sizeof(Node));
+    if (head == NULL) {
+        return 1;
+    }
+    head->data = NULL;
+    
+    Node* second = (Node*)malloc(sizeof(Node));
+    if (second == NULL) {
+        free_list(head);
+        return 1;
+    }
+    second->data = NULL;
+    
+    Node* third = (Node*)malloc(sizeof(Node));
+    if (third == NULL) {
+        second->next = NULL;
+        head->next = second;
+        free_list(head);
+        return 1;
+    }
+    third->data = NULL;
+    third->next = NULL;
+    
+    second->next = third;
+    head->next = second;
+
+    unsigned long long squared_count = count_and_square_lists(head);
+    
+    printf("%llu\n", squared_count);
+
+    free_list(head);
+
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+typedef struct {
+    int value;
+} Tuple;
+
+long long sum_tuples(Tuple *tuples, size_t count) {
+    long long total = 0;
+    for (size_t i = 0; i < count; ++i) {
+        total += tuples[i].value;
+    }
+    return total;
+}
+
+int main() {
+    Tuple *tuples;
+    size_t count;
+
+    // Input handling
+    if (scanf("%zu", &count) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    tuples = (Tuple *)malloc(count * sizeof(Tuple));
+    if (!tuples) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (scanf("%d", &tuples[i].value) != 1) {
+            free(tuples);
+            return EXIT_FAILURE;
+        }
+    }
+
+    long long result = sum_tuples(tuples, count);
+
+    printf("%lld\n", result);
+
+    free(tuples);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_modular_inverse_self(const int *arr, int n, int p) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        long long val = arr[i];
+        if (val <= 0 || val >= p) {
+            continue;
+        }
+        long long sq = (val * val) % p;
+        if (sq == 1) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int p = 7;
+    int arr[] = {1, 2, 3, 4, 5, 6, p - 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = count_modular_inverse_self(arr, n, p);
+    printf("%d\n", result);
+    return 0;
+}

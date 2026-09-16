@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-808-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-808-s3.c:37:25: style: Condition 'tuple_contains_k(NULL,1)' is always false [knownConditionTrueFalse]
+    if (tuple_contains_k(NULL, 1)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-808-s3.c:37:25: note: Calling function 'tuple_contains_k' returns 0
+    if (tuple_contains_k(NULL, 1)) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-808-s3.c:37:25: note: Condition 'tuple_contains_k(NULL,1)' is always false
+    if (tuple_contains_k(NULL, 1)) {
+                        ^

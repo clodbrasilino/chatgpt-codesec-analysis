@@ -2,58 +2,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
+#define MAX_SIZE 1024
+#define CHAR_SET_SIZE 256
 
 typedef struct {
     char character;
     int count;
-} ElementCount;
+} CharCount;
 
 int compare(const void *a, const void *b) {
-    return ((ElementCount *)b)->count - ((ElementCount *)a)->count;
+    return ((CharCount *)b)->count - ((CharCount *)a)->count;
 }
 
-void findMostCommonElements(const char *text, ElementCount **result, int *count) {
-    int freq[256] = {0};
-    for (int i = 0; text[i]; i++) {
-        freq[(unsigned char)text[i]]++;
-    }
-
-    for (int i = 0; i < 256; i++) {
-        if (freq[i] > 0) {
-            (*count)++;
+void findCommonChars(char *text, int *n) {
+    int count[CHAR_SET_SIZE] = {0};
+    int i, j;
+    
+    for (i = 0; text[i]; ++i) {
+        if (isalpha(text[i])) {
+            count[tolower(text[i])]++;
         }
     }
 
-    *result = (ElementCount *)malloc((*count) * sizeof(ElementCount));
-    if (!*result) {
-        (*count) = 0;
-        return;
+    CharCount *charCounts = (CharCount *)malloc(CHAR_SET_SIZE * sizeof(CharCount));
+    if (!charCounts) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
     }
 
-    *count = 0;
-    for (int i = 0; i < 256; i++) {
-        if (freq[i] > 0) {
-            (*result)[(*count)].character = (char)i;
-            (*result)[(*count)].count = freq[i];
-            (*count)++;
+    for (i = 0, j = 0; i < CHAR_SET_SIZE; i++) {
+        if (count[i] > 0) {
+            charCounts[j].character = (char)i;
+            charCounts[j].count = count[i];
+            j++;
         }
     }
+    *n = j;
 
-    qsort(*result, *count, sizeof(ElementCount), compare);
+    qsort(charCounts, *n, sizeof(CharCount), compare);
+
+    for (i = 0; i < *n; i++) {
+        printf("Character: %c, Count: %d\n", charCounts[i].character, charCounts[i].count);
+    }
+
+    free(charCounts);
 }
 
 int main() {
-    const char *text = "hello world hello";
-    ElementCount *result = NULL;
-    int count = 0;
-
-    findMostCommonElements(text, &result, &count);
-
-    for (int i = 0; i < count; i++) {
-        printf("Character: '%c', Count: %d\n", result[i].character, result[i].count);
+    char text[MAX_SIZE];
+    int n;
+    fgets(text, MAX_SIZE, stdin);
+    if (strlen(text) > 0 && text[strlen(text) - 1] == '\n') {
+        text[strlen(text) - 1] = '\0';
     }
-
-    free(result);
+    findCommonChars(text, &n);
     return 0;
 }
 ```

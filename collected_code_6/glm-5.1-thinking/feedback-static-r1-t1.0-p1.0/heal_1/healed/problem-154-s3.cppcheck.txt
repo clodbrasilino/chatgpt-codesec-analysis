@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-154-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-154-s3.c:72:9: style: Variable 'req_rows' can be declared as const array [constVariable]
+    int req_rows[] = {0, 1, 2, 1, 5, 2};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-154-s3.c:73:9: style: Variable 'req_cols' can be declared as const array [constVariable]
+    int req_cols[] = {1, 0, 3, 2, 0, -1};
+        ^

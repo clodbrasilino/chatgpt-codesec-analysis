@@ -2,28 +2,29 @@
 #include <string.h>
 #include <ctype.h>
 
-char* snake_to_camel(char *snake_str) {
-    int capitalize_next = 1;
-    char *src = snake_str;
-    char *dst = src;
-    while (*src) {
-        if (*src == '_') {
-            capitalize_next = 1;
-        } else if (capitalize_next) {
-            *dst++ = toupper(*src);
-            capitalize_next = 0;
-        } else {
-            *dst++ = *src;
+char* snake_to_camel(char *snake_case) {
+    for (char *token = snake_case; *token; token++) {
+        if (*token == '_') {
+            *token = toupper(*(token + 1));
+            memmove(token, token + 1, strlen(token));
         }
-        src++;
     }
-    *dst = '\0';
-    return snake_str;
+    return snake_case;
 }
 
 int main() {
-    char snake_case[] = "this_is_a_test_string";
-    char *camel_case = snake_to_camel(snake_case);
-    printf("%s\n", camel_case);
+    char test0[] = "python_program";
+    char test1[] = "python_language";
+    char test2[] = "programming_language";
+
+    printf("Original: %s\n", test0);
+    printf("CamelCase: %s\n", snake_to_camel(test0));
+
+    printf("Original: %s\n", test1);
+    printf("CamelCase: %s\n", snake_to_camel(test1));
+
+    printf("Original: %s\n", test2);
+    printf("CamelCase: %s\n", snake_to_camel(test2));
+
     return 0;
 }

@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} SubList;
+
+typedef struct {
+    SubList *sublists;
+    size_t count;
+} ListOfLists;
+
+int *get_last_elements(const ListOfLists *list, size_t *out_count) {
+    if (list == NULL || out_count == NULL) {
+        return NULL;
+    }
+    *out_count = 0;
+    if (list->sublists == NULL || list->count == 0) {
+        return NULL;
+    }
+    int *result = malloc(list->count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < list->count; i++) {
+        if (list->sublists[i].data == NULL || list->sublists[i].len == 0) {
+            free(result);
+            return NULL;
+        }
+        result[i] = list->sublists[i].data[list->sublists[i].len - 1];
+    }
+    *out_count = list->count;
+    return result;
+}
+
+int main(void) {
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5};
+    int c[] = {6, 7, 8, 9};
+    SubList sl[] = {{a, 3}, {b, 2}, {c, 4}};
+    ListOfLists lol = {sl, 3};
+    size_t count = 0;
+    int *last = get_last_elements(&lol, &count);
+    if (last != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%d\n", last[i]);
+        }
+        free(last);
+    }
+    return 0;
+}
+```

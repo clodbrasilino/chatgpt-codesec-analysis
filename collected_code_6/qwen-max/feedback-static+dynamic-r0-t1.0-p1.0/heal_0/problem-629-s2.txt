@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void find_even_numbers(int *arr, int size, int **even_arr, int *even_count) {
+    *even_arr = (int *)malloc(size * sizeof(int));
+    if (*even_arr == NULL) {
+        return;
+    }
+    *even_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] % 2 == 0) {
+            (*even_arr)[*even_count] = arr[i];
+            (*even_count)++;
+        }
+    }
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int *even_arr = NULL;
+    int even_count = 0;
+
+    find_even_numbers(arr, size, &even_arr, &even_count);
+
+    for (int i = 0; i < even_count; i++) {
+        printf("%d ", even_arr[i]);
+    }
+    printf("\n");
+
+    free(even_arr);
+    return 0;
+}
+```

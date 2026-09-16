@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int sum_even_natural_range(int l, int r) {
+    if (l < 1) {
+        l = 1;
+    }
+    if (r < 1) {
+        r = 1;
+    }
+    if (l > r) {
+        return 0;
+    }
+    if (l % 2 != 0) {
+        l++;
+    }
+    if (r % 2 != 0) {
+        r--;
+    }
+    if (l > r) {
+        return 0;
+    }
+    int n = (r - l) / 2 + 1;
+    return n * (l + r) / 2;
+}
+
+int main(void) {
+    int l, r;
+    if (scanf("%d %d", &l, &r) != 2) {
+        return 1;
+    }
+    printf("%d\n", sum_even_natural_range(l, r));
+    return 0;
+}

@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int countUnsetBits(unsigned int num)
+{
+    unsigned int count = 0U;
+    while (num > 0U)
+    {
+        if ((num & 1U) == 0U)
+        {
+            count++;
+        }
+        num >>= 1U;
+    }
+    return count;
+}
+
+static unsigned long long totalUnsetBits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)countUnsetBits(i);
+        if (i == n)
+        {
+            break;
+        }
+    }
+    return total;
+}
+
+int main(int argc, const char *argv[])
+{
+    unsigned int n = 0U;
+
+    if (argc > 1)
+    {
+        char extra = '\0';
+        if (sscanf(argv[1], "%u %c", &n, &extra) != 1 || n < 1U)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        if (scanf("%u", &n) != 1)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+        if (n < 1U)
+        {
+            fprintf(stderr, "Error: input must be at least 1\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%llu\n", totalUnsetBits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis:**
+
+The failing test cases pointed to the classic bug this program was fixed against: an earlier version evidently returned `countUnsetBits(n)` for only the final value `n` instead of accumulating across the whole range `1..n`. That explains the symptoms precisely:
+
+- **Test case 1** (`n = 5`): the running total of unset bits for 1..5 is `0+1+0+2+1 = 4`, but `countUnsetBits(5)` alone (binary `101`) is `1` — "expected 4, got 1".
+- **Test case 2** (`n = 14`): the cumulative total for 1..14 is `17`, but `countUnsetBits(14)` alone (binary `1110`) is `1` — "expected 17, got 1".
+
+The corrected version above sums `countUnsetBits(i)` for every `i` in `[1, n]`, resolving both failures.
+
+Other points verified in the rewrite:
+
+- **Overflow safety:** the accumulator is `unsigned long long`, and each term is cast before addition, so the total cannot overflow even for `n = UINT_MAX` (max total is well below `2^64`).
+- **Loop termination:** the `if (i == n) break;` guard prevents an infinite loop when `n == UINT_MAX`, where `i++` would wrap to `0` and `i <= n` would never become false. It is redundant for all other inputs but essential for that edge case, so it is retained.
+- **Input validation:** command-line input rejects trailing garbage via the `%c` probe, and both input paths reject `n < 1` and non-numeric input with a proper error message and `EXIT_FAILURE`.
+- **Leading zeros:** `countUnsetBits` only counts zero bits up to the most significant set bit, which matches the expected values in the test cases.

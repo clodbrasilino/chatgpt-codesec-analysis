@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long eulerian(unsigned int n, unsigned int m)
+{
+    unsigned long long *row;
+    unsigned int i;
+    unsigned int j;
+    unsigned long long result;
+
+    if (m > n) {
+        return 0ULL;
+    }
+    if (n == 0U) {
+        return (m == 0U) ? 1ULL : 0ULL;
+    }
+
+    row = calloc((size_t)n + 1U, sizeof(unsigned long long));
+    if (row == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    row[0] = 1ULL;
+    for (i = 1U; i <= n; i++) {
+        for (j = i; j > 0U; j--) {
+            row[j] = (unsigned long long)(i - j) * row[j - 1U]
+                   + (unsigned long long)(j + 1U) * row[j];
+        }
+        row[0] = 1ULL;
+    }
+
+    result = row[m];
+    free(row);
+    return result;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned int m;
+    unsigned long long value;
+
+    printf("Enter n and m: ");
+    if (scanf("%u %u", &n, &m) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 20U) {
+        fprintf(stderr, "n too large, risk of overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    value = eulerian(n, m);
+    printf("Eulerian number A(%u, %u) = %llu\n", n, m, value);
+
+    return EXIT_SUCCESS;
+}
+```

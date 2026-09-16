@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TUPLE_SIZE 4
+
+int divide_tuples(const int *tuple1, const int *tuple2, double *result, size_t size)
+{
+    size_t i;
+
+    if (tuple1 == NULL || tuple2 == NULL || result == NULL || size == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < size; i++) {
+        if (tuple2[i] == 0) {
+            return -2;
+        }
+        result[i] = (double)tuple1[i] / (double)tuple2[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const int tuple1[TUPLE_SIZE] = { 10, 4, 6, 9 };
+    const int tuple2[TUPLE_SIZE] = { 5, 5, 7, 3 };
+    double result[TUPLE_SIZE] = { 0.0 };
+    int status;
+    size_t i;
+
+    status = divide_tuples(tuple1, tuple2, result, TUPLE_SIZE);
+
+    if (status == -1) {
+        if (fprintf(stderr, "Invalid input parameters.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (status == -2) {
+        if (fprintf(stderr, "Division by zero detected.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: (") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < TUPLE_SIZE; i++) {
+        if (printf("%.2f", result[i]) < 0) {
+            return EXIT_FAILURE;
+        }
+        if (i < (TUPLE_SIZE - 1U)) {
+            if (printf(", ") < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    if (printf(")\n") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

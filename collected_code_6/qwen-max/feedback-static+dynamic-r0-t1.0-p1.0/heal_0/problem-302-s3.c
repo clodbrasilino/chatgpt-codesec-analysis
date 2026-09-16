@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int find_msb_set_bit(uint32_t num) {
+    if (num == 0) return -1;
+    int msb = 0;
+    while (num) {
+        msb++;
+        num >>= 1;
+    }
+    return msb - 1;
+}
+
+int main() {
+    uint32_t test_num = 0xF000000F;
+    int result = find_msb_set_bit(test_num);
+    if (result != -1) {
+        printf("The most significant set bit is at position: %d\n", result);
+    } else {
+        printf("No bits are set.\n");
+    }
+    return 0;
+}

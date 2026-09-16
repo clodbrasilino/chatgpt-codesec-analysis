@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+unsigned long long count_substrings(const char *str)
+{
+    unsigned long long n;
+
+    if (str == NULL)
+    {
+        return 0ULL;
+    }
+
+    n = (unsigned long long)strlen(str);
+    return (n * (n + 1ULL)) / 2ULL;
+}
+
+int main(void)
+{
+    char buffer[1024];
+    unsigned long long result;
+    size_t len;
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error: failed to read input\n");
+        return EXIT_FAILURE;
+    }
+
+    len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    result = count_substrings(buffer);
+
+    if (printf("%llu\n", result) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

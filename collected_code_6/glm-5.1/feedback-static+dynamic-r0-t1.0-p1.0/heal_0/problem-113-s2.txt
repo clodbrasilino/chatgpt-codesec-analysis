@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <ctype.h>
+
+bool is_integer(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    if (*str == '\0') {
+        return false;
+    }
+
+    size_t i = 0;
+
+    if (str[i] == '+' || str[i] == '-') {
+        i++;
+        if (str[i] == '\0') {
+            return false;
+        }
+    }
+
+    while (str[i] != '\0') {
+        if (!isdigit((unsigned char)str[i])) {
+            return false;
+        }
+        i++;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "12345",
+        "-12345",
+        "+12345",
+        "12a34",
+        "12 34",
+        "",
+        "-",
+        "+",
+        NULL,
+        "0"
+    };
+
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        if (test_strings[i] == NULL) {
+            printf("String: NULL -> Result: %s\n", is_integer(test_strings[i]) ? "True" : "False");
+        } else {
+            printf("String: \"%s\" -> Result: %s\n", test_strings[i], is_integer(test_strings[i]) ? "True" : "False");
+        }
+    }
+
+    return 0;
+}
+```

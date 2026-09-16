@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static void flip(int *arr, size_t k)
+{
+    size_t start = 0;
+    while (start < k) {
+        int temp = arr[start];
+        arr[start] = arr[k];
+        arr[k] = temp;
+        start++;
+        k--;
+    }
+}
+
+static size_t find_max_index(const int *arr, size_t n)
+{
+    size_t max_idx = 0;
+    size_t i;
+    for (i = 1; i < n; i++) {
+        if (arr[i] > arr[max_idx]) {
+            max_idx = i;
+        }
+    }
+    return max_idx;
+}
+
+static void pancake_sort(int *arr, size_t n)
+{
+    size_t curr_size;
+    if (arr == NULL || n < 2) {
+        return;
+    }
+    for (curr_size = n; curr_size > 1; curr_size--) {
+        size_t max_idx = find_max_index(arr, curr_size);
+        if (max_idx != curr_size - 1) {
+            if (max_idx != 0) {
+                flip(arr, max_idx);
+            }
+            flip(arr, curr_size - 1);
+        }
+    }
+}
+
+static void print_array(const int *arr, size_t n)
+{
+    size_t i;
+    for (i = 0; i < n; i++) {
+        if (printf("%d%s", arr[i], (i + 1 < n) ? " " : "\n") < 0) {
+            exit(EXIT_FAILURE);
+        }
+    }
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    int *arr;
+    unsigned long input_n;
+
+    if (printf("Enter number of elements: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%lu", &input_n) != 1) {
+        fprintf(stderr, "Invalid input for size\n");
+        return EXIT_FAILURE;
+    }
+    if (input_n == 0 || input_n > (size_t)-1 / sizeof(int)) {
+        fprintf(stderr, "Invalid array size\n");
+        return EXIT_FAILURE;
+    }
+    n = (size_t)input_n;
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Enter %lu integers: ", (unsigned long)n) < 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            fprintf(stderr, "Invalid input for element %lu\n", (unsigned long)i);
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    pancake_sort(arr, n);
+
+    if (printf("Sorted array: ") < 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+    print_array(arr, n);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

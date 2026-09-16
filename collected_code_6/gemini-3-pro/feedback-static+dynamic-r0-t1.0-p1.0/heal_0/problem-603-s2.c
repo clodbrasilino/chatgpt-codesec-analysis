@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_lucid(int num) {
+    if (num < 1) return 0;
+    
+    int temp = num;
+    int sum = 0;
+    while (temp > 0) {
+        int digit = temp % 10;
+        sum += digit;
+        temp /= 10;
+    }
+    
+    if (sum == 0) return 0;
+    return (num % sum == 0);
+}
+
+int get_lucid_number_lte_n(int n) {
+    for (int i = n; i >= 1; i--) {
+        if (is_lucid(i)) {
+            return i;
+        }
+    }
+    return -1; 
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 1) {
+        return 1;
+    }
+    
+    int result = get_lucid_number_lte_n(n);
+    if (result != -1) {
+        printf("%d\n", result);
+    }
+    
+    return 0;
+}

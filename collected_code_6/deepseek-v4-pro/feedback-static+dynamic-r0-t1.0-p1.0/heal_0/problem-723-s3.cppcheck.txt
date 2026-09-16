@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-723-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-723-s3.c:56:31: style: Parameter 'pair' can be declared as pointer to const [constParameterPointer]
+unsigned long hash_pair(Pair *pair) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-723-s3.c:63:23: style: Parameter 'p1' can be declared as pointer to const [constParameterPointer]
+int pair_equals(Pair *p1, Pair *p2) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-723-s3.c:63:33: style: Parameter 'p2' can be declared as pointer to const [constParameterPointer]
+int pair_equals(Pair *p1, Pair *p2) {
+                                ^

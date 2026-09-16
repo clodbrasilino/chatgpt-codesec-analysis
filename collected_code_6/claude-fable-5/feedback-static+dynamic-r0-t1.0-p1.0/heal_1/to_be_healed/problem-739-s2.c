@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+long long triangular(long long k)
+{
+    return k * (k + 1LL) / 2LL;
+}
+
+long long smallest_triangular_index(int n)
+{
+    long long low;
+    long long high;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'mid' can be reduced. [variableScope]
+     */
+    long long mid;
+    long long limit;
+    long long result;
+    int i;
+
+    if (n < 1 || n > 18) {
+        return -1LL;
+    }
+
+    limit = 1LL;
+    for (i = 1; i < n; i++) {
+        limit *= 10LL;
+    }
+
+    low = 1LL;
+    high = 2000000000LL;
+    result = -1LL;
+
+    while (low <= high) {
+        mid = low + (high - low) / 2LL;
+        if (triangular(mid) >= limit) {
+            result = mid;
+            high = mid - 1LL;
+        } else {
+            low = mid + 1LL;
+        }
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    long long index;
+
+    printf("Enter number of digits (1-18): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    index = smallest_triangular_index(n);
+    if (index < 0LL) {
+        fprintf(stderr, "Input out of supported range\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Index of smallest triangular number with %d digits: %lld\n", n, index);
+    printf("Triangular number: %lld\n", triangular(index));
+
+    return EXIT_SUCCESS;
+}

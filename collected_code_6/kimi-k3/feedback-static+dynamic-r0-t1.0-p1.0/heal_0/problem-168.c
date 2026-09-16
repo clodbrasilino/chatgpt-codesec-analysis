@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findFrequency(const int *arr, size_t size, int target) {
+    if (arr == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 2, 5};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int target = 2;
+    
+    int frequency = findFrequency(arr, size, target);
+    printf("Frequency of %d: %d\n", target, frequency);
+    
+    return 0;
+}

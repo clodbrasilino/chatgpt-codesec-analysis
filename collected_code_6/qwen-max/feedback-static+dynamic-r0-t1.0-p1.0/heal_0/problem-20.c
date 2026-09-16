@@ -1,25 +1,25 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
-bool is_woodall(long num) {
-    if (num < 1) return false;
-    for (long k = 1; ; ++k) {
-        long woodall = k * (1L << k) - 1;
-        if (woodall == num) return true;
-        if (woodall > num) return false;
+bool is_woodall_number(unsigned long long n) {
+    if (n == 0) return false;
+    for (unsigned long long k = 1; (k << k) <= n; ++k) {
+        if ((k << k) - k == n) {
+            return true;
+        }
     }
+    return false;
 }
 
 int main() {
-    long num;
+    unsigned long long num;
     printf("Enter a number: ");
-    if (scanf("%ld", &num) != 1) {
-        return 1;
-    }
-    if (is_woodall(num)) {
-        printf("%ld is a Woodall number\n", num);
+    scanf("%llu", &num);
+    if (is_woodall_number(num)) {
+        printf("%llu is a Woodall number.\n", num);
     } else {
-        printf("%ld is not a Woodall number\n", num);
+        printf("%llu is not a Woodall number.\n", num);
     }
     return 0;
 }

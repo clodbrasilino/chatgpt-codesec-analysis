@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int binary_tuple_to_int(const int *binary_tuple, size_t size) {
+    if (binary_tuple == NULL || size == 0 || size > sizeof(int) * 8) {
+        return -1;
+    }
+
+    int result = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (binary_tuple[i] != 0 && binary_tuple[i] != 1) {
+            return -1;
+        }
+        result = (result << 1) | binary_tuple[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int binary_tuple[] = {1, 0, 1, 1, 0, 1};
+    size_t size = sizeof(binary_tuple) / sizeof(binary_tuple[0]);
+
+    int result = binary_tuple_to_int(binary_tuple, size);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Error converting binary tuple to integer.\n");
+    }
+
+    return 0;
+}

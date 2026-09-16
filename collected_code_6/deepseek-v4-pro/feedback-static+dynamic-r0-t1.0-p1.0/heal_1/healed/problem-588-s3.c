@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_difference(const int arr[], int size) {
+    if (size <= 0) {
+        return -1;
+    }
+
+    int min = INT_MAX;
+    int max = INT_MIN;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    return max - min;
+}
+
+int main(void) {
+    int arr[] = {5, 2, 9, 1, 7, 3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_difference(arr, size);
+
+    if (result != -1) {
+        printf("Difference between largest and smallest: %d\n", result);
+    } else {
+        printf("Error: Invalid array size\n");
+    }
+
+    return 0;
+}

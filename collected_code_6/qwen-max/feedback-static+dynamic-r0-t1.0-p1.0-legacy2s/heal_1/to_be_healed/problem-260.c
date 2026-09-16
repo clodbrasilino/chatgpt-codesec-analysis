@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool is_prime(long n) {
+    if (n <= 1) return false;
+    if (n <= 3) return true;
+    if (n % 2 == 0 || n % 3 == 0) return false;
+    for (long i = 5; i * i <= n; i += 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+    return true;
+}
+
+bool is_nswn_prime(long n) {
+    /* Possible weaknesses found:
+     *  Variable 'u' is assigned a value that is never used. [unreadVariable]
+     *  The scope of the variable 'u' can be reduced. [variableScope]
+     */
+    long s = 1, t = 1, u = 1;
+    while (1) {
+        long v = s - 2 * t;
+        if (v < 0 || v > n) break;
+        if (v == n) return true;
+        u = 2 * s - t;
+        s = 4 * s - 2 * t + u;
+        t = 2 * t + u;
+    }
+    return false;
+}
+
+long nth_nswn_prime(int n) {
+    long count = 0;
+    for (long candidate = 1; ; candidate++) {
+        if (is_prime(candidate) && is_nswn_prime(candidate)) {
+            count++;
+            if (count == n) {
+                return candidate;
+            }
+        }
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the position of the NSWN prime to find: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input!\n");
+        return 1;
+    }
+    long result = nth_nswn_prime(n);
+    printf("The %dth Newman–Shanks–Williams prime is: %ld\n", n, result);
+    return 0;
+}

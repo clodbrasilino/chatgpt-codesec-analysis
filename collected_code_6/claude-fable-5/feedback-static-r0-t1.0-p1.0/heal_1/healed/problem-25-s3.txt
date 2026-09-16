@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long product_of_non_repeated(const int *arr, size_t n)
+{
+    long long product = 1;
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || n == 0) {
+        return 1;
+    }
+
+    for (i = 0; i < n; i++) {
+        int seen = 0;
+        for (j = 0; j < i; j++) {
+            if (arr[j] == arr[i]) {
+                seen = 1;
+                break;
+            }
+        }
+        if (seen == 0) {
+            product *= (long long)arr[i];
+        }
+    }
+
+    return product;
+}
+
+int main(void)
+{
+    int arr[] = {1, 1, 2, 3, 4, 4, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long result;
+
+    result = product_of_non_repeated(arr, n);
+
+    if (printf("Product of non-repeated elements: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The only change required was moving the declaration of `seen` inside the outer `for` loop, reducing its scope to the block where it is actually used. This addresses the `[variableScope]` warning: the variable is now initialized at its point of declaration on each iteration, which eliminates the risk of stale values being read if the code is later refactored, and it makes the variable's lifetime and purpose clearer to readers and static analyzers. The rest of the code was already sound — it guards against `NULL` input and zero length, uses `size_t` for indices, casts to `long long` before multiplication, and checks the return value of `printf`.

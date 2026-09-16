@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t capacity) {
+    if (capacity == 0) return NULL;
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    
+    dict->items = (KeyValuePair *)malloc(capacity * sizeof(KeyValuePair));
+    if (!dict->items) {
+        free(dict);
+        return NULL;
+    }
+    
+    dict->count = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+bool add_to_dictionary(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key || dict->count >= dict->capacity) return false;
+    
+    char *dup_key = strdup(key);
+    if (!dup_key) return false;
+    
+    dict->items[dict->count].key = dup_key;
+    dict->items[dict->count].value = value;
+    dict->count++;
+    
+    return true;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->items[i].key);
+    }
+    free(dict->items);
+    free(dict);
+}
+
+bool are_all_values_same(const Dictionary *dict) {
+    if (!dict || dict->count <= 1) return true;
+    
+    int first_value = dict->items[0].value;
+    for (size_t i = 1; i < dict->count; i++) {
+        if (dict->items[i].value != first_value) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(5);
+    if (!dict) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (!add_to_dictionary(dict, "a", 10) ||
+        !add_to_dictionary(dict, "b", 10) ||
+        !add_to_dictionary(dict, "c", 10)) {
+        fprintf(stderr, "Failed to add items to dictionary\n");
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    
+    if (are_all_values_same(dict)) {
+        printf("All values are the same.\n");
+    } else {
+        printf("Values are not all the same.\n");
+    }
+    
+    free_dictionary(dict);
+    return EXIT_SUCCESS;
+}
+```

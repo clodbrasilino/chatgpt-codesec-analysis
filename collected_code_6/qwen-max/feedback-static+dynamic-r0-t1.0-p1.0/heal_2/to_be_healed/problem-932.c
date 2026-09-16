@@ -2,66 +2,90 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct {
-    char **words;
-    int size;
-} StringList;
+typedef struct Node {
+    char* word;
+    struct Node* next;
+} Node;
 
-int list_contains(StringList *list, const char *word) {
-    for (int i = 0; i < list->size; ++i) {
-        if (strcmp(list->words[i], word) == 0) {
+Node* createNode(const char* word) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->word = strdup(word);
+    newNode->next = NULL;
+    return newNode;
+}
+
+int contains(const Node* head, const char* word) {
+    while (head != NULL) {
+        if (strcmp(head->word, word) == 0) {
             return 1;
         }
+        head = head->next;
     }
     return 0;
 }
 
-void remove_duplicates(StringList *input_list, StringList *output_list) {
-    for (int i = 0; i < input_list->size; ++i) {
-        if (!list_contains(output_list, input_list->words[i])) {
-            output_list->words[output_list->size] = strdup(input_list->words[i]);
-            output_list->size++;
-        }
+void addUnique(Node** head, const char* word) {
+    if (!contains(*head, word)) {
+        Node* newNode = createNode(word);
+        newNode->next = *head;
+        *head = newNode;
     }
 }
 
-void free_string_list(StringList *list) {
-    for (int i = 0; i < list->size; ++i) {
-        /* Possible weaknesses found:
-         * ASan: BUS
-         */
-        free(list->words[i]);
+char** removeDuplicates(const char* words[], int n, int* newLength) {
+    Node* uniqueWords = NULL;
+    for (int i = 0; i < n; i++) {
+        addUnique(&uniqueWords, words[i]);
     }
-    free(list->words);
-    list->words = NULL;
-    list->size = 0;
+
+    *newLength = 0;
+    Node* temp = uniqueWords;
+    while (temp != NULL) {
+        (*newLength)++;
+        temp = temp->next;
+    }
+
+    char** result = (char**)malloc((*newLength) * sizeof(char*));
+    temp = uniqueWords;
+    for (int i = 0; i < *newLength; i++) {
+        result[i] = temp->word;
+        temp = temp->next;
+    }
+
+    temp = uniqueWords;
+    while (temp != NULL) {
+        Node* next = temp->next;
+        free(temp);
+        temp = next;
+    }
+
+    return result;
+}
+
+/* Possible weaknesses found:
+ *  expected 'const char **' but argument is of type 'char **'
+ */
+void printArray(const char* arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%s ", arr[i]);
+    }
+    printf("\n");
 }
 
 int main() {
-    StringList input_list = { .words = NULL, .size = 0 };
-    StringList unique_list = { .words = NULL, .size = 0 };
+    const char* words[] = {"hello", "world", "hello", "test", "world"};
+    int n = 5;
+    int newLength;
+    char** result = removeDuplicates(words, n, &newLength);
+    /* Possible weaknesses found:
+     *  passing argument 1 of 'printArray' from incompatible pointer type [-Wincompatible-pointer-types]
+     */
+    printArray(result, newLength);
 
-    input_list.size = 8;
-    input_list.words = malloc(input_list.size * sizeof(char*));
-    input_list.words[0] = "apple";
-    input_list.words[1] = "banana";
-    input_list.words[2] = "apple";
-    input_list.words[3] = "cherry";
-    input_list.words[4] = "date";
-    input_list.words[5] = "banana";
-    input_list.words[6] = "elderberry";
-    input_list.words[7] = "fig";
-
-    unique_list.words = malloc(input_list.size * sizeof(char*));
-
-    remove_duplicates(&input_list, &unique_list);
-
-    for (int i = 0; i < unique_list.size; ++i) {
-        printf("%s\n", unique_list.words[i]);
+    for (int i = 0; i < newLength; i++) {
+        free(result[i]);
     }
-
-    free_string_list(&input_list);
-    free_string_list(&unique_list);
+    free(result);
 
     return 0;
 }

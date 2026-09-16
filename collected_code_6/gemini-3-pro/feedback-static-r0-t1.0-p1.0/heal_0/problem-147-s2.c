@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_ROWS 100
+
+int maxPathSum(int triangle[][MAX_ROWS], int numRows) {
+    if (numRows <= 0 || numRows > MAX_ROWS) {
+        return -1;
+    }
+
+    int dp[MAX_ROWS];
+
+    for (int i = 0; i < numRows; i++) {
+        dp[i] = triangle[numRows - 1][i];
+    }
+
+    for (int row = numRows - 2; row >= 0; row--) {
+        for (int col = 0; col <= row; col++) {
+            int max_val = dp[col] > dp[col + 1] ? dp[col] : dp[col + 1];
+            dp[col] = triangle[row][col] + max_val;
+        }
+    }
+
+    return dp[0];
+}
+
+int main(void) {
+    int triangle[MAX_ROWS][MAX_ROWS] = {0};
+    int numRows = 4;
+
+    triangle[0][0] = 3;
+    triangle[1][0] = 7; triangle[1][1] = 4;
+    triangle[2][0] = 2; triangle[2][1] = 4; triangle[2][2] = 6;
+    triangle[3][0] = 8; triangle[3][1] = 5; triangle[3][2] = 9; triangle[3][3] = 3;
+
+    int max_sum = maxPathSum(triangle, numRows);
+
+    if (max_sum != -1) {
+        printf("Maximum total path sum is: %d\n", max_sum);
+    } else {
+        printf("Invalid number of rows.\n");
+    }
+
+    return 0;
+}

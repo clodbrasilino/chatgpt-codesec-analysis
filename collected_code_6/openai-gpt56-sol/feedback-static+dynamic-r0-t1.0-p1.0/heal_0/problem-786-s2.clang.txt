@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-786-s2.c:63:28: error: use of undeclared identifier 'INT_MIN'
+   63 |             parsed_value < INT_MIN || parsed_value > INT_MAX) {
+      |                            ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-786-s2.c:63:54: error: use of undeclared identifier 'INT_MAX'
+   63 |             parsed_value < INT_MIN || parsed_value > INT_MAX) {
+      |                                                      ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-786-s2.c:82:25: error: use of undeclared identifier 'INT_MIN'
+   82 |         parsed_target < INT_MIN || parsed_target > INT_MAX) {
+      |                         ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-786-s2.c:82:52: error: use of undeclared identifier 'INT_MAX'
+   82 |         parsed_target < INT_MIN || parsed_target > INT_MAX) {
+      |                                                    ^~~~~~~
+4 errors generated.

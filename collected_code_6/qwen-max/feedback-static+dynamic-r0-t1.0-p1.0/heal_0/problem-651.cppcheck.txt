@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-651.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-651.c:4:20: style: Parameter 'tuple1' can be declared as pointer to const [constParameterPointer]
+bool isSubset(int *tuple1, int *tuple2, int len1, int len2) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-651.c:4:33: style: Parameter 'tuple2' can be declared as pointer to const [constParameterPointer]
+bool isSubset(int *tuple1, int *tuple2, int len1, int len2) {
+                                ^

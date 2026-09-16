@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_even_numbers(const int *input, size_t input_size, int **output, size_t *output_size)
+{
+    size_t count;
+    int *result;
+
+    if (input == NULL || output == NULL || output_size == NULL) {
+        return -1;
+    }
+
+    count = 0;
+    for (size_t i = 0; i < input_size; i++) {
+        if (input[i] % 2 == 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        *output = NULL;
+        *output_size = 0;
+        return 0;
+    }
+
+    result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        return -1;
+    }
+
+    count = 0;
+    for (size_t i = 0; i < input_size; i++) {
+        if (input[i] % 2 == 0) {
+            result[count] = input[i];
+            count++;
+        }
+    }
+
+    *output = result;
+    *output_size = count;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {3, 8, 15, 22, 7, 4, 9, 10, 21, 6};
+    size_t numbers_size = sizeof(numbers) / sizeof(numbers[0]);
+    int *evens = NULL;
+    size_t evens_size = 0;
+
+    if (find_even_numbers(numbers, numbers_size, &evens, &evens_size) != 0) {
+        fprintf(stderr, "Failed to find even numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    if (evens_size == 0) {
+        printf("No even numbers found\n");
+    } else {
+        printf("Even numbers:");
+        for (size_t i = 0; i < evens_size; i++) {
+            printf(" %d", evens[i]);
+        }
+        printf("\n");
+    }
+
+    free(evens);
+    return EXIT_SUCCESS;
+}
+```

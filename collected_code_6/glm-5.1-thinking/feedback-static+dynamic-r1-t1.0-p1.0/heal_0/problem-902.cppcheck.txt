@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-902.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-902.c:58:27: style: Condition 'dict_init(result)!=0' is always false [knownConditionTrueFalse]
+    if (dict_init(result) != 0) return -1;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-902.c:58:18: note: Calling function 'dict_init' returns 0
+    if (dict_init(result) != 0) return -1;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-902.c:58:27: note: Condition 'dict_init(result)!=0' is always false
+    if (dict_init(result) != 0) return -1;
+                          ^

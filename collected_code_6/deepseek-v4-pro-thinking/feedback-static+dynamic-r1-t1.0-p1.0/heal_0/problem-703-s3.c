@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Entry;
+
+typedef struct {
+    Entry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+int dictionary_add(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+
+    size_t key_len = strlen(key);
+    char *key_copy = malloc(key_len + 1);
+    if (key_copy == NULL) {
+        return -1;
+    }
+    memcpy(key_copy, key, key_len + 1);
+
+    if (dict->count == dict->capacity) {
+        size_t new_capacity = dict->capacity == 0 ? 8 : dict->capacity * 2;
+        Entry *new_entries = realloc(dict->entries, new_capacity * sizeof(*new_entries));
+        if (new_entries == NULL) {
+            free(key_copy);
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    dict->entries[dict->count].key = key_copy;
+    dict->entries[dict->count].value = value;
+    ++dict->count;
+    return 0;
+}
+
+int dictionary_contains(const Dictionary *dict, const char *key) {
+    if (dict == NULL || key == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void dictionary_destroy(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+    }
+
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+int main(void) {
+    Dictionary dict = {0};
+
+    if (dictionary_add(&dict, "apple", 1) != 0) {
+        dictionary_destroy(&dict);
+        return EXIT_FAILURE;
+    }
+
+    if (dictionary_add(&dict, "banana", 2) != 0) {
+        dictionary_destroy(&dict);
+        return EXIT_FAILURE;
+    }
+
+    const char *key = "apple";
+    if (dictionary_contains(&dict, key)) {
+        printf("Key '%s' is present.\n", key);
+    } else {
+        printf("Key '%s' is not present.\n", key);
+    }
+
+    key = "cherry";
+    if (dictionary_contains(&dict, key)) {
+        printf("Key '%s' is present.\n", key);
+    } else {
+        printf("Key '%s' is not present.\n", key);
+    }
+
+    dictionary_destroy(&dict);
+    return EXIT_SUCCESS;
+}

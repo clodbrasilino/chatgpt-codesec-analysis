@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_add_for_even_sum(const int *arr, size_t n)
+{
+    size_t i;
+    int parity = 0;
+
+    if (arr == NULL || n == 0U) {
+        return 2;
+    }
+
+    for (i = 0; i < n; i++) {
+        parity ^= (arr[i] & 1);
+    }
+
+    if (parity != 0) {
+        return 1;
+    }
+    return 2;
+}
+
+int main(void)
+{
+    int arr[] = { 1, 2, 3, 4 };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int result;
+
+    result = min_add_for_even_sum(arr, n);
+
+    if (printf("Minimum number to add: %d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

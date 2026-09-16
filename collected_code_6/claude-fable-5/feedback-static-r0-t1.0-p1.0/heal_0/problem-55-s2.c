@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+static double geometric_nth_term(double first_term, double common_ratio, unsigned int n, int *status)
+{
+    double result;
+
+    if (status == NULL) {
+        return 0.0;
+    }
+
+    if (n == 0U) {
+        *status = -1;
+        return 0.0;
+    }
+
+    errno = 0;
+    result = first_term * pow(common_ratio, (double)(n - 1U));
+
+    if (errno != 0 || isinf(result) || isnan(result)) {
+        *status = -1;
+        return 0.0;
+    }
+
+    *status = 0;
+    return result;
+}
+
+int main(void)
+{
+    double first_term;
+    double common_ratio;
+    unsigned int n;
+    int status;
+    double term;
+
+    printf("Enter first term: ");
+    if (scanf("%lf", &first_term) != 1) {
+        fprintf(stderr, "Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter common ratio: ");
+    if (scanf("%lf", &common_ratio) != 1) {
+        fprintf(stderr, "Invalid input for common ratio\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter term number (n >= 1): ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input for term number\n");
+        return EXIT_FAILURE;
+    }
+
+    status = 0;
+    term = geometric_nth_term(first_term, common_ratio, n, &status);
+
+    if (status != 0) {
+        fprintf(stderr, "Could not compute the term (invalid n or numeric overflow)\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Term %u of the geometric series is: %f\n", n, term);
+
+    return EXIT_SUCCESS;
+}

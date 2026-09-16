@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int **lists;
+    int *lengths;
+    int count;
+} ListOfLists;
+
+/* Possible weaknesses found:
+ *  Parameter 'lengths' can be declared as pointer to const [constParameterPointer]
+ */
+ListOfLists find_max_length_lists(int **lists, int *lengths, int num_lists) {
+    ListOfLists result = {NULL, NULL, 0};
+
+    if (num_lists <= 0 || lists == NULL || lengths == NULL) {
+        return result;
+    }
+
+    int max_len = lengths[0];
+    for (int i = 1; i < num_lists; i++) {
+        if (lengths[i] > max_len) {
+            max_len = lengths[i];
+        }
+    }
+
+    int max_count = 0;
+    for (int i = 0; i < num_lists; i++) {
+        if (lengths[i] == max_len) {
+            max_count++;
+        }
+    }
+
+    result.lists = malloc(max_count * sizeof(int *));
+    result.lengths = malloc(max_count * sizeof(int));
+
+    if (result.lists == NULL || result.lengths == NULL) {
+        free(result.lists);
+        free(result.lengths);
+        result.lists = NULL;
+        result.lengths = NULL;
+        result.count = 0;
+        return result;
+    }
+
+    int index = 0;
+    for (int i = 0; i < num_lists; i++) {
+        if (lengths[i] == max_len) {
+            result.lists[index] = lists[i];
+            result.lengths[index] = lengths[i];
+            index++;
+        }
+    }
+
+    result.count = max_count;
+    return result;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3};
+    int list2[] = {4, 5};
+    int list3[] = {6, 7, 8, 9};
+    int list4[] = {10, 11, 12, 13};
+
+    int num_lists = 4;
+    int *lists_arr[] = {list1, list2, list3, list4};
+    /* Possible weaknesses found:
+     *  Variable 'lengths_arr' can be declared as const array [constVariable]
+     */
+    int lengths_arr[] = {3, 2, 4, 4};
+
+    int **dynamic_lists = malloc(num_lists * sizeof(int *));
+    int *dynamic_lengths = malloc(num_lists * sizeof(int));
+
+    if (dynamic_lists == NULL || dynamic_lengths == NULL) {
+        free(dynamic_lists);
+        free(dynamic_lengths);
+        return 1;
+    }
+
+    for (int i = 0; i < num_lists; i++) {
+        dynamic_lists[i] = lists_arr[i];
+        dynamic_lengths[i] = lengths_arr[i];
+    }
+
+    ListOfLists result = find_max_length_lists(dynamic_lists, dynamic_lengths, num_lists);
+
+    for (int i = 0; i < result.count; i++) {
+        printf("List %d (length %d): ", i, result.lengths[i]);
+        for (int j = 0; j < result.lengths[i]; j++) {
+            printf("%d ", result.lists[i][j]);
+        }
+        printf("\n");
+    }
+
+    free(dynamic_lists);
+    free(dynamic_lengths);
+    free(result.lists);
+    free(result.lengths);
+
+    return 0;
+}

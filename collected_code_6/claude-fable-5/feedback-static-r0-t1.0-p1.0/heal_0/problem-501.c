@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned int gcd(unsigned int a, unsigned int b)
+{
+    while (b != 0U) {
+        unsigned int t = a % b;
+        a = b;
+        b = t;
+    }
+    return a;
+}
+
+static unsigned int to_unsigned_abs(int n)
+{
+    if (n == INT_MIN) {
+        return (unsigned int)INT_MAX + 1U;
+    }
+    if (n < 0) {
+        return (unsigned int)(-n);
+    }
+    return (unsigned int)n;
+}
+
+int main(void)
+{
+    int x;
+    int y;
+
+    printf("Enter two integers: ");
+    if (scanf("%d %d", &x, &y) != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned int ua = to_unsigned_abs(x);
+    unsigned int ub = to_unsigned_abs(y);
+
+    if (ua == 0U && ub == 0U) {
+        fprintf(stderr, "GCD is undefined for (0, 0).\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned int result = gcd(ua, ub);
+    printf("Greatest common divisor of %d and %d is %u\n", x, y, result);
+
+    return EXIT_SUCCESS;
+}

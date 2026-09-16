@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSubset(const int tuple1[], int size1, const int tuple2[], int size2) {
+    if (tuple1 == NULL || tuple2 == NULL) {
+        return false;
+    }
+
+    if (size1 > size2) {
+        return false;
+    }
+
+    for (int i = 0; i < size1; i++) {
+        bool found = false;
+        for (int j = 0; j < size2; j++) {
+            if (tuple1[i] == tuple2[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int tupleA[] = {1, 3, 5};
+    int sizeA = sizeof(tupleA) / sizeof(tupleA[0]);
+
+    int tupleB[] = {1, 2, 3, 4, 5, 6};
+    int sizeB = sizeof(tupleB) / sizeof(tupleB[0]);
+
+    bool result = isSubset(tupleA, sizeA, tupleB, sizeB);
+
+    if (result) {
+        printf("tupleA is a subset of tupleB\n");
+    } else {
+        printf("tupleA is not a subset of tupleB\n");
+    }
+
+    return 0;
+}

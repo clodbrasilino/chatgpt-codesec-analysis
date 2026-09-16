@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-533.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-533.c:58:59: style: Variable 'i' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 0, (union {int i; float f; char c; }){.i = 1});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-533.c:59:59: style: Variable 'f' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 1, (union {int i; float f; char c; }){.f = 2.5});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-533.c:60:59: style: Variable 'c' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 2, (union {int i; float f; char c; }){.c = 'a'});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-533.c:61:59: style: Variable 'i' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 0, (union {int i; float f; char c; }){.i = 3});
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-533.c:62:59: style: Variable 'f' is assigned a value that is never used. [unreadVariable]
+    tuple_add(t, 1, (union {int i; float f; char c; }){.f = 4.5});
+                                                          ^

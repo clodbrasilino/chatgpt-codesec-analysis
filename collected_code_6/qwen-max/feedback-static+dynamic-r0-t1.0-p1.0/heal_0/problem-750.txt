@@ -3,51 +3,52 @@
 #include <stdlib.h>
 
 typedef struct {
-    int first;
-    int second;
+    int x;
+    int y;
 } Tuple;
 
 typedef struct Node {
-    Tuple data;
-    struct Node *next;
-} ListNode;
+    Tuple tuple;
+    struct Node* next;
+} Node;
 
-ListNode* addTupleToList(ListNode* head, Tuple newTuple) {
-    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
+typedef struct {
+    Node* head;
+} List;
+
+void addTupleToList(List* list, Tuple t) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
     if (newNode == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "Failed to allocate memory\n");
+        return;
     }
-    newNode->data = newTuple;
-    newNode->next = NULL;
-    
-    if (head == NULL) {
-        return newNode;
-    }
+    newNode->tuple = t;
+    newNode->next = list->head;
+    list->head = newNode;
+}
 
-    ListNode *current = head;
-    while (current->next != NULL) {
-        current = current->next;
+void freeList(List* list) {
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
     }
-    current->next = newNode;
-    return head;
+    list->head = NULL;
 }
 
 int main() {
-    ListNode* list = NULL;
-    list = addTupleToList(list, (Tuple){1, 2});
-    list = addTupleToList(list, (Tuple){3, 4});
+    List myList = {NULL};
+    Tuple t = {1, 2};
 
-    for (ListNode* current = list; current != NULL; current = current->next) {
-        printf("(%d, %d)\n", current->data.first, current->data.second);
+    addTupleToList(&myList, t);
+
+    // Print the list (for debugging purposes)
+    for (Node* current = myList.head; current != NULL; current = current->next) {
+        printf("(%d, %d) ", current->tuple.x, current->tuple.y);
     }
 
-    while (list != NULL) {
-        ListNode* temp = list;
-        list = list->next;
-        free(temp);
-    }
-
+    freeList(&myList);
     return 0;
 }
 ```

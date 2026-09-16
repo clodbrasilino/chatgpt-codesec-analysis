@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int **allocate_square(int n)
+{
+    int **square;
+    int i;
+
+    square = malloc((size_t)n * sizeof(*square));
+    if (square == NULL) {
+        return NULL;
+    }
+    for (i = 0; i < n; i++) {
+        square[i] = calloc((size_t)n, sizeof(*square[i]));
+        if (square[i] == NULL) {
+            int j;
+            for (j = 0; j < i; j++) {
+                free(square[j]);
+            }
+            free(square);
+            return NULL;
+        }
+    }
+    return square;
+}
+
+static void free_square(int **square, int n)
+{
+    int i;
+
+    if (square == NULL) {
+        return;
+    }
+    for (i = 0; i < n; i++) {
+        free(square[i]);
+    }
+    free(square);
+}
+
+static int generate_magic_square(int **square, int n)
+{
+    int row;
+    int col;
+    int num;
+
+    if (square == NULL || n <= 0 || n % 2 == 0) {
+        return -1;
+    }
+
+    row = 0;
+    col = n / 2;
+    for (num = 1; num <= n * n; num++) {
+        int next_row;
+        int next_col;
+
+        square[row][col] = num;
+        next_row = (row - 1 + n) % n;
+        next_col = (col + 1) % n;
+        if (square[next_row][next_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+    return 0;
+}
+
+static void print_square(int **square, int n)
+{
+    int i;
+    int j;
+
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            printf("%4d ", square[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void)
+{
+    int n;
+    int **square;
+
+    printf("Enter the order of the magic square (positive odd integer, max 99): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    if (n <= 0 || n % 2 == 0 || n > 99) {
+        fprintf(stderr, "Error: order must be a positive odd integer no greater than 99.\n");
+        return EXIT_FAILURE;
+    }
+
+    square = allocate_square(n);
+    if (square == NULL) {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (generate_magic_square(square, n) != 0) {
+        fprintf(stderr, "Error: failed to generate magic square.\n");
+        free_square(square, n);
+        return EXIT_FAILURE;
+    }
+
+    printf("\nMagic square of order %d (magic constant %d):\n", n, n * (n * n + 1) / 2);
+    print_square(square, n);
+
+    free_square(square, n);
+    square = NULL;
+    return EXIT_SUCCESS;
+}

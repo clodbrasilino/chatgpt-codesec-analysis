@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_multiples(int n, int m) {
+    int* multiples;
+    int i;
+
+    if (m <= 0) {
+        return NULL;
+    }
+
+    multiples = (int*)malloc((size_t)m * sizeof(int));
+    if (multiples == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < m; i++) {
+        multiples[i] = n * (i + 1);
+    }
+
+    return multiples;
+}
+
+int main(void) {
+    int n = 5;
+    int m = 10;
+    int* multiples;
+    int i;
+
+    multiples = find_multiples(n, m);
+    if (multiples == NULL) {
+        fprintf(stderr, "Error allocating memory or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < m; i++) {
+        printf("%d ", multiples[i]);
+    }
+    printf("\n");
+
+    free(multiples);
+    multiples = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

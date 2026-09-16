@@ -3,90 +3,66 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct ListNode {
-    char *data;
-    struct ListNode *next;
-} ListNode;
+typedef struct Node {
+    char data;
+    struct Node *next;
+} Node;
 
-ListNode *createNode(char *value) {
-    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-    if (newNode == NULL) {
-        return NULL;
+Node* create_node(char data) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
     }
-    newNode->data = strdup(value);
-    if (newNode->data == NULL) {
-        free(newNode);
-        return NULL;
-    }
-    newNode->next = NULL;
-    return newNode;
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
 }
 
-void freeList(ListNode *head) {
-    ListNode *current = head;
-    while (current != NULL) {
-        ListNode *temp = current;
-        current = current->next;
-        free(temp->data);
-        free(temp);
+void append_to_list(Node **head, char data) {
+    Node *new_node = create_node(data);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
     }
 }
 
-ListNode *stringToList(const char *str) {
-    if (str == NULL || *str == '\0') {
-        return NULL;
+Node* string_to_list(const char *str) {
+    Node *head = NULL;
+    for (int i = 0; str[i] != '\0'; ++i) {
+        append_to_list(&head, str[i]);
     }
-
-    ListNode *head = NULL;
-    ListNode *tail = NULL;
-
-    const char *start = str;
-    while (*start != '\0') {
-        while (*start == ' ' && *start != '\0') {
-            start++;
-        }
-
-        const char *end = start;
-        while (*end != ' ' && *end != '\0') {
-            end++;
-        }
-
-        if (end > start) {
-            ListNode *newNode = createNode(strndup(start, end - start));
-            if (newNode == NULL) {
-                freeList(head);
-                return NULL;
-            }
-            if (head == NULL) {
-                head = tail = newNode;
-            } else {
-                tail->next = newNode;
-                tail = newNode;
-            }
-        }
-
-        start = end;
-    }
-
     return head;
 }
 
-int main() {
-    const char *input = "  hello   world  C programming  ";
-    ListNode *list = stringToList(input);
-
-    if (list == NULL) {
-        printf("Failed to create list\n");
-        return 1;
-    }
-
-    ListNode *current = list;
+void print_list(Node *head) {
+    Node *current = head;
     while (current != NULL) {
-        printf("%s\n", current->data);
+        printf("%c -> ", current->data);
         current = current->next;
     }
+    printf("NULL\n");
+}
 
-    freeList(list);
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    const char *str = "Hello, World!";
+    Node *list = string_to_list(str);
+    print_list(list);
+    free_list(list);
     return 0;
 }
 ```

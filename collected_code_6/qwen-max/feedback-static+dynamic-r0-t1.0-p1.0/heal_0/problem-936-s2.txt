@@ -3,48 +3,35 @@
 #include <stdlib.h>
 
 typedef struct {
-    int id;
-    char name[50];
-} Person;
+    int first;
+    int second;
+} Tuple;
 
-void rearrangeTuples(Person **arr, int *order, int n) {
-    Person **temp = (Person **)malloc(n * sizeof(Person *));
-    for (int i = 0; i < n; i++) {
-        if (order[i] >= 0 && order[i] < n) {
-            temp[order[i]] = arr[i];
-        }
+void rearrange_tuples(Tuple *tuples, int *order, int size) {
+    Tuple *temp = (Tuple*)malloc(size * sizeof(Tuple));
+    if (temp == NULL) {
+        return;
     }
-    for (int i = 0; i < n; i++) {
-        arr[i] = temp[i];
+    for (int i = 0; i < size; ++i) {
+        temp[i] = tuples[order[i]];
+    }
+    for (int i = 0; i < size; ++i) {
+        tuples[i] = temp[i];
     }
     free(temp);
 }
 
 int main() {
-    int n = 3;
-    Person *persons[n];
-    persons[0] = (Person *)malloc(sizeof(Person));
-    persons[1] = (Person *)malloc(sizeof(Person));
-    persons[2] = (Person *)malloc(sizeof(Person));
-
-    persons[0]->id = 1;
-    strcpy(persons[0]->name, "Alice");
-    persons[1]->id = 2;
-    strcpy(persons[1]->name, "Bob");
-    persons[2]->id = 3;
-    strcpy(persons[2]->name, "Charlie");
-
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
     int order[] = {2, 0, 1};
-    
-    rearrangeTuples(persons, order, n);
+    int size = sizeof(tuples) / sizeof(tuples[0]);
 
-    for (int i = 0; i < n; i++) {
-        printf("ID: %d, Name: %s\n", persons[i]->id, persons[i]->name);
+    rearrange_tuples(tuples, order, size);
+
+    for (int i = 0; i < size; ++i) {
+        printf("(%d, %d) ", tuples[i].first, tuples[i].second);
     }
 
-    for (int i = 0; i < n; i++) {
-        free(persons[i]);
-    }
     return 0;
 }
 ```

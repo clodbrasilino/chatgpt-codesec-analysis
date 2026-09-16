@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-623-s3.c: In function 'power_elements':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-623-s3.c:6:18: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+    6 |         arr[i] = pow(arr[i], n);
+      |                  ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-623-s3.c:3:1: note: include '<math.h>' or provide a declaration of 'pow'
+    2 | #include <stdlib.h>
+  +++ |+#include <math.h>
+    3 | 

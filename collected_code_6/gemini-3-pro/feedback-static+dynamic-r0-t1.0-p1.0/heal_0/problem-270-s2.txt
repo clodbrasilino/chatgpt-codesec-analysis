@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_even_at_even_positions(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    int sum = 0;
+    for (size_t i = 0; i < size; i += 2) {
+        if (arr[i] % 2 == 0) {
+            sum += arr[i];
+        }
+    }
+
+    return sum;
+}
+
+int main(void) {
+    size_t size = 6;
+    int *arr = (int *)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    arr[0] = 2;
+    arr[1] = 5;
+    arr[2] = 4;
+    arr[3] = 9;
+    arr[4] = 7;
+    arr[5] = 8;
+
+    int result = sum_even_at_even_positions(arr, size);
+    printf("Sum: %d\n", result);
+
+    free(arr);
+
+    return EXIT_SUCCESS;
+}
+```

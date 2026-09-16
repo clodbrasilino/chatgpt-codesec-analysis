@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int remove_multiple_spaces(char *str) {
+    if (str == NULL) {
+        return -1;
+    }
+
+    regex_t regex;
+    int reti;
+    regmatch_t pmatch[1];
+    char *pattern = "  +";
+    char *temp_str = NULL;
+    size_t len;
+
+    reti = regcomp(&regex, pattern, REG_EXTENDED);
+    if (reti) {
+        return -1;
+    }
+
+    len = strlen(str) + 1;
+    temp_str = (char *)malloc(len);
+    if (temp_str == NULL) {
+        regfree(&regex);
+        return -1;
+    }
+
+    while (regexec(&regex, str, 1, pmatch, 0) == 0) {
+        int start = pmatch[0].rm_so;
+        int end = pmatch[0].rm_eo;
+        
+        strncpy(temp_str, str, start + 1);
+        temp_str[start + 1] = '\0';
+        strcat(temp_str, str + end);
+        
+        strcpy(str, temp_str);
+    }
+
+    free(temp_str);
+    regfree(&regex);
+    return 0;
+}
+
+int main(void) {
+    char test_string[] = "This    is  a   test      string  with    multiple     spaces.";
+    
+    printf("Original: '%s'\n", test_string);
+    
+    if (remove_multiple_spaces(test_string) == 0) {
+        printf("Modified: '%s'\n", test_string);
+    } else {
+        printf("Error processing string.\n");
+    }
+    
+    return 0;
+}
+```

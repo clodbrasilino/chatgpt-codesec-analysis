@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t *indices;
+    size_t count;
+} MinIndicesResult;
+
+MinIndicesResult find_min_indices(const int *arr, size_t length) {
+    MinIndicesResult result = {NULL, 0};
+
+    if (arr == NULL || length == 0) {
+        return result;
+    }
+
+    int min_val = arr[0];
+    for (size_t i = 1; i < length; ++i) {
+        if (arr[i] < min_val) {
+            min_val = arr[i];
+        }
+    }
+
+    size_t min_count = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (arr[i] == min_val) {
+            min_count++;
+        }
+    }
+
+    if (min_count == 0) {
+        return result;
+    }
+
+    result.indices = (size_t *)malloc(min_count * sizeof(size_t));
+    if (result.indices == NULL) {
+        return result;
+    }
+
+    result.count = min_count;
+    size_t current_idx = 0;
+    for (size_t i = 0; i < length; ++i) {
+        if (arr[i] == min_val) {
+            result.indices[current_idx++] = i;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int data[] = {3, 1, 4, 1, 5, 9, 2, 6, 1, 3};
+    size_t data_len = sizeof(data) / sizeof(data[0]);
+
+    MinIndicesResult res = find_min_indices(data, data_len);
+
+    if (res.indices != NULL && res.count > 0) {
+        printf("Indices of minimum value: ");
+        for (size_t i = 0; i < res.count; ++i) {
+            printf("%zu ", res.indices[i]);
+        }
+        printf("\n");
+    }
+
+    free(res.indices);
+    res.indices = NULL;
+
+    return 0;
+}
+```

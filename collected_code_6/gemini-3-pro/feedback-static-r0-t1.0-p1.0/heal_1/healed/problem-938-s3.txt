@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+void findClosestElements(const int arr1[], int size1, const int arr2[], int size2, const int arr3[], int size3) {
+    if (size1 <= 0 || size2 <= 0 || size3 <= 0) {
+        return;
+    }
+
+    int i = 0, j = 0, k = 0;
+    int minDiff = INT_MAX;
+    int resI = -1, resJ = -1, resK = -1;
+
+    while (i < size1 && j < size2 && k < size3) {
+        int maxVal = arr1[i];
+        if (arr2[j] > maxVal) maxVal = arr2[j];
+        if (arr3[k] > maxVal) maxVal = arr3[k];
+
+        int minVal = arr1[i];
+        if (arr2[j] < minVal) minVal = arr2[j];
+        if (arr3[k] < minVal) minVal = arr3[k];
+
+        int diff = maxVal - minVal;
+
+        if (diff < minDiff) {
+            minDiff = diff;
+            resI = i;
+            resJ = j;
+            resK = k;
+        }
+
+        if (diff == 0) {
+            break;
+        }
+
+        if (arr1[i] == minVal) {
+            i++;
+        } else if (arr2[j] == minVal) {
+            j++;
+        } else {
+            k++;
+        }
+    }
+
+    if (resI != -1 && resJ != -1 && resK != -1) {
+        printf("%d, %d, %d\n", arr1[resI], arr2[resJ], arr3[resK]);
+    }
+}
+
+int main(void) {
+    int arr1[] = {1, 4, 10, 20, 22, 26, 30};
+    int arr2[] = {8, 15, 20, 25, 30};
+    int arr3[] = {1, 10, 15, 24, 26};
+
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    findClosestElements(arr1, size1, arr2, size2, arr3, size3);
+
+    return 0;
+}
+```

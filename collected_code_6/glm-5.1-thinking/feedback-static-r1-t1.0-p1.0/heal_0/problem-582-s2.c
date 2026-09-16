@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int size;
+    int capacity;
+    char **keys;
+    char **values;
+} Dictionary;
+
+int dict_init(Dictionary *dict, int capacity) {
+    if (dict == NULL || capacity <= 0) {
+        return -1;
+    }
+    dict->keys = malloc(capacity * sizeof(char *));
+    dict->values = malloc(capacity * sizeof(char *));
+    if (dict->keys == NULL || dict->values == NULL) {
+        free(dict->keys);
+        free(dict->values);
+        dict->keys = NULL;
+        dict->values = NULL;
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    free(dict->keys);
+    free(dict->values);
+    dict->keys = NULL;
+    dict->values = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+bool dict_is_empty(const Dictionary *dict) {
+    if (dict == NULL) {
+        return true;
+    }
+    return dict->size == 0;
+}
+
+int main(void) {
+    Dictionary d;
+    if (dict_init(&d, 10) != 0) {
+        fprintf(stderr, "Initialization failed\n");
+        return EXIT_FAILURE;
+    }
+    if (dict_is_empty(&d)) {
+        printf("Dictionary is empty\n");
+    } else {
+        printf("Dictionary is not empty\n");
+    }
+    dict_free(&d);
+    return EXIT_SUCCESS;
+}

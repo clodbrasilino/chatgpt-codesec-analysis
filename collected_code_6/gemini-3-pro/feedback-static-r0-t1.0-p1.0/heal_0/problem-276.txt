@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+
+#define PI 3.14159265358979323846
+
+double calculateCylinderVolume(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return PI * radius * radius * height;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double height = 0.0;
+    double volume = 0.0;
+    int result = 0;
+
+    result = scanf("%lf %lf", &radius, &height);
+
+    if (result != 2) {
+        return 1;
+    }
+
+    volume = calculateCylinderVolume(radius, height);
+
+    if (volume < 0.0) {
+        return 1;
+    }
+
+    printf("%f\n", volume);
+
+    return 0;
+}
+```

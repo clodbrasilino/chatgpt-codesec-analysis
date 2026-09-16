@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *item;
+    struct Node *next;
+} Node;
+
+Node* create_node(const char *str) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->item = strdup(str);
+    if (new_node->item == NULL) {
+        free(new_node);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->next = NULL;
+    return new_node;
+}
+
+void insert_at_beginning(Node **head, const char *prefix, const char *item) {
+    Node *new_node = create_node(item);
+    size_t len_prefix = strlen(prefix);
+    size_t len_item = strlen(new_node->item);
+    char *new_item = (char*)malloc(len_prefix + len_item + 1);
+    if (new_item == NULL) {
+        free(new_node->item);
+        free(new_node);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    strcpy(new_item, prefix);
+    strcat(new_item, new_node->item);
+
+    free(new_node->item);
+    new_node->item = new_item;
+
+    new_node->next = *head;
+    *head = new_node;
+}
+
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp->item);
+        free(temp);
+    }
+}
+
+int main() {
+    Node *head = NULL;
+    const char *prefix = "pre_";
+
+    insert_at_beginning(&head, prefix, "one");
+    insert_at_beginning(&head, prefix, "two");
+    insert_at_beginning(&head, prefix, "three");
+
+    for (Node *current = head; current != NULL; current = current->next) {
+        printf("%s\n", current->item);
+    }
+
+    free_list(head);
+    return 0;
+}

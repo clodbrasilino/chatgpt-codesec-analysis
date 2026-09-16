@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_frequency_of_largest(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    int largest = array[0];
+    int count = 1;
+
+    for (size_t i = 1; i < size; i++) {
+        if (array[i] > largest) {
+            largest = array[i];
+            count = 1;
+        } else if (array[i] == largest) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int array[] = {1, 5, 3, 5, 2, 5, 4};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    int frequency = find_frequency_of_largest(array, size);
+    printf("Frequency of the largest value: %d\n", frequency);
+
+    return 0;
+}

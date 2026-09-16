@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c:76:48: style: Condition 'encoded_len==0' is always false [knownConditionTrueFalse]
+    } else if (decoded_len == 0 && encoded_len == 0) {
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c:65:42: note: Assignment 'encoded_len=sizeof(encoded)/sizeof(encoded[0])', assigned value is 8
+    size_t encoded_len = sizeof(encoded) / sizeof(encoded[0]);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-215.c:76:48: note: Condition 'encoded_len==0' is always false
+    } else if (decoded_len == 0 && encoded_len == 0) {
+                                               ^

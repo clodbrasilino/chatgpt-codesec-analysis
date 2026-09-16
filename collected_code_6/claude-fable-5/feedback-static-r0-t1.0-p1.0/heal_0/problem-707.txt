@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long count_set_bits_upto(unsigned long long n)
+{
+    unsigned long long total = 0ULL;
+    unsigned long long i;
+
+    for (i = 0ULL; (1ULL << i) <= n && i < 63ULL; i++) {
+        unsigned long long block_size = 1ULL << (i + 1ULL);
+        unsigned long long full_blocks = (n + 1ULL) / block_size;
+        unsigned long long remainder = (n + 1ULL) % block_size;
+        unsigned long long bits_in_full = full_blocks * (1ULL << i);
+        unsigned long long bits_in_partial = 0ULL;
+
+        if (remainder > (1ULL << i)) {
+            bits_in_partial = remainder - (1ULL << i);
+        }
+
+        total += bits_in_full + bits_in_partial;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned long long n = 0ULL;
+    unsigned long long result = 0ULL;
+    int scan_status = 0;
+
+    printf("Enter a positive integer n: ");
+
+    scan_status = scanf("%llu", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0ULL) {
+        fprintf(stderr, "Error: n must be at least 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_set_bits_upto(n);
+
+    printf("Total set bits from 1 to %llu: %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```

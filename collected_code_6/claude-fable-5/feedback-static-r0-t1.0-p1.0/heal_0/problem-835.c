@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int compute_slope(double x1, double y1, double x2, double y2, double *slope);
+
+int compute_slope(double x1, double y1, double x2, double y2, double *slope)
+{
+    double dx;
+    double dy;
+
+    if (slope == NULL) {
+        return -1;
+    }
+
+    dx = x2 - x1;
+    dy = y2 - y1;
+
+    if (fabs(dx) < 1e-12) {
+        return -1;
+    }
+
+    *slope = dy / dx;
+
+    if (isnan(*slope) || isinf(*slope)) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double x1;
+    double y1;
+    double x2;
+    double y2;
+    double slope;
+
+    printf("Enter x1 y1: ");
+    if (scanf("%lf %lf", &x1, &y1) != 2) {
+        fprintf(stderr, "Invalid input for first point.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter x2 y2: ");
+    if (scanf("%lf %lf", &x2, &y2) != 2) {
+        fprintf(stderr, "Invalid input for second point.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (compute_slope(x1, y1, x2, y2, &slope) != 0) {
+        fprintf(stderr, "Slope is undefined (vertical line or invalid values).\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Slope: %f\n", slope);
+
+    return EXIT_SUCCESS;
+}

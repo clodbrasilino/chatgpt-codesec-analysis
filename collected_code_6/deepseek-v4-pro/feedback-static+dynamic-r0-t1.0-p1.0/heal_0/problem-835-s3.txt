@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+enum slope_status {
+    SLOPE_OK,
+    SLOPE_UNDEFINED,
+    SLOPE_INVALID_INPUT
+};
+
+struct slope_result {
+    double value;
+    enum slope_status status;
+};
+
+struct slope_result calculate_slope(double x1, double y1, double x2, double y2) {
+    struct slope_result result;
+    
+    if (isnan(x1) || isnan(y1) || isnan(x2) || isnan(y2) ||
+        isinf(x1) || isinf(y1) || isinf(x2) || isinf(y2)) {
+        result.status = SLOPE_INVALID_INPUT;
+        result.value = 0.0;
+        return result;
+    }
+    
+    if (fabs(x2 - x1) < 1e-10) {
+        result.status = SLOPE_UNDEFINED;
+        result.value = 0.0;
+        return result;
+    }
+    
+    result.value = (y2 - y1) / (x2 - x1);
+    result.status = SLOPE_OK;
+    return result;
+}
+
+int main(void) {
+    double x1, y1, x2, y2;
+    struct slope_result result;
+    
+    printf("Enter coordinates (x1 y1 x2 y2): ");
+    if (scanf("%lf %lf %lf %lf", &x1, &y1, &x2, &y2) != 4) {
+        fprintf(stderr, "Error: Invalid input format\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = calculate_slope(x1, y1, x2, y2);
+    
+    switch (result.status) {
+        case SLOPE_OK:
+            printf("Slope: %.10f\n", result.value);
+            break;
+        case SLOPE_UNDEFINED:
+            printf("Slope: undefined (vertical line)\n");
+            break;
+        case SLOPE_INVALID_INPUT:
+            fprintf(stderr, "Error: Invalid numerical input\n");
+            return EXIT_FAILURE;
+        default:
+            fprintf(stderr, "Error: Unknown error occurred\n");
+            return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

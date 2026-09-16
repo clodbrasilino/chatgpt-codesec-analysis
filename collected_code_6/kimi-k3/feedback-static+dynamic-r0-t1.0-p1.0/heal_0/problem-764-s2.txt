@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int count_numeric_values(const char *str) {
+    int count = 0;
+    int in_number = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (isdigit((unsigned char)*str)) {
+            if (!in_number) {
+                count++;
+                in_number = 1;
+            }
+        } else {
+            in_number = 0;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void) {
+    char input[256];
+
+    printf("Enter a string: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    size_t len = strlen(input);
+    if (len > 0 && input[len - 1] == '\n') {
+        input[len - 1] = '\0';
+    }
+
+    int result = count_numeric_values(input);
+    printf("Number of numeric values: %d\n", result);
+
+    return 0;
+}
+```

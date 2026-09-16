@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-790-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-790-s3.c:37:18: style: Condition 'null_arr!=NULL' is always false [knownConditionTrueFalse]
+    if (null_arr != NULL) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-790-s3.c:35:27: note: Assignment 'null_arr=NULL', assigned value is 0
+    const int *null_arr = NULL;
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-790-s3.c:37:18: note: Condition 'null_arr!=NULL' is always false
+    if (null_arr != NULL) {
+                 ^

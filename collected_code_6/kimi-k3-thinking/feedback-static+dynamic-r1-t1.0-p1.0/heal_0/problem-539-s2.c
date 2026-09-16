@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <math.h>
+
+static double power_by_index(double base, size_t index)
+{
+    return pow(base, (double)index);
+}
+
+static double *map_indexed(const double *array, size_t length, double (*func)(double, size_t))
+{
+    double *result;
+    size_t i;
+
+    if (array == NULL || func == NULL || length == 0) {
+        return NULL;
+    }
+
+    if (length > SIZE_MAX / sizeof(*result)) {
+        return NULL;
+    }
+
+    result = malloc(length * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; i++) {
+        result[i] = func(array[i], i);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    const double bases[] = {2.0, 3.0, 4.0, 5.0, 6.0};
+    const size_t length = sizeof(bases) / sizeof(bases[0]);
+    double *powers;
+    size_t i;
+
+    powers = map_indexed(bases, length, power_by_index);
+    if (powers == NULL) {
+        fprintf(stderr, "Error: failed to create the powers list.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Bases: ");
+    for (i = 0; i < length; i++) {
+        printf("%8.2f", bases[i]);
+    }
+    printf("\n");
+
+    printf("Powers:");
+    for (i = 0; i < length; i++) {
+        printf("%8.2f", powers[i]);
+    }
+    printf("\n");
+
+    free(powers);
+    powers = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-399-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-399-s3.c:4:38: style: Parameter 'a' can be declared as pointer to const [constParameterPointer]
+unsigned int tuple_xor(unsigned int *a, unsigned int *b, size_t size, unsigned int *result) {
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-399-s3.c:4:55: style: Parameter 'b' can be declared as pointer to const [constParameterPointer]
+unsigned int tuple_xor(unsigned int *a, unsigned int *b, size_t size, unsigned int *result) {
+                                                      ^

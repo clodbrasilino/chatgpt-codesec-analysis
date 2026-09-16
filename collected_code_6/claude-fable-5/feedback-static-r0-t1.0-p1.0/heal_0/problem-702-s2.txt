@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+int min_removals(int *arr, size_t n, int k)
+{
+    size_t i;
+    size_t j;
+    size_t best;
+
+    if (arr == NULL || n == 0U) {
+        return 0;
+    }
+
+    qsort(arr, n, sizeof(int), compare_ints);
+
+    best = 1U;
+    i = 0U;
+
+    for (j = 0U; j < n; j++) {
+        while ((long long)arr[j] - (long long)arr[i] > (long long)k) {
+            i++;
+        }
+        if ((j - i + 1U) > best) {
+            best = j - i + 1U;
+        }
+    }
+
+    return (int)(n - best);
+}
+
+int main(void)
+{
+    size_t n;
+    int k;
+    int *arr;
+    size_t idx;
+    int result;
+
+    if (scanf("%zu %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U || n > 1000000U || k < 0) {
+        fprintf(stderr, "Invalid parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc(n * sizeof(int));
+    if (arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (idx = 0U; idx < n; idx++) {
+        if (scanf("%d", &arr[idx]) != 1) {
+            fprintf(stderr, "Invalid element input\n");
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    result = min_removals(arr, n, k);
+    printf("%d\n", result);
+
+    free(arr);
+    return EXIT_SUCCESS;
+}
+```

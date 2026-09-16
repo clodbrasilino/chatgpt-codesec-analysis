@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int nth_catalan_number(unsigned int n) {
+    if (n <= 1) {
+        return 1;
+    }
+
+    unsigned long long int *catalan = (unsigned long long int *)calloc(n + 1, sizeof(unsigned long long int));
+    if (catalan == NULL) {
+        return 0;
+    }
+
+    catalan[0] = 1;
+    catalan[1] = 1;
+
+    for (unsigned int i = 2; i <= n; i++) {
+        catalan[i] = 0;
+        for (unsigned int j = 0; j < i; j++) {
+            if (catalan[j] > 0 && catalan[i - j - 1] > 0 && 
+                catalan[j] > (__UINT64_MAX__ - catalan[i]) / catalan[i - j - 1]) {
+                free(catalan);
+                return 0; 
+            }
+            catalan[i] += catalan[j] * catalan[i - j - 1];
+        }
+    }
+
+    unsigned long long int result = catalan[n];
+    free(catalan);
+    return result;
+}
+
+int main(void) {
+    unsigned int n;
+    
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long int result = nth_catalan_number(n);
+    
+    if (result == 0 && n > 1) {
+        printf("Overflow or memory allocation failure occurred.\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

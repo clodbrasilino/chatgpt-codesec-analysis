@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: The binary search implementation shown is already the corrected version. The weaknesses described in the comments (returning values one higher than expected, e.g. `3` instead of `2`) are characteristic of an earlier buggy variant that either used `low = mid` / `high = mid - 1` incorrectly or returned `low + 1`. The current logic — comparing `arr[mid] > arr[high]`, narrowing with `low = mid + 1` or `high = mid`, and returning `low` — correctly converges on the index of the minimum element, which equals the rotation count. It also safely handles `NULL` input, non-positive sizes, avoids overflow via `low + (high - low) / 2`, and correctly returns `0` for the non-rotated `arr3`.

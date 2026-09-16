@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+
+int64_t largest_k_modulo_x_is_y(int64_t x, int64_t y) {
+    if (x <= 0) {
+        return -1;
+    }
+    if (y < 0 || y >= x) {
+        return -1;
+    }
+    if (x > INT64_MAX / 2) {
+        return -1;
+    }
+    int64_t result = INT64_MAX - (INT64_MAX % x) + y;
+    if (result > INT64_MAX) {
+        result -= x;
+    }
+    if (result % x != y) {
+        return -1;
+    }
+    return result;
+}
+
+int main(void) {
+    int64_t test_cases[][2] = {
+        {5, 2},
+        {10, 7},
+        {1, 0},
+        {100, 99},
+        {7, 0},
+        {3, 2}
+    };
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        int64_t x = test_cases[i][0];
+        int64_t y = test_cases[i][1];
+        int64_t result = largest_k_modulo_x_is_y(x, y);
+        printf("x=%lld, y=%lld, k=%lld\n", 
+               (long long)x, (long long)y, (long long)result);
+    }
+    
+    int64_t invalid_x = largest_k_modulo_x_is_y(0, 5);
+    printf("Invalid x=0: %lld\n", (long long)invalid_x);
+    
+    int64_t invalid_y = largest_k_modulo_x_is_y(5, 5);
+    printf("Invalid y=5 for x=5: %lld\n", (long long)invalid_y);
+    
+    return 0;
+}

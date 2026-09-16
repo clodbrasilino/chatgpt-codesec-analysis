@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int maxPairSum(int *arr, int n, int k) {
+    if (n < 2 * k) return 0;
+    int *dp = (int*)calloc(n + 1, sizeof(int));
+    if (!dp) return 0;
+    int *prefix = (int*)calloc(n + 1, sizeof(int));
+    if (!prefix) {
+        free(dp);
+        return 0;
+    }
+    for (int i = 1; i <= n; i++) {
+        prefix[i] = prefix[i - 1] + arr[i - 1];
+    }
+    for (int i = 1; i <= k; i++) {
+        int *new_dp = (int*)calloc(n + 1, sizeof(int));
+        if (!new_dp) {
+            free(dp);
+            free(prefix);
+            return 0;
+        }
+        for (int j = 2 * i; j <= n; j++) {
+            new_dp[j] = new_dp[j - 1];
+            int sum_pair = arr[j - 1] + arr[j - 2];
+            int cand = dp[j - 2] + sum_pair;
+            if (cand > new_dp[j]) new_dp[j] = cand;
+        }
+        free(dp);
+        dp = new_dp;
+    }
+    int result = dp[n];
+    free(dp);
+    free(prefix);
+    return result;
+}
+
+int main(void) {
+    int arr[] = {3, 4, 1, 2, 8, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    printf("%d\n", maxPairSum(arr, n, k));
+    return 0;
+}

@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'tuple' can be declared as pointer to const [constParameterPointer]
+ */
+int assign_pairs(int *tuple, int size, int **result, int *result_size) {
+    if (tuple == NULL || size < 0 || result == NULL || result_size == NULL) {
+        return -1;
+    }
+
+    if (size < 2) {
+        *result = NULL;
+        *result_size = 0;
+        return 0;
+    }
+
+    *result_size = size;
+    *result = (int *)malloc(size * sizeof(int));
+    if (*result == NULL) {
+        return -1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (i % 2 == 0) {
+            (*result)[i] = tuple[i + 1];
+        } else {
+            (*result)[i] = tuple[i - 1];
+        }
+    }
+
+    return 0;
+}
+
+int main() {
+    int tuple[] = {1, 2, 3, 4, 5, 6};
+    int size = sizeof(tuple) / sizeof(tuple[0]);
+    int *result = NULL;
+    int result_size = 0;
+
+    int rc = assign_pairs(tuple, size, &result, &result_size);
+
+    if (rc == 0 && result != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+    }
+
+    free(result);
+    result = NULL;
+
+    return 0;
+}

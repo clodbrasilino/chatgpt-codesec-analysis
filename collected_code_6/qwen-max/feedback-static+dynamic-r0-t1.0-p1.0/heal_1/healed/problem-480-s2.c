@@ -3,25 +3,25 @@
 
 char findMaxOccurringChar(const char *str) {
     int count[256] = {0};
-    int max = 0;
-    int result = 0;
+    int max = -1;
+    char result = '\0';
 
-    if (str[0] == '\0') return result;
-
-    for (int i = 0; str[i]; ++i) {
-        unsigned char c = (unsigned char)str[i];
+    while (*str) {
+        unsigned char c = (unsigned char)*str;
         count[c]++;
         if (max < count[c]) {
             max = count[c];
-            result = c;
+            result = *str;
         }
+        str++;
     }
 
-    return (char)result;
+    return result;
 }
 
 int main() {
-    const char *str = "example string with characters";
-    printf("Max occurring character is: %c\n", findMaxOccurringChar(str));
+    const char *testStr = "example string with text";
+    char maxChar = findMaxOccurringChar(testStr);
+    printf("Max occurring character: %c\n", maxChar);
     return 0;
 }

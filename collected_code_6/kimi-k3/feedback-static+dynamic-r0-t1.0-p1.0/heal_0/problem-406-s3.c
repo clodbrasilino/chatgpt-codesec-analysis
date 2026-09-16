@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_parity(int num) {
+    return num & 1;
+}
+
+int main(void) {
+    int num;
+    int result;
+    
+    printf("Enter a number: ");
+    
+    if (scanf("%d", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = find_parity(num);
+    
+    if (result == 0) {
+        printf("Even parity\n");
+    } else {
+        printf("Odd parity\n");
+    }
+    
+    return EXIT_SUCCESS;
+}

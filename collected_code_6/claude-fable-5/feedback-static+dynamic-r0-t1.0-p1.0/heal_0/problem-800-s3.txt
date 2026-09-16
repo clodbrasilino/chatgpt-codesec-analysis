@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void remove_whitespace(char *str)
+{
+    size_t read_index = 0;
+    size_t write_index = 0;
+
+    if (str == NULL) {
+        return;
+    }
+
+    while (str[read_index] != '\0') {
+        if (!isspace((unsigned char)str[read_index])) {
+            str[write_index] = str[read_index];
+            write_index++;
+        }
+        read_index++;
+    }
+
+    str[write_index] = '\0';
+}
+
+int main(void)
+{
+    char text[] = "  Hello,   World!  \t This is a \n test.  ";
+
+    printf("Before: \"%s\"\n", text);
+
+    remove_whitespace(text);
+
+    printf("After:  \"%s\"\n", text);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key safety considerations in this implementation:**
+
+1. **CWE-664 (Resource lifetime):** The function operates in-place on a caller-owned buffer, so there's no allocation/deallocation to mismanage. `main` uses a stack array with automatic lifetime — no dangling pointers or leaks possible.
+
+2. **CWE-703 (Exceptional conditions):** The function explicitly checks for a `NULL` pointer before dereferencing. The character passed to `isspace()` is cast to `unsigned char`, which prevents undefined behavior when `char` is signed and holds a negative value.
+
+3. **CWE-710 (Coding standards):** 
+   - `size_t` is used for indexing rather than `int`, avoiding signed/unsigned issues.
+   - `main(void)` is the standard-conforming signature and returns `EXIT_SUCCESS`.
+   - The string is always properly null-terminated after compaction.
+   - No use of unsafe functions like `gets` or unbounded `strcpy`.
+
+The algorithm is a single-pass two-pointer compaction: O(n) time, O(1) extra space, and the write index can never exceed the read index, so no buffer overflow is possible.

@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long delannoy_number(int n, int m) {
+    long long dp[n+1][m+1];
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= m; j++) {
+            if (i == 0 || j == 0) {
+                dp[i][j] = 1;
+            } else {
+                dp[i][j] = dp[i-1][j] + dp[i][j-1] + dp[i-1][j-1];
+            }
+        }
+    }
+    return dp[n][m];
+}
+
+int main() {
+    int n, m;
+    printf("Enter n and m: ");
+    scanf("%d %d", &n, &m);
+    long long result = delannoy_number(n, m);
+    printf("The Delannoy number D(%d, %d) is: %lld\n", n, m, result);
+    return 0;
+}

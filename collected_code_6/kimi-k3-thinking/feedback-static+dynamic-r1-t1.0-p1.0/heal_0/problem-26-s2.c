@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+bool tuple_list_all_contain_k(const Tuple *tuples, size_t count, int k)
+{
+    if (tuples == NULL && count > 0U) {
+        return false;
+    }
+
+    for (size_t i = 0U; i < count; i++) {
+        if (tuples[i].first != k && tuples[i].second != k) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {4, 2},
+        {2, 3},
+        {1, 2}
+    };
+    const size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    const int k = 2;
+
+    if (tuple_list_all_contain_k(tuples, count, k)) {
+        (void)printf("All %zu tuples contain %d.\n", count, k);
+    } else {
+        (void)printf("Not all tuples contain %d.\n", k);
+    }
+
+    return 0;
+}

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_lateral_surface_area(double side);
+
+int main(void) {
+    double side;
+    double lateral_surface_area;
+
+    if (scanf("%lf", &side) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    lateral_surface_area = calculate_lateral_surface_area(side);
+
+    if (lateral_surface_area < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.2f\n", lateral_surface_area) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+double calculate_lateral_surface_area(double side) {
+    if (side <= 0.0) {
+        return -1.0;
+    }
+    return 4.0 * side * side;
+}

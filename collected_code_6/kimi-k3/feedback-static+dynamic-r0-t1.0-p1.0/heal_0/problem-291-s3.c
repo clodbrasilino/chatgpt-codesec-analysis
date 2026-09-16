@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long countWays(int n, int k) {
+    if (n <= 0 || k <= 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return k;
+    }
+    
+    long long same = k;
+    long long diff = (long long)k * (k - 1);
+    long long total = same + diff;
+    
+    for (int i = 3; i <= n; i++) {
+        long long newSame = diff;
+        long long newDiff = total * (k - 1);
+        same = newSame;
+        diff = newDiff;
+        total = same + diff;
+    }
+    
+    return total;
+}
+
+int main(void) {
+    int n, k;
+    
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Invalid input: n and k must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = countWays(n, k);
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

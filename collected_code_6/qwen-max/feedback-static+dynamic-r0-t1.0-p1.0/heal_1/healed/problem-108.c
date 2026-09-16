@@ -2,97 +2,98 @@
 #include <stdlib.h>
 
 typedef struct {
-    int value;
-    int index;
-} Element;
-
-typedef struct {
-    Element *elements;
+    int *array;
     int size;
-    int capacity;
-} PriorityQueue;
+    int current;
+} Iterator;
 
 int compare(const void *a, const void *b) {
-    return ((Element *)a)->value - ((Element *)b)->value;
+    return (*(int **)a)[0] - (*(int **)b)[0];
 }
 
-void heapify(PriorityQueue *pq, int i) {
-    int smallest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
-
-    if (left < pq->size && pq->elements[left].value < pq->elements[smallest].value)
-        smallest = left;
-
-    if (right < pq->size && pq->elements[right].value < pq->elements[smallest].value)
-        smallest = right;
-
-    if (smallest != i) {
-        Element temp = pq->elements[i];
-        pq->elements[i] = pq->elements[smallest];
-        pq->elements[smallest] = temp;
-        heapify(pq, smallest);
-    }
-}
-
-void insert(PriorityQueue *pq, Element element) {
-    if (pq->size == pq->capacity) {
-        pq->capacity = pq->capacity == 0 ? 1 : pq->capacity * 2;
-        pq->elements = realloc(pq->elements, pq->capacity * sizeof(Element));
-    }
-    pq->elements[pq->size] = element;
-    int i = pq->size;
-    while (i > 0 && pq->elements[(i - 1) / 2].value > pq->elements[i].value) {
-        Element temp = pq->elements[i];
-        pq->elements[i] = pq->elements[(i - 1) / 2];
-        pq->elements[(i - 1) / 2] = temp;
+void push(int **heap, int *sizes, int *array, int size, int *heap_size) {
+    heap[*heap_size] = array;
+    sizes[*heap_size] = size;
+    int i = *heap_size;
+    while (i > 0 && heap[(i - 1) / 2][0] > heap[i][0]) {
+        int *temp_arr = heap[(i - 1) / 2];
+        int temp_size = sizes[(i - 1) / 2];
+        heap[(i - 1) / 2] = heap[i];
+        sizes[(i - 1) / 2] = sizes[i];
+        heap[i] = temp_arr;
+        sizes[i] = temp_size;
         i = (i - 1) / 2;
     }
-    pq->size++;
+    (*heap_size)++;
 }
 
-Element extractMin(PriorityQueue *pq) {
-    Element min = pq->elements[0];
-    pq->elements[0] = pq->elements[--pq->size];
-    heapify(pq, 0);
-    return min;
-}
-
-int is_empty(const PriorityQueue *pq) {
-    return pq->size == 0;
-}
-
-void merge_sorted_arrays(int *arrays[], int sizes[], int k) {
-    PriorityQueue pq = {NULL, 0, 0};
-    for (int i = 0; i < k; i++) {
-        if (sizes[i] > 0) {
-            insert(&pq, (Element){arrays[i][0], i});
-            sizes[i]--;
-        }
+int pop(int **heap, int *sizes, int *heap_size) {
+    if (*heap_size == 0) return -1;
+    int result = heap[0][0];
+    heap[0] = heap[*heap_size - 1];
+    sizes[0] = sizes[*heap_size - 1];
+    (*heap_size)--;
+    int i = 0;
+    while (i * 2 + 1 < *heap_size) {
+        int smallest = i;
+        if (heap[i][0] > heap[i * 2 + 1][0]) smallest = i * 2 + 1;
+        if (i * 2 + 2 < *heap_size && heap[smallest][0] > heap[i * 2 + 2][0]) smallest = i * 2 + 2;
+        if (smallest == i) break;
+        int *temp_arr = heap[smallest];
+        int temp_size = sizes[smallest];
+        heap[smallest] = heap[i];
+        sizes[smallest] = sizes[i];
+        heap[i] = temp_arr;
+        sizes[i] = temp_size;
+        i = smallest;
     }
+    return result;
+}
 
-    while (!is_empty(&pq)) {
-        Element min = extractMin(&pq);
-        printf("%d ", min.value);
-        if (sizes[min.index] > 0) {
-            insert(&pq, (Element){arrays[min.index][sizes[min.index]], min.index});
-            sizes[min.index]--;
-        }
-    }
-    printf("\n");
-    free(pq.elements);
+int next(Iterator *iter) {
+    if (iter->current >= iter->size) return -1;
+    return iter->array[iter->current++];
 }
 
 int main() {
-    int arr1[] = {1, 3, 5, 7};
-    int arr2[] = {2, 4, 6, 8};
-    int arr3[] = {0, 9, 10, 11};
+    int arr1[] = {1, 3, 5};
+    int arr2[] = {2, 4, 6};
+    int arr3[] = {0, 7, 8, 9};
 
-    int *arrays[] = {arr1, arr2, arr3};
-    int sizes[] = {4, 4, 4};
-    int k = 3;
+    int **arrays = malloc(3 * sizeof(int *));
+    arrays[0] = arr1;
+    arrays[1] = arr2;
+    arrays[2] = arr3;
 
-    merge_sorted_arrays(arrays, sizes, k);
+    const int sizes[] = {3, 3, 4};
+
+    int *result = malloc(10 * sizeof(int));
+    int result_index = 0;
+
+    int **heap = malloc(3 * sizeof(int *));
+    int *hsizes = malloc(3 * sizeof(int));
+    int heap_size = 0;
+
+    for (int i = 0; i < 3; i++) {
+        push(heap, hsizes, arrays[i], sizes[i], &heap_size);
+    }
+
+    while (heap_size > 0) {
+        int item = pop(heap, hsizes, &heap_size);
+        result[result_index++] = item;
+        int *arr = heap[0];
+        if (next((Iterator *)arr)) {
+            push(heap, hsizes, arr, sizes[0], &heap_size);
+        }
+    }
+
+    for (int i = 0; i < result_index; i++) {
+        printf("%d ", result[i]);
+    }
+    free(result);
+    free(arrays);
+    free(heap);
+    free(hsizes);
 
     return 0;
 }

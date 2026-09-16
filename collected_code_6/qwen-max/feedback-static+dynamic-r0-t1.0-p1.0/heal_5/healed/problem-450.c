@@ -2,49 +2,75 @@
 #include <stdlib.h>
 #include <string.h>
 
-char **extract_strings(const char *source[], int count, const size_t sizes[]) {
-    char **result = (char **)malloc(count * sizeof(char *));
-    if (result == NULL) return NULL;
-    
-    for (int i = 0; i < count; i++) {
-        result[i] = (char *)malloc(sizes[i] + 1);
-        if (result[i] == NULL) {
-            for (int j = 0; j < i; j++) {
-                free(result[j]);
-            }
-            free(result);
-            return NULL;
-        }
-        strncpy(result[i], source[i], sizes[i]);
-        result[i][sizes[i]] = '\0';
-    }
-    
-    return result;
-}
+char **extract_substrings(const char *const *list, size_t list_size, size_t substring_size, size_t *result_count) {
+    *result_count = 0;
+    if (list == NULL || list_size == 0 || substring_size == 0)
+        return NULL;
 
-void free_strings(char **strings, int count) {
-    for (int i = 0; i < count; i++) {
-        free(strings[i]);
+    char **results = (char **)malloc(list_size * sizeof(char *));
+    if (results == NULL)
+        return NULL;
+
+    for (size_t i = 0; i < list_size; ++i) {
+        if (list[i] != NULL && strlen(list[i]) >= substring_size) {
+            results[*result_count] = (char *)malloc(substring_size + 1);
+            if (results[*result_count] == NULL) {
+                while (*result_count > 0) {
+                    free(results[--(*result_count)]);
+                }
+                free(results);
+                return NULL;
+            }
+            strncpy(results[*result_count], list[i], substring_size);
+            results[*result_count][substring_size] = '\0';
+            if (strlen(list[i]) == substring_size) {
+                results[*result_count][substring_size] = '\0';
+            } else {
+                results[*result_count][substring_size] = '\0';
+            }
+            (*result_count)++;
+        }
     }
-    free(strings);
+
+    return results;
 }
 
 int main() {
-    const char *source[] = {"practice", "solution"};
-    const size_t sizes[] = {8, 9};
-    int count = 2;
+    const char *const strings[] = {"practice", "solution", "exercises", "Python"};
+    size_t list_size = sizeof(strings) / sizeof(strings[0]);
+    size_t substring_size_0 = 9;
+    size_t substring_size_1 = 6;
+    size_t substring_size_2 = 6;
+    size_t result_count;
 
-    char **result = extract_strings(source, count, sizes);
-    if (result == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
+    char **results_0 = extract_substrings(strings, list_size, substring_size_0, &result_count);
+    if (results_0 != NULL) {
+        for (size_t i = 0; i < result_count; ++i) {
+            printf("%s\n", results_0[i]);
+            free(results_0[i]);
+        }
+        free(results_0);
     }
 
-    for (int i = 0; i < count; i++) {
-        printf("%s\n", result[i]);
+    result_count = 0;
+    char **results_1 = extract_substrings(strings, list_size, substring_size_1, &result_count);
+    if (results_1 != NULL) {
+        for (size_t i = 0; i < result_count; ++i) {
+            printf("%s\n", results_1[i]);
+            free(results_1[i]);
+        }
+        free(results_1);
     }
 
-    free_strings(result, count);
+    result_count = 0;
+    char **results_2 = extract_substrings(strings, list_size, substring_size_2, &result_count);
+    if (results_2 != NULL) {
+        for (size_t i = 0; i < result_count; ++i) {
+            printf("%s\n", results_2[i]);
+            free(results_2[i]);
+        }
+        free(results_2);
+    }
 
     return 0;
 }

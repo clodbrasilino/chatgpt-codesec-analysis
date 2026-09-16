@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int rearrange_alternating(int *arr, size_t n);
+void print_array(const int *arr, size_t n);
+
+int rearrange_alternating(int *arr, size_t n)
+{
+    int *pos;
+    int *neg;
+    size_t pcount = 0;
+    size_t ncount = 0;
+    size_t i;
+    size_t pi = 0;
+    size_t ni = 0;
+    size_t idx = 0;
+
+    if (arr == NULL || n == 0)
+    {
+        return -1;
+    }
+
+    pos = malloc(n * sizeof(int));
+    if (pos == NULL)
+    {
+        return -1;
+    }
+
+    neg = malloc(n * sizeof(int));
+    if (neg == NULL)
+    {
+        free(pos);
+        return -1;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        if (arr[i] >= 0)
+        {
+            pos[pcount] = arr[i];
+            pcount++;
+        }
+        else
+        {
+            neg[ncount] = arr[i];
+            ncount++;
+        }
+    }
+
+    while (pi < pcount && ni < ncount)
+    {
+        arr[idx] = pos[pi];
+        idx++;
+        pi++;
+        arr[idx] = neg[ni];
+        idx++;
+        ni++;
+    }
+
+    while (pi < pcount)
+    {
+        arr[idx] = pos[pi];
+        idx++;
+        pi++;
+    }
+
+    while (ni < ncount)
+    {
+        arr[idx] = neg[ni];
+        idx++;
+        ni++;
+    }
+
+    free(pos);
+    free(neg);
+    return 0;
+}
+
+void print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int data[] = { -5, 3, 4, -1, -2, 8, -9, 7, 6, -3 };
+    size_t n = sizeof(data) / sizeof(data[0]);
+
+    printf("Original array:\n");
+    print_array(data, n);
+
+    if (rearrange_alternating(data, n) != 0)
+    {
+        fprintf(stderr, "Error: rearrangement failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Rearranged array:\n");
+    print_array(data, n);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define EARTH_RADIUS_KM 6371.0088
+#define PI 3.14159265358979323846
+
+static double degrees_to_radians(double degrees)
+{
+    return degrees * (PI / 180.0);
+}
+
+static int validate_coordinates(double latitude, double longitude)
+{
+    if (isnan(latitude) || isnan(longitude)) {
+        return 0;
+    }
+    if (isinf(latitude) || isinf(longitude)) {
+        return 0;
+    }
+    if (latitude < -90.0 || latitude > 90.0) {
+        return 0;
+    }
+    if (longitude < -180.0 || longitude > 180.0) {
+        return 0;
+    }
+    return 1;
+}
+
+static double haversine_distance(double lat1, double lon1, double lat2, double lon2)
+{
+    double phi1 = degrees_to_radians(lat1);
+    double phi2 = degrees_to_radians(lat2);
+    double delta_phi = degrees_to_radians(lat2 - lat1);
+    double delta_lambda = degrees_to_radians(lon2 - lon1);
+
+    double sin_dphi = sin(delta_phi / 2.0);
+    double sin_dlambda = sin(delta_lambda / 2.0);
+
+    double a = (sin_dphi * sin_dphi) +
+               (cos(phi1) * cos(phi2) * sin_dlambda * sin_dlambda);
+
+    if (a < 0.0) {
+        a = 0.0;
+    }
+    if (a > 1.0) {
+        a = 1.0;
+    }
+
+    double c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+
+    return EARTH_RADIUS_KM * c;
+}
+
+int main(void)
+{
+    double lat1;
+    double lon1;
+    double lat2;
+    double lon2;
+    double distance;
+
+    printf("Enter latitude of point 1 (-90 to 90): ");
+    if (scanf("%lf", &lat1) != 1) {
+        fprintf(stderr, "Error: invalid input for latitude 1\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter longitude of point 1 (-180 to 180): ");
+    if (scanf("%lf", &lon1) != 1) {
+        fprintf(stderr, "Error: invalid input for longitude 1\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter latitude of point 2 (-90 to 90): ");
+    if (scanf("%lf", &lat2) != 1) {
+        fprintf(stderr, "Error: invalid input for latitude 2\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter longitude of point 2 (-180 to 180): ");
+    if (scanf("%lf", &lon2) != 1) {
+        fprintf(stderr, "Error: invalid input for longitude 2\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!validate_coordinates(lat1, lon1)) {
+        fprintf(stderr, "Error: point 1 coordinates out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!validate_coordinates(lat2, lon2)) {
+        fprintf(stderr, "Error: point 2 coordinates out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    distance = haversine_distance(lat1, lon1, lat2, lon2);
+
+    if (isnan(distance) || isinf(distance) || distance < 0.0) {
+        fprintf(stderr, "Error: distance computation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Distance: %.4f km\n", distance);
+
+    return EXIT_SUCCESS;
+}

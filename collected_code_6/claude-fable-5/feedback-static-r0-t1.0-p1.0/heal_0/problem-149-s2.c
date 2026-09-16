@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int longest_subsequence_diff_one(const int *arr, size_t n)
+{
+    int *dp = NULL;
+    int result = 0;
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || n == 0U) {
+        return 0;
+    }
+
+    dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        dp[i] = 1;
+    }
+
+    for (i = 1U; i < n; i++) {
+        for (j = 0U; j < i; j++) {
+            int diff = arr[i] - arr[j];
+            if ((diff == 1) || (diff == -1)) {
+                if (dp[j] + 1 > dp[i]) {
+                    dp[i] = dp[j] + 1;
+                }
+            }
+        }
+    }
+
+    result = dp[0];
+    for (i = 1U; i < n; i++) {
+        if (dp[i] > result) {
+            result = dp[i];
+        }
+    }
+
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 3, 2};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int length;
+
+    length = longest_subsequence_diff_one(arr, n);
+    if (length < 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Length of the longest subsequence: %d\n", length) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

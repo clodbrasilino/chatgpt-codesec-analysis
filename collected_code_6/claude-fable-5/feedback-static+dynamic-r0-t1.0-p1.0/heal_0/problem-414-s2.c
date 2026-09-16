@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+bool value_exists(const int *sequence, size_t length, int value)
+{
+    if (sequence == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < length; i++) {
+        if (sequence[i] == value) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int numbers[] = { 4, 8, 15, 16, 23, 42 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int target = 15;
+
+    if (value_exists(numbers, count, target)) {
+        printf("%d exists in the sequence.\n", target);
+    } else {
+        printf("%d does not exist in the sequence.\n", target);
+    }
+
+    target = 99;
+
+    if (value_exists(numbers, count, target)) {
+        printf("%d exists in the sequence.\n", target);
+    } else {
+        printf("%d does not exist in the sequence.\n", target);
+    }
+
+    return 0;
+}

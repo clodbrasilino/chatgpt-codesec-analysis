@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:14: error: implicit declaration of function 'regexec' [-Wimplicit-function-declaration]
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |              ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:23: error: 'regex' undeclared here (not in a function)
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |                       ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:30: error: 'cursor' undeclared here (not in a function)
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |                              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:42: error: 'match' undeclared here (not in a function)
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |                                          ^~~~~

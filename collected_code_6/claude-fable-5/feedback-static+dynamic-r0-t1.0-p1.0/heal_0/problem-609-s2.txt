@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double find_min_periodic(double a, double b);
+
+double find_min_periodic(double a, double b)
+{
+    return -hypot(a, b);
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double result;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Error: invalid input for a\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1) {
+        fprintf(stderr, "Error: invalid input for b\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(a) || !isfinite(b)) {
+        fprintf(stderr, "Error: inputs must be finite numbers\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_min_periodic(a, b);
+
+    if (!isfinite(result)) {
+        fprintf(stderr, "Error: computation overflowed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum value of f(x) = %g*sin(x) + %g*cos(x) is: %f\n", a, b, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solves the classic problem of finding the minimum possible value of the periodic function `f(x) = a·sin(x) + b·cos(x)`, which is mathematically `-√(a² + b²)`.
+
+Key design decisions addressing the specified weaknesses:
+
+- **CWE-703**: Every `scanf` return value is checked, inputs are validated with `isfinite` to reject NaN/infinity, and the computed result is verified before printing. Errors go to `stderr` with a failure exit code.
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there is nothing that can leak or be used outside its lifetime; all variables are stack-local with well-defined scope.
+- **CWE-710**: The code adheres to standards by using `int main(void)`, a forward declaration for the helper function, `EXIT_SUCCESS`/`EXIT_FAILURE` macros, and `hypot()` from `<math.h>` instead of a hand-rolled `sqrt(a*a + b*b)`, which avoids intermediate overflow/underflow issues.
+
+Compile with: `gcc -Wall -Wextra -std=c11 min_periodic.c -lm -o min_periodic`

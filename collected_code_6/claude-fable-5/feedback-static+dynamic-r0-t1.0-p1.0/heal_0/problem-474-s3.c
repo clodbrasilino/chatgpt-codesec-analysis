@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+size_t replace_char(char *str, char old_char, char new_char)
+{
+    size_t count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (str[i] == old_char) {
+            str[i] = new_char;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *original = "hello world, hello everyone";
+    char *buffer;
+    size_t len;
+    size_t replaced;
+
+    len = strlen(original);
+    buffer = malloc(len + 1);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, len + 1);
+
+    printf("Before: %s\n", buffer);
+
+    replaced = replace_char(buffer, 'l', 'L');
+
+    printf("After:  %s\n", buffer);
+    printf("Replaced %zu occurrence(s)\n", replaced);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}

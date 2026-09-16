@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-31.c:90:32: error: cannot assign to variable 'min' with const-qualified type 'const int'
+   90 |         if (nums[i] < min) min = nums[i];
+      |                            ~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-31.c:88:15: note: variable 'min' declared const here
+   88 |     const int min = nums[0], max = nums[numsSize - 1];
+      |     ~~~~~~~~~~^~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-31.c:91:32: error: cannot assign to variable 'max' with const-qualified type 'const int'
+   91 |         if (nums[i] > max) max = nums[i];
+      |                            ~~~ ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-31.c:88:30: note: variable 'max' declared const here
+   88 |     const int min = nums[0], max = nums[numsSize - 1];
+      |     ~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+2 errors generated.

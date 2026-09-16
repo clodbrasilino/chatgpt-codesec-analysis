@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void extract_k_elements(int *array, int size, int k, int *output) {
+    int *temp = (int *)malloc(size * sizeof(int));
+    if (temp == NULL) return;
+    
+    for (int i = 0; i < size; ++i) {
+        temp[i] = array[i];
+    }
+    
+    for (int i = 0; i < k; ++i) {
+        int min_index = i;
+        for (int j = i + 1; j < size; ++j) {
+            if (temp[min_index] > temp[j]) {
+                min_index = j;
+            }
+        }
+        output[i] = temp[min_index];
+        temp[min_index] = INT_MAX;
+    }
+    
+    for (int i = 0; i < k; ++i) {
+        int max_index = i;
+        for (int j = i + 1; j < size; ++j) {
+            if (temp[max_index] < temp[j]) {
+                max_index = j;
+            }
+        }
+        output[i + k] = temp[max_index];
+        temp[max_index] = INT_MIN;
+    }
+    
+    free(temp);
+}
+
+int main() {
+    int arr[] = {1, 4, 2, 8, 3, 6, 5, 7, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+    int result[2 * k];
+    
+    extract_k_elements(arr, n, k, result);
+    
+    printf("Smallest %d elements: ", k);
+    for (int i = 0; i < k; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\nLargest %d elements: ", k);
+    for (int i = 0; i < k; ++i) {
+        printf("%d ", result[i + k]);
+    }
+    printf("\n");
+    
+    return 0;
+}
+```

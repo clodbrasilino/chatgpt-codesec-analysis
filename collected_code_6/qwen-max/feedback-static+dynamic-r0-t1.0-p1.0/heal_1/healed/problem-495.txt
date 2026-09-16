@@ -4,24 +4,18 @@
 #include <regex.h>
 #include <string.h>
 
-void removeLowercaseSubstrings(char *str) {
+void remove_lowercase_substrings(char *str) {
     regex_t regex;
-    regmatch_t pmatch[1];
-    int status;
-
-    if (regcomp(&regex, "[a-z]+", REG_EXTENDED|REG_NOSUB) != 0) {
-        fprintf(stderr, "Could not compile regex\n");
-        exit(EXIT_FAILURE);
+    char *pattern = "[a-z]+";
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return;
     }
 
-    while ((status = regexec(&regex, str, 1, pmatch, 0)) == 0) {
-        memmove(str + pmatch[0].rm_so, str + pmatch[0].rm_eo, strlen(str + pmatch[0].rm_eo) + 1);
-    }
-
-    if (status != REG_NOMATCH) {
-        regfree(&regex);
-        perror("Regex match failed");
-        exit(EXIT_FAILURE);
+    regmatch_t matches[1];
+    while (regexec(&regex, str, 1, matches, 0) == 0) {
+        int match_start = matches[0].rm_so;
+        int match_end = matches[0].rm_eo;
+        memmove(str + match_start, str + match_end, strlen(str + match_end) + 1);
     }
 
     regfree(&regex);
@@ -29,9 +23,8 @@ void removeLowercaseSubstrings(char *str) {
 
 int main() {
     char input[] = "HeLlO WoRlD";
-    removeLowercaseSubstrings(input);
+    remove_lowercase_substrings(input);
     printf("%s\n", input);
-
     return 0;
 }
 ```

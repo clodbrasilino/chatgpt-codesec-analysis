@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int find_shortest_word_length(const char *str) {
+    int shortest = -1, word_length = 0, i;
+    
+    for (i = 0; str[i] != '\0'; ++i) {
+        if (str[i] == ' ' || str[i] == '\t' || str[i] == '\n') {
+            if (word_length > 0 && (shortest == -1 || word_length < shortest)) {
+                shortest = word_length;
+            }
+            word_length = 0;
+        } else {
+            word_length++;
+        }
+    }
+    
+    if (word_length > 0 && (shortest == -1 || word_length < shortest)) {
+        shortest = word_length;
+    }
+    
+    return shortest;
+}
+
+int main() {
+    const char *input = "Find the length of the shortest word in this sentence.";
+    int length = find_shortest_word_length(input);
+    if (length != -1) {
+        printf("The length of the shortest word: %d\n", length);
+    } else {
+        printf("No words found in the input.\n");
+    }
+    return 0;
+}
+```

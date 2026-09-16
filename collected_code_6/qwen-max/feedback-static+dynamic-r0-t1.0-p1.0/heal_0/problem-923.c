@@ -1,15 +1,16 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
-int shortestCommonSupersequenceLength(char *str1, char *str2) {
-    int len1 = strlen(str1), len2 = strlen(str2);
-    int dp[len1 + 1][len2 + 1];
-
-    for (int i = 0; i <= len1; i++) {
-        for (int j = 0; j <= len2; j++) {
-            if (i == 0 || j == 0) {
-                dp[i][j] = i + j;
+int shortestCommonSupersequence(char* str1, char* str2) {
+    int m = strlen(str1), n = strlen(str2);
+    int dp[m + 1][n + 1];
+    
+    for (int i = 0; i <= m; i++) {
+        for (int j = 0; j <= n; j++) {
+            if (i == 0) {
+                dp[i][j] = j;
+            } else if (j == 0) {
+                dp[i][j] = i;
             } else if (str1[i - 1] == str2[j - 1]) {
                 dp[i][j] = 1 + dp[i - 1][j - 1];
             } else {
@@ -17,13 +18,12 @@ int shortestCommonSupersequenceLength(char *str1, char *str2) {
             }
         }
     }
-
-    return dp[len1][len2];
+    return dp[m][n];
 }
 
 int main() {
-    char str1[] = "abc";
-    char str2[] = "def";
-    printf("Length of the shortest common supersequence: %d\n", shortestCommonSupersequenceLength(str1, str2));
+    char str1[] = "AGGTAB";
+    char str2[] = "GXTXAYB";
+    printf("Length of the shortest common supersequence: %d\n", shortestCommonSupersequence(str1, str2));
     return 0;
 }

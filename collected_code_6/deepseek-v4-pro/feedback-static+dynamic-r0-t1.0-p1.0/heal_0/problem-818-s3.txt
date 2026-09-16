@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+int count_lowercase(const char *str) {
+    int count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    while (*str != '\0') {
+        if (islower((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test1 = "Hello World";
+    const char *test2 = "ABCdef123XYZ";
+    const char *test3 = "";
+    const char *test4 = "ALL UPPER";
+    const char *test5 = NULL;
+    
+    printf("Lowercase in \"%s\": %d\n", test1, count_lowercase(test1));
+    printf("Lowercase in \"%s\": %d\n", test2, count_lowercase(test2));
+    printf("Lowercase in \"%s\": %d\n", test3, count_lowercase(test3));
+    printf("Lowercase in \"%s\": %d\n", test4, count_lowercase(test4));
+    printf("Lowercase in NULL: %d\n", count_lowercase(test5));
+    
+    return 0;
+}
+```

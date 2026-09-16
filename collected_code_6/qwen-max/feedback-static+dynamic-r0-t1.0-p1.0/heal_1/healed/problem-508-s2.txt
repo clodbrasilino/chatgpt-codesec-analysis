@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool checkOrder(const int* list1, int list1Size, const int* list2, int list2Size) {
+    int index1 = 0, index2 = 0;
+    while (index1 < list1Size && index2 < list2Size) {
+        if (list1[index1] == list2[index2]) {
+            index1++;
+            index2++;
+        } else {
+            index1++;
+        }
+    }
+    return index2 == list2Size;
+}
+
+int main() {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 4, 5};
+    int list1Size = sizeof(list1) / sizeof(list1[0]);
+    int list2Size = sizeof(list2) / sizeof(list2[0]);
+
+    if (checkOrder(list1, list1Size, list2, list2Size)) {
+        printf("Common elements are in the same order.\n");
+    } else {
+        printf("Common elements are not in the same order.\n");
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_monotonic(const int *arr, size_t n)
+{
+    bool increasing = true;
+    bool decreasing = true;
+    size_t i;
+
+    if (arr == NULL) {
+        return false;
+    }
+
+    if (n < 2U) {
+        return true;
+    }
+
+    for (i = 1U; i < n; i++) {
+        if (arr[i] > arr[i - 1U]) {
+            decreasing = false;
+        }
+        if (arr[i] < arr[i - 1U]) {
+            increasing = false;
+        }
+    }
+
+    return increasing || decreasing;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 2, 3};
+    int arr2[] = {6, 5, 4, 4};
+    int arr3[] = {1, 3, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    if (is_monotonic(arr1, n1)) {
+        (void)printf("arr1 is monotonic\n");
+    } else {
+        (void)printf("arr1 is not monotonic\n");
+    }
+
+    if (is_monotonic(arr2, n2)) {
+        (void)printf("arr2 is monotonic\n");
+    } else {
+        (void)printf("arr2 is not monotonic\n");
+    }
+
+    if (is_monotonic(arr3, n3)) {
+        (void)printf("arr3 is monotonic\n");
+    } else {
+        (void)printf("arr3 is not monotonic\n");
+    }
+
+    return 0;
+}

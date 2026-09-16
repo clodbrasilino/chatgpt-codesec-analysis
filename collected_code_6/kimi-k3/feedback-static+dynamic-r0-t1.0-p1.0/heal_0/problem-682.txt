@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* create_node(int data) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append_node(Node **head, int data) {
+    Node *new_node = create_node(data);
+    if (new_node == NULL) {
+        return;
+    }
+    
+    if (*head == NULL) {
+        *head = new_node;
+        return;
+    }
+    
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+Node* multiply_lists(Node *list1, Node *list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return NULL;
+    }
+    
+    Node *result = NULL;
+    Node *ptr1 = list1;
+    Node *ptr2 = list2;
+    
+    while (ptr1 != NULL && ptr2 != NULL) {
+        append_node(&result, ptr1->data * ptr2->data);
+        ptr1 = ptr1->next;
+        ptr2 = ptr2->next;
+    }
+    
+    return result;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    Node *next;
+    
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+    
+    append_node(&list1, 1);
+    append_node(&list1, 2);
+    append_node(&list1, 3);
+    
+    append_node(&list2, 4);
+    append_node(&list2, 5);
+    append_node(&list2, 6);
+    
+    printf("List 1: ");
+    print_list(list1);
+    
+    printf("List 2: ");
+    print_list(list2);
+    
+    result = multiply_lists(list1, list2);
+    
+    if (result != NULL) {
+        printf("Result: ");
+        print_list(result);
+        free_list(result);
+    } else {
+        printf("Multiplication failed or lists are empty\n");
+    }
+    
+    free_list(list1);
+    free_list(list2);
+    
+    return 0;
+}
+```

@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_digits(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (!isdigit((unsigned char)input[i])) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int remove_digits_from_list(const char **list, size_t count, char ***output)
+{
+    size_t i;
+    char **cleaned;
+
+    if (list == NULL || output == NULL) {
+        return -1;
+    }
+
+    cleaned = calloc(count, sizeof(char *));
+    if (cleaned == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        cleaned[i] = remove_digits(list[i]);
+        if (cleaned[i] == NULL) {
+            size_t k;
+            for (k = 0; k < i; k++) {
+                free(cleaned[k]);
+            }
+            free(cleaned);
+            return -1;
+        }
+    }
+
+    *output = cleaned;
+    return 0;
+}
+
+void free_string_list(char **list, size_t count)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(list[i]);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    const char *strings[] = {
+        "hello123world",
+        "abc456",
+        "789",
+        "no digits here",
+        "2024 year"
+    };
+    size_t count = sizeof(strings) / sizeof(strings[0]);
+    char **cleaned = NULL;
+    size_t i;
+
+    if (remove_digits_from_list(strings, count, &cleaned) != 0) {
+        fprintf(stderr, "Failed to process string list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("\"%s\" -> \"%s\"\n", strings[i], cleaned[i]) < 0) {
+            free_string_list(cleaned, count);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free_string_list(cleaned, count);
+    return EXIT_SUCCESS;
+}
+```

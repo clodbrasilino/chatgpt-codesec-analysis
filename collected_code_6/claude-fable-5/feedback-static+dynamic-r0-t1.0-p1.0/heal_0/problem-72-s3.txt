@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int can_be_difference_of_squares(long long n);
+
+int can_be_difference_of_squares(long long n)
+{
+    long long remainder;
+
+    if (n < 0LL) {
+        n = -n;
+    }
+
+    remainder = n % 4LL;
+
+    if (remainder == 2LL) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    long long number = 0LL;
+    int scan_result;
+
+    printf("Enter an integer: ");
+
+    scan_result = scanf("%lld", &number);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (can_be_difference_of_squares(number)) {
+        printf("%lld can be represented as a difference of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as a difference of two squares.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The logic relies on the mathematical fact that a number can be expressed as a difference of two squares (a² − b²) if and only if it is **not** congruent to 2 modulo 4, since a² − b² = (a+b)(a−b) and the two factors always have the same parity.
+
+Key points addressing the CWE concerns:
+
+- **CWE-703**: The return value of `scanf` is explicitly checked, and an error message with a failure exit code is produced on invalid input instead of proceeding with an uninitialized or garbage value.
+- **CWE-664**: No dynamically allocated or shared resources are used; all variables are initialized before use and confined to their proper scope and lifetime.
+- **CWE-710**: The code follows standard conventions — `int main(void)` signature, forward declaration of the function, use of `EXIT_SUCCESS`/`EXIT_FAILURE`, matching format specifiers (`%lld` for `long long`), and braces on all control structures.

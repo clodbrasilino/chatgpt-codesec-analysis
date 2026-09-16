@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double r;
+    double theta;
+} PolarCoord;
+
+typedef struct {
+    double x;
+    double y;
+} RectCoord;
+
+RectCoord polar_to_rect(PolarCoord p) {
+    RectCoord r;
+    r.x = p.r * cos(p.theta);
+    r.y = p.r * sin(p.theta);
+    return r;
+}
+
+int main(void) {
+    PolarCoord p;
+    RectCoord r;
+    
+    p.r = 5.0;
+    p.theta = M_PI / 4.0;
+    
+    r = polar_to_rect(p);
+    
+    printf("Rectangular coordinates: x = %f, y = %f\n", r.x, r.y);
+    
+    return 0;
+}
+```

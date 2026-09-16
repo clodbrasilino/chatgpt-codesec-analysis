@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+static bool contains(const int *list, size_t size, int value) {
+    if (list == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < size; i++) {
+        if (list[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+IntList get_difference(const IntList *list1, const IntList *list2) {
+    IntList result = {NULL, 0};
+
+    if (list1 == NULL || list1->data == NULL || list1->size == 0) {
+        return result;
+    }
+
+    result.data = (int *)malloc(list1->size * sizeof(int));
+    if (result.data == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < list1->size; i++) {
+        bool in_list2 = false;
+        if (list2 != NULL && list2->data != NULL) {
+            in_list2 = contains(list2->data, list2->size, list1->data[i]);
+        }
+        if (!in_list2) {
+            result.data[result.size++] = list1->data[i];
+        }
+    }
+
+    if (result.size == 0) {
+        free(result.data);
+        result.data = NULL;
+        return result;
+    }
+
+    if (result.size < list1->size) {
+        int *temp = (int *)realloc(result.data, result.size * sizeof(int));
+        if (temp != NULL) {
+            result.data = temp;
+        }
+    }
+
+    return result;
+}
+
+void free_intlist(IntList *list) {
+    if (list != NULL) {
+        free(list->data);
+        list->data = NULL;
+        list->size = 0;
+    }
+}
+
+int main(void) {
+    int data1[] = {1, 2, 3, 4, 5};
+    int data2[] = {4, 5, 6, 7};
+
+    IntList list1 = {data1, sizeof(data1) / sizeof(data1[0])};
+    IntList list2 = {data2, sizeof(data2) / sizeof(data2[0])};
+
+    IntList diff = get_difference(&list1, &list2);
+
+    for (size_t i = 0; i < diff.size; i++) {
+        printf("%d ", diff.data[i]);
+    }
+    printf("\n");
+
+    free_intlist(&diff);
+
+    return 0;
+}
+```

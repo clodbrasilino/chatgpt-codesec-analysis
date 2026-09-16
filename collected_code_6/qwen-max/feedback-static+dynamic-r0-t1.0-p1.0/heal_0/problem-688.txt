@@ -1,0 +1,16 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <complex.h>
+
+double complex_length(double complex z) {
+    return cabs(z);
+}
+
+int main() {
+    double complex z = 3.0 + 4.0 * I;
+    double length = complex_length(z);
+    printf("The length of the complex number is: %f\n", length);
+    return 0;
+}
+```

@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 4
+
+static int max_path_sum(const int *triangle, int rows, int *out_sum)
+{
+    if (triangle == NULL || out_sum == NULL || rows <= 0) {
+        return -1;
+    }
+
+    int *dp = malloc((size_t)rows * sizeof(*dp));
+    if (dp == NULL) {
+        return -2;
+    }
+
+    const int *last_row = triangle + ((size_t)(rows - 1) * (size_t)rows) / 2;
+    for (int j = 0; j < rows; j++) {
+        dp[j] = last_row[j];
+    }
+
+    for (int i = rows - 2; i >= 0; i--) {
+        const int *row = triangle + ((size_t)i * (size_t)(i + 1)) / 2;
+        for (int j = 0; j <= i; j++) {
+            dp[j] = row[j] + (dp[j] > dp[j + 1] ? dp[j] : dp[j + 1]);
+        }
+    }
+
+    *out_sum = dp[0];
+    free(dp);
+    dp = NULL;
+    return 0;
+}
+
+int main(void)
+{
+    static const int triangle[] = {
+        3,
+        7, 4,
+        2, 4, 6,
+        8, 5, 9, 3
+    };
+
+    int max_sum = 0;
+    int status = max_path_sum(triangle, ROWS, &max_sum);
+
+    if (status != 0) {
+        fprintf(stderr, "Error: failed to compute maximum path sum (code %d)\n", status);
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum path sum: %d\n", max_sum);
+    return EXIT_SUCCESS;
+}
+```

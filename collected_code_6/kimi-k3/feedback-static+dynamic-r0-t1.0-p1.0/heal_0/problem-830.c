@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double round_up_to_digits(double num, int digits) {
+    double multiplier = pow(10.0, (double)digits);
+    return ceil(num * multiplier) / multiplier;
+}
+
+int main(void) {
+    double number;
+    int digits;
+    
+    printf("Enter a number: ");
+    if (scanf("%lf", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter number of decimal digits: ");
+    if (scanf("%d", &digits) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (digits < 0 || digits > 15) {
+        fprintf(stderr, "Digits must be between 0 and 15\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = round_up_to_digits(number, digits);
+    printf("Rounded up to %d digits: %.*f\n", digits, digits, result);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void remove_odd_chars(char *str) {
+    char *src = str;
+    char *dst = str;
+    while (*src) {
+        if ((int)*src % 2 == 0) {
+            *dst++ = *src;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char input[] = "Hello, World!";
+    remove_odd_chars(input);
+    printf("%s\n", input);
+    return 0;
+}
+```

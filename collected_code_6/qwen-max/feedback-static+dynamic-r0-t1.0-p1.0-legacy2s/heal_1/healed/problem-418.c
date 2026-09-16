@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Sublist;
+
+Sublist* findMaxSublist(Sublist *lists, size_t numLists) {
+    if (numLists == 0) return NULL;
+    Sublist *maxList = lists;
+    for (size_t i = 1; i < numLists; i++) {
+        if (lists[i].length > maxList->length) {
+            maxList = &lists[i];
+        }
+    }
+    return maxList;
+}
+
+int main() {
+    int data0[] = {1, 2, 3};
+    int data1[] = {4, 5};
+    int data2[] = {6, 7, 8, 9};
+
+    Sublist lists[] = {
+        {data0, 3},
+        {data1, 2},
+        {data2, 4}
+    };
+    size_t numLists = sizeof(lists) / sizeof(lists[0]);
+
+    Sublist *maxSublist = findMaxSublist(lists, numLists);
+    if (maxSublist != NULL) {
+        for (size_t i = 0; i < maxSublist->length; i++) {
+            printf("%d ", maxSublist->data[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No sublists provided.\n");
+    }
+
+    return 0;
+}

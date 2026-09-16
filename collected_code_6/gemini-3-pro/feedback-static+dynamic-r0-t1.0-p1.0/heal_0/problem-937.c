@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char find_most_common_character(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return '\0';
+    }
+
+    int counts[256] = {0};
+    int max_count = 0;
+    char most_common = '\0';
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char current_char = (unsigned char)str[i];
+        counts[current_char]++;
+        
+        if (counts[current_char] > max_count) {
+            max_count = counts[current_char];
+            most_common = current_char;
+        }
+    }
+
+    return most_common;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "hello world",
+        "aabbbbbc",
+        "abc",
+        "",
+        NULL
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        char result = find_most_common_character(test_strings[i]);
+        if (test_strings[i] == NULL) {
+            printf("String: NULL -> Most common: '%c'\n", result);
+        } else {
+            printf("String: \"%s\" -> Most common: '%c'\n", test_strings[i], result);
+        }
+    }
+
+    return 0;
+}

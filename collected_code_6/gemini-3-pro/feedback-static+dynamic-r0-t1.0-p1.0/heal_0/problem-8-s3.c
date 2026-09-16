@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* squareElements(const int* list, size_t size) {
+    if (list == NULL || size == 0) {
+        return NULL;
+    }
+
+    int* squaredList = (int*)malloc(size * sizeof(int));
+    if (squaredList == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        squaredList[i] = list[i] * list[i];
+    }
+
+    return squaredList;
+}
+
+int main(void) {
+    int list[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    int* squaredList = squareElements(list, size);
+
+    if (squaredList != NULL) {
+        for (size_t i = 0; i < size; ++i) {
+            printf("%d ", squaredList[i]);
+        }
+        printf("\n");
+        free(squaredList);
+    } else {
+        printf("Memory allocation failed or empty list.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

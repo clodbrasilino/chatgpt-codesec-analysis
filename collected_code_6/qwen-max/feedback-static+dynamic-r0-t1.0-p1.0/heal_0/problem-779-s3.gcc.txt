@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c:51:42: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   51 |     List lists[MAX_LISTS] = {{{"a", 1}, {"b", 2}}, {{"a", 1}, {"c", 1}}, {{"b", 2}, {"a", 1}}};
+      |                                          ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c:51:42: note: (near initialization for 'lists[0].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c:51:64: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   51 |     List lists[MAX_LISTS] = {{{"a", 1}, {"b", 2}}, {{"a", 1}, {"c", 1}}, {{"b", 2}, {"a", 1}}};
+      |                                                                ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c:51:64: note: (near initialization for 'lists[1].count')
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c:51:86: error: initialization of 'int' from 'char *' makes integer from pointer without a cast [-Wint-conversion]
+   51 |     List lists[MAX_LISTS] = {{{"a", 1}, {"b", 2}}, {{"a", 1}, {"c", 1}}, {{"b", 2}, {"a", 1}}};
+      |                                                                                      ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-779-s3.c:51:86: note: (near initialization for 'lists[2].count')

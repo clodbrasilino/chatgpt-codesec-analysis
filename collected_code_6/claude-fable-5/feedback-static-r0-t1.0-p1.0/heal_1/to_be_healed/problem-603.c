@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *getLudicNumbers(int n, size_t *count);
+void printLudicNumbers(const int *ludic, size_t count);
+
+int *getLudicNumbers(int n, size_t *count)
+{
+    int *arr;
+    int *result;
+    size_t size;
+    size_t resCount;
+    size_t i;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'j' can be reduced. [variableScope]
+     */
+    size_t j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'first' can be reduced. [variableScope]
+     */
+    int first;
+
+    if (count == NULL) {
+        return NULL;
+    }
+
+    *count = 0;
+
+    if (n < 1) {
+        return NULL;
+    }
+
+    result = malloc((size_t)n * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    resCount = 0;
+    result[resCount++] = 1;
+
+    if (n == 1) {
+        *count = resCount;
+        return result;
+    }
+
+    size = (size_t)n - 1U;
+    arr = malloc(size * sizeof(int));
+    if (arr == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++) {
+        arr[i] = (int)i + 2;
+    }
+
+    while (size > 0) {
+        first = arr[0];
+        result[resCount++] = first;
+
+        j = 0;
+        for (i = 0; i < size; i++) {
+            if (i % (size_t)first != 0) {
+                arr[j++] = arr[i];
+            }
+        }
+        size = j;
+    }
+
+    free(arr);
+    *count = resCount;
+    return result;
+}
+
+void printLudicNumbers(const int *ludic, size_t count)
+{
+    size_t i;
+
+    if (ludic == NULL || count == 0) {
+        printf("No ludic numbers found.\n");
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("%d", ludic[i]);
+        if (i + 1 < count) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void)
+{
+    int n;
+    size_t count;
+    int *ludic;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    ludic = getLudicNumbers(n, &count);
+    if (ludic == NULL && n >= 1) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printLudicNumbers(ludic, count);
+    free(ludic);
+
+    return EXIT_SUCCESS;
+}

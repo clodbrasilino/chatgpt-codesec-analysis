@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+long long product_first_even_odd(const int *arr, size_t len, bool *found)
+{
+    bool even_found = false;
+    bool odd_found = false;
+    int first_even = 0;
+    int first_odd = 0;
+    size_t i;
+
+    if (found == NULL) {
+        return 0;
+    }
+
+    *found = false;
+
+    if (arr == NULL || len == 0U) {
+        return 0;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if ((arr[i] % 2) == 0) {
+            if (!even_found) {
+                first_even = arr[i];
+                even_found = true;
+            }
+        } else {
+            if (!odd_found) {
+                first_odd = arr[i];
+                odd_found = true;
+            }
+        }
+        if (even_found && odd_found) {
+            break;
+        }
+    }
+
+    if (even_found && odd_found) {
+        *found = true;
+        return (long long)first_even * (long long)first_odd;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 1, 3, 5, 7, 4, 1, 6, 8 };
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+    bool found = false;
+    long long result;
+
+    result = product_first_even_odd(numbers, len, &found);
+
+    if (found) {
+        if (printf("Product of first even and first odd: %lld\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("List does not contain both an even and an odd number.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

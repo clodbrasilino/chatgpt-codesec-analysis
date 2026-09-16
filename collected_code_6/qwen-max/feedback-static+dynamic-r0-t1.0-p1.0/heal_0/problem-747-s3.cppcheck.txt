@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:9:36: style: Parameter 'X' can be declared as pointer to const [constParameterPointer]
+int longestCommonSubsequence(char* X, char* Y, char* Z, int m, int n, int o) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:9:45: style: Parameter 'Y' can be declared as pointer to const [constParameterPointer]
+int longestCommonSubsequence(char* X, char* Y, char* Z, int m, int n, int o) {
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s3.c:9:54: style: Parameter 'Z' can be declared as pointer to const [constParameterPointer]
+int longestCommonSubsequence(char* X, char* Y, char* Z, int m, int n, int o) {
+                                                     ^

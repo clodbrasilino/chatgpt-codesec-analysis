@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double calculate_geometric_sum(double a, double r, int n);
+
+double calculate_geometric_sum(double a, double r, int n) {
+    if (n <= 0) {
+        return 0.0;
+    }
+    if (r == 1.0) {
+        return a * n;
+    }
+    return a * (1.0 - pow(r, (double)n)) / (1.0 - r);
+}
+
+int main(void) {
+    double a = 1.0;
+    double r = 2.0;
+    int n = 5;
+    double sum;
+
+    sum = calculate_geometric_sum(a, r, n);
+    printf("%.6f\n", sum);
+
+    return 0;
+}
+```

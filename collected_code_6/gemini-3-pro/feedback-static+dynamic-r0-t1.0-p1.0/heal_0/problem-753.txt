@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    int value;
+} Tuple;
+
+void swap(Tuple* a, Tuple* b) {
+    Tuple temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void maxHeapify(Tuple* heap, int size, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && heap[left].value > heap[largest].value) {
+        largest = left;
+    }
+
+    if (right < size && heap[right].value > heap[largest].value) {
+        largest = right;
+    }
+
+    if (largest != i) {
+        swap(&heap[i], &heap[largest]);
+        maxHeapify(heap, size, largest);
+    }
+}
+
+void buildMaxHeap(Tuple* heap, int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) {
+        maxHeapify(heap, size, i);
+    }
+}
+
+Tuple* findMinimumKRecords(const Tuple* records, int numRecords, int k, int* resultSize) {
+    if (records == NULL || numRecords <= 0 || k <= 0 || resultSize == NULL) {
+        if (resultSize != NULL) {
+            *resultSize = 0;
+        }
+        return NULL;
+    }
+
+    int size = (k < numRecords) ? k : numRecords;
+    *resultSize = size;
+
+    Tuple* minRecords = (Tuple*)malloc(size * sizeof(Tuple));
+    if (minRecords == NULL) {
+        *resultSize = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < size; i++) {
+        minRecords[i] = records[i];
+    }
+
+    buildMaxHeap(minRecords, size);
+
+    for (int i = size; i < numRecords; i++) {
+        if (records[i].value < minRecords[0].value) {
+            minRecords[0] = records[i];
+            maxHeapify(minRecords, size, 0);
+        }
+    }
+
+    return minRecords;
+}
+
+int main(void) {
+    Tuple records[] = {
+        {1, 50}, {2, 10}, {3, 30}, {4, 20}, {5, 60}, {6, 40}
+    };
+    int numRecords = sizeof(records) / sizeof(records[0]);
+    int k = 3;
+    int resultSize = 0;
+
+    Tuple* minRecords = findMinimumKRecords(records, numRecords, k, &resultSize);
+
+    if (minRecords != NULL) {
+        for (int i = 0; i < resultSize; i++) {
+            printf("ID: %d, Value: %d\n", minRecords[i].id, minRecords[i].value);
+        }
+        free(minRecords);
+    } else {
+        printf("Failed to find records or invalid input.\n");
+    }
+
+    return 0;
+}
+```

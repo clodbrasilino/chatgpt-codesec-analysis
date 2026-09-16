@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_negatives(const int *list, int size) {
+    int count = 0;
+    for (int i = 0; i < size; ++i) {
+        if (list[i] < 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, -2, 3, -4, 5, -6, 7, -8, 9, -10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int negatives = count_negatives(arr, size);
+    printf("Number of negative numbers: %d\n", negatives);
+    return 0;
+}

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static void swap(char *a, char *b)
+{
+    if (a != NULL && b != NULL && a != b) {
+        char temp = *a;
+        *a = *b;
+        *b = temp;
+    }
+}
+
+static void print_permutations(char *str, size_t left, size_t right)
+{
+    if (str == NULL) {
+        return;
+    }
+    
+    if (left == right) {
+        if (printf("%s\n", str) < 0) {
+            fprintf(stderr, "Error writing to stdout\n");
+        }
+        return;
+    }
+    
+    for (size_t i = left; i <= right; i++) {
+        swap(&str[left], &str[i]);
+        print_permutations(str, left + 1, right);
+        swap(&str[left], &str[i]);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argc > 0 ? argv[0] : "program");
+        return EXIT_FAILURE;
+    }
+    
+    if (argv[1] == NULL) {
+        fprintf(stderr, "Invalid argument\n");
+        return EXIT_FAILURE;
+    }
+    
+    size_t len = strlen(argv[1]);
+    if (len == 0) {
+        return EXIT_SUCCESS;
+    }
+    
+    char *str = malloc(len + 1);
+    if (str == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    strcpy(str, argv[1]);
+    print_permutations(str, 0, len - 1);
+    
+    free(str);
+    str = NULL;
+    
+    return EXIT_SUCCESS;
+}

@@ -2,30 +2,26 @@
 #include <stdio.h>
 #include <math.h>
 
-int is_power_of_two(int n) {
-    return (n > 0) && !(n & (n - 1));
-}
-
-int is_woodall_number(int n) {
-    int i;
-    for (i = 1; ; i++) {
-        if (pow(2, i) * i - 1 > n) {
-            break;
-        }
-        if (pow(2, i) * i - 1 == n) {
-            return 1;
-        }
+int is_woodall(long n) {
+    for (long k = 1; ; ++k) {
+        long woodall_number = k * pow(2, k) - 1;
+        if (woodall_number == n) return 1;
+        if (woodall_number > n || woodall_number < 0) break;
     }
     return 0;
 }
 
 int main() {
-    int num = 31;
-    if (is_woodall_number(num)) {
-        printf("%d is a Woodall number.\n", num);
+    long number;
+    printf("Enter a number: ");
+    scanf("%ld", &number);
+
+    if (is_woodall(number)) {
+        printf("%ld is a Woodall number.\n", number);
     } else {
-        printf("%d is not a Woodall number.\n", num);
+        printf("%ld is not a Woodall number.\n", number);
     }
+
     return 0;
 }
 ```

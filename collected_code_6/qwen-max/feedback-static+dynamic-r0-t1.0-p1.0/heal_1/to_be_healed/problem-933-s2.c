@@ -6,64 +6,52 @@
   *  include '<ctype.h>' or provide a declaration of 'tolower'
   */
 
-char *camel_to_snake(const char *str) {
-    const int buffer_size = 256;
-    char *snake_case = (char *)malloc(buffer_size * sizeof(char));
-    if (!snake_case) {
-        return NULL;
-    }
-
-    memset(snake_case, 0, buffer_size);
-
+void camel_to_snake(const char *input, char *output) {
     regex_t regex;
-    regmatch_t matches[3];
-    if (regcomp(&regex, "([a-z0-9])([A-Z])|([A-Z])([A-Z][a-z])", REG_EXTENDED)) {
-        free(snake_case);
-        return NULL;
+    regmatch_t matches[2];
+    char buffer[1024];
+
+    if (regcomp(&regex, "([a-z])([A-Z])", REG_EXTENDED) != 0) {
+        fprintf(stderr, "Failed to compile regex\n");
+        exit(1);
     }
 
-    int pos = 0;
-    int match_pos = 0;
-    while (regexec(&regex, str + pos, 3, matches, 0) == 0) {
-        int match_start = matches[0].rm_so;
-        int match_end = matches[0].rm_eo;
-        strncpy(snake_case + match_pos, str + pos, match_start);
-        match_pos += match_start;
+    strcpy(buffer, input);
 
-        if (matches[1].rm_so != -1 && matches[2].rm_so != -1) {
-            snake_case[match_pos++] = '_';
+    int nmatches = 1;
+    while (nmatches > 0) {
+        nmatches = regexec(&regex, buffer, 2, matches, 0);
+        if (nmatches > 0) {
+            buffer[matches[1].rm_so + 1] = '_';
+            memmove(&buffer[matches[1].rm_so + 2], &buffer[matches[1].rm_so + 1], strlen(&buffer[matches[1].rm_so + 1]));
             /* Possible weaknesses found:
-             *  include the header <ctype.h> or explicitly provide a declaration for 'tolower'
-             *  implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
-             *  call to undeclared library function 'tolower' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+             *  Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
              */
-            snake_case[match_pos++] = tolower(str[pos + match_start]);
-        /* Possible weaknesses found:
-         *  Array 'matches[3]' accessed at index 4, which is out of bounds. [arrayIndexOutOfBounds]
-         *  Array 'matches[3]' accessed at index 3, which is out of bounds. [arrayIndexOutOfBounds]
-         */
-        } else if (matches[3].rm_so != -1 && matches[4].rm_so != -1) {
-            snake_case[match_pos++] = '_';
-            snake_case[match_pos++] = tolower(str[pos + match_start]);
+            buffer[matches[2].rm_so + 1] = buffer[matches[2].rm_so];
+            /* Possible weaknesses found:
+             *  Array 'matches[2]' accessed at index 2, which is out of bounds. [arrayIndexOutOfBounds]
+             */
+            buffer[matches[2].rm_so] = buffer[matches[2].rm_so + 1];
         }
-
-        pos += match_end;
     }
 
-    strcpy(snake_case + match_pos, str + pos);
-    regfree(&regex);
+    for (int i = 0; i < strlen(buffer); ++i) {
+        /* Possible weaknesses found:
+         *  call to undeclared library function 'tolower' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <ctype.h> or explicitly provide a declaration for 'tolower'
+         *  implicit declaration of function 'tolower' [-Wimplicit-function-declaration]
+         */
+        buffer[i] = tolower(buffer[i]);
+    }
 
-    return snake_case;
+    strcpy(output, buffer);
+    regfree(&regex);
 }
 
 int main() {
-    const char *camel_case = "ThisIsCamelCaseString";
-    char *snake_case = camel_to_snake(camel_case);
-    if (snake_case) {
-        printf("%s\n", snake_case);
-        free(snake_case);
-    } else {
-        printf("Conversion failed.\n");
-    }
+    const char *input = "camelCaseExample";
+    char output[1024];
+    camel_to_snake(input, output);
+    printf("%s\n", output);
     return 0;
 }

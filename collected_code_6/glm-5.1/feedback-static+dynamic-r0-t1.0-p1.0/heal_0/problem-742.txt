@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_tetrahedron_area(double a, double b, double c, double d, double e, double f) {
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0 || d <= 0.0 || e <= 0.0 || f <= 0.0) {
+        return -1.0;
+    }
+
+    double a2 = a * a;
+    double b2 = b * b;
+    double c2 = c * c;
+    double d2 = d * d;
+    double e2 = e * e;
+    double f2 = f * f;
+
+    double val = (4.0 * a2 * b2 * c2)
+               - (a2 * (b2 + c2 - f2) * (b2 + c2 - f2))
+               - (b2 * (a2 + c2 - e2) * (a2 + c2 - e2))
+               - (c2 * (a2 + b2 - d2) * (a2 + b2 - d2))
+               + ((a2 + b2 - d2) * (a2 + c2 - e2) * (b2 + c2 - f2));
+
+    if (val <= 0.0) {
+        return -1.0;
+    }
+
+    return sqrt(val) / 12.0;
+}
+
+int main(void) {
+    double a = 1.0;
+    double b = 1.0;
+    double c = 1.0;
+    double d = 1.0;
+    double e = 1.0;
+    double f = 1.0;
+
+    double area = calculate_tetrahedron_area(a, b, c, d, e, f);
+
+    if (area < 0.0) {
+        printf("Invalid tetrahedron\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```

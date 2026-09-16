@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double largest_triangle_area(double semi_major, double semi_minor);
+
+double largest_triangle_area(double semi_major, double semi_minor)
+{
+    if (semi_major <= 0.0 || semi_minor <= 0.0)
+    {
+        return -1.0;
+    }
+
+    if (!isfinite(semi_major) || !isfinite(semi_minor))
+    {
+        return -1.0;
+    }
+
+    return (3.0 * sqrt(3.0) / 4.0) * semi_major * semi_minor;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double area = 0.0;
+
+    printf("Enter semi-major axis (a): ");
+    if (scanf("%lf", &a) != 1)
+    {
+        fprintf(stderr, "Error: invalid input for semi-major axis.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter semi-minor axis (b): ");
+    if (scanf("%lf", &b) != 1)
+    {
+        fprintf(stderr, "Error: invalid input for semi-minor axis.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = largest_triangle_area(a, b);
+
+    if (area < 0.0)
+    {
+        fprintf(stderr, "Error: axes must be positive finite values.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Largest inscribed triangle area: %.6f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:** The largest triangle that can be inscribed in an ellipse with semi-axes `a` and `b` is an affine transformation of the equilateral triangle inscribed in a circle. Its maximum area is given by the closed-form formula:
+
+Area = (3√3 / 4) × a × b
+
+**Safety considerations addressed:**
+
+- **CWE-664:** No dynamic resources (memory, files) are allocated, so there is nothing to leak or misuse across a lifetime; all variables are stack-based and initialized.
+- **CWE-703:** All `scanf` return values are checked, inputs are validated for positivity and finiteness (`isfinite` guards against `NaN`/`Inf`), and error paths return `EXIT_FAILURE` with diagnostics to `stderr`.
+- **CWE-710:** The code uses `int main(void)`, explicit function prototypes, braces on all control blocks, standard exit macros, and initializes every variable at declaration.
+
+Compile with: `gcc -Wall -Wextra -std=c11 triangle.c -lm -o triangle`

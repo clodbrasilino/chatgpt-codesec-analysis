@@ -1,0 +1,10 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-843.c:38:5: error: call to undeclared function 'decreaseKey'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   38 |     decreaseKey(h, h->size - 1, k);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-843.c:41:6: error: conflicting types for 'decreaseKey'
+   41 | void decreaseKey(minHeap *h, int i, int new_val) {
+      |      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-843.c:38:5: note: previous implicit declaration is here
+   38 |     decreaseKey(h, h->size - 1, k);
+      |     ^
+2 errors generated.

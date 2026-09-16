@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int add_and_count_digits(long long a, long long b, long long *sum)
+{
+    if ((b > 0 && a > LLONG_MAX - b) || (b < 0 && a < LLONG_MIN - b)) {
+        return -1;
+    }
+
+    *sum = a + b;
+
+    long long value = *sum;
+    int digits = 1;
+
+    while (value <= -10 || value >= 10) {
+        value /= 10;
+        digits++;
+    }
+
+    return digits;
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+    long long sum;
+    int digits;
+
+    printf("Enter first number: ");
+    if (scanf("%lld", &a) != 1) {
+        fprintf(stderr, "Invalid input for first number\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second number: ");
+    if (scanf("%lld", &b) != 1) {
+        fprintf(stderr, "Invalid input for second number\n");
+        return EXIT_FAILURE;
+    }
+
+    digits = add_and_count_digits(a, b, &sum);
+    if (digits < 0) {
+        fprintf(stderr, "Overflow detected: cannot compute sum\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum: %lld\n", sum);
+    printf("Number of digits: %d\n", digits);
+
+    return EXIT_SUCCESS;
+}

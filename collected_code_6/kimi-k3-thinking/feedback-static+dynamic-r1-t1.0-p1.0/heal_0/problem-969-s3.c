@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *items;
+    size_t length;
+    size_t capacity;
+} Tuple;
+
+static void free_tuples(Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0u; i < count; i++) {
+        free(tuples[i].items);
+        tuples[i].items = NULL;
+        tuples[i].length = 0u;
+        tuples[i].capacity = 0u;
+    }
+    free(tuples);
+}
+
+static int tuple_append(Tuple *tuple, int value)
+{
+    if (tuple->length == tuple->capacity) {
+        size_t new_capacity = (tuple->capacity == 0u) ? 4u : tuple->capacity * 2u;
+        int *new_items;
+
+        if (new_capacity < tuple->capacity ||
+            new_capacity > SIZE_MAX / sizeof(*new_items)) {
+            return 0;
+        }
+        new_items = (int *)realloc(tuple->items, new_capacity * sizeof(*new_items));
+        if (new_items == NULL) {
+            return 0;
+        }
+        tuple->items = new_items;
+        tuple->capacity = new_capacity;
+    }
+    tuple->items[tuple->length] = value;
+    tuple->length += 1u;
+    return 1;
+}
+
+static Tuple *join_tuples(const Tuple *tuples, size_t count, size_t *result_count)
+{
+    Tuple *result;
+    size_t result_length = 0u;
+    size_t i;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+    *result_count = 0u;
+    if (tuples == NULL || count == 0u) {
+        return NULL;
+    }
+
+    result = (Tuple *)calloc(count, sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0u; i < count; i++) {
+        size_t j;
+        int matched = 0;
+
+        if (tuples[i].items == NULL || tuples[i].length == 0u) {
+            continue;
+        }
+
+        for (j = 0u; j < result_length; j++) {
+            if (result[j].items[0] == tuples[i].items[0]) {
+                size_t k;
+                for (k = 1u; k < tuples[i].length; k++) {
+                    if (!tuple_append(&result[j], tuples[i].items[k])) {
+                        free_tuples(result, result_length);
+                        return NULL;
+                    }
+                }
+                matched = 1;
+                break;
+            }
+        }
+
+        if (!matched) {
+            size_t k;
+            for (k = 0u; k < tuples[i].length; k++) {
+                if (!tuple_append(&result[result_length], tuples[i].items[k])) {
+                    free_tuples(result, result_length + 1u);
+                    return NULL;
+                }
+            }
+            result_length += 1u;
+        }
+    }
+
+    *result_count = result_length;
+    return result;
+}
+
+int main(void)
+{
+    int values0[] = {5, 6};
+    int values1[] = {3, 2};
+    int values2[] = {5, 9};
+    int values3[] = {8, 1};
+    int values4[] = {3, 4};
+
+    Tuple input[5];
+    Tuple *joined;
+    size_t joined_count = 0u;
+    size_t i;
+
+    input[0].items = values0;
+    input[0].length = 2u;
+    input[0].capacity = 2u;
+    input[1].items = values1;
+    input[1].length = 2u;
+    input[1].capacity = 2u;
+    input[2].items = values2;
+    input[2].length = 2u;
+    input[2].capacity = 2u;
+    input[3].items = values3;
+    input[3].length = 2u;
+    input[3].capacity = 2u;
+    input[4].items = values4;
+    input[4].length = 2u;
+    input[4].capacity = 2u;
+
+    joined = join_tuples(input, 5u, &joined_count);
+    if (joined == NULL) {
+        fprintf(stderr, "Failed to join tuples.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0u; i < joined_count; i++) {
+        size_t j;
+        printf("(");
+        for (j = 0u; j < joined[i].length; j++) {
+            printf("%d", joined[i].items[j]);
+            if (j + 1u < joined[i].length) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+
+    free_tuples(joined, joined_count);
+    return EXIT_SUCCESS;
+}

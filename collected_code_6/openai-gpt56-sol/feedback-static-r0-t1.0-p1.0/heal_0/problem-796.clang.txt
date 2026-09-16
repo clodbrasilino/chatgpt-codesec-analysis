@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-796.c:22:49: error: use of undeclared identifier 'LLONG_MAX'
+   22 |         if ((dictionary[i].value > 0 && total > LLONG_MAX - dictionary[i].value) ||
+      |                                                 ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-796.c:23:49: error: use of undeclared identifier 'LLONG_MIN'
+   23 |             (dictionary[i].value < 0 && total < LLONG_MIN - dictionary[i].value)) {
+      |                                                 ^~~~~~~~~
+2 errors generated.

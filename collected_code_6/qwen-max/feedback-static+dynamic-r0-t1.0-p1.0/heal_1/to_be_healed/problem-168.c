@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int countFrequency(int *arr, int n, int x) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == x) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 2, 2, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 2;
+    int frequency = countFrequency(arr, n, x);
+    printf("Frequency of %d in the array is: %d\n", x, frequency);
+    return 0;
+}

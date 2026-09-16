@@ -1,0 +1,101 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct IntNode {
+    int value;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct OuterNode {
+    const IntNode *list;
+    struct OuterNode *next;
+} OuterNode;
+
+typedef struct PairNode {
+    const IntNode *first;
+    const IntNode *second;
+    struct PairNode *next;
+} PairNode;
+
+void pair_list_free(PairNode *head) {
+    while (head != NULL) {
+        PairNode *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+PairNode *zip_lists(const OuterNode *a, const OuterNode *b) {
+    PairNode *head = NULL;
+    PairNode *tail = NULL;
+
+    while (a != NULL && b != NULL) {
+        PairNode *node = malloc(sizeof(*node));
+        if (node == NULL) {
+            pair_list_free(head);
+            return NULL;
+        }
+
+        node->first = a->list;
+        node->second = b->list;
+        node->next = NULL;
+
+        if (tail == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+
+        a = a->next;
+        b = b->next;
+    }
+
+    return head;
+}
+
+void print_int_list(const IntNode *head) {
+    while (head != NULL) {
+        printf("%d", head->value);
+        if (head->next != NULL) {
+            printf(" ");
+        }
+        head = head->next;
+    }
+}
+
+int main(void) {
+    IntNode a1_2 = {2, NULL};
+    IntNode a1_1 = {1, &a1_2};
+    IntNode a2_2 = {4, NULL};
+    IntNode a2_1 = {3, &a2_2};
+
+    IntNode b1_2 = {6, NULL};
+    IntNode b1_1 = {5, &b1_2};
+    IntNode b2_2 = {8, NULL};
+    IntNode b2_1 = {7, &b2_2};
+
+    OuterNode a2 = {&a2_1, NULL};
+    OuterNode a1 = {&a1_1, &a2};
+
+    OuterNode b2 = {&b2_1, NULL};
+    OuterNode b1 = {&b1_1, &b2};
+
+    PairNode *zipped = zip_lists(&a1, &b1);
+    if (zipped == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (PairNode *p = zipped; p != NULL; p = p->next) {
+        printf("(");
+        print_int_list(p->first);
+        printf(", ");
+        print_int_list(p->second);
+        printf(")\n");
+    }
+
+    pair_list_free(zipped);
+    return EXIT_SUCCESS;
+}
+```

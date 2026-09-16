@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+bool is_increasing(int *arr, int n) {
+    for (int i = 1; i < n; i++) {
+        if (arr[i] <= arr[i - 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    if (is_increasing(arr, n)) {
+        printf("The sequence is increasing.\n");
+    } else {
+        printf("The sequence is not increasing.\n");
+    }
+
+    return 0;
+}

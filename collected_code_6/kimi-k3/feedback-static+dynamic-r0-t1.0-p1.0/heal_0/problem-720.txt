@@ -1,0 +1,165 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    void **items;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+Dictionary *dict_create(void) {
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = 4;
+    dict->entries = calloc(dict->capacity, sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    return dict;
+}
+
+int dict_add(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    dict->entries[dict->size].key = malloc(strlen(key) + 1);
+    if (dict->entries[dict->size].key == NULL) {
+        return -1;
+    }
+    strcpy(dict->entries[dict->size].key, key);
+    dict->entries[dict->size].value = malloc(strlen(value) + 1);
+    if (dict->entries[dict->size].value == NULL) {
+        free(dict->entries[dict->size].key);
+        return -1;
+    }
+    strcpy(dict->entries[dict->size].value, value);
+    dict->size++;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+Tuple *tuple_create(void) {
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->size = 0;
+    tuple->capacity = 4;
+    tuple->items = calloc(tuple->capacity, sizeof(void *));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    return tuple;
+}
+
+int tuple_add_dict(Tuple *tuple, Dictionary *dict) {
+    if (tuple == NULL || dict == NULL) {
+        return -1;
+    }
+    if (tuple->size >= tuple->capacity) {
+        size_t new_capacity = tuple->capacity * 2;
+        void **new_items = realloc(tuple->items, new_capacity * sizeof(void *));
+        if (new_items == NULL) {
+            return -1;
+        }
+        tuple->items = new_items;
+        tuple->capacity = new_capacity;
+    }
+    tuple->items[tuple->size] = dict;
+    tuple->size++;
+    return 0;
+}
+
+void tuple_free(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < tuple->size; i++) {
+        dict_free((Dictionary *)tuple->items[i]);
+    }
+    free(tuple->items);
+    free(tuple);
+}
+
+int main(void) {
+    Tuple *tuple = tuple_create();
+    if (tuple == NULL) {
+        fprintf(stderr, "Failed to create tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *dict1 = dict_create();
+    if (dict1 == NULL) {
+        fprintf(stderr, "Failed to create dictionary\n");
+        tuple_free(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(dict1, "name", "Alice") != 0) {
+        fprintf(stderr, "Failed to add entry to dictionary\n");
+        dict_free(dict1);
+        tuple_free(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (dict_add(dict1, "age", "30") != 0) {
+        fprintf(stderr, "Failed to add entry to dictionary\n");
+        dict_free(dict1);
+        tuple_free(tuple);
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_add_dict(tuple, dict1) != 0) {
+        fprintf(stderr, "Failed to add dictionary to tuple\n");
+        dict_free(dict1);
+        tuple_free(tuple);
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *retrieved = (Dictionary *)tuple->items[0];
+    for (size_t i = 0; i < retrieved->size; i++) {
+        printf("%s: %s\n", retrieved->entries[i].key, retrieved->entries[i].value);
+    }
+
+    tuple_free(tuple);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+int countEqualNumbers(int a, int b, int c) {
+    int count = 0;
+    if (a == b && b == c) {
+        count = 3;
+    } else if (a == b || b == c || a == c) {
+        count = 2;
+    }
+    return count;
+}
+
+int main() {
+    int num1, num2, num3;
+    scanf("%d %d %d", &num1, &num2, &num3);
+    int result = countEqualNumbers(num1, num2, num3);
+    printf("%d\n", result);
+    return 0;
+}

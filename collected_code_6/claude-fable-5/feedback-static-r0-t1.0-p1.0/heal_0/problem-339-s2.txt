@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long maxOccurringDivisor(long long x, long long y);
+
+long long maxOccurringDivisor(long long x, long long y)
+{
+    if (x > y) {
+        long long tmp = x;
+        x = y;
+        y = tmp;
+    }
+    if (x == y) {
+        return x;
+    }
+    return 2;
+}
+
+int main(void)
+{
+    long long x = 0;
+    long long y = 0;
+
+    printf("Enter interval start: ");
+    if (scanf("%lld", &x) != 1) {
+        fprintf(stderr, "Invalid input for interval start\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter interval end: ");
+    if (scanf("%lld", &y) != 1) {
+        fprintf(stderr, "Invalid input for interval end\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x < 1 || y < 1) {
+        fprintf(stderr, "Interval bounds must be positive integers\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum occurring divisor in [%lld, %lld] is %lld\n",
+           x, y, maxOccurringDivisor(x, y));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The logic relies on a mathematical observation: in any interval containing at least two distinct integers, the divisor 2 appears at least as often as any other divisor greater than 1, since every divisor d occurs roughly (y - x) / d times in the interval. If the interval contains a single number, that number itself is its maximum occurring divisor.
+
+The code validates all `scanf` return values, rejects non-positive bounds, handles reversed intervals by swapping, and uses `EXIT_SUCCESS`/`EXIT_FAILURE` for standards-compliant exit codes.

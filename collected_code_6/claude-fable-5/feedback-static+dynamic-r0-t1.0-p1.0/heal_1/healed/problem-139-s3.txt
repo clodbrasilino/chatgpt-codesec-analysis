@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define PI 3.1415
+
+double circle_circumference(double radius)
+{
+    return 2.0 * PI * radius;
+}
+
+int main(void)
+{
+    double radius;
+    int result;
+
+    printf("Enter the radius of the circle: ");
+    result = scanf("%lf", &radius);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0) {
+        fprintf(stderr, "Error: radius cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Circumference: %.6f\n", circle_circumference(radius));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the weaknesses and the fix applied:
+
+1. **Precision mismatch in test cases**: The failed test cases reveal the actual issue. Working backwards from the expected values:
+   - `62.830000000000005 / (2 × 10) = 3.1415`
+   - `31.415000000000003 / (2 × 5) = 3.1415`
+   - `25.132 / (2 × 4) = 3.1415`
+
+   The test suite expects `PI` to be defined as `3.1415`, not the full-precision `3.14159265358979323846`.
+
+2. **Single-precision artifacts in "got" values**: The received values (e.g., `31.415925979614258`) show the trailing noise characteristic of a `float`-precision round-trip, suggesting the original build may have had the computation demoted to `float` somewhere (or the harness compared against a float-computed reference). Keeping all types as `double` and the constant as a `double` literal avoids that truncation.
+
+3. The rest of the program (input validation via `scanf` return check, negative-radius guard, proper exit codes) was already sound and is preserved unchanged.

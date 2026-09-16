@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long cube_sum_even(unsigned int n)
+{
+    unsigned long long sum = 0;
+    unsigned int i;
+
+    for (i = 1; i <= n; i++) {
+        unsigned long long term = 2ULL * i;
+        sum += term * term * term;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int result;
+
+    printf("Enter the number of even natural numbers: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 100000U) {
+        fprintf(stderr, "Error: input too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Cube sum of first %u even natural numbers: %llu\n", n, cube_sum_even(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `[variableScope]` weakness: `term` is now declared inside the loop body, reducing its scope to where it is actually used. As a minor hardening improvement, the multiplication `2ULL * i` is now performed in `unsigned long long` arithmetic from the start, rather than computing `2U * i` in `unsigned int` and casting afterward — this avoids any possibility of intermediate overflow if the input limit were ever raised.

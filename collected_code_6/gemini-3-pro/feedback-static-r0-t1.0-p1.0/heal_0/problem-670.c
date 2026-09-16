@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool has_decreasing_trend(const int *sequence, size_t length) {
+    if (sequence == NULL || length < 2) {
+        return false;
+    }
+
+    for (size_t i = 1; i < length; i++) {
+        if (sequence[i] >= sequence[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int seq1[] = {10, 8, 5, 3, 1};
+    size_t len1 = sizeof(seq1) / sizeof(seq1[0]);
+
+    int seq2[] = {10, 8, 9, 3, 1};
+    size_t len2 = sizeof(seq2) / sizeof(seq2[0]);
+
+    if (has_decreasing_trend(seq1, len1)) {
+        printf("seq1 has a decreasing trend.\n");
+    } else {
+        printf("seq1 does not have a decreasing trend.\n");
+    }
+
+    if (has_decreasing_trend(seq2, len2)) {
+        printf("seq2 has a decreasing trend.\n");
+    } else {
+        printf("seq2 does not have a decreasing trend.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

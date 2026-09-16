@@ -5,33 +5,27 @@
   *  include '<string.h>' or provide a declaration of 'memmove'
   */
 
-void removeLowercaseSubstrings(char *str) {
+void remove_lowercase_substrings(char *str) {
     regex_t regex;
-    regmatch_t pmatch[1];
-    int status;
-
-    if (regcomp(&regex, "[a-z]+", REG_EXTENDED|REG_NOSUB) != 0) {
-        fprintf(stderr, "Could not compile regex\n");
-        exit(EXIT_FAILURE);
+    char *pattern = "[a-z]+";
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        return;
     }
 
-    while ((status = regexec(&regex, str, 1, pmatch, 0)) == 0) {
+    regmatch_t matches[1];
+    while (regexec(&regex, str, 1, matches, 0) == 0) {
+        int match_start = matches[0].rm_so;
+        int match_end = matches[0].rm_eo;
         /* Possible weaknesses found:
-         *  include the header <string.h> or explicitly provide a declaration for 'memmove'
-         *  call to undeclared library function 'memmove' with type 'void *(void *, const void *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <string.h> or explicitly provide a declaration for 'strlen'
          *  implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
          *  include '<string.h>' or provide a declaration of 'strlen'
-         *  include the header <string.h> or explicitly provide a declaration for 'strlen'
-         *  call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+         *  include the header <string.h> or explicitly provide a declaration for 'memmove'
          *  implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+         *  call to undeclared library function 'memmove' with type 'void *(void *, const void *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
          */
-        memmove(str + pmatch[0].rm_so, str + pmatch[0].rm_eo, strlen(str + pmatch[0].rm_eo) + 1);
-    }
-
-    if (status != REG_NOMATCH) {
-        regfree(&regex);
-        perror("Regex match failed");
-        exit(EXIT_FAILURE);
+        memmove(str + match_start, str + match_end, strlen(str + match_end) + 1);
     }
 
     regfree(&regex);
@@ -39,8 +33,7 @@ void removeLowercaseSubstrings(char *str) {
 
 int main() {
     char input[] = "HeLlO WoRlD";
-    removeLowercaseSubstrings(input);
+    remove_lowercase_substrings(input);
     printf("%s\n", input);
-
     return 0;
 }

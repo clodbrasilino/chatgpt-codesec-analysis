@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *replace_last_with_list(Node *list1, Node *list2) {
+    if (list1 == NULL) {
+        return list2;
+    }
+
+    if (list1->next == NULL) {
+        free(list1);
+        return list2;
+    }
+
+    Node *prev = list1;
+    while (prev->next->next != NULL) {
+        prev = prev->next;
+    }
+
+    free(prev->next);
+    prev->next = list2;
+
+    return list1;
+}
+
+int main(void) {
+    Node *n1 = malloc(sizeof(Node));
+    if (!n1) return EXIT_FAILURE;
+    Node *n2 = malloc(sizeof(Node));
+    if (!n2) { free(n1); return EXIT_FAILURE; }
+    Node *n3 = malloc(sizeof(Node));
+    if (!n3) { free(n2); free(n1); return EXIT_FAILURE; }
+
+    n1->data = 1;
+    n1->next = n2;
+    n2->data = 2;
+    n2->next = n3;
+    n3->data = 3;
+    n3->next = NULL;
+
+    Node *m1 = malloc(sizeof(Node));
+    if (!m1) { free(n3); free(n2); free(n1); return EXIT_FAILURE; }
+    Node *m2 = malloc(sizeof(Node));
+    if (!m2) { free(m1); free(n3); free(n2); free(n1); return EXIT_FAILURE; }
+
+    m1->data = 4;
+    m1->next = m2;
+    m2->data = 5;
+    m2->next = NULL;
+
+    Node *result = replace_last_with_list(n1, m1);
+
+    Node *curr = result;
+    while (curr != NULL) {
+        printf("%d ", curr->data);
+        curr = curr->next;
+    }
+    printf("\n");
+
+    while (result != NULL) {
+        Node *temp = result;
+        result = result->next;
+        free(temp);
+    }
+
+    return EXIT_SUCCESS;
+}

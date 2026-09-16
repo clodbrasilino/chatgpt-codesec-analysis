@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+Tuple *set_to_ordered_tuple(const int *set, size_t size)
+{
+    Tuple *tuple = NULL;
+
+    if (set == NULL || size == 0U) {
+        return NULL;
+    }
+
+    tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->elements = malloc(size * sizeof(int));
+    if (tuple->elements == NULL) {
+        free(tuple);
+        return NULL;
+    }
+
+    for (size_t i = 0U; i < size; i++) {
+        tuple->elements[i] = set[i];
+    }
+
+    qsort(tuple->elements, size, sizeof(int), compare_ints);
+    tuple->size = size;
+
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+void print_tuple(const Tuple *tuple)
+{
+    if (tuple == NULL || tuple->elements == NULL) {
+        return;
+    }
+
+    if (printf("(") < 0) {
+        return;
+    }
+
+    for (size_t i = 0U; i < tuple->size; i++) {
+        if (i > 0U) {
+            if (printf(", ") < 0) {
+                return;
+            }
+        }
+        if (printf("%d", tuple->elements[i]) < 0) {
+            return;
+        }
+    }
+
+    if (printf(")\n") < 0) {
+        return;
+    }
+}
+
+int main(void)
+{
+    int set[] = { 42, 7, 19, 3, 88, 1 };
+    size_t size = sizeof(set) / sizeof(set[0]);
+    Tuple *tuple = NULL;
+
+    tuple = set_to_ordered_tuple(set, size);
+    if (tuple == NULL) {
+        (void)fprintf(stderr, "Failed to convert set to ordered tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(tuple);
+    free_tuple(tuple);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(const char *str, size_t len)
+{
+    Node *node = malloc(sizeof *node);
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = malloc(len + 1);
+    if (node->data == NULL) {
+        free(node);
+        return NULL;
+    }
+    memcpy(node->data, str, len);
+    node->data[len] = '\0';
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head->data);
+        free(head);
+        head = next;
+    }
+}
+
+static int is_separator(int ch)
+{
+    return isspace(ch) || ch == ',';
+}
+
+Node *string_to_list(const char *str)
+{
+    Node *head = NULL;
+    Node *tail = NULL;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (*str != '\0') {
+        const char *start;
+        Node *node;
+
+        while (*str != '\0' && is_separator((unsigned char)*str)) {
+            str++;
+        }
+        if (*str == '\0') {
+            break;
+        }
+        start = str;
+        while (*str != '\0' && !is_separator((unsigned char)*str)) {
+            str++;
+        }
+        node = create_node(start, (size_t)(str - start));
+        if (node == NULL) {
+            free_list(head);
+            return NULL;
+        }
+        if (tail == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+
+    return head;
+}
+
+void print_list(const Node *head)
+{
+    putchar('[');
+    while (head != NULL) {
+        printf("'%s'", head->data);
+        head = head->next;
+        if (head != NULL) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+static char *read_input(FILE *stream)
+{
+    size_t capacity = 128;
+    size_t length = 0;
+    char *buffer = malloc(capacity);
+    int ch;
+
+    if (buffer == NULL) {
+        return NULL;
+    }
+
+    while ((ch = fgetc(stream)) != EOF && ch != '\n') {
+        if (length + 1 >= capacity) {
+            size_t new_capacity = capacity * 2;
+            char *grown = realloc(buffer, new_capacity);
+            if (grown == NULL) {
+                free(buffer);
+                return NULL;
+            }
+            buffer = grown;
+            capacity = new_capacity;
+        }
+        buffer[length++] = (char)ch;
+    }
+    buffer[length] = '\0';
+    return buffer;
+}
+
+static char *join_arguments(int argc, const char *const argv[])
+{
+    size_t total = 1;
+    char *joined;
+    int i;
+
+    for (i = 1; i < argc; i++) {
+        total += strlen(argv[i]) + 1;
+    }
+    joined = malloc(total);
+    if (joined == NULL) {
+        return NULL;
+    }
+    joined[0] = '\0';
+    for (i = 1; i < argc; i++) {
+        strcat(joined, argv[i]);
+        if (i + 1 < argc) {
+            strcat(joined, " ");
+        }
+    }
+    return joined;
+}
+
+int main(int argc, char *argv[])
+{
+    char *input;
+    Node *list;
+
+    if (argc > 1) {
+        input = join_arguments(argc, (const char *const *)argv);
+    } else {
+        input = read_input(stdin);
+    }
+
+    if (input == NULL) {
+        fprintf(stderr, "Failed to obtain input\n");
+        return EXIT_FAILURE;
+    }
+
+    list = string_to_list(input);
+    print_list(list);
+    fflush(stdout);
+
+    free_list(list);
+    list = NULL;
+    free(input);
+    input = NULL;
+
+    return EXIT_SUCCESS;
+}

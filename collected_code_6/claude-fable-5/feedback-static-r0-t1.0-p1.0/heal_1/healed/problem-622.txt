@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double findMedianSortedArrays(const int *a, size_t na, const int *b, size_t nb);
+
+double findMedianSortedArrays(const int *a, size_t na, const int *b, size_t nb)
+{
+    size_t i = 0;
+    size_t j = 0;
+    size_t count = 0;
+    int m1 = 0;
+    int m2 = 0;
+
+    if ((a == NULL) || (b == NULL) || (na == 0U) || (na != nb)) {
+        return 0.0;
+    }
+
+    for (count = 0; count <= na; count++) {
+        m1 = m2;
+        if (i == na) {
+            m2 = b[j];
+            j++;
+        } else if (j == nb) {
+            m2 = a[i];
+            i++;
+        } else if (a[i] <= b[j]) {
+            m2 = a[i];
+            i++;
+        } else {
+            m2 = b[j];
+            j++;
+        }
+    }
+
+    return ((double)m1 + (double)m2) / 2.0;
+}
+
+int main(void)
+{
+    static const int arr1[] = {1, 3, 5, 7};
+    static const int arr2[] = {2, 4, 6, 8};
+    const size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    const size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    double median = 0.0;
+
+    median = findMedianSortedArrays(arr1, n1, arr2, n2);
+
+    if (printf("Median: %f\n", median) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes made:**
+
+1. **Removed the `knownConditionTrueFalse` weakness**: The `if (n != n2)` check in `main` was statically provable as always false since both arrays have compile-time known equal sizes. The size-equality validation was moved into `findMedianSortedArrays` itself, where it becomes a meaningful runtime guard for callers with arbitrary inputs.
+
+2. **API hardening**: The function now accepts both sizes (`na`, `nb`) explicitly instead of assuming equal lengths. This makes the precondition enforceable inside the function rather than relying on caller discipline.
+
+3. **`static const` arrays**: Since the arrays are never modified, they are declared `const` (matching the function's `const int *` contract) and `static` to avoid stack initialization overhead.
+
+4. **`const`-qualified size variables**: `n1` and `n2` are single-assignment values, so marking them `const` documents intent and lets static analyzers verify no accidental reassignment.
+
+5. **Retained defensive checks**: NULL-pointer and zero-length guards remain, and the `printf` return value is still checked, preserving the original code's robustness against I/O failure.

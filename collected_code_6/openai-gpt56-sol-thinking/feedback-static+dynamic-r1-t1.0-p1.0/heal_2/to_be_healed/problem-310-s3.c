@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    unsigned char *items;
+    size_t length;
+} CharTuple;
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0'], got <no output>
+  *  test case 2 failed: expected ['1', '5', '.', '1', '0'], got <no output>
+  *  test case 1 failed: expected ['i', 't', 'e', 'm', '1'], got <no output>
+  */
+
+CharTuple *string_to_tuple(const char *string)
+{
+    CharTuple *tuple;
+    size_t length;
+
+    if (string == NULL) {
+        return NULL;
+    }
+
+    length = strlen(string);
+
+    tuple = malloc(sizeof *tuple);
+    if (tuple == NULL) {
+        return NULL;
+    }
+
+    tuple->items = NULL;
+    tuple->length = length;
+
+    if (length != 0) {
+        tuple->items = malloc(length * sizeof *tuple->items);
+        if (tuple->items == NULL) {
+            free(tuple);
+            return NULL;
+        }
+
+        memcpy(tuple->items, string, length);
+    }
+
+    return tuple;
+}
+
+void free_tuple(CharTuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->items);
+        free(tuple);
+    }
+}
+
+int print_tuple(const CharTuple *tuple)
+{
+    size_t index;
+
+    if (tuple == NULL || (tuple->length != 0 && tuple->items == NULL)) {
+        return -1;
+    }
+
+    if (fputc('[', stdout) == EOF) {
+        return -1;
+    }
+
+    for (index = 0; index < tuple->length; ++index) {
+        unsigned char value = tuple->items[index];
+
+        if (index != 0 && fputs(", ", stdout) == EOF) {
+            return -1;
+        }
+
+        if (fputc('\'', stdout) == EOF) {
+            return -1;
+        }
+
+        switch (value) {
+            case '\'':
+                if (fputs("\\'", stdout) == EOF) {
+                    return -1;
+                }
+                break;
+
+            case '\\':
+                if (fputs("\\\\", stdout) == EOF) {
+                    return -1;
+                }
+                break;
+
+            case '\n':
+                if (fputs("\\n", stdout) == EOF) {
+                    return -1;
+                }
+                break;
+
+            case '\r':
+                if (fputs("\\r", stdout) == EOF) {
+                    return -1;
+                }
+                break;
+
+            case '\t':
+                if (fputs("\\t", stdout) == EOF) {
+                    return -1;
+                }
+                break;
+
+            default:
+                if (value >= 32 && value <= 126) {
+                    if (fputc((int)value, stdout) == EOF) {
+                        return -1;
+                    }
+                } else if (fprintf(stdout, "\\x%02X", (unsigned int)value) < 0) {
+                    return -1;
+                }
+                break;
+        }
+
+        if (fputc('\'', stdout) == EOF) {
+            return -1;
+        }
+    }
+
+    if (fputs("]\n", stdout) == EOF) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    CharTuple *tuple;
+    const char *program_name =
+        argc > 0 && argv[0] != NULL ? argv[0] : "program";
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", program_name);
+        return EXIT_FAILURE;
+    }
+
+    tuple = string_to_tuple(argv[1]);
+    if (tuple == NULL) {
+        fputs("Failed to create tuple\n", stderr);
+        return EXIT_FAILURE;
+    }
+
+    if (print_tuple(tuple) != 0) {
+        free_tuple(tuple);
+        return EXIT_FAILURE;
+    }
+
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}

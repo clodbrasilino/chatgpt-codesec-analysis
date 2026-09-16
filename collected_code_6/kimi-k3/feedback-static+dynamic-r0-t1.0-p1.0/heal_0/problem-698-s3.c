@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key1;
+    int key2;
+    char value[64];
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+static int compare_by_product(const void *a, const void *b)
+{
+    const DictItem *item_a = (const DictItem *)a;
+    const DictItem *item_b = (const DictItem *)b;
+    long long prod_a = (long long)item_a->key1 * item_a->key2;
+    long long prod_b = (long long)item_b->key1 * item_b->key2;
+    
+    if (prod_a < prod_b) return -1;
+    if (prod_a > prod_b) return 1;
+    return 0;
+}
+
+static int dict_init(Dictionary *dict, size_t initial_capacity)
+{
+    if (dict == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    
+    dict->items = malloc(initial_capacity * sizeof(DictItem));
+    if (dict->items == NULL) {
+        return -1;
+    }
+    
+    dict->count = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+static int dict_add(Dictionary *dict, int key1, int key2, const char *value)
+{
+    DictItem *new_items;
+    size_t new_capacity;
+    
+    if (dict == NULL || value == NULL) {
+        return -1;
+    }
+    
+    if (dict->count >= dict->capacity) {
+        new_capacity = dict->capacity * 2;
+        if (new_capacity < dict->capacity) {
+            return -1;
+        }
+        
+        new_items = realloc(dict->items, new_capacity * sizeof(DictItem));
+        if (new_items == NULL) {
+            return -1;
+        }
+        
+        dict->items = new_items;
+        dict->capacity = new_capacity;
+    }
+    
+    dict->items[dict->count].key1 = key1;
+    dict->items[dict->count].key2 = key2;
+    
+    if (strlen(value) >= sizeof(dict->items[dict->count].value)) {
+        return -1;
+    }
+    
+    strcpy(dict->items[dict->count].value, value);
+    dict->count++;
+    
+    return 0;
+}
+
+static void dict_sort_by_product(Dictionary *dict)
+{
+    if (dict == NULL || dict->items == NULL || dict->count == 0) {
+        return;
+    }
+    
+    qsort(dict->items, dict->count, sizeof(DictItem), compare_by_product);
+}
+
+static void dict_free(Dictionary *dict)
+{
+    if (dict != NULL) {
+        free(dict->items);
+        dict->items = NULL;
+        dict->count = 0;
+        dict->capacity = 0;
+    }
+}
+
+static void dict_print(const Dictionary *dict)
+{
+    size_t i;
+    
+    if (dict == NULL) {
+        return;
+    }
+    
+    for (i = 0; i < dict->count; i++) {
+        printf("(%d, %d): %s [product: %lld]\n",
+               dict->items[i].key1,
+               dict->items[i].key2,
+               dict->items[i].value,
+               (long long)dict->items[i].key1 * dict->items[i].key2);
+    }
+}
+
+int main(void)
+{
+    Dictionary dict;
+    
+    if (dict_init(&dict, 4) != 0) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (dict_add(&dict, 3, 4, "apple") != 0 ||
+        dict_add(&dict, 1, 2, "banana") != 0 ||
+        dict_add(&dict, 2, 3, "cherry") != 0 ||
+        dict_add(&dict, 5, 1, "date") != 0 ||
+        dict_add(&dict, 2, 2, "elderberry") != 0) {
+        fprintf(stderr, "Failed to add items\n");
+        dict_free(&dict);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Before sorting:\n");
+    dict_print(&dict);
+    
+    dict_sort_by_product(&dict);
+    
+    printf("\nAfter sorting by key product:\n");
+    dict_print(&dict);
+    
+    dict_free(&dict);
+    
+    return EXIT_SUCCESS;
+}

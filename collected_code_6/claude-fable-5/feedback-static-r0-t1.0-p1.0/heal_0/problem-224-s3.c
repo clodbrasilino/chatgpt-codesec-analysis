@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int count_set_bits(unsigned int n)
+{
+    unsigned int count = 0U;
+
+    while (n != 0U)
+    {
+        n &= (n - 1U);
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    int result = 0;
+
+    printf("Enter a non-negative integer: ");
+
+    result = scanf("%u", &number);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of set bits in %u: %u\n", number, count_set_bits(number));
+
+    return EXIT_SUCCESS;
+}

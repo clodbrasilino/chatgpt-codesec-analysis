@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long findMaxProductIncreasingSubsequence(int* arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    long long* mpis = (long long*)malloc(n * sizeof(long long));
+    if (mpis == NULL) {
+        return 0; 
+    }
+
+    for (int i = 0; i < n; i++) {
+        mpis[i] = (long long)arr[i];
+    }
+
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && mpis[i] < mpis[j] * arr[i]) {
+                mpis[i] = mpis[j] * arr[i];
+            }
+        }
+    }
+
+    long long max_product = 0;
+    for (int i = 0; i < n; i++) {
+        if (mpis[i] > max_product) {
+            max_product = mpis[i];
+        }
+    }
+
+    free(mpis);
+    return max_product;
+}
+
+int main(void) {
+    int arr[] = {3, 100, 4, 5, 150, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    long long max_prod = findMaxProductIncreasingSubsequence(arr, n);
+    
+    printf("%lld\n", max_prod);
+    
+    return 0;
+}

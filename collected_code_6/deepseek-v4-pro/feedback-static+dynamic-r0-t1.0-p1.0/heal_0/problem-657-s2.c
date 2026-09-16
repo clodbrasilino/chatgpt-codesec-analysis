@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <math.h>
+
+int first_digit_of_factorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    double log_sum = 0.0;
+    for (int i = 2; i <= n; i++) {
+        log_sum += log10((double)i);
+    }
+    
+    double fractional_part = log_sum - floor(log_sum);
+    int first_digit = (int)pow(10.0, fractional_part);
+    
+    return first_digit;
+}
+
+int main(void) {
+    int numbers[] = {0, 1, 2, 3, 4, 5, 10, 20, 50, 100};
+    int num_tests = sizeof(numbers) / sizeof(numbers[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        int n = numbers[i];
+        int digit = first_digit_of_factorial(n);
+        if (digit == -1) {
+            printf("Factorial of %d is not defined for negative numbers\n", n);
+        } else {
+            printf("First digit of %d! is: %d\n", n, digit);
+        }
+    }
+    
+    return 0;
+}

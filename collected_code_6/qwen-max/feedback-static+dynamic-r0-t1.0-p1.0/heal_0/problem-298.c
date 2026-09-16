@@ -4,65 +4,86 @@
 typedef struct Node {
     int value;
     struct Node *next;
-    struct Node *sublist;
 } Node;
 
-Node* create_node(int value, Node *next, Node *sublist) {
-    Node *new_node = (Node*)malloc(sizeof(Node));
+typedef struct List {
+    Node *head;
+} List;
+
+void addNode(List *list, int value) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
     new_node->value = value;
-    new_node->next = next;
-    new_node->sublist = sublist;
-    return new_node;
+    new_node->next = list->head;
+    list->head = new_node;
 }
 
-int is_element_in_list(Node *head, int value) {
-    while (head != NULL) {
-        if (head->value == value) {
+int findInList(List *list, int value) {
+    Node *current = list->head;
+    while (current != NULL) {
+        if (current->value == value) {
             return 1;
         }
-        head = head->next;
+        current = current->next;
     }
     return 0;
 }
 
-void find_nested_elements(Node *main_list, Node *search_list) {
-    while (main_list != NULL) {
-        if (is_element_in_list(search_list, main_list->value)) {
-            printf("%d\n", main_list->value);
+void findNestedElements(List *nested, List *elements, List *result) {
+    Node *current = nested->head;
+    while (current != NULL) {
+        if (findInList(elements, current->value)) {
+            addNode(result, current->value);
         }
-        if (main_list->sublist != NULL) {
-            find_nested_elements(main_list->sublist, search_list);
-        }
-        main_list = main_list->next;
+        current = current->next;
     }
 }
 
-void free_list(Node *head) {
-    while (head != NULL) {
-        Node *temp = head;
-        if (temp->sublist != NULL) {
-            free_list(temp->sublist);
-        }
-        head = head->next;
-        free(temp);
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(List *list) {
+    Node *current = list->head;
+    Node *next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
     }
 }
 
 int main() {
-    Node *sublist1 = create_node(4, create_node(5, NULL, NULL), NULL);
-    Node *sublist2 = create_node(6, create_node(7, NULL, NULL), NULL);
+    List nested;
+    List elements;
+    List result;
+    nested.head = NULL;
+    elements.head = NULL;
+    result.head = NULL;
 
-    Node *list1 = create_node(1, create_node(2, create_node(3, NULL, sublist1), NULL), NULL);
-    Node *list2 = create_node(2, create_node(8, create_node(9, NULL, sublist2), NULL), NULL);
+    addNode(&nested, 3);
+    addNode(&nested, 2);
+    addNode(&nested, 1);
 
-    Node *search_list = create_node(2, create_node(4, create_node(6, create_node(8, NULL, NULL), NULL), NULL), NULL);
+    addNode(&elements, 4);
+    addNode(&elements, 3);
+    addNode(&elements, 1);
 
-    find_nested_elements(list1, search_list);
-    find_nested_elements(list2, search_list);
+    findNestedElements(&nested, &elements, &result);
 
-    free_list(list1);
-    free_list(list2);
-    free_list(search_list);
+    printList(&result);
+
+    freeList(&nested);
+    freeList(&elements);
+    freeList(&result);
 
     return 0;
 }

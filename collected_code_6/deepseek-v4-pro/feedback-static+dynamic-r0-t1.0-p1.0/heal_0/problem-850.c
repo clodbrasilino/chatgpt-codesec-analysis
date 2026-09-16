@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int is_triangle_possible(double angle1, double angle2, double angle3) {
+    if (angle1 <= 0 || angle2 <= 0 || angle3 <= 0) {
+        return 0;
+    }
+    
+    if (angle1 >= 180 || angle2 >= 180 || angle3 >= 180) {
+        return 0;
+    }
+    
+    double sum = angle1 + angle2 + angle3;
+    if (sum != 180.0) {
+        return 0;
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    double a1, a2, a3;
+    
+    printf("Enter three angles: ");
+    scanf("%lf %lf %lf", &a1, &a2, &a3);
+    
+    if (is_triangle_possible(a1, a2, a3)) {
+        printf("Triangle is possible\n");
+    } else {
+        printf("Triangle is not possible\n");
+    }
+    
+    return 0;
+}

@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max(long long a, long long b) {
+    return (a > b) ? a : b;
+}
+
+long long maxSumNonAdjacent(int** grid, int n) {
+    if (grid == NULL || n <= 0) {
+        return 0;
+    }
+
+    if (n == 1) {
+        return max(max(0, grid[0][0]), grid[1][0]);
+    }
+
+    long long* incl = (long long*)calloc(n, sizeof(long long));
+    long long* excl = (long long*)calloc(n, sizeof(long long));
+
+    if (incl == NULL || excl == NULL) {
+        free(incl);
+        free(excl);
+        return 0;
+    }
+
+    long long col0_max = max(max(0, grid[0][0]), grid[1][0]);
+    incl[0] = col0_max;
+    excl[0] = 0;
+
+    for (int i = 1; i < n; i++) {
+        long long current_col_max = max(max(0, grid[0][i]), grid[1][i]);
+        incl[i] = excl[i - 1] + current_col_max;
+        excl[i] = max(incl[i - 1], excl[i - 1]);
+    }
+
+    long long result = max(incl[n - 1], excl[n - 1]);
+
+    free(incl);
+    free(excl);
+
+    return result;
+}
+
+int main() {
+    int n = 5;
+    
+    int** grid = (int**)malloc(2 * sizeof(int*));
+    if (grid == NULL) {
+        return 1;
+    }
+    
+    for (int i = 0; i < 2; i++) {
+        grid[i] = (int*)malloc(n * sizeof(int));
+        if (grid[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(grid[j]);
+            }
+            free(grid);
+            return 1;
+        }
+    }
+
+    int values[2][5] = {
+        {1, 4, 5, 3, 2},
+        {2, 1, 4, 6, 8}
+    };
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < n; j++) {
+            grid[i][j] = values[i][j];
+        }
+    }
+
+    long long result = maxSumNonAdjacent(grid, n);
+    printf("%lld\n", result);
+
+    for (int i = 0; i < 2; i++) {
+        free(grid[i]);
+    }
+    free(grid);
+
+    return 0;
+}
+```

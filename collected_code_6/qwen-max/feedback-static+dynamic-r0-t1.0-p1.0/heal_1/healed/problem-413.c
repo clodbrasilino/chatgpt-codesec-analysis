@@ -3,51 +3,33 @@
 
 typedef struct {
     int first;
-    char second;
+    float second;
 } Tuple;
 
 Tuple* create_tuple_list(int n) {
-    Tuple *list = (Tuple*)malloc(n * sizeof(Tuple));
-    if (list == NULL) {
-        return NULL;
-    }
+    Tuple *list = (Tuple *)malloc(n * sizeof(Tuple));
     for (int i = 0; i < n; ++i) {
-        list[i].first = i;
-        list[i].second = 'A' + i;
+        list[i].first = i * 2;
+        list[i].second = (float)i / 2.0;
     }
     return list;
 }
 
-void free_tuple_list(Tuple *list) {
-    if (list != NULL) {
-        free(list);
-    }
-}
-
-Tuple get_nth_tuple(const Tuple *const list, int n, int size) {
-    if (n < 0 || n >= size) {
-        Tuple invalid = {-1, '\0'};
-        return invalid;
-    }
+Tuple get_nth_element(const Tuple *list, int n) {
     return list[n];
 }
 
 int main() {
-    int n = 5; 
+    int n = 5;
     Tuple *tuple_list = create_tuple_list(n);
     if (tuple_list == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
         return 1;
     }
 
     int index = 2;
-    Tuple nth_tuple = get_nth_tuple(tuple_list, index, n);
-    if (nth_tuple.first != -1) {
-        printf("Tuple %d: (%d, '%c')\n", index, nth_tuple.first, nth_tuple.second);
-    } else {
-        printf("Invalid index\n");
-    }
+    Tuple nth_element = get_nth_element(tuple_list, index);
+    printf("Tuple at index %d: (%d, %f)\n", index, nth_element.first, nth_element.second);
 
-    free_tuple_list(tuple_list);
+    free(tuple_list);
     return 0;
 }

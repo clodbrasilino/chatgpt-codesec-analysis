@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_wind_chill(double temperature, double wind_speed)
+{
+    if (wind_speed < 0.0)
+    {
+        return NAN;
+    }
+
+    if (wind_speed == 0.0)
+    {
+        return temperature;
+    }
+
+    double wc = 13.12 + 0.6215 * temperature - 11.37 * pow(wind_speed, 0.16) + 0.3965 * temperature * pow(wind_speed, 0.16);
+    
+    return wc;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 3)
+    {
+        fprintf(stderr, "Usage: %s <temperature_c> <wind_speed_kph>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *temp_endptr;
+    double temperature = strtod(argv[1], &temp_endptr);
+    if (*temp_endptr != '\0')
+    {
+        fprintf(stderr, "Invalid temperature format\n");
+        return EXIT_FAILURE;
+    }
+
+    char *wind_endptr;
+    double wind_speed = strtod(argv[2], &wind_endptr);
+    if (*wind_endptr != '\0')
+    {
+        fprintf(stderr, "Invalid wind speed format\n");
+        return EXIT_FAILURE;
+    }
+
+    double wind_chill = calculate_wind_chill(temperature, wind_speed);
+
+    if (isnan(wind_chill))
+    {
+        fprintf(stderr, "Wind speed must not be negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", wind_chill);
+
+    return EXIT_SUCCESS;
+}
+```

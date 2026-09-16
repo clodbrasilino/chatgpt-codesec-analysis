@@ -1,24 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 4, got <no output>
+  *  test case 1 failed: expected 3, got <no output>
+  *  test case 0 failed: expected 5, got <no output>
+  */
 
 /* Possible weaknesses found:
- *  Parameter 'sequence' can be declared as pointer to const [constParameterPointer]
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
  */
-int findLongestIncreasingSubsequence(int *sequence, int n) {
+int longest_increasing_subsequence(int *arr, int n) {
     if (n == 0) return 0;
-    int *lis = (int*)malloc(n * sizeof(int));
+    int *lis = (int *)malloc(n * sizeof(int));
     for (int i = 0; i < n; ++i) {
         lis[i] = 1;
     }
     for (int i = 1; i < n; ++i) {
         for (int j = 0; j < i; ++j) {
-            if (sequence[i] > sequence[j] && lis[i] < lis[j] + 1) {
+            if (arr[i] > arr[j] && lis[i] < lis[j] + 1) {
                 lis[i] = lis[j] + 1;
             }
         }
     }
-    int max = 0;
-    for (int i = 0; i < n; ++i) {
+    int max = lis[0];
+    for (int i = 1; i < n; ++i) {
         if (max < lis[i]) {
             max = lis[i];
         }
@@ -30,6 +35,6 @@ int findLongestIncreasingSubsequence(int *sequence, int n) {
 int main() {
     int arr[] = {10, 22, 9, 33, 21, 50, 41, 60, 80};
     int n = sizeof(arr) / sizeof(arr[0]);
-    printf("Length of the longest increasing subsequence is %d\n", findLongestIncreasingSubsequence(arr, n));
+    printf("Length of the longest increasing subsequence is %d\n", longest_increasing_subsequence(arr, n));
     return 0;
 }

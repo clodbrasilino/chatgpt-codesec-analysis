@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntTuple;
+
+IntTuple* parse_tuple_string(const char *tuple_str) {
+    if (!tuple_str) {
+        return NULL;
+    }
+
+    IntTuple *tuple = malloc(sizeof(IntTuple));
+    if (!tuple) {
+        return NULL;
+    }
+
+    size_t capacity = 4;
+    tuple->size = 0;
+    tuple->data = malloc(capacity * sizeof(int));
+    if (!tuple->data) {
+        free(tuple);
+        return NULL;
+    }
+
+    const char *ptr = tuple_str;
+    while (*ptr != '\0' && *ptr != '(') {
+        ptr++;
+    }
+    
+    if (*ptr == '(') {
+        ptr++;
+    }
+
+    while (*ptr != '\0' && *ptr != ')') {
+        while (*ptr != '\0' && isspace((unsigned char)*ptr)) {
+            ptr++;
+        }
+
+        if (*ptr == ')' || *ptr == '\0') {
+            break;
+        }
+
+        if (*ptr == ',') {
+            ptr++;
+            continue;
+        }
+
+        char *endptr;
+        long val = strtol(ptr, &endptr, 10);
+        if (ptr == endptr) {
+            ptr++;
+            continue;
+        }
+
+        if (tuple->size >= capacity) {
+            capacity *= 2;
+            int *new_data = realloc(tuple->data, capacity * sizeof(int));
+            if (!new_data) {
+                free(tuple->data);
+                free(tuple);
+                return NULL;
+            }
+            tuple->data = new_data;
+        }
+
+        tuple->data[tuple->size++] = (int)val;
+        ptr = endptr;
+    }
+
+    if (tuple->size == 0) {
+        free(tuple->data);
+        tuple->data = NULL;
+    }
+
+    return tuple;
+}
+
+void free_tuple(IntTuple *tuple) {
+    if (tuple) {
+        free(tuple->data);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    const char *str = "(10, -5, 42, 0)";
+    IntTuple *tuple = parse_tuple_string(str);
+
+    if (tuple) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            printf("%d ", tuple->data[i]);
+        }
+        printf("\n");
+        free_tuple(tuple);
+    } else {
+        fprintf(stderr, "Failed to parse tuple.\n");
+    }
+
+    return 0;
+}
+```

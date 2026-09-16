@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int count_uppercase(const char *str) {
+    int count = 0;
+    
+    if (str == NULL) {
+        return -1;
+    }
+    
+    while (*str) {
+        if (isupper((unsigned char)*str)) {
+            count++;
+        }
+        str++;
+    }
+    
+    return count;
+}
+
+int main(void) {
+    const char *test1 = "Hello World";
+    const char *test2 = "ALL CAPS";
+    const char *test3 = "no caps here";
+    const char *test4 = "";
+    const char *test5 = NULL;
+    
+    printf("Test 1: %d\n", count_uppercase(test1));
+    printf("Test 2: %d\n", count_uppercase(test2));
+    printf("Test 3: %d\n", count_uppercase(test3));
+    printf("Test 4: %d\n", count_uppercase(test4));
+    printf("Test 5: %d\n", count_uppercase(test5));
+    
+    return 0;
+}

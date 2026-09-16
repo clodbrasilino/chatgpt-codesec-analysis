@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int smallest_missing_number(const int arr[], int size) {
+    int *present = (int *)calloc(size + 1, sizeof(int));
+    if (present == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        if (arr[i] >= 0 && arr[i] <= size) {
+            present[arr[i]] = 1;
+        }
+    }
+    
+    for (int i = 0; i <= size; i++) {
+        if (present[i] == 0) {
+            free(present);
+            return i;
+        }
+    }
+    
+    free(present);
+    return size + 1;
+}
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int smallest_missing_number_sorted(int arr[], int size) {
+    if (size <= 0) {
+        return 0;
+    }
+    
+    qsort(arr, size, sizeof(int), compare);
+    
+    int expected = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == expected) {
+            expected++;
+        } else if (arr[i] > expected) {
+            return expected;
+        }
+    }
+    
+    return expected;
+}
+
+int main(void) {
+    int arr1[] = {3, 4, 7, 1};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Smallest missing number: %d\n", smallest_missing_number(arr1, size1));
+    
+    int arr2[] = {0, 2, 3, 4, 6};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Smallest missing number: %d\n", smallest_missing_number(arr2, size2));
+    
+    int arr3[] = {0, 1, 2, 3, 4};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Smallest missing number: %d\n", smallest_missing_number(arr3, size3));
+    
+    int arr4[] = {1, 2, 3, 4};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("Smallest missing number: %d\n", smallest_missing_number(arr4, size4));
+    
+    int arr5[] = {};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("Smallest missing number: %d\n", smallest_missing_number(arr5, size5));
+    
+    int arr6[] = {5, 3, 0, 1, 2};
+    int size6 = sizeof(arr6) / sizeof(arr6[0]);
+    printf("Smallest missing number (sorted method): %d\n", smallest_missing_number_sorted(arr6, size6));
+    
+    return 0;
+}

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <string.h>
+
+bool is_palindrome(unsigned long long num) {
+    char buffer[21];
+    int len = snprintf(buffer, sizeof(buffer), "%llu", num);
+    
+    if (len < 0 || len >= (int)sizeof(buffer)) {
+        return false;
+    }
+    
+    for (int i = 0; i < len / 2; i++) {
+        if (buffer[i] != buffer[len - 1 - i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int find_previous_palindrome(unsigned long long num, unsigned long long *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (num <= 1) {
+        return -1;
+    }
+    
+    for (unsigned long long i = num - 1; i > 0; i--) {
+        if (is_palindrome(i)) {
+            *result = i;
+            return 0;
+        }
+        if (i == 0) {
+            break;
+        }
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    unsigned long long test_cases[] = {100, 121, 12321, 1000, 2, 1, 0, 99999};
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    unsigned long long result;
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        if (find_previous_palindrome(test_cases[i], &result) == 0) {
+            printf("Previous palindrome of %llu: %llu\n", test_cases[i], result);
+        } else {
+            printf("No previous palindrome exists for %llu\n", test_cases[i]);
+        }
+    }
+    
+    return 0;
+}

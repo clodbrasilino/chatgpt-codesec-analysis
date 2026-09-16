@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c:51:20: style: Condition 'is_min_heap(heap3,n3)' is always true [knownConditionTrueFalse]
+    if (is_min_heap(heap3, n3)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c:51:20: note: Calling function 'is_min_heap' returns 1
+    if (is_min_heap(heap3, n3)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c:51:20: note: Condition 'is_min_heap(heap3,n3)' is always true
+    if (is_min_heap(heap3, n3)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c:57:20: style: Condition 'is_min_heap(NULL,0)' is always true [knownConditionTrueFalse]
+    if (is_min_heap(NULL, 0)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c:57:20: note: Calling function 'is_min_heap' returns 1
+    if (is_min_heap(NULL, 0)) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-751-s2.c:57:20: note: Condition 'is_min_heap(NULL,0)' is always true
+    if (is_min_heap(NULL, 0)) {
+                   ^

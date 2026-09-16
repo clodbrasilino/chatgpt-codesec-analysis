@@ -1,0 +1,205 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+typedef struct IntNode {
+    int data;
+    struct IntNode *next;
+} IntNode;
+
+typedef struct ListNode {
+    IntNode *list;
+    struct ListNode *next;
+} ListNode;
+
+IntNode *int_node_create(int data) {
+    IntNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void int_list_free(IntNode *head) {
+    while (head != NULL) {
+        IntNode *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+IntNode *int_list_create(const int *values, size_t length) {
+    IntNode *head = NULL;
+    IntNode *tail = NULL;
+
+    for (size_t i = 0; i < length; i++) {
+        IntNode *node = int_node_create(values[i]);
+        if (node == NULL) {
+            int_list_free(head);
+            return NULL;
+        }
+        if (head == NULL) {
+            head = node;
+        } else {
+            tail->next = node;
+        }
+        tail = node;
+    }
+    return head;
+}
+
+bool int_list_equal(const IntNode *a, const IntNode *b) {
+    while (a != NULL && b != NULL) {
+        if (a->data != b->data) {
+            return false;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return a == NULL && b == NULL;
+}
+
+ListNode *list_node_create(IntNode *list) {
+    ListNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->list = list;
+    node->next = NULL;
+    return node;
+}
+
+bool outer_list_append(ListNode **head, IntNode *list) {
+    ListNode *node = list_node_create(list);
+    if (node == NULL) {
+        return false;
+    }
+
+    if (*head == NULL) {
+        *head = node;
+        return true;
+    }
+
+    ListNode *tail = *head;
+    while (tail->next != NULL) {
+        tail = tail->next;
+    }
+    tail->next = node;
+    return true;
+}
+
+ListNode *remove_duplicates(ListNode *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    ListNode *current = head;
+    ListNode *previous = NULL;
+
+    while (current != NULL) {
+        bool duplicate = false;
+
+        for (ListNode *runner = head; runner != current; runner = runner->next) {
+            if (int_list_equal(runner->list, current->list)) {
+                duplicate = true;
+                break;
+            }
+        }
+
+        if (duplicate) {
+            ListNode *next = current->next;
+            if (previous == NULL) {
+                head = next;
+            } else {
+                previous->next = next;
+            }
+            int_list_free(current->list);
+            free(current);
+            current = next;
+        } else {
+            previous = current;
+            current = current->next;
+        }
+    }
+
+    return head;
+}
+
+void int_list_print(const IntNode *head) {
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+}
+
+void outer_list_print(const ListNode *head) {
+    while (head != NULL) {
+        int_list_print(head->list);
+        printf("\n");
+        head = head->next;
+    }
+}
+
+void outer_list_free(ListNode *head) {
+    while (head != NULL) {
+        ListNode *next = head->next;
+        int_list_free(head->list);
+        free(head);
+        head = next;
+    }
+}
+
+bool add_list(ListNode **head, const int *values, size_t length) {
+    IntNode *list = int_list_create(values, length);
+    if (list == NULL) {
+        return false;
+    }
+
+    if (!outer_list_append(head, list)) {
+        int_list_free(list);
+        return false;
+    }
+
+    return true;
+}
+
+int main(void) {
+    ListNode *head = NULL;
+
+    int values1[] = {1, 2, 3};
+    int values2[] = {4, 5};
+    int values3[] = {1, 2, 3};
+    int values4[] = {6};
+    int values5[] = {4, 5};
+
+    if (!add_list(&head, values1, sizeof(values1) / sizeof(values1[0]))) {
+        outer_list_free(head);
+        return EXIT_FAILURE;
+    }
+    if (!add_list(&head, values2, sizeof(values2) / sizeof(values2[0]))) {
+        outer_list_free(head);
+        return EXIT_FAILURE;
+    }
+    if (!add_list(&head, values3, sizeof(values3) / sizeof(values3[0]))) {
+        outer_list_free(head);
+        return EXIT_FAILURE;
+    }
+    if (!add_list(&head, values4, sizeof(values4) / sizeof(values4[0]))) {
+        outer_list_free(head);
+        return EXIT_FAILURE;
+    }
+    if (!add_list(&head, values5, sizeof(values5) / sizeof(values5[0]))) {
+        outer_list_free(head);
+        return EXIT_FAILURE;
+    }
+
+    head = remove_duplicates(head);
+
+    outer_list_print(head);
+
+    outer_list_free(head);
+    return EXIT_SUCCESS;
+}

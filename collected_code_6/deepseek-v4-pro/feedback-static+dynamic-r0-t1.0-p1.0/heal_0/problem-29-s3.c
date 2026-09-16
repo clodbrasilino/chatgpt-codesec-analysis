@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_odd_occurrence(int *array, int size) {
+    int result = 0;
+    for (int i = 0; i < size; i++) {
+        result ^= array[i];
+    }
+    return result;
+}
+
+int main(void) {
+    int size;
+    int *array;
+    int odd_element;
+
+    if (scanf("%d", &size) != 1) {
+        return 1;
+    }
+
+    if (size <= 0) {
+        return 1;
+    }
+
+    array = (int *)malloc((size_t)size * sizeof(int));
+    if (array == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (scanf("%d", &array[i]) != 1) {
+            free(array);
+            return 1;
+        }
+    }
+
+    odd_element = find_odd_occurrence(array, size);
+    printf("%d\n", odd_element);
+
+    free(array);
+    return 0;
+}

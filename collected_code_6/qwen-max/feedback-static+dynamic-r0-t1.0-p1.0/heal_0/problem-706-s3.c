@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_subset(int *arr1, int arr1_size, int *arr2, int arr2_size) {
+    int count = 0;
+    for (int i = 0; i < arr2_size; i++) {
+        bool found = false;
+        for (int j = 0; j < arr1_size; j++) {
+            if (arr2[i] == arr1[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            count++;
+        }
+    }
+    return count == arr2_size;
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {2, 3, 5};
+
+    int arr1_size = sizeof(arr1) / sizeof(arr1[0]);
+    int arr2_size = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (is_subset(arr1, arr1_size, arr2, arr2_size)) {
+        printf("Array 2 is a subset of Array 1\n");
+    } else {
+        printf("Array 2 is not a subset of Array 1\n");
+    }
+
+    return 0;
+}

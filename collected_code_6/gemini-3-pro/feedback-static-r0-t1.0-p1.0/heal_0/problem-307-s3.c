@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    double second;
+} Tuple;
+
+Tuple* clone_tuple(const Tuple* original);
+
+Tuple* clone_tuple(const Tuple* original) {
+    if (original == NULL) {
+        return NULL;
+    }
+
+    Tuple* clone = (Tuple*)malloc(sizeof(Tuple));
+    if (clone == NULL) {
+        return NULL;
+    }
+
+    clone->first = original->first;
+    clone->second = original->second;
+
+    return clone;
+}
+
+int main(void) {
+    Tuple original_tuple = {42, 3.14159};
+
+    Tuple* cloned_tuple = clone_tuple(&original_tuple);
+    if (cloned_tuple == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%d, %f\n", cloned_tuple->first, cloned_tuple->second);
+
+    free(cloned_tuple);
+    cloned_tuple = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Node **split_list(Node *head, int n) {
+    if (n <= 0) return NULL;
+
+    int count = 0;
+    Node *curr = head;
+    while (curr) {
+        count++;
+        curr = curr->next;
+    }
+
+    int num_lists = (count == 0) ? 1 : (count + n - 1) / n;
+    Node **result = malloc((num_lists + 1) * sizeof(Node *));
+    if (!result) return NULL;
+
+    curr = head;
+    for (int i = 0; i < num_lists; i++) {
+        result[i] = curr;
+        for (int j = 0; j < n - 1 && curr; j++) {
+            curr = curr->next;
+        }
+        if (curr) {
+            Node *next_head = curr->next;
+            curr->next = NULL;
+            curr = next_head;
+        }
+    }
+    result[num_lists] = NULL;
+
+    return result;
+}
+
+void free_list(Node *head) {
+    Node *curr = head;
+    while (curr) {
+        Node *next = curr->next;
+        free(curr);
+        curr = next;
+    }
+}
+
+void free_split_result(Node **result) {
+    if (!result) return;
+    for (int i = 0; result[i] != NULL; i++) {
+        free_list(result[i]);
+    }
+    free(result);
+}
+
+int main(void) {
+    Node *head = create_node(1);
+    if (!head) return 1;
+
+    Node *curr = head;
+    for (int i = 2; i <= 10; i++) {
+        curr->next = create_node(i);
+        if (!curr->next) {
+            free_list(head);
+            return 1;
+        }
+        curr = curr->next;
+    }
+
+    Node **result = split_list(head, 3);
+    if (!result) {
+        free_list(head);
+        return 1;
+    }
+
+    for (int i = 0; result[i] != NULL; i++) {
+        curr = result[i];
+        while (curr) {
+            printf("%d ", curr->data);
+            curr = curr->next;
+        }
+        printf("\n");
+    }
+
+    free_split_result(result);
+    return 0;
+}

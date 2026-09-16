@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap_numbers(int *first_number, int *second_number);
+
+void swap_numbers(int *first_number, int *second_number) {
+    if (first_number == NULL || second_number == NULL) {
+        return;
+    }
+    int temporary_storage = *first_number;
+    *first_number = *second_number;
+    *second_number = temporary_storage;
+}
+
+int main(void) {
+    int x = 15;
+    int y = 27;
+
+    printf("x = %d, y = %d\n", x, y);
+
+    swap_numbers(&x, &y);
+
+    printf("x = %d, y = %d\n", x, y);
+
+    return EXIT_SUCCESS;
+}

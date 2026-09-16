@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-187-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-187-s2.c:59:20: style: Variable 'idx' is assigned a value that is never used. [unreadVariable]
+        size_t idx = i * (len2 + 1) + j;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-187-s2.c:60:25: style: Variable 'idx_diag' is assigned a value that is never used. [unreadVariable]
+        size_t idx_diag = (i - 1) * (len2 + 1) + (j - 1);
+                        ^

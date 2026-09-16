@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+
+unsigned long most_common_char_count(const char *str, char *most_common);
+
+unsigned long most_common_char_count(const char *str, char *most_common) {
+    if (str == NULL || *str == '\0') {
+        if (most_common != NULL) {
+            *most_common = '\0';
+        }
+        return 0;
+    }
+
+    unsigned long counts[UCHAR_MAX + 1] = {0};
+    const unsigned char *p = (const unsigned char *)str;
+    size_t i;
+
+    while (*p != '\0') {
+        counts[*p]++;
+        p++;
+    }
+
+    size_t max_index = 0;
+    unsigned long max_count = counts[0];
+
+    for (i = 1; i <= UCHAR_MAX; i++) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+            max_index = i;
+        }
+    }
+
+    if (most_common != NULL) {
+        *most_common = (char)max_index;
+    }
+
+    return max_count;
+}
+
+int main(void) {
+    const char *text = "hello world";
+    char most_common;
+    unsigned long count = most_common_char_count(text, &most_common);
+
+    printf("%c %lu\n", most_common, count);
+
+    return 0;
+}
+```

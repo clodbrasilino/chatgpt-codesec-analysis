@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool sum_range(const int *arr, size_t size, size_t start, size_t end, long long *result)
+{
+    if (arr == NULL || result == NULL) {
+        return false;
+    }
+    if (start > end || end >= size) {
+        return false;
+    }
+
+    long long sum = 0;
+    for (size_t i = start; i <= end; ++i) {
+        sum += arr[i];
+    }
+    *result = sum;
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t start = 2;
+    size_t end = 6;
+    long long result = 0;
+
+    if (sum_range(numbers, size, start, end, &result)) {
+        printf("Sum of elements from index %zu to %zu: %lld\n", start, end, result);
+    } else {
+        fprintf(stderr, "Invalid range or input\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

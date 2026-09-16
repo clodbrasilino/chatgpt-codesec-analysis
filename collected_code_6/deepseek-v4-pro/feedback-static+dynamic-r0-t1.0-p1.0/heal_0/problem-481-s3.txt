@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_subset_sum(int set[], int n, int sum) {
+    bool **dp = (bool **)malloc((n + 1) * sizeof(bool *));
+    if (dp == NULL) {
+        return false;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (bool *)malloc((sum + 1) * sizeof(bool));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return false;
+        }
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i][0] = true;
+    }
+    
+    for (int j = 1; j <= sum; j++) {
+        dp[0][j] = false;
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= sum; j++) {
+            if (set[i - 1] <= j) {
+                dp[i][j] = dp[i - 1][j] || dp[i - 1][j - set[i - 1]];
+            } else {
+                dp[i][j] = dp[i - 1][j];
+            }
+        }
+    }
+    
+    bool result = dp[n][sum];
+    
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+int main(void) {
+    int set[] = {3, 34, 4, 12, 5, 2};
+    int sum = 9;
+    int n = sizeof(set) / sizeof(set[0]);
+    
+    if (is_subset_sum(set, n, sum)) {
+        printf("Found a subset with given sum\n");
+    } else {
+        printf("No subset with given sum\n");
+    }
+    
+    return 0;
+}
+```

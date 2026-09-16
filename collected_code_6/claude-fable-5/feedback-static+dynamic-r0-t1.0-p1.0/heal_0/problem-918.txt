@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_coin_change(const int *coins, size_t num_coins, int amount)
+{
+    long long *table = NULL;
+    size_t i;
+    size_t j;
+
+    if (coins == NULL || amount < 0) {
+        return -1;
+    }
+
+    table = calloc((size_t)amount + 1U, sizeof(long long));
+    if (table == NULL) {
+        return -1;
+    }
+
+    table[0] = 1;
+
+    for (i = 0; i < num_coins; i++) {
+        if (coins[i] <= 0) {
+            free(table);
+            return -1;
+        }
+        for (j = (size_t)coins[i]; j <= (size_t)amount; j++) {
+            table[j] += table[j - (size_t)coins[i]];
+        }
+    }
+
+    long long result = table[(size_t)amount];
+    free(table);
+    return result;
+}
+
+int main(void)
+{
+    int coins[] = {1, 2, 5};
+    size_t num_coins = sizeof(coins) / sizeof(coins[0]);
+    int amount = 11;
+
+    long long ways = count_coin_change(coins, num_coins, amount);
+    if (ways < 0) {
+        if (fprintf(stderr, "Error computing coin change\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of ways to make %d: %lld\n", amount, ways) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

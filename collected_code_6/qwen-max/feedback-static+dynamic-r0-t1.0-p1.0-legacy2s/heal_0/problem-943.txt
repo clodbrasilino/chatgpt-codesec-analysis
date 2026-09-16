@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node* createNode(int data) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insert(Node **root, int data) {
+    Node *newNode = createNode(data);
+    if (*root == NULL) {
+        *root = newNode;
+    } else {
+        Node *temp = *root;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+void printList(Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+Node* mergeSortedLists(Node *a, Node *b) {
+    Node dummy;
+    Node *tail = &dummy;
+    dummy.next = NULL;
+
+    while (a != NULL && b != NULL) {
+        if (a->data <= b->data) {
+            tail->next = a;
+            a = a->next;
+        } else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != NULL) {
+        tail->next = a;
+    } else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+int main() {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+
+    insert(&list1, 1);
+    insert(&list1, 3);
+    insert(&list1, 5);
+
+    insert(&list2, 2);
+    insert(&list2, 4);
+    insert(&list2, 6);
+
+    printf("List 1: ");
+    printList(list1);
+
+    printf("List 2: ");
+    printList(list2);
+
+    Node *mergedList = mergeSortedLists(list1, list2);
+    printf("Merged List: ");
+    printList(mergedList);
+
+    return 0;
+}
+```

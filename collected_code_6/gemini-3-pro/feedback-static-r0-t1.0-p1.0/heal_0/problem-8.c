@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void square_elements(const int *input_list, int *output_list, size_t length) {
+    if (input_list == NULL || output_list == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        output_list[i] = input_list[i] * input_list[i];
+    }
+}
+
+int main(void) {
+    size_t num_elements = 5;
+    int *input_list = NULL;
+    int *output_list = NULL;
+
+    input_list = (int *)malloc(num_elements * sizeof(int));
+    if (input_list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    output_list = (int *)malloc(num_elements * sizeof(int));
+    if (output_list == NULL) {
+        free(input_list);
+        return EXIT_FAILURE;
+    }
+
+    input_list[0] = 1;
+    input_list[1] = 2;
+    input_list[2] = 3;
+    input_list[3] = 4;
+    input_list[4] = 5;
+
+    square_elements(input_list, output_list, num_elements);
+
+    for (size_t i = 0; i < num_elements; ++i) {
+        printf("%d ", output_list[i]);
+    }
+    printf("\n");
+
+    free(input_list);
+    free(output_list);
+
+    return EXIT_SUCCESS;
+}

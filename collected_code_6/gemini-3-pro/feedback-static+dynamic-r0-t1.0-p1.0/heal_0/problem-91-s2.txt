@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool is_substring_in_list(const char *const *list, size_t list_size, const char *substring) {
+    if (list == NULL || substring == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < list_size; ++i) {
+        if (list[i] != NULL && strstr(list[i], substring) != NULL) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    const char *strings[] = {
+        "apple",
+        "banana",
+        "cherry",
+        "date"
+    };
+    size_t list_size = sizeof(strings) / sizeof(strings[0]);
+    const char *search_term = "nan";
+
+    bool result = is_substring_in_list(strings, list_size, search_term);
+
+    if (result) {
+        printf("Substring found.\n");
+    } else {
+        printf("Substring not found.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_inversions_type1(const int *arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int count_inversions_type2(const int *arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] < arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int check_inversion_counts(const int *arr1, int n1, const int *arr2, int n2) {
+    int type1_1 = count_inversions_type1(arr1, n1);
+    int type1_2 = count_inversions_type1(arr2, n2);
+    int type2_1 = count_inversions_type2(arr1, n1);
+    int type2_2 = count_inversions_type2(arr2, n2);
+
+    return (type1_1 == type1_2 && type2_1 == type2_2);
+}
+
+int main(void) {
+    int arr1[] = {1, 3, 2, 5, 4};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    int arr2[] = {2, 1, 4, 3, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (check_inversion_counts(arr1, n1, arr2, n2)) {
+        printf("Same inversion counts\n");
+    } else {
+        printf("Different inversion counts\n");
+    }
+
+    return 0;
+}

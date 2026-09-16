@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double square_perimeter(double side)
+{
+    return 4.0 * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+
+    printf("Enter the side length of the square: ");
+
+    if (scanf("%lf", &side) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (side < 0.0) {
+        fprintf(stderr, "Error: side length cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Perimeter of the square: %.2f\n", square_perimeter(side));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation:
+
+- **Validates input** — checks the return value of `scanf` so a non-numeric entry doesn't leave `side` uninitialized (addresses CWE-703).
+- **Rejects negative side lengths** — a square cannot have a negative side, preventing nonsensical results.
+- **Initializes all variables** and uses no dynamic resources, so there is no resource lifetime to mismanage (addresses CWE-664).
+- **Follows standard conventions** — `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE`, errors written to `stderr` (addresses CWE-710).

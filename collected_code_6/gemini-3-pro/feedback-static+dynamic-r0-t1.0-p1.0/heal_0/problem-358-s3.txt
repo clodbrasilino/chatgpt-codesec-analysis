@@ -1,0 +1,110 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head, int data) {
+    if (head == NULL) {
+        return;
+    }
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    struct Node* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+struct Node* moduloLists(struct Node* list1, struct Node* list2) {
+    struct Node* resultHead = NULL;
+    struct Node* resultTail = NULL;
+    struct Node* current1 = list1;
+    struct Node* current2 = list2;
+
+    while (current1 != NULL && current2 != NULL) {
+        int val2 = current2->data;
+        int modVal = 0;
+        
+        if (val2 != 0) {
+            modVal = current1->data % val2;
+        } else {
+            modVal = 0;
+        }
+
+        struct Node* newNode = createNode(modVal);
+        if (resultHead == NULL) {
+            resultHead = newNode;
+            resultTail = newNode;
+        } else {
+            resultTail->next = newNode;
+            resultTail = newNode;
+        }
+
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+
+    return resultHead;
+}
+
+void printList(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    struct Node* list1 = NULL;
+    struct Node* list2 = NULL;
+    struct Node* result = NULL;
+
+    appendNode(&list1, 10);
+    appendNode(&list1, 20);
+    appendNode(&list1, 30);
+
+    appendNode(&list2, 3);
+    appendNode(&list2, 0);
+    appendNode(&list2, 7);
+
+    result = moduloLists(list1, list2);
+
+    printList(result);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
+
+    return 0;
+}
+```

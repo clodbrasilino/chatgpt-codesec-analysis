@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+bool is_subset(const Tuple *subset, const Tuple *superset) {
+    if (!subset || !superset || !subset->elements || !superset->elements) {
+        return false;
+    }
+
+    if (subset->size == 0) {
+        return true;
+    }
+
+    if (subset->size > superset->size) {
+        return false;
+    }
+
+    for (size_t i = 0; i < subset->size; i++) {
+        bool found = false;
+        for (size_t j = 0; j < superset->size; j++) {
+            if (subset->elements[i] == superset->elements[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {1, 2};
+    int arr2[] = {1, 2, 3, 4};
+    int arr3[] = {1, 5};
+
+    Tuple t1 = {arr1, 2};
+    Tuple t2 = {arr2, 4};
+    Tuple t3 = {arr3, 2};
+
+    if (is_subset(&t1, &t2)) {
+        printf("t1 is a subset of t2\n");
+    } else {
+        printf("t1 is NOT a subset of t2\n");
+    }
+
+    if (is_subset(&t3, &t2)) {
+        printf("t3 is a subset of t2\n");
+    } else {
+        printf("t3 is NOT a subset of t2\n");
+    }
+
+    return 0;
+}

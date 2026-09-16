@@ -1,0 +1,157 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary **dicts;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+Dictionary* create_dictionary(size_t capacity) {
+    if (capacity == 0) return NULL;
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->entries = malloc(capacity * sizeof(DictEntry));
+    if (!dict->entries) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+int add_to_dictionary(Dictionary *dict, const char *key, const char *value) {
+    if (!dict || !key || !value) return -1;
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (!new_entries) return -1;
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    
+    dict->entries[dict->size].key = strdup(key);
+    if (!dict->entries[dict->size].key) return -1;
+    
+    dict->entries[dict->size].value = strdup(value);
+    if (!dict->entries[dict->size].value) {
+        free(dict->entries[dict->size].key);
+        return -1;
+    }
+    dict->size++;
+    return 0;
+}
+
+Tuple* create_tuple(size_t capacity) {
+    if (capacity == 0) return NULL;
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    tuple->dicts = malloc(capacity * sizeof(Dictionary*));
+    if (!tuple->dicts) {
+        free(tuple);
+        return NULL;
+    }
+    tuple->size = 0;
+    tuple->capacity = capacity;
+    return tuple;
+}
+
+int add_dict_to_tuple(Tuple *tuple, Dictionary *dict) {
+    if (!tuple || !dict) return -1;
+    if (tuple->size >= tuple->capacity) {
+        size_t new_capacity = tuple->capacity * 2;
+        Dictionary **new_dicts = realloc(tuple->dicts, new_capacity * sizeof(Dictionary*));
+        if (!new_dicts) return -1;
+        tuple->dicts = new_dicts;
+        tuple->capacity = new_capacity;
+    }
+    tuple->dicts[tuple->size++] = dict;
+    return 0;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (!dict) return;
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+void free_tuple(Tuple *tuple) {
+    if (!tuple) return;
+    for (size_t i = 0; i < tuple->size; i++) {
+        free_dictionary(tuple->dicts[i]);
+    }
+    free(tuple->dicts);
+    free(tuple);
+}
+
+int main(void) {
+    Tuple *my_tuple = create_tuple(2);
+    if (!my_tuple) return 1;
+
+    Dictionary *dict1 = create_dictionary(2);
+    if (!dict1) {
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    if (add_to_dictionary(dict1, "name", "Alice") != 0 || 
+        add_to_dictionary(dict1, "role", "Admin") != 0) {
+        free_dictionary(dict1);
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    if (add_dict_to_tuple(my_tuple, dict1) != 0) {
+        free_dictionary(dict1);
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    Dictionary *dict2 = create_dictionary(1);
+    if (!dict2) {
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    if (add_to_dictionary(dict2, "name", "Bob") != 0) {
+        free_dictionary(dict2);
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    if (add_dict_to_tuple(my_tuple, dict2) != 0) {
+        free_dictionary(dict2);
+        free_tuple(my_tuple);
+        return 1;
+    }
+
+    for (size_t i = 0; i < my_tuple->size; i++) {
+        printf("Dictionary %zu:\n", i);
+        Dictionary *d = my_tuple->dicts[i];
+        for (size_t j = 0; j < d->size; j++) {
+            printf("  %s: %s\n", d->entries[j].key, d->entries[j].value);
+        }
+    }
+
+    free_tuple(my_tuple);
+    return 0;
+}
+```

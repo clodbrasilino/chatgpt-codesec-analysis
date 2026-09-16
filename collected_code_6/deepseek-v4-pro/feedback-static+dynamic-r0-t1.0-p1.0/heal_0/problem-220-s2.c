@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_chars(char *str, int n) {
+    int count = 0;
+    char *p = str;
+    
+    while (*p && count < n) {
+        if (*p == ' ' || *p == ',' || *p == '.') {
+            *p = ':';
+            count++;
+        }
+        p++;
+    }
+}
+
+int main(void) {
+    char str[100];
+    int n;
+    
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) == NULL) {
+        return 1;
+    }
+    str[strcspn(str, "\n")] = '\0';
+    
+    printf("Enter maximum replacements: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        return 1;
+    }
+    
+    replace_chars(str, n);
+    printf("Result: %s\n", str);
+    
+    return 0;
+}

@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t j = 0;
+    char *result;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    result = (char *)malloc(len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (str[i] != '(' && str[i] != ')') {
+            result[j] = str[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(int argc, char *argv[])
+{
+    char buffer[4096];
+    const char *input;
+    char *output;
+    char *start;
+    char *end;
+
+    if (argc > 1) {
+        input = argv[1];
+    } else {
+        size_t len;
+
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            fprintf(stderr, "Error: failed to read input\n");
+            return EXIT_FAILURE;
+        }
+        len = strlen(buffer);
+        while (len > 0 && (buffer[len - 1] == '\n' || buffer[len - 1] == '\r')) {
+            buffer[--len] = '\0';
+        }
+        input = buffer;
+    }
+
+    output = remove_parentheses(input);
+    if (output == NULL) {
+        fprintf(stderr, "Error: failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    start = output;
+    while (*start == ' ' || *start == '\t') {
+        start++;
+    }
+    end = start + strlen(start);
+    while (end > start && (end[-1] == ' ' || end[-1] == '\t')) {
+        *--end = '\0';
+    }
+
+    printf("%s\n", start);
+
+    free(output);
+    output = NULL;
+
+    return EXIT_SUCCESS;
+}

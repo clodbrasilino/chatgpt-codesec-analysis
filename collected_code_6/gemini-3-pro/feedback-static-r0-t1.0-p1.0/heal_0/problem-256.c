@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int count_primes(int n) {
+    if (n <= 2) {
+        return 0;
+    }
+
+    bool *is_prime = (bool *)calloc(n, sizeof(bool));
+    if (is_prime == NULL) {
+        return -1;
+    }
+
+    for (int i = 2; i < n; i++) {
+        is_prime[i] = true;
+    }
+
+    for (int i = 2; i * i < n; i++) {
+        if (is_prime[i]) {
+            for (int j = i * i; j < n; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+
+    int count = 0;
+    for (int i = 2; i < n; i++) {
+        if (is_prime[i]) {
+            count++;
+        }
+    }
+
+    free(is_prime);
+    return count;
+}
+
+int main(void) {
+    int n = 10;
+    int result = count_primes(n);
+    
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

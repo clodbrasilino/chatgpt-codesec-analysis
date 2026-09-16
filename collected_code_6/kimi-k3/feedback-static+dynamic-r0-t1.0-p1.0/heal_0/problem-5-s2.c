@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_domino_tilings(int n)
+{
+    if (n < 0) {
+        return 0;
+    }
+    if (n % 2 != 0) {
+        return 0;
+    }
+    if (n == 0) {
+        return 1;
+    }
+
+    long long *dp = (long long *)malloc((size_t)(n + 1) * sizeof(long long));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 1;
+    dp[1] = 0;
+
+    for (int i = 2; i <= n; i += 2) {
+        dp[i] = 0;
+        for (int j = 0; j <= i - 2; j += 2) {
+            long long multiplier = (j == i - 2) ? 3 : 2;
+            dp[i] += dp[j] * multiplier;
+        }
+    }
+
+    long long result = dp[n];
+    free(dp);
+    dp = NULL;
+
+    return result;
+}
+
+int main(void)
+{
+    int n = 0;
+
+    printf("Enter n for 3 x n board: ");
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = count_domino_tilings(n);
+
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of ways to tile 3 x %d board: %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}

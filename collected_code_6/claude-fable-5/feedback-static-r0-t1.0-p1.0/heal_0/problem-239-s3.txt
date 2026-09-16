@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_sequences(long long m, long long n)
+{
+    if (n == 0)
+    {
+        return 1;
+    }
+    if (m <= 0)
+    {
+        return 0;
+    }
+    return count_sequences(m - 1, n) + count_sequences(m / 2, n - 1);
+}
+
+int main(void)
+{
+    long long m;
+    long long n;
+
+    printf("Enter m: ");
+    if (scanf("%lld", &m) != 1)
+    {
+        fprintf(stderr, "Invalid input for m\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter n: ");
+    if (scanf("%lld", &n) != 1)
+    {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m < 0 || n < 0)
+    {
+        fprintf(stderr, "Values must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 62 || m > 1000000)
+    {
+        fprintf(stderr, "Input values too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of possible sequences: %lld\n", count_sequences(m, n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The function uses the recurrence: either the maximum value `m` is not used (reducing to `m-1`), or it is used as the last element, meaning the previous element can be at most `m/2` (reducing to a sequence of length `n-1` with maximum `m/2`). Input validation guards against invalid, negative, or excessively large inputs to prevent stack exhaustion and undefined behavior.

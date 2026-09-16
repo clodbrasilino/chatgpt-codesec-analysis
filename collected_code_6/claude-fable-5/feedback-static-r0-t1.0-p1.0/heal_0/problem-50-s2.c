@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *create_node(int data)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int append_node(struct Node **head, int data)
+{
+    struct Node *node = create_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    struct Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+size_t list_length(const struct Node *head)
+{
+    size_t length = 0;
+    while (head != NULL) {
+        length++;
+        head = head->next;
+    }
+    return length;
+}
+
+int find_min_length_list(struct Node *const *lists, size_t count, size_t *min_index)
+{
+    if (lists == NULL || min_index == NULL || count == 0) {
+        return -1;
+    }
+    size_t best_index = 0;
+    size_t best_length = list_length(lists[0]);
+    for (size_t i = 1; i < count; i++) {
+        size_t current_length = list_length(lists[i]);
+        if (current_length < best_length) {
+            best_length = current_length;
+            best_index = i;
+        }
+    }
+    *min_index = best_index;
+    return 0;
+}
+
+void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    struct Node *lists[3] = { NULL, NULL, NULL };
+    int status = EXIT_SUCCESS;
+
+    for (int i = 0; i < 5; i++) {
+        if (append_node(&lists[0], i) != 0) {
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+    }
+    for (int i = 0; i < 2; i++) {
+        if (append_node(&lists[1], i * 10) != 0) {
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        if (append_node(&lists[2], i * 100) != 0) {
+            status = EXIT_FAILURE;
+            goto cleanup;
+        }
+    }
+
+    size_t min_index = 0;
+    if (find_min_length_list(lists, 3, &min_index) != 0) {
+        status = EXIT_FAILURE;
+        goto cleanup;
+    }
+
+    if (printf("List %zu has the minimum length: %zu\n",
+               min_index, list_length(lists[min_index])) < 0) {
+        status = EXIT_FAILURE;
+    }
+
+cleanup:
+    for (size_t i = 0; i < 3; i++) {
+        free_list(lists[i]);
+        lists[i] = NULL;
+    }
+    return status;
+}

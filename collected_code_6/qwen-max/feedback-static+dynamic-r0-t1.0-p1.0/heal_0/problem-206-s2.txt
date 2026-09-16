@@ -3,35 +3,47 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* concat_adjacent(char *tuple1, char *tuple2) {
-    size_t len1 = strlen(tuple1);
-    size_t len2 = strlen(tuple2);
-    char *result = (char *)malloc(len1 + len2 + 1);
-    if (result == NULL) {
-        return NULL;
-    }
-    memcpy(result, tuple1, len1);
-    memcpy(result + len1, tuple2, len2 + 1);
+char *concatAdjacent(const char *a, const char *b) {
+    size_t aLen = strlen(a);
+    size_t bLen = strlen(b);
+    char *result = (char *)malloc(aLen + bLen + 1);
+    if (result == NULL) return NULL;
+    memcpy(result, a, aLen);
+    memcpy(result + aLen, b, bLen + 1);
     return result;
 }
 
-void free_tuple(char **tuple) {
-    if (*tuple != NULL) {
-        free(*tuple);
-        *tuple = NULL;
+void processTuples(char *tuple[], int n, char ***result, int *resSize) {
+    *result = (char **)malloc(n * sizeof(char *));
+    if (*result == NULL) return;
+    for (int i = 0; i < n - 1; ++i) {
+        (*result)[i] = concatAdjacent(tuple[i], tuple[i + 1]);
+        if ((*result)[i] == NULL) {
+            while (i >= 0) {
+                free((*result)[i]);
+                --i;
+            }
+            free(*result);
+            *result = NULL;
+            *resSize = 0;
+            return;
+        }
     }
+    *resSize = n - 1;
 }
 
 int main() {
-    char *tuple1 = "hello";
-    char *tuple2 = " world";
-    char *result = concat_adjacent(tuple1, tuple2);
-    if (result != NULL) {
-        printf("%s\n", result);
-        free_tuple(&result);
-    } else {
-        fprintf(stderr, "Memory allocation failed\n");
+    char *tuples[] = {"apple", "banana", "cherry", "date"};
+    int n = 4;
+    char **result;
+    int resSize;
+    processTuples(tuples, n, &result, &resSize);
+    
+    for (int i = 0; i < resSize; ++i) {
+        printf("%s\n", result[i]);
+        free(result[i]);
     }
+    free(result);
     return 0;
 }
 ```

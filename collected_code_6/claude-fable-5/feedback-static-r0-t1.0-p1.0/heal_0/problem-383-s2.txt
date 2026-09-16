@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int toggle_odd_bits(unsigned int num)
+{
+    unsigned int mask = 0xAAAAAAAAU;
+    return num ^ mask;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int result = 0U;
+    int scan_status = 0;
+
+    printf("Enter an unsigned integer: ");
+    scan_status = scanf("%u", &number);
+
+    if (scan_status != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_odd_bits(number);
+
+    printf("Original number: %u\n", number);
+    printf("After toggling odd bits: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of key design decisions:**
+
+- **Mask `0xAAAAAAAAU`**: In binary this is `1010...1010`, which has a `1` at every odd bit position (1, 3, 5, ..., 31). XOR-ing with this mask flips exactly those bits while leaving even bits untouched.
+
+- **`unsigned int` throughout**: Bitwise operations on signed integers can invoke implementation-defined or undefined behavior (e.g., with negative values), so unsigned types are used to stay standards-compliant (addresses CWE-710).
+
+- **Checked `scanf` return value**: The return of `scanf` is validated before using `number`, preventing use of an uninitialized/indeterminate value on input failure (addresses CWE-703 and CWE-664).
+
+- **All variables initialized at declaration**: Guarantees no resource is read before it holds a defined value at any point in its lifetime.
+
+- **`EXIT_SUCCESS` / `EXIT_FAILURE`**: Portable, standards-conforming exit codes from `<stdlib.h>`.
+
+**Sample run:**
+
+```
+Enter an unsigned integer: 10
+Original number: 10
+After toggling odd bits: 2863311520
+```
+
+(`10` is `...1010`; toggling odd bits flips bits 1 and 3 and sets all higher odd bits, yielding `0xAAAAAAA0` = `2863311520`.)

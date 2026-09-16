@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} SubList;
+
+typedef struct {
+    SubList *items;
+    size_t size;
+} ListOfLists;
+
+static int sublist_within_range(const SubList *sub, int low, int high)
+{
+    size_t i;
+
+    if (sub == NULL || sub->data == NULL || sub->size == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < sub->size; i++) {
+        if (sub->data[i] < low || sub->data[i] > high) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int remove_sublists_outside_range(ListOfLists *list, int low, int high)
+{
+    size_t i;
+    size_t kept;
+
+    if (list == NULL || low > high) {
+        return -1;
+    }
+
+    kept = 0;
+    for (i = 0; i < list->size; i++) {
+        if (sublist_within_range(&list->items[i], low, high)) {
+            list->items[kept] = list->items[i];
+            kept++;
+        } else {
+            free(list->items[i].data);
+            list->items[i].data = NULL;
+            list->items[i].size = 0;
+        }
+    }
+
+    list->size = kept;
+    return 0;
+}
+
+static int init_sublist(SubList *sub, const int *values, size_t n)
+{
+    size_t i;
+
+    if (sub == NULL || (values == NULL && n > 0)) {
+        return -1;
+    }
+
+    sub->data = NULL;
+    sub->size = 0;
+
+    if (n > 0) {
+        sub->data = (int *)malloc(n * sizeof(int));
+        if (sub->data == NULL) {
+            return -1;
+        }
+        for (i = 0; i < n; i++) {
+            sub->data[i] = values[i];
+        }
+        sub->size = n;
+    }
+
+    return 0;
+}
+
+static void print_list(const ListOfLists *list)
+{
+    size_t i;
+    size_t j;
+
+    if (list == NULL) {
+        return;
+    }
+
+    printf("[");
+    for (i = 0; i < list->size; i++) {
+        printf("[");
+        for (j = 0; j < list->items[i].size; j++) {
+            printf("%d", list->items[i].data[j]);
+            if (j + 1 < list->items[i].size) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1 < list->size) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+static void free_list(ListOfLists *list)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < list->size; i++) {
+        free(list->items[i].data);
+        list->items[i].data = NULL;
+        list->items[i].size = 0;
+    }
+    free(list->items);
+    list->items = NULL;
+    list->size = 0;
+}
+
+int main(void)
+{
+    static const int raw0[] = {1, 2, 3, 4};
+    static const int raw1[] = {4, 5, 6, 7};
+    static const int raw2[] = {9, 10, 11, 12};
+    static const int raw3[] = {13, 14, 15, 16};
+    static const int raw4[] = {5, 8};
+
+    static const int *raw[] = {raw0, raw1, raw2, raw3, raw4};
+    static const size_t raw_sizes[] = {4, 4, 4, 4, 2};
+
+    const size_t count = sizeof(raw) / sizeof(raw[0]);
+    const int low = 4;
+    const int high = 12;
+
+    ListOfLists list;
+    size_t i;
+
+    list.items = NULL;
+    list.size = 0;
+
+    list.items = (SubList *)calloc(count, sizeof(SubList));
+    if (list.items == NULL) {
+        fprintf(stderr, "memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    list.size = count;
+
+    for (i = 0; i < count; i++) {
+        if (init_sublist(&list.items[i], raw[i], raw_sizes[i]) != 0) {
+            fprintf(stderr, "memory allocation failed\n");
+            free_list(&list);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list of lists:\n");
+    print_list(&list);
+
+    if (remove_sublists_outside_range(&list, low, high) != 0) {
+        fprintf(stderr, "failed to remove sublists\n");
+        free_list(&list);
+        return EXIT_FAILURE;
+    }
+
+    printf("After removing sublists outside [%d, %d]:\n", low, high);
+    print_list(&list);
+
+    free_list(&list);
+    return EXIT_SUCCESS;
+}

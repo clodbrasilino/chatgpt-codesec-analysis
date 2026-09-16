@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+int round_up_to_digits(double value, int digits, double *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (digits < -308 || digits > 308) {
+        return -1;
+    }
+    
+    if (isnan(value) || isinf(value)) {
+        return -1;
+    }
+    
+    errno = 0;
+    double multiplier = pow(10.0, digits);
+    
+    if (errno != 0 || multiplier == 0.0 || isinf(multiplier)) {
+        return -1;
+    }
+    
+    double scaled = value * multiplier;
+    
+    if (isinf(scaled) || isnan(scaled)) {
+        return -1;
+    }
+    
+    double rounded = ceil(scaled);
+    *result = rounded / multiplier;
+    
+    return 0;
+}
+
+int main(void) {
+    double value;
+    int digits;
+    double result;
+    
+    printf("Enter a number: ");
+    if (scanf("%lf", &value) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter number of digits: ");
+    if (scanf("%d", &digits) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (round_up_to_digits(value, digits, &result) != 0) {
+        fprintf(stderr, "Error: Invalid parameters or calculation failed\n");
+        return 1;
+    }
+    
+    printf("Rounded up: %.*f\n", (digits >= 0) ? digits : 0, result);
+    
+    return 0;
+}
+```

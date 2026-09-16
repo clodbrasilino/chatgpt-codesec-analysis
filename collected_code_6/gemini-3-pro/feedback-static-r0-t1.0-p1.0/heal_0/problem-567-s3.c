@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_sorted(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return true;
+    }
+
+    for (size_t i = 0; i < size - 1; i++) {
+        if (array[i] > array[i + 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    if (is_sorted(arr1, size1)) {
+        printf("arr1 is sorted.\n");
+    } else {
+        printf("arr1 is not sorted.\n");
+    }
+
+    int arr2[] = {5, 3, 4, 1, 2};
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (is_sorted(arr2, size2)) {
+        printf("arr2 is sorted.\n");
+    } else {
+        printf("arr2 is not sorted.\n");
+    }
+
+    return 0;
+}

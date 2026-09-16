@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_in_range(const int *list, size_t size, size_t start_idx, size_t end_idx) {
+    long long sum = 0;
+
+    if (list == NULL) {
+        return 0;
+    }
+
+    if (start_idx >= size || start_idx > end_idx) {
+        return 0;
+    }
+
+    if (end_idx >= size) {
+        end_idx = size - 1;
+    }
+
+    for (size_t i = start_idx; i <= end_idx; ++i) {
+        sum += list[i];
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int numbers[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+
+    size_t start = 2;
+    size_t end = 5;
+
+    long long result = sum_in_range(numbers, size, start, end);
+
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

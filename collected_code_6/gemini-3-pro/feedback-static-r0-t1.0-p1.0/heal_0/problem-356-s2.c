@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int calculate_third_angle(double angle1, double angle2, double *third_angle) {
+    if (third_angle == NULL) {
+        return -1;
+    }
+    if (angle1 <= 0.0 || angle2 <= 0.0) {
+        return -1;
+    }
+    if ((angle1 + angle2) >= 180.0) {
+        return -1;
+    }
+    
+    *third_angle = 180.0 - (angle1 + angle2);
+    return 0;
+}
+
+int main(void) {
+    double angle1 = 60.0;
+    double angle2 = 45.0;
+    double third_angle = 0.0;
+
+    int status = calculate_third_angle(angle1, angle2, &third_angle);
+
+    if (status == 0) {
+        printf("The third angle is: %.2f\n", third_angle);
+    } else {
+        fprintf(stderr, "Error: Invalid angles provided.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

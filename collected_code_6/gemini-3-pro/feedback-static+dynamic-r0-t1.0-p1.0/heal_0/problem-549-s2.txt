@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long sumOfFifthPowerOfOddNumbers(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    unsigned long long sum = 0;
+    unsigned long long current_odd = 1;
+
+    for (int i = 0; i < n; i++) {
+        unsigned long long power = current_odd * current_odd * current_odd * current_odd * current_odd;
+        sum += power;
+        current_odd += 2;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = sumOfFifthPowerOfOddNumbers(n);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

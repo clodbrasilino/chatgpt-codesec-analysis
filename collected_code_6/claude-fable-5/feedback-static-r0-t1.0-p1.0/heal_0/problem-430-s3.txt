@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+static int find_directrix(double a, double b, double c, double *directrix)
+{
+    if (directrix == NULL)
+    {
+        return -1;
+    }
+
+    if (fabs(a) < 1e-12)
+    {
+        return -1;
+    }
+
+    *directrix = c - ((b * b) + 1.0) / (4.0 * a);
+
+    return 0;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double c = 0.0;
+    double directrix = 0.0;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1)
+    {
+        fprintf(stderr, "Invalid input for a\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1)
+    {
+        fprintf(stderr, "Invalid input for b\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient c: ");
+    if (scanf("%lf", &c) != 1)
+    {
+        fprintf(stderr, "Invalid input for c\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_directrix(a, b, c, &directrix) != 0)
+    {
+        fprintf(stderr, "Error: coefficient a must be non-zero\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Directrix: y = %.6f\n", directrix);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution computes the directrix of a parabola given in the form **y = ax² + bx + c**, using the formula:
+
+**y = c − (b² + 1) / (4a)**
+
+Key safety measures addressing the specified CWEs:
+
+- **CWE-703**: Every `scanf` return value is checked, and the function validates that `a` is non-zero (using an epsilon comparison rather than direct floating-point equality) before dividing.
+- **CWE-664**: No dynamic resources are allocated; all variables are stack-based and initialized at declaration, so there is no resource lifetime to mismanage.
+- **CWE-710**: The code follows standard conventions—`main` returns `EXIT_SUCCESS`/`EXIT_FAILURE`, the helper function has a proper prototype with `static` linkage, a null-pointer guard protects the output parameter, and errors are reported to `stderr`.

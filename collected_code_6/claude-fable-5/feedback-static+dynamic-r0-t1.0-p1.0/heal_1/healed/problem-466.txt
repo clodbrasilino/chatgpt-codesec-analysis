@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t findPeakElement(const int *arr, size_t n)
+{
+    size_t low = 0;
+    size_t high = n - 1;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (arr[mid] < arr[mid + 1]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low;
+}
+
+int main(void)
+{
+    int arr[] = {1, 3, 20, 4, 1, 0};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    size_t peakIndex = findPeakElement(arr, n);
+
+    if (printf("Peak element is %d at index %zu\n", arr[peakIndex], peakIndex) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes made:**
+
+1. **Removed the always-false `n == 0` check** — The static analyzer correctly flagged this: since `arr` is a fixed-size array with 6 elements, `n` is a compile-time constant of `6`, making the empty-array check dead code. Removing it eliminates the `knownConditionTrueFalse` warning.
+
+2. **Changed `findPeakElement` to return `size_t`** — The original cast `(int)low` was a narrowing conversion from `size_t` to `int`, which could silently truncate on very large arrays. Returning `size_t` directly keeps the index type consistent throughout.
+
+3. **Fixed the format specifier** — With `peakIndex` now being `size_t`, the correct format specifier is `%zu` rather than `%d`. Passing a `size_t` to `%d` is undefined behavior per the C standard.
+
+4. **Retained the safe midpoint calculation** — `low + (high - low) / 2` avoids the classic overflow bug of `(low + high) / 2`, so it was kept as-is.
+
+5. **Retained the `printf` return-value check** — Checking for a negative return from `printf` is a legitimate defensive practice for detecting stream errors, so it remains.
+
+The algorithm itself (binary search for a peak in O(log n)) is correct: since `n >= 1` is guaranteed by construction, `n - 1` in `findPeakElement` cannot underflow in this program.

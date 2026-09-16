@@ -1,0 +1,31 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:18:20: warning: Invalid test for overflow 'arr[i]>currentSum+arr[i]'; signed integer overflow is undefined behavior. Some mainstream compilers removes handling of overflows when optimising the code and change the code to 'currentSum<0'. [invalidTestForOverflow]
+        if (arr[i] > currentSum + arr[i]) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:13:9: style: The scope of the variable 'maxStart' can be reduced. [variableScope]
+    int maxStart = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:14:9: style: The scope of the variable 'maxEnd' can be reduced. [variableScope]
+    int maxEnd = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:4:28: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int maxSubArrayLength(int *arr, int n) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:13:18: style: Variable 'maxStart' is assigned a value that is never used. [unreadVariable]
+    int maxStart = 0;
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:14:16: style: Variable 'maxEnd' is assigned a value that is never used. [unreadVariable]
+    int maxEnd = 0;
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:29:22: style: Variable 'maxStart' is assigned a value that is never used. [unreadVariable]
+            maxStart = currentStart;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:30:20: style: Variable 'maxEnd' is assigned a value that is never used. [unreadVariable]
+            maxEnd = i;
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:35:26: style: Variable 'maxStart' is assigned a value that is never used. [unreadVariable]
+                maxStart = currentStart;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836-s3.c:36:24: style: Variable 'maxEnd' is assigned a value that is never used. [unreadVariable]
+                maxEnd = i;
+                       ^

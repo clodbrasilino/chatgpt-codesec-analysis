@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int segregate(int *arr, int n) {
+    int j = 0, i;
+    for (i = 0; i < n; i++) {
+        if (arr[i] <= 0) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            j++;
+        }
+    }
+    return j;
+}
+
+int findMissingPositive(int *arr, int n) {
+    int size = n;
+    int shift = segregate(arr, n);
+    int *positive = &arr[shift];
+    n -= shift;
+
+    for (int i = 0; i < n; i++) {
+        if (abs(positive[i]) - 1 < n && positive[abs(positive[i]) - 1] > 0) {
+            positive[abs(positive[i]) - 1] = -positive[abs(positive[i]) - 1];
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (positive[i] > 0) {
+            return i + 1;
+        }
+    }
+    return n + 1;
+}
+
+int firstMissingPositive(int* nums, int numsSize) {
+    return findMissingPositive(nums, numsSize);
+}
+
+int main() {
+    int arr[] = {3, 4, -1, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("The smallest missing positive integer is %d\n", firstMissingPositive(arr, n));
+    return 0;
+}

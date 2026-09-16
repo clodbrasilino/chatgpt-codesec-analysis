@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int is_substring_present(char *substring, char **list, int list_size) {
+    for (int i = 0; i < list_size; i++) {
+        if (strstr(list[i], substring) != NULL) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int main() {
+    char *sample_list[] = {"hello", "world", "example", "test"};
+    int list_size = sizeof(sample_list) / sizeof(sample_list[0]);
+    char *substring = "lo";
+
+    if (is_substring_present(substring, sample_list, list_size)) {
+        printf("Substring found\n");
+    } else {
+        printf("Substring not found\n");
+    }
+
+    return 0;
+}

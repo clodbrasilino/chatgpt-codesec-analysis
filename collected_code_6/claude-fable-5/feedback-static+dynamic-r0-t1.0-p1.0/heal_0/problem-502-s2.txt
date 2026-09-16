@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_remainder(int dividend, int divisor, int *result)
+{
+    if (divisor == 0)
+    {
+        return -1;
+    }
+    *result = dividend % divisor;
+    return 0;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    int remainder;
+
+    printf("Enter dividend: ");
+    if (scanf("%d", &a) != 1)
+    {
+        fprintf(stderr, "Invalid input for dividend.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter divisor: ");
+    if (scanf("%d", &b) != 1)
+    {
+        fprintf(stderr, "Invalid input for divisor.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_remainder(a, b, &remainder) != 0)
+    {
+        fprintf(stderr, "Error: division by zero is not allowed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Remainder of %d %% %d = %d\n", a, b, remainder);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety measures in this implementation:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The divisor is checked for zero before performing the modulo operation, and every `scanf` return value is validated before the input is used.
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used; all variables are stack-allocated and initialized before use through validated input.
+- **CWE-710 (Improper Adherence to Coding Standards):** The function returns a status code instead of a sentinel value, uses `EXIT_SUCCESS`/`EXIT_FAILURE`, declares `main(void)` properly, and writes error messages to `stderr`.

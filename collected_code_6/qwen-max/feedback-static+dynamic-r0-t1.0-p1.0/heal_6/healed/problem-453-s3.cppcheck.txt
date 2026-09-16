@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-453-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-453-s3.c:15:34: style: Condition 'n%2==0' is always true [knownConditionTrueFalse]
+    return sum + (n > 1 && n % 2 == 0 ? n : 0);
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-453-s3.c:6:15: note: Assuming that condition 'n%2!=0' is not redundant
+    if (n % 2 != 0) return 0;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-453-s3.c:15:34: note: Condition 'n%2==0' is always true
+    return sum + (n > 1 && n % 2 == 0 ? n : 0);
+                                 ^

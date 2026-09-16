@@ -1,62 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct {
-    char **strings;
-    size_t length;
-} StringTuple;
+    char** elements;
+    size_t size;
+} tuple;
 
-StringTuple *create_string_tuple(char **list, size_t length) {
-    StringTuple *tuple = (StringTuple *)malloc(sizeof(StringTuple));
-    if (tuple == NULL) {
+tuple* stringListToTuple(char** list, size_t length) {
+    if (length == 0) return NULL;
+
+    tuple* result = malloc(sizeof(tuple));
+    if (result == NULL) return NULL;
+
+    result->elements = malloc(length * sizeof(char*));
+    if (result->elements == NULL) {
+        free(result);
         return NULL;
     }
-    tuple->strings = (char **)malloc(length * sizeof(char *));
-    if (tuple->strings == NULL) {
-        free(tuple);
-        return NULL;
+
+    for (size_t i = 0; i < length; i++) {
+        result->elements[i] = list[i];
     }
 
-    for (size_t i = 0; i < length; ++i) {
-        tuple->strings[i] = strdup(list[i]);
-        if (tuple->strings[i] == NULL) {
-            for (size_t j = 0; j < i; ++j) {
-                free(tuple->strings[j]);
-            }
-            free(tuple->strings);
-            free(tuple);
-            return NULL;
-        }
-    }
-
-    tuple->length = length;
-    return tuple;
+    result->size = length;
+    return result;
 }
 
-void destroy_string_tuple(StringTuple *tuple) {
-    if (tuple != NULL) {
-        for (size_t i = 0; i < tuple->length; ++i) {
-            free(tuple->strings[i]);
-        }
-        free(tuple->strings);
-        free(tuple);
+void freeTuple(tuple* t) {
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
     }
 }
 
 int main() {
-    char *list[] = {"one", "two", "three"};
-    size_t length = 3;
-
-    StringTuple *tuple = create_string_tuple(list, length);
-
-    if (tuple != NULL) {
-        for (size_t i = 0; i < tuple->length; ++i) {
-            printf("%s\n", tuple->strings[i]);
+    char* list[] = {"one", "two", "three"};
+    size_t length = sizeof(list) / sizeof(list[0]);
+    
+    tuple* t = stringListToTuple(list, length);
+    if (t != NULL) {
+        for (size_t i = 0; i < t->size; i++) {
+            printf("%s\n", t->elements[i]);
         }
-        destroy_string_tuple(tuple);
-    } else {
-        fprintf(stderr, "Failed to create tuple\n");
+        freeTuple(t);
     }
 
     return 0;

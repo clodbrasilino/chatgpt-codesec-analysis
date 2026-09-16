@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-899-s3.c:33:13: warning: Value stored to 'min_val' during its initialization is never read [deadcode.DeadStores]
+   33 |         int min_val = (deque[left] <= deque[right]) ? deque[left] : deque[right];
+      |             ^~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-899-s3.c:34:13: warning: Value stored to 'max_val' during its initialization is never read [deadcode.DeadStores]
+   34 |         int max_val = (deque[left] >= deque[right]) ? deque[left] : deque[right];
+      |             ^~~~~~~   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2 warnings generated.

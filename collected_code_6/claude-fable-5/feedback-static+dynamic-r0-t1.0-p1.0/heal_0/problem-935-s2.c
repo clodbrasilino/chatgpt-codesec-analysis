@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int sum_of_squares(unsigned int n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (n > 2642245U) {
+        return -1;
+    }
+    *result = ((unsigned long long)n * (n + 1ULL) * (2ULL * n + 1ULL)) / 6ULL;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long sum = 0ULL;
+
+    printf("Enter n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_of_squares(n, &sum) != 0) {
+        fprintf(stderr, "Value of n is too large or invalid\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of series up to %u^2 is %llu\n", n, sum);
+    return EXIT_SUCCESS;
+}

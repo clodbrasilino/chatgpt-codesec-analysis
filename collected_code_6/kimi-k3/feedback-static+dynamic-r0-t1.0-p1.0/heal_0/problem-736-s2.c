@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t find_left_insertion_point(const int *array, size_t length, int value) {
+    size_t left = 0;
+    size_t right = length;
+    
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+        if (array[mid] < value) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    return left;
+}
+
+int main(void) {
+    int array[] = {1, 3, 5, 5, 7, 9};
+    size_t length = sizeof(array) / sizeof(array[0]);
+    int value = 5;
+    
+    size_t position = find_left_insertion_point(array, length, value);
+    printf("Left insertion point for %d is at index: %zu\n", value, position);
+    
+    return 0;
+}

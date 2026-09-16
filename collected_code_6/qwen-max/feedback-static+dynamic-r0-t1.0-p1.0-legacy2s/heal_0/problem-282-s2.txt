@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+} List;
+
+List* create_list() {
+    List* list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    return list;
+}
+
+void free_list(List* list) {
+    while (list->head != NULL) {
+        Node* temp = list->head->next;
+        free(list->head);
+        list->head = temp;
+    }
+    free(list);
+}
+
+void append(List* list, int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+List* subtract_lists(List* list1, List* list2) {
+    List* result = create_list();
+    Node* current1 = list1->head;
+
+    while (current1 != NULL) {
+        int found = 0;
+        Node* current2 = list2->head;
+
+        while (current2 != NULL && !found) {
+            if (current2->value == current1->value) {
+                found = 1;
+            }
+            current2 = current2->next;
+        }
+
+        if (!found) {
+            append(result, current1->value);
+        }
+
+        current1 = current1->next;
+    }
+
+    return result;
+}
+
+void print_list(List* list) {
+    Node* current = list->head;
+    while (current != NULL) {
+        printf("%d -> ", current->value);
+        current = current->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    List* list1 = create_list();
+    append(list1, 1);
+    append(list1, 2);
+    append(list1, 3);
+    append(list1, 4);
+
+    List* list2 = create_list();
+    append(list2, 2);
+    append(list2, 4);
+
+    List* result = subtract_lists(list1, list2);
+
+    printf("List 1: ");
+    print_list(list1);
+    printf("List 2: ");
+    print_list(list2);
+    printf("Result: ");
+    print_list(result);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}
+```

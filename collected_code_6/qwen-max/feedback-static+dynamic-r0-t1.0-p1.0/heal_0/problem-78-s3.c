@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int count_set_bits(uint32_t n) {
+    int count = 0;
+    while (n) {
+        count += n & 1;
+        n >>= 1;
+    }
+    return count;
+}
+
+int count_odd_set_bits(int *arr, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (count_set_bits(arr[i]) % 2 != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = count_odd_set_bits(arr, size);
+    printf("Number of integers with odd number of set bits: %d\n", result);
+    return 0;
+}

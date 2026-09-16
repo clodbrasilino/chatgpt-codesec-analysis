@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+typedef struct {
+    int alphabets;
+    int digits;
+    int special;
+} CharCount;
+
+CharCount count_characters(const char *str) {
+    CharCount counts = {0, 0, 0};
+
+    if (str == NULL) {
+        return counts;
+    }
+
+    size_t i = 0;
+    while (str[i] != '\0') {
+        if (isalpha((unsigned char)str[i])) {
+            counts.alphabets++;
+        } else if (isdigit((unsigned char)str[i])) {
+            counts.digits++;
+        } else {
+            counts.special++;
+        }
+        i++;
+    }
+
+    return counts;
+}
+
+int main(void) {
+    const char *text = "Hello, World! 123 #@$";
+    CharCount result = count_characters(text);
+
+    printf("Alphabets: %d\n", result.alphabets);
+    printf("Digits: %d\n", result.digits);
+    printf("Special characters: %d\n", result.special);
+
+    CharCount null_test = count_characters(NULL);
+    if (null_test.alphabets == 0 && null_test.digits == 0 && null_test.special == 0) {
+        printf("NULL pointer handled correctly.\n");
+    }
+
+    return 0;
+}
+```

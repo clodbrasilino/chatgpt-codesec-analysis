@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_difference(const int *list, size_t size, int *result) {
+    if (list == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    int first_even = 0;
+    int first_odd = 0;
+    int found_even = 0;
+    int found_odd = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (!found_even && list[i] % 2 == 0) {
+            first_even = list[i];
+            found_even = 1;
+        } else if (!found_odd && list[i] % 2 != 0) {
+            first_odd = list[i];
+            found_odd = 1;
+        }
+
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    if (!found_even || !found_odd) {
+        return -2;
+    }
+
+    *result = first_even - first_odd;
+    return 0;
+}
+
+int main(void) {
+    int list[] = {3, 5, 4, 8, 7, 2};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int result = 0;
+
+    int status = find_difference(list, size, &result);
+
+    if (status == 0) {
+        printf("%d\n", result);
+    } else if (status == -1) {
+        printf("Error: Invalid arguments.\n");
+    } else if (status == -2) {
+        printf("Error: List does not contain both an even and an odd number.\n");
+    }
+
+    return 0;
+}

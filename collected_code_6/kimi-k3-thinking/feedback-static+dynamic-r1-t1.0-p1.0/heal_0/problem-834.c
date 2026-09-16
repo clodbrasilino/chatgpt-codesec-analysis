@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int **generate_spiral_matrix(int n);
+void print_matrix(int **matrix, int n);
+void free_matrix(int **matrix, int n);
+
+int **generate_spiral_matrix(int n)
+{
+    int **matrix;
+    int i;
+    int j;
+    int value;
+    int top;
+    int bottom;
+    int left;
+    int right;
+
+    matrix = malloc((size_t)n * sizeof(*matrix));
+    if (matrix == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        matrix[i] = malloc((size_t)n * sizeof(**matrix));
+        if (matrix[i] == NULL) {
+            for (j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return NULL;
+        }
+    }
+
+    value = 1;
+    top = 0;
+    bottom = n - 1;
+    left = 0;
+    right = n - 1;
+
+    while (top <= bottom && left <= right) {
+        for (i = left; i <= right; i++) {
+            matrix[top][i] = value++;
+        }
+        top++;
+
+        for (i = top; i <= bottom; i++) {
+            matrix[i][right] = value++;
+        }
+        right--;
+
+        if (top <= bottom) {
+            for (i = right; i >= left; i--) {
+                matrix[bottom][i] = value++;
+            }
+            bottom--;
+        }
+
+        if (left <= right) {
+            for (i = bottom; i >= top; i--) {
+                matrix[i][left] = value++;
+            }
+            left++;
+        }
+    }
+
+    return matrix;
+}
+
+void print_matrix(int **matrix, int n)
+{
+    int i;
+    int j;
+
+    if (matrix == NULL || n <= 0) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            printf("%4d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void free_matrix(int **matrix, int n)
+{
+    int i;
+
+    if (matrix == NULL) {
+        return;
+    }
+
+    for (i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+int main(void)
+{
+    int n;
+    int **matrix;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0 || n > 46340) {
+        fprintf(stderr, "Error: n must be in range 1..46340.\n");
+        return EXIT_FAILURE;
+    }
+
+    matrix = generate_spiral_matrix(n);
+    if (matrix == NULL) {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_matrix(matrix, n);
+    free_matrix(matrix, n);
+
+    return EXIT_SUCCESS;
+}

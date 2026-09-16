@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <limits.h>
+
+int findSmallest(int *arr, int n) {
+    if (n <= 0) return INT_MAX;
+    
+    int smallest = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] < smallest) {
+            smallest = arr[i];
+        }
+    }
+    return smallest;
+}
+
+int main() {
+    int arr[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int smallest = findSmallest(arr, n);
+    printf("The smallest number is: %d\n", smallest);
+    
+    return 0;
+}

@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_min_product(const int *tuples, size_t num_tuples) {
+    if (tuples == NULL || num_tuples == 0) {
+        return 0;
+    }
+
+    int min_product = INT_MAX;
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        int a = tuples[i * 2];
+        int b = tuples[i * 2 + 1];
+        int product = a * b;
+
+        if (product < min_product) {
+            min_product = product;
+        }
+    }
+
+    return min_product;
+}
+
+int main(void) {
+    int data[] = {3, 5, -2, 4, 1, 10, -3, -3};
+    size_t num_tuples = sizeof(data) / sizeof(data[0]) / 2;
+
+    int result = find_min_product(data, num_tuples);
+
+    printf("%d\n", result);
+
+    return 0;
+}

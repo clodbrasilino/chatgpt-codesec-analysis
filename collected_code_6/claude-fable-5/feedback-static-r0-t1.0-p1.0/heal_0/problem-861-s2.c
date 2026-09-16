@@ -1,0 +1,131 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int compare_chars(const void *a, const void *b)
+{
+    unsigned char ca = *(const unsigned char *)a;
+    unsigned char cb = *(const unsigned char *)b;
+
+    if (ca < cb) {
+        return -1;
+    }
+    if (ca > cb) {
+        return 1;
+    }
+    return 0;
+}
+
+static char *sorted_copy(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+
+    len = strlen(s);
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+
+    memcpy(copy, s, len + 1);
+    qsort(copy, len, sizeof(char), compare_chars);
+    return copy;
+}
+
+int find_anagrams(const char *target, const char *const *list, size_t list_size,
+                  size_t *result_indices, size_t *result_count)
+{
+    char *sorted_target;
+    size_t i;
+    size_t count;
+
+    if (target == NULL || list == NULL || result_indices == NULL ||
+        result_count == NULL) {
+        return -1;
+    }
+
+    *result_count = 0;
+
+    sorted_target = sorted_copy(target);
+    if (sorted_target == NULL) {
+        return -1;
+    }
+
+    count = 0;
+    for (i = 0; i < list_size; i++) {
+        char *sorted_candidate;
+
+        if (list[i] == NULL) {
+            continue;
+        }
+
+        if (strlen(list[i]) != strlen(target)) {
+            continue;
+        }
+
+        sorted_candidate = sorted_copy(list[i]);
+        if (sorted_candidate == NULL) {
+            free(sorted_target);
+            return -1;
+        }
+
+        if (strcmp(sorted_candidate, sorted_target) == 0) {
+            result_indices[count] = i;
+            count++;
+        }
+
+        free(sorted_candidate);
+    }
+
+    free(sorted_target);
+    *result_count = count;
+    return 0;
+}
+
+int main(void)
+{
+    const char *target = "listen";
+    const char *words[] = {
+        "enlist",
+        "google",
+        "inlets",
+        "banana",
+        "silent",
+        "tinsel",
+        "listens"
+    };
+    size_t word_count = sizeof(words) / sizeof(words[0]);
+    size_t *indices;
+    size_t found;
+    size_t i;
+    int status;
+
+    indices = malloc(word_count * sizeof(size_t));
+    if (indices == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = find_anagrams(target, words, word_count, indices, &found);
+    if (status != 0) {
+        fprintf(stderr, "Error while searching for anagrams\n");
+        free(indices);
+        return EXIT_FAILURE;
+    }
+
+    printf("Anagrams of \"%s\":\n", target);
+    for (i = 0; i < found; i++) {
+        printf("  %s\n", words[indices[i]]);
+    }
+
+    if (found == 0) {
+        printf("  (none found)\n");
+    }
+
+    free(indices);
+    return EXIT_SUCCESS;
+}

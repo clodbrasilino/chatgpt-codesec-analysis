@@ -1,27 +1,24 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
+#include <ctype.h>
 
-bool is_vowel(char c) {
-    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
-           c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+int is_vowel(char c) {
+    c = tolower(c);
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u';
 }
 
-void reverse_vowels(char *str) {
-    int len = strlen(str);
-    int left = 0, right = len - 1;
-
-    while (left < right) {
-        if (!is_vowel(str[left])) {
-            left++;
-        } else if (!is_vowel(str[right])) {
-            right--;
-        } else {
-            char temp = str[left];
-            str[left] = str[right];
-            str[right] = temp;
-            left++;
-            right--;
+void reverse_vowels(char *s) {
+    int len = strlen(s);
+    int i, j;
+    for (i = 0, j = len - 1; i < j; ) {
+        while (i < j && !is_vowel(s[i])) i++;
+        while (i < j && !is_vowel(s[j])) j--;
+        if (i < j) {
+            char tmp = s[i];
+            s[i] = s[j];
+            s[j] = tmp;
+            i++;
+            j--;
         }
     }
 }

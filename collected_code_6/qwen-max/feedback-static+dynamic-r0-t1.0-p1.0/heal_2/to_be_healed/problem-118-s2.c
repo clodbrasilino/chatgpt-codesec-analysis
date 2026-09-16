@@ -2,82 +2,77 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct List {
-    char *item;
-    struct List *next;
-} List;
+typedef struct Node {
+    char *data;
+    struct Node *next;
+} Node;
 
-List* createNode(const char *str) {
-    List *newNode = (List*)malloc(sizeof(List));
-    newNode->item = strdup(str);
-    newNode->next = NULL;
-    return newNode;
-}
-
-void freeList(List *head) {
-    while (head != NULL) {
-        List *temp = head;
-        head = head->next;
-        free(temp->item);
-        free(temp);
-    }
-}
- /* Possible weaknesses found:
-  *  test case 1 failed: expected ['lists', 'tuples', 'strings'], got <no output>
-  *  test case 2 failed: expected ['write', 'a', 'program'], got <no output>
-  *  test case 0 failed: expected ['python', 'programming'], got ["python","p"
-  */
-
-List* stringToList(const char *str) {
-    if (str == NULL || *str == '\0') {
+Node* create_node(char *str) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
         return NULL;
     }
-
-    List *head = NULL;
-    List *tail = NULL;
-
-    const char *tokenStart = str;
-    while (*str) {
-        if (*str == ' ') {
-            if (tokenStart != str) {
-                List *newNode = createNode(strndup(tokenStart, str - tokenStart));
-                if (head == NULL) {
-                    head = tail = newNode;
-                } else {
-                    tail->next = newNode;
-                    tail = newNode;
-                }
-            }
-            tokenStart = str + 1;
-        }
-        str++;
+    new_node->data = strdup(str);
+    if (new_node->data == NULL) {
+        free(new_node);
+        return NULL;
     }
+    new_node->next = NULL;
+    return new_node;
+}
 
-    if (tokenStart != str) {
-        List *newNode = createNode(strndup(tokenStart, str - tokenStart));
-        if (head == NULL) {
-            head = newNode;
-        } else {
-            tail->next = newNode;
-            /* Possible weaknesses found:
-             *  Value stored to 'tail' is never read [deadcode.DeadStores]
-             *  Variable 'tail' is assigned a value that is never used. [unreadVariable]
-             */
-            tail = newNode;
-        }
+void insert_node(Node **head, char *str) {
+    Node *new_node = create_node(str);
+    if (new_node == NULL) {
+        return;
     }
+    new_node->next = *head;
+    *head = new_node;
+}
 
+void free_list(Node **head) {
+    Node *current = *head;
+    while (current != NULL) {
+        Node *temp = current->next;
+        free(current->data);
+        free(current);
+        current = temp;
+    }
+    *head = NULL;
+}
+
+Node* string_to_list(const char *str, char delimiter) {
+    char *mutable_str = strdup(str);
+    if (mutable_str == NULL) {
+        return NULL;
+    }
+    Node *head = NULL;
+    /* Possible weaknesses found:
+     *  Invalid strtok() argument nr 2. A nul-terminated string is required. [invalidFunctionArgStr]
+     */
+    char *token = strtok(mutable_str, &delimiter);
+    while (token != NULL) {
+        insert_node(&head, token);
+        /* Possible weaknesses found:
+         *  Invalid strtok() argument nr 2. A nul-terminated string is required. [invalidFunctionArgStr]
+         */
+        token = strtok(NULL, &delimiter);
+    }
+    free(mutable_str);
     return head;
 }
 
 int main() {
-    const char input[] = "This is a test string";
-    List *list = stringToList(input);
+    const char *input = "apple,banana,cherry";
+    char delimiter = ',';
+    Node *head = string_to_list(input, delimiter);
 
-    for (List *p = list; p != NULL; p = p->next) {
-        printf("%s\n", p->item);
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s\n", current->data);
+        current = current->next;
     }
 
-    freeList(list);
+    free_list(&head);
     return 0;
 }

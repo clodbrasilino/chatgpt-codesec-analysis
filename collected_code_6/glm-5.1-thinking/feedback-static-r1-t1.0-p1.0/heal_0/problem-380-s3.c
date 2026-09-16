@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** generate_2d_array(size_t rows, size_t cols) {
+    if (rows == 0 || cols == 0) {
+        return NULL;
+    }
+
+    int **array = malloc(rows * sizeof(int *));
+    if (!array) {
+        return NULL;
+    }
+
+    int *data = malloc(rows * cols * sizeof(int));
+    if (!data) {
+        free(array);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        array[i] = data + i * cols;
+    }
+
+    return array;
+}
+
+void free_2d_array(int **array) {
+    if (array) {
+        free(array[0]);
+        free(array);
+    }
+}
+
+int main(void) {
+    size_t rows = 3;
+    size_t cols = 4;
+
+    int **matrix = generate_2d_array(rows, cols);
+    if (!matrix) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < rows; i++) {
+        for (size_t j = 0; j < cols; j++) {
+            matrix[i][j] = (int)(i * cols + j);
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_2d_array(matrix);
+    return EXIT_SUCCESS;
+}

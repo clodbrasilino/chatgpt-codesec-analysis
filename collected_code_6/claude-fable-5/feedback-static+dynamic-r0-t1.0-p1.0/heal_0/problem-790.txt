@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool even_index_even_numbers(const int *list, size_t size)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return false;
+    }
+
+    for (i = 0U; i < size; i += 2U) {
+        if ((list[i] % 2) != 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int list1[] = {2, 1, 4, 3, 6, 7};
+    int list2[] = {2, 1, 5, 3, 6, 7};
+    int list3[] = {0, 9, 8, 5, 12};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t size3 = sizeof(list3) / sizeof(list3[0]);
+
+    if (even_index_even_numbers(list1, size1)) {
+        (void)printf("list1: true\n");
+    } else {
+        (void)printf("list1: false\n");
+    }
+
+    if (even_index_even_numbers(list2, size2)) {
+        (void)printf("list2: true\n");
+    } else {
+        (void)printf("list2: false\n");
+    }
+
+    if (even_index_even_numbers(list3, size3)) {
+        (void)printf("list3: true\n");
+    } else {
+        (void)printf("list3: false\n");
+    }
+
+    return 0;
+}
+```

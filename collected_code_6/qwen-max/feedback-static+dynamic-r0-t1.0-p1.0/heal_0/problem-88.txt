@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ElementCount;
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+ElementCount* getFrequency(int* arr, int size, int* freqSize) {
+    if (arr == NULL || size <= 0) {
+        *freqSize = 0;
+        return NULL;
+    }
+
+    qsort(arr, size, sizeof(int), compare);
+
+    ElementCount* freq = (ElementCount*)malloc(size * sizeof(ElementCount));
+    if (freq == NULL) {
+        *freqSize = 0;
+        return NULL;
+    }
+
+    int uniqueCount = 0;
+    for (int i = 0; i < size; i++) {
+        if (i == 0 || arr[i] != arr[i - 1]) {
+            freq[uniqueCount].value = arr[i];
+            freq[uniqueCount].count = 1;
+            uniqueCount++;
+        } else {
+            freq[uniqueCount - 1].count++;
+        }
+    }
+
+    *freqSize = uniqueCount;
+    return freq;
+}
+
+void freeFrequencyList(ElementCount* list, int size) {
+    free(list);
+}
+
+int main() {
+    int arr[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int freqSize;
+
+    ElementCount* freq = getFrequency(arr, size, &freqSize);
+
+    for (int i = 0; i < freqSize; i++) {
+        printf("Value: %d, Frequency: %d\n", freq[i].value, freq[i].count);
+    }
+
+    freeFrequencyList(freq, freqSize);
+
+    return 0;
+}
+```

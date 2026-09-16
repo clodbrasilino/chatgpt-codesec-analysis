@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+void find_substrings(const char *str, const char *sub) {
+    if (str == NULL || sub == NULL || *sub == '\0') {
+        return;
+    }
+
+    const char *tmp = str;
+    int count = 0;
+
+    while ((tmp = strstr(tmp, sub)) != NULL) {
+        printf("Occurrence: %d, Position: %td\n", ++count, tmp - str);
+        tmp++; 
+    }
+}
+
+int main(void) {
+    const char *text = "The quick brown fox jumps over the lazy dog. The fox is fast.";
+    const char *substring = "fox";
+
+    find_substrings(text, substring);
+
+    return 0;
+}
+```

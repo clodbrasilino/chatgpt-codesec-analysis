@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *min_elements;
+    int *max_elements;
+    size_t count;
+} MinMaxResult;
+
+static int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int extract_min_max_k(const Tuple *input, size_t k, MinMaxResult *result) {
+    int *sorted;
+    size_t i;
+
+    if (input == NULL || result == NULL || input->data == NULL) {
+        return -1;
+    }
+    if (k == 0 || k > input->size) {
+        return -1;
+    }
+
+    result->min_elements = malloc(k * sizeof(int));
+    if (result->min_elements == NULL) {
+        return -1;
+    }
+
+    result->max_elements = malloc(k * sizeof(int));
+    if (result->max_elements == NULL) {
+        free(result->min_elements);
+        result->min_elements = NULL;
+        return -1;
+    }
+
+    sorted = malloc(input->size * sizeof(int));
+    if (sorted == NULL) {
+        free(result->min_elements);
+        free(result->max_elements);
+        result->min_elements = NULL;
+        result->max_elements = NULL;
+        return -1;
+    }
+
+    memcpy(sorted, input->data, input->size * sizeof(int));
+    qsort(sorted, input->size, sizeof(int), compare_ints);
+
+    for (i = 0; i < k; i++) {
+        result->min_elements[i] = sorted[i];
+        result->max_elements[i] = sorted[input->size - 1 - i];
+    }
+
+    result->count = k;
+    free(sorted);
+    return 0;
+}
+
+void free_min_max_result(MinMaxResult *result) {
+    if (result == NULL) {
+        return;
+    }
+    free(result->min_elements);
+    free(result->max_elements);
+    result->min_elements = NULL;
+    result->max_elements = NULL;
+    result->count = 0;
+}
+
+int main(void) {
+    int values[] = {7, 2, 9, 4, 1, 8, 3, 6, 5};
+    Tuple input;
+    MinMaxResult result;
+    size_t k = 3;
+    size_t i;
+
+    input.data = values;
+    input.size = sizeof(values) / sizeof(values[0]);
+
+    if (extract_min_max_k(&input, k, &result) != 0) {
+        fprintf(stderr, "Error: invalid input or allocation failure\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum %zu elements: ", k);
+    for (i = 0; i < result.count; i++) {
+        printf("%d ", result.min_elements[i]);
+    }
+    printf("\n");
+
+    printf("Maximum %zu elements: ", k);
+    for (i = 0; i < result.count; i++) {
+        printf("%d ", result.max_elements[i]);
+    }
+    printf("\n");
+
+    free_min_max_result(&result);
+    return EXIT_SUCCESS;
+}

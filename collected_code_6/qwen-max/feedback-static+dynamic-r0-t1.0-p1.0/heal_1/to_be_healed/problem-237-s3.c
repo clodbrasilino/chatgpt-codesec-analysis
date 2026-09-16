@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    /* Possible weaknesses found:
+     *  Variable 'tupleA' can be declared as pointer to const [constVariablePointer]
+     */
+    Tuple *tupleA = (Tuple *)a;
+    /* Possible weaknesses found:
+     *  Variable 'tupleB' can be declared as pointer to const [constVariablePointer]
+     */
+    Tuple *tupleB = (Tuple *)b;
+    if (tupleA->first == tupleB->first) {
+        return tupleA->second - tupleB->second;
+    }
+    return tupleA->first - tupleB->first;
+}
+
+int countOccurrences(Tuple *tuples, int n, int key, int value) {
+    int count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (tuples[i].first == key && tuples[i].second == value) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void checkSimilarOccurrences(Tuple *tuples, int n) {
+    qsort(tuples, n, sizeof(Tuple), compare);
+    for (int i = 0; i < n; ++i) {
+        if (i > 0 && tuples[i].first == tuples[i-1].first && tuples[i].second == tuples[i-1].second) {
+            continue;
+        }
+        int occurrences = countOccurrences(tuples, n, tuples[i].first, tuples[i].second);
+        printf("Record (%d, %d) occurs %d times\n", tuples[i].first, tuples[i].second, occurrences);
+    }
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {1, 2}, {5, 6}, {3, 4}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    checkSimilarOccurrences(tuples, n);
+    return 0;
+}

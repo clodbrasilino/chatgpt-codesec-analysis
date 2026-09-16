@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_a_anything_b(const char *str)
+{
+    size_t len;
+    const char *first_a;
+
+    if (str == NULL) {
+        return false;
+    }
+
+    len = strlen(str);
+    if (len < 2) {
+        return false;
+    }
+
+    first_a = strchr(str, 'a');
+    if (first_a == NULL) {
+        return false;
+    }
+
+    if (str[len - 1] != 'b') {
+        return false;
+    }
+
+    if (first_a >= &str[len - 1]) {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "ab",
+        "axyzb",
+        "a123b",
+        "b",
+        "a",
+        "ba",
+        "xxaxxb",
+        "aab",
+        "",
+        "abc"
+    };
+    size_t count;
+    size_t i;
+
+    count = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < count; i++) {
+        if (match_a_anything_b(tests[i])) {
+            if (printf("\"%s\" matches\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        } else {
+            if (printf("\"%s\" does not match\n", tests[i]) < 0) {
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation:
+
+- **Validates input** before use (`NULL` check, minimum length check) to properly handle exceptional conditions (CWE-703).
+- **Uses no dynamic resources** (no heap allocation, no file handles), so there is nothing to leak or misuse across a lifetime (CWE-664).
+- **Checks the return value of `printf`** and returns a failure status on error rather than ignoring it (CWE-703).
+- **Adheres to coding standards** (CWE-710): uses `const` correctness, `size_t` for lengths and indices, `bool` return type from `<stdbool.h>`, `EXIT_SUCCESS`/`EXIT_FAILURE`, and `int main(void)` per the C standard.
+
+The matching logic finds the first `'a'`, verifies the string ends with `'b'`, and ensures the `'a'` occurs strictly before that final `'b'`, which is equivalent to the regex `a.*b`.

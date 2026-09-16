@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool are_all_characters_same(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+
+    char first_char = *str;
+    str++;
+
+    while (*str != '\0') {
+        if (*str != first_char) {
+            return false;
+        }
+        str++;
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *tests[] = {
+        "aaaaa",
+        "aabbb",
+        "a",
+        "",
+        NULL
+    };
+    const char *names[] = {
+        "test1",
+        "test2",
+        "test3",
+        "test4",
+        "test5"
+    };
+
+    for (int i = 0; i < 5; i++) {
+        if (are_all_characters_same(tests[i])) {
+            printf("%s: All characters are the same.\n", names[i]);
+        } else {
+            printf("%s: Characters are not all the same.\n", names[i]);
+        }
+    }
+
+    return 0;
+}

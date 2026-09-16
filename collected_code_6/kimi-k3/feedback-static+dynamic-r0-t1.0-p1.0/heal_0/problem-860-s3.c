@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int ends_with_alphanumeric(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    regex_t regex;
+    int result;
+    char pattern[] = "[a-zA-Z0-9]$";
+    
+    result = regcomp(&regex, pattern, REG_EXTENDED);
+    if (result != 0) {
+        return 0;
+    }
+    
+    result = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    
+    return (result == 0) ? 1 : 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "Hello123",
+        "Hello!",
+        "Test@123",
+        "abc",
+        "123",
+        "Hello World1",
+        "Hello World!",
+        ""
+    };
+    
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        printf("String: \"%s\" - %s\n", 
+               test_strings[i], 
+               ends_with_alphanumeric(test_strings[i]) ? "Ends with alphanumeric" : "Does not end with alphanumeric");
+    }
+    
+    return 0;
+}

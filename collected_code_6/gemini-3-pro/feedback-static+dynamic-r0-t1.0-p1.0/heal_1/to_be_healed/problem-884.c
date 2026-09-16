@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool check_bits_in_range(uint32_t number, uint8_t left, uint8_t right) {
+    if (left > right || right > 31) {
+        return false;
+    }
+
+    uint32_t mask = 0;
+    for (uint8_t i = left; i <= right; i++) {
+        mask |= (1U << i);
+    }
+
+    return (number & ~mask) == 0;
+}
+
+int main(void) {
+    uint32_t test_val_1 = 14; 
+    uint8_t left_1 = 1, right_1 = 3;
+
+    if (check_bits_in_range(test_val_1, left_1, right_1)) {
+        printf("Test 1: All set bits are within the range.\n");
+    } else {
+        printf("Test 1: Set bits are outside the range.\n");
+    }
+
+    uint32_t test_val_2 = 18; 
+    uint8_t left_2 = 1, right_2 = 3;
+
+    if (check_bits_in_range(test_val_2, left_2, right_2)) {
+        printf("Test 2: All set bits are within the range.\n");
+    } else {
+        printf("Test 2: Set bits are outside the range.\n");
+    }
+
+    uint32_t test_val_3 = 5;
+    uint8_t left_3 = 4, right_3 = 2; 
+    
+    /* Possible weaknesses found:
+     *  Calling function 'check_bits_in_range' returns 0
+     *  Condition 'check_bits_in_range(test_val_3,left_3,right_3)' is always false [knownConditionTrueFalse]
+     *  Condition 'check_bits_in_range(test_val_3,left_3,right_3)' is always false
+     */
+    if (check_bits_in_range(test_val_3, left_3, right_3)) {
+        printf("Test 3: All set bits are within the range.\n");
+    } else {
+        printf("Test 3: Set bits are outside the range or range is invalid.\n");
+    }
+
+    return 0;
+}

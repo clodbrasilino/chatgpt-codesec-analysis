@@ -2,191 +2,124 @@
 #include <stdlib.h>
 
 #define INITIAL_CAPACITY 1024
-#define LOAD_FACTOR 70
 
 typedef struct {
-    unsigned long long key;
-    unsigned long long value;
-    int used;
+    long long key;
+    long long value;
+    int occupied;
 } Entry;
 
 typedef struct {
     Entry *entries;
     size_t capacity;
-    size_t size;
-} Table;
+    size_t count;
+} HashTable;
 
-static unsigned long long hash_key(unsigned long long key) {
-    key ^= key >> 33;
-    key *= 0xff51afd7ed558ccdULL;
-    key ^= key >> 33;
-    key *= 0xc4ceb9fe1a85ec53ULL;
-    key ^= key >> 33;
-    return key;
+static size_t hash_key(long long key) {
+    unsigned long long x = (unsigned long long)key;
+    x ^= x >> 33;
+    x *= 0xff51afd7ed558ccdULL;
+    x ^= x >> 33;
+    x *= 0xc4ceb9fe1a85ec53ULL;
+    x ^= x >> 33;
+    return (size_t)x;
 }
 
-static int table_init(Table *table, size_t capacity) {
-    table->entries = calloc(capacity, sizeof(Entry));
-    if (table->entries == NULL) {
-        return 0;
+static HashTable *table_create(size_t capacity) {
+    HashTable *table = (HashTable *)malloc(sizeof(HashTable));
+    if (!table) return NULL;
+    table->entries = (Entry *)calloc(capacity, sizeof(Entry));
+    if (!table->entries) {
+        free(table);
+        return NULL;
     }
     table->capacity = capacity;
-    table->size = 0;
+    table->count = 0;
+    return table;
+}
+
+static void table_destroy(HashTable *table) {
+    if (!table) return;
+    free(table->entries);
+    free(table);
+}
+
+static int resize_table(HashTable *table) {
+    size_t new_capacity = table->capacity * 2;
+    if (new_capacity < table->capacity) return 0;
+    Entry *new_entries = (Entry *)calloc(new_capacity, sizeof(Entry));
+    if (!new_entries) return 0;
+    Entry *old_entries = table->entries;
+    size_t old_capacity = table->capacity;
+    table->entries = new_entries;
+    table->capacity = new_capacity;
+    table->count = 0;
+    for (size_t i = 0; i < old_capacity; ++i) {
+        if (old_entries[i].occupied) {
+            size_t idx = hash_key(old_entries[i].key) & (new_capacity - 1);
+            while (new_entries[idx].occupied) {
+                idx = (idx + 1) & (new_capacity - 1);
+            }
+            new_entries[idx] = old_entries[i];
+            table->count++;
+        }
+    }
+    free(old_entries);
     return 1;
 }
 
-static void table_destroy(Table *table) {
-    free(table->entries);
-    table->entries = NULL;
-    table->capacity = 0;
-    table->size = 0;
-}
-
-static int table_get(Table *table, unsigned long long key, unsigned long long *value) {
-    size_t index = hash_key(key) % table->capacity;
-    size_t i;
-
-    for (i = 0; i < table->capacity; i++) {
-        size_t pos = (index + i) % table->capacity;
-
-        if (!table->entries[pos].used) {
-            return 0;
-        }
-
-        if (table->entries[pos].key == key) {
-            *value = table->entries[pos].value;
+static int table_lookup(HashTable *table, long long key, long long *value) {
+    size_t idx = hash_key(key) & (table->capacity - 1);
+    while (table->entries[idx].occupied) {
+        if (table->entries[idx].key == key) {
+            *value = table->entries[idx].value;
             return 1;
         }
+        idx = (idx + 1) & (table->capacity - 1);
     }
-
     return 0;
 }
 
-static int table_put(Table *table, unsigned long long key, unsigned long long value) {
-    if ((table->size + 1) * 100 >= table->capacity * LOAD_FACTOR) {
-        size_t new_capacity = table->capacity * 2;
-        Entry *new_entries = calloc(new_capacity, sizeof(Entry));
-        size_t i;
-
-        if (new_entries == NULL) {
-            return 0;
+static int table_insert(HashTable *table, long long key, long long value) {
+    if (table->count * 10 >= table->capacity * 7) {
+        if (!resize_table(table)) return 0;
+    }
+    size_t idx = hash_key(key) & (table->capacity - 1);
+    while (table->entries[idx].occupied) {
+        if (table->entries[idx].key == key) {
+            table->entries[idx].value = value;
+            return 1;
         }
-
-        for (i = 0; i < table->capacity; i++) {
-            if (table->entries[i].used) {
-                size_t index = hash_key(table->entries[i].key) % new_capacity;
-                size_t j = 0;
-
-                while (j < new_capacity) {
-                    size_t pos = (index + j) % new_capacity;
-
-                    if (!new_entries[pos].used) {
-                        new_entries[pos] = table->entries[i];
-                        break;
-                    }
-
-                    j++;
-                }
-            }
-        }
-
-        free(table->entries);
-        table->entries = new_entries;
-        table->capacity = new_capacity;
+        idx = (idx + 1) & (table->capacity - 1);
     }
-
-    {
-        size_t index = hash_key(key) % table->capacity;
-        size_t i;
-
-        for (i = 0; i < table->capacity; i++) {
-            size_t pos = (index + i) % table->capacity;
-
-            if (!table->entries[pos].used) {
-                table->entries[pos].key = key;
-                table->entries[pos].value = value;
-                table->entries[pos].used = 1;
-                table->size++;
-                return 1;
-            }
-
-            if (table->entries[pos].key == key) {
-                table->entries[pos].value = value;
-                return 1;
-            }
-        }
-    }
-
-    return 0;
-}
-
-static int solve(Table *table, unsigned long long n, unsigned long long *result) {
-    unsigned long long cached;
-    unsigned long long a;
-    unsigned long long b;
-    unsigned long long c;
-    unsigned long long d;
-    unsigned long long sum;
-
-    if (n == 0) {
-        *result = 0;
-        return 1;
-    }
-
-    if (table_get(table, n, &cached)) {
-        *result = cached;
-        return 1;
-    }
-
-    if (!solve(table, n / 2, &a) ||
-        !solve(table, n / 3, &b) ||
-        !solve(table, n / 4, &c) ||
-        !solve(table, n / 5, &d)) {
-        return 0;
-    }
-
-    sum = a + b + c + d;
-    *result = sum > n ? sum : n;
-
-    if (!table_put(table, n, *result)) {
-        return 0;
-    }
-
+    table->entries[idx].occupied = 1;
+    table->entries[idx].key = key;
+    table->entries[idx].value = value;
+    table->count++;
     return 1;
 }
 
-unsigned long long f(unsigned long long n) {
-    Table table;
-    unsigned long long result;
-
-    if (n == 0) {
-        return 0;
-    }
-
-    if (!table_init(&table, INITIAL_CAPACITY)) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (!solve(&table, n, &result)) {
-        table_destroy(&table);
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    table_destroy(&table);
+static long long max_sum(long long n, HashTable *table) {
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+    long long cached;
+    if (table_lookup(table, n, &cached)) return cached;
+    long long sum = max_sum(n / 2, table) +
+                    max_sum(n / 3, table) +
+                    max_sum(n / 4, table) +
+                    max_sum(n / 5, table);
+    long long result = sum > n ? sum : n;
+    (void)table_insert(table, n, result);
     return result;
 }
 
 int main(void) {
-    unsigned long long n;
-
-    if (scanf("%llu", &n) != 1) {
-        fprintf(stderr, "Invalid input\n");
-        return EXIT_FAILURE;
+    HashTable *table = table_create(INITIAL_CAPACITY);
+    if (!table) return 1;
+    long long n;
+    while (scanf("%lld", &n) == 1) {
+        printf("%lld\n", max_sum(n, table));
     }
-
-    printf("%llu\n", f(n));
-
-    return EXIT_SUCCESS;
+    table_destroy(table);
+    return 0;
 }

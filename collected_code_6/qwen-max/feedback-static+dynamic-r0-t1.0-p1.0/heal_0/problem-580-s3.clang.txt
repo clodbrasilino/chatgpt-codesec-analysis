@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:39:40: error: no member named 'next' in 'struct Tuple'
+   39 |             nestedTuple = nestedTuple->next;
+      |                           ~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:89:21: error: no member named 'next' in 'struct Tuple'
+   89 |     t4->tupleValue->next = t5;
+      |     ~~~~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:90:21: error: no member named 'next' in 'struct Tuple'
+   90 |     t5->tupleValue->next = t6;
+      |     ~~~~~~~~~~~~~~  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s3.c:91:21: error: no member named 'next' in 'struct Tuple'
+   91 |     t6->tupleValue->next = NULL;
+      |     ~~~~~~~~~~~~~~  ^
+4 errors generated.

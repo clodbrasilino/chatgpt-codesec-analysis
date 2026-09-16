@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_divisible_by_its_digits(int num) {
+    int original_num = num;
+    while (num > 0) {
+        int digit = num % 10;
+        if (digit == 0 || original_num % digit != 0) {
+            return false;
+        }
+        num /= 10;
+    }
+    return true;
+}
+
+void find_numbers_in_range(int start, int end) {
+    for (int i = start; i <= end; ++i) {
+        if (is_divisible_by_its_digits(i)) {
+            printf("%d ", i);
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    find_numbers_in_range(1, 25);
+    return 0;
+}

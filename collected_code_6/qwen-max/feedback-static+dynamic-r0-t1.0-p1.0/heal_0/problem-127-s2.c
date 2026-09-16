@@ -1,19 +1,31 @@
 #include <stdio.h>
+#include <limits.h>
 
-int multiply(int a, int b) {
+int multiply(int x, int y) {
     int result = 0;
-    while (b != 0) {
-        if (b & 1) {
-            result += a;
+    int negativeResult = 0;
+    if (y < 0) {
+        y = -y;
+        negativeResult = 1;
+    }
+    while (y > 0) {
+        if (y & 1) {
+            result = result + x;
         }
-        a <<= 1;
-        b >>= 1;
+        x <<= 1;
+        y >>= 1;
+    }
+    if (negativeResult) {
+        result = -result;
     }
     return result;
 }
 
 int main() {
-    int x = 5, y = 3;
-    printf("The product of %d and %d is %d\n", x, y, multiply(x, y));
+    int a, b;
+    printf("Enter two integers: ");
+    scanf("%d %d", &a, &b);
+    int product = multiply(a, b);
+    printf("Product: %d\n", product);
     return 0;
 }

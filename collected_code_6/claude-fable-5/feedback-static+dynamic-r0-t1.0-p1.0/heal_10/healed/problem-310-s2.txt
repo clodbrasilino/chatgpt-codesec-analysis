@@ -1,0 +1,116 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity > 0 ? capacity : 1);
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (!isspace((unsigned char)str[i])) {
+            t->items[count++] = str[i];
+        }
+    }
+    t->count = count;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        fflush(stdout);
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    char buffer[4096];
+
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        if (buffer[0] == '\0') {
+            continue;
+        }
+
+        Tuple *t = string_to_tuple(buffer);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            continue;
+        }
+
+        tuple_print(t);
+
+        tuple_destroy(t);
+    }
+
+    fflush(stdout);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fix applied:**
+
+The test failures reveal the actual problem clearly:
+
+1. **Test case 0**: Input `"python 3.0"` was expected to produce `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']` — note the **space is absent** from the expected output, but the original code copied the string verbatim, including the space.
+
+2. **Test cases 1 and 2**: Inputs like `"item 1"` and `"15 . 10"` expected `['i', 't', 'e', 'm', '1']` and `['1', '5', '.', '1', '0']` respectively — again, whitespace must be stripped.
+
+**The fix**: In `string_to_tuple`, instead of a blind `memcpy` of the entire input, the rewritten version iterates character-by-character and copies only non-whitespace characters, using `isspace((unsigned char)str[i])` (the cast to `unsigned char` is important to avoid undefined behavior with negative `char` values on platforms where `char` is signed). The `count` field then reflects only the retained characters.
+
+The allocation of `len` bytes remains a safe upper bound since filtering can only reduce the number of items. All other defensive measures (NULL checks, allocation-failure cleanup, unbuffered stdout, CR/LF stripping) are preserved from the original.

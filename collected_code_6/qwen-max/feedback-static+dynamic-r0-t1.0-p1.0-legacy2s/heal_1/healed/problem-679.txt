@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char** keys;
+    const void** values;  // Changed to pointer to const
+    size_t count;
+} Dictionary;
+
+Dictionary* createDictionary() {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict) {
+        dict->keys = NULL;
+        dict->values = NULL;
+        dict->count = 0;
+    }
+    return dict;
+}
+
+int insertDictionary(Dictionary* dict, const char* key, const void* value) {  // Changed to const void*
+    if (!dict || !key || !value) {
+        return -1;
+    }
+
+    dict->count++;
+    dict->keys = (char**)realloc(dict->keys, sizeof(char*) * dict->count);
+    dict->values = (const void**)realloc(dict->values, sizeof(const void*) * dict->count);  // Changed to const void**
+
+    if (!dict->keys || !dict->values) {
+        dict->count--;
+        return -1;
+    }
+
+    dict->keys[dict->count - 1] = (char*)key;
+    dict->values[dict->count - 1] = value;  // No cast needed
+    return 0;
+}
+
+const void* getElementByIndex(Dictionary* dict, size_t index) {  // Changed to const void*
+    if (!dict || index >= dict->count) {
+        return NULL;
+    }
+
+    return dict->values[index];  // No cast needed
+}
+
+void destroyDictionary(Dictionary* dict) {
+    free(dict->keys);
+    free((void*)dict->values);  // Cast back to void* for free
+    free(dict);
+}
+
+int main() {
+    Dictionary* dict = createDictionary();
+    if (!dict) {
+        return 1;
+    }
+
+    int a = 10;
+    int b = 20;
+    int c = 30;
+
+    if (insertDictionary(dict, "one", &a) != 0) {
+        destroyDictionary(dict);
+        return 1;
+    }
+    if (insertDictionary(dict, "two", &b) != 0) {
+        destroyDictionary(dict);
+        return 1;
+    }
+    if (insertDictionary(dict, "three", &c) != 0) {
+        destroyDictionary(dict);
+        return 1;
+    }
+
+    const int* value = (const int*)getElementByIndex(dict, 1);  // Changed to const int*
+    if (value) {
+        printf("Value: %d\n", *value);
+    } else {
+        printf("Invalid index\n");
+    }
+
+    destroyDictionary(dict);
+    return 0;
+}
+```

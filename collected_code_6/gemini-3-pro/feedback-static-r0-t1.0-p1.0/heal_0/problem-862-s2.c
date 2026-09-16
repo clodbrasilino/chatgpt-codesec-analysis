@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX_WORD_LEN 256
+#define MAX_WORDS 10000
+
+typedef struct {
+    char word[MAX_WORD_LEN];
+    int count;
+} WordCount;
+
+void to_lowercase(char *str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower((unsigned char)str[i]);
+    }
+}
+
+int compare_words(const void *a, const void *b) {
+    WordCount *wc1 = (WordCount *)a;
+    WordCount *wc2 = (WordCount *)b;
+    return wc2->count - wc1->count;
+}
+
+void find_n_most_common_words(const char *text, int n) {
+    if (!text || n <= 0) return;
+
+    WordCount *word_counts = calloc(MAX_WORDS, sizeof(WordCount));
+    if (!word_counts) return;
+
+    int unique_words = 0;
+    char *text_copy = strdup(text);
+    if (!text_copy) {
+        free(word_counts);
+        return;
+    }
+
+    char *token = strtok(text_copy, " \t\n\r\f\v.,;:!?()[]{}'\"");
+    while (token != NULL) {
+        if (strlen(token) >= MAX_WORD_LEN) {
+            token[MAX_WORD_LEN - 1] = '\0';
+        }
+        
+        to_lowercase(token);
+
+        int found = 0;
+        for (int i = 0; i < unique_words; i++) {
+            if (strcmp(word_counts[i].word, token) == 0) {
+                word_counts[i].count++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found && unique_words < MAX_WORDS) {
+            strncpy(word_counts[unique_words].word, token, MAX_WORD_LEN - 1);
+            word_counts[unique_words].word[MAX_WORD_LEN - 1] = '\0';
+            word_counts[unique_words].count = 1;
+            unique_words++;
+        }
+
+        token = strtok(NULL, " \t\n\r\f\v.,;:!?()[]{}'\"");
+    }
+
+    qsort(word_counts, unique_words, sizeof(WordCount), compare_words);
+
+    int limit = n < unique_words ? n : unique_words;
+    for (int i = 0; i < limit; i++) {
+        printf("%s: %d\n", word_counts[i].word, word_counts[i].count);
+    }
+
+    free(text_copy);
+    free(word_counts);
+}
+
+int main(void) {
+    const char *sample_text = "This is a sample text. This text contains some words. Some words are repeated, some are not.";
+    int n = 3;
+
+    find_n_most_common_words(sample_text, n);
+
+    return 0;
+}

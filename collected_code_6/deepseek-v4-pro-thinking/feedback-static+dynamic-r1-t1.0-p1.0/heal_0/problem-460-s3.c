@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+} IntList;
+
+int *get_first_elements(const IntList *lists, size_t count) {
+    if (lists == NULL || count == 0) {
+        return NULL;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (lists[i].data == NULL || lists[i].length == 0) {
+            return NULL;
+        }
+    }
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < count; i++) {
+        result[i] = lists[i].data[0];
+    }
+    return result;
+}
+
+int main(void) {
+    int sub0_data[] = { 10, 20, 30 };
+    int sub1_data[] = { 40, 50 };
+    int sub2_data[] = { 60 };
+    IntList lists[] = {
+        { sub0_data, sizeof(sub0_data) / sizeof(sub0_data[0]) },
+        { sub1_data, sizeof(sub1_data) / sizeof(sub1_data[0]) },
+        { sub2_data, sizeof(sub2_data) / sizeof(sub2_data[0]) }
+    };
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+
+    int *firsts = get_first_elements(lists, count);
+    if (firsts == NULL) {
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < count; i++) {
+        printf("%d\n", firsts[i]);
+    }
+    free(firsts);
+    return EXIT_SUCCESS;
+}

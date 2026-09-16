@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+#define EARTH_RADIUS_KM 6371.0
+
+typedef struct {
+    double latitude;
+    double longitude;
+} GeoPoint;
+
+static double to_radians(double degrees) {
+    return degrees * PI / 180.0;
+}
+
+double haversine_distance(const GeoPoint *point1, const GeoPoint *point2) {
+    double lat1, lon1, lat2, lon2;
+    double dlat, dlon;
+    double a, c;
+
+    if (point1 == NULL || point2 == NULL) {
+        return -1.0;
+    }
+
+    if (point1->latitude < -90.0 || point1->latitude > 90.0 ||
+        point2->latitude < -90.0 || point2->latitude > 90.0 ||
+        point1->longitude < -180.0 || point1->longitude > 180.0 ||
+        point2->longitude < -180.0 || point2->longitude > 180.0) {
+        return -1.0;
+    }
+
+    lat1 = to_radians(point1->latitude);
+    lon1 = to_radians(point1->longitude);
+    lat2 = to_radians(point2->latitude);
+    lon2 = to_radians(point2->longitude);
+
+    dlat = lat2 - lat1;
+    dlon = lon2 - lon1;
+
+    a = sin(dlat / 2.0) * sin(dlat / 2.0) +
+        cos(lat1) * cos(lat2) *
+        sin(dlon / 2.0) * sin(dlon / 2.0);
+
+    c = 2.0 * atan2(sqrt(a), sqrt(1.0 - a));
+
+    return EARTH_RADIUS_KM * c;
+}
+
+int main(void) {
+    GeoPoint point1;
+    GeoPoint point2;
+    double distance;
+
+    point1.latitude = 40.7128;
+    point1.longitude = -74.0060;
+    point2.latitude = 51.5074;
+    point2.longitude = -0.1278;
+
+    distance = haversine_distance(&point1, &point2);
+
+    if (distance < 0.0) {
+        fprintf(stderr, "Invalid coordinates\n");
+        return 1;
+    }
+
+    printf("Distance: %.2f km\n", distance);
+
+    return 0;
+}
+```

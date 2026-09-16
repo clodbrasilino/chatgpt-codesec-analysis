@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double sum_of_geometric_progression(int terms, double first_term, double common_ratio) {
+    if (terms <= 0) return 0.0;
+    if (common_ratio == 1.0) return first_term * terms;
+    return first_term * (1 - pow(common_ratio, terms)) / (1 - common_ratio);
+}
+
+int main() {
+    int n = 4;
+    double a = 2.0;
+    double r = 3.0;
+
+    double sum = sum_of_geometric_progression(n, a, r);
+    printf("Sum of geometric series: %.2f\n", sum);
+
+    return 0;
+}
+```

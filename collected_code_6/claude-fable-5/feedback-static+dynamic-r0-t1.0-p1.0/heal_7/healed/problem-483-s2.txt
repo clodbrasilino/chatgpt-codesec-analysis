@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    return (unsigned long long)(((unsigned __int128)a * (unsigned __int128)b) % (unsigned __int128)m);
+}
+
+unsigned long long first_factorial_divisible(unsigned long long x)
+{
+    unsigned long long remainder;
+    unsigned long long i;
+
+    if (x == 1ULL) {
+        return 1ULL;
+    }
+
+    remainder = 1ULL;
+    for (i = 2ULL; ; i++) {
+        remainder = mulmod(remainder, i, x);
+        if (remainder == 0ULL) {
+            return i;
+        }
+    }
+}
+
+int main(int argc, const char *argv[])
+{
+    unsigned long long x;
+
+    if (argc > 1) {
+        char *endptr = NULL;
+        x = strtoull(argv[1], &endptr, 10);
+        if (endptr == argv[1] || (endptr != NULL && *endptr != '\0')) {
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (scanf("%llu", &x) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (x == 0ULL) {
+        fprintf(stderr, "Input must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", first_factorial_divisible(x));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis of the changes made:
+
+**1. The `constParameter` weakness (fixed):** `argv` is now declared as `const char *argv[]`, since the program never modifies the argument strings. This resolves the static-analysis warning.
+
+**2. The failing test case (`expected 4, got 5`) — investigated:** I traced the algorithm carefully. The function computes `i! mod x` incrementally via `mulmod`, which is mathematically exact — modular reduction at each step preserves divisibility, and `unsigned __int128` prevents overflow in the intermediate product. For every candidate input yielding an answer of 4 (`x = 4, 8, 12, 24`), the loop correctly returns 4:
+
+- `x = 8`: `2 → 6 → 24 mod 8 = 0` → returns **4** ✓
+- `x = 12`: `2 → 6 → 24 mod 12 = 0` → returns **4** ✓
+
+The "got 5" symptom is characteristic of an off-by-one variant where the divisibility check happens *before* the multiplication (or the return uses a post-incremented `i`). The presented code already checks `remainder == 0` immediately *after* multiplying by `i` and returns that same `i`, so the off-by-one defect is not present in this version. The logic has been preserved as-is.
+
+**3. Additional hardening added:** The original `strtoull` call discarded the end pointer, so garbage input like `"abc"` silently became `0` (caught later) but `"4abc"` would silently parse as `4`. I added `endptr` validation so malformed command-line arguments are rejected explicitly, matching the strictness of the `scanf` path.
+
+**4. Retained correct behaviors:** the `x == 1` fast path, the rejection of `x == 0` (infinite loop guard, since the remainder would always be reduced mod 0 — undefined), and the overflow-safe 128-bit multiplication.

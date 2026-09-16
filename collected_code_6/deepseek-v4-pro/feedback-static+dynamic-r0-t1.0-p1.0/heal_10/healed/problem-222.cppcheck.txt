@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222.c:80:33: style: Condition 'empty_result' is always false [knownConditionTrueFalse]
+    printf("Empty tuple: %s\n", empty_result ? "true" : "false");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222.c:79:38: note: Calling function 'all_same_type' returns 0
+    bool empty_result = all_same_type(NULL, 0);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222.c:79:38: note: Assignment 'empty_result=all_same_type(NULL,0)', assigned value is 0
+    bool empty_result = all_same_type(NULL, 0);
+                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222.c:80:33: note: Condition 'empty_result' is always false
+    printf("Empty tuple: %s\n", empty_result ? "true" : "false");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_10/healed/problem-222.c:22:7: style: struct member 'TupleElement::data' is never used. [unusedStructMember]
+    } data;
+      ^

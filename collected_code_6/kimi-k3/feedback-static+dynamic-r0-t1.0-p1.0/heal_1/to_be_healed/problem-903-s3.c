@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 4, got 7
+  *  test case 2 failed: expected 17, got 28
+  *  test case 0 failed: expected 1, got 2
+  */
+
+static uint64_t count_unset_bits(uint64_t n)
+{
+    if (n == 0) {
+        return 0;
+    }
+
+    uint64_t total_unset = 0;
+    uint64_t power_of_2 = 1;
+    unsigned int bit_position = 0;
+
+    while (power_of_2 <= n) {
+        uint64_t complete_cycles = (n + 1) / (power_of_2 * 2);
+        uint64_t remainder = (n + 1) % (power_of_2 * 2);
+        
+        uint64_t zeros_in_column = complete_cycles * power_of_2;
+        if (remainder > power_of_2) {
+            zeros_in_column += remainder - power_of_2;
+        }
+        
+        total_unset += zeros_in_column;
+        
+        if (power_of_2 > UINT64_MAX / 2) {
+            break;
+        }
+        power_of_2 *= 2;
+        bit_position++;
+        
+        if (bit_position >= 64) {
+            break;
+        }
+    }
+
+    return total_unset;
+}
+
+int main(void)
+{
+    uint64_t n;
+    
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long *' but the argument type is 'unsigned long *'. [invalidScanfArgType_int]
+     */
+    if (scanf("%llu", &n) != 1) {
+        return 1;
+    }
+    
+    uint64_t result = count_unset_bits(n);
+    /* Possible weaknesses found:
+     *  %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+     */
+    printf("%llu\n", result);
+    
+    return 0;
+}

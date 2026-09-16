@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long count_multiples(long long divisor, long long low, long long high)
+{
+    return (high / divisor) - ((low - 1) / divisor);
+}
+
+long long max_occurring_divisor(long long low, long long high)
+{
+    long long best_divisor;
+    long long best_count;
+    long long d;
+
+    if (low == high) {
+        return low;
+    }
+
+    best_divisor = 2;
+    best_count = count_multiples(2, low, high);
+
+    for (d = 3; d <= high; d++) {
+        long long c = count_multiples(d, low, high);
+        if (c > best_count) {
+            best_count = c;
+            best_divisor = d;
+        }
+    }
+
+    return best_divisor;
+}
+
+int main(void)
+{
+    long long low;
+    long long high;
+    long long result;
+
+    printf("Enter interval start: ");
+    if (scanf("%lld", &low) != 1) {
+        fprintf(stderr, "Invalid input for interval start\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter interval end: ");
+    if (scanf("%lld", &high) != 1) {
+        fprintf(stderr, "Invalid input for interval end\n");
+        return EXIT_FAILURE;
+    }
+
+    if (low < 1) {
+        fprintf(stderr, "Interval start must be at least 1\n");
+        return EXIT_FAILURE;
+    }
+
+    if (low > high) {
+        fprintf(stderr, "Interval start must not exceed interval end\n");
+        return EXIT_FAILURE;
+    }
+
+    result = max_occurring_divisor(low, high);
+    printf("Maximum occurring divisor in [%lld, %lld] is %lld\n", low, high, result);
+
+    return EXIT_SUCCESS;
+}

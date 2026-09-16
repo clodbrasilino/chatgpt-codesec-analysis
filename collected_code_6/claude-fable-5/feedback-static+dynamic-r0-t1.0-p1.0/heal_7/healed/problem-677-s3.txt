@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+static void sort_sides(double *a, double *b, double *c)
+{
+    double tmp;
+
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+    if (*b > *c) {
+        tmp = *b;
+        *b = *c;
+        *c = tmp;
+    }
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+}
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
+        return 0;
+    }
+
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+
+    sort_sides(&a, &b, &c);
+
+    if (!isfinite(a + b)) {
+        return 1;
+    }
+
+    return (a + b > c) ? 1 : 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fixes applied:**
+
+The original code's problem was the artificial `tolerance` band built from `DBL_EPSILON * fmax(...) * 4.0`, combined with the reordered expression `(a - c) + b`. This caused two classes of failures matching the reported test cases:
+
+1. **"expected True, got 0"** — A legitimately valid but very thin (near-degenerate) triangle, where `a + b` exceeds `c` by an amount smaller than the inflated tolerance, was incorrectly rejected. The tolerance was scaled by the *largest* side and multiplied by 4, which is far too aggressive for triangles with large side magnitudes.
+
+2. **"expected False, got 1"** — Conversely, the rewritten expression `(a - c) + b` introduces its own rounding, which for certain degenerate inputs (`a + b == c` mathematically) can evaluate to a small positive residue exceeding the tolerance, incorrectly accepting a degenerate triangle.
+
+The fix removes the tolerance heuristic entirely and performs the direct, well-defined strict comparison `a + b > c` after sorting so that `c` is the largest side. Since the inputs are exact `double` values, the strict IEEE-754 comparison is the correct semantic: a degenerate case where `a + b` rounds equal to `c` is rejected, and any representable positive margin is accepted. The `isfinite(a + b)` overflow guard is retained — if two finite positive sides sum past `DBL_MAX`, their sum necessarily exceeds the (finite) third side, so returning valid there is correct. The `float.h` include was dropped as `DBL_EPSILON` is no longer needed.

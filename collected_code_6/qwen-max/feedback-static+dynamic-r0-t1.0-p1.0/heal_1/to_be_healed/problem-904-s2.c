@@ -7,18 +7,18 @@ bool is_even(int num) {
 
 int main() {
     /* Possible weaknesses found:
-     *  Assignment 'number=4', assigned value is 4
+     *  Assignment 'number=42', assigned value is 42
      */
-    int number = 4; // Example number
+    int number = 42;
     /* Possible weaknesses found:
      *  Condition 'is_even(number)' is always true
      *  Condition 'is_even(number)' is always true [knownConditionTrueFalse]
      *  Calling function 'is_even' returns 1
      */
     if (is_even(number)) {
-        printf("%d is even.\n", number);
+        printf("The number is even.\n");
     } else {
-        printf("%d is not even.\n", number);
+        printf("The number is odd.\n");
     }
     return 0;
 }

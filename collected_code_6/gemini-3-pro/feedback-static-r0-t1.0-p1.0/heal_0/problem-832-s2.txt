@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+#include <limits.h>
+
+long extract_max_numeric(const char *str) {
+    if (!str) {
+        return LONG_MIN;
+    }
+
+    regex_t regex;
+    int reti;
+    long max_val = LONG_MIN;
+    long current_val = 0;
+    int found = 0;
+
+    reti = regcomp(&regex, "-?[0-9]+", REG_EXTENDED);
+    if (reti) {
+        return LONG_MIN;
+    }
+
+    const char *p = str;
+    regmatch_t pmatch[1];
+
+    while (regexec(&regex, p, 1, pmatch, 0) == 0) {
+        char *endptr;
+        current_val = strtol(p + pmatch[0].rm_so, &endptr, 10);
+        
+        if (found == 0 || current_val > max_val) {
+            max_val = current_val;
+            found = 1;
+        }
+        
+        p += pmatch[0].rm_eo;
+    }
+
+    regfree(&regex);
+
+    if (!found) {
+        return LONG_MIN;
+    }
+
+    return max_val;
+}
+
+int main(void) {
+    const char *test_str1 = "The temperatures were -5, 20, 105, and 32 degrees.";
+    const char *test_str2 = "No numbers here!";
+    const char *test_str3 = NULL;
+
+    long max1 = extract_max_numeric(test_str1);
+    if (max1 != LONG_MIN) {
+        printf("Max value: %ld\n", max1);
+    } else {
+        printf("No numeric values found or error occurred.\n");
+    }
+
+    long max2 = extract_max_numeric(test_str2);
+    if (max2 != LONG_MIN) {
+        printf("Max value: %ld\n", max2);
+    } else {
+        printf("No numeric values found or error occurred.\n");
+    }
+
+    long max3 = extract_max_numeric(test_str3);
+    if (max3 != LONG_MIN) {
+        printf("Max value: %ld\n", max3);
+    } else {
+        printf("No numeric values found or error occurred.\n");
+    }
+
+    return 0;
+}
+```

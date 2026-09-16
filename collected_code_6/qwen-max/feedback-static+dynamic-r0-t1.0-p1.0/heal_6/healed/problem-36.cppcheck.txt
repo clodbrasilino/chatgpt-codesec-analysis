@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:15:11: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+    if (n > 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:14:45: note: Assignment 'n=5', assigned value is 5
+    int numerator = 1, denominator = 7, n = 5;
+                                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:15:11: note: Condition 'n>0' is always true
+    if (n > 0) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:14:9: style: The scope of the variable 'numerator' can be reduced. [variableScope]
+    int numerator = 1, denominator = 7, n = 5;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-36.c:14:24: style: The scope of the variable 'denominator' can be reduced. [variableScope]
+    int numerator = 1, denominator = 7, n = 5;
+                       ^

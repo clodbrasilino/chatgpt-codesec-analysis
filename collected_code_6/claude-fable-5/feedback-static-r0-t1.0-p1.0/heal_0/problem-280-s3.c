@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sequential_search(const int *arr, size_t size, int key)
+{
+    size_t i;
+
+    if (arr == NULL || size == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < size; i++) {
+        if (arr[i] == key) {
+            return (int)i;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr[] = { 12, 45, 7, 23, 89, 3, 56, 71 };
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int key;
+    int result;
+
+    printf("Enter the element to search: ");
+    if (scanf("%d", &key) != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sequential_search(arr, size, key);
+
+    if (result >= 0) {
+        printf("Element %d found at index %d.\n", key, result);
+    } else {
+        printf("Element %d not found in the array.\n", key);
+    }
+
+    return EXIT_SUCCESS;
+}

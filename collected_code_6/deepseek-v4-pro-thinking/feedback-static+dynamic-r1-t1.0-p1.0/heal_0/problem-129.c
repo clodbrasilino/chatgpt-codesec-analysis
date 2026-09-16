@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int **generate_magic_square(int n) {
+    if (n < 1 || n % 2 == 0) {
+        return NULL;
+    }
+
+    if ((size_t)n > (size_t)INT_MAX / (size_t)n) {
+        return NULL;
+    }
+
+    int **square = malloc((size_t)n * sizeof(int *));
+    if (square == NULL) {
+        return NULL;
+    }
+
+    int *data = calloc((size_t)n * (size_t)n, sizeof(int));
+    if (data == NULL) {
+        free(square);
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        square[i] = data + (size_t)i * (size_t)n;
+    }
+
+    int row = 0;
+    int col = n / 2;
+    size_t max = (size_t)n * (size_t)n;
+
+    for (size_t num = 1; num <= max; num++) {
+        square[row][col] = (int)num;
+
+        int next_row = (row - 1 + n) % n;
+        int next_col = (col + 1) % n;
+
+        if (square[next_row][next_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+
+    return square;
+}
+
+void free_magic_square(int **square) {
+    if (square != NULL) {
+        free(square[0]);
+        free(square);
+    }
+}
+
+int main(void) {
+    int n = 5;
+    int **square = generate_magic_square(n);
+
+    if (square == NULL) {
+        fprintf(stderr, "Error: invalid size or allocation failure.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%4d", square[i][j]);
+        }
+        printf("\n");
+    }
+
+    free_magic_square(square);
+    return EXIT_SUCCESS;
+}

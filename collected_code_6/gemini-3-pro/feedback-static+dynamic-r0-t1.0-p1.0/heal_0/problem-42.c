@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_repeated_elements(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    int sum = 0;
+    int *counts = (int *)calloc(size, sizeof(int));
+    if (counts == NULL) {
+        return 0;
+    }
+
+    int *visited = (int *)calloc(size, sizeof(int));
+    if (visited == NULL) {
+        free(counts);
+        return 0;
+    }
+
+    for (size_t i = 0; i < size; i++) {
+        int count = 1;
+        if (visited[i]) {
+            continue;
+        }
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+                visited[j] = 1;
+            }
+        }
+        if (count > 1) {
+            sum += arr[i];
+        }
+    }
+
+    free(counts);
+    free(visited);
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 5, 1, 6, 2};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int sum = sum_of_repeated_elements(arr, size);
+    printf("Sum of repeated elements: %d\n", sum);
+
+    return 0;
+}

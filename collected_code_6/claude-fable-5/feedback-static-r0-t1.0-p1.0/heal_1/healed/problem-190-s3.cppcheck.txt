@@ -1,0 +1,28 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:37:14: style: Condition 'side<=1' is always true [knownConditionTrueFalse]
+    if (side <= 1)
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:20:12: note: Assuming that condition 'y2<y1' is not redundant
+    if (y2 < y1)
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:22:13: note: tmp is assigned 'y1' here.
+        tmp = y1;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:23:12: note: y1 is assigned 'y2' here.
+        y1 = y2;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:24:12: note: y2 is assigned 'tmp' here.
+        y2 = tmp;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:28:13: note: Assignment 'dy=y2-y1', assigned value is less than 2
+    dy = y2 - y1;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:30:12: note: Assuming condition is false
+    if (dx != dy)
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:35:12: note: Assignment 'side=dx', assigned value is symbolic=dy
+    side = dx;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_1/healed/problem-190-s3.c:37:14: note: Condition 'side<=1' is always true
+    if (side <= 1)
+             ^

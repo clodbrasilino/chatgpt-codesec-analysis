@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:73:15: style: Condition 'list1==NULL' is always true [knownConditionTrueFalse]
+    if (list1 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:72:29: note: Calling function 'build_list' returns 0
+    Node *list1 = build_list(values1, sizeof(values1) / sizeof(values1[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:72:29: note: Assignment 'list1=build_list(values1,sizeof(values1)/sizeof(values1[0]))', assigned value is 0
+    Node *list1 = build_list(values1, sizeof(values1) / sizeof(values1[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:73:15: note: Condition 'list1==NULL' is always true
+    if (list1 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:78:15: style: Condition 'list2==NULL' is always true [knownConditionTrueFalse]
+    if (list2 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:77:29: note: Calling function 'build_list' returns 0
+    Node *list2 = build_list(values2, sizeof(values2) / sizeof(values2[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:77:29: note: Assignment 'list2=build_list(values2,sizeof(values2)/sizeof(values2[0]))', assigned value is 0
+    Node *list2 = build_list(values2, sizeof(values2) / sizeof(values2[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:78:15: note: Condition 'list2==NULL' is always true
+    if (list2 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:84:15: style: Condition 'list3==NULL' is always true [knownConditionTrueFalse]
+    if (list3 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:83:29: note: Calling function 'build_list' returns 0
+    Node *list3 = build_list(values3, sizeof(values3) / sizeof(values3[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:83:29: note: Assignment 'list3=build_list(values3,sizeof(values3)/sizeof(values3[0]))', assigned value is 0
+    Node *list3 = build_list(values3, sizeof(values3) / sizeof(values3[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static+dynamic-r1-t1.0-p1.0/heal_3/healed/problem-393.c:84:15: note: Condition 'list3==NULL' is always true
+    if (list3 == NULL) {
+              ^

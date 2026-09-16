@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t initial_capacity) {
+    if (initial_capacity == 0) {
+        return NULL;
+    }
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    dict->items = malloc(initial_capacity * sizeof(KeyValuePair));
+    if (!dict->items) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->items[i].key);
+        }
+        free(dict->items);
+        free(dict);
+    }
+}
+
+int add_item(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key) {
+        return -1;
+    }
+    if (dict->size == dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        KeyValuePair *new_items = realloc(dict->items, new_capacity * sizeof(KeyValuePair));
+        if (!new_items) {
+            return -1;
+        }
+        dict->items = new_items;
+        dict->capacity = new_capacity;
+    }
+    
+    char *key_copy = strdup(key);
+    if (!key_copy) {
+        return -1;
+    }
+    
+    dict->items[dict->size].key = key_copy;
+    dict->items[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+Dictionary* filter_dictionary(const Dictionary *dict, int threshold) {
+    if (!dict) {
+        return NULL;
+    }
+    
+    Dictionary *filtered = create_dictionary(dict->capacity);
+    if (!filtered) {
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < dict->size; i++) {
+        if (dict->items[i].value >= threshold) {
+            if (add_item(filtered, dict->items[i].key, dict->items[i].value) != 0) {
+                free_dictionary(filtered);
+                return NULL;
+            }
+        }
+    }
+    
+    return filtered;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(4);
+    if (!dict) {
+        return EXIT_FAILURE;
+    }
+    
+    if (add_item(dict, "apple", 10) != 0 ||
+        add_item(dict, "banana", 5) != 0 ||
+        add_item(dict, "cherry", 20) != 0 ||
+        add_item(dict, "date", 3) != 0) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    
+    Dictionary *filtered_dict = filter_dictionary(dict, 10);
+    if (!filtered_dict) {
+        free_dictionary(dict);
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < filtered_dict->size; i++) {
+        printf("%s: %d\n", filtered_dict->items[i].key, filtered_dict->items[i].value);
+    }
+    
+    free_dictionary(filtered_dict);
+    free_dictionary(dict);
+    
+    return EXIT_SUCCESS;
+}

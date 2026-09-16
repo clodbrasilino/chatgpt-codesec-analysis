@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+static int validate_positive(double value)
+{
+    return (value > 0.0) && isfinite(value);
+}
+
+static int calculate_surface_area(double base_edge, double height, double *result)
+{
+    double base_area;
+    double slant_height;
+    double lateral_area;
+    
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (!validate_positive(base_edge) || !validate_positive(height)) {
+        return -1;
+    }
+    
+    if (base_edge > sqrt(DBL_MAX / 4.0) || height > DBL_MAX / 2.0) {
+        return -1;
+    }
+    
+    base_area = base_edge * base_edge;
+    if (base_area > DBL_MAX - (2.0 * base_edge * height)) {
+        return -1;
+    }
+    
+    slant_height = sqrt((base_edge / 2.0) * (base_edge / 2.0) + height * height);
+    lateral_area = 2.0 * base_edge * slant_height;
+    
+    if (lateral_area > DBL_MAX - base_area) {
+        return -1;
+    }
+    
+    *result = base_area + lateral_area;
+    return 0;
+}
+
+int main(void)
+{
+    double base_edge;
+    double height;
+    double surface_area;
+    int scan_result;
+    
+    printf("Enter base edge length: ");
+    scan_result = scanf("%lf", &base_edge);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter height: ");
+    scan_result = scanf("%lf", &height);
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (calculate_surface_area(base_edge, height, &surface_area) != 0) {
+        fprintf(stderr, "Calculation error: invalid dimensions or overflow\n");
+        return 1;
+    }
+    
+    printf("Surface area: %.6f\n", surface_area);
+    
+    return 0;
+}
+```

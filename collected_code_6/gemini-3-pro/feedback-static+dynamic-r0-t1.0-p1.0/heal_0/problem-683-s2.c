@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool judgeSquareSum(int c) {
+    if (c < 0) {
+        return false;
+    }
+    long left = 0;
+    long right = 0;
+    while (right * right <= c) {
+        right++;
+    }
+    right--;
+
+    while (left <= right) {
+        long current_sum = left * left + right * right;
+        if (current_sum == c) {
+            return true;
+        } else if (current_sum < c) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int test_cases[] = {5, 3, 4, 2, 1, 0, -5, 2147483647};
+    int num_cases_to_test = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int i = 0; i < num_cases_to_test; i++) {
+        bool result = judgeSquareSum(test_cases[i]);
+        if (result) {
+            printf("%d: true\n", test_cases[i]);
+        } else {
+            printf("%d: false\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

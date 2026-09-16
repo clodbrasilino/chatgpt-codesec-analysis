@@ -3,75 +3,55 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    int value;
+    int data;
     struct Node* next;
 } Node;
 
-Node* create_node(int value) {
-    Node* new_node = (Node*)malloc(sizeof(Node));
-    if (new_node == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-    new_node->value = value;
-    new_node->next = NULL;
-    return new_node;
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) exit(EXIT_FAILURE);
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
 }
 
-void add_to_list(Node** head, int value) {
-    Node* new_node = create_node(value);
-    if (*head == NULL) {
-        *head = new_node;
-    } else {
-        Node* current = *head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = new_node;
+void shiftFirstToEnd(Node** head) {
+    if (*head == NULL || (*head)->next == NULL) return;
+    
+    Node* curr = *head;
+    Node* second = (*head)->next;
+    
+    while (second->next != NULL) {
+        curr = curr->next;
+        second = second->next;
     }
+    
+    curr->next = NULL;
+    second->next = *head;
+    *head = second;
 }
 
-void shift_first_element_to_end(Node** head) {
-    if (*head == NULL || (*head)->next == NULL) {
-        return;
-    }
-
-    Node* first = *head;
-    Node* prev = *head;
-    while (prev->next != NULL) {
-        if (prev->next->next == NULL) {
-            break;
-        }
-        prev = prev->next;
-    }
-
-    *head = (*head)->next;
-    prev->next = first;
-    first->next = NULL;
-}
-
-void print_list(Node* head) {
+void printList(Node* head) {
     while (head != NULL) {
-        printf("%d -> ", head->value);
+        printf("%d -> ", head->data);
         head = head->next;
     }
     printf("NULL\n");
 }
 
 int main() {
-    Node* list = NULL;
-    add_to_list(&list, 10);
-    add_to_list(&list, 20);
-    add_to_list(&list, 30);
-    add_to_list(&list, 40);
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
 
     printf("Original list: ");
-    print_list(list);
+    printList(head);
 
-    shift_first_element_to_end(&list);
+    shiftFirstToEnd(&head);
 
-    printf("List after shifting first element to end: ");
-    print_list(list);
+    printf("Shifted list: ");
+    printList(head);
 
     return 0;
 }

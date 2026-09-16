@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int hexagonal_number(unsigned int n, unsigned long long *result)
+{
+    unsigned long long un;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        return -1;
+    }
+
+    un = (unsigned long long)n;
+
+    if (un > (ULLONG_MAX / 2ULL)) {
+        return -1;
+    }
+
+    if ((2ULL * un - 1ULL) != 0ULL && un > (ULLONG_MAX / (2ULL * un - 1ULL))) {
+        return -1;
+    }
+
+    *result = un * (2ULL * un - 1ULL);
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long result = 0ULL;
+    int scan_status;
+
+    printf("Enter n: ");
+
+    scan_status = scanf("%u", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (hexagonal_number(n, &result) != 0) {
+        fprintf(stderr, "Cannot compute hexagonal number for n = %u.\n", n);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %u-th hexagonal number is %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

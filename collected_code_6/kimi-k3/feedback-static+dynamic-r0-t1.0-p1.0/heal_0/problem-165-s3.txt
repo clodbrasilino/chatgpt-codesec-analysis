@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+int count_alphabet_position_matches(const char *str)
+{
+    int count = 0;
+    size_t i;
+
+    if (str == NULL) {
+        return -1;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        unsigned char current = (unsigned char)str[i];
+        
+        if (isalpha(current)) {
+            int lower_pos = tolower(current) - 'a';
+            int index_pos = (int)(i % 26);
+            
+            if (lower_pos == index_pos) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *test_string = "Abcdefg";
+    int result;
+
+    result = count_alphabet_position_matches(test_string);
+    
+    if (result >= 0) {
+        printf("String: %s\n", test_string);
+        printf("Matches: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: Invalid input string\n");
+        return 1;
+    }
+
+    return 0;
+}
+```

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int max_subarray_length(int *arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+    int max_ending_here = arr[0];
+    int max_so_far = arr[0];
+    int current_length = 1;
+    int max_length = 1;
+    for (int i = 1; i < n; i++) {
+        /* Possible weaknesses found:
+         *  Invalid test for overflow 'arr[i]>max_ending_here+arr[i]'; signed integer overflow is undefined behavior. Some mainstream compilers removes handling of overflows when optimising the code and change the code to 'max_ending_here<0'. [invalidTestForOverflow]
+         */
+        if (arr[i] > max_ending_here + arr[i]) {
+            max_ending_here = arr[i];
+            current_length = 1;
+        } else {
+            max_ending_here = max_ending_here + arr[i];
+            current_length++;
+        }
+        if (max_ending_here > max_so_far) {
+            max_so_far = max_ending_here;
+            max_length = current_length;
+        } else if (max_ending_here == max_so_far) {
+            if (current_length > max_length) {
+                max_length = current_length;
+            }
+        }
+    }
+    return max_length;
+}
+
+int main(void) {
+    int arr1[] = {-2, -3, 4, -1, -2, 1, 5, -3};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%d\n", max_subarray_length(arr1, n1));
+    int arr2[] = {1, 2, 3, -2, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%d\n", max_subarray_length(arr2, n2));
+    int arr3[] = {-1, -2, -3, -4};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%d\n", max_subarray_length(arr3, n3));
+    return 0;
+}

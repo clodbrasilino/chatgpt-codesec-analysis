@@ -1,73 +1,77 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct List {
+typedef struct list {
     int *data;
     size_t size;
-    struct List *next;
+    struct list *next;
 } List;
 
-List* create_list(int size) {
-    List *new_list = (List *)malloc(sizeof(List));
-    new_list->data = (int *)malloc(size * sizeof(int));
-    new_list->size = size;
-    new_list->next = NULL;
-    for (int i = 0; i < size; ++i) {
-        new_list->data[i] = 0; // Initialize with zeros
-    }
-    return new_list;
+List* create_list() {
+    return (List*)calloc(1, sizeof(List));
 }
 
-void free_list(List *list) {
-    while (list) {
-        free(list->data);
-        List *temp = list;
-        list = list->next;
+void free_list(List *head) {
+    List *current = head;
+    while (current != NULL) {
+        if (current->data) {
+            free(current->data);
+        }
+        List *temp = current;
+        current = current->next;
         free(temp);
     }
 }
 
 List* remove_empty_lists(List *head) {
-    if (!head) return NULL;
+    List dummy;
+    dummy.next = NULL;
+    List *tail = &dummy;
 
-    List *current = head;
-    List *prev = NULL;
-    while (current) {
-        if (current->size == 0) {
-            if (prev) {
-                prev->next = current->next;
-                free(current->data);
-                free(current);
-                current = prev->next;
-            } else {
-                head = current->next;
-                free(current->data);
-                free(current);
-                current = head;
-            }
-        } else {
-            prev = current;
-            current = current->next;
+    for (List *current = head; current != NULL; current = current->next) {
+        if (current->size > 0) {
+            tail->next = current;
+            tail = current;
         }
     }
-    return head;
+    tail->next = NULL;
+    return dummy.next;
 }
 
 int main() {
-    List *head = create_list(3);
-    head->next = create_list(0);
-    head->next->next = create_list(2);
+    List *head = create_list();
+    head->data = (int*)malloc(3 * sizeof(int));
+    head->size = 3;
+    head->data[0] = 1;
+    head->data[1] = 2;
+    head->data[2] = 3;
 
-    head = remove_empty_lists(head);
+    List *second = create_list();
+    second->data = NULL;
+    second->size = 0;
+    head->next = second;
 
-    for (List *itr = head; itr != NULL; itr = itr->next) {
-        for (size_t i = 0; i < itr->size; ++i) {
-            printf("%d ", itr->data[i]);
+    List *third = create_list();
+    third->data = (int*)malloc(2 * sizeof(int));
+    third->size = 2;
+    third->data[0] = 4;
+    third->data[1] = 5;
+    second->next = third;
+
+    List *fourth = create_list();
+    fourth->data = NULL;
+    fourth->size = 0;
+    third->next = fourth;
+
+    List *cleaned = remove_empty_lists(head);
+
+    for (List *current = cleaned; current != NULL; current = current->next) {
+        for (size_t i = 0; i < current->size; ++i) {
+            printf("%d ", current->data[i]);
         }
         printf("\n");
     }
 
-    free_list(head);
-
+    free_list(cleaned);
     return 0;
 }

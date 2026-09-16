@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int product_of_non_repeated(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+
+    int *visited = (int *)calloc(size, sizeof(int));
+    if (visited == NULL) {
+        return 0;
+    }
+
+    int product = 1;
+    int has_non_repeated = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (visited[i]) {
+            continue;
+        }
+
+        int count = 1;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+                visited[j] = 1;
+            }
+        }
+
+        if (count == 1) {
+            product *= arr[i];
+            has_non_repeated = 1;
+        }
+    }
+
+    free(visited);
+
+    if (!has_non_repeated) {
+        return 0;
+    }
+
+    return product;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%d\n", product_of_non_repeated(arr1, size1));
+
+    int arr2[] = {1, 2, 2, 3, 3, 4, 4};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%d\n", product_of_non_repeated(arr2, size2));
+
+    int arr3[] = {2, 2, 4, 4, 6, 6};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%d\n", product_of_non_repeated(arr3, size3));
+
+    int arr4[] = {0, 1, 2, 3};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("%d\n", product_of_non_repeated(arr4, size4));
+
+    int arr5[] = {5};
+    int size5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("%d\n", product_of_non_repeated(arr5, size5));
+
+    return 0;
+}

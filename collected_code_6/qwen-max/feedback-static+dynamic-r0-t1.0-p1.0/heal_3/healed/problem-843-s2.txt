@@ -2,92 +2,97 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_HEAP_SIZE 10000
+
 typedef struct {
-    int* data;
+    int* array;
     int size;
-    int capacity;
-} Heap;
+} MinHeap;
 
-Heap* createHeap(int capacity) {
-    Heap* heap = (Heap*)malloc(sizeof(Heap));
-    heap->data = (int*)malloc(capacity * sizeof(int));
-    heap->size = 0;
-    heap->capacity = capacity;
-    return heap;
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
 }
 
-void freeHeap(Heap* heap) {
-    free(heap->data);
-    free(heap);
-}
+void heapify(MinHeap* heap, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
 
-void insertHeap(Heap* heap, int value) {
-    if (heap->size < heap->capacity) {
-        int i = heap->size++;
-        for (; i > 0 && heap->data[(i - 1) / 2] > value; i = (i - 1) / 2) {
-            heap->data[i] = heap->data[(i - 1) / 2];
-        }
-        heap->data[i] = value;
+    if (left < heap->size && heap->array[left] < heap->array[smallest])
+        smallest = left;
+
+    if (right < heap->size && heap->array[right] < heap->array[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap->array[i], &heap->array[smallest]);
+        heapify(heap, smallest);
     }
 }
 
-int extractMin(Heap* heap) {
-    if (heap->size == 0) return -1;
-    int min = heap->data[0];
-    heap->data[0] = heap->data[--heap->size];
-    int i = 0;
-    while (2 * i + 1 < heap->size) {
-        int left = 2 * i + 1;
-        int right = 2 * i + 2;
-        int minIndex = (right < heap->size && heap->data[right] < heap->data[left]) ? right : left;
-        if (heap->data[i] <= heap->data[minIndex]) {
-            break;
-        } else {
-            int temp = heap->data[i];
-            heap->data[i] = heap->data[minIndex];
-            heap->data[minIndex] = temp;
-            i = minIndex;
-        }
-    }
-    return min;
+void buildHeap(MinHeap* heap) {
+    for (int i = (heap->size / 2) - 1; i >= 0; i--)
+        heapify(heap, i);
 }
 
-int nthSuperUglyNumber(int n, int k, const int* primes) {
-    int* uglyNumbers = (int*)malloc(n * sizeof(int));
-    uglyNumbers[0] = 1;
-    int nextMultiple[k], indices[k];
-    for (int i = 0; i < k; ++i) {
-        nextMultiple[i] = uglyNumbers[0] * primes[i];
-        indices[i] = 0;
+void insert(MinHeap* heap, int key) {
+    if (heap->size == MAX_HEAP_SIZE) return;
+    heap->array[heap->size] = key;
+    int i = heap->size;
+    heap->size++;
+    while (i > 0 && heap->array[(i - 1) / 2] > heap->array[i]) {
+        swap(&heap->array[(i - 1) / 2], &heap->array[i]);
+        i = (i - 1) / 2;
+    }
+}
+
+int extractMin(MinHeap* heap) {
+    if (heap->size <= 0) return -1;
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->array[0];
     }
 
-    Heap* minHeap = createHeap(k);
+    int root = heap->array[0];
+    heap->array[0] = heap->array[heap->size - 1];
+    heap->size--;
+    heapify(heap, 0);
 
-    for (int i = 1; i < n; ++i) {
-        for (int j = 0; j < k; ++j) {
-            insertHeap(minHeap, nextMultiple[j]);
-        }
-        uglyNumbers[i] = extractMin(minHeap);
+    return root;
+}
 
-        for (int j = 0; j < k; ++j) {
-            if (nextMultiple[j] == uglyNumbers[i]) {
-                indices[j]++;
-                nextMultiple[j] = uglyNumbers[indices[j]] * primes[j];
-                break;
-            }
-        }
+int nthSuperUglyNumber(int n, int k, const int primes[]) {
+    int* ugly = (int*)malloc(n * sizeof(int));
+    int* index = (int*)malloc(k * sizeof(int));
+    for (int i = 0; i < k; i++) index[i] = 0;
+
+    MinHeap heap;
+    heap.array = (int*)malloc(MAX_HEAP_SIZE * sizeof(int));
+    heap.size = 0;
+
+    ugly[0] = 1;
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j < k; j++)
+            if (primes[j] * ugly[index[j]] == ugly[i - 1])
+                insert(&heap, primes[j] * ugly[++index[j]]);
+            else if (primes[j] * ugly[index[j]] > ugly[i - 1])
+                insert(&heap, primes[j] * ugly[index[j]]);
+        ugly[i] = extractMin(&heap);
     }
 
-    freeHeap(minHeap);
-    free(uglyNumbers);
-    return uglyNumbers[n - 1];
+    free(heap.array);
+    free(ugly);
+    free(index);
+    return ugly[n - 1];
 }
 
 int main() {
-    const int primes[] = {2, 3, 5};
-    int k = 3;
     int n = 12;
-    printf("%d\n", nthSuperUglyNumber(n, k, primes));
+    int k = 4;
+    const int primes[] = {2, 7, 13, 19};
+    printf("The %dth super ugly number is: %d\n", n, nthSuperUglyNumber(n, k, primes));
     return 0;
 }
 ```

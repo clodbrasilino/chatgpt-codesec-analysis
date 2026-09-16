@@ -2,52 +2,50 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <regex.h>
 
-char* snake_to_camel(const char* snake) {
-    size_t len = strlen(snake);
-    char* camel = (char*)malloc(len + 1);
-    if (!camel) return NULL;
+char* snake_to_camel(const char *input) {
+    regex_t re;
+    regmatch_t match[2];
+    const char *p = input;
+    char *output, *q;
+    int len;
 
-    char* dest = camel;
-    int next_upper = 1;
+    if (regcomp(&re, "(_[a-z])", REG_EXTENDED | REG_NEWLINE) != 0) {
+        return NULL;
+    }
 
-    for (const char* src = snake; *src; src++) {
-        if (*src == '_') {
-            next_upper = 1;
+    len = strlen(input);
+    output = malloc(len + 1);
+    if (!output) {
+        return NULL;
+    }
+    q = output;
+
+    while (*p) {
+        if (regexec(&re, p, 2, match, 0) == 0 && match[1].rm_so == 0) {
+            *q++ = toupper(p[1]);
+            p += 2;
         } else {
-            if (next_upper) {
-                *dest++ = toupper((unsigned char)*src);
-                next_upper = 0;
-            } else {
-                *dest++ = *src;
-            }
+            *q++ = *p++;
         }
     }
-    *dest = '\0';
+    *q = '\0';
 
-    return camel;
+    regfree(&re);
+    return output;
 }
 
 int main() {
-    const char* test_cases[] = {
-        "NRI_tv",
-        "google_pixel",
-        "apple_watch"
-    };
-    const char* expected_results[] = {
-        "NriTv",
-        "GooglePixel",
-        "AppleWatch"
-    };
-    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
-
-    for (int i = 0; i < num_tests; i++) {
-        char* result = snake_to_camel(test_cases[i]);
-        if (result) {
-            printf("Test %d: %s -> %s\n", i, test_cases[i], result);
-            free(result);
+    const char *test_cases[] = {"android_tv", "google_pixel", "apple_watch"};
+    for (int i = 0; i < 3; i++) {
+        char *output = snake_to_camel(test_cases[i]);
+        if (output) {
+            printf("%s\n", output);
+            free(output);
+        } else {
+            fprintf(stderr, "Error converting string.\n");
         }
     }
-
     return 0;
 }

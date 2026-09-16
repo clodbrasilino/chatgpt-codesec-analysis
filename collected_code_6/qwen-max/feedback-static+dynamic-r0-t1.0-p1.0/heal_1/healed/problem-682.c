@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* multiply_lists(const int* list1, int size1, const int* list2, int size2, int* result_size) {
+    if (size1 != size2 || !list1 || !list2) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    *result_size = size1;
+    int* result = (int*)malloc(size1 * sizeof(int));
+    if (!result) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < size1; ++i) {
+        result[i] = list1[i] * list2[i];
+    }
+
+    return result;
+}
+
+int main() {
+    int list1[] = {1, 2, 3};
+    int list2[] = {4, 5, 6};
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+    int size2 = sizeof(list2) / sizeof(list2[0]);
+    int result_size;
+
+    int* result = multiply_lists(list1, size1, list2, size2, &result_size);
+
+    if (result && result_size > 0) {
+        for (int i = 0; i < result_size; ++i) {
+            printf("%d ", result[i]);
+        }
+        free(result);
+    } else {
+        printf("Failed to multiply lists\n");
+    }
+
+    return 0;
+}

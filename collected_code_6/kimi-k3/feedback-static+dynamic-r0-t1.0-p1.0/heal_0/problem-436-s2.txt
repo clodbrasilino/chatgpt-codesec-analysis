@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+
+void print_negative_numbers(const int *list, size_t size)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (list[i] < 0) {
+            printf("%d\n", list[i]);
+        }
+    }
+}
+
+int main(void)
+{
+    int numbers[] = {4, -3, 7, -1, 0, -9, 12};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+
+    print_negative_numbers(numbers, size);
+
+    return 0;
+}
+```

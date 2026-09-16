@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+
+void count_digits_and_letters(const char *str, int *digits_count, int *letters_count) {
+    if (str == NULL || digits_count == NULL || letters_count == NULL) {
+        return;
+    }
+
+    *digits_count = 0;
+    *letters_count = 0;
+
+    int i = 0;
+    while (str[i] != '\0') {
+        if (isdigit((unsigned char)str[i])) {
+            (*digits_count)++;
+        } else if (isalpha((unsigned char)str[i])) {
+            (*letters_count)++;
+        }
+        i++;
+    }
+}
+
+int main(void) {
+    const char *test_str = "Hello World 123!";
+    int digits = 0;
+    int letters = 0;
+
+    count_digits_and_letters(test_str, &digits, &letters);
+
+    printf("Digits: %d\n", digits);
+    printf("Letters: %d\n", letters);
+
+    return 0;
+}
+```

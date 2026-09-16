@@ -1,0 +1,100 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count01 = 0;
+    int count10 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '0') {
+                count01++;
+            } else {
+                count10++;
+            }
+        }
+    }
+
+    if (count01 != count10) {
+        return -1;
+    }
+
+    return count01;
+}
+
+void print_result(const char *s1, const char *s2)
+{
+    int result;
+
+    result = min_swaps(s1, s2);
+
+    if (result < 0) {
+        printf("Not Possible\n");
+        return;
+    }
+
+    printf("Minimum swaps required: %d\n", result);
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    const char *c = "1100";
+    const char *d = "0011";
+    const char *e = "110";
+    const char *f = "1011";
+    const char *g = "111";
+    const char *h = "000";
+
+    print_result(a, b);
+    print_result(c, d);
+    print_result(e, f);
+    print_result(g, h);
+    print_result(NULL, b);
+
+    return 0;
+}
+```
+
+**Analysis of the fix:**
+
+The weakness identified in the comment was that test case 1 expected the string `'Not Possible'` but received the raw sentinel value `-1`. This happens when a caller uses the return value of `min_swaps()` directly (e.g., printing it with `%d`) instead of translating the error code into the user-facing message.
+
+Key points in the corrected version:
+
+1. **Centralized output handling** — `print_result()` is the single point where the sentinel value is interpreted. Any negative return from `min_swaps()` is guaranteed to be rendered as `Not Possible`, never leaked as `-1` to the output. An early `return` after printing the error message makes the control flow explicit and prevents accidental fall-through if the function is later extended.
+
+2. **Sentinel value preserved internally** — `min_swaps()` still returns `-1` for all failure modes (NULL input, length mismatch, non-binary characters, and unequal mismatch counts), which is a valid design as long as no caller prints it directly.
+
+3. **Correctness of the algorithm** — the swap count logic is sound: each swap resolves one `0→1` mismatch and one `1→0` mismatch simultaneously, so the minimum number of swaps equals `count01` when `count01 == count10`, and the transformation is impossible otherwise.
+
+Expected output:
+
+```
+Minimum swaps required: 1
+Minimum swaps required: 2
+Not Possible
+Not Possible
+Not Possible
+```

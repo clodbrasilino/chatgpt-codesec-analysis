@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stddef.h>
+
+unsigned long long count_sublists_with_element(const int *array, size_t length, int element)
+{
+    unsigned long long count = 0;
+    unsigned long long previous = 0;
+    int found = 0;
+    size_t i;
+
+    if (array == NULL || length == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < length; ++i) {
+        if (array[i] == element) {
+            unsigned long long left = found ? (unsigned long long)i - previous : (unsigned long long)i + 1;
+            unsigned long long right = (unsigned long long)length - i;
+
+            count += left * right;
+            previous = i;
+            found = 1;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int array[] = {1, 2, 3, 2, 1};
+    size_t length = sizeof(array) / sizeof(array[0]);
+    int element = 2;
+
+    unsigned long long count = count_sublists_with_element(array, length, element);
+
+    printf("%llu\n", count);
+
+    return 0;
+}

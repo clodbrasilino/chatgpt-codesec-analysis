@@ -1,0 +1,169 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} MaxHeap;
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int heap_init(MaxHeap *heap, size_t capacity) {
+    if (heap == NULL || capacity == 0) {
+        return -1;
+    }
+    heap->data = malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        return -1;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+void heap_free(MaxHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        heap->data = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+void heapify_down(MaxHeap *heap, size_t idx) {
+    size_t largest = idx;
+    size_t left = 2 * idx + 1;
+    size_t right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left] > heap->data[largest]) {
+        largest = left;
+    }
+    if (right < heap->size && heap->data[right] > heap->data[largest]) {
+        largest = right;
+    }
+    if (largest != idx) {
+        swap(&heap->data[idx], &heap->data[largest]);
+        heapify_down(heap, largest);
+    }
+}
+
+void heapify_up(MaxHeap *heap, size_t idx) {
+    if (idx == 0) {
+        return;
+    }
+    size_t parent = (idx - 1) / 2;
+    if (heap->data[parent] < heap->data[idx]) {
+        swap(&heap->data[parent], &heap->data[idx]);
+        heapify_up(heap, parent);
+    }
+}
+
+int heap_insert(MaxHeap *heap, int value) {
+    if (heap == NULL || heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->data[heap->size] = value;
+    heap->size++;
+    heapify_up(heap, heap->size - 1);
+    return 0;
+}
+
+int heap_replace_max(MaxHeap *heap, int value) {
+    if (heap == NULL || heap->size == 0) {
+        return -1;
+    }
+    heap->data[0] = value;
+    heapify_down(heap, 0);
+    return 0;
+}
+
+int heap_get_max(const MaxHeap *heap, int *result) {
+    if (heap == NULL || heap->size == 0 || result == NULL) {
+        return -1;
+    }
+    *result = heap->data[0];
+    return 0;
+}
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    if (int_a < int_b) return -1;
+    if (int_a > int_b) return 1;
+    return 0;
+}
+
+int find_smallest(const int *arr, size_t arr_size, size_t k, int *result) {
+    if (arr == NULL || result == NULL || k == 0 || k > arr_size) {
+        return -1;
+    }
+
+    MaxHeap heap;
+    if (heap_init(&heap, k) != 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < arr_size; i++) {
+        if (heap.size < k) {
+            if (heap_insert(&heap, arr[i]) != 0) {
+                heap_free(&heap);
+                return -1;
+            }
+        } else {
+            int current_max;
+            if (heap_get_max(&heap, &current_max) != 0) {
+                heap_free(&heap);
+                return -1;
+            }
+            if (arr[i] < current_max) {
+                if (heap_replace_max(&heap, arr[i]) != 0) {
+                    heap_free(&heap);
+                    return -1;
+                }
+            }
+        }
+    }
+
+    for (size_t i = 0; i < k; i++) {
+        result[i] = heap.data[i];
+    }
+
+    qsort(result, k, sizeof(int), compare_ints);
+
+    heap_free(&heap);
+    return 0;
+}
+
+int main(void) {
+    int numbers[] = {15, 3, 9, 8, 22, 1, 7, 12, 4, 18};
+    size_t n = sizeof(numbers) / sizeof(numbers[0]);
+    size_t k = 4;
+
+    int *smallest = malloc(k * sizeof(int));
+    if (smallest == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_smallest(numbers, n, k, smallest) != 0) {
+        fprintf(stderr, "Error finding smallest elements\n");
+        free(smallest);
+        return EXIT_FAILURE;
+    }
+
+    printf("The %zu smallest integers are: ", k);
+    for (size_t i = 0; i < k; i++) {
+        printf("%d ", smallest[i]);
+    }
+    printf("\n");
+
+    free(smallest);
+    return EXIT_SUCCESS;
+}
+```

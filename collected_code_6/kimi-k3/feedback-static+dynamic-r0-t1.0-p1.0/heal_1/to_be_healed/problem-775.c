@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int check_odd_indices(int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+    
+    for (int i = 1; i < size; i += 2) {
+        if (arr[i] % 2 == 0) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    int *list = NULL;
+    int size = 0;
+    int result = 0;
+    
+    printf("Enter the size of the list: ");
+    if (scanf("%d", &size) != 1 || size <= 0) {
+        fprintf(stderr, "Invalid size input\n");
+        return EXIT_FAILURE;
+    }
+    
+    list = (int *)malloc((size_t)size * sizeof(int));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter %d integers: ", size);
+    for (int i = 0; i < size; i++) {
+        if (scanf("%d", &list[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(list);
+            list = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+    
+    result = check_odd_indices(list, size);
+    
+    if (result) {
+        printf("All odd indices contain odd numbers.\n");
+    } else {
+        printf("Not all odd indices contain odd numbers.\n");
+    }
+    
+    free(list);
+    list = NULL;
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_hamming_distances(int n) {
+    if (n < 0) {
+        return -1;
+    }
+
+    long long sum = 0;
+    for (int i = 1; i <= n; i++) {
+        int xor_val = i ^ (i - 1);
+        long long distance = 0;
+        while (xor_val > 0) {
+            distance += xor_val & 1;
+            xor_val >>= 1;
+        }
+        sum += distance;
+    }
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = sum_hamming_distances(n);
+    if (result == -1) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

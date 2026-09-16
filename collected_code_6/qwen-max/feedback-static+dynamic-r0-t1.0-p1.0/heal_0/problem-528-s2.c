@@ -1,75 +1,72 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct ListNode {
-    int value;
-    struct ListNode *next;
-} ListNode;
-
 typedef struct List {
-    ListNode *head;
-    int size;
+    int *data;
+    int length;
 } List;
 
-List* createList() {
-    List *list = (List*)malloc(sizeof(List));
-    if (list) {
-        list->head = NULL;
-        list->size = 0;
+typedef struct ListOfLists {
+    List **lists;
+    int numLists;
+} ListOfLists;
+
+List *createList(int length) {
+    List *lst = (List *)malloc(sizeof(List));
+    lst->data = (int *)malloc(length * sizeof(int));
+    lst->length = length;
+    return lst;
+}
+
+ListOfLists *createListOfLists(int numLists) {
+    ListOfLists *listOfLists = (ListOfLists *)malloc(sizeof(ListOfLists));
+    listOfLists->lists = (List **)malloc(numLists * sizeof(List *));
+    listOfLists->numLists = numLists;
+    return listOfLists;
+}
+
+void freeList(List *lst) {
+    free(lst->data);
+    free(lst);
+}
+
+void freeListOfLists(ListOfLists *lol) {
+    for (int i = 0; i < lol->numLists; i++) {
+        freeList(lol->lists[i]);
     }
-    return list;
+    free(lol->lists);
+    free(lol);
 }
 
-void addToList(List *list, int value) {
-    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
-    newNode->value = value;
-    newNode->next = list->head;
-    list->head = newNode;
-    list->size++;
-}
+List *findMinLengthList(ListOfLists *lol) {
+    if (lol->numLists == 0) {
+        return NULL;
+    }
 
-int getMinSizeListIndex(List **lists, int totalLists) {
-    int minSize = lists[0]->size;
-    int minIndex = 0;
-    for (int i = 1; i < totalLists; i++) {
-        if (lists[i]->size < minSize) {
-            minSize = lists[i]->size;
-            minIndex = i;
+    List *minList = lol->lists[0];
+    for (int i = 1; i < lol->numLists; i++) {
+        if (lol->lists[i]->length < minList->length) {
+            minList = lol->lists[i];
         }
     }
-    return minIndex;
+    return minList;
 }
 
 int main() {
-    int totalLists = 3;
-    List *l1 = createList();
-    List *l2 = createList();
-    List *l3 = createList();
+    ListOfLists *lol = createListOfLists(3);
 
-    addToList(l1, 1);
-    addToList(l1, 2);
-    
-    addToList(l2, 3);
-    addToList(l2, 4);
-    addToList(l2, 5);
+    lol->lists[0] = createList(5);
+    lol->lists[1] = createList(3);
+    lol->lists[2] = createList(7);
 
-    addToList(l3, 6);
+    List *minList = findMinLengthList(lol);
 
-    List *lists[] = {l1, l2, l3};
-    int minIndex = getMinSizeListIndex(lists, totalLists);
-
-    printf("The list with minimum length is at index: %d\n", minIndex);
-
-    // Free allocated memory
-    for (int i = 0; i < totalLists; i++) {
-        ListNode *current = lists[i]->head;
-        while (current) {
-            ListNode *temp = current;
-            current = current->next;
-            free(temp);
-        }
-        free(lists[i]);
+    if (minList != NULL) {
+        printf("Minimum length list has length %d\n", minList->length);
+    } else {
+        printf("No lists found.\n");
     }
 
+    freeListOfLists(lol);
     return 0;
 }

@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_subsequences(const int *arr, int n, long long k)
+{
+    if (arr == NULL || n <= 0 || n > 60 || k <= 0 || k > 1000000LL) {
+        return -1LL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < 0) {
+            return -1LL;
+        }
+    }
+
+    int *pos = (int *)malloc((size_t)n * sizeof(int));
+    if (pos == NULL) {
+        return -1LL;
+    }
+
+    int m = 0;
+    int zeros = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            zeros++;
+        } else {
+            pos[m] = arr[i];
+            m++;
+        }
+    }
+
+    long long zero_count = (1LL << n) - (1LL << (n - zeros));
+
+    long long limit = k - 1LL;
+    size_t rows = (size_t)limit + 1U;
+    size_t cols = (size_t)m + 1U;
+
+    if (rows > (SIZE_MAX / sizeof(long long)) / cols) {
+        free(pos);
+        return -1LL;
+    }
+
+    long long *dp = (long long *)calloc(rows * cols, sizeof(long long));
+    if (dp == NULL) {
+        free(pos);
+        return -1LL;
+    }
+
+    for (long long i = 1; i <= limit; i++) {
+        for (int j = 1; j <= m; j++) {
+            long long val = dp[(size_t)i * cols + (size_t)(j - 1)];
+            if ((long long)pos[j - 1] <= i) {
+                val += dp[(size_t)(i / (long long)pos[j - 1]) * cols + (size_t)(j - 1)] + 1LL;
+            }
+            dp[(size_t)i * cols + (size_t)j] = val;
+        }
+    }
+
+    long long result = dp[(size_t)limit * cols + (size_t)m] + zero_count;
+
+    free(dp);
+    free(pos);
+    return result;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 3, 4};
+    long long k1 = 10;
+    long long res1 = count_subsequences(arr1, 4, k1);
+    if (res1 < 0) {
+        fprintf(stderr, "Error computing result for array 1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Array 1 with k = %lld: %lld subsequences\n", k1, res1);
+
+    int arr2[] = {4, 8, 7, 2};
+    long long k2 = 50;
+    long long res2 = count_subsequences(arr2, 4, k2);
+    if (res2 < 0) {
+        fprintf(stderr, "Error computing result for array 2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Array 2 with k = %lld: %lld subsequences\n", k2, res2);
+
+    int arr3[] = {0, 1, 2};
+    long long k3 = 5;
+    long long res3 = count_subsequences(arr3, 3, k3);
+    if (res3 < 0) {
+        fprintf(stderr, "Error computing result for array 3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Array 3 with k = %lld: %lld subsequences\n", k3, res3);
+
+    return EXIT_SUCCESS;
+}
+```
+
+You'll need `#include <stdint.h>` for `SIZE_MAX` — here's the corrected include block:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+```
+
+A few notes on the design choices with respect to the CWEs you mentioned:
+
+- **CWE-664**: Every allocation (`pos`, `dp`) is freed exactly once on every exit path, and no pointer is used after being freed.
+- **CWE-703**: All `malloc`/`calloc` returns are checked, inputs are validated (null pointer, negative values, out-of-range `n` and `k`), the allocation size multiplication is checked against `SIZE_MAX` to prevent overflow, and the caller in `main` checks the sentinel error value before using results.
+- **CWE-710**: The code is strictly conforming C, uses `size_t` for indexing, avoids implicit conversions that could truncate, handles zeros in the array separately (avoiding division by zero in the DP recurrence), and bounds `n <= 60` so the `1LL << n` shift is always well-defined.

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int check_decimal_precision(const char *str) {
+    regex_t regex;
+    int reti;
+    int result = 0;
+
+    reti = regcomp(&regex, "^[+-]?[0-9]+\\.[0-9]{2}$", REG_EXTENDED);
+    if (reti) {
+        return 0;
+    }
+
+    reti = regexec(&regex, str, 0, NULL, 0);
+    if (!reti) {
+        result = 1;
+    } else if (reti == REG_NOMATCH) {
+        result = 0;
+    } else {
+        result = 0;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "123.45",
+        "0.99",
+        "-12.34",
+        "+0.00",
+        "123.4",
+        "123.456",
+        "abc",
+        "12.",
+        ".45",
+        "123"
+    };
+    size_t num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_cases; i++) {
+        if (check_decimal_precision(test_cases[i])) {
+            printf("\"%s\" is a valid decimal with precision of 2.\n", test_cases[i]);
+        } else {
+            printf("\"%s\" is NOT a valid decimal with precision of 2.\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+size_t remove_duplicates(int *list, size_t length)
+{
+    size_t read_index;
+    size_t check_index;
+    size_t unique_count;
+    int is_duplicate;
+
+    if (list == NULL || length == 0U) {
+        return 0U;
+    }
+
+    unique_count = 1U;
+    for (read_index = 1U; read_index < length; read_index++) {
+        is_duplicate = 0;
+        for (check_index = 0U; check_index < unique_count; check_index++) {
+            if (list[read_index] == list[check_index]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (is_duplicate == 0) {
+            list[unique_count] = list[read_index];
+            unique_count++;
+        }
+    }
+
+    return unique_count;
+}
+
+int main(void)
+{
+    int **lists = NULL;
+    size_t *lengths = NULL;
+    size_t num_lists = 0U;
+    size_t list_index;
+    size_t element_index;
+    int status = EXIT_FAILURE;
+
+    printf("Enter the number of lists: ");
+    if (scanf("%zu", &num_lists) != 1 || num_lists == 0U ||
+        num_lists > SIZE_MAX / sizeof(*lists)) {
+        fprintf(stderr, "Error: invalid number of lists.\n");
+        return EXIT_FAILURE;
+    }
+
+    lists = malloc(num_lists * sizeof(*lists));
+    if (lists == NULL) {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        goto cleanup;
+    }
+    for (list_index = 0U; list_index < num_lists; list_index++) {
+        lists[list_index] = NULL;
+    }
+
+    lengths = malloc(num_lists * sizeof(*lengths));
+    if (lengths == NULL) {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        goto cleanup;
+    }
+
+    for (list_index = 0U; list_index < num_lists; list_index++) {
+        printf("Enter the number of elements in list %zu: ", list_index + 1U);
+        if (scanf("%zu", &lengths[list_index]) != 1 || lengths[list_index] == 0U ||
+            lengths[list_index] > SIZE_MAX / sizeof(**lists)) {
+            fprintf(stderr, "Error: invalid list size.\n");
+            goto cleanup;
+        }
+
+        lists[list_index] = malloc(lengths[list_index] * sizeof(**lists));
+        if (lists[list_index] == NULL) {
+            fprintf(stderr, "Error: memory allocation failed.\n");
+            goto cleanup;
+        }
+
+        printf("Enter %zu integers: ", lengths[list_index]);
+        for (element_index = 0U; element_index < lengths[list_index]; element_index++) {
+            if (scanf("%d", &lists[list_index][element_index]) != 1) {
+                fprintf(stderr, "Error: invalid integer input.\n");
+                goto cleanup;
+            }
+        }
+
+        lengths[list_index] = remove_duplicates(lists[list_index], lengths[list_index]);
+
+        printf("List %zu after removing duplicates: ", list_index + 1U);
+        for (element_index = 0U; element_index < lengths[list_index]; element_index++) {
+            printf("%d ", lists[list_index][element_index]);
+        }
+        putchar('\n');
+    }
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    if (lists != NULL) {
+        for (list_index = 0U; list_index < num_lists; list_index++) {
+            free(lists[list_index]);
+        }
+        free(lists);
+    }
+    free(lengths);
+
+    return status;
+}

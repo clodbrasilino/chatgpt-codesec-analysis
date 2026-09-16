@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <math.h>
+
+double power(double a, int b) {
+    if (a == 0.0 && b <= 0) {
+        fprintf(stderr, "Error: 0 cannot be raised to a non-positive power.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (b == 0) {
+        return 1.0;
+    }
+
+    int negative_exponent = 0;
+    long long exp = b;
+    
+    if (exp < 0) {
+        negative_exponent = 1;
+        exp = -exp;
+    }
+
+    double result = 1.0;
+    double base = a;
+
+    while (exp > 0) {
+        if (exp & 1) {
+            result *= base;
+        }
+        base *= base;
+        exp >>= 1;
+    }
+
+    if (negative_exponent) {
+        if (result == 0.0) {
+            fprintf(stderr, "Error: division by zero in reciprocal calculation.\n");
+            exit(EXIT_FAILURE);
+        }
+        return 1.0 / result;
+    }
+
+    return result;
+}
+
+int main(void) {
+    double a;
+    int b;
+
+    printf("Enter base (double): ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Error: invalid input for base.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter exponent (int): ");
+    if (scanf("%d", &b) != 1) {
+        fprintf(stderr, "Error: invalid input for exponent.\n");
+        return EXIT_FAILURE;
+    }
+
+    double result = power(a, b);
+    printf("%.10g ^ %d = %.10g\n", a, b, result);
+
+    return EXIT_SUCCESS;
+}

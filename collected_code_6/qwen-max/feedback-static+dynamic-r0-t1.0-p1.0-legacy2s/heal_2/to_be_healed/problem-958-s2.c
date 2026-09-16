@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 'L', got <no output>
+  *  test case 2 failed: expected 'IV', got <no output>
+  *  test case 0 failed: expected 'I', got <no output>
+  */
+
+char *intToRoman(int num) {
+    char *roman = (char *)malloc(20 * sizeof(char));
+    if (!roman) return NULL;
+    const char *s[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    const int v[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+
+    for (int j = 0; j < 13; j++) {
+        while (num >= v[j]) {
+            strcat(roman, s[j]);
+            num -= v[j];
+        }
+    }
+
+    return roman;
+}
+
+int main() {
+    int number = 1994;
+    char *result = intToRoman(number);
+    if (result) {
+        printf("%d in Roman numerals is: %s\n", number, result);
+        free(result);
+    } else {
+        printf("Failed to convert %d to Roman numeral.\n", number);
+    }
+    return 0;
+}

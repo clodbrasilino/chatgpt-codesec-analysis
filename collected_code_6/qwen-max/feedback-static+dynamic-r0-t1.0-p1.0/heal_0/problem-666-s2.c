@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <string.h>
+
+int count_char_occurrence(const char *str, char ch) {
+    int count = 0;
+    if (str == NULL) {
+        return -1;
+    }
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] == ch) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    const char *test_str = "hello world";
+    char test_ch = 'l';
+    int result = count_char_occurrence(test_str, test_ch);
+    printf("Character '%c' occurs %d times in the string.\n", test_ch, result);
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+int regsub(regex_t *preg, const char *str, size_t nmatch, regmatch_t pmatch[], size_t eflags, const char *repl, char *buf, size_t buflen);
+
+void swap_spaces_underscores(char *str) {
+    regex_t space_regex, underscore_regex;
+    char tmp[1024];
+    regmatch_t pmatch;
+    
+    if (regcomp(&space_regex, " ", REG_EXTENDED) || regcomp(&underscore_regex, "_", REG_EXTENDED)) {
+        return;
+    }
+    
+    if (regexec(&space_regex, str, 1, &pmatch, 0) == 0) {
+        regsub(&space_regex, str, 1, &pmatch, 0, "_", tmp, sizeof(tmp));
+        strcpy(str, tmp);
+    }
+    
+    if (regexec(&underscore_regex, str, 1, &pmatch, 0) == 0) {
+        regsub(&underscore_regex, str, 1, &pmatch, 0, " ", tmp, sizeof(tmp));
+        strcpy(str, tmp);
+    }
+    
+    regfree(&space_regex);
+    regfree(&underscore_regex);
+}
+
+int main() {
+    char test_str[] = "Hello World and_Hello_Under_Score";
+    
+    swap_spaces_underscores(test_str);
+    
+    printf("%s\n", test_str);
+    
+    return 0;
+}

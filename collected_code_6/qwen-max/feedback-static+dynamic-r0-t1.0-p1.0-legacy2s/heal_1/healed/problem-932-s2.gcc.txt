@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-932-s2.c: In function 'remove_duplicates':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-932-s2.c:21:27: error: passing argument 1 of 'is_duplicate' from incompatible pointer type [-Wincompatible-pointer-types]
+   21 |         if (!is_duplicate(strings, i)) {
+      |                           ^~~~~~~
+      |                           |
+      |                           char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-932-s2.c:12:30: note: expected 'const char **' but argument is of type 'char **'
+   12 | int is_duplicate(const char *strings[], int index) {
+      |                  ~~~~~~~~~~~~^~~~~~~~~

@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int countPositives(int *arr, int size) {
+    int count = 0;
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] > 0) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int numbers[] = {3, -1, 0, 7, -5, 2};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    int positives = countPositives(numbers, size);
+    printf("Number of positive numbers: %d\n", positives);
+    return 0;
+}

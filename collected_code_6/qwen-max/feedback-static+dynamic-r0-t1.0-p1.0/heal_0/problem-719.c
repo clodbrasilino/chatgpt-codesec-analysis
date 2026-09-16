@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_pattern(const char *str) {
+    if (str[0] != 'a') return false;
+    for (int i = 1; str[i] != '\0'; ++i) {
+        if (str[i] != 'b') return false;
+    }
+    return true;
+}
+
+int main() {
+    const char *test_str = "abbb";
+    if (match_pattern(test_str)) {
+        printf("Matched\n");
+    } else {
+        printf("Not Matched\n");
+    }
+    return 0;
+}

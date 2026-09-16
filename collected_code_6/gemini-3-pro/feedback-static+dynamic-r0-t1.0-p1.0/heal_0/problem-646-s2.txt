@@ -1,0 +1,26 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_cubes(unsigned int n, unsigned int k) {
+    if (k > n || k == 0) {
+        return 0;
+    }
+    unsigned long long diff = n - k + 1;
+    return diff * diff * diff;
+}
+
+int main(void) {
+    unsigned int n = 0;
+    unsigned int k = 0;
+
+    if (scanf("%u %u", &n, &k) != 2) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = count_cubes(n, k);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

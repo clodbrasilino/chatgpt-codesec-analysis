@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int get_lucid(unsigned int n) {
+    if (n < 1) {
+        return 0;
+    }
+    for (unsigned int i = n; i >= 1; i--) {
+        unsigned int temp = i;
+        unsigned int reversed = 0;
+        while (temp > 0) {
+            reversed = reversed * 10 + (temp % 10);
+            temp /= 10;
+        }
+        if (i == reversed) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    char *endptr;
+    unsigned long val = strtoul(argv[1], &endptr, 10);
+    if (*endptr != '\0' || val > 4294967295UL) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    unsigned int n = (unsigned int)val;
+    unsigned int result = get_lucid(n);
+    printf("%u\n", result);
+    return EXIT_SUCCESS;
+}
+```

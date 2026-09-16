@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_coin_change(int amount, int coins[], int num_coins) {
+    if (amount < 0 || num_coins <= 0) {
+        return 0;
+    }
+    if (amount == 0) {
+        return 1;
+    }
+    if (num_coins == 1) {
+        return (amount % coins[0] == 0) ? 1 : 0;
+    }
+    int with_last_coin = count_coin_change(amount - coins[num_coins - 1], coins, num_coins);
+    int without_last_coin = count_coin_change(amount, coins, num_coins - 1);
+    return with_last_coin + without_last_coin;
+}
+
+int main() {
+    int coins[] = {1, 2, 5};
+    int num_coins = sizeof(coins) / sizeof(coins[0]);
+    int amount = 5;
+    int ways = count_coin_change(amount, coins, num_coins);
+    printf("Number of ways to make change for %d: %d\n", amount, ways);
+    return 0;
+}

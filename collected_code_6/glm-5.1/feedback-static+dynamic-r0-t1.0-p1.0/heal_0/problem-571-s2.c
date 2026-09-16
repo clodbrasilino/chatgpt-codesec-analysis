@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_ints(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    if (int_a < int_b) return -1;
+    if (int_a > int_b) return 1;
+    return 0;
+}
+
+int max_disjoint_pair_sum(int *arr, int n, int k) {
+    if (arr == NULL || n < 2 || k <= 0) {
+        return 0;
+    }
+
+    qsort(arr, n, sizeof(int), compare_ints);
+
+    int count = 0;
+    int sum = 0;
+    int i = n - 1;
+
+    while (i > 0 && count < k) {
+        if (arr[i] - arr[i - 1] <= k) {
+            sum += arr[i] + arr[i - 1];
+            count++;
+            i -= 2;
+        } else {
+            i--;
+        }
+    }
+
+    return sum;
+}
+
+int main() {
+    int arr1[] = {5, 10, 15, 20, 25, 30};
+    int k1 = 2;
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int result1 = max_disjoint_pair_sum(arr1, n1, k1);
+    printf("%d\n", result1);
+
+    int arr2[] = {1, 8, 3, 12, 5, 20};
+    int k2 = 10;
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int result2 = max_disjoint_pair_sum(arr2, n2, k2);
+    printf("%d\n", result2);
+
+    int arr3[] = {5, 5, 5, 5, 5, 5};
+    int k3 = 3;
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int result3 = max_disjoint_pair_sum(arr3, n3, k3);
+    printf("%d\n", result3);
+
+    return 0;
+}

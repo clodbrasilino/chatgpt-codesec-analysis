@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int can_be_difference_of_squares(long long n);
+
+int can_be_difference_of_squares(long long n)
+{
+    long long remainder;
+
+    if (n < 0) {
+        n = -n;
+    }
+
+    remainder = n % 4;
+
+    if (remainder == 2) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int main(void)
+{
+    long long number;
+    int scan_result;
+
+    printf("Enter an integer: ");
+
+    scan_result = scanf("%lld", &number);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (can_be_difference_of_squares(number) == 1) {
+        printf("%lld can be represented as a difference of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as a difference of two squares.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of the logic:** A number `n` can be written as `a² - b² = (a+b)(a-b)` if and only if `n % 4 != 2`. This is because `(a+b)` and `(a-b)` always have the same parity — their product is either odd (any odd number works, since `n = ((n+1)/2)² - ((n-1)/2)²`) or divisible by 4 (since `n = (n/4+1)² - (n/4-1)²`). Numbers congruent to 2 mod 4 cannot be factored into two factors of matching parity.
+
+**Safety considerations addressed:**
+- **CWE-703:** The return value of `scanf` is checked before using the input, and an error path exits cleanly with `EXIT_FAILURE`.
+- **CWE-664:** No dynamic resources (heap memory, file handles) are allocated, so there is nothing to leak or misuse; `stdin`/`stdout`/`stderr` are managed by the runtime.
+- **CWE-710:** The code uses proper function prototypes, `int main(void)`, standard exit codes, no implicit conversions, and avoids undefined behavior (the modulo approach avoids any loops or arithmetic that could overflow).

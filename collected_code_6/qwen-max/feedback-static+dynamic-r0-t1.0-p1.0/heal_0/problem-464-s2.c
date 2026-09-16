@@ -3,22 +3,42 @@
 #include <stdbool.h>
 
 typedef struct {
-    char *key;
-    int value;
+    int key;
+    void *value;
 } DictionaryEntry;
 
 typedef struct {
     DictionaryEntry *entries;
     size_t count;
+    size_t capacity;
 } Dictionary;
 
-bool areAllValuesTheSame(Dictionary *dict) {
-    if (dict == NULL || dict->count == 0) {
+bool initDictionary(Dictionary *dict, size_t capacity) {
+    dict->entries = (DictionaryEntry *)malloc(capacity * sizeof(DictionaryEntry));
+    if (dict->entries == NULL) {
         return false;
     }
+    dict->count = 0;
+    dict->capacity = capacity;
+    return true;
+}
 
-    int firstValue = dict->entries[0].value;
-    for (size_t i = 1; i < dict->count; ++i) {
+void freeDictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].value);
+    }
+    free(dict->entries);
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+bool areAllValuesSame(const Dictionary *dict) {
+    if (dict->count <= 1) {
+        return true;
+    }
+
+    const void *firstValue = dict->entries[0].value;
+    for (size_t i = 1; i < dict->count; i++) {
         if (dict->entries[i].value != firstValue) {
             return false;
         }
@@ -28,20 +48,23 @@ bool areAllValuesTheSame(Dictionary *dict) {
 
 int main() {
     Dictionary dict;
-    dict.count = 4;
-    dict.entries = (DictionaryEntry *)malloc(dict.count * sizeof(DictionaryEntry));
-
-    dict.entries[0] = (DictionaryEntry){"apple", 5};
-    dict.entries[1] = (DictionaryEntry){"banana", 5};
-    dict.entries[2] = (DictionaryEntry){"cherry", 5};
-    dict.entries[3] = (DictionaryEntry){"date", 5};
-
-    if (areAllValuesTheSame(&dict)) {
-        printf("All values are the same.\n");
-    } else {
-        printf("Not all values are the same.\n");
+    if (!initDictionary(&dict, 3)) {
+        fprintf(stderr, "Failed to initialize dictionary\n");
+        return 1;
     }
 
-    free(dict.entries);
+    // Example values
+    dict.entries[0] = (DictionaryEntry){1, (void *)"test"};
+    dict.entries[1] = (DictionaryEntry){2, (void *)"test"};
+    dict.entries[2] = (DictionaryEntry){3, (void *)"test"};
+    dict.count = 3;
+
+    if (areAllValuesSame(&dict)) {
+        printf("All values are the same\n");
+    } else {
+        printf("Not all values are the same\n");
+    }
+
+    freeDictionary(&dict);
     return 0;
 }

@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int find_min_removals(int arr[], int n, int k) {
+    if (n <= 1) {
+        return 0;
+    }
+    qsort(arr, n, sizeof(int), compare);
+    int max_len = 1;
+    int left = 0;
+    int right = 1;
+    while (right < n) {
+        if (arr[right] - arr[left] <= k) {
+            int current_len = right - left + 1;
+            if (current_len > max_len) {
+                max_len = current_len;
+            }
+            right++;
+        } else {
+            left++;
+            if (left == right) {
+                right++;
+            }
+        }
+    }
+    return n - max_len;
+}
+
+int main() {
+    int arr1[] = {1, 3, 4, 9, 10, 11, 12, 17, 20};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int k1 = 4;
+    printf("%d\n", find_min_removals(arr1, n1, k1));
+
+    int arr2[] = {1, 2, 3, 4, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int k2 = 2;
+    printf("%d\n", find_min_removals(arr2, n2, k2));
+
+    int arr3[] = {10, 20, 30, 40, 50};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int k3 = 5;
+    printf("%d\n", find_min_removals(arr3, n3, k3));
+
+    return 0;
+}

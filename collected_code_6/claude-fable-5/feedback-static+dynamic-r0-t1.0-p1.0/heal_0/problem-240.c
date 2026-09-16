@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *createNode(int data)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+struct Node *appendNode(struct Node *head, int data)
+{
+    struct Node *node = createNode(data);
+    if (head == NULL) {
+        return node;
+    }
+    struct Node *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return head;
+}
+
+struct Node *replaceLastWithList(struct Node *head, struct Node *replacement)
+{
+    if (head == NULL) {
+        return replacement;
+    }
+    if (head->next == NULL) {
+        free(head);
+        return replacement;
+    }
+    struct Node *current = head;
+    while (current->next->next != NULL) {
+        current = current->next;
+    }
+    free(current->next);
+    current->next = replacement;
+    return head;
+}
+
+void printList(const struct Node *head)
+{
+    const struct Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    struct Node *listA = NULL;
+    struct Node *listB = NULL;
+
+    listA = appendNode(listA, 1);
+    listA = appendNode(listA, 2);
+    listA = appendNode(listA, 3);
+
+    listB = appendNode(listB, 10);
+    listB = appendNode(listB, 20);
+    listB = appendNode(listB, 30);
+
+    printf("List A: ");
+    printList(listA);
+    printf("List B: ");
+    printList(listB);
+
+    listA = replaceLastWithList(listA, listB);
+
+    printf("Result: ");
+    printList(listA);
+
+    freeList(listA);
+
+    return EXIT_SUCCESS;
+}

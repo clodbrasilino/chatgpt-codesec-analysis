@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool isMajority(const int arr[], size_t n, int candidate)
+{
+    if (arr == NULL || n == 0) {
+        return false;
+    }
+    
+    size_t left = 0;
+    size_t right = n;
+    
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+        if (arr[mid] < candidate) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    size_t first = left;
+    
+    if (first >= n || arr[first] != candidate) {
+        return false;
+    }
+    
+    left = first;
+    right = n;
+    
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+        if (arr[mid] <= candidate) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    size_t last = left;
+    size_t count = last - first;
+    
+    return count > n / 2;
+}
+
+int main(void)
+{
+    int arr1[] = {1, 2, 3, 3, 3, 3, 10};
+    int arr2[] = {1, 1, 2, 4, 4, 4, 6, 6};
+    int arr3[] = {1, 1, 1, 1, 1};
+    int arr4[] = {1, 2, 3};
+    
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+    size_t n4 = sizeof(arr4) / sizeof(arr4[0]);
+    
+    printf("%s\n", isMajority(arr1, n1, 3) ? "true" : "false");
+    printf("%s\n", isMajority(arr2, n2, 4) ? "true" : "false");
+    printf("%s\n", isMajority(arr3, n3, 1) ? "true" : "false");
+    printf("%s\n", isMajority(arr4, n4, 2) ? "true" : "false");
+    
+    return 0;
+}

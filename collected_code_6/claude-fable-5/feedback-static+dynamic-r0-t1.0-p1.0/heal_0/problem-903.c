@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned int count_unset_bits_in_number(unsigned int num)
+{
+    unsigned int count = 0U;
+    unsigned int msb_pos = 0U;
+    unsigned int temp = num;
+
+    while (temp > 1U)
+    {
+        temp >>= 1U;
+        msb_pos++;
+    }
+
+    for (unsigned int i = 0U; i < msb_pos; i++)
+    {
+        if ((num & (1U << i)) == 0U)
+        {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static unsigned long long count_total_unset_bits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+
+    for (unsigned int i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)count_unset_bits_in_number(i);
+        if (i == UINT_MAX)
+        {
+            break;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result = 0;
+
+    printf("Enter a positive integer n: ");
+
+    result = scanf("%u", &n);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1U)
+    {
+        fprintf(stderr, "Error: n must be at least 1\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total unset bits from 1 to %u: %llu\n", n, count_total_unset_bits(n));
+
+    return EXIT_SUCCESS;
+}

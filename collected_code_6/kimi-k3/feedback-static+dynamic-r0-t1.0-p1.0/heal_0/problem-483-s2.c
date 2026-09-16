@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_first_factorial_divisible(unsigned int x, unsigned int *result)
+{
+    unsigned int n;
+    unsigned int factorial;
+
+    if (x == 0U)
+    {
+        return -1;
+    }
+
+    if (x == 1U)
+    {
+        *result = 1U;
+        return 0;
+    }
+
+    n = 1U;
+    factorial = 1U;
+
+    while (n <= UINT_MAX / n)
+    {
+        if (factorial > UINT_MAX / (n + 1U))
+        {
+            break;
+        }
+
+        factorial *= n;
+
+        if (factorial % x == 0U)
+        {
+            *result = n;
+            return 0;
+        }
+
+        n++;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    unsigned int x;
+    unsigned int result;
+    int status;
+
+    if (scanf("%u", &x) != 1)
+    {
+        return EXIT_FAILURE;
+    }
+
+    status = find_first_factorial_divisible(x, &result);
+
+    if (status != 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    printf("%u\n", result);
+
+    return EXIT_SUCCESS;
+}

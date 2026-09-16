@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    int value;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int frequency;
+} TupleFrequency;
+
+TupleFrequency* calculateFrequencies(Tuple* tuples, int numTuples, int* numUniqueTuples) {
+    if (tuples == NULL || numTuples <= 0 || numUniqueTuples == NULL) {
+        return NULL;
+    }
+
+    TupleFrequency* frequencies = (TupleFrequency*)malloc(numTuples * sizeof(TupleFrequency));
+    if (frequencies == NULL) {
+        return NULL;
+    }
+
+    int uniqueCount = 0;
+
+    for (int i = 0; i < numTuples; i++) {
+        int found = 0;
+        for (int j = 0; j < uniqueCount; j++) {
+            if (frequencies[j].tuple.id == tuples[i].id && frequencies[j].tuple.value == tuples[i].value) {
+                frequencies[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            frequencies[uniqueCount].tuple = tuples[i];
+            frequencies[uniqueCount].frequency = 1;
+            uniqueCount++;
+        }
+    }
+
+    *numUniqueTuples = uniqueCount;
+
+    TupleFrequency* resizedFrequencies = (TupleFrequency*)realloc(frequencies, uniqueCount * sizeof(TupleFrequency));
+    if (resizedFrequencies == NULL && uniqueCount > 0) {
+        free(frequencies);
+        return NULL;
+    }
+
+    return resizedFrequencies;
+}
+
+int main() {
+    Tuple tuples[] = {
+        {1, 10},
+        {2, 20},
+        {1, 10},
+        {3, 30},
+        {2, 20},
+        {1, 10}
+    };
+    int numTuples = sizeof(tuples) / sizeof(tuples[0]);
+    int numUniqueTuples = 0;
+
+    TupleFrequency* frequencies = calculateFrequencies(tuples, numTuples, &numUniqueTuples);
+
+    if (frequencies != NULL) {
+        for (int i = 0; i < numUniqueTuples; i++) {
+            printf("Tuple (%d, %d): Frequency = %d\n", frequencies[i].tuple.id, frequencies[i].tuple.value, frequencies[i].frequency);
+        }
+        free(frequencies);
+    } else {
+        printf("Failed to calculate frequencies.\n");
+    }
+
+    return 0;
+}
+```

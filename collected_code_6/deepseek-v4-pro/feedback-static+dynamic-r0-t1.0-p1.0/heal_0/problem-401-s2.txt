@@ -1,0 +1,174 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int size;
+    int *elements;
+} Tuple;
+
+typedef struct NestedTuple {
+    int size;
+    Tuple **tuples;
+} NestedTuple;
+
+NestedTuple *create_nested_tuple(int size, Tuple **tuples) {
+    NestedTuple *nt = (NestedTuple *)malloc(sizeof(NestedTuple));
+    if (nt == NULL) {
+        return NULL;
+    }
+    nt->size = size;
+    nt->tuples = tuples;
+    return nt;
+}
+
+Tuple *create_tuple(int size, int *elements) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->size = size;
+    t->elements = elements;
+    return t;
+}
+
+void free_nested_tuple(NestedTuple *nt) {
+    if (nt == NULL) {
+        return;
+    }
+    for (int i = 0; i < nt->size; i++) {
+        if (nt->tuples[i] != NULL) {
+            free(nt->tuples[i]->elements);
+            free(nt->tuples[i]);
+        }
+    }
+    free(nt->tuples);
+    free(nt);
+}
+
+NestedTuple *add_nested_tuples(NestedTuple *a, NestedTuple *b) {
+    if (a == NULL || b == NULL || a->size != b->size) {
+        return NULL;
+    }
+    
+    int size = a->size;
+    Tuple **result_tuples = (Tuple **)malloc(size * sizeof(Tuple *));
+    if (result_tuples == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < size; i++) {
+        if (a->tuples[i] == NULL || b->tuples[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result_tuples[j]->elements);
+                free(result_tuples[j]);
+            }
+            free(result_tuples);
+            return NULL;
+        }
+        
+        if (a->tuples[i]->size != b->tuples[i]->size) {
+            for (int j = 0; j < i; j++) {
+                free(result_tuples[j]->elements);
+                free(result_tuples[j]);
+            }
+            free(result_tuples);
+            return NULL;
+        }
+        
+        int tuple_size = a->tuples[i]->size;
+        int *elements = (int *)malloc(tuple_size * sizeof(int));
+        if (elements == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(result_tuples[j]->elements);
+                free(result_tuples[j]);
+            }
+            free(result_tuples);
+            return NULL;
+        }
+        
+        for (int j = 0; j < tuple_size; j++) {
+            elements[j] = a->tuples[i]->elements[j] + b->tuples[i]->elements[j];
+        }
+        
+        result_tuples[i] = create_tuple(tuple_size, elements);
+        if (result_tuples[i] == NULL) {
+            free(elements);
+            for (int j = 0; j < i; j++) {
+                free(result_tuples[j]->elements);
+                free(result_tuples[j]);
+            }
+            free(result_tuples);
+            return NULL;
+        }
+    }
+    
+    NestedTuple *result = create_nested_tuple(size, result_tuples);
+    if (result == NULL) {
+        for (int i = 0; i < size; i++) {
+            free(result_tuples[i]->elements);
+            free(result_tuples[i]);
+        }
+        free(result_tuples);
+        return NULL;
+    }
+    
+    return result;
+}
+
+void print_nested_tuple(NestedTuple *nt) {
+    if (nt == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    
+    printf("(");
+    for (int i = 0; i < nt->size; i++) {
+        printf("(");
+        if (nt->tuples[i] != NULL) {
+            for (int j = 0; j < nt->tuples[i]->size; j++) {
+                printf("%d", nt->tuples[i]->elements[j]);
+                if (j < nt->tuples[i]->size - 1) {
+                    printf(", ");
+                }
+            }
+        }
+        printf(")");
+        if (i < nt->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    int elems1_1[] = {1, 2, 3};
+    int elems1_2[] = {4, 5, 6};
+    Tuple *t1_1 = create_tuple(3, elems1_1);
+    Tuple *t1_2 = create_tuple(3, elems1_2);
+    Tuple *tuples1[] = {t1_1, t1_2};
+    NestedTuple *nt1 = create_nested_tuple(2, tuples1);
+    
+    int elems2_1[] = {7, 8, 9};
+    int elems2_2[] = {10, 11, 12};
+    Tuple *t2_1 = create_tuple(3, elems2_1);
+    Tuple *t2_2 = create_tuple(3, elems2_2);
+    Tuple *tuples2[] = {t2_1, t2_2};
+    NestedTuple *nt2 = create_nested_tuple(2, tuples2);
+    
+    NestedTuple *result = add_nested_tuples(nt1, nt2);
+    
+    printf("First nested tuple: ");
+    print_nested_tuple(nt1);
+    printf("Second nested tuple: ");
+    print_nested_tuple(nt2);
+    printf("Sum result: ");
+    print_nested_tuple(result);
+    
+    free_nested_tuple(nt1);
+    free_nested_tuple(nt2);
+    free_nested_tuple(result);
+    
+    return 0;
+}
+```

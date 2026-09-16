@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool is_alternating(const char *str) {
+    if (str == NULL || str[0] == '\0' || str[1] == '\0') {
+        return false;
+    }
+
+    char first = str[0];
+    char second = str[1];
+
+    if (first == second) {
+        return false;
+    }
+
+    for (size_t i = 0; str[i] != '\0'; i++) {
+        if (i % 2 == 0) {
+            if (str[i] != first) {
+                return false;
+            }
+        } else {
+            if (str[i] != second) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "ababab";
+    const char *test2 = "xyxy";
+    const char *test3 = "aaaa";
+    const char *test4 = "abca";
+    const char *test5 = "ab";
+    const char *test6 = "a";
+    const char *test7 = "";
+
+    printf("\"%s\" -> %s\n", test1, is_alternating(test1) ? "true" : "false");
+    printf("\"%s\" -> %s\n", test2, is_alternating(test2) ? "true" : "false");
+    printf("\"%s\" -> %s\n", test3, is_alternating(test3) ? "true" : "false");
+    printf("\"%s\" -> %s\n", test4, is_alternating(test4) ? "true" : "false");
+    printf("\"%s\" -> %s\n", test5, is_alternating(test5) ? "true" : "false");
+    printf("\"%s\" -> %s\n", test6, is_alternating(test6) ? "true" : "false");
+    printf("\"%s\" -> %s\n", test7, is_alternating(test7) ? "true" : "false");
+
+    return 0;
+}
+```

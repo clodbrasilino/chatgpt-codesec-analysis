@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_DIVISOR 1000000
+
+int max_occurring_divisor(int start, int end) {
+    if (start > end || start < 1 || end < 1) {
+        return -1;
+    }
+    
+    if (end > MAX_DIVISOR) {
+        return -1;
+    }
+    
+    int *counts = (int *)calloc(end + 1, sizeof(int));
+    if (counts == NULL) {
+        return -1;
+    }
+    
+    for (int num = start; num <= end; num++) {
+        for (int d = 1; d * d <= num; d++) {
+            if (num % d == 0) {
+                counts[d]++;
+                if (d != num / d) {
+                    counts[num / d]++;
+                }
+            }
+        }
+    }
+    
+    int max_divisor = 1;
+    int max_count = counts[1];
+    
+    for (int i = 2; i <= end; i++) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+            max_divisor = i;
+        }
+    }
+    
+    free(counts);
+    return max_divisor;
+}
+
+int main(void) {
+    int start, end;
+    
+    printf("Enter interval start: ");
+    if (scanf("%d", &start) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter interval end: ");
+    if (scanf("%d", &end) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int result = max_occurring_divisor(start, end);
+    
+    if (result == -1) {
+        printf("Invalid interval or error occurred\n");
+        return 1;
+    }
+    
+    printf("Maximum occurring divisor in interval [%d, %d]: %d\n", start, end, result);
+    
+    return 0;
+}

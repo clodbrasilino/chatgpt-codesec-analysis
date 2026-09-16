@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+int count_negatives(int *list, size_t list_len) {
+    int count = 0;
+    for (size_t i = 0; i < list_len; ++i) {
+        if (list[i] < 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main() {
+    int numbers[] = {1, -2, 3, -4, 5, -6, 7, -8};
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+
+    int negative_count = count_negatives(numbers, len);
+    printf("Number of negative numbers: %d\n", negative_count);
+
+    return 0;
+}

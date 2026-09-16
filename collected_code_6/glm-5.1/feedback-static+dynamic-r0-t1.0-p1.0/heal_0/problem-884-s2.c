@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool check_bits_in_range(uint64_t num, int low, int high) {
+    if (low < 0 || high < 0 || low > 63 || high > 63 || low > high) {
+        return false;
+    }
+
+    uint64_t mask;
+    if (high == 63) {
+        mask = ~((1ULL << low) - 1);
+    } else {
+        mask = ((1ULL << (high - low + 1)) - 1) << low;
+    }
+
+    return (num & mask) == num;
+}
+
+int main(void) {
+    uint64_t val1 = 0ULL;
+    uint64_t val2 = 0b111ULL;
+    uint64_t val3 = 0b1000ULL;
+    uint64_t val4 = 0xFFFFFFFFFFFFFFFFULL;
+
+    if (check_bits_in_range(val1, 0, 1) != true) return 1;
+    if (check_bits_in_range(val2, 0, 2) != true) return 1;
+    if (check_bits_in_range(val3, 0, 2) != false) return 1;
+    if (check_bits_in_range(val4, 32, 63) != true) return 1;
+    if (check_bits_in_range(val3, -1, 2) != false) return 1;
+    if (check_bits_in_range(val3, 2, 1) != false) return 1;
+
+    printf("All tests passed.\n");
+    return 0;
+}

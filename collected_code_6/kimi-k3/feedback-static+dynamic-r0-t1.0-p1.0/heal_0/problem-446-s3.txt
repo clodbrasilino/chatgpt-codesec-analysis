@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *data;
+    size_t size;
+} List;
+
+int count_occurrences(const Tuple *tuple, const List *list) {
+    if (tuple == NULL || list == NULL || tuple->data == NULL || list->data == NULL) {
+        return -1;
+    }
+    
+    int total_count = 0;
+    
+    for (size_t i = 0; i < list->size; i++) {
+        for (size_t j = 0; j < tuple->size; j++) {
+            if (tuple->data[j] == list->data[i]) {
+                total_count++;
+            }
+        }
+    }
+    
+    return total_count;
+}
+
+int main(void) {
+    int tuple_data[] = {1, 2, 3, 2, 4, 2, 5};
+    int list_data[] = {2, 4};
+    
+    Tuple tuple = {tuple_data, sizeof(tuple_data) / sizeof(tuple_data[0])};
+    List list = {list_data, sizeof(list_data) / sizeof(list_data[0])};
+    
+    int result = count_occurrences(&tuple, &list);
+    
+    if (result >= 0) {
+        printf("Total occurrences: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

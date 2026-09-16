@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+void move_zeroes_to_end(int arr[], int n) {
+    int write_index = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (arr[i] != 0) {
+            arr[write_index++] = arr[i];
+        }
+    }
+    
+    while (write_index < n) {
+        arr[write_index++] = 0;
+    }
+}
+
+int main(void) {
+    int arr[] = {0, 1, 0, 3, 12, 0, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    move_zeroes_to_end(arr, n);
+    
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    
+    return 0;
+}

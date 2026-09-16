@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void *data;
+    size_t element_size;
+} SingletonTuple;
+
+typedef struct Node {
+    void *data;
+    struct Node *next;
+} ListNode;
+
+ListNode *copy_from_singleton_tuple(const SingletonTuple *tuple) {
+    ListNode *head = NULL;
+    
+    if (tuple == NULL || tuple->data == NULL || tuple->element_size == 0) {
+        return NULL;
+    }
+    
+    head = malloc(sizeof(ListNode));
+    if (head == NULL) {
+        return NULL;
+    }
+    
+    head->data = malloc(tuple->element_size);
+    if (head->data == NULL) {
+        free(head);
+        return NULL;
+    }
+    
+    memcpy(head->data, tuple->data, tuple->element_size);
+    head->next = NULL;
+    
+    return head;
+}
+
+void free_list(ListNode *head, size_t element_size) {
+    ListNode *current = head;
+    ListNode *next;
+    
+    while (current != NULL) {
+        next = current->next;
+        free(current->data);
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    int value = 42;
+    SingletonTuple tuple;
+    ListNode *copied_list = NULL;
+    
+    tuple.data = &value;
+    tuple.element_size = sizeof(int);
+    
+    copied_list = copy_from_singleton_tuple(&tuple);
+    if (copied_list == NULL) {
+        fprintf(stderr, "Failed to copy from singleton tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original value: %d\n", value);
+    printf("Copied value: %d\n", *(int *)copied_list->data);
+    
+    free_list(copied_list, sizeof(int));
+    
+    return EXIT_SUCCESS;
+}

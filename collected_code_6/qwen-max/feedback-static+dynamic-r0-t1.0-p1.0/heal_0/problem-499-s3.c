@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <math.h>
+
+double circle_diameter(double radius) {
+    if (radius < 0) {
+        fprintf(stderr, "Radius cannot be negative.\n");
+        return -1;
+    }
+    return 2 * radius;
+}
+
+int main() {
+    double radius = 5.0;
+    double diameter = circle_diameter(radius);
+    if (diameter != -1) {
+        printf("Diameter: %.2f\n", diameter);
+    }
+    return 0;
+}

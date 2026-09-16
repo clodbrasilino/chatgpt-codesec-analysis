@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-330-s2.c:24:37: error: subscripted value is not an array, pointer, or vector
+   24 |         size_t start = (size_t)match[2].rm_so;
+      |                                ~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-330-s2.c:25:39: error: subscripted value is not an array, pointer, or vector
+   25 |         size_t length = (size_t)(match[2].rm_eo - match[2].rm_so);
+      |                                  ~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-330-s2.c:25:56: error: subscripted value is not an array, pointer, or vector
+   25 |         size_t length = (size_t)(match[2].rm_eo - match[2].rm_so);
+      |                                                   ~~~~~^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-330-s2.c:34:24: error: subscripted value is not an array, pointer, or vector
+   34 |         cursor += match[2].rm_eo;
+      |                   ~~~~~^~
+4 errors generated.

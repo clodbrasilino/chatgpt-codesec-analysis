@@ -2,52 +2,68 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_SIZE 100
+
 typedef struct {
-    int *values;
-    size_t count;
-} IntTuple;
+    int *data;
+    size_t size;
+} Tuple;
 
-IntTuple parse_integers(const char *str) {
-    IntTuple tuple = {0};
-    const char *delim = " ,";
+Tuple* create_tuple(const char *str) {
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) return NULL;
+
     char *token;
-    char *temp_str = strdup(str);
-    if (temp_str == NULL) {
-        return tuple;
+    char *str_copy = strdup(str);
+    if (str_copy == NULL) {
+        free(tuple);
+        return NULL;
     }
 
-    token = strtok(temp_str, delim);
+    token = strtok(str_copy, ",");
+    tuple->size = 0;
+    tuple->data = (int*)malloc(MAX_SIZE * sizeof(int));
+
     while (token != NULL) {
-        int value = (int)strtol(token, NULL, 10);
-        tuple.values = realloc(tuple.values, (tuple.count + 1) * sizeof(int));
-        if (tuple.values == NULL) {
-            free(temp_str);
-            return tuple;
+        if (tuple->size >= MAX_SIZE) {
+            free(str_copy);
+            free(tuple->data);
+            free(tuple);
+            return NULL;
         }
-        tuple.values[tuple.count++] = value;
-        token = strtok(NULL, delim);
+        tuple->data[tuple->size++] = atoi(token);
+        token = strtok(NULL, ",");
     }
-    free(temp_str);
+
+    free(str_copy);
     return tuple;
 }
 
-void free_tuple(IntTuple *tuple) {
-    if (tuple->values != NULL) {
-        free(tuple->values);
-        tuple->values = NULL;
-        tuple->count = 0;
+void print_tuple(Tuple *tuple) {
+    for (size_t i = 0; i < tuple->size; i++) {
+        printf("%d", tuple->data[i]);
+        if (i < tuple->size - 1) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple) {
+        free(tuple->data);
+        free(tuple);
     }
 }
 
 int main() {
-    const char *input = "1, 2, 3, 4, 5";
-    IntTuple tuple = parse_integers(input);
-
-    for (size_t i = 0; i < tuple.count; ++i) {
-        printf("%d ", tuple.values[i]);
+    const char *str = "1,2,3,4,5,6";
+    Tuple *tuple = create_tuple(str);
+    if (tuple) {
+        print_tuple(tuple);
+        destroy_tuple(tuple);
+    } else {
+        fprintf(stderr, "Failed to create tuple\n");
     }
-    printf("\n");
-
-    free_tuple(&tuple);
     return 0;
 }

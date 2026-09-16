@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int chunk_tuples(const int *data, size_t length, size_t n, int ***chunks, size_t *chunk_count)
+{
+    if (chunks == NULL || chunk_count == NULL || n == 0) {
+        return -1;
+    }
+    *chunks = NULL;
+    *chunk_count = 0;
+    if (length == 0) {
+        return 0;
+    }
+    if (data == NULL) {
+        return -1;
+    }
+    if (length % n != 0) {
+        return -2;
+    }
+
+    size_t count = length / n;
+    int **result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return -3;
+    }
+
+    for (size_t i = 0; i < count; i++) {
+        result[i] = malloc(n * sizeof(*result[i]));
+        if (result[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(result[j]);
+            }
+            free(result);
+            return -3;
+        }
+        for (size_t j = 0; j < n; j++) {
+            result[i][j] = data[i * n + j];
+        }
+    }
+
+    *chunks = result;
+    *chunk_count = count;
+    return 0;
+}
+
+void free_chunks(int **chunks, size_t chunk_count)
+{
+    if (chunks == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < chunk_count; i++) {
+        free(chunks[i]);
+    }
+    free(chunks);
+}
+
+int main(void)
+{
+    int data[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t length = sizeof(data) / sizeof(data[0]);
+    size_t n = 3;
+    int **chunks = NULL;
+    size_t chunk_count = 0;
+    int status = chunk_tuples(data, length, n, &chunks, &chunk_count);
+    if (status != 0) {
+        fprintf(stderr, "Error: %d\n", status);
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < chunk_count; i++) {
+        printf("(");
+        for (size_t j = 0; j < n; j++) {
+            printf("%d", chunks[i][j]);
+            if (j + 1 < n) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+
+    free_chunks(chunks, chunk_count);
+    return EXIT_SUCCESS;
+}
+```

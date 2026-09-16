@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* list_modulo(const int* a, const int* b, size_t size) {
+    if (a == NULL || b == NULL || size == 0) {
+        return NULL;
+    }
+
+    int* result = (int*)malloc(size * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (b[i] == 0) {
+            free(result);
+            return NULL;
+        }
+        result[i] = a[i] % b[i];
+    }
+
+    return result;
+}
+
+int main(void) {
+    int a[] = {10, 25, 31, 44, 50};
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {3, 4, 7, 5, 8};
+    size_t size = sizeof(a) / sizeof(a[0]);
+
+    int* result = list_modulo(a, b, size);
+    if (result != NULL) {
+        for (size_t i = 0; i < size; ++i) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("Failed to compute modulo.\n");
+    }
+
+    int c[] = {10, 20, 30};
+    /* Possible weaknesses found:
+     *  Variable 'd' can be declared as const array [constVariable]
+     */
+    int d[] = {1, 0, 3};
+    size_t size2 = sizeof(c) / sizeof(c[0]);
+
+    /* Possible weaknesses found:
+     *  Variable 'result2' can be declared as pointer to const [constVariablePointer]
+     */
+    int* result2 = list_modulo(c, d, size2);
+    if (result2 == NULL) {
+        printf("Zero divisor handled correctly.\n");
+    }
+
+    return 0;
+}

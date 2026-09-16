@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void remove_spaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    char *dest = str;
+    while (*str) {
+        if (*str != ' ') {
+            *dest = *str;
+            dest++;
+        }
+        str++;
+    }
+    *dest = '\0';
+}
+
+int main(void) {
+    char *heap_str = malloc(50 * sizeof(char));
+    if (heap_str == NULL) {
+        return EXIT_FAILURE;
+    }
+    snprintf(heap_str, 50, "  H e l l o   W o r l d  ");
+
+    printf("Before: \"%s\"\n", heap_str);
+    remove_spaces(heap_str);
+    printf("After: \"%s\"\n", heap_str);
+    free(heap_str);
+    heap_str = NULL;
+
+    char stack_str[] = "C p r o g r a m m i n g";
+    printf("Before: \"%s\"\n", stack_str);
+    remove_spaces(stack_str);
+    printf("After: \"%s\"\n", stack_str);
+
+    return EXIT_SUCCESS;
+}

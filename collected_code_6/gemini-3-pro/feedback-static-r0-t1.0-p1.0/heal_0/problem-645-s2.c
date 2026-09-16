@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+long long product_of_kth_elements(Tuple *tuples, size_t num_tuples, size_t k) {
+    if (tuples == NULL || num_tuples == 0) {
+        return 0;
+    }
+
+    long long product = 1;
+    int valid_product = 0;
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        if (tuples[i].elements != NULL && k < tuples[i].size) {
+            product *= tuples[i].elements[k];
+            valid_product = 1;
+        }
+    }
+
+    return valid_product ? product : 0;
+}
+
+int main(void) {
+    size_t k = 1;
+    size_t num_tuples = 3;
+
+    Tuple *tuples = (Tuple *)malloc(num_tuples * sizeof(Tuple));
+    if (tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        tuples[i].size = 3;
+        tuples[i].elements = (int *)malloc(tuples[i].size * sizeof(int));
+        if (tuples[i].elements == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuples[j].elements);
+            }
+            free(tuples);
+            return EXIT_FAILURE;
+        }
+    }
+
+    tuples[0].elements[0] = 1; tuples[0].elements[1] = 2; tuples[0].elements[2] = 3;
+    tuples[1].elements[0] = 4; tuples[1].elements[1] = 5; tuples[1].elements[2] = 6;
+    tuples[2].elements[0] = 7; tuples[2].elements[1] = 8; tuples[2].elements[2] = 9;
+
+    long long result = product_of_kth_elements(tuples, num_tuples, k);
+    printf("%lld\n", result);
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        free(tuples[i].elements);
+    }
+    free(tuples);
+
+    return EXIT_SUCCESS;
+}

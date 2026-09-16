@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-192-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-192-s3.c:44:48: style: Condition 'string_has_letter_and_number(test5)' is always false [knownConditionTrueFalse]
+    printf("%s\n", string_has_letter_and_number(test5) ? "True" : "False");
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-192-s3.c:44:48: note: Calling function 'string_has_letter_and_number' returns 0
+    printf("%s\n", string_has_letter_and_number(test5) ? "True" : "False");
+                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-192-s3.c:44:48: note: Condition 'string_has_letter_and_number(test5)' is always false
+    printf("%s\n", string_has_letter_and_number(test5) ? "True" : "False");
+                                               ^

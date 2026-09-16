@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_occuring_divisor(int low, int high) {
+    int *freq = (int *)calloc(high + 1, sizeof(int));
+    if (freq == NULL) {
+        return -1;
+    }
+
+    for (int i = low; i <= high; i++) {
+        for (int j = 1; j * j <= i; j++) {
+            if (i % j == 0) {
+                freq[j]++;
+                if (j != i / j) {
+                    freq[i / j]++;
+                }
+            }
+        }
+    }
+
+    int max_freq = 0;
+    int max_div = 1;
+
+    for (int i = 1; i <= high; i++) {
+        if (freq[i] > max_freq) {
+            max_freq = freq[i];
+            max_div = i;
+        }
+    }
+
+    free(freq);
+    return max_div;
+}
+
+int main(void) {
+    int low, high;
+
+    printf("Enter interval [low, high]: ");
+    if (scanf("%d %d", &low, &high) != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return 1;
+    }
+
+    if (low > high || low < 1) {
+        fprintf(stderr, "Invalid interval.\n");
+        return 1;
+    }
+
+    int result = max_occuring_divisor(low, high);
+    if (result == -1) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    printf("Max occurring divisor: %d\n", result);
+
+    return 0;
+}
+```

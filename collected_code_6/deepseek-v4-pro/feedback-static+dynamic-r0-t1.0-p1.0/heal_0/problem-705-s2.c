@@ -1,0 +1,162 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    size_t length;
+} List;
+
+Node* create_node(int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+List* create_list(void) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    list->head = NULL;
+    list->length = 0;
+    return list;
+}
+
+void append_to_list(List* list, int value) {
+    if (list == NULL) {
+        return;
+    }
+    Node* new_node = create_node(value);
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+    list->length++;
+}
+
+void free_list(List* list) {
+    if (list == NULL) {
+        return;
+    }
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void free_list_array(List** lists, size_t count) {
+    if (lists == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < count; i++) {
+        free_list(lists[i]);
+    }
+    free(lists);
+}
+
+int compare_lists(const void* a, const void* b) {
+    const List* list_a = *(const List* const*)a;
+    const List* list_b = *(const List* const*)b;
+    
+    if (list_a->length != list_b->length) {
+        return list_a->length < list_b->length ? -1 : 1;
+    }
+    
+    Node* node_a = list_a->head;
+    Node* node_b = list_b->head;
+    
+    while (node_a != NULL && node_b != NULL) {
+        if (node_a->data != node_b->data) {
+            return node_a->data < node_b->data ? -1 : 1;
+        }
+        node_a = node_a->next;
+        node_b = node_b->next;
+    }
+    
+    return 0;
+}
+
+void sort_lists(List** lists, size_t count) {
+    if (lists == NULL || count == 0) {
+        return;
+    }
+    qsort(lists, count, sizeof(List*), compare_lists);
+}
+
+void print_list(const List* list) {
+    if (list == NULL) {
+        printf("[]");
+        return;
+    }
+    printf("[");
+    Node* current = list->head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(", ");
+        }
+        current = current->next;
+    }
+    printf("]");
+}
+
+int main(void) {
+    List** lists = (List**)malloc(4 * sizeof(List*));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    lists[0] = create_list();
+    append_to_list(lists[0], 3);
+    append_to_list(lists[0], 1);
+    append_to_list(lists[0], 2);
+    
+    lists[1] = create_list();
+    append_to_list(lists[1], 5);
+    
+    lists[2] = create_list();
+    append_to_list(lists[2], 3);
+    append_to_list(lists[2], 1);
+    
+    lists[3] = create_list();
+    append_to_list(lists[3], 2);
+    append_to_list(lists[3], 4);
+    
+    printf("Before sorting:\n");
+    for (size_t i = 0; i < 4; i++) {
+        print_list(lists[i]);
+        printf(" (length: %zu)\n", lists[i]->length);
+    }
+    
+    sort_lists(lists, 4);
+    
+    printf("\nAfter sorting by length and value:\n");
+    for (size_t i = 0; i < 4; i++) {
+        print_list(lists[i]);
+        printf(" (length: %zu)\n", lists[i]->length);
+    }
+    
+    free_list_array(lists, 4);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_abundant(int num) {
+    if (num <= 0) {
+        return false;
+    }
+
+    int sum_of_divisors = 0;
+
+    for (int i = 1; i <= num / 2; i++) {
+        if (num % i == 0) {
+            sum_of_divisors += i;
+        }
+    }
+
+    return sum_of_divisors > num;
+}
+
+int main(void) {
+    int number;
+
+    if (scanf("%d", &number) == 1) {
+        if (is_abundant(number)) {
+            printf("%d is an abundant number.\n", number);
+        } else {
+            printf("%d is not an abundant number.\n", number);
+        }
+    } else {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    return 0;
+}

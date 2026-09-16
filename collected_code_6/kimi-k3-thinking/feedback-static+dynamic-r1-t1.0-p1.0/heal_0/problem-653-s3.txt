@@ -1,0 +1,225 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} KVPair;
+
+typedef struct {
+    char **items;
+    size_t size;
+    size_t capacity;
+} ValueList;
+
+typedef struct {
+    char *key;
+    ValueList values;
+} MapEntry;
+
+typedef struct {
+    MapEntry *entries;
+    size_t size;
+    size_t capacity;
+} Map;
+
+static char *dup_string(const char *s)
+{
+    size_t len;
+    char *copy;
+
+    if (s == NULL) {
+        return NULL;
+    }
+    len = strlen(s);
+    copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, s, len + 1);
+    return copy;
+}
+
+static void value_list_init(ValueList *list)
+{
+    list->items = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+static int value_list_push(ValueList *list, const char *value)
+{
+    char **new_items;
+    char *copy;
+    size_t new_capacity;
+
+    copy = dup_string(value);
+    if (copy == NULL) {
+        return -1;
+    }
+    if (list->size == list->capacity) {
+        new_capacity = (list->capacity == 0) ? 4 : list->capacity * 2;
+        if (new_capacity < list->capacity ||
+            new_capacity > SIZE_MAX / sizeof(*new_items)) {
+            free(copy);
+            return -1;
+        }
+        new_items = realloc(list->items, new_capacity * sizeof(*new_items));
+        if (new_items == NULL) {
+            free(copy);
+            return -1;
+        }
+        list->items = new_items;
+        list->capacity = new_capacity;
+    }
+    list->items[list->size] = copy;
+    list->size++;
+    return 0;
+}
+
+static void value_list_free(ValueList *list)
+{
+    size_t i;
+
+    for (i = 0; i < list->size; i++) {
+        free(list->items[i]);
+    }
+    free(list->items);
+    list->items = NULL;
+    list->size = 0;
+    list->capacity = 0;
+}
+
+static void map_init(Map *map)
+{
+    map->entries = NULL;
+    map->size = 0;
+    map->capacity = 0;
+}
+
+static MapEntry *map_find(Map *map, const char *key)
+{
+    size_t i;
+
+    for (i = 0; i < map->size; i++) {
+        if (strcmp(map->entries[i].key, key) == 0) {
+            return &map->entries[i];
+        }
+    }
+    return NULL;
+}
+
+static int map_add(Map *map, const char *key, const char *value)
+{
+    MapEntry *entry;
+    MapEntry *new_entries;
+    size_t new_capacity;
+
+    entry = map_find(map, key);
+    if (entry != NULL) {
+        return value_list_push(&entry->values, value);
+    }
+    if (map->size == map->capacity) {
+        new_capacity = (map->capacity == 0) ? 4 : map->capacity * 2;
+        if (new_capacity < map->capacity ||
+            new_capacity > SIZE_MAX / sizeof(*new_entries)) {
+            return -1;
+        }
+        new_entries = realloc(map->entries, new_capacity * sizeof(*new_entries));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        map->entries = new_entries;
+        map->capacity = new_capacity;
+    }
+    entry = &map->entries[map->size];
+    entry->key = dup_string(key);
+    if (entry->key == NULL) {
+        return -1;
+    }
+    value_list_init(&entry->values);
+    if (value_list_push(&entry->values, value) != 0) {
+        free(entry->key);
+        entry->key = NULL;
+        return -1;
+    }
+    map->size++;
+    return 0;
+}
+
+static void map_free(Map *map)
+{
+    size_t i;
+
+    if (map == NULL) {
+        return;
+    }
+    for (i = 0; i < map->size; i++) {
+        free(map->entries[i].key);
+        value_list_free(&map->entries[i].values);
+    }
+    free(map->entries);
+    map->entries = NULL;
+    map->size = 0;
+    map->capacity = 0;
+}
+
+static int group_pairs(const KVPair *pairs, size_t count, Map *map)
+{
+    size_t i;
+
+    if (map == NULL || (pairs == NULL && count > 0)) {
+        return -1;
+    }
+    map_init(map);
+    for (i = 0; i < count; i++) {
+        if (pairs[i].key == NULL || pairs[i].value == NULL) {
+            continue;
+        }
+        if (map_add(map, pairs[i].key, pairs[i].value) != 0) {
+            map_free(map);
+            return -1;
+        }
+    }
+    return 0;
+}
+
+static void map_print(const Map *map)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < map->size; i++) {
+        printf("%s: [", map->entries[i].key);
+        for (j = 0; j < map->entries[i].values.size; j++) {
+            printf("%s%s", map->entries[i].values.items[j],
+                   (j + 1 < map->entries[i].values.size) ? ", " : "");
+        }
+        printf("]\n");
+    }
+}
+
+int main(void)
+{
+    KVPair pairs[] = {
+        {"fruit", "apple"},
+        {"vegetable", "carrot"},
+        {"fruit", "banana"},
+        {"grain", "rice"},
+        {"vegetable", "broccoli"},
+        {"fruit", "cherry"}
+    };
+    Map map;
+
+    if (group_pairs(pairs, sizeof(pairs) / sizeof(pairs[0]), &map) != 0) {
+        fprintf(stderr, "Failed to group key-value pairs\n");
+        return EXIT_FAILURE;
+    }
+    map_print(&map);
+    map_free(&map);
+    return EXIT_SUCCESS;
+}
+```

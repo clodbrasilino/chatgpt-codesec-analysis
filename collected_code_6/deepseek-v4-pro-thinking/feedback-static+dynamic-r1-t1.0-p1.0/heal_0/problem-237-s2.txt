@@ -1,0 +1,123 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int record;
+    int count;
+} RecordCount;
+
+int find_similar_occurrences(const int tuples[][2], int tuple_count, int **out_records, int *out_count) {
+    if (tuples == NULL || tuple_count <= 0 || out_records == NULL || out_count == NULL) {
+        return -1;
+    }
+
+    *out_records = NULL;
+    *out_count = 0;
+
+    size_t capacity = (size_t)tuple_count * 2;
+    RecordCount *counts = (RecordCount *)malloc(capacity * sizeof(RecordCount));
+    if (counts == NULL) {
+        return -1;
+    }
+
+    int unique_count = 0;
+
+    for (int i = 0; i < tuple_count; ++i) {
+        for (int j = 0; j < 2; ++j) {
+            int current = tuples[i][j];
+            int found = 0;
+
+            for (int k = 0; k < unique_count; ++k) {
+                if (counts[k].record == current) {
+                    counts[k].count++;
+                    found = 1;
+                    break;
+                }
+            }
+
+            if (!found) {
+                if ((size_t)unique_count >= capacity) {
+                    size_t new_capacity = capacity * 2;
+                    RecordCount *temp = (RecordCount *)realloc(counts, new_capacity * sizeof(RecordCount));
+                    if (temp == NULL) {
+                        free(counts);
+                        return -1;
+                    }
+                    counts = temp;
+                    capacity = new_capacity;
+                }
+
+                counts[unique_count].record = current;
+                counts[unique_count].count = 1;
+                unique_count++;
+            }
+        }
+    }
+
+    int *similar = (int *)malloc((size_t)unique_count * sizeof(int));
+    if (similar == NULL) {
+        free(counts);
+        return -1;
+    }
+
+    int similar_count = 0;
+
+    for (int i = 0; i < unique_count; ++i) {
+        int has_same_frequency = 0;
+
+        for (int j = 0; j < unique_count; ++j) {
+            if (i != j && counts[i].count == counts[j].count) {
+                has_same_frequency = 1;
+                break;
+            }
+        }
+
+        if (has_same_frequency) {
+            similar[similar_count] = counts[i].record;
+            similar_count++;
+        }
+    }
+
+    free(counts);
+
+    if (similar_count == 0) {
+        free(similar);
+        return 0;
+    }
+
+    *out_records = similar;
+    *out_count = similar_count;
+
+    return 0;
+}
+
+int main(void) {
+    int tuples[][2] = {
+        {1, 2},
+        {1, 2},
+        {3, 4}
+    };
+
+    int tuple_count = (int)(sizeof(tuples) / sizeof(tuples[0]));
+    int *records = NULL;
+    int count = 0;
+
+    int status = find_similar_occurrences(tuples, tuple_count, &records, &count);
+
+    if (status != 0) {
+        printf("Error\n");
+        return 1;
+    }
+
+    printf("Records with similar occurrence counts: %d\n", count);
+
+    for (int i = 0; i < count; ++i) {
+        printf("%d\n", records[i]);
+    }
+
+    free(records);
+
+    return 0;
+}
+```

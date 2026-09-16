@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_prime_factors(int num);
+int find_nth_smart_number(int n);
+
+int count_prime_factors(int num) {
+    if (num <= 1) {
+        return 0;
+    }
+    
+    int count = 0;
+    
+    if (num % 2 == 0) {
+        count++;
+        while (num % 2 == 0) {
+            num /= 2;
+        }
+    }
+    
+    for (int i = 3; i * i <= num; i += 2) {
+        if (num % i == 0) {
+            count++;
+            while (num % i == 0) {
+                num /= i;
+            }
+        }
+    }
+    
+    if (num > 2) {
+        count++;
+    }
+    
+    return count;
+}
+
+int find_nth_smart_number(int n) {
+    if (n <= 0) {
+        return -1;
+    }
+    
+    int count = 0;
+    int current = 30; 
+    
+    while (1) {
+        if (count_prime_factors(current) >= 3) {
+            count++;
+            if (count == n) {
+                return current; 
+            }
+        }
+        if (current == __INT_MAX__) {
+            return -1;
+        }
+        current++;
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int n = 0;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        return EXIT_FAILURE;
+    }
+    
+    int result = find_nth_smart_number(n);
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

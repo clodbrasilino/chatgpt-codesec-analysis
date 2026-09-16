@@ -6,43 +6,48 @@ typedef struct {
     int second;
 } Tuple;
 
-Tuple* create_tuple_list(int size) {
-    return (Tuple*)malloc(size * sizeof(Tuple));
-}
-
-void free_tuple_list(Tuple* list) {
-    free(list);
-}
-
-int get_nth_element(Tuple* list, int n, int* result) {
-    if (n < 0 || !list) {
-        return -1;
+Tuple* create_tuple(int first, int second) {
+    Tuple *t = (Tuple *)malloc(sizeof(Tuple));
+    if (t != NULL) {
+        t->first = first;
+        t->second = second;
     }
-    *result = list[n].first;
-    return 0;
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t != NULL) {
+        free(t);
+    }
+}
+
+Tuple* get_nth_element(Tuple *list[], int n, int size) {
+    if (n >= 0 && n < size) {
+        return list[n];
+    }
+    return NULL;
 }
 
 int main() {
-    Tuple* tuple_list = create_tuple_list(5);
-    if (!tuple_list) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
+    int size = 5;
+    Tuple *list[size];
+
+    for (int i = 0; i < size; ++i) {
+        list[i] = create_tuple(i, i * 2);
     }
 
-    tuple_list[0] = (Tuple){10, 20};
-    tuple_list[1] = (Tuple){30, 40};
-    tuple_list[2] = (Tuple){50, 60};
-    tuple_list[3] = (Tuple){70, 80};
-    tuple_list[4] = (Tuple){90, 100};
+    int n = 2;
+    Tuple *nth_element = get_nth_element(list, n, size);
 
-    int result;
-    int index = 2;
-    if (get_nth_element(tuple_list, index, &result) == 0) {
-        printf("The %dth element is: %d\n", index + 1, result);
+    if (nth_element != NULL) {
+        printf("Element %d: (%d, %d)\n", n, nth_element->first, nth_element->second);
     } else {
-        fprintf(stderr, "Failed to get the %dth element\n", index + 1);
+        printf("Invalid index\n");
     }
 
-    free_tuple_list(tuple_list);
+    for (int i = 0; i < size; ++i) {
+        free_tuple(list[i]);
+    }
+
     return 0;
 }

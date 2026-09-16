@@ -1,0 +1,19 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:54:43: error: member reference base type 'int' is not a structure or union
+   54 |         for (int j = 0; j < list->items[i].size; j++) {
+      |                             ~~~~~~~~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:55:38: error: member reference base type 'int' is not a structure or union
+   55 |             int item = list->items[i].items[j];
+      |                        ~~~~~~~~~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:90:37: error: member reference base type 'int' is not a structure or union
+   90 |         int min_val = list->items[i].items[0];
+      |                       ~~~~~~~~~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:91:43: error: member reference base type 'int' is not a structure or union
+   91 |         for (int j = 1; j < list->items[i].size; j++) {
+      |                             ~~~~~~~~~~~~~~^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:92:31: error: member reference base type 'int' is not a structure or union
+   92 |             if (list->items[i].items[j] < min_val) {
+      |                 ~~~~~~~~~~~~~~^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:93:41: error: member reference base type 'int' is not a structure or union
+   93 |                 min_val = list->items[i].items[j];
+      |                           ~~~~~~~~~~~~~~^~~~~~
+6 errors generated.

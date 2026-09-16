@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_delannoy(int n, int m) {
+    if (n < 0 || m < 0) {
+        return 0;
+    }
+    
+    unsigned long long **dp = (unsigned long long **)malloc((n + 1) * sizeof(unsigned long long *));
+    if (dp == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i] = (unsigned long long *)malloc((m + 1) * sizeof(unsigned long long));
+        if (dp[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(dp[j]);
+            }
+            free(dp);
+            return 0;
+        }
+    }
+    
+    for (int i = 0; i <= n; i++) {
+        dp[i][0] = 1;
+    }
+    for (int j = 0; j <= m; j++) {
+        dp[0][j] = 1;
+    }
+    
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            dp[i][j] = dp[i - 1][j] + dp[i][j - 1] + dp[i - 1][j - 1];
+        }
+    }
+    
+    unsigned long long result = dp[n][m];
+    
+    for (int i = 0; i <= n; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    
+    return result;
+}
+
+unsigned long long nth_delannoy(int n) {
+    return calculate_delannoy(n, n);
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 0) {
+        return 1;
+    }
+    
+    unsigned long long result = nth_delannoy(n);
+    printf("%llu\n", result);
+    
+    return 0;
+}
+```

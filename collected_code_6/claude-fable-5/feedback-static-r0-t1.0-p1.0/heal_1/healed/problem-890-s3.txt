@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_extra_element_index(const int *arr1, const int *arr2, size_t n)
+{
+    size_t low = 0;
+    size_t high = n;
+
+    if (arr1 == NULL || arr2 == NULL) {
+        return -1;
+    }
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+
+        if (arr1[mid] == arr2[mid]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+static int process_arrays(const int *arr1, size_t n1, const int *arr2, size_t n2)
+{
+    int index;
+
+    if (n1 != n2 + 1) {
+        fprintf(stderr, "Invalid input: first array must contain exactly one extra element\n");
+        return EXIT_FAILURE;
+    }
+
+    index = find_extra_element_index(arr1, arr2, n2);
+
+    if (index < 0) {
+        fprintf(stderr, "Error: invalid arrays\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Index of extra element: %d\n", index) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+    int arr1[] = {2, 4, 6, 8, 10, 12, 13};
+    int arr2[] = {2, 4, 6, 8, 10, 12};
+
+    return process_arrays(arr1, sizeof(arr1) / sizeof(arr1[0]),
+                          arr2, sizeof(arr2) / sizeof(arr2[0]));
+}
+```
+
+**Analysis of the changes:**
+
+1. **`knownConditionTrueFalse` warning** — In the original code, `n1` and `n2` were computed from `sizeof` on local arrays, making them compile-time constants (7 and 6). The static analyzer correctly determined that `n1 != n2 + 1` could never be true, flagging it as dead code. The fix moves the validation logic into a separate function `process_arrays()` that receives the sizes as runtime parameters. From the function's perspective, the values are no longer known constants, so the guard becomes a legitimate, reusable runtime check rather than dead code.
+
+2. **Redundant assignment warning** — The intermediate variables `n1` and `n2` holding known constant values were eliminated in `main()`; the `sizeof` expressions are passed directly as arguments, removing the flagged assignments.
+
+3. **Preserved defensive properties** — The `NULL` checks, the overflow-safe midpoint calculation (`low + (high - low) / 2`), the checked `printf` return value, and the correct handling of the edge case where the extra element is the last one (binary search converging to `n2`) are all retained.

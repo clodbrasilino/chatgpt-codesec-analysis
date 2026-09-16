@@ -1,121 +1,98 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
 typedef struct List {
-    int *data;
-    size_t size;
+    Node *head;
+    Node *tail;
 } List;
 
-typedef struct ListOfLists {
-    List **lists;
-    size_t count;
-} ListOfLists;
-
-ListOfLists* create_list_of_lists(size_t count) {
-    ListOfLists *lol = (ListOfLists *)malloc(sizeof(ListOfLists));
-    if (!lol) return NULL;
-    lol->lists = (List **)calloc(count, sizeof(List *));
-    if (!lol->lists) {
-        free(lol);
-        return NULL;
-    }
-    lol->count = count;
-    return lol;
-}
-
-void free_list(List *list) {
-    if (list) {
-        free(list->data);
-        free(list);
-    }
-}
-
-void free_list_of_lists(ListOfLists *lol) {
-    if (lol) {
-        for (size_t i = 0; i < lol->count; ++i) {
-            free_list(lol->lists[i]);
-        }
-        free(lol->lists);
-        free(lol);
-    }
-}
-
-List* create_list(size_t size) {
-    List *list = (List *)malloc(sizeof(List));
-    if (!list) return NULL;
-    list->data = (int *)calloc(size, sizeof(int));
-    if (!list->data) {
-        free(list);
-        return NULL;
-    }
-    list->size = size;
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    list->tail = NULL;
     return list;
 }
 
-ListOfLists* zip_lists(const ListOfLists *a, const ListOfLists *b, size_t n) {
-    if (a->count != b->count || a->count != n) return NULL;
-    ListOfLists *result = create_list_of_lists(n);
-    if (!result) return NULL;
-
-    for (size_t i = 0; i < n; ++i) {
-        result->lists[i] = create_list(a->lists[i]->size + b->lists[i]->size);
-        if (!result->lists[i]) {
-            free_list_of_lists(result);
-            return NULL;
-        }
-        for (size_t j = 0; j < a->lists[i]->size; ++j) {
-            result->lists[i]->data[j] = a->lists[i]->data[j];
-        }
-        for (size_t j = 0; j < b->lists[i]->size; ++j) {
-            result->lists[i]->data[a->lists[i]->size + j] = b->lists[i]->data[j];
-        }
+void append_to_list(List *list, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = value;
+    new_node->next = NULL;
+    if (list->head == NULL) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
     }
-    return result;
 }
 
-void print_list(const List *list) {
-    for (size_t i = 0; i < list->size; ++i) {
-        printf("%d ", list->data[i]);
+List* zip_lists(List *list1, List *list2) {
+    List *zipped_list = create_list();
+    Node *current1 = list1->head;
+    Node *current2 = list2->head;
+
+    while (current1 != NULL && current2 != NULL) {
+        append_to_list(zipped_list, current1->value);
+        append_to_list(zipped_list, current2->value);
+        current1 = current1->next;
+        current2 = current2->next;
+    }
+
+    while (current1 != NULL) {
+        append_to_list(zipped_list, current1->value);
+        current1 = current1->next;
+    }
+
+    while (current2 != NULL) {
+        append_to_list(zipped_list, current2->value);
+        current2 = current2->next;
+    }
+
+    return zipped_list;
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
     }
     printf("\n");
 }
 
-void print_list_of_lists(const ListOfLists *lol) {
-    for (size_t i = 0; i < lol->count; ++i) {
-        print_list(lol->lists[i]);
+void free_list(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
     }
+    free(list);
 }
 
 int main() {
-    ListOfLists *a = create_list_of_lists(3);
-    a->lists[0] = create_list(2);
-    a->lists[0]->data[0] = 1;
-    a->lists[0]->data[1] = 2;
-    a->lists[1] = create_list(2);
-    a->lists[1]->data[0] = 3;
-    a->lists[1]->data[1] = 4;
-    a->lists[2] = create_list(2);
-    a->lists[2]->data[0] = 5;
-    a->lists[2]->data[1] = 6;
+    List *list1 = create_list();
+    append_to_list(list1, 1);
+    append_to_list(list1, 2);
+    append_to_list(list1, 3);
 
-    ListOfLists *b = create_list_of_lists(3);
-    b->lists[0] = create_list(2);
-    b->lists[0]->data[0] = 7;
-    b->lists[0]->data[1] = 8;
-    b->lists[1] = create_list(2);
-    b->lists[1]->data[0] = 9;
-    b->lists[1]->data[1] = 10;
-    b->lists[2] = create_list(2);
-    b->lists[2]->data[0] = 11;
-    b->lists[2]->data[1] = 12;
+    List *list2 = create_list();
+    append_to_list(list2, 4);
+    append_to_list(list2, 5);
+    append_to_list(list2, 6);
+    append_to_list(list2, 7);
 
-    ListOfLists *result = zip_lists(a, b, 3);
+    List *zipped_list = zip_lists(list1, list2);
+    print_list(zipped_list);
 
-    print_list_of_lists(result);
-
-    free_list_of_lists(a);
-    free_list_of_lists(b);
-    free_list_of_lists(result);
+    free_list(list1);
+    free_list(list2);
+    free_list(zipped_list);
 
     return 0;
 }

@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int calculate_standard_deviation(const double *data, size_t n, double *result);
+
+int calculate_standard_deviation(const double *data, size_t n, double *result)
+{
+    size_t i;
+    double mean;
+    double sum;
+    double variance;
+
+    if (data == NULL || result == NULL || n < 2U) {
+        return -1;
+    }
+
+    sum = 0.0;
+    for (i = 0U; i < n; i++) {
+        sum += data[i];
+    }
+    mean = sum / (double)n;
+
+    variance = 0.0;
+    for (i = 0U; i < n; i++) {
+        double diff = data[i] - mean;
+        variance += diff * diff;
+    }
+    variance /= (double)(n - 1U);
+
+    if (variance < 0.0) {
+        return -1;
+    }
+
+    *result = sqrt(variance);
+    return 0;
+}
+
+int main(void)
+{
+    double values[] = { 2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0 };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    double stddev = 0.0;
+    int status;
+
+    status = calculate_standard_deviation(values, count, &stddev);
+    if (status != 0) {
+        if (fprintf(stderr, "Error: could not compute standard deviation\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Standard deviation: %f\n", stddev) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

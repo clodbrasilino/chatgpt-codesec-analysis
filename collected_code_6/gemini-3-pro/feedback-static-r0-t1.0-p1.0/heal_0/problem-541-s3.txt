@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool isAbundant(int n) {
+    if (n <= 0) {
+        return false;
+    }
+
+    long long sum = 0;
+    for (int i = 1; i <= n / 2; ++i) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+
+    return sum > n;
+}
+
+int main(void) {
+    int num;
+    
+    if (scanf("%d", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (isAbundant(num)) {
+        printf("The number %d is abundant.\n", num);
+    } else {
+        printf("The number %d is not abundant.\n", num);
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

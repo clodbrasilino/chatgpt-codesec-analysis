@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+int tuple_equals(Tuple a, Tuple b) {
+    return a.x == b.x && a.y == b.y;
+}
+
+int contains_tuple(const Tuple *arr, size_t size, Tuple t) {
+    for (size_t i = 0; i < size; i++) {
+        if (tuple_equals(arr[i], t)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int remove_matching_tuples(const Tuple *arr1, size_t size1, const Tuple *arr2, size_t size2,
+                           Tuple **res1, size_t *res1_size, Tuple **res2, size_t *res2_size) {
+    *res1 = NULL;
+    *res2 = NULL;
+    *res1_size = 0;
+    *res2_size = 0;
+
+    if (size1 > 0) {
+        *res1 = malloc(size1 * sizeof(Tuple));
+        if (*res1 == NULL) return -1;
+    }
+
+    if (size2 > 0) {
+        *res2 = malloc(size2 * sizeof(Tuple));
+        if (*res2 == NULL) {
+            free(*res1);
+            *res1 = NULL;
+            return -1;
+        }
+    }
+
+    size_t count1 = 0;
+    for (size_t i = 0; i < size1; i++) {
+        if (!contains_tuple(arr2, size2, arr1[i])) {
+            (*res1)[count1++] = arr1[i];
+        }
+    }
+
+    size_t count2 = 0;
+    for (size_t i = 0; i < size2; i++) {
+        if (!contains_tuple(arr1, size1, arr2[i])) {
+            (*res2)[count2++] = arr2[i];
+        }
+    }
+
+    if (count1 == 0) {
+        free(*res1);
+        *res1 = NULL;
+    } else if (count1 < size1) {
+        Tuple *tmp = realloc(*res1, count1 * sizeof(Tuple));
+        if (tmp != NULL) *res1 = tmp;
+    }
+
+    if (count2 == 0) {
+        free(*res2);
+        *res2 = NULL;
+    } else if (count2 < size2) {
+        Tuple *tmp = realloc(*res2, count2 * sizeof(Tuple));
+        if (tmp != NULL) *res2 = tmp;
+    }
+
+    *res1_size = count1;
+    *res2_size = count2;
+
+    return 0;
+}
+
+int main(void) {
+    Tuple arr1[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple arr2[] = {{3, 4}, {7, 8}, {1, 2}, {9, 10}};
+
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    Tuple *res1 = NULL;
+    Tuple *res2 = NULL;
+    size_t res1_size = 0;
+    size_t res2_size = 0;
+
+    if (remove_matching_tuples(arr1, size1, arr2, size2, &res1, &res1_size, &res2, &res2_size) == 0) {
+        printf("Result 1:\n");
+        for (size_t i = 0; i < res1_size; i++) {
+            printf("(%d, %d)\n", res1[i].x, res1[i].y);
+        }
+
+        printf("Result 2:\n");
+        for (size_t i = 0; i < res2_size; i++) {
+            printf("(%d, %d)\n", res2[i].x, res2[i].y);
+        }
+    }
+
+    free(res1);
+    free(res2);
+
+    return 0;
+}

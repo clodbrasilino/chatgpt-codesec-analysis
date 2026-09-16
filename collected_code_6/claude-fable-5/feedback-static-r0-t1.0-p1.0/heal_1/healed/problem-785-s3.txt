@@ -1,0 +1,158 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+
+int convert_tuple_string(const char *str, int **result, size_t *count)
+{
+    const char *p;
+    char *endptr;
+    int *values;
+    int *temp;
+    size_t capacity;
+    size_t n;
+
+    if (str == NULL || result == NULL || count == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    *count = 0;
+
+    p = str;
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+
+    if (*p != '(') {
+        return -1;
+    }
+    p++;
+
+    capacity = 4;
+    n = 0;
+    values = malloc(capacity * sizeof(int));
+    if (values == NULL) {
+        return -1;
+    }
+
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+
+    if (*p == ')') {
+        p++;
+        while (isspace((unsigned char)*p)) {
+            p++;
+        }
+        if (*p != '\0') {
+            free(values);
+            return -1;
+        }
+        free(values);
+        *result = NULL;
+        *count = 0;
+        return 0;
+    }
+
+    for (;;) {
+        long value;
+
+        while (isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        errno = 0;
+        value = strtol(p, &endptr, 10);
+        if (endptr == p) {
+            free(values);
+            return -1;
+        }
+        if (errno == ERANGE || value > INT_MAX || value < INT_MIN) {
+            free(values);
+            return -1;
+        }
+
+        if (n == capacity) {
+            if (capacity > SIZE_MAX / 2 / sizeof(int)) {
+                free(values);
+                return -1;
+            }
+            capacity *= 2;
+            temp = realloc(values, capacity * sizeof(int));
+            if (temp == NULL) {
+                free(values);
+                return -1;
+            }
+            values = temp;
+        }
+
+        values[n] = (int)value;
+        n++;
+
+        p = endptr;
+        while (isspace((unsigned char)*p)) {
+            p++;
+        }
+
+        if (*p == ',') {
+            p++;
+        } else if (*p == ')') {
+            p++;
+            break;
+        } else {
+            free(values);
+            return -1;
+        }
+    }
+
+    while (isspace((unsigned char)*p)) {
+        p++;
+    }
+    if (*p != '\0') {
+        free(values);
+        return -1;
+    }
+
+    *result = values;
+    *count = n;
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "(7, 8, 9, 10)";
+    int *tuple;
+    size_t count;
+    size_t i;
+
+    if (convert_tuple_string(input, &tuple, &count) != 0) {
+        fprintf(stderr, "Failed to parse tuple string\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Parsed %zu values: ", count);
+    for (i = 0; i < count; i++) {
+        printf("%d", tuple[i]);
+        if (i + 1 < count) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+
+    free(tuple);
+    return EXIT_SUCCESS;
+}
+```
+
+The key changes made to address the identified weakness:
+
+1. **Variable scope reduction**: The `long value` declaration was moved from function scope into the `for (;;)` loop body, since it is only used within a single iteration. This limits its lifetime to where it's actually needed, improving readability and reducing the chance of accidental misuse.
+
+2. **Added `<stdint.h>`**: The original code used `SIZE_MAX` in the overflow guard before `realloc`, but `SIZE_MAX` is defined in `<stdint.h>`, which was missing from the includes. Without it, the code may fail to compile or rely on transitive includes.
+
+The rest of the code was already robust: it validates all pointer arguments, handles empty tuples, guards against `strtol` range errors via `errno`/`INT_MAX`/`INT_MIN` checks, protects against `size_t` overflow when doubling capacity, uses a temporary pointer for `realloc` to avoid leaks on failure, and frees memory on every error path.

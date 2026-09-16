@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long first_factorial_divisible(unsigned long long x);
+
+unsigned long long first_factorial_divisible(unsigned long long x)
+{
+    unsigned long long remainder = 1ULL;
+    unsigned long long i;
+
+    if (x == 1ULL) {
+        return 1ULL;
+    }
+
+    for (i = 1ULL; i <= x; i++) {
+        remainder = (remainder * (i % x)) % x;
+        if (remainder == 0ULL) {
+            return i;
+        }
+    }
+
+    return x;
+}
+
+int main(void)
+{
+    unsigned long long x = 0ULL;
+    unsigned long long result;
+
+    printf("Enter a natural number x: ");
+    if (scanf("%llu", &x) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x == 0ULL) {
+        fprintf(stderr, "Error: x must be a natural number greater than zero\n");
+        return EXIT_FAILURE;
+    }
+
+    result = first_factorial_divisible(x);
+    printf("The first natural number whose factorial is divisible by %llu is %llu\n", x, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the design choices:
+
+- Instead of computing the full factorial (which overflows quickly), the function keeps only the running remainder modulo `x`. Since `n! % x == 0` if and only if the running product modulo `x` reaches zero, this avoids integer overflow entirely, which addresses CWE-664 by keeping the arithmetic resource within its valid range for its whole lifetime.
+- The return value of `scanf` is checked, and `x == 0` is rejected explicitly, addressing CWE-703 by handling exceptional input conditions rather than proceeding with invalid data.
+- The code uses `EXIT_SUCCESS`/`EXIT_FAILURE`, consistent unsigned types throughout, a prototype before use, and `main(void)`, adhering to standard C conventions per CWE-710.
+- The loop is bounded by `x` because `x!` is always divisible by `x`, guaranteeing termination.

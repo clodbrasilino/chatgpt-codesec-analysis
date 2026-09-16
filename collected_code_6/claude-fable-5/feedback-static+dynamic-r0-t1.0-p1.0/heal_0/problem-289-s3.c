@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_leap_year(int year)
+{
+    if ((year % 400) == 0)
+    {
+        return 1;
+    }
+    if ((year % 100) == 0)
+    {
+        return 0;
+    }
+    if ((year % 4) == 0)
+    {
+        return 1;
+    }
+    return 0;
+}
+
+int calculate_odd_days(int year)
+{
+    int leap_years;
+    int ordinary_years;
+    int total_odd_days;
+
+    if (year < 0)
+    {
+        return -1;
+    }
+
+    leap_years = (year / 4) - (year / 100) + (year / 400);
+    ordinary_years = year - leap_years;
+    total_odd_days = ((ordinary_years % 7) + ((leap_years * 2) % 7)) % 7;
+
+    return total_odd_days;
+}
+
+int main(void)
+{
+    int year;
+    int odd_days;
+    int result;
+
+    printf("Enter a year: ");
+    result = scanf("%d", &year);
+
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    odd_days = calculate_odd_days(year);
+
+    if (odd_days < 0)
+    {
+        fprintf(stderr, "Error: year must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of odd days up to year %d: %d\n", year, odd_days);
+    printf("Odd days in year %d itself: %d\n", year, is_leap_year(year) ? 2 : 1);
+
+    return EXIT_SUCCESS;
+}

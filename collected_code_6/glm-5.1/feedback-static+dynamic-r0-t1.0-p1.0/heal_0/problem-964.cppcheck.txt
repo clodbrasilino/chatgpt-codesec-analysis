@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-964.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-964.c:36:23: style: Condition 'is_length_even(NULL)' is always false [knownConditionTrueFalse]
+    if (is_length_even(NULL)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-964.c:36:23: note: Calling function 'is_length_even' returns 0
+    if (is_length_even(NULL)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-964.c:36:23: note: Condition 'is_length_even(NULL)' is always false
+    if (is_length_even(NULL)) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-964.c:16:10: style: Variable 'word3' can be declared as const array [constVariable]
+    char word3[] = "";
+         ^

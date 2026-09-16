@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-463.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-463.c:4:29: style: Parameter 'nums' can be declared as pointer to const [constParameterPointer]
+int maxProductSubarray(int* nums, int numsSize, int* start, int* end) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-463.c:55:26: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char* argv[]) {
+                         ^

@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int numWays(int n, int k) {
+    if (n == 0) return 0;
+    if (n == 1) return k;
+    
+    long long same = k;
+    long long diff = (long long)k * (k - 1);
+    long long total = same + diff;
+    
+    for (int i = 3; i <= n; i++) {
+        same = diff;
+        diff = total * (k - 1);
+        total = same + diff;
+    }
+    
+    return (int)total;
+}
+
+int main(void) {
+    int n, k;
+    
+    printf("Enter number of posts (n): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter number of colors (k): ");
+    if (scanf("%d", &k) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Values must be non-negative\n");
+        return 1;
+    }
+    
+    if (k == 0 && n > 0) {
+        printf("0\n");
+        return 0;
+    }
+    
+    if (k == 1 && n > 2) {
+        printf("0\n");
+        return 0;
+    }
+    
+    printf("%d\n", numWays(n, k));
+    
+    return 0;
+}
+```

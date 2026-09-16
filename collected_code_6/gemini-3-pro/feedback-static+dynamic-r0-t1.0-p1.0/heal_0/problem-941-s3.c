@@ -1,0 +1,120 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INTEGER,
+    TYPE_TUPLE
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int int_val;
+        void* tuple_val; 
+    } data;
+} Element;
+
+typedef struct Node {
+    Element element;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+} List;
+
+int count_elements_until_tuple(List* list) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    Node* current = list->head;
+
+    while (current != NULL) {
+        if (current->element.type == TYPE_TUPLE) {
+            break;
+        }
+        count++;
+        current = current->next;
+    }
+
+    return count;
+}
+
+void free_list(List* list) {
+    if (list == NULL) {
+        return;
+    }
+
+    Node* current = list->head;
+    while (current != NULL) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+List* create_list(void) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list != NULL) {
+        list->head = NULL;
+    }
+    return list;
+}
+
+int append_element(List* list, ElementType type, int int_val) {
+    if (list == NULL) {
+        return -1;
+    }
+
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    new_node->element.type = type;
+    if (type == TYPE_INTEGER) {
+        new_node->element.data.int_val = int_val;
+    } else {
+        new_node->element.data.tuple_val = NULL;
+    }
+    new_node->next = NULL;
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node* current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    List* list = create_list();
+    if (list == NULL) {
+        return 1;
+    }
+
+    if (append_element(list, TYPE_INTEGER, 10) != 0 ||
+        append_element(list, TYPE_INTEGER, 20) != 0 ||
+        append_element(list, TYPE_INTEGER, 30) != 0 ||
+        append_element(list, TYPE_TUPLE, 0) != 0 ||
+        append_element(list, TYPE_INTEGER, 40) != 0) {
+        free_list(list);
+        return 1;
+    }
+
+    int count = count_elements_until_tuple(list);
+    
+    printf("Elements until tuple: %d\n", count);
+
+    free_list(list);
+    return 0;
+}

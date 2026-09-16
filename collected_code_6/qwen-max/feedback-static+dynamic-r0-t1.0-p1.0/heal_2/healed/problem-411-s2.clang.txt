@@ -1,0 +1,11 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c:32:20: error: call to undeclared function 'snake_to_camle'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   32 |     char *camel1 = snake_to_camle(test1);
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c:32:20: note: did you mean 'snake_to_camel'?
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c:6:7: note: 'snake_to_camel' declared here
+    6 | char *snake_to_camel(const char *input) {
+      |       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-411-s2.c:32:11: error: incompatible integer to pointer conversion initializing 'char *' with an expression of type 'int' [-Wint-conversion]
+   32 |     char *camel1 = snake_to_camle(test1);
+      |           ^        ~~~~~~~~~~~~~~~~~~~~~
+2 errors generated.

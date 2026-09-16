@@ -43,11 +43,13 @@ class OpenAICompatibleClient:
             else:
                 kwargs["max_tokens"] = max_tokens
         else:
-            kwargs.update(
-                temperature=temperature,
-                top_p=top_p,
-                max_tokens=max_tokens,
-            )
+            kwargs.update(temperature=temperature, top_p=top_p)
+            # gpt-5.6-sol (and newer OpenAI models) reject 'max_tokens'
+            # with 400 unsupported_parameter even on the non-reasoning path.
+            if self.cfg.provider == "openai":
+                kwargs["max_completion_tokens"] = max_tokens
+            else:
+                kwargs["max_tokens"] = max_tokens
 
         def _call():
             return self.client.chat.completions.create(**kwargs)

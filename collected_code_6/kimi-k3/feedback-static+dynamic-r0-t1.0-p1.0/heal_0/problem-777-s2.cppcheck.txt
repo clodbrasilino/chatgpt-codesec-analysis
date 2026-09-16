@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-777-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-777-s2.c:31:14: style: Condition 'size==0' is always false [knownConditionTrueFalse]
+    if (size == 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-777-s2.c:29:28: note: Assignment 'size=sizeof(arr)/sizeof(arr[0])', assigned value is 7
+    int size = sizeof(arr) / sizeof(arr[0]);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-777-s2.c:31:14: note: Condition 'size==0' is always false
+    if (size == 0) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-777-s2.c:10:9: style: The scope of the variable 'count' can be reduced. [variableScope]
+    int count;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-777-s2.c:4:25: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+int sumNonRepeated(int *arr, int size) {
+                        ^

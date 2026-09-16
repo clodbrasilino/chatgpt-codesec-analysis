@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+long long count_factorial_digits(long long n)
+{
+    if (n < 0) {
+        return -1;
+    }
+    if (n <= 1) {
+        return 1;
+    }
+    double digits = 0.0;
+    for (long long i = 2; i <= n; i++) {
+        digits += log10((double)i);
+    }
+    return (long long)floor(digits) + 1;
+}
+
+int main(void)
+{
+    long long n = 0;
+    printf("Enter a non-negative integer: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    long long result = count_factorial_digits(n);
+    if (result < 0) {
+        fprintf(stderr, "Error: factorial is undefined for negative numbers.\n");
+        return EXIT_FAILURE;
+    }
+    printf("Number of digits in %lld! is %lld\n", n, result);
+    return EXIT_SUCCESS;
+}

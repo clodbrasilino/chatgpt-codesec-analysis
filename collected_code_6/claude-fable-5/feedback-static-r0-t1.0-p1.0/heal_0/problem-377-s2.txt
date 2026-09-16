@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void remove_char(char *str, char c)
+{
+    char *src;
+    char *dst;
+
+    if (str == NULL) {
+        return;
+    }
+
+    src = str;
+    dst = str;
+
+    while (*src != '\0') {
+        if (*src != c) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+    *dst = '\0';
+}
+
+int main(void)
+{
+    const char *original = "hello world, hello everyone";
+    char target = 'l';
+    size_t len;
+    char *buffer;
+
+    len = strlen(original);
+    buffer = malloc(len + 1);
+    if (buffer == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    memcpy(buffer, original, len + 1);
+
+    printf("Original: %s\n", buffer);
+    remove_char(buffer, target);
+    printf("After removing '%c': %s\n", target, buffer);
+
+    free(buffer);
+    buffer = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+- `remove_char` uses a two-pointer in-place approach with O(n) time and O(1) space, and guards against a `NULL` input pointer (CWE-703).
+- The `main` function checks the `malloc` return value before use, avoiding unchecked exceptional conditions (CWE-703).
+- The buffer is freed exactly once and the pointer is set to `NULL` afterward, ensuring proper resource lifetime control (CWE-664).
+- `memcpy` with a known length is used instead of unsafe unbounded copies, and the code uses standard return values (`EXIT_SUCCESS`/`EXIT_FAILURE`) and `int main(void)` per the C standard (CWE-710).

@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int* elements;
+    int size;
+    int total_digits;
+} Tuple;
+
+int count_digits(int num) {
+    int count = 0;
+    if (num == 0) return 1;
+    if (num < 0) num = -num;
+    while (num > 0) {
+        count++;
+        num /= 10;
+    }
+    return count;
+}
+
+int calculate_total_digits(const Tuple* t) {
+    int total = 0;
+    for (int i = 0; i < t->size; i++) {
+        total += count_digits(t->elements[i]);
+    }
+    return total;
+}
+
+int compare_tuples(const void* a, const void* b) {
+    const Tuple* tuple_a = (const Tuple*)a;
+    const Tuple* tuple_b = (const Tuple*)b;
+    return tuple_a->total_digits - tuple_b->total_digits;
+}
+
+void sort_tuples_by_digits(Tuple* tuples, int count) {
+    if (tuples == NULL || count <= 0) return;
+
+    for (int i = 0; i < count; i++) {
+        tuples[i].total_digits = calculate_total_digits(&tuples[i]);
+    }
+
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+int main() {
+    Tuple tuples[3];
+    int elements0[] = {12, 3};
+    int elements1[] = {456, 7890};
+    int elements2[] = {1};
+
+    tuples[0].elements = elements0;
+    tuples[0].size = 2;
+    
+    tuples[1].elements = elements1;
+    tuples[1].size = 2;
+    
+    tuples[2].elements = elements2;
+    tuples[2].size = 1;
+
+    sort_tuples_by_digits(tuples, 3);
+
+    for (int i = 0; i < 3; i++) {
+        printf("(");
+        for (int j = 0; j < tuples[i].size; j++) {
+            printf("%d", tuples[i].elements[j]);
+            if (j < tuples[i].size - 1) printf(", ");
+        }
+        printf(")\n");
+    }
+
+    return 0;
+}

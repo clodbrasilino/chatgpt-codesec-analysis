@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-203-s3.c:25:49: error: use of undeclared identifier 'errno'
+   25 |     if (*endptr1 != '\0' || *endptr2 != '\0' || errno == ERANGE) {
+      |                                                 ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-203-s3.c:25:58: error: use of undeclared identifier 'ERANGE'
+   25 |     if (*endptr1 != '\0' || *endptr2 != '\0' || errno == ERANGE) {
+      |                                                          ^~~~~~
+2 errors generated.

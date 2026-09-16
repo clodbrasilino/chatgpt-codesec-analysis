@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *lists;
+    size_t count;
+    size_t capacity;
+} ListCollection;
+
+int compare_lists(const void *a, const void *b) {
+    const IntList *list_a = (const IntList *)a;
+    const IntList *list_b = (const IntList *)b;
+    
+    if (list_a->size < list_b->size) {
+        return -1;
+    }
+    if (list_a->size > list_b->size) {
+        return 1;
+    }
+    
+    if (list_a->size == 0) {
+        return 0;
+    }
+    
+    return memcmp(list_a->data, list_b->data, list_a->size * sizeof(int));
+}
+
+int init_collection(ListCollection *collection, size_t initial_capacity) {
+    if (collection == NULL || initial_capacity == 0) {
+        return -1;
+    }
+    
+    collection->lists = malloc(initial_capacity * sizeof(IntList));
+    if (collection->lists == NULL) {
+        return -1;
+    }
+    
+    collection->count = 0;
+    collection->capacity = initial_capacity;
+    return 0;
+}
+
+int add_list(ListCollection *collection, const int *data, size_t size) {
+    if (collection == NULL || (data == NULL && size > 0)) {
+        return -1;
+    }
+    
+    if (collection->count >= collection->capacity) {
+        size_t new_capacity = collection->capacity * 2;
+        IntList *new_lists = realloc(collection->lists, new_capacity * sizeof(IntList));
+        if (new_lists == NULL) {
+            return -1;
+        }
+        collection->lists = new_lists;
+        collection->capacity = new_capacity;
+    }
+    
+    IntList *new_list = &collection->lists[collection->count];
+    new_list->size = size;
+    
+    if (size > 0) {
+        new_list->data = malloc(size * sizeof(int));
+        if (new_list->data == NULL) {
+            return -1;
+        }
+        memcpy(new_list->data, data, size * sizeof(int));
+    } else {
+        new_list->data = NULL;
+    }
+    
+    collection->count++;
+    return 0;
+}
+
+size_t count_unique_lists(ListCollection *collection) {
+    if (collection == NULL || collection->count == 0) {
+        return 0;
+    }
+    
+    qsort(collection->lists, collection->count, sizeof(IntList), compare_lists);
+    
+    size_t unique_count = 1;
+    for (size_t i = 1; i < collection->count; i++) {
+        if (compare_lists(&collection->lists[i-1], &collection->lists[i]) != 0) {
+            unique_count++;
+        }
+    }
+    
+    return unique_count;
+}
+
+void free_collection(ListCollection *collection) {
+    if (collection == NULL) {
+        return;
+    }
+    
+    if (collection->lists != NULL) {
+        for (size_t i = 0; i < collection->count; i++) {
+            free(collection->lists[i].data);
+        }
+        free(collection->lists);
+        collection->lists = NULL;
+    }
+    
+    collection->count = 0;
+    collection->capacity = 0;
+}
+
+int main(void) {
+    ListCollection collection;
+    
+    if (init_collection(&collection, 4) != 0) {
+        fprintf(stderr, "Failed to initialize collection\n");
+        return EXIT_FAILURE;
+    }
+    
+    /* Possible weaknesses found:
+     *  Variable 'data1' can be declared as const array [constVariable]
+     */
+    int data1[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'data2' can be declared as const array [constVariable]
+     */
+    int data2[] = {4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'data3' can be declared as const array [constVariable]
+     */
+    int data3[] = {1, 2, 3};
+    /* Possible weaknesses found:
+     *  Variable 'data4' can be declared as const array [constVariable]
+     */
+    int data4[] = {6, 7, 8, 9};
+    /* Possible weaknesses found:
+     *  Variable 'data5' can be declared as const array [constVariable]
+     */
+    int data5[] = {4, 5};
+    /* Possible weaknesses found:
+     *  Variable 'data6' can be declared as const array [constVariable]
+     */
+    int data6[] = {1, 2, 4};
+    
+    if (add_list(&collection, data1, 3) != 0 ||
+        add_list(&collection, data2, 2) != 0 ||
+        add_list(&collection, data3, 3) != 0 ||
+        add_list(&collection, data4, 4) != 0 ||
+        add_list(&collection, data5, 2) != 0 ||
+        add_list(&collection, data6, 3) != 0) {
+        fprintf(stderr, "Failed to add list\n");
+        free_collection(&collection);
+        return EXIT_FAILURE;
+    }
+    
+    size_t unique = count_unique_lists(&collection);
+    printf("Number of unique lists: %zu\n", unique);
+    
+    free_collection(&collection);
+    return EXIT_SUCCESS;
+}

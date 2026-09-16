@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_max(const int *arr, size_t n, int *max_out)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U || max_out == NULL) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    if (low == 0U) {
+        *max_out = arr[n - 1U];
+    } else {
+        *max_out = arr[low - 1U];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int arr1[] = {5, 6, 7, 8, 9, 1, 2, 3, 4};
+    int arr2[] = {3, 4, 5, 1, 2};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int arr4[] = {7};
+    int max_val;
+
+    if (find_max(arr1, sizeof(arr1) / sizeof(arr1[0]), &max_val) == 0) {
+        if (printf("Maximum: %d\n", max_val) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    if (find_max(arr2, sizeof(arr2) / sizeof(arr2[0]), &max_val) == 0) {
+        if (printf("Maximum: %d\n", max_val) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    if (find_max(arr3, sizeof(arr3) / sizeof(arr3[0]), &max_val) == 0) {
+        if (printf("Maximum: %d\n", max_val) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    if (find_max(arr4, sizeof(arr4) / sizeof(arr4[0]), &max_val) == 0) {
+        if (printf("Maximum: %d\n", max_val) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        return EXIT_FAILURE;
+    }
+
+    if (find_max(NULL, 0U, &max_val) != 0) {
+        if (printf("Invalid input handled correctly\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

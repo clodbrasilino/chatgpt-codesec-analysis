@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void remove_multiple_spaces(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    char *dest = str;
+    int in_space = 0;
+
+    while (*str) {
+        if (isspace((unsigned char)*str)) {
+            if (!in_space) {
+                *dest++ = ' ';
+                in_space = 1;
+            }
+        } else {
+            *dest++ = *str;
+            in_space = 0;
+        }
+        str++;
+    }
+    *dest = '\0';
+}
+
+int main(void) {
+    char str[] = "This   is  a    test   string.";
+    
+    printf("Original: '%s'\n", str);
+    remove_multiple_spaces(str);
+    printf("Modified: '%s'\n", str);
+    
+    return 0;
+}

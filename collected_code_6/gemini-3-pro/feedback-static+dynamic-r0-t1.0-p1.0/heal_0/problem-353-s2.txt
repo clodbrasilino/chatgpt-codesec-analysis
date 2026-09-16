@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int** data;
+    size_t rows;
+    size_t* cols;
+} NestedList;
+
+void remove_column(NestedList* list, size_t col_index) {
+    if (!list || !list->data || !list->cols) {
+        return;
+    }
+
+    for (size_t i = 0; i < list->rows; i++) {
+        if (!list->data[i] || col_index >= list->cols[i]) {
+            continue;
+        }
+
+        for (size_t j = col_index; j < list->cols[i] - 1; j++) {
+            list->data[i][j] = list->data[i][j + 1];
+        }
+
+        list->cols[i]--;
+
+        if (list->cols[i] > 0) {
+            int* new_row = realloc(list->data[i], list->cols[i] * sizeof(int));
+            if (new_row) {
+                list->data[i] = new_row;
+            }
+        } else {
+            free(list->data[i]);
+            list->data[i] = NULL;
+        }
+    }
+}
+
+int main(void) {
+    NestedList list;
+    list.rows = 3;
+    list.cols = malloc(list.rows * sizeof(size_t));
+    if (!list.cols) return 1;
+
+    list.data = malloc(list.rows * sizeof(int*));
+    if (!list.data) {
+        free(list.cols);
+        return 1;
+    }
+
+    for (size_t i = 0; i < list.rows; i++) {
+        list.cols[i] = 4;
+        list.data[i] = malloc(list.cols[i] * sizeof(int));
+        if (!list.data[i]) {
+            for (size_t j = 0; j < i; j++) free(list.data[j]);
+            free(list.data);
+            free(list.cols);
+            return 1;
+        }
+        for (size_t j = 0; j < list.cols[i]; j++) {
+            list.data[i][j] = (int)(i * 10 + j);
+        }
+    }
+
+    remove_column(&list, 2);
+
+    for (size_t i = 0; i < list.rows; i++) {
+        for (size_t j = 0; j < list.cols[i]; j++) {
+            printf("%d ", list.data[i][j]);
+        }
+        printf("\n");
+    }
+
+    for (size_t i = 0; i < list.rows; i++) {
+        free(list.data[i]);
+    }
+    free(list.data);
+    free(list.cols);
+
+    return 0;
+}
+```

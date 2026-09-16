@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long absll(long long value)
+{
+    return (value < 0) ? -value : value;
+}
+
+static long long digit_distance(long long a, long long b)
+{
+    long long ua = absll(a);
+    long long ub = absll(b);
+    long long distance = 0;
+
+    while (ua > 0 || ub > 0) {
+        long long da = ua % 10;
+        long long db = ub % 10;
+        distance += absll(da - db);
+        ua /= 10;
+        ub /= 10;
+    }
+
+    return distance;
+}
+
+int main(void)
+{
+    long long x = 0;
+    long long y = 0;
+
+    printf("Enter first integer: ");
+    if (scanf("%lld", &x) != 1) {
+        fprintf(stderr, "Invalid input for first integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter second integer: ");
+    if (scanf("%lld", &y) != 1) {
+        fprintf(stderr, "Invalid input for second integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x == LLONG_MIN || y == LLONG_MIN) {
+        fprintf(stderr, "Input value out of supported range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Digit distance: %lld\n", digit_distance(x, y));
+
+    return EXIT_SUCCESS;
+}

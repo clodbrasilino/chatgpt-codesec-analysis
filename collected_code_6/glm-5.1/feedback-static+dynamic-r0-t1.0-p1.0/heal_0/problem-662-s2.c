@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+int dictionary_cmp(const void *a, const void *b) {
+    const DictEntry *ea = (const DictEntry *)a;
+    const DictEntry *eb = (const DictEntry *)b;
+    return strcmp(ea->key, eb->key);
+}
+
+int dictionary_init(Dictionary *dict, size_t capacity) {
+    if (dict == NULL || capacity == 0) {
+        return -1;
+    }
+    dict->entries = (DictEntry *)malloc(capacity * sizeof(DictEntry));
+    if (dict->entries == NULL) {
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return 0;
+}
+
+void dictionary_free(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->entries[i].key);
+        dict->entries[i].key = NULL;
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int dictionary_insert(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = (DictEntry *)realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    char *new_key = (char *)malloc(strlen(key) + 1);
+    if (new_key == NULL) {
+        return -1;
+    }
+    strcpy(new_key, key);
+    dict->entries[dict->size].key = new_key;
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+void dictionary_sort(Dictionary *dict) {
+    if (dict == NULL || dict->entries == NULL || dict->size <= 1) {
+        return;
+    }
+    qsort(dict->entries, dict->size, sizeof(DictEntry), dictionary_cmp);
+}
+
+void dictionary_print(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        printf("%s: %d\n", dict->entries[i].key, dict->entries[i].value);
+    }
+}
+
+int main(void) {
+    Dictionary dict;
+    if (dictionary_init(&dict, 4) != 0) {
+        fprintf(stderr, "Initialization failed\n");
+        return 1;
+    }
+
+    if (dictionary_insert(&dict, "zebra", 5) != 0 ||
+        dictionary_insert(&dict, "apple", 1) != 0 ||
+        dictionary_insert(&dict, "mango", 3) != 0 ||
+        dictionary_insert(&dict, "banana", 2) != 0) {
+        fprintf(stderr, "Insertion failed\n");
+        dictionary_free(&dict);
+        return 1;
+    }
+
+    printf("Before sorting:\n");
+    dictionary_print(&dict);
+
+    dictionary_sort(&dict);
+
+    printf("\nAfter sorting:\n");
+    dictionary_print(&dict);
+
+    dictionary_free(&dict);
+    return 0;
+}

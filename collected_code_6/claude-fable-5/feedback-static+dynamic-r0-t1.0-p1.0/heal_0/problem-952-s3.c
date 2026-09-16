@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long power_mod(long long base, long long exp, long long mod)
+{
+    long long result = 1;
+    long long b = base % mod;
+
+    if (b < 0)
+    {
+        b += mod;
+    }
+
+    while (exp > 0)
+    {
+        if ((exp & 1LL) == 1LL)
+        {
+            result = (result * b) % mod;
+        }
+        b = (b * b) % mod;
+        exp >>= 1;
+    }
+
+    return result;
+}
+
+static long long mod_inverse(long long a, long long p)
+{
+    return power_mod(a, p - 2, p);
+}
+
+static int ncr_mod_p(long long n, long long r, long long p, long long *out)
+{
+    long long numerator;
+    long long denominator;
+    long long i;
+
+    if (out == NULL)
+    {
+        return -1;
+    }
+
+    if (n < 0 || r < 0 || p < 2)
+    {
+        return -1;
+    }
+
+    if (r > n)
+    {
+        *out = 0;
+        return 0;
+    }
+
+    if (r > n - r)
+    {
+        r = n - r;
+    }
+
+    numerator = 1;
+    denominator = 1;
+
+    for (i = 0; i < r; i++)
+    {
+        long long term_num = (n - i) % p;
+        long long term_den = (i + 1) % p;
+
+        numerator = (numerator * term_num) % p;
+        denominator = (denominator * term_den) % p;
+    }
+
+    if (denominator == 0)
+    {
+        return -1;
+    }
+
+    *out = (numerator * mod_inverse(denominator, p)) % p;
+    return 0;
+}
+
+int main(void)
+{
+    long long n;
+    long long r;
+    long long p;
+    long long result;
+
+    printf("Enter n, r, p: ");
+
+    if (scanf("%lld %lld %lld", &n, &r, &p) != 3)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (ncr_mod_p(n, r, p, &result) != 0)
+    {
+        fprintf(stderr, "Computation failed: invalid arguments\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("nCr mod p = %lld\n", result);
+    return EXIT_SUCCESS;
+}

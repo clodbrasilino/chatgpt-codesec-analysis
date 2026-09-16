@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+float rectangle_area(float length, float width) {
+    if (length <= 0 || width <= 0) {
+        fprintf(stderr, "Error: length and width must be positive values\n");
+        exit(EXIT_FAILURE);
+    }
+    return length * width;
+}
+
+int main(void) {
+    float length = 0.0f;
+    float width = 0.0f;
+    float area = 0.0f;
+
+    printf("Enter rectangle length: ");
+    if (scanf("%f", &length) != 1) {
+        fprintf(stderr, "Error: invalid input for length\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter rectangle width: ");
+    if (scanf("%f", &width) != 1) {
+        fprintf(stderr, "Error: invalid input for width\n");
+        return EXIT_FAILURE;
+    }
+
+    area = rectangle_area(length, width);
+    printf("Rectangle area: %.2f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```

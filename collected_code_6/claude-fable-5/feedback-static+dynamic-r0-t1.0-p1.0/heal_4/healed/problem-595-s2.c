@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+
+int min_swaps(const char *s1, const char *s2, long *swaps)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    long count10 = 0;
+    long count01 = 0;
+
+    if (s1 == NULL || s2 == NULL || swaps == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1') {
+                count10++;
+            } else {
+                count01++;
+            }
+        }
+    }
+
+    if (count10 != count01) {
+        return -1;
+    }
+
+    *swaps = count10;
+    return 0;
+}
+
+int print_min_swaps(const char *s1, const char *s2)
+{
+    long swaps = 0;
+
+    if (min_swaps(s1, s2, &swaps) != 0) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    if (printf("Minimum swaps required: %ld\n", swaps) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "0011";
+
+    if (print_min_swaps(a, b) != 0) {
+        return 1;
+    }
+
+    if (print_min_swaps("110", "0011") != 0) {
+        return 1;
+    }
+
+    if (print_min_swaps(NULL, "0011") != 0) {
+        return 1;
+    }
+
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+const char *divisor_count_parity(unsigned long long n)
+{
+    unsigned long long i;
+    unsigned long long count = 0;
+
+    for (i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            if (i * i == n) {
+                count += 1;
+            } else {
+                count += 2;
+            }
+        }
+    }
+
+    if (count % 2 == 0) {
+        return "Even";
+    }
+    return "Odd";
+}
+
+int main(void)
+{
+    unsigned long long n;
+
+    printf("Enter a positive integer: ");
+    if (scanf("%llu", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0) {
+        fprintf(stderr, "Input must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The count of divisors of %llu is %s\n", n, divisor_count_parity(n));
+
+    return EXIT_SUCCESS;
+}

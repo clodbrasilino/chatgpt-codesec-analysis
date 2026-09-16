@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_present_in_sequence(unsigned long long n) {
+    unsigned long long low = 1;
+    unsigned long long high = 1;
+    
+    if (n == 0) {
+        return false;
+    }
+    
+    while (high < n) {
+        low = high + 1;
+        high = high * 2;
+    }
+    
+    while (low <= high) {
+        unsigned long long mid = low + (high - low) / 2;
+        
+        if (mid == n) {
+            return true;
+        } else if (mid > n) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    unsigned long long number;
+    
+    printf("Enter a number: ");
+    if (scanf("%llu", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (is_present_in_sequence(number)) {
+        printf("%llu is present in the sequence.\n", number);
+    } else {
+        printf("%llu is not present in the sequence.\n", number);
+    }
+    
+    return 0;
+}

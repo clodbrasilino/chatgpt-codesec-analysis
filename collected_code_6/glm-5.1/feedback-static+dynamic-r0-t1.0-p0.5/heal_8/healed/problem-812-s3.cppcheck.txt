@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-812-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-812-s3.c:76:14: style: Condition 'res4!=NULL' is always false [knownConditionTrueFalse]
+    if (res4 != NULL) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-812-s3.c:75:33: note: Calling function 'abbreviate_road' returns 0
+    char *res4 = abbreviate_road(NULL);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-812-s3.c:75:33: note: Assignment 'res4=abbreviate_road(NULL)', assigned value is 0
+    char *res4 = abbreviate_road(NULL);
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_8/healed/problem-812-s3.c:76:14: note: Condition 'res4!=NULL' is always false
+    if (res4 != NULL) {
+             ^

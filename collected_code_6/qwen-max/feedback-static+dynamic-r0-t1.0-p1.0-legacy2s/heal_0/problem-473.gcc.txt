@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-473.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-473.c:57:38: error: passing argument 1 of 'findIntersection' from incompatible pointer type [-Wincompatible-pointer-types]
+   57 |     Tuple *result = findIntersection(tuples, count);
+      |                                      ^~~~~~
+      |                                      |
+      |                                      Tuple **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-473.c:28:32: note: expected 'Tuple *' but argument is of type 'Tuple **'
+   28 | Tuple* findIntersection(Tuple *tuples, size_t count) {
+      |                         ~~~~~~~^~~~~~

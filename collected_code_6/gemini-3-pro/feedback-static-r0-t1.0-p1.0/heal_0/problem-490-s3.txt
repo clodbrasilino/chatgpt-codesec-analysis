@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+void find_symmetric_pairs(Tuple* tuples, int size, Tuple** result, int* result_size) {
+    if (tuples == NULL || result == NULL || result_size == NULL || size <= 0) {
+        return;
+    }
+
+    *result = (Tuple*)malloc(size * sizeof(Tuple));
+    if (*result == NULL) {
+        *result_size = 0;
+        return;
+    }
+
+    *result_size = 0;
+
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (tuples[i].first == tuples[j].second && tuples[i].second == tuples[j].first) {
+                (*result)[*result_size].first = tuples[i].first;
+                (*result)[*result_size].second = tuples[i].second;
+                (*result_size)++;
+                break;
+            }
+        }
+    }
+
+    if (*result_size == 0) {
+        free(*result);
+        *result = NULL;
+    } else {
+        Tuple* temp = (Tuple*)realloc(*result, (*result_size) * sizeof(Tuple));
+        if (temp != NULL) {
+            *result = temp;
+        }
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {11, 20},
+        {30, 40},
+        {5, 10},
+        {40, 30},
+        {10, 5},
+        {20, 11}
+    };
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+    
+    Tuple* symmetric_pairs = NULL;
+    int result_size = 0;
+
+    find_symmetric_pairs(tuples, size, &symmetric_pairs, &result_size);
+
+    for (int i = 0; i < result_size; i++) {
+        printf("{%d, %d}\n", symmetric_pairs[i].first, symmetric_pairs[i].second);
+    }
+
+    if (symmetric_pairs != NULL) {
+        free(symmetric_pairs);
+        symmetric_pairs = NULL;
+    }
+
+    return 0;
+}
+```

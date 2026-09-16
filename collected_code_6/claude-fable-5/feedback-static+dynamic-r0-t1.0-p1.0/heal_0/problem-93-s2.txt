@@ -1,0 +1,159 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+static int power(double a, int b, double *result)
+{
+    double res = 1.0;
+    double base = a;
+    unsigned int exp;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (a == 0.0 && b < 0) {
+        return -1;
+    }
+
+    if (b < 0) {
+        if (b == INT_MIN) {
+            exp = (unsigned int)INT_MAX + 1U;
+        } else {
+            exp = (unsigned int)(-b);
+        }
+        base = 1.0 / a;
+    } else {
+        exp = (unsigned int)b;
+    }
+
+    while (exp > 0U) {
+        if ((exp & 1U) == 1U) {
+            res *= base;
+        }
+        base *= base;
+        exp >>= 1U;
+    }
+
+    if (isinf(res) || isnan(res)) {
+        return -1;
+    }
+
+    *result = res;
+    return 0;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    int b = 0;
+    double result = 0.0;
+    int items;
+
+    printf("Enter base (a): ");
+    items = scanf("%lf", &a);
+    if (items != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter exponent (b): ");
+    items = scanf("%d", &b);
+    if (items != 1) {
+        fprintf(stderr, "Invalid input for exponent\n");
+        return EXIT_FAILURE;
+    }
+
+    if (power(a, b, &result) != 0) {
+        fprintf(stderr, "Computation error: invalid operation or overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%g^%d = %g\n", a, b, result);
+    return EXIT_SUCCESS;
+}
+```
+
+Wait — I used `INT_MIN` and `INT_MAX` without including `<limits.h>`. Here is the corrected, complete version:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <math.h>
+
+static int power(double a, int b, double *result)
+{
+    double res = 1.0;
+    double base = a;
+    unsigned int exp;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (a == 0.0 && b < 0) {
+        return -1;
+    }
+
+    if (b < 0) {
+        if (b == INT_MIN) {
+            exp = (unsigned int)INT_MAX + 1U;
+        } else {
+            exp = (unsigned int)(-b);
+        }
+        base = 1.0 / a;
+    } else {
+        exp = (unsigned int)b;
+    }
+
+    while (exp > 0U) {
+        if ((exp & 1U) == 1U) {
+            res *= base;
+        }
+        base *= base;
+        exp >>= 1U;
+    }
+
+    if (isinf(res) || isnan(res)) {
+        return -1;
+    }
+
+    *result = res;
+    return 0;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    int b = 0;
+    double result = 0.0;
+
+    printf("Enter base (a): ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for base\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter exponent (b): ");
+    if (scanf("%d", &b) != 1) {
+        fprintf(stderr, "Invalid input for exponent\n");
+        return EXIT_FAILURE;
+    }
+
+    if (power(a, b, &result) != 0) {
+        fprintf(stderr, "Computation error: invalid operation or overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%g^%d = %g\n", a, b, result);
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety points addressed:
+- **CWE-703**: Every `scanf` return value is checked, division by zero (`0^negative`) is rejected, and overflow/NaN results are detected via `isinf`/`isnan` with an error status returned to the caller.
+- **CWE-664**: No dynamic resources are allocated; the result is passed through a caller-owned pointer that is validated before use, so no resource outlives its valid scope.
+- **CWE-710**: Strict C standard conformance — `int main(void)`, all functions fully prototyped, no undefined behavior on `INT_MIN` negation (handled explicitly), explicit return statuses, and no implicit conversions that lose value semantics.

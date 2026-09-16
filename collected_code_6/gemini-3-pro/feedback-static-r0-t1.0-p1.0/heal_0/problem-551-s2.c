@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct List {
+    struct Node* head;
+    struct List* next;
+};
+
+int* extractColumn(struct List* nestedList, int colIndex, int* outSize) {
+    if (nestedList == NULL || colIndex < 0 || outSize == NULL) {
+        if (outSize != NULL) {
+            *outSize = 0;
+        }
+        return NULL;
+    }
+
+    int numRows = 0;
+    struct List* currentList = nestedList;
+    while (currentList != NULL) {
+        numRows++;
+        currentList = currentList->next;
+    }
+
+    int* columnData = (int*)malloc(numRows * sizeof(int));
+    if (columnData == NULL) {
+        *outSize = 0;
+        return NULL;
+    }
+
+    currentList = nestedList;
+    int rowIndex = 0;
+    int actualSize = 0;
+
+    while (currentList != NULL) {
+        struct Node* currentNode = currentList->head;
+        int currentCol = 0;
+
+        while (currentNode != NULL && currentCol < colIndex) {
+            currentNode = currentNode->next;
+            currentCol++;
+        }
+
+        if (currentNode != NULL && currentCol == colIndex) {
+            columnData[actualSize] = currentNode->data;
+            actualSize++;
+        }
+        currentList = currentList->next;
+        rowIndex++;
+    }
+
+    if (actualSize == 0) {
+        free(columnData);
+        *outSize = 0;
+        return NULL;
+    }
+
+    if (actualSize < numRows) {
+        int* reallocData = (int*)realloc(columnData, actualSize * sizeof(int));
+        if (reallocData != NULL) {
+            columnData = reallocData;
+        }
+    }
+
+    *outSize = actualSize;
+    return columnData;
+}
+
+void freeNodeList(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        struct Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void freeNestedList(struct List* head) {
+    struct List* current = head;
+    while (current != NULL) {
+        struct List* next = current->next;
+        freeNodeList(current->head);
+        free(current);
+        current = next;
+    }
+}
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode != NULL) {
+        newNode->data = data;
+        newNode->next = NULL;
+    }
+    return newNode;
+}
+
+int main() {
+    struct List* nestedList = (struct List*)malloc(sizeof(struct List));
+    if (nestedList == NULL) return 1;
+    nestedList->next = (struct List*)malloc(sizeof(struct List));
+    if (nestedList->next == NULL) {
+        free(nestedList);
+        return 1;
+    }
+    nestedList->next->next = NULL;
+
+    nestedList->head = createNode(1);
+    if (nestedList->head) nestedList->head->next = createNode(2);
+    if (nestedList->head && nestedList->head->next) nestedList->head->next->next = createNode(3);
+
+    nestedList->next->head = createNode(4);
+    if (nestedList->next->head) nestedList->next->head->next = createNode(5);
+    if (nestedList->next->head && nestedList->next->head->next) nestedList->next->head->next->next = createNode(6);
+
+    int outSize = 0;
+    int* col = extractColumn(nestedList, 1, &outSize);
+
+    if (col != NULL) {
+        for (int i = 0; i < outSize; ++i) {
+            printf("%d\n", col[i]);
+        }
+        free(col);
+    }
+
+    freeNestedList(nestedList);
+
+    return 0;
+}

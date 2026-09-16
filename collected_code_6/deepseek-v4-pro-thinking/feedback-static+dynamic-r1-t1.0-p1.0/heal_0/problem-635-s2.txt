@@ -1,0 +1,164 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+static int heap_init(MinHeap *heap, size_t capacity) {
+    if (heap == NULL || capacity == 0 || capacity > ((size_t)-1) / sizeof(int)) {
+        return -1;
+    }
+    heap->data = malloc(capacity * sizeof(int));
+    if (heap->data == NULL) {
+        return -1;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return 0;
+}
+
+static void heap_destroy(MinHeap *heap) {
+    if (heap != NULL) {
+        free(heap->data);
+        heap->data = NULL;
+        heap->size = 0;
+        heap->capacity = 0;
+    }
+}
+
+static int heap_reserve(MinHeap *heap, size_t new_capacity) {
+    int *new_data;
+    if (heap == NULL || new_capacity <= heap->capacity) {
+        return 0;
+    }
+    if (new_capacity > ((size_t)-1) / sizeof(int)) {
+        return -1;
+    }
+    new_data = realloc(heap->data, new_capacity * sizeof(int));
+    if (new_data == NULL) {
+        return -1;
+    }
+    heap->data = new_data;
+    heap->capacity = new_capacity;
+    return 0;
+}
+
+static void heap_swap(int *a, int *b) {
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void heap_sift_up(MinHeap *heap, size_t index) {
+    while (index > 0) {
+        size_t parent = (index - 1) / 2;
+        if (heap->data[parent] <= heap->data[index]) {
+            break;
+        }
+        heap_swap(&heap->data[parent], &heap->data[index]);
+        index = parent;
+    }
+}
+
+static void heap_sift_down(MinHeap *heap, size_t index) {
+    for (;;) {
+        size_t left = index * 2 + 1;
+        size_t right = left + 1;
+        size_t smallest = index;
+        if (left < heap->size && heap->data[left] < heap->data[smallest]) {
+            smallest = left;
+        }
+        if (right < heap->size && heap->data[right] < heap->data[smallest]) {
+            smallest = right;
+        }
+        if (smallest == index) {
+            break;
+        }
+        heap_swap(&heap->data[index], &heap->data[smallest]);
+        index = smallest;
+    }
+}
+
+int heap_push(MinHeap *heap, int value) {
+    if (heap == NULL || heap->data == NULL) {
+        return -1;
+    }
+    if (heap->size == heap->capacity) {
+        size_t new_capacity;
+        if (heap->capacity > ((size_t)-1) / 2) {
+            return -1;
+        }
+        new_capacity = heap->capacity * 2;
+        if (heap_reserve(heap, new_capacity) != 0) {
+            return -1;
+        }
+    }
+    heap->data[heap->size] = value;
+    heap_sift_up(heap, heap->size);
+    heap->size++;
+    return 0;
+}
+
+int heap_pop(MinHeap *heap, int *out) {
+    if (heap == NULL || out == NULL || heap->size == 0) {
+        return -1;
+    }
+    *out = heap->data[0];
+    heap->size--;
+    if (heap->size > 0) {
+        heap->data[0] = heap->data[heap->size];
+        heap_sift_down(heap, 0);
+    }
+    return 0;
+}
+
+int heap_sort_values(const int *values, size_t count, int *sorted, size_t sorted_capacity) {
+    MinHeap heap;
+    size_t i;
+    if (count > sorted_capacity) {
+        return -1;
+    }
+    if (count > 0 && (values == NULL || sorted == NULL)) {
+        return -1;
+    }
+    if (heap_init(&heap, count == 0 ? 1 : count) != 0) {
+        return -1;
+    }
+    for (i = 0; i < count; i++) {
+        if (heap_push(&heap, values[i]) != 0) {
+            heap_destroy(&heap);
+            return -1;
+        }
+    }
+    for (i = 0; i < count; i++) {
+        if (heap_pop(&heap, &sorted[i]) != 0) {
+            heap_destroy(&heap);
+            return -1;
+        }
+    }
+    heap_destroy(&heap);
+    return 0;
+}
+
+int main(void) {
+    int values[] = {5, 2, 8, 1, 9, 3};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    int sorted[6];
+    size_t i;
+
+    if (heap_sort_values(values, count, sorted, count) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("%d ", sorted[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}
+```

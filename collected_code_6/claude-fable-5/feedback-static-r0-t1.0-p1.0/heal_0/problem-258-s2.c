@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_odd_elements(const int *arr, size_t len)
+{
+    size_t count = 0U;
+    size_t i;
+
+    if (arr == NULL) {
+        return 0U;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if ((arr[i] % 2) != 0) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int numbers[] = { 3, 8, 15, -7, 22, 0, 9, -4 };
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+    size_t odd_count;
+
+    odd_count = count_odd_elements(numbers, len);
+
+    if (printf("Number of odd elements: %zu\n", odd_count) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

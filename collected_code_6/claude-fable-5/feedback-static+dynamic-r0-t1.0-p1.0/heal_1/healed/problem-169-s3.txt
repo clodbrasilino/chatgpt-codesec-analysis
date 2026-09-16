@@ -1,0 +1,95 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+
+static int pell(unsigned int n, unsigned long long *result)
+{
+    unsigned long long prev;
+    unsigned long long curr;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        *result = 0ULL;
+        return 0;
+    }
+
+    if (n == 1U) {
+        *result = 1ULL;
+        return 0;
+    }
+
+    prev = 0ULL;
+    curr = 1ULL;
+
+    for (i = 2U; i <= n; i++) {
+        unsigned long long next;
+
+        if (curr > (ULLONG_MAX - prev) / 2ULL) {
+            return -1;
+        }
+        next = (2ULL * curr) + prev;
+        prev = curr;
+        curr = next;
+    }
+
+    *result = curr;
+    return 0;
+}
+
+int main(int argc, char *const argv[])
+{
+    char *endptr;
+    long value;
+    unsigned long long pell_result;
+
+    if (argc != 2) {
+        (void)fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    endptr = NULL;
+    value = strtol(argv[1], &endptr, 10);
+
+    if (errno != 0) {
+        (void)fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == argv[1] || *endptr != '\0') {
+        (void)fprintf(stderr, "Error: input is not a valid integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (value < 0L || value > (long)UINT_MAX) {
+        (void)fprintf(stderr, "Error: input out of range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (pell((unsigned int)value, &pell_result) != 0) {
+        (void)fprintf(stderr, "Error: result overflows\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Pell(%ld) = %llu\n", value, pell_result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The two identified weaknesses have been addressed as follows:
+
+1. **`variableScope` on `next`**: The variable `next` is now declared inside the `for` loop body, reducing its scope to the smallest block where it is actually used. This improves readability and prevents accidental use outside the loop.
+
+2. **`constParameter` on `argv`**: The parameter is now declared as `char *const argv[]`, making the array elements const pointers. This is compatible with `strtol` (which takes `const char *` for its first argument) and still allows `endptr` comparison against `argv[1]`, while documenting that the pointers in the array are never reassigned.
+
+All other defensive measures in the original code remain intact: NULL check on the output pointer, overflow detection before computing the next Pell number, full `strtol` error handling (errno, empty parse, trailing characters), range validation before the narrowing cast, and checked return values on all I/O calls.

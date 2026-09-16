@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+
+int compare_desc(const void *a, const void *b) {
+    return (*(const int *)b - *(const int *)a);
+}
+
+long long largest_number_from_digits(int *digits, size_t size) {
+    if (digits == NULL || size == 0) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < size; i++) {
+        if (digits[i] < 0 || digits[i] > 9) {
+            return -1;
+        }
+    }
+    
+    qsort(digits, size, sizeof(int), compare_desc);
+    
+    long long result = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (result > (LLONG_MAX - digits[i]) / 10) {
+            return -1;
+        }
+        result = result * 10 + digits[i];
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int digits[] = {4, 2, 8, 1, 9, 5};
+    size_t size = sizeof(digits) / sizeof(digits[0]);
+    
+    long long result = largest_number_from_digits(digits, size);
+    
+    if (result == -1) {
+        fprintf(stderr, "Error: Invalid input or overflow\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

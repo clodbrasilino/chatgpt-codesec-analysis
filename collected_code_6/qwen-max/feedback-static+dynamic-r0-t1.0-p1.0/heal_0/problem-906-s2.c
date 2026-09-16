@@ -1,57 +1,41 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <regex.h>
+#include <stdlib.h>
 
-typedef struct {
-    int year;
-    int month;
-    int day;
-} DateParts;
-
-int extract_date_from_url(const char *url, DateParts *date) {
+void extract_date_from_url(const char *url, int *year, int *month, int *day) {
     regex_t regex;
-    int reti;
-    regmatch_t matches[3];
+    regmatch_t matches[4];
+    const char *pattern = ".*\\/([0-9]{4})\\/([0-9]{2})\\/([0-9]{2}).*";
 
-    if (regcomp(&regex, "/([0-9]{4})/([0-9]{2})/([0-9]{2})", REG_EXTENDED) != 0) {
-        return -1;
+    if (regcomp(&regex, pattern, REG_EXTENDED) != 0) {
+        fprintf(stderr, "Regex compilation failed\n");
+        exit(1);
     }
 
-    if (regexec(&regex, url, 3, matches, 0) == 0) {
-        for (int i = 1; i <= 3; ++i) {
-            char *ptr;
-            long val;
-            ptr = malloc(matches[i].rm_eo - matches[i].rm_so + 1);
-            if (!ptr) {
-                regfree(&regex);
-                return -1;
-            }
-            strncpy(ptr, url + matches[i].rm_so, matches[i].rm_eo - matches[i].rm_so);
-            ptr[matches[i].rm_eo - matches[i].rm_so] = '\0';
-            val = strtol(ptr, NULL, 10);
-            free(ptr);
-            switch (i) {
-                case 1: date->year = val; break;
-                case 2: date->month = val; break;
-                case 3: date->day = val; break;
-            }
-        }
+    if (regexec(&regex, url, 4, matches, 0) == 0) {
+        *year = atoi(url + matches[1].rm_so);
+        *month = atoi(url + matches[2].rm_so);
+        *day = atoi(url + matches[3].rm_so);
     } else {
-        regfree(&regex);
-        return -1;
+        *year = -1;
+        *month = -1;
+        *day = -1;
     }
 
     regfree(&regex);
-    return 0;
 }
 
 int main() {
-    const char *url = "http://example.com/2023/10/01";
-    DateParts date;
-    if (extract_date_from_url(url, &date) == 0) {
-        printf("Year: %d, Month: %d, Day: %d\n", date.year, date.month, date.day);
+    const char *url = "http://example.com/2023/10/05/some-article";
+    int year, month, day;
+
+    extract_date_from_url(url, &year, &month, &day);
+
+    if (year != -1 && month != -1 && day != -1) {
+        printf("Year: %d, Month: %d, Day: %d\n", year, month, day);
     } else {
-        printf("Date extraction failed\n");
+        printf("Date not found in the URL.\n");
     }
+
     return 0;
 }

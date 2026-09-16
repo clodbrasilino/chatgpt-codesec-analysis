@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+
+int extract_element(const int *array, int rows, int cols, int target, int *result, int result_capacity) {
+    int count = 0;
+    int i;
+    int j;
+
+    if (rows < 0 || cols < 0 || result_capacity < 0) {
+        return -1;
+    }
+    if (array == NULL && rows > 0 && cols > 0) {
+        return -1;
+    }
+    if (result == NULL && result_capacity > 0) {
+        return -1;
+    }
+
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < cols; j++) {
+            if (array[i * cols + j] == target) {
+                if (result != NULL && count < result_capacity) {
+                    result[count] = target;
+                }
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int matrix[3][4] = {
+        {1, 2, 3, 4},
+        {5, 2, 7, 8},
+        {9, 2, 3, 2}
+    };
+    int result[10];
+    int total;
+    int i;
+
+    total = extract_element(&matrix[0][0], 3, 4, 2, result, 10);
+    if (total < 0) {
+        printf("Error\n");
+        return 1;
+    }
+
+    printf("Total occurrences: %d\n", total);
+    for (i = 0; i < total && i < 10; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+```

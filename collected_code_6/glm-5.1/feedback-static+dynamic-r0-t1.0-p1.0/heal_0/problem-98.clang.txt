@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-98.c:4:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
+    4 | doubleMultiplyAndDivide(double *array, size_t length) {
+      | ^
+      | int
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-98.c:19:18: error: call to undeclared function 'MultiplyAndDivide'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   19 |     double res = MultiplyAndDivide(data, len);
+      |                  ^
+2 errors generated.

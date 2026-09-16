@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int max_path_sum(const int *triangle, int rows)
+{
+    int *dp;
+    int i;
+    int j;
+    int result;
+    size_t last_row_offset;
+
+    if (triangle == NULL || rows <= 0) {
+        return 0;
+    }
+
+    dp = malloc((size_t)rows * sizeof(int));
+    if (dp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    last_row_offset = (size_t)(rows - 1) * (size_t)rows / 2U;
+    memcpy(dp, triangle + last_row_offset, (size_t)rows * sizeof(int));
+
+    for (i = rows - 2; i >= 0; i--) {
+        size_t row_offset = (size_t)i * (size_t)(i + 1) / 2U;
+        for (j = 0; j <= i; j++) {
+            int left = dp[j];
+            int right = dp[j + 1];
+            int best = (left > right) ? left : right;
+            dp[j] = triangle[row_offset + (size_t)j] + best;
+        }
+    }
+
+    result = dp[0];
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    const int triangle[] = {
+        1,
+        2, 1,
+        3, 3, 2
+    };
+    int rows = 3;
+    int answer;
+
+    answer = max_path_sum(triangle, rows);
+    if (printf("Maximum path sum: %d\n", answer) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix applied:**
+
+The static-analysis comment (`constVariable` from Cppcheck) flagged that `triangle` in `main` is never modified after initialization and is passed to a function taking a `const int *` parameter. Declaring it as `const int triangle[]` fixes this:
+
+- **Intent documentation:** The `const` qualifier makes it explicit that the triangle data is read-only.
+- **Compiler enforcement:** Any accidental write to the array now produces a compile-time error.
+- **Potential optimization:** The compiler may place the array in read-only storage (`.rodata`).
+
+**Notes on the rest of the code (already sound):**
+
+- `max_path_sum` correctly guards against `NULL` input and non-positive `rows`.
+- Triangular-number offsets use `size_t` arithmetic with explicit casts, avoiding signed overflow and implicit-conversion warnings.
+- `malloc` failure is checked; `dp` is freed exactly once before return — no leaks, no double-free.
+- The bottom-up DP is O(n²) time, O(n) space, which is optimal for this problem.
+- The `printf` return value is checked, satisfying strict error-handling standards (e.g., MISRA/CERT style).
+- No implicit conversions passing `const int[]` to `const int *` — the call remains fully valid after the fix.

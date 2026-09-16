@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+IntList list_difference(const int *a, size_t a_size, const int *b, size_t b_size) {
+    IntList result;
+    result.size = 0;
+
+    if (a_size == 0) {
+        result.data = NULL;
+        return result;
+    }
+
+    result.data = (int *)malloc(a_size * sizeof(int));
+    if (result.data == NULL) {
+        result.data = NULL;
+        return result;
+    }
+
+    for (size_t i = 0; i < a_size; i++) {
+        int found = 0;
+        for (size_t j = 0; j < b_size; j++) {
+            if (a[i] == b[j]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            result.data[result.size++] = a[i];
+        }
+    }
+
+    if (result.size == 0) {
+        free(result.data);
+        result.data = NULL;
+    } else if (result.size < a_size) {
+        int *temp = (int *)realloc(result.data, result.size * sizeof(int));
+        if (temp != NULL) {
+            result.data = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    int a[] = {1, 2, 3, 4, 5, 6};
+    int b[] = {2, 4, 6, 8};
+    size_t a_size = sizeof(a) / sizeof(a[0]);
+    size_t b_size = sizeof(b) / sizeof(b[0]);
+
+    IntList diff = list_difference(a, a_size, b, b_size);
+
+    for (size_t i = 0; i < diff.size; i++) {
+        printf("%d ", diff.data[i]);
+    }
+    printf("\n");
+
+    free(diff.data);
+
+    return 0;
+}
+```

@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define ROWS 3
+#define COLS 3
+
+static int min3(int a, int b, int c)
+{
+    int m = a;
+    if (b < m)
+    {
+        m = b;
+    }
+    if (c < m)
+    {
+        m = c;
+    }
+    return m;
+}
+
+int minCostPath(const int cost[ROWS][COLS], int m, int n, int *result)
+{
+    int i;
+    int j;
+    int **tc;
+
+    if (result == NULL)
+    {
+        return -1;
+    }
+    if (m < 0 || m >= ROWS || n < 0 || n >= COLS)
+    {
+        return -1;
+    }
+
+    tc = (int **)malloc((size_t)(m + 1) * sizeof(int *));
+    if (tc == NULL)
+    {
+        return -1;
+    }
+
+    for (i = 0; i <= m; i++)
+    {
+        tc[i] = (int *)malloc((size_t)(n + 1) * sizeof(int));
+        if (tc[i] == NULL)
+        {
+            for (j = 0; j < i; j++)
+            {
+                free(tc[j]);
+            }
+            free(tc);
+            return -1;
+        }
+    }
+
+    tc[0][0] = cost[0][0];
+
+    for (i = 1; i <= m; i++)
+    {
+        tc[i][0] = tc[i - 1][0] + cost[i][0];
+    }
+
+    for (j = 1; j <= n; j++)
+    {
+        tc[0][j] = tc[0][j - 1] + cost[0][j];
+    }
+
+    for (i = 1; i <= m; i++)
+    {
+        for (j = 1; j <= n; j++)
+        {
+            tc[i][j] = min3(tc[i - 1][j - 1], tc[i - 1][j], tc[i][j - 1]) + cost[i][j];
+        }
+    }
+
+    *result = tc[m][n];
+
+    for (i = 0; i <= m; i++)
+    {
+        free(tc[i]);
+    }
+    free(tc);
+
+    return 0;
+}
+
+int main(void)
+{
+    const int cost[ROWS][COLS] = {
+        {1, 2, 3},
+        {4, 8, 2},
+        {1, 5, 3}
+    };
+    int result = 0;
+
+    if (minCostPath(cost, 2, 2, &result) != 0)
+    {
+        fprintf(stderr, "Error computing minimum cost path\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum cost path: %d\n", result) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

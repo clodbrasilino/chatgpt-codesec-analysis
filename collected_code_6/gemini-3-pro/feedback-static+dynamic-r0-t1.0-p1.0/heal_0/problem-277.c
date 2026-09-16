@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    KeyValuePair *items;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary* create_dictionary(size_t capacity) {
+    if (capacity == 0) {
+        return NULL;
+    }
+    Dictionary *dict = malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->items = malloc(capacity * sizeof(KeyValuePair));
+    if (dict->items == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = capacity;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->items[i].key);
+        }
+        free(dict->items);
+        free(dict);
+    }
+}
+
+int add_item(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL || dict->size >= dict->capacity) {
+        return 0;
+    }
+    dict->items[dict->size].key = strdup(key);
+    if (dict->items[dict->size].key == NULL) {
+        return 0;
+    }
+    dict->items[dict->size].value = value;
+    dict->size++;
+    return 1;
+}
+
+Dictionary* filter_dictionary_by_value(const Dictionary *dict, int threshold) {
+    if (dict == NULL) {
+        return NULL;
+    }
+    Dictionary *filtered = create_dictionary(dict->capacity);
+    if (filtered == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        if (dict->items[i].value >= threshold) {
+            if (!add_item(filtered, dict->items[i].key, dict->items[i].value)) {
+                free_dictionary(filtered);
+                return NULL;
+            }
+        }
+    }
+    return filtered;
+}
+
+int main(void) {
+    Dictionary *dict = create_dictionary(5);
+    if (dict == NULL) {
+        return 1;
+    }
+
+    if (!add_item(dict, "apple", 10) ||
+        !add_item(dict, "banana", 5) ||
+        !add_item(dict, "cherry", 20) ||
+        !add_item(dict, "date", 3) ||
+        !add_item(dict, "elderberry", 15)) {
+        free_dictionary(dict);
+        return 1;
+    }
+
+    Dictionary *filtered = filter_dictionary_by_value(dict, 10);
+    if (filtered == NULL) {
+        free_dictionary(dict);
+        return 1;
+    }
+
+    for (size_t i = 0; i < filtered->size; i++) {
+        printf("%s: %d\n", filtered->items[i].key, filtered->items[i].value);
+    }
+
+    free_dictionary(filtered);
+    free_dictionary(dict);
+
+    return 0;
+}

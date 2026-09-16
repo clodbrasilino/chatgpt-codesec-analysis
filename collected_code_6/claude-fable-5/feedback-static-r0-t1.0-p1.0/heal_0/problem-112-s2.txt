@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double cylinder_perimeter(double radius, double height)
+{
+    return 2.0 * (radius + height);
+}
+
+int main(void)
+{
+    double radius;
+    double height;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius <= 0.0 || height <= 0.0) {
+        fprintf(stderr, "Error: radius and height must be positive values.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The perimeter of the cylinder is: %.2f\n", cylinder_perimeter(radius, height));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This program:
+
+1. **Defines `cylinder_perimeter`** using the standard formula `2 * (radius + height)`.
+2. **Checks `scanf` return values** to handle exceptional conditions (CWE-703) — malformed input won't leave variables uninitialized or cause undefined behavior.
+3. **Validates input values** so negative or zero dimensions are rejected before computation.
+4. **Uses `EXIT_SUCCESS`/`EXIT_FAILURE`** and `int main(void)` for standards adherence (CWE-710).
+5. **Acquires no dynamic resources**, so there's nothing to leak or misuse across its lifetime (CWE-664).

@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-192-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-192-s3.c:48:14: style: Condition 'res5==-1' is always true [knownConditionTrueFalse]
+    if (res5 == -1) {
+             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-192-s3.c:47:44: note: Calling function 'string_has_letter_and_number' returns -1
+    int res5 = string_has_letter_and_number(test5);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-192-s3.c:47:44: note: Assignment 'res5=string_has_letter_and_number(test5)', assigned value is -1
+    int res5 = string_has_letter_and_number(test5);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-192-s3.c:48:14: note: Condition 'res5==-1' is always true
+    if (res5 == -1) {
+             ^

@@ -1,0 +1,98 @@
+## Analysis
+
+The core DP algorithm (the "at most k transactions" stock-profit problem using a rolling `prev`/`curr` array with a running `maxDiff`) is structurally sound, but the reported test failures point at a few weaknesses:
+
+1. **Premature "got 0" results** — the early-exit guard and the `k > n/2` greedy shortcut interact badly with the DP path: when the shortcut isn't taken, the `maxDiff` update happens *after* `curr[d]` is computed using the *previous* row's value at index `d`, which allows a same-day buy/sell but, more importantly, if the swap parity or initialization is disturbed, the final read of `prev[n-1]` can pick up the zeroed buffer.
+2. **`result = prev[n-1]` after swap** — reading the answer after the pointer swap is fragile; reading `curr` state explicitly (or tracking the answer during the loop) is safer.
+3. **No validation of the algorithm against known-answer test cases** — the failures (`expected 2`, `expected 7`, `expected 10`) are classic LeetCode-188 cases; a test harness in `main` should verify them rather than printing a single ad-hoc result.
+4. **Minor robustness issues** — `maxDiff` should be initialized per transaction from `prices[0]`, and the update of `maxDiff` should occur before it is consumed for day `d` so a buy on day `d` and sell on day `d` (zero-profit, harmless but cleaner) is handled consistently.
+
+Below is the rewritten, corrected version with a self-checking `main`:
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int *prev;
+    int *curr;
+    int *tmp;
+    int t;
+    int d;
+    int result;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        result = 0;
+        for (d = 1; d < n; d++) {
+            if (prices[d] > prices[d - 1]) {
+                result += prices[d] - prices[d - 1];
+            }
+        }
+        return result;
+    }
+
+    prev = calloc((size_t)n, sizeof(int));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc((size_t)n, sizeof(int));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    result = 0;
+
+    for (t = 1; t <= k; t++) {
+        int maxDiff = prev[0] - prices[0];
+        curr[0] = 0;
+        for (d = 1; d < n; d++) {
+            if (prev[d] - prices[d] > maxDiff) {
+                maxDiff = prev[d] - prices[d];
+            }
+            curr[d] = curr[d - 1];
+            if (prices[d] + maxDiff > curr[d]) {
+                curr[d] = prices[d] + maxDiff;
+            }
+        }
+        if (curr[n - 1] > result) {
+            result = curr[n - 1];
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices0[] = {10, 22, 5, 75, 65, 80};
+    int prices1[] = {3, 2, 6, 5, 0, 3};
+    int prices2[] = {2, 4, 1};
+
+    struct {
+        int k;
+        const int *prices;
+        int n;
+        int expected;
+    } tests[] = {
+        {2, prices0, (int)(sizeof(prices0) / sizeof(prices0[0])), 87},
+        {2, prices1, (int)(sizeof(prices1) / sizeof(prices1[0])), 7},
+        {2, prices2, (int)(sizeof(prices2) / sizeof(prices2[0])), 2}
+    };
+
+    int numTests = (int)(sizeof(tests) / sizeof(tests[0]));
+    int

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 2, got 5
+  *  test case 1 failed: expected 115975, got 678570
+  *  test case 2 failed: expected 6775685320645824322581483068371419745979053216268760300, got 310653722294342475
+  */
+
+unsigned long long bell_number(int n) {
+    if (n < 0) return 0;
+    if (n == 0) return 1;
+    
+    unsigned long long *bell = (unsigned long long *)calloc(n + 1, sizeof(unsigned long long));
+    if (!bell) return 0;
+    
+    bell[0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        unsigned long long prev = bell[0];
+        bell[0] = bell[i - 1];
+        
+        for (int j = 1; j <= i; j++) {
+            unsigned long long temp = bell[j];
+            bell[j] = prev + bell[j - 1];
+            prev = temp;
+        }
+    }
+    
+    unsigned long long result = bell[n];
+    free(bell);
+    return result;
+}
+
+int main(void) {
+    int n;
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "n must be non-negative\n");
+        return 1;
+    }
+    
+    unsigned long long result = bell_number(n);
+    printf("Bell number B_%d = %llu\n", n, result);
+    
+    return 0;
+}

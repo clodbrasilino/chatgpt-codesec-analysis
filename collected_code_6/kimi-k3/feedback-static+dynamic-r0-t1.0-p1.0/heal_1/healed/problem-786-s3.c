@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int find_insertion_point(const int *arr, size_t size, int value, size_t *result)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+
+    low = 0;
+    high = size;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+
+        if (arr[mid] < value) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    *result = low;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 3, 5, 7, 9, 11, 13, 15};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t insertion_point;
+    int value;
+    int status;
+
+    value = 7;
+    status = find_insertion_point(arr, size, value, &insertion_point);
+    if (status != 0) {
+        fprintf(stderr, "Error: find_insertion_point failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Insertion point for %d: index %zu\n", value, insertion_point);
+
+    value = 6;
+    status = find_insertion_point(arr, size, value, &insertion_point);
+    if (status != 0) {
+        fprintf(stderr, "Error: find_insertion_point failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Insertion point for %d: index %zu\n", value, insertion_point);
+
+    value = 0;
+    status = find_insertion_point(arr, size, value, &insertion_point);
+    if (status != 0) {
+        fprintf(stderr, "Error: find_insertion_point failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Insertion point for %d: index %zu\n", value, insertion_point);
+
+    value = 20;
+    status = find_insertion_point(arr, size, value, &insertion_point);
+    if (status != 0) {
+        fprintf(stderr, "Error: find_insertion_point failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Insertion point for %d: index %zu\n", value, insertion_point);
+
+    value = 5;
+    status = find_insertion_point(arr, size, value, &insertion_point);
+    if (status != 0) {
+        fprintf(stderr, "Error: find_insertion_point failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("Insertion point for %d: index %zu\n", value, insertion_point);
+
+    return EXIT_SUCCESS;
+}

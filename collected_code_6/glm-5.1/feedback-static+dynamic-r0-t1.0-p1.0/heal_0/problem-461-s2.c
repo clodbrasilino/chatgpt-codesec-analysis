@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <ctype.h>
+
+size_t count_uppercase(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t count = 0;
+    size_t i = 0;
+
+    while (str[i] != '\0') {
+        if (isupper((unsigned char)str[i])) {
+            count++;
+        }
+        i++;
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *text = "Hello World!";
+    size_t result = count_uppercase(text);
+    printf("%zu\n", result);
+    return 0;
+}

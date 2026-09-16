@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long calculate_ascii_sum(const char *str) {
+    long long sum = 0;
+    
+    if (str == NULL) {
+        return -1;
+    }
+
+    while (*str != '\0') {
+        sum += (unsigned char)(*str);
+        str++;
+    }
+
+    return sum;
+}
+
+int main() {
+    char input_string[1024];
+
+    if (fgets(input_string, sizeof(input_string), stdin) == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    long long total_ascii_value = calculate_ascii_sum(input_string);
+
+    if (total_ascii_value == -1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%lld\n", total_ascii_value);
+
+    return EXIT_SUCCESS;
+}
+```

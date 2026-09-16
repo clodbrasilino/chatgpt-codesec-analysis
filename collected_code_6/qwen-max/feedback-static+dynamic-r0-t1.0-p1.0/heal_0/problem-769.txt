@@ -7,84 +7,92 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-Node* create_node(int value) {
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    if (new_node == NULL) {
+typedef struct List {
+    Node *head;
+} List;
+
+List* createList() {
+    List *list = (List*)malloc(sizeof(List));
+    if (list == NULL) {
         exit(EXIT_FAILURE);
     }
-    new_node->value = value;
-    new_node->next = NULL;
-    return new_node;
+    list->head = NULL;
+    return list;
 }
 
-void add_to_list(Node **list, int value) {
-    Node *new_node = create_node(value);
-    if (*list == NULL) {
-        *list = new_node;
-    } else {
-        Node *current = *list;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = new_node;
+void addNode(List *list, int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
     }
+    newNode->value = value;
+    newNode->next = list->head;
+    list->head = newNode;
 }
 
-Node* list_difference(Node *list1, Node *list2) {
-    Node *result = NULL;
-    for (Node *current1 = list1; current1 != NULL; current1 = current1->next) {
+List* getDifference(List *list1, List *list2) {
+    List *result = createList();
+    Node *current1 = list1->head;
+    while (current1 != NULL) {
         int found = 0;
-        for (Node *current2 = list2; current2 != NULL && !found; current2 = current2->next) {
-            if (current2->value == current1->value) {
+        Node *current2 = list2->head;
+        while (current2 != NULL) {
+            if (current1->value == current2->value) {
                 found = 1;
+                break;
             }
+            current2 = current2->next;
         }
         if (!found) {
-            add_to_list(&result, current1->value);
+            addNode(result, current1->value);
         }
+        current1 = current1->next;
     }
     return result;
 }
 
-void print_list(Node *list) {
-    for (Node *current = list; current != NULL; current = current->next) {
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
         printf("%d -> ", current->value);
+        current = current->next;
     }
     printf("NULL\n");
 }
 
-void free_list(Node *list) {
-    Node *current = list;
+void freeList(List *list) {
+    Node *current = list->head;
     while (current != NULL) {
         Node *temp = current;
         current = current->next;
         free(temp);
     }
+    free(list);
 }
 
 int main() {
-    Node *list1 = NULL;
-    Node *list2 = NULL;
-    
-    add_to_list(&list1, 1);
-    add_to_list(&list1, 2);
-    add_to_list(&list1, 3);
-    add_to_list(&list1, 4);
-    
-    add_to_list(&list2, 2);
-    add_to_list(&list2, 3);
-    add_to_list(&list2, 5);
-    
-    print_list(list1);
-    print_list(list2);
-    
-    Node *diff = list_difference(list1, list2);
-    print_list(diff);
-    
-    free_list(list1);
-    free_list(list2);
-    free_list(diff);
-    
+    List *list1 = createList();
+    List *list2 = createList();
+
+    addNode(list1, 5);
+    addNode(list1, 3);
+    addNode(list1, 1);
+    addNode(list1, 4);
+
+    addNode(list2, 3);
+    addNode(list2, 1);
+    addNode(list2, 2);
+
+    printList(list1);
+    printList(list2);
+
+    List *difference = getDifference(list1, list2);
+    printList(difference);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(difference);
+
     return 0;
 }
 ```

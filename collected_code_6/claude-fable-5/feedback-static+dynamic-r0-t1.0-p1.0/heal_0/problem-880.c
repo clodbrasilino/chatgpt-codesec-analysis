@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define EPSILON 1e-9
+
+int number_of_solutions(double a, double b, double c);
+
+int number_of_solutions(double a, double b, double c)
+{
+    double discriminant;
+
+    if (fabs(a) < EPSILON) {
+        if (fabs(b) < EPSILON) {
+            if (fabs(c) < EPSILON) {
+                return -1;
+            }
+            return 0;
+        }
+        return 1;
+    }
+
+    discriminant = (b * b) - (4.0 * a * c);
+
+    if (discriminant > EPSILON) {
+        return 2;
+    }
+    if (fabs(discriminant) <= EPSILON) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+    int result;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for coefficient a\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1) {
+        fprintf(stderr, "Invalid input for coefficient b\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient c: ");
+    if (scanf("%lf", &c) != 1) {
+        fprintf(stderr, "Invalid input for coefficient c\n");
+        return EXIT_FAILURE;
+    }
+
+    result = number_of_solutions(a, b, c);
+
+    if (result == -1) {
+        printf("The equation has infinitely many solutions\n");
+    } else {
+        printf("Number of solutions: %d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

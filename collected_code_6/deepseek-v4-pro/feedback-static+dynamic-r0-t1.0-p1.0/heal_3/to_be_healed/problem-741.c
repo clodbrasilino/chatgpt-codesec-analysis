@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected False, got <no output>
+  *  test case 1 failed: expected True, got <no output>
+  *  test case 0 failed: expected False, got <no output>
+  */
+
+bool all_characters_same(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return false;
+    }
+    
+    char first = str[0];
+    /* Possible weaknesses found:
+     *  Array index out of bounds
+     *  Array 'str[1]' accessed at index 1, which is out of bounds. [arrayIndexOutOfBounds]
+     *  Assignment 'i=1', assigned value is 1
+     */
+    for (size_t i = 1; str[i] != '\0'; i++) {
+        if (str[i] != first) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const char *test1 = "aaaa";
+    const char *test2 = "abca";
+    const char *test3 = "";
+    const char *test4 = "b";
+    const char *test5 = NULL;
+    
+    bool result1 = all_characters_same(test1);
+    bool result2 = all_characters_same(test2);
+    bool result3 = all_characters_same(test3);
+    bool result4 = all_characters_same(test4);
+    /* Possible weaknesses found:
+     *  Assignment 'result5=all_characters_same(test5)', assigned value is 0
+     *  Calling function 'all_characters_same' returns 0
+     */
+    bool result5 = all_characters_same(test5);
+    
+    printf("Test 1 (\"%s\"): %s\n", test1, result1 ? "True" : "False");
+    printf("Test 2 (\"%s\"): %s\n", test2, result2 ? "True" : "False");
+    printf("Test 3 (\"%s\"): %s\n", test3, result3 ? "True" : "False");
+    printf("Test 4 (\"%s\"): %s\n", test4, result4 ? "True" : "False");
+    /* Possible weaknesses found:
+     *  Condition 'result5' is always false
+     *  Condition 'result5' is always false [knownConditionTrueFalse]
+     */
+    printf("Test 5 (NULL): %s\n", result5 ? "True" : "False");
+    
+    return 0;
+}

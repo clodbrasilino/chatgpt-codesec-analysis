@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+static int compare_ints(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    if (x < y) {
+        return -1;
+    }
+    if (x > y) {
+        return 1;
+    }
+    return 0;
+}
+
+bool contains_consecutive_numbers(const int *list, size_t length)
+{
+    int *sorted;
+    size_t i;
+    bool result = true;
+
+    if (list == NULL || length == 0U) {
+        return false;
+    }
+
+    if (length == 1U) {
+        return true;
+    }
+
+    sorted = malloc(length * sizeof(*sorted));
+    if (sorted == NULL) {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++) {
+        sorted[i] = list[i];
+    }
+
+    qsort(sorted, length, sizeof(*sorted), compare_ints);
+
+    for (i = 1U; i < length; i++) {
+        if (sorted[i - 1U] == 2147483647) {
+            result = false;
+            break;
+        }
+        if (sorted[i] != sorted[i - 1U] + 1) {
+            result = false;
+            break;
+        }
+    }
+
+    free(sorted);
+    return result;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {7, 5, 6, 8, 9};
+    int list3[] = {1, 2, 4, 5};
+    int list4[] = {3, 3, 4, 5};
+
+    if (contains_consecutive_numbers(list1, sizeof(list1) / sizeof(list1[0]))) {
+        printf("list1: consecutive\n");
+    } else {
+        printf("list1: not consecutive\n");
+    }
+
+    if (contains_consecutive_numbers(list2, sizeof(list2) / sizeof(list2[0]))) {
+        printf("list2: consecutive\n");
+    } else {
+        printf("list2: not consecutive\n");
+    }
+
+    if (contains_consecutive_numbers(list3, sizeof(list3) / sizeof(list3[0]))) {
+        printf("list3: consecutive\n");
+    } else {
+        printf("list3: not consecutive\n");
+    }
+
+    if (contains_consecutive_numbers(list4, sizeof(list4) / sizeof(list4[0]))) {
+        printf("list4: consecutive\n");
+    } else {
+        printf("list4: not consecutive\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```

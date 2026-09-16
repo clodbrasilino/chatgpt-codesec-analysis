@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findLargestNegative(const int *arr, size_t size, int *result) {
+    if (arr == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    int temp_largest_negative = INT_MIN;
+    int found = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] < 0) {
+            if (!found || arr[i] > temp_largest_negative) {
+                temp_largest_negative = arr[i];
+                found = 1;
+            }
+        }
+    }
+
+    if (found) {
+        *result = temp_largest_negative;
+        return 0;
+    }
+
+    return -1;
+}
+
+int main(void) {
+    int numbers[] = {3, -5, 7, -1, -8, 2, -3};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int largest_negative;
+
+    if (findLargestNegative(numbers, size, &largest_negative) == 0) {
+        printf("Largest negative number is: %d\n", largest_negative);
+    } else {
+        printf("No negative numbers found in the list.\n");
+    }
+
+    int no_negatives[] = {3, 5, 7, 1, 8, 2, 3};
+    size_t size_no_negatives = sizeof(no_negatives) / sizeof(no_negatives[0]);
+
+    if (findLargestNegative(no_negatives, size_no_negatives, &largest_negative) == 0) {
+        printf("Largest negative number is: %d\n", largest_negative);
+    } else {
+        printf("No negative numbers found in the list.\n");
+    }
+
+    return 0;
+}

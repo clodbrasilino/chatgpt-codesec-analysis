@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct List {
+    int *data;
+    size_t len;
+} List;
+
+typedef struct ListList {
+    List **lists;
+    size_t count;
+} ListList;
+
+int compare_lists(const void *a, const void *b) {
+    List *list1 = *(List **)a;
+    List *list2 = *(List **)b;
+    if (list1->len != list2->len) return 0;
+    for (size_t i = 0; i < list1->len; i++) {
+        if (list1->data[i] != list2->data[i]) return 0;
+    }
+    return 1;
+}
+
+void free_list(List *list) {
+    free(list->data);
+    free(list);
+}
+
+void free_listlist(ListList *ll) {
+    for (size_t i = 0; i < ll->count; i++) {
+        free_list(ll->lists[i]);
+    }
+    free(ll->lists);
+    free(ll);
+}
+
+ListList* remove_duplicates(ListList *ll) {
+    qsort(ll->lists, ll->count, sizeof(List *), (int(*)(const void*, const void*))compare_lists);
+
+    size_t new_count = 1;
+    for (size_t i = 1; i < ll->count; i++) {
+        if (!compare_lists(&ll->lists[i-1], &ll->lists[i])) {
+            ll->lists[new_count++] = ll->lists[i];
+        } else {
+            free_list(ll->lists[i]);
+        }
+    }
+
+    ListList *result = (ListList *)malloc(sizeof(ListList));
+    result->lists = (List **)realloc(ll->lists, new_count * sizeof(List *));
+    result->count = new_count;
+
+    return result;
+}
+
+List* create_list(int *data, size_t len) {
+    List *list = (List *)malloc(sizeof(List));
+    list->data = (int *)malloc(len * sizeof(int));
+    memcpy(list->data, data, len * sizeof(int));
+    list->len = len;
+    return list;
+}
+
+ListList* create_listlist(size_t count) {
+    ListList *ll = (ListList *)malloc(sizeof(ListList));
+    ll->lists = (List **)malloc(count * sizeof(List *));
+    ll->count = count;
+    return ll;
+}
+
+int main() {
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5, 6};
+    int data3[] = {1, 2, 3};
+
+    List *list1 = create_list(data1, 3);
+    List *list2 = create_list(data2, 3);
+    List *list3 = create_list(data3, 3);
+
+    ListList *ll = create_listlist(3);
+    ll->lists[0] = list1;
+    ll->lists[1] = list2;
+    ll->lists[2] = list3;
+
+    ListList *result = remove_duplicates(ll);
+
+    for (size_t i = 0; i < result->count; i++) {
+        for (size_t j = 0; j < result->lists[i]->len; j++) {
+            printf("%d ", result->lists[i]->data[j]);
+        }
+        printf("\n");
+    }
+
+    free_listlist(result);
+    return 0;
+}

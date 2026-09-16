@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t next_power_of_2(uint32_t n);
+
+uint32_t next_power_of_2(uint32_t n) {
+    if (n == 0) {
+        return 1;
+    }
+    n--;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n++;
+    return n;
+}
+
+int main(void) {
+    uint32_t inputs[] = {0, 1, 2, 3, 4, 5, 100, 1024, 1025};
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        uint32_t n = inputs[i];
+        uint32_t result = next_power_of_2(n);
+        printf("%u -> %u\n", n, result);
+    }
+
+    return 0;
+}

@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:122:24: error: use of undeclared identifier 'LLONG_MAX'
+  122 |          current_sum > LLONG_MAX - tuple_sums[position]) ||
+      |                        ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:124:24: error: use of undeclared identifier 'LLONG_MIN'
+  124 |          current_sum < LLONG_MIN - tuple_sums[position])) {
+      |                        ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:189:37: error: use of undeclared identifier 'LLONG_MAX'
+  189 |             if ((value > 0 && sum > LLONG_MAX - value) ||
+      |                                     ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-780-s3.c:190:37: error: use of undeclared identifier 'LLONG_MIN'
+  190 |                 (value < 0 && sum < LLONG_MIN - value)) {
+      |                                     ^~~~~~~~~
+4 errors generated.

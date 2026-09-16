@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int *convert_strings_to_ints(const char **str_tuple, int size, int *out_size) {
+    *out_size = 0;
+    if (size <= 0) return NULL;
+    
+    int *int_tuple = (int *)malloc(size * sizeof(int));
+    if (int_tuple == NULL) return NULL;
+
+    for (int i = 0; i < size; ++i) {
+        char *end;
+        long val = strtol(str_tuple[i], &end, 10);
+        if (end == str_tuple[i] || *end != '\0') {
+            free(int_tuple);
+            return NULL;
+        }
+        int_tuple[i] = (int)val;
+    }
+
+    *out_size = size;
+    return int_tuple;
+}
+
+int main() {
+    const char *str_values[] = {"1", "2", "3", "4", "5"};
+    int int_values_size;
+    int *int_values = convert_strings_to_ints(str_values, 5, &int_values_size);
+
+    if (int_values) {
+        for (int i = 0; i < int_values_size; ++i) {
+            printf("%d ", int_values[i]);
+        }
+        printf("\n");
+        free(int_values);
+    } else {
+        printf("Conversion failed\n");
+    }
+
+    return 0;
+}

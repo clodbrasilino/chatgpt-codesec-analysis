@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+double largest_triangle_area(double semi_major, double semi_minor);
+ /* Possible weaknesses found:
+  *  test case 2 failed: expected 105.2220865598093, got 11.691343307495117
+  *  test case 1 failed: expected 4.639421805988064, got 45.466335296630859
+  */
+
+double largest_triangle_area(double semi_major, double semi_minor)
+{
+    double coefficient = 0.0;
+    double product = 0.0;
+
+    if (semi_major <= 0.0 || semi_minor <= 0.0)
+    {
+        return -1.0;
+    }
+
+    if (semi_major > DBL_MAX / semi_minor)
+    {
+        return -1.0;
+    }
+
+    product = semi_major * semi_minor;
+    coefficient = (3.0 * sqrt(3.0)) / 4.0;
+
+    if (product > DBL_MAX / coefficient)
+    {
+        return -1.0;
+    }
+
+    return coefficient * product;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double area = 0.0;
+    int scanned = 0;
+
+    printf("Enter semi-major axis (a): ");
+    scanned = scanf("%lf", &a);
+    if (scanned != 1)
+    {
+        fprintf(stderr, "Error: invalid input for semi-major axis.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter semi-minor axis (b): ");
+    scanned = scanf("%lf", &b);
+    if (scanned != 1)
+    {
+        fprintf(stderr, "Error: invalid input for semi-minor axis.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (a <= 0.0 || b <= 0.0)
+    {
+        fprintf(stderr, "Error: axes must be positive values.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (b > a)
+    {
+        double tmp = a;
+        a = b;
+        b = tmp;
+    }
+
+    area = largest_triangle_area(a, b);
+    if (area < 0.0)
+    {
+        fprintf(stderr, "Error: could not compute triangle area.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Largest inscribed triangle area: %.15f\n", area);
+
+    return EXIT_SUCCESS;
+}

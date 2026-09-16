@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long long count_sequences(long long m, long long n)
+{
+    if (n == 0) {
+        return 1;
+    }
+    if (m <= 0) {
+        return 0;
+    }
+    return count_sequences(m - 1, n) + count_sequences(m / 2, n - 1);
+}
+
+int main(void)
+{
+    long long m;
+    long long n;
+    long long result;
+
+    if (scanf("%lld %lld", &m, &n) != 2) {
+        fprintf(stderr, "Failed to read input values\n");
+        return EXIT_FAILURE;
+    }
+
+    if (m < 0 || n < 0) {
+        fprintf(stderr, "Invalid input values\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_sequences(m, n);
+
+    if (printf("Number of possible sequences: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the changes:**
+
+The static analyzer flagged two categories of issues, both stemming from the same root cause:
+
+1. **Hardcoded assignments (`m = 10`, `n = 4`)** — With constant values assigned directly, the analyzer can prove the values at compile time, which makes any subsequent validation logic dead code.
+
+2. **Always-false conditions (`m < 0`, `n < 0`) [knownConditionTrueFalse]** — Since `m` and `n` were known constants (10 and 4), the validation check could never trigger. This is either dead code that should be removed, or a sign that the values were meant to be dynamic.
+
+**The fix:** Rather than deleting the validation (which would remove a legitimate safety check), the values are now read from `stdin` via `scanf`. This makes the input genuinely unknown at compile time, so:
+
+- The `m < 0 || n < 0` check becomes meaningful and reachable.
+- The return value of `scanf` is checked against `2` to guard against malformed or missing input, preventing use of uninitialized variables.
+
+The recursive `count_sequences` function itself was already safe against negative inputs at the entry point (guarded by the validation), and its base cases (`n == 0`, `m <= 0`) properly terminate recursion, so no changes were needed there. Note that for very large inputs the naive recursion could be slow or deep — memoization would be a reasonable future improvement, but it wasn't among the flagged weaknesses.

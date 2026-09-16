@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **elements;
+    size_t size;
+    size_t element_size;
+} tuple_t;
+
+int tuple_count_element(const tuple_t *tuple, const void *element) {
+    if (tuple == NULL || element == NULL || tuple->elements == NULL) {
+        return 0;
+    }
+    
+    int count = 0;
+    for (size_t i = 0; i < tuple->size; i++) {
+        if (memcmp(tuple->elements[i], element, tuple->element_size) == 0) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+tuple_t *tuple_create(size_t element_size) {
+    tuple_t *tuple = (tuple_t *)malloc(sizeof(tuple_t));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->elements = NULL;
+    tuple->size = 0;
+    tuple->element_size = element_size;
+    return tuple;
+}
+
+int tuple_add(tuple_t *tuple, const void *element) {
+    if (tuple == NULL || element == NULL) {
+        return -1;
+    }
+    
+    void **new_elements = (void **)realloc(tuple->elements, (tuple->size + 1) * sizeof(void *));
+    if (new_elements == NULL) {
+        return -1;
+    }
+    
+    tuple->elements = new_elements;
+    tuple->elements[tuple->size] = malloc(tuple->element_size);
+    if (tuple->elements[tuple->size] == NULL) {
+        return -1;
+    }
+    
+    memcpy(tuple->elements[tuple->size], element, tuple->element_size);
+    tuple->size++;
+    return 0;
+}
+
+void tuple_destroy(tuple_t *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    if (tuple->elements != NULL) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            free(tuple->elements[i]);
+        }
+        free(tuple->elements);
+    }
+    
+    free(tuple);
+}
+
+int main(void) {
+    tuple_t *tuple = tuple_create(sizeof(int));
+    if (tuple == NULL) {
+        return 1;
+    }
+    
+    int values[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    for (size_t i = 0; i < sizeof(values) / sizeof(values[0]); i++) {
+        if (tuple_add(tuple, &values[i]) != 0) {
+            tuple_destroy(tuple);
+            return 1;
+        }
+    }
+    
+    int target = 5;
+    int result = tuple_count_element(tuple, &target);
+    printf("Element %d occurs %d time(s)\n", target, result);
+    
+    tuple_destroy(tuple);
+    return 0;
+}

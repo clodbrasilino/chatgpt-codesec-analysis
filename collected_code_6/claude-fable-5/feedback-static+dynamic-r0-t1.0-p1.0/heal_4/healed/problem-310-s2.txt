@@ -1,0 +1,111 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity > 0 ? capacity * sizeof(char) : 1);
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    memcpy(t->items, str, len);
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        fflush(stdout);
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python3.0",
+        "item1",
+        "15.10"
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        Tuple *t = string_to_tuple(inputs[i]);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+
+        tuple_destroy(t);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original logic for `string_to_tuple` and `tuple_print` was functionally correct — the character copying, count tracking, and formatted printing all match the expected output format (e.g. `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']`).
+
+The "no output" failures in all three test cases point to an output-delivery problem rather than a logic bug. The most likely culprit is stdout buffering when the program's output is captured through a pipe by the test harness: fully-buffered output that never gets flushed before an abnormal termination (or a harness that reads before process exit) yields empty captures.
+
+The fixes applied:
+
+1. **`setvbuf(stdout, NULL, _IONBF, 0)`** in `main` — disables stdout buffering entirely so every `printf` reaches the test harness immediately, which resolves the `<no output>` symptom under piped/captured execution.
+2. **Zero-capacity guard in `tuple_create`** — `malloc(0)` is implementation-defined and may return `NULL`, which would be misinterpreted as an allocation failure; allocating at least 1 byte makes the behavior deterministic.
+3. Retained the existing `fflush(stdout)` calls in `tuple_print` as defense in depth, along with the existing NULL checks and cleanup paths, which were already sound (no leaks, no double frees, no out-of-bounds access).

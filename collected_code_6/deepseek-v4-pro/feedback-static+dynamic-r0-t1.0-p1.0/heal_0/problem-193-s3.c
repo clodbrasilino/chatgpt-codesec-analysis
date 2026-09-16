@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+Tuple remove_duplicates(Tuple input) {
+    if (input.size <= 0 || input.data == NULL) {
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    int *result = (int *)malloc(input.size * sizeof(int));
+    if (result == NULL) {
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    int result_size = 0;
+    int *seen = (int *)malloc(input.size * sizeof(int));
+    if (seen == NULL) {
+        free(result);
+        Tuple empty = {NULL, 0};
+        return empty;
+    }
+    
+    for (int i = 0; i < input.size; i++) {
+        int is_duplicate = 0;
+        for (int j = 0; j < result_size; j++) {
+            if (seen[j] == input.data[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            result[result_size] = input.data[i];
+            seen[result_size] = input.data[i];
+            result_size++;
+        }
+    }
+    
+    free(seen);
+    
+    if (result_size < input.size) {
+        int *resized = (int *)realloc(result, result_size * sizeof(int));
+        if (resized != NULL) {
+            result = resized;
+        }
+    }
+    
+    Tuple output = {result, result_size};
+    return output;
+}
+
+int main(int argc, char *argv[]) {
+    int test_data[] = {5, 2, 7, 2, 5, 9, 7, 1, 8, 5, 1};
+    int test_size = sizeof(test_data) / sizeof(test_data[0]);
+    
+    Tuple input;
+    input.data = test_data;
+    input.size = test_size;
+    
+    Tuple result = remove_duplicates(input);
+    
+    if (result.data != NULL && result.size > 0) {
+        printf("Original: ");
+        for (int i = 0; i < input.size; i++) {
+            printf("%d ", input.data[i]);
+        }
+        printf("\n");
+        
+        printf("Unique: ");
+        for (int i = 0; i < result.size; i++) {
+            printf("%d ", result.data[i]);
+        }
+        printf("\n");
+        
+        free(result.data);
+    } else {
+        printf("Error: Unable to process tuple\n");
+    }
+    
+    return 0;
+}

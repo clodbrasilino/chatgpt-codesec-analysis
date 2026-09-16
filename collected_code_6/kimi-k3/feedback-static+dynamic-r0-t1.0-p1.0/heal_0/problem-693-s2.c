@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int remove_multiple_spaces(const char *input, char *output, size_t output_size)
+{
+    regex_t regex;
+    regmatch_t match;
+    const char *cursor;
+    size_t output_len = 0;
+    int ret;
+
+    if (input == NULL || output == NULL || output_size == 0)
+    {
+        return -1;
+    }
+
+    ret = regcomp(&regex, "  +", REG_EXTENDED);
+    if (ret != 0)
+    {
+        return -1;
+    }
+
+    cursor = input;
+    output[0] = '\0';
+
+    while (*cursor != '\0')
+    {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH)
+        {
+            break;
+        }
+        else if (ret != 0)
+        {
+            regfree(&regex);
+            return -1;
+        }
+
+        size_t prefix_len = (size_t)match.rm_so;
+        if (output_len + prefix_len + 2 > output_size)
+        {
+            regfree(&regex);
+            return -1;
+        }
+
+        memcpy(output + output_len, cursor, prefix_len);
+        output_len += prefix_len;
+        output[output_len++] = ' ';
+        output[output_len] = '\0';
+
+        cursor += match.rm_eo;
+    }
+
+    size_t remaining = strlen(cursor);
+    if (output_len + remaining + 1 > output_size)
+    {
+        regfree(&regex);
+        return -1;
+    }
+
+    memcpy(output + output_len, cursor, remaining + 1);
+    regfree(&regex);
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "This   is    a   test      string.";
+    char output[256];
+
+    if (remove_multiple_spaces(input, output, sizeof(output)) == 0)
+    {
+        printf("Original: %s\n", input);
+        printf("Modified: %s\n", output);
+    }
+    else
+    {
+        fprintf(stderr, "Error processing string\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

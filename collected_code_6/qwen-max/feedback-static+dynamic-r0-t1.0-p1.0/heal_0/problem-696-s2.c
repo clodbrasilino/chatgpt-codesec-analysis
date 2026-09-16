@@ -2,98 +2,100 @@
 #include <stdlib.h>
 
 typedef struct List {
-    int data;
-    struct List *next;
-} ListNode, *List;
+    int* data;
+    int size;
+} List;
 
-List newNode(int data) {
-    List node = (List)malloc(sizeof(ListNode));
-    node->data = data;
-    node->next = NULL;
-    return node;
-}
+typedef struct ListOfLists {
+    List** lists;
+    int count;
+} ListOfLists;
 
-void appendNode(List *head, int data) {
-    if (*head == NULL) {
-        *head = newNode(data);
-    } else {
-        List temp = *head;
-        while (temp->next) {
-            temp = temp->next;
-        }
-        temp->next = newNode(data);
+ListOfLists* createListOfLists(int count) {
+    ListOfLists* lol = (ListOfLists*)malloc(sizeof(ListOfLists));
+    if (lol == NULL) exit(EXIT_FAILURE);
+    lol->lists = (List**)malloc(count * sizeof(List*));
+    if (lol->lists == NULL) exit(EXIT_FAILURE);
+    lol->count = count;
+    for (int i = 0; i < count; ++i) {
+        lol->lists[i] = NULL;
     }
+    return lol;
 }
 
-List* createListOfLists(int *values, int n, int m) {
-    List *lists = (List*)calloc(n, sizeof(List));
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < m; ++j) {
-            appendNode(&lists[i], values[i * m + j]);
+void freeListOfLists(ListOfLists* lol) {
+    for (int i = 0; lol && (i < lol->count); ++i) {
+        if (lol->lists[i]) {
+            free(lol->lists[i]->data);
+            free(lol->lists[i]);
         }
     }
-    return lists;
+    free(lol->lists);
+    free(lol);
 }
 
-void freeListOfLists(List *lists, int n) {
-    for (int i = 0; i < n; ++i) {
-        List current = lists[i];
-        while (current) {
-            List toFree = current;
-            current = current->next;
-            free(toFree);
+List* createList(int size) {
+    List* list = (List*)malloc(sizeof(List));
+    if (list == NULL) exit(EXIT_FAILURE);
+    list->data = (int*)malloc(size * sizeof(int));
+    if (list->data == NULL) exit(EXIT_FAILURE);
+    list->size = size;
+    return list;
+}
+
+ListOfLists* zipLists(ListOfLists* lol1, ListOfLists* lol2) {
+    ListOfLists* zipped = createListOfLists(lol1->count * lol2->count);
+    int index = 0;
+    for (int i = 0; i < lol1->count; ++i) {
+        for (int j = 0; j < lol2->count; ++j) {
+            zipped->lists[index] = createList(lol1->lists[i]->size + lol2->lists[j]->size);
+            for (int k = 0; k < lol1->lists[i]->size; ++k) {
+                zipped->lists[index]->data[k] = lol1->lists[i]->data[k];
+            }
+            for (int k = 0; k < lol2->lists[j]->size; ++k) {
+                zipped->lists[index]->data[lol1->lists[i]->size + k] = lol2->lists[j]->data[k];
+            }
+            ++index;
         }
     }
-    free(lists);
-}
-
-void printList(List head) {
-    while (head) {
-        printf("%d ", head->data);
-        head = head->next;
-    }
-    printf("\n");
-}
-
-List zipLists(List a, List b) {
-    List result = NULL;
-    while (a || b) {
-        if (a) {
-            appendNode(&result, a->data);
-            a = a->next;
-        }
-        if (b) {
-            appendNode(&result, b->data);
-            b = b->next;
-        }
-    }
-    return result;
-}
-
-List* zipListOfLists(List *list1, List *list2, int n) {
-    List *result = (List*)calloc(n, sizeof(List));
-    for (int i = 0; i < n; ++i) {
-        result[i] = zipLists(list1[i], list2[i]);
-    }
-    return result;
+    return zipped;
 }
 
 int main() {
-    int values1[] = {1, 2, 3, 4, 5, 6};
-    int values2[] = {10, 20, 30, 40, 50, 60};
+    ListOfLists* lol1 = createListOfLists(2);
+    lol1->lists[0] = createList(3);
+    lol1->lists[0]->data[0] = 1;
+    lol1->lists[0]->data[1] = 2;
+    lol1->lists[0]->data[2] = 3;
 
-    List *list1 = createListOfLists(values1, 2, 3);
-    List *list2 = createListOfLists(values2, 2, 3);
+    lol1->lists[1] = createList(4);
+    lol1->lists[1]->data[0] = 4;
+    lol1->lists[1]->data[1] = 5;
+    lol1->lists[1]->data[2] = 6;
+    lol1->lists[1]->data[3] = 7;
 
-    List *zippedLists = zipListOfLists(list1, list2, 2);
+    ListOfLists* lol2 = createListOfLists(2);
+    lol2->lists[0] = createList(2);
+    lol2->lists[0]->data[0] = 8;
+    lol2->lists[0]->data[1] = 9;
 
-    for (int i = 0; i < 2; ++i) {
-        printList(zippedLists[i]);
+    lol2->lists[1] = createList(3);
+    lol2->lists[1]->data[0] = 10;
+    lol2->lists[1]->data[1] = 11;
+    lol2->lists[1]->data[2] = 12;
+
+    ListOfLists* zipped = zipLists(lol1, lol2);
+
+    for (int i = 0; i < zipped->count; ++i) {
+        for (int j = 0; j < zipped->lists[i]->size; ++j) {
+            printf("%d ", zipped->lists[i]->data[j]);
+        }
+        printf("\n");
     }
 
-    freeListOfLists(list1, 2);
-    freeListOfLists(list2, 2);
-    freeListOfLists(zippedLists, 2);
+    freeListOfLists(zipped);
+    freeListOfLists(lol1);
+    freeListOfLists(lol2);
 
     return 0;
 }

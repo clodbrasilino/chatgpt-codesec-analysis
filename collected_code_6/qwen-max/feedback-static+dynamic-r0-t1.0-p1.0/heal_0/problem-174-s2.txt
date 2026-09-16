@@ -3,76 +3,92 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Node {
+typedef struct Pair {
     char *key;
     int value;
-    struct Node *next;
-} Node;
+    struct Pair *next;
+} Pair;
 
-typedef struct Dictionary {
+typedef struct {
+    char *key;
+    Pair *head;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry **entries;
     int size;
-    Node **buckets;
 } Dictionary;
 
-Dictionary* create_dictionary(int capacity) {
-    Dictionary *dict = malloc(sizeof(Dictionary));
-    dict->size = capacity;
-    dict->buckets = calloc(capacity, sizeof(Node*));
+Dictionary* createDictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    dict->size = size;
+    dict->entries = (DictionaryEntry **)calloc(size, sizeof(DictionaryEntry *));
+    for (int i = 0; i < size; ++i) {
+        dict->entries[i] = (DictionaryEntry *)malloc(sizeof(DictionaryEntry));
+        dict->entries[i]->key = NULL;
+        dict->entries[i]->head = NULL;
+    }
     return dict;
 }
 
-void add_to_dictionary(Dictionary *dict, const char *key, int value) {
+unsigned long hash(char *str) {
     unsigned long hash = 5381;
-    int len = strlen(key);
-    for (int i = 0; i < len; i++) {
-        hash = ((hash << 5) + hash) + key[i];
-    }
-    int index = hash % dict->size;
-
-    Node *new_node = malloc(sizeof(Node));
-    new_node->key = strdup(key);
-    new_node->value = value;
-    new_node->next = dict->buckets[index];
-    dict->buckets[index] = new_node;
+    int c;
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    return hash % 1000;
 }
 
-void free_dictionary(Dictionary *dict) {
-    for (int i = 0; i < dict->size; i++) {
-        Node *current = dict->buckets[i];
-        while (current != NULL) {
-            Node *temp = current;
-            current = current->next;
+void addPair(Dictionary *dict, char *key, int value) {
+    unsigned long index = hash(key) % dict->size;
+    Pair *newPair = (Pair *)malloc(sizeof(Pair));
+    newPair->key = strdup(key);
+    newPair->value = value;
+    newPair->next = dict->entries[index]->head;
+    dict->entries[index]->head = newPair;
+}
+
+void printDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->entries[i]->head != NULL) {
+            printf("%s: [", dict->entries[i]->key ? dict->entries[i]->key : "NULL");
+            for (Pair *p = dict->entries[i]->head; p != NULL; p = p->next) {
+                printf("%d", p->value);
+                if (p->next != NULL)
+                    printf(", ");
+            }
+            printf("]\n");
+        }
+    }
+}
+
+void freeDictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        Pair *pair = dict->entries[i]->head;
+        while (pair) {
+            Pair *temp = pair;
+            pair = pair->next;
             free(temp->key);
             free(temp);
         }
+        free(dict->entries[i]);
     }
-    free(dict->buckets);
+    free(dict->entries);
     free(dict);
 }
 
-void print_dictionary(Dictionary *dict) {
-    for (int i = 0; i < dict->size; i++) {
-        Node *current = dict->buckets[i];
-        printf("[ ");
-        while (current != NULL) {
-            printf("%s: %d ", current->key, current->value);
-            current = current->next;
-        }
-        printf("]\n");
-    }
-}
-
 int main() {
-    Dictionary *dict = create_dictionary(10);
-    
-    add_to_dictionary(dict, "apple", 1);
-    add_to_dictionary(dict, "banana", 2);
-    add_to_dictionary(dict, "apple", 3);
-    add_to_dictionary(dict, "cherry", 4);
+    Dictionary *myDict = createDictionary(10);
+    addPair(myDict, "fruits", 5);
+    addPair(myDict, "fruits", 10);
+    addPair(myDict, "fruits", 15);
+    addPair(myDict, "vegetables", 20);
+    addPair(myDict, "vegetables", 25);
+    addPair(myDict, "grains", 30);
 
-    print_dictionary(dict);
+    printDictionary(myDict);
 
-    free_dictionary(dict);
+    freeDictionary(myDict);
     return 0;
 }
 ```

@@ -2,13 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct KeyValue {
-    char *key;
-    char *value;
-} KeyValue;
-
 typedef struct Node {
-    char *value;
+    char *key;
+    int value;
     struct Node *next;
 } Node;
 
@@ -16,119 +12,99 @@ typedef struct List {
     Node *head;
 } List;
 
-typedef struct Map {
+typedef struct HashTable {
+    List **buckets;
     int size;
-    char **keys;
-    List *lists;
-} Map;
+} HashTable;
 
-Node *create_node(char *value) {
-    Node *node = (Node *)malloc(sizeof(Node));
-    if (!node) return NULL;
-    node->value = strdup(value);
-    node->next = NULL;
-    return node;
+Node* create_node(const char *key, int value) {
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    new_node->key = strdup(key);
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
 }
 
-void free_list(List *list) {
-    while (list->head) {
-        Node *temp = list->head;
-        list->head = list->head->next;
-        free(temp->value);
-        free(temp);
-    }
-}
-
-List *create_list() {
-    List *list = (List *)malloc(sizeof(List));
-    if (!list) return NULL;
+List* create_list() {
+    List *list = (List*) malloc(sizeof(List));
     list->head = NULL;
     return list;
 }
 
-void add_to_list(List *list, char *value) {
-    Node *new_node = create_node(value);
-    if (new_node) {
-        new_node->next = list->head;
-        list->head = new_node;
-    }
-}
-
-Map *create_map(int size) {
-    Map *map = (Map *)malloc(sizeof(Map));
-    if (!map) return NULL;
-    map->size = 0;
-    map->keys = (char **)calloc(size, sizeof(char *));
-    map->lists = (List **)calloc(size, sizeof(List *));
-    if (!map->keys || !map->lists) {
-        free(map->keys);
-        free(map->lists);
-        free(map);
-        return NULL;
-    }
+HashTable* create_hash_table(int size) {
+    HashTable *table = (HashTable*) malloc(sizeof(HashTable));
+    table->size = size;
+    table->buckets = (List**) calloc(size, sizeof(List*));
     for (int i = 0; i < size; ++i) {
-        map->lists[i] = create_list();
+        table->buckets[i] = create_list();
     }
-    return map;
+    return table;
 }
 
-void free_map(Map *map) {
-    if (!map) return;
-    for (int i = 0; i < map->size; ++i) {
-        free_list(map->lists[i]);
-        free(map->lists[i]);
-        free(map->keys[i]);
+unsigned long hash(const char *str, int size) {
+    unsigned long hash = 5381;
+    int c;
+    while ((c = *str++)) {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
     }
-    free(map->keys);
-    free(map->lists);
-    free(map);
+    return hash % size;
 }
 
-int get_key_index(Map *map, char *key) {
-    for (int i = 0; i < map->size; ++i) {
-        if (strcmp(map->keys[i], key) == 0) return i;
-    }
-    return -1;
+void add_to_hash_table(HashTable *table, const char *key, int value) {
+    unsigned long index = hash(key, table->size);
+    Node *new_node = create_node(key, value);
+    new_node->next = table->buckets[index]->head;
+    table->buckets[index]->head = new_node;
 }
 
-void group_kv_pairs(KeyValue *pairs, int count, Map *map) {
-    for (int i = 0; i < count; ++i) {
-        int index = get_key_index(map, pairs[i].key);
-        if (index != -1) {
-            add_to_list(map->lists[index], pairs[i].value);
-        } else {
-            map->keys[map->size] = strdup(pairs[i].key);
-            add_to_list(map->lists[map->size], pairs[i].value);
-            map->size++;
+void free_list(List *list) {
+    Node *current = list->head;
+    Node *temp;
+    while (current != NULL) {
+        temp = current->next;
+        free(current->key);
+        free(current);
+        current = temp;
+    }
+    free(list);
+}
+
+void free_hash_table(HashTable *table) {
+    if (table == NULL) return;
+    for (int i = 0; i < table->size; ++i) {
+        free_list(table->buckets[i]);
+    }
+    free(table->buckets);
+    free(table);
+}
+
+void print_hash_table(HashTable *table) {
+    for (int i = 0; i < table->size; ++i) {
+        Node *current = table->buckets[i]->head;
+        printf("Bucket %d: ", i);
+        while (current != NULL) {
+            printf("%s -> %d", current->key, current->value);
+            if (current->next != NULL) {
+                printf(", ");
+            }
+            current = current->next;
         }
-    }
-}
-
-void print_list(List *list) {
-    for (Node *current = list->head; current != NULL; current = current->next) {
-        printf("%s ", current->value);
-    }
-    printf("\n");
-}
-
-void print_map(Map *map) {
-    for (int i = 0; i < map->size; ++i) {
-        printf("%s: ", map->keys[i]);
-        print_list(map->lists[i]);
+        printf("\n");
     }
 }
 
 int main() {
-    KeyValue pairs[] = {{"a", "1"}, {"b", "2"}, {"a", "3"}, {"c", "4"}, {"b", "5"}};
-    int count = sizeof(pairs) / sizeof(pairs[0]);
+    const int hash_table_size = 10;
+    HashTable *table = create_hash_table(hash_table_size);
 
-    Map *map = create_map(count);
-    if (!map) return 1;
+    add_to_hash_table(table, "apple", 5);
+    add_to_hash_table(table, "banana", 3);
+    add_to_hash_table(table, "orange", 4);
+    add_to_hash_table(table, "apple", 7);
+    add_to_hash_table(table, "banana", 2);
 
-    group_kv_pairs(pairs, count, map);
+    print_hash_table(table);
 
-    print_map(map);
-
-    free_map(map);
+    free_hash_table(table);
     return 0;
 }

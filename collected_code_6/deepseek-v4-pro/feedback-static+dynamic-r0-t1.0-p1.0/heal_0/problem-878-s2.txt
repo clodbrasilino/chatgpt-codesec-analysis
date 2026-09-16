@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    int size;
+} Tuple;
+
+bool tuple_contains_only_k_elements(Tuple tuple, int k) {
+    if (tuple.elements == NULL || tuple.size <= 0) {
+        return false;
+    }
+    
+    int first = tuple.elements[0];
+    
+    for (int i = 1; i < tuple.size; i++) {
+        if (tuple.elements[i] != first) {
+            return false;
+        }
+    }
+    
+    return first == k;
+}
+
+bool tuple_has_exactly_k_elements(Tuple tuple, int k) {
+    return tuple.size == k;
+}
+
+Tuple create_tuple(int *elements, int size) {
+    Tuple tuple;
+    tuple.elements = elements;
+    tuple.size = size;
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple != NULL) {
+        tuple->elements = NULL;
+        tuple->size = 0;
+    }
+}
+
+int main() {
+    int elements1[] = {1, 1, 1, 1};
+    Tuple tuple1 = create_tuple(elements1, 4);
+    
+    if (tuple_contains_only_k_elements(tuple1, 1)) {
+        printf("Tuple 1 contains only 1s\n");
+    } else {
+        printf("Tuple 1 does not contain only 1s\n");
+    }
+    
+    int elements2[] = {2, 2, 3, 2};
+    Tuple tuple2 = create_tuple(elements2, 4);
+    
+    if (tuple_contains_only_k_elements(tuple2, 2)) {
+        printf("Tuple 2 contains only 2s\n");
+    } else {
+        printf("Tuple 2 does not contain only 2s\n");
+    }
+    
+    int elements3[] = {5, 5, 5};
+    Tuple tuple3 = create_tuple(elements3, 3);
+    
+    if (tuple_has_exactly_k_elements(tuple3, 3)) {
+        printf("Tuple 3 has exactly 3 elements\n");
+    } else {
+        printf("Tuple 3 does not have exactly 3 elements\n");
+    }
+    
+    destroy_tuple(&tuple1);
+    destroy_tuple(&tuple2);
+    destroy_tuple(&tuple3);
+    
+    return 0;
+}
+```

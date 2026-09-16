@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_even(int number)
+{
+    return (number % 2 == 0);
+}
+
+int main(void)
+{
+    int number;
+
+    printf("Enter a number: ");
+
+    if (scanf("%d", &number) != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (is_even(number))
+    {
+        printf("%d is even.\n", number);
+    }
+    else
+    {
+        printf("%d is odd.\n", number);
+    }
+
+    return 0;
+}
+```
+
+Notes on how the code addresses the listed weaknesses:
+- **CWE-703:** The return value of `scanf` is checked before using `number`, so uninitialized data is never read on invalid input, and the failure is reported via `stderr` with a nonzero exit status.
+- **CWE-664:** No dynamic resources are acquired, so there are no leaks or lifetime issues; `main` returns properly on all paths.
+- **CWE-710:** The code follows standard C conventions — `int main(void)`, `<stdbool.h>` for the `bool` type, explicit return values, and consistent formatting. The modulo approach also handles negative integers correctly (e.g., `-4 % 2 == 0`).

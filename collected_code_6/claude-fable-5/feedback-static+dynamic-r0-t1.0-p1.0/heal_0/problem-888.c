@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NUM_TUPLES 4
+#define TUPLE_SIZE 2
+
+typedef struct {
+    int a;
+    int b;
+} Pair;
+
+int subtract_nested_tuples(const Pair *first, const Pair *second, Pair *result, size_t count)
+{
+    size_t i;
+
+    if (first == NULL || second == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        result[i].a = first[i].a - second[i].a;
+        result[i].b = first[i].b - second[i].b;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    Pair first[NUM_TUPLES] = { {1, 3}, {4, 5}, {2, 9}, {1, 10} };
+    Pair second[NUM_TUPLES] = { {6, 7}, {3, 9}, {1, 1}, {7, 3} };
+    Pair result[NUM_TUPLES];
+    size_t i;
+    int status;
+
+    status = subtract_nested_tuples(first, second, result, NUM_TUPLES);
+    if (status != 0) {
+        (void)fprintf(stderr, "Error: invalid input to subtract_nested_tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("(");
+    for (i = 0U; i < NUM_TUPLES; i++) {
+        (void)printf("(%d, %d)", result[i].a, result[i].b);
+        if (i < (NUM_TUPLES - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf(")\n");
+
+    return EXIT_SUCCESS;
+}

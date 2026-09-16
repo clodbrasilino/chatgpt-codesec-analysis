@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+void shell_sort(int array[], int n) {
+    int gap, i, j, temp;
+
+    for (gap = n / 2; gap > 0; gap /= 2) {
+        for (i = gap; i < n; i++) {
+            temp = array[i];
+            j = i;
+
+            while (j >= gap && array[j - gap] > temp) {
+                array[j] = array[j - gap];
+                j -= gap;
+            }
+
+            array[j] = temp;
+        }
+    }
+}
+
+int main(void) {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int i;
+
+    shell_sort(arr, n);
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

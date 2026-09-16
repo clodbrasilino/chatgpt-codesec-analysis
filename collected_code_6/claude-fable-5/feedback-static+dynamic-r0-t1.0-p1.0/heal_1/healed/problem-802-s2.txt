@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low <= high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        {
+            size_t mid = low + ((high - low) / 2U);
+            size_t next = (mid + 1U) % n;
+            size_t prev = (mid + n - 1U) % n;
+
+            if (arr[mid] <= arr[next] && arr[mid] <= arr[prev]) {
+                return (int)mid;
+            }
+
+            if (arr[mid] <= arr[high]) {
+                if (mid == 0U) {
+                    break;
+                }
+                high = mid - 1U;
+            } else {
+                low = mid + 1U;
+            }
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result != 2) {
+        fprintf(stderr, "Error computing rotations for arr1: expected 2, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result != 4) {
+        fprintf(stderr, "Error computing rotations for arr2: expected 4, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result != 0) {
+        fprintf(stderr, "Error computing rotations for arr3: expected 0, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+1. **`variableScope` warnings** — `mid`, `next`, and `prev` were declared at function scope but only used inside the `while` loop body. They are now scoped to the loop iteration block, which limits their lifetime, prevents accidental use of stale values across iterations, and helps the optimizer.
+
+2. **"test case 1 failed: expected 2, got 3"** — this indicates a historical off-by-one in the midpoint/boundary logic. The correct behavior for `arr1 = {15, 18, 2, 3, 6, 12}` is to find the minimum at index `2`. The rewritten code verifies this explicitly: on the first iteration `mid = 2`, and since `arr[2] = 2` is less than or equal to both its neighbors (`18` and `3`), index `2` is correctly returned. The `main` function now asserts the expected values (`2`, `4`, `0`) rather than only checking for a negative error code, so a regression of this bug would be caught at runtime.
+
+3. **Retained defensive checks** — the `NULL`/zero-length guard, the overflow-safe midpoint computation `low + ((high - low) / 2U)`, and the `mid == 0U` guard against `size_t` underflow when computing `high = mid - 1U` are all preserved, as they are correct and necessary with unsigned index types.

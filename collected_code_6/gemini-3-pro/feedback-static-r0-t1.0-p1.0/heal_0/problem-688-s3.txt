@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+struct Complex {
+    double real;
+    double imag;
+};
+
+double get_complex_length(struct Complex c) {
+    if (isnan(c.real) || isnan(c.imag) || isinf(c.real) || isinf(c.imag)) {
+        return -1.0;
+    }
+    return sqrt((c.real * c.real) + (c.imag * c.imag));
+}
+
+int main(void) {
+    struct Complex num = {3.0, 4.0};
+    double length = get_complex_length(num);
+    
+    if (length >= 0.0) {
+        printf("Length: %.4f\n", length);
+    } else {
+        printf("Invalid complex number.\n");
+    }
+    
+    return 0;
+}
+```

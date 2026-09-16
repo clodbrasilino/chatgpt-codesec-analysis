@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_divisors(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (int i = 1; i <= n / 2; ++i) {
+        if (n % i == 0) {
+            sum += i;
+        }
+    }
+    sum += n;
+
+    return sum;
+}
+
+int main(void) {
+    int test_numbers[] = {1, 6, 28, 10, -5, 0};
+    size_t num_tests = sizeof(test_numbers) / sizeof(test_numbers[0]);
+
+    for (size_t i = 0; i < num_tests; ++i) {
+        int n = test_numbers[i];
+        long long sum = sum_of_divisors(n);
+        printf("Sum of divisors of %d is %lld\n", n, sum);
+    }
+
+    return EXIT_SUCCESS;
+}

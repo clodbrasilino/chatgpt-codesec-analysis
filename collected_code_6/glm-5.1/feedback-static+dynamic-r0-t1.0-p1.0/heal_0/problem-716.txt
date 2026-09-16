@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+
+double perimeter_rombus(double side) {
+    if (side <= 0.0) {
+        return -1.0;
+    }
+    return 4.0 * side;
+}
+
+int main() {
+    double side;
+    if (scanf("%lf", &side) != 1) {
+        return 1;
+    }
+    double result = perimeter_rombus(side);
+    if (result < 0.0) {
+        return 1;
+    }
+    printf("%f\n", result);
+    return 0;
+}
+```

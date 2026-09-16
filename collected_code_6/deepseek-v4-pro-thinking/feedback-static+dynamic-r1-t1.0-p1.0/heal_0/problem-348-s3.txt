@@ -1,0 +1,164 @@
+```c
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static unsigned long long int_pow(unsigned long long base, int exp)
+{
+    if (exp <= 0) {
+        return 1;
+    }
+    if (base == 0) {
+        return 0;
+    }
+    if (base == 1) {
+        return 1;
+    }
+
+    unsigned long long result = 1;
+    for (int i = 0; i < exp; ++i) {
+        if (result > ULLONG_MAX / base) {
+            errno = ERANGE;
+            return 0;
+        }
+        result *= base;
+    }
+    return result;
+}
+
+unsigned long long count_sequences(int length, const int *values, int values_count)
+{
+    if (length < 0) {
+        errno = EINVAL;
+        return 0;
+    }
+    if (length == 0) {
+        return 1;
+    }
+    if (values == NULL || values_count <= 0) {
+        errno = EINVAL;
+        return 0;
+    }
+
+    int max_pos = 0;
+    int has_positive = 0;
+    int zero_count = 0;
+
+    for (int i = 0; i < values_count; ++i) {
+        if (values[i] > 0) {
+            has_positive = 1;
+            if (values[i] > max_pos) {
+                max_pos = values[i];
+            }
+        } else if (values[i] == 0) {
+            ++zero_count;
+        }
+    }
+
+    if (!has_positive) {
+        if (zero_count == 0) {
+            return 0;
+        }
+        return int_pow((unsigned long long)zero_count, length);
+    }
+
+    if ((size_t)max_pos > (size_t)-1 / (size_t)length) {
+        errno = ENOMEM;
+        return 0;
+    }
+    size_t max_sum = (size_t)max_pos * (size_t)length;
+    if (max_sum == (size_t)-1) {
+        errno = ENOMEM;
+        return 0;
+    }
+    size_t states = max_sum + 1;
+    if (states > (size_t)-1 / sizeof(unsigned long long)) {
+        errno = ENOMEM;
+        return 0;
+    }
+
+    unsigned long long *dp = calloc(states, sizeof(unsigned long long));
+    if (dp == NULL) {
+        errno = ENOMEM;
+        return 0;
+    }
+    unsigned long long *next = calloc(states, sizeof(unsigned long long));
+    if (next == NULL) {
+        free(dp);
+        errno = ENOMEM;
+        return 0;
+    }
+
+    dp[0] = 1;
+
+    for (int step = 0; step < length; ++step) {
+        memset(next, 0, states * sizeof(unsigned long long));
+
+        for (size_t sum = 0; sum < states; ++sum) {
+            if (dp[sum] == 0) {
+                continue;
+            }
+
+            for (int i = 0; i < values_count; ++i) {
+                int value = values[i];
+                size_t new_index;
+
+                if (value >= 0) {
+                    if (sum > (size_t)-1 - (size_t)value) {
+                        continue;
+                    }
+                    new_index = sum + (size_t)value;
+                } else {
+                    size_t abs_value = (size_t)(-(value + 1)) + 1;
+                    if (sum < abs_value) {
+                        continue;
+                    }
+                    new_index = sum - abs_value;
+                }
+
+                if (new_index >= states) {
+                    continue;
+                }
+
+                if (next[new_index] > ULLONG_MAX - dp[sum]) {
+                    free(dp);
+                    free(next);
+                    errno = ERANGE;
+                    return 0;
+                }
+
+                next[new_index] += dp[sum];
+            }
+        }
+
+        unsigned long long *tmp = dp;
+        dp = next;
+        next = tmp;
+    }
+
+    unsigned long long total = 0;
+    for (size_t sum = 0; sum < states; ++sum) {
+        if (total > ULLONG_MAX - dp[sum]) {
+            free(dp);
+            free(next);
+            errno = ERANGE;
+            return 0;
+        }
+        total += dp[sum];
+    }
+
+    free(dp);
+    free(next);
+
+    return total;
+}
+
+int main(void)
+{
+    int values[] = { -1, 1, 2 };
+    int values_count = (int)(sizeof(values) / sizeof(values[0]));
+    int length = 3;
+
+    unsigned

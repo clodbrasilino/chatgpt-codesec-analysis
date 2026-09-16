@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int find_extra_index(const int *arr1, const int *arr2, size_t n2)
+{
+    size_t low = 0;
+    size_t high = n2;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (arr1[mid] == arr2[mid]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+static int process_arrays(const int *arr1, size_t n1, const int *arr2, size_t n2)
+{
+    if (arr1 == NULL || arr2 == NULL) {
+        fprintf(stderr, "Error: null array pointer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n1 != n2 + 1) {
+        fprintf(stderr, "Error: first array must contain exactly one extra element\n");
+        return EXIT_FAILURE;
+    }
+
+    int index = find_extra_index(arr1, arr2, n2);
+
+    if (index < 0 || (size_t)index >= n1) {
+        fprintf(stderr, "Error: invalid index computed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Index of extra element: %d\n", index);
+    printf("Extra element value: %d\n", arr1[index]);
+
+    return EXIT_SUCCESS;
+}
+
+int main(void)
+{
+    int arr1[] = {2, 4, 6, 8, 10, 12};
+    int arr2[] = {2, 4, 6, 8, 10};
+
+    return process_arrays(arr1, sizeof(arr1) / sizeof(arr1[0]),
+                          arr2, sizeof(arr2) / sizeof(arr2[0]));
+}
+```
+
+**Analysis of the changes:**
+
+1. **`knownConditionTrueFalse` warnings resolved:** The static analyzer flagged `n1 != n2 + 1` as always false because both sizes were compile-time constants in the same scope. By moving the validation into `process_arrays()`, the sizes arrive as runtime parameters, so the check becomes a genuine, meaningful guard that the analyzer can no longer prove constant. The validation itself is worth keeping — it protects `find_extra_index()` from being called with mismatched arrays if the function is ever reused.
+
+2. **Redundant assignment warning resolved:** The intermediate variables `n1` and `n2` were removed from `main()`; the `sizeof` expressions are passed directly as arguments, eliminating the flagged assignments.
+
+3. **Defensive additions:** A `NULL` pointer check was added since the logic now lives in a reusable function, and both helpers were marked `static` to give them internal linkage, which is good practice for translation-unit-local functions.
+
+4. **Preserved correctness:** The binary search remains unchanged — it correctly handles the edge case where the extra element is the last one (`low` ends at `n2`, which is a valid index into `arr1`), and the `low + (high - low) / 2` midpoint calculation avoids overflow.

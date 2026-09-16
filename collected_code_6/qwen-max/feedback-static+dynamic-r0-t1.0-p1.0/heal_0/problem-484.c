@@ -2,67 +2,47 @@
 #include <stdlib.h>
 
 typedef struct {
-    int *data;
-    size_t length;
+    int a;
+    int b;
 } Tuple;
 
-int compareTuples(const void *a, const void *b) {
-    return (*(int*)a - *(int*)b);
-}
+Tuple* remove_matching_tuples(Tuple *tuples1, int len1, Tuple *tuples2, int len2, int *new_len) {
+    Tuple *result = (Tuple *)malloc(len1 * sizeof(Tuple));
+    if (result == NULL) return NULL;
+    *new_len = 0;
 
-Tuple* removeMatchingElements(Tuple *tuple1, Tuple *tuple2) {
-    qsort(tuple1->data, tuple1->length, sizeof(int), compareTuples);
-    qsort(tuple2->data, tuple2->length, sizeof(int), compareTuples);
-
-    int *result = malloc(tuple1->length * sizeof(int));
-    if (!result) {
-        return NULL;
-    }
-
-    size_t index1 = 0, index2 = 0, resultIndex = 0;
-
-    while (index1 < tuple1->length && index2 < tuple2->length) {
-        if (tuple1->data[index1] < tuple2->data[index2]) {
-            result[resultIndex++] = tuple1->data[index1++];
-        } else if (tuple1->data[index1] > tuple2->data[index2]) {
-            index2++;
-        } else {
-            index1++;
-            index2++;
+    for (int i = 0; i < len1; i++) {
+        int found = 0;
+        for (int j = 0; j < len2; j++) {
+            if (tuples1[i].a == tuples2[j].a && tuples1[i].b == tuples2[j].b) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            result[(*new_len)++] = tuples1[i];
         }
     }
 
-    while (index1 < tuple1->length) {
-        result[resultIndex++] = tuple1->data[index1++];
-    }
-
-    Tuple *newTuple = (Tuple*)malloc(sizeof(Tuple));
-    newTuple->data = result;
-    newTuple->length = resultIndex;
-
-    return newTuple;
-}
-
-void freeTuple(Tuple *tuple) {
-    free(tuple->data);
-    free(tuple);
+    return result;
 }
 
 int main() {
-    int arr1[] = {1, 2, 3, 4, 5, 6, 7};
-    int arr2[] = {2, 4, 6, 8, 10};
+    Tuple tuples1[] = {{1, 2}, {3, 4}, {5, 6}};
+    Tuple tuples2[] = {{3, 4}, {7, 8}};
+    int len1 = sizeof(tuples1) / sizeof(tuples1[0]);
+    int len2 = sizeof(tuples2) / sizeof(tuples2[0]);
+    int new_len;
 
-    Tuple tuple1 = {arr1, 7};
-    Tuple tuple2 = {arr2, 5};
-
-    Tuple *result = removeMatchingElements(&tuple1, &tuple2);
-
-    for (size_t i = 0; i < result->length; i++) {
-        printf("%d ", result->data[i]);
+    Tuple *result = remove_matching_tuples(tuples1, len1, tuples2, len2, &new_len);
+    if (result == NULL) {
+        return 1;
     }
-    printf("\n");
 
-    freeTuple(result);
+    for (int i = 0; i < new_len; i++) {
+        printf("(%d, %d)\n", result[i].a, result[i].b);
+    }
 
+    free(result);
     return 0;
 }

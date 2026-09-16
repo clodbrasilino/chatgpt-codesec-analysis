@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-903.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-903.c:23:33: style: Parameter 'argv' can be declared as const array [constParameter]
+int main(int argc, char * const argv[]) {
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-903.c:10:46: error: Shifting 64-bit value by 64 bits is undefined behaviour [shiftTooManyBits]
+        unsigned long long next_power = 1ULL << (i + 1);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-903.c:8:30: note: Assignment 'num_bits=sizeof(n)*8', assigned value is 64
+    int num_bits = sizeof(n) * 8;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-903.c:9:23: note: Assuming that condition 'i<num_bits' is not redundant
+    for (int i = 0; i < num_bits; i++) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-903.c:10:46: note: Shift
+        unsigned long long next_power = 1ULL << (i + 1);
+                                             ^

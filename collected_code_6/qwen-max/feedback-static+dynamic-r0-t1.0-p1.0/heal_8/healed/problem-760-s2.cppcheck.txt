@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:18:35: style: Condition 'isSingleDistinctElement(arr1,4)' is always false [knownConditionTrueFalse]
+    printf(isSingleDistinctElement(arr1, 4) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:18:35: note: Calling function 'isSingleDistinctElement' returns 0
+    printf(isSingleDistinctElement(arr1, 4) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:18:35: note: Condition 'isSingleDistinctElement(arr1,4)' is always false
+    printf(isSingleDistinctElement(arr1, 4) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:19:35: style: Condition 'isSingleDistinctElement(arr2,4)' is always false [knownConditionTrueFalse]
+    printf(isSingleDistinctElement(arr2, 4) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:19:35: note: Calling function 'isSingleDistinctElement' returns 0
+    printf(isSingleDistinctElement(arr2, 4) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:19:35: note: Condition 'isSingleDistinctElement(arr2,4)' is always false
+    printf(isSingleDistinctElement(arr2, 4) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:20:35: style: Condition 'isSingleDistinctElement(arr3,1)' is always true [knownConditionTrueFalse]
+    printf(isSingleDistinctElement(arr3, 1) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:20:35: note: Calling function 'isSingleDistinctElement' returns 1
+    printf(isSingleDistinctElement(arr3, 1) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:20:35: note: Condition 'isSingleDistinctElement(arr3,1)' is always true
+    printf(isSingleDistinctElement(arr3, 1) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:21:35: style: Condition 'isSingleDistinctElement(arr4,0)' is always false [knownConditionTrueFalse]
+    printf(isSingleDistinctElement(arr4, 0) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:21:35: note: Calling function 'isSingleDistinctElement' returns 0
+    printf(isSingleDistinctElement(arr4, 0) ? "true\n" : "false\n");
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_8/healed/problem-760-s2.c:21:35: note: Condition 'isSingleDistinctElement(arr4,0)' is always false
+    printf(isSingleDistinctElement(arr4, 0) ? "true\n" : "false\n");
+                                  ^

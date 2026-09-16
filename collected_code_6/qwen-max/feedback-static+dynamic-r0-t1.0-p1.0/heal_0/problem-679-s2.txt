@@ -1,68 +1,67 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct {
     char *key;
     void *value;
-} DictionaryElement;
+} DictionaryItem;
 
 typedef struct {
-    DictionaryElement **elements;
+    DictionaryItem **items;
     int size;
 } Dictionary;
 
-Dictionary* create_dictionary(int size) {
-    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
-    dict->elements = (DictionaryElement**)calloc(size, sizeof(DictionaryElement*));
+Dictionary *create_dictionary(int size) {
+    Dictionary *dict = (Dictionary *)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->items = (DictionaryItem **)calloc(size, sizeof(DictionaryItem *));
+    if (!dict->items) { free(dict); return NULL; }
     dict->size = size;
     return dict;
 }
 
-void insert_into_dictionary(Dictionary *dict, const char *key, void *value, int index) {
-    if (index >= 0 && index < dict->size) {
-        DictionaryElement *element = (DictionaryElement*)malloc(sizeof(DictionaryElement));
-        element->key = strdup(key);
-        element->value = value;
-        dict->elements[index] = element;
+void destroy_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->items[i]) {
+            free(dict->items[i]->key);
+            free(dict->items[i]->value);
+            free(dict->items[i]);
+        }
+    }
+    free(dict->items);
+    free(dict);
+}
+
+void add_to_dictionary(Dictionary *dict, const char *key, void *value) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->items[i] == NULL) {
+            DictionaryItem *item = (DictionaryItem *)malloc(sizeof(DictionaryItem));
+            item->key = strdup(key);
+            item->value = value;
+            dict->items[i] = item;
+            break;
+        }
     }
 }
 
 void *get_value_by_index(Dictionary *dict, int index) {
-    if (index >= 0 && index < dict->size) {
-        return dict->elements[index]->value;
+    if (index < 0 || index >= dict->size) {
+        return NULL;
     }
-    return NULL;
-}
-
-void free_dictionary(Dictionary *dict) {
-    for (int i = 0; i < dict->size; ++i) {
-        if (dict->elements[i] != NULL) {
-            free(dict->elements[i]->key);
-            free(dict->elements[i]);
-        }
-    }
-    free(dict->elements);
-    free(dict);
+    return (dict->items[index]) ? dict->items[index]->value : NULL;
 }
 
 int main() {
     Dictionary *dict = create_dictionary(3);
-    int val1 = 10;
-    int val2 = 20;
-    int val3 = 30;
+    if (!dict) return 1;
+    add_to_dictionary(dict, "key1", (void *)"value1");
+    add_to_dictionary(dict, "key2", (void *)"value2");
+    add_to_dictionary(dict, "key3", (void *)"value3");
 
-    insert_into_dictionary(dict, "one", &val1, 0);
-    insert_into_dictionary(dict, "two", &val2, 1);
-    insert_into_dictionary(dict, "three", &val3, 2);
+    printf("Value at index 1: %s\n", (char *)get_value_by_index(dict, 1));
 
-    void *value = get_value_by_index(dict, 1);
-    if (value != NULL) {
-        printf("Value at index 1: %d\n", *(int*)value);
-    }
-
-    free_dictionary(dict);
+    destroy_dictionary(dict);
     return 0;
 }
 ```

@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int id;
+    char name[50];
+} Tuple;
+
+typedef struct {
+    Tuple tuple1;
+    Tuple tuple2;
+} NestedTuple;
+
+NestedTuple* concatenate_tuples(const Tuple* t1, const Tuple* t2) {
+    if (t1 == NULL || t2 == NULL) {
+        return NULL;
+    }
+
+    NestedTuple* nested = (NestedTuple*)malloc(sizeof(NestedTuple));
+    if (nested == NULL) {
+        return NULL;
+    }
+
+    nested->tuple1.id = t1->id;
+    strncpy(nested->tuple1.name, t1->name, sizeof(nested->tuple1.name) - 1);
+    nested->tuple1.name[sizeof(nested->tuple1.name) - 1] = '\0';
+
+    nested->tuple2.id = t2->id;
+    strncpy(nested->tuple2.name, t2->name, sizeof(nested->tuple2.name) - 1);
+    nested->tuple2.name[sizeof(nested->tuple2.name) - 1] = '\0';
+
+    return nested;
+}
+
+int main(void) {
+    Tuple t1 = {1, "First"};
+    Tuple t2 = {2, "Second"};
+
+    NestedTuple* result = concatenate_tuples(&t1, &t2);
+    if (result != NULL) {
+        printf("NestedTuple: { { %d, %s }, { %d, %s } }\n",
+               result->tuple1.id, result->tuple1.name,
+               result->tuple2.id, result->tuple2.name);
+        
+        free(result);
+    } else {
+        fprintf(stderr, "Failed to concatenate tuples.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

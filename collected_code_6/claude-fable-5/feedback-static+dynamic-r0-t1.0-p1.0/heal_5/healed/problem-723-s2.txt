@@ -1,0 +1,158 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
+
+typedef int (*pair_func)(int, int);
+
+static int is_equal(int a, int b)
+{
+    return (a == b) ? 1 : 0;
+}
+
+static int *map_pairs(const int *list1, const int *list2, size_t n, pair_func f)
+{
+    int *result;
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL || f == NULL || n == 0U) {
+        return NULL;
+    }
+
+    if (n > SIZE_MAX / sizeof(*result)) {
+        return NULL;
+    }
+
+    result = malloc(n * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        result[i] = f(list1[i], list2[i]);
+    }
+
+    return result;
+}
+
+static int count_same_pair(const int *list1, const int *list2, size_t n)
+{
+    int *mapped;
+    int count = 0;
+    size_t i;
+
+    if (n == 0U) {
+        return 0;
+    }
+
+    if (list1 == NULL || list2 == NULL) {
+        return -1;
+    }
+
+    mapped = map_pairs(list1, list2, n, is_equal);
+    if (mapped == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        count += mapped[i];
+    }
+
+    free(mapped);
+    return count;
+}
+
+static int read_list(int *list, size_t n)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (scanf("%d", &list[i]) != 1) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+int main(void)
+{
+    size_t n;
+    unsigned long input_n;
+    int *list1;
+    int *list2;
+    int result;
+
+    if (scanf("%lu", &input_n) != 1) {
+        fprintf(stderr, "Error: failed to read size\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input_n > (unsigned long)SIZE_MAX) {
+        fprintf(stderr, "Error: size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (size_t)input_n;
+
+    if (n == 0U) {
+        printf("0\n");
+        return EXIT_SUCCESS;
+    }
+
+    if (n > SIZE_MAX / sizeof(*list1)) {
+        fprintf(stderr, "Error: size too large\n");
+        return EXIT_FAILURE;
+    }
+
+    list1 = malloc(n * sizeof(*list1));
+    if (list1 == NULL) {
+        fprintf(stderr, "Error: allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list2 = malloc(n * sizeof(*list2));
+    if (list2 == NULL) {
+        free(list1);
+        fprintf(stderr, "Error: allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (read_list(list1, n) != 0 || read_list(list2, n) != 0) {
+        free(list1);
+        free(list2);
+        fprintf(stderr, "Error: failed to read lists\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_same_pair(list1, list2, n);
+    free(list1);
+    free(list2);
+
+    if (result < 0) {
+        fprintf(stderr, "Error: failed to count pairs\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%d\n", result);
+    fflush(stdout);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original logic of `map_pairs` and `count_same_pair` was functionally sound — the pair mapping, equality counting, overflow guards, and memory management were all correct. The "no output" failures in the test cases pointed at the I/O path in `main` rather than the algorithm itself, since a failure anywhere in input parsing causes the program to exit via `stderr` with no `stdout` output at all.
+
+Key adjustments made:
+
+1. **Size validation before the cast** — `(size_t)input_n` could silently truncate on platforms where `size_t` is narrower than `unsigned long` (e.g., some 32-bit targets). A range check against `SIZE_MAX` is now performed before converting, so an oversized input produces a clean diagnostic instead of a truncated allocation size that leads to out-of-bounds reads in `read_list`.
+
+2. **Explicit `fflush(stdout)`** — ensures the result is actually delivered even if the process is observed through a pipe by a test harness that reads output before process exit, which is the classic cause of "expected N, got no output" failures.
+
+3. Everything else (NULL checks, `SIZE_MAX / sizeof(*result)` overflow guards, freeing `mapped` before returning, freeing both lists on every exit path) was preserved, as those defensive measures were already correct.

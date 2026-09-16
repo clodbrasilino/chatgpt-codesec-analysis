@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Chunk;
+
+static Chunk *chunk_array(const int *array, size_t array_size, size_t n, size_t *chunk_count)
+{
+    Chunk *chunks;
+    size_t count;
+    size_t i;
+
+    if (array == NULL || n == 0 || chunk_count == NULL) {
+        return NULL;
+    }
+
+    count = array_size / n;
+    if (array_size % n != 0) {
+        count++;
+    }
+
+    if (count == 0) {
+        *chunk_count = 0;
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(*chunks)) {
+        *chunk_count = 0;
+        return NULL;
+    }
+
+    chunks = malloc(count * sizeof(*chunks));
+    if (chunks == NULL) {
+        *chunk_count = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        size_t start = i * n;
+        size_t remaining = array_size - start;
+        size_t chunk_size = remaining < n ? remaining : n;
+        size_t j;
+
+        chunks[i].size = chunk_size;
+        chunks[i].data = malloc(chunk_size * sizeof(*chunks[i].data));
+        if (chunks[i].data == NULL) {
+            for (j = 0; j < i; j++) {
+                free(chunks[j].data);
+            }
+            free(chunks);
+            *chunk_count = 0;
+            return NULL;
+        }
+
+        for (j = 0; j < chunk_size; j++) {
+            chunks[i].data[j] = array[start + j];
+        }
+    }
+
+    *chunk_count = count;
+    return chunks;
+}
+
+static void free_chunks(Chunk *chunks, size_t chunk_count)
+{
+    size_t i;
+
+    if (chunks == NULL) {
+        return;
+    }
+
+    for (i = 0; i < chunk_count; i++) {
+        free(chunks[i].data);
+    }
+    free(chunks);
+}
+
+int main(void)
+{
+    const int array[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    const size_t array_size = sizeof(array) / sizeof(array[0]);
+    const size_t n = 3;
+    size_t chunk_count = 0;
+    size_t i;
+    Chunk *chunks;
+
+    chunks = chunk_array(array, array_size, n, &chunk_count);
+    if (chunks == NULL) {
+        fprintf(stderr, "Error: failed to chunk array\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < chunk_count; i++) {
+        size_t j;
+        printf("Chunk %zu: (", i + 1);
+        for (j = 0; j < chunks[i].size; j++) {
+            printf("%d", chunks[i].data[j]);
+            if (j + 1 < chunks[i].size) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+
+    free_chunks(chunks, chunk_count);
+    chunks = NULL;
+
+    return EXIT_SUCCESS;
+}

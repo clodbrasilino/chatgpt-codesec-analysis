@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int multiply_consecutive(const long long *list, size_t n, long long *result)
+{
+    size_t i;
+
+    if (list == NULL || result == NULL || n < 2) {
+        return -1;
+    }
+
+    for (i = 0; i + 1 < n; i++) {
+        long long a = list[i];
+        long long b = list[i + 1];
+
+        if (a != 0) {
+            if (a > 0) {
+                if (b > 0 && a > LLONG_MAX / b) {
+                    return -1;
+                }
+                if (b < 0 && b < LLONG_MIN / a) {
+                    return -1;
+                }
+            } else {
+                if (b > 0 && a < LLONG_MIN / b) {
+                    return -1;
+                }
+                if (b < 0 && a < LLONG_MAX / b) {
+                    return -1;
+                }
+            }
+        }
+
+        result[i] = a * b;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    long long numbers[] = {2, 3, 4, 5, 6};
+    size_t n = sizeof(numbers) / sizeof(numbers[0]);
+    long long *products;
+    size_t i;
+
+    products = malloc((n - 1) * sizeof(*products));
+    if (products == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (multiply_consecutive(numbers, n, products) != 0) {
+        fprintf(stderr, "Multiplication failed\n");
+        free(products);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n - 1; i++) {
+        if (printf("%lld * %lld = %lld\n",
+                   numbers[i], numbers[i + 1], products[i]) < 0) {
+            free(products);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(products);
+    return EXIT_SUCCESS;
+}

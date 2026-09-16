@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(outer (inner) text)ing",
+        "alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            free(output);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the reported weaknesses:**
+
+The failure messages in the comments (`expected 'python', got ���`) are the classic signature of a buffer containing **uninitialized or non-null-terminated memory**. In an earlier, broken version of this code, that would have been caused by one or more of:
+
+1. **Using `malloc` instead of `calloc` without terminating the string** — garbage bytes printed until a random `'\0'` is found.
+2. **Missing `result[j] = '\0';`** after the copy loop.
+3. **Undersized allocation** (e.g., `malloc(len)` without `+ 1` for the terminator), causing a heap overflow when writing the terminator.
+4. **Returning a pointer to a stack-allocated buffer**, which becomes dangling garbage after the function returns.
+
+The version above addresses all of these:
+
+- `calloc(len + 1, sizeof(char))` allocates exactly enough for the worst case (no parentheses at all) plus the null terminator, and zero-initializes the buffer so the result is always a valid C string even before the explicit termination.
+- `result[j] = '\0';` explicitly terminates at the correct position (defensive redundancy alongside `calloc`).
+- The buffer is heap-allocated and ownership is transferred to the caller, which correctly frees it on all paths, including the error path — no leaks, no dangling pointers.
+- `NULL` input and allocation failure are both handled gracefully.
+
+Depth tracking with `if (depth > 0)` also guards against unbalanced closing parentheses (e.g., `"ab)cd"`), preventing the depth counter from going negative and swallowing subsequent characters. All three test cases pass with this implementation.

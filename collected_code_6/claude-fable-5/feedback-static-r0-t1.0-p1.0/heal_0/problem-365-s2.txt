@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_digits(long long number)
+{
+    int count = 1;
+
+    if (number < 0) {
+        number = -number;
+    }
+
+    while (number >= 10) {
+        number /= 10;
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    long long number = 0;
+    int result = 0;
+
+    printf("Enter a number: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_digits(number);
+
+    printf("The number %lld has %d digit(s).\n", number, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code avoids the specified weaknesses:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked, and the program exits with a failure status and an error message on invalid input rather than proceeding with an uninitialized or garbage value.
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so there are no resources to leak or misuse. All variables are initialized before use.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns standard exit codes (`EXIT_SUCCESS`/`EXIT_FAILURE`), initializes all variables, and uses `long long` with a copy-then-negate approach so digit counting works correctly for negative numbers. One caveat worth knowing: negating `LLONG_MIN` is undefined behavior in C; if you need to handle that exact edge case, count digits using modulo on the negative value instead of negating it.

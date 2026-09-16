@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_kth_element(const int *arr1, size_t size1, const int *arr2, size_t size2, size_t k, int *result)
+{
+    size_t i = 0;
+    size_t j = 0;
+    size_t count = 0;
+    int current = 0;
+
+    if (arr1 == NULL || arr2 == NULL || result == NULL)
+    {
+        return -1;
+    }
+
+    if (k == 0 || k > size1 + size2)
+    {
+        return -1;
+    }
+
+    while (i < size1 && j < size2)
+    {
+        if (arr1[i] <= arr2[j])
+        {
+            current = arr1[i];
+            i++;
+        }
+        else
+        {
+            current = arr2[j];
+            j++;
+        }
+
+        count++;
+
+        if (count == k)
+        {
+            *result = current;
+            return 0;
+        }
+    }
+
+    while (i < size1)
+    {
+        current = arr1[i];
+        i++;
+        count++;
+
+        if (count == k)
+        {
+            *result = current;
+            return 0;
+        }
+    }
+
+    while (j < size2)
+    {
+        current = arr2[j];
+        j++;
+        count++;
+
+        if (count == k)
+        {
+            *result = current;
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int arr1[] = {2, 3, 6, 7, 9};
+    int arr2[] = {1, 4, 8, 10};
+    size_t size1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t size2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t k = 5;
+    int result = 0;
+    int status = 0;
+
+    status = find_kth_element(arr1, size1, arr2, size2, k, &result);
+
+    if (status == 0)
+    {
+        printf("The %zuth element is: %d\n", k, result);
+    }
+    else
+    {
+        printf("Invalid input or k is out of range.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

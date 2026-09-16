@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <regex.h>
+
+void remove_multiple_spaces(char *input) {
+    static const char pattern[] = "[[:space:]]+";
+    regex_t reg;
+    char result[1024];
+    regmatch_t match;
+    int offset = 0, reti;
+
+    if (regcomp(&reg, pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+        return;
+    }
+
+    while (regexec(&reg, input + offset, 1, &match, 0) == 0) {
+        if (match.rm_so == 0) {
+            offset += 1;
+            continue;
+        }
+        snprintf(result, 1024, "%.*s %.*s", 
+                 match.rm_so, input + offset, 
+                 (int)(strlen(input + offset) - match.rm_eo), 
+                 input + offset + match.rm_eo);
+        strcpy(input + offset, result);
+        offset += 1;
+    }
+
+    regfree(&reg);
+}
+
+int main() {
+    char str[] = "This  is   a    test string. ";
+    remove_multiple_spaces(str);
+    printf("%s\n", str);
+    return 0;
+}

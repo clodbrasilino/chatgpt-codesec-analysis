@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-660-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-660-s2.c:4:23: style: Parameter 'range1' can be declared as pointer to const [constParameterPointer]
+int choosePoints(int *range1, int *range2, int size, int **result1, int **result2) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-660-s2.c:4:36: style: Parameter 'range2' can be declared as pointer to const [constParameterPointer]
+int choosePoints(int *range1, int *range2, int size, int **result1, int **result2) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-660-s2.c:33:27: style: Variable 'totalUniquePoints' is assigned a value that is never used. [unreadVariable]
+    int totalUniquePoints = choosePoints(range1, range2, size, &result1, &result2);
+                          ^

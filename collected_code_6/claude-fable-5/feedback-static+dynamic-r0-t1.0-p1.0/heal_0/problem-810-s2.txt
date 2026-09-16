@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct element {
+    int value;
+    size_t count;
+};
+
+static int expand_elements(const struct element *elems, size_t n,
+                           int **out, size_t *out_len)
+{
+    size_t total = 0;
+    size_t i;
+    size_t j;
+    size_t pos = 0;
+    int *result = NULL;
+
+    if (elems == NULL || out == NULL || out_len == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (elems[i].count > SIZE_MAX - total) {
+            return -1;
+        }
+        total += elems[i].count;
+    }
+
+    if (total == 0) {
+        *out = NULL;
+        *out_len = 0;
+        return 0;
+    }
+
+    if (total > SIZE_MAX / sizeof(int)) {
+        return -1;
+    }
+
+    result = malloc(total * sizeof(int));
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < elems[i].count; j++) {
+            result[pos] = elems[i].value;
+            pos++;
+        }
+    }
+
+    *out = result;
+    *out_len = total;
+    return 0;
+}
+
+int main(void)
+{
+    struct element elems[] = {
+        { 7, 3 },
+        { 2, 1 },
+        { 9, 4 },
+        { 5, 0 },
+        { 1, 2 }
+    };
+    size_t n = sizeof(elems) / sizeof(elems[0]);
+    int *expanded = NULL;
+    size_t len = 0;
+    size_t i;
+
+    if (expand_elements(elems, n, &expanded, &len) != 0) {
+        fprintf(stderr, "Failed to expand elements\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (printf("%d ", expanded[i]) < 0) {
+            free(expanded);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        free(expanded);
+        return EXIT_FAILURE;
+    }
+
+    free(expanded);
+    return EXIT_SUCCESS;
+}
+```

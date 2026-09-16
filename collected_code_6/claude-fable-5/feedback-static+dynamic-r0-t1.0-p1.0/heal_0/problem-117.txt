@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <math.h>
+
+int try_convert_to_float(const char *str, float *result)
+{
+    char *endptr;
+    float value;
+
+    if (str == NULL || result == NULL) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 0;
+    }
+
+    errno = 0;
+    value = strtof(str, &endptr);
+
+    if (errno == ERANGE) {
+        return 0;
+    }
+
+    if (endptr == str) {
+        return 0;
+    }
+
+    while (isspace((unsigned char)*endptr)) {
+        endptr++;
+    }
+
+    if (*endptr != '\0') {
+        return 0;
+    }
+
+    if (isnan(value) || isinf(value)) {
+        return 0;
+    }
+
+    *result = value;
+    return 1;
+}
+
+size_t convert_list_to_floats(const char **list, size_t count, float *output)
+{
+    size_t i;
+    size_t converted;
+    float value;
+
+    if (list == NULL || output == NULL) {
+        return 0;
+    }
+
+    converted = 0;
+    for (i = 0; i < count; i++) {
+        if (try_convert_to_float(list[i], &value)) {
+            output[converted] = value;
+            converted++;
+        }
+    }
+
+    return converted;
+}
+
+int main(void)
+{
+    const char *list[] = {
+        "3.14",
+        "hello",
+        "42",
+        "-0.5",
+        "1e3",
+        "12abc",
+        "",
+        "  7.5  ",
+        "999999999999999999999999999999999999999999999"
+    };
+    size_t count;
+    float *output;
+    size_t converted;
+    size_t i;
+
+    count = sizeof(list) / sizeof(list[0]);
+
+    output = malloc(count * sizeof(float));
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    converted = convert_list_to_floats(list, count, output);
+
+    printf("Converted %zu of %zu elements:\n", converted, count);
+    for (i = 0; i < converted; i++) {
+        printf("%f\n", (double)output[i]);
+    }
+
+    free(output);
+    output = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

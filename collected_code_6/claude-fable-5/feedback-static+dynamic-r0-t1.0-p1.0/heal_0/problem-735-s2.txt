@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int toggle_middle_bits(unsigned int n)
+{
+    unsigned int mask;
+    unsigned int temp;
+    unsigned int msb_pos;
+
+    if (n <= 2U)
+    {
+        return n;
+    }
+
+    temp = n;
+    msb_pos = 0U;
+    while (temp > 1U)
+    {
+        temp >>= 1U;
+        msb_pos++;
+    }
+
+    mask = ((1U << msb_pos) - 1U) & ~1U;
+
+    return n ^ mask;
+}
+
+int main(void)
+{
+    unsigned int number;
+    unsigned int result;
+    int scan_status;
+
+    printf("Enter an unsigned integer: ");
+    scan_status = scanf("%u", &number);
+    if (scan_status != 1)
+    {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = toggle_middle_bits(number);
+    printf("Original number: %u\n", number);
+    printf("After toggling middle bits: %u\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+1. **`toggle_middle_bits`**: Finds the position of the most significant set bit, builds a mask with all bits set *between* the MSB and the LSB (exclusive of both), then XORs the number with that mask. Numbers `<= 2` are returned unchanged since they have no middle bits.
+
+2. **Safety considerations addressed:**
+   - **CWE-703**: The return value of `scanf` is checked, and an error path with a non-zero exit code handles malformed input.
+   - **CWE-664**: Only automatic storage is used; no dynamic resources are allocated, so there's nothing to leak or misuse.
+   - **CWE-710**: Uses `unsigned int` consistently with `U` suffixes to avoid signed overflow/shift undefined behavior, `main` has the standard `int main(void)` signature, and `EXIT_SUCCESS`/`EXIT_FAILURE` are used for portable exit codes.
+
+**Example:** For input `10` (binary `1010`), the middle bits toggle to give `1100` = `12`.

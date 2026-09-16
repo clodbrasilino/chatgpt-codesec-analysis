@@ -1,0 +1,74 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int power_safe(long long base, long long exp, long long *result)
+{
+    long long acc = 1;
+    long long i;
+
+    if (result == NULL || exp < 0) {
+        return -1;
+    }
+
+    for (i = 0; i < exp; i++) {
+        if (base != 0 && (acc > LLONG_MAX / base || acc < LLONG_MIN / base)) {
+            return -1;
+        }
+        acc *= base;
+    }
+
+    *result = acc;
+    return 0;
+}
+
+static int tuple_exponentiation(const long long *bases, const long long *exps,
+                                size_t len, long long *out)
+{
+    size_t i;
+
+    if (bases == NULL || exps == NULL || out == NULL || len == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < len; i++) {
+        if (power_safe(bases[i], exps[i], &out[i]) != 0) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const long long bases[] = {10, 4, 5, 6};
+    const long long exps[] = {5, 6, 7, 5};
+    const size_t len = sizeof(bases) / sizeof(bases[0]);
+    long long *results;
+    size_t i;
+
+    results = malloc(len * sizeof(*results));
+    if (results == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (tuple_exponentiation(bases, exps, len, results) != 0) {
+        fprintf(stderr, "Exponentiation failed\n");
+        free(results);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < len; i++) {
+        printf("%lld", results[i]);
+        if (i + 1 < len) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(results);
+    return EXIT_SUCCESS;
+}

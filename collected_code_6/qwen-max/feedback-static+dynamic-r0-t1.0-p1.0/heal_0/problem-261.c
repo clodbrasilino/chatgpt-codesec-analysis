@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+Tuple divide_tuples(Tuple a, Tuple b) {
+    if (b.x == 0 || b.y == 0) {
+        fprintf(stderr, "Error: Division by zero\n");
+        exit(EXIT_FAILURE);
+    }
+    Tuple result;
+    result.x = a.x / b.x;
+    result.y = a.y / b.y;
+    return result;
+}
+
+int main() {
+    Tuple a = {10, 20};
+    Tuple b = {2, 4};
+    
+    Tuple result = divide_tuples(a, b);
+
+    printf("Result: (%d, %d)\n", result.x, result.y);
+
+    return 0;
+}

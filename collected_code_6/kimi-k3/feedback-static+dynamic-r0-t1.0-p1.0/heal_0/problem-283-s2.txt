@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int checkDigitFrequency(long long number) {
+    int frequency[10] = {0};
+    unsigned long long absNumber;
+    
+    if (number < 0) {
+        if (number == LLONG_MIN) {
+            absNumber = (unsigned long long)LLONG_MAX + 1ULL;
+        } else {
+            absNumber = (unsigned long long)(-number);
+        }
+    } else {
+        absNumber = (unsigned long long)number;
+    }
+    
+    if (absNumber == 0) {
+        return 1;
+    }
+    
+    while (absNumber > 0) {
+        int digit = (int)(absNumber % 10ULL);
+        frequency[digit]++;
+        absNumber /= 10ULL;
+    }
+    
+    for (int i = 0; i < 10; i++) {
+        if (frequency[i] > i) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    long long testCases[] = {0, 1, 11, 122, 1223, 12321, 123321, 123456, 111};
+    size_t numTests = sizeof(testCases) / sizeof(testCases[0]);
+    
+    for (size_t i = 0; i < numTests; i++) {
+        int result = checkDigitFrequency(testCases[i]);
+        printf("Number: %lld -> %s\n", testCases[i], result ? "Valid" : "Invalid");
+    }
+    
+    return 0;
+}
+```

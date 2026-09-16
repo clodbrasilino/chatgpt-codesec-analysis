@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double find_ratio_of_zeroes(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0.0;
+    }
+
+    size_t zero_count = 0;
+    for (size_t i = 0; i < size; ++i) {
+        if (array[i] == 0) {
+            zero_count++;
+        }
+    }
+
+    return (double)zero_count / (double)size;
+}
+
+int main(void) {
+    int arr[] = {1, 0, -5, 0, 3, 0, 8};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    double ratio = find_ratio_of_zeroes(arr, size);
+
+    printf("Ratio of zeroes: %f\n", ratio);
+
+    return 0;
+}
+```

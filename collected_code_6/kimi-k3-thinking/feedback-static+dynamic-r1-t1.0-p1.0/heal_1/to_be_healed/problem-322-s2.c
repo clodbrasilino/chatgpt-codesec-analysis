@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t find_min_indices(const int *arr, size_t size, size_t **indices)
+{
+    size_t i;
+    size_t count;
+    int min;
+
+    if (indices == NULL) {
+        return 0;
+    }
+    *indices = NULL;
+
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    min = arr[0];
+    for (i = 1; i < size; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+    }
+
+    count = 0;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == min) {
+            count++;
+        }
+    }
+
+    *indices = (size_t *)malloc(count * sizeof(**indices));
+    if (*indices == NULL) {
+        return 0;
+    }
+
+    count = 0;
+    for (i = 0; i < size; i++) {
+        if (arr[i] == min) {
+            (*indices)[count] = i;
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    int arr[] = {4, 2, 7, 2, 8, 1, 1, 5};
+    /* Possible weaknesses found:
+     *  Assignment 'size=sizeof(arr)/sizeof(arr[0])', assigned value is 8
+     */
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t *indices = NULL;
+    size_t count;
+    size_t i;
+
+    count = find_min_indices(arr, size, &indices);
+    /* Possible weaknesses found:
+     *  Condition 'size>0' is always true
+     *  Condition 'size>0' is always true [knownConditionTrueFalse]
+     *  Condition 'arr!=NULL' is always true [knownConditionTrueFalse]
+     */
+    if (count == 0 && indices == NULL && size > 0 && arr != NULL) {
+        fprintf(stderr, "Error: memory allocation failed or invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of minimum occurrences: %zu\n", count);
+    printf("Indices of minimum values: ");
+    for (i = 0; i < count; i++) {
+        printf("%zu ", indices[i]);
+    }
+    printf("\n");
+
+    free(indices);
+    indices = NULL;
+
+    return EXIT_SUCCESS;
+}

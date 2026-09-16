@@ -1,0 +1,135 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    int *max_elements;
+    int *min_elements;
+    size_t count;
+} ExtractedElements;
+
+int compare_ascending(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    if (int_a < int_b) return -1;
+    if (int_a > int_b) return 1;
+    return 0;
+}
+
+int compare_descending(const void *a, const void *b) {
+    int int_a = *(const int *)a;
+    int int_b = *(const int *)b;
+    if (int_a > int_b) return -1;
+    if (int_a < int_b) return 1;
+    return 0;
+}
+
+ExtractedElements extract_max_min_k(const Tuple *tuple, size_t k) {
+    ExtractedElements result = {NULL, NULL, 0};
+    
+    if (tuple == NULL || tuple->data == NULL || tuple->size == 0 || k == 0) {
+        return result;
+    }
+    
+    size_t actual_k = k;
+    if (actual_k > tuple->size) {
+        actual_k = tuple->size;
+    }
+    
+    int *sorted_copy = malloc(tuple->size * sizeof(int));
+    if (sorted_copy == NULL) {
+        return result;
+    }
+    
+    for (size_t i = 0; i < tuple->size; i++) {
+        sorted_copy[i] = tuple->data[i];
+    }
+    
+    result.max_elements = malloc(actual_k * sizeof(int));
+    if (result.max_elements == NULL) {
+        free(sorted_copy);
+        return result;
+    }
+    
+    result.min_elements = malloc(actual_k * sizeof(int));
+    if (result.min_elements == NULL) {
+        free(result.max_elements);
+        result.max_elements = NULL;
+        free(sorted_copy);
+        return result;
+    }
+    
+    qsort(sorted_copy, tuple->size, sizeof(int), compare_ascending);
+    
+    for (size_t i = 0; i < actual_k; i++) {
+        result.min_elements[i] = sorted_copy[i];
+    }
+    
+    qsort(sorted_copy, tuple->size, sizeof(int), compare_descending);
+    
+    for (size_t i = 0; i < actual_k; i++) {
+        result.max_elements[i] = sorted_copy[i];
+    }
+    
+    result.count = actual_k;
+    
+    free(sorted_copy);
+    
+    return result;
+}
+
+void free_extracted_elements(ExtractedElements *elements) {
+    if (elements == NULL) {
+        return;
+    }
+    free(elements->max_elements);
+    elements->max_elements = NULL;
+    free(elements->min_elements);
+    elements->min_elements = NULL;
+    elements->count = 0;
+}
+
+int main(void) {
+    int data[] = {5, 2, 9, 1, 7, 3, 8, 4, 6};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+    
+    Tuple tuple = {data, data_size};
+    
+    size_t k = 3;
+    
+    ExtractedElements result = extract_max_min_k(&tuple, k);
+    
+    if (result.max_elements == NULL || result.min_elements == NULL) {
+        fprintf(stderr, "Error: Failed to extract elements\n");
+        free_extracted_elements(&result);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Original tuple: ");
+    for (size_t i = 0; i < tuple.size; i++) {
+        printf("%d ", tuple.data[i]);
+    }
+    printf("\n");
+    
+    printf("Maximum %zu elements: ", result.count);
+    for (size_t i = 0; i < result.count; i++) {
+        printf("%d ", result.max_elements[i]);
+    }
+    printf("\n");
+    
+    printf("Minimum %zu elements: ", result.count);
+    for (size_t i = 0; i < result.count; i++) {
+        printf("%d ", result.min_elements[i]);
+    }
+    printf("\n");
+    
+    free_extracted_elements(&result);
+    
+    return EXIT_SUCCESS;
+}
+```

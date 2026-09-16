@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    size_t count;
+} Tuple;
+
+int contains_k_elements(Tuple t, size_t k) {
+    return t.count == k;
+}
+
+int main() {
+    int elements[] = {1, 2, 3};
+    Tuple t = {sizeof(elements) / sizeof(elements[0])};
+
+    size_t k = 3;
+    if (contains_k_elements(t, k)) {
+        printf("The tuple contains %zu elements.\n", k);
+    } else {
+        printf("The tuple does not contain %zu elements.\n", k);
+    }
+
+    return 0;
+}

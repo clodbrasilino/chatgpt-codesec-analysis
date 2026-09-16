@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_FIB_INDEX 92
+
+static long long fibonacci(int n)
+{
+    if (n <= 0) {
+        return 0LL;
+    }
+    if (n == 1) {
+        return 1LL;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main(void)
+{
+    int n = 0;
+    int result = 0;
+
+    printf("Enter the index of the Fibonacci number (0-%d): ", MAX_FIB_INDEX);
+
+    result = scanf("%d", &n);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || n > MAX_FIB_INDEX) {
+        fprintf(stderr, "Error: index must be between 0 and %d.\n", MAX_FIB_INDEX);
+        return EXIT_FAILURE;
+    }
+
+    printf("Fibonacci(%d) = %lld\n", n, fibonacci(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety considerations addressed:
+
+- **CWE-703**: The return value of `scanf` is checked, and the input range is validated before use. Error paths write to `stderr` and return `EXIT_FAILURE`.
+- **CWE-664**: No dynamically allocated resources or file handles are used, so there is nothing left unreleased; the program has a single, well-defined lifecycle for all resources.
+- **CWE-710**: The index is capped at 92 because `fibonacci(93)` overflows a signed 64-bit integer, avoiding undefined behavior from signed overflow. Variables are initialized, `main` uses the standard `(void)` signature, and standard exit codes are returned.
+
+One practical note: naive recursion runs in exponential time, so values near the upper limit will take an extremely long time to compute. If performance matters, an iterative or memoized version is strongly recommended, but this satisfies the pure-recursion requirement.

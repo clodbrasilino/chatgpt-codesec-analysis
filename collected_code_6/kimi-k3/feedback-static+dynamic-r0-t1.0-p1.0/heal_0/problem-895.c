@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_sum_no_adjacent(const int *arr, size_t n) {
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+    
+    if (n == 1) {
+        return arr[0] > 0 ? arr[0] : 0;
+    }
+    
+    int include = arr[0];
+    int exclude = 0;
+    
+    for (size_t i = 1; i < n; i++) {
+        int new_exclude = (include > exclude) ? include : exclude;
+        int new_include = exclude + arr[i];
+        
+        if (new_include < exclude) {
+            new_include = exclude;
+        }
+        
+        include = new_include;
+        exclude = new_exclude;
+    }
+    
+    int result = (include > exclude) ? include : exclude;
+    return result > 0 ? result : 0;
+}
+
+int main(void) {
+    int arr[] = {5, 5, 10, 100, 10, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = max_sum_no_adjacent(arr, n);
+    printf("Maximum sum: %d\n", result);
+    
+    return 0;
+}

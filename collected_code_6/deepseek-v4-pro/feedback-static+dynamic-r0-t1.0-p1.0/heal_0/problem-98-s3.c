@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double multiply_and_divide(const double *list, size_t length) {
+    double product = 1.0;
+    
+    if (list == NULL || length == 0) {
+        return 0.0;
+    }
+    
+    for (size_t i = 0; i < length; i++) {
+        product *= list[i];
+    }
+    
+    return product / (double)length;
+}
+
+int main(void) {
+    double numbers[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    
+    double result = multiply_and_divide(numbers, length);
+    printf("Result: %f\n", result);
+    
+    double *dynamic_numbers = (double *)malloc(3 * sizeof(double));
+    if (dynamic_numbers != NULL) {
+        dynamic_numbers[0] = 2.0;
+        dynamic_numbers[1] = 3.0;
+        dynamic_numbers[2] = 4.0;
+        
+        result = multiply_and_divide(dynamic_numbers, 3);
+        printf("Dynamic result: %f\n", result);
+        
+        free(dynamic_numbers);
+    }
+    
+    return 0;
+}

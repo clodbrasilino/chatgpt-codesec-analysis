@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-755-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-755-s3.c:57:43: style: Condition 'second_smallest(NULL,5,&result)==0' is always false [knownConditionTrueFalse]
+    if (second_smallest(NULL, 5, &result) == 0) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-755-s3.c:57:24: note: Calling function 'second_smallest' returns -1
+    if (second_smallest(NULL, 5, &result) == 0) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-755-s3.c:57:43: note: Condition 'second_smallest(NULL,5,&result)==0' is always false
+    if (second_smallest(NULL, 5, &result) == 0) {
+                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-755-s3.c:4:25: style: Parameter 'arr' can be declared as const array [constParameter]
+int second_smallest(int arr[], int size, int *result) {
+                        ^

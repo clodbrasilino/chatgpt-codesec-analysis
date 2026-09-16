@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int add(int a, int b, int lower, int upper) {
+    int sum = a + b;
+    if (sum >= lower && sum <= upper) {
+        return 20;
+    }
+    return sum;
+}
+
+int main(void) {
+    int result;
+    result = add(10, 5, 10, 20);
+    printf("%d\n", result);
+    return 0;
+}

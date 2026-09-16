@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+int compareTuples(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+Tuple* removeMatchingElements(Tuple *tuple1, Tuple *tuple2) {
+    qsort(tuple1->data, tuple1->length, sizeof(int), compareTuples);
+    qsort(tuple2->data, tuple2->length, sizeof(int), compareTuples);
+
+    int *result = malloc(tuple1->length * sizeof(int));
+    if (!result) {
+        return NULL;
+    }
+
+    size_t index1 = 0, index2 = 0, resultIndex = 0;
+
+    while (index1 < tuple1->length && index2 < tuple2->length) {
+        if (tuple1->data[index1] < tuple2->data[index2]) {
+            result[resultIndex++] = tuple1->data[index1++];
+        } else if (tuple1->data[index1] > tuple2->data[index2]) {
+            index2++;
+        } else {
+            index1++;
+            index2++;
+        }
+    }
+
+    while (index1 < tuple1->length) {
+        result[resultIndex++] = tuple1->data[index1++];
+    }
+
+    Tuple *newTuple = (Tuple*)malloc(sizeof(Tuple));
+    newTuple->data = result;
+    newTuple->length = resultIndex;
+
+    return newTuple;
+}
+
+void freeTuple(Tuple *tuple) {
+    free(tuple->data);
+    free(tuple);
+}
+
+int main() {
+    int arr1[] = {1, 2, 3, 4, 5, 6, 7};
+    int arr2[] = {2, 4, 6, 8, 10};
+
+    Tuple tuple1 = {arr1, 7};
+    Tuple tuple2 = {arr2, 5};
+
+    Tuple *result = removeMatchingElements(&tuple1, &tuple2);
+
+    for (size_t i = 0; i < result->length; i++) {
+        printf("%d ", result->data[i]);
+    }
+    printf("\n");
+
+    freeTuple(result);
+
+    return 0;
+}
+```

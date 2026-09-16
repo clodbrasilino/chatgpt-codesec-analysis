@@ -1,65 +1,63 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
 
 typedef struct {
+    char *key;
     int value;
-    UT_hash_handle hh;
-} ValueHash;
+} DictEntry;
 
-bool add_value(ValueHash **table, int value) {
-    ValueHash *s = NULL;
-    HASH_FIND_INT(*table, &value, s);
-    if (s == NULL) {
-        s = (ValueHash *)malloc(sizeof(ValueHash));
-        if (s == NULL) return false;
-        s->value = value;
-        HASH_ADD_INT(*table, value, s);
-        return true;
-    }
-    return false;
-}
+typedef struct {
+    DictEntry *entries;
+    int size;
+} Dictionary;
 
-void free_table(ValueHash **table) {
-    ValueHash *current, *tmp;
-    HASH_ITER(hh, *table, current, tmp) {
-        HASH_DEL(*table, current);
-        free(current);
-    }
-}
-
-int* extract_unique_values(int** dict, int dictSize, int* dictColSize, int* returnSize) {
-    ValueHash *table = NULL;
-    for (int i = 0; i < dictSize; i++) {
-        for (int j = 0; j < (*dictColSize); j++) {
-            add_value(&table, dict[i][j]);
+bool is_value_unique(Dictionary *dict, int value) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (dict->entries[i].value == value) {
+            return false;
         }
     }
+    return true;
+}
 
-    *returnSize = HASH_COUNT(table);
-    int *result = (int*)malloc(*returnSize * sizeof(int));
-    if (result == NULL) return NULL;
-
-    int index = 0;
-    ValueHash *s, *tmp;
-    HASH_ITER(hh, table, s, tmp) {
-        result[index++] = s->value;
+void extract_unique_values(Dictionary *dict, int **unique_values, int *count) {
+    *unique_values = malloc(dict->size * sizeof(int));
+    if (*unique_values == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
     }
-
-    free_table(&table);
-    return result;
+    *count = 0;
+    for (int i = 0; i < dict->size; ++i) {
+        if (is_value_unique(dict, dict->entries[i].value) && (*count < dict->size)) {
+            (*unique_values)[*count] = dict->entries[i].value;
+            (*count)++;
+        }
+    }
 }
 
 int main() {
-    int dict[][5] = {{1, 2, 2, 3}, {4, 5, 1}, {6, 7, 8, 9, 2}};
-    int dictSize = 3;
-    int dictColSize[3] = {4, 3, 5};
-    int returnSize;
-    int *uniqueValues = extract_unique_values((int**)dict, dictSize, dictColSize, &returnSize);
+    Dictionary dict = {
+        .entries = (DictEntry[]) {
+            {"one", 1},
+            {"two", 2},
+            {"three", 3},
+            {"four", 4},
+            {"duplicate", 2}
+        },
+        .size = 5
+    };
 
-    for (int i = 0; i < returnSize; ++i) {
-        printf("%d ", uniqueValues[i]);
+    int *unique_values = NULL;
+    int count = 0;
+
+    extract_unique_values(&dict, &unique_values, &count);
+
+    for (int i = 0; i < count; ++i) {
+        printf("%d ", unique_values[i]);
     }
-    free(uniqueValues);
+
+    free(unique_values);
     return 0;
 }

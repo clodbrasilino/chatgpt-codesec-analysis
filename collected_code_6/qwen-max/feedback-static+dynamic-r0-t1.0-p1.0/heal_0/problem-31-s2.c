@@ -1,108 +1,122 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_HEAP_SIZE 1000
-
 typedef struct {
     int value;
-    int count;
-} HeapNode;
+    int frequency;
+} Element;
 
 typedef struct {
-    HeapNode* array;
-    int size;
     int capacity;
+    int size;
+    Element *array;
 } MinHeap;
 
 MinHeap* createMinHeap(int capacity) {
     MinHeap* minHeap = (MinHeap*)malloc(sizeof(MinHeap));
-    minHeap->array = (HeapNode*)malloc(sizeof(HeapNode) * capacity);
-    minHeap->size = 0;
     minHeap->capacity = capacity;
+    minHeap->size = 0;
+    minHeap->array = (Element*)malloc(capacity * sizeof(Element));
     return minHeap;
 }
 
-void swap(HeapNode* a, HeapNode* b) {
-    HeapNode temp = *a;
+void swapElements(Element *a, Element *b) {
+    Element temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void minHeapify(MinHeap* minHeap, int idx) {
-    int smallest = idx;
-    int left = 2 * idx + 1;
-    int right = 2 * idx + 2;
+void heapify(MinHeap* minHeap, int index) {
+    int smallest = index;
+    int left = 2 * index + 1;
+    int right = 2 * index + 2;
 
-    if (left < minHeap->size && minHeap->array[left].count < minHeap->array[smallest].count)
+    if (left < minHeap->size && minHeap->array[left].frequency < minHeap->array[smallest].frequency) {
         smallest = left;
+    }
 
-    if (right < minHeap->size && minHeap->array[right].count < minHeap->array[smallest].count)
+    if (right < minHeap->size && minHeap->array[right].frequency < minHeap->array[smallest].frequency) {
         smallest = right;
+    }
 
-    if (smallest != idx) {
-        swap(&minHeap->array[idx], &minHeap->array[smallest]);
-        minHeapify(minHeap, smallest);
+    if (smallest != index) {
+        swapElements(&minHeap->array[index], &minHeap->array[smallest]);
+        heapify(minHeap, smallest);
     }
 }
 
-HeapNode extractMin(MinHeap* minHeap) {
-    HeapNode root = minHeap->array[0];
+void insertElement(MinHeap* minHeap, Element element) {
+    if (minHeap->size == minHeap->capacity) {
+        if (element.frequency > minHeap->array[0].frequency) {
+            minHeap->array[0] = element;
+            heapify(minHeap, 0);
+        }
+    } else {
+        int i = minHeap->size;
+        minHeap->array[i] = element;
+        minHeap->size++;
+        while (i > 0 && minHeap->array[(i - 1) / 2].frequency > minHeap->array[i].frequency) {
+            swapElements(&minHeap->array[i], &minHeap->array[(i - 1) / 2]);
+            i = (i - 1) / 2;
+        }
+    }
+}
+
+Element extractMin(MinHeap* minHeap) {
+    Element root = minHeap->array[0];
     minHeap->array[0] = minHeap->array[minHeap->size - 1];
-    --minHeap->size;
-    minHeapify(minHeap, 0);
+    minHeap->size--;
+    heapify(minHeap, 0);
     return root;
 }
 
-void insertKey(MinHeap* minHeap, HeapNode key) {
-    ++minHeap->size;
-    int i = minHeap->size - 1;
-    while (i && key.count > minHeap->array[(i - 1) / 2].count) {
-        minHeap->array[i] = minHeap->array[(i - 1) / 2];
-        i = (i - 1) / 2;
-    }
-    minHeap->array[i] = key;
+void freeMinHeap(MinHeap* minHeap) {
+    free(minHeap->array);
+    free(minHeap);
 }
 
-int* topKFrequent(int* nums, int numsSize, int k, int* returnSize) {
-    int countMap[10001] = {0};
-    for (int i = 0; i < numsSize; ++i) {
-        countMap[nums[i]]++;
+int compare(const void *a, const void *b) {
+    return ((Element *)b)->frequency - ((Element *)a)->frequency;
+}
+
+void findTopKIntegers(int *arr, int n, int k) {
+    Element *elements = (Element *)malloc(n * sizeof(Element));
+    for (int i = 0; i < n; i++) {
+        elements[i].value = arr[i];
+        elements[i].frequency = 1;
     }
 
-    MinHeap* minHeap = createMinHeap(k + 1);
-    for (int i = 0; i < 10001; ++i) {
-        if (countMap[i]) {
-            HeapNode node = {i, countMap[i]};
-            insertKey(minHeap, node);
-
-            if (minHeap->size > k) {
-                extractMin(minHeap);
-            }
+    for (int i = 0; i < n - 1; i++) {
+        if (arr[i] == (arr[i + 1] - 1)) {
+            elements[i + 1].frequency += elements[i].frequency;
+            elements[i].frequency = 0;
         }
     }
 
-    *returnSize = k;
-    int* result = (int*)malloc(sizeof(int) * k);
-    for (int i = k - 1; i >= 0; --i) {
-        result[i] = extractMin(minHeap).value;
+    qsort(elements, n, sizeof(Element), compare);
+
+    MinHeap *minHeap = createMinHeap(k);
+    for (int i = 0; i < n; i++) {
+        if (elements[i].frequency > 0) {
+            insertElement(minHeap, elements[i]);
+        }
     }
 
-    free(minHeap->array);
-    free(minHeap);
-    return result;
-}
-
-int main() {
-    int nums[] = {1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
-    int k = 2;
-    int returnSize = 0;
-    int* topK = topKFrequent(nums, 11, k, &returnSize);
-
-    for (int i = 0; i < returnSize; ++i) {
-        printf("%d ", topK[i]);
+    for (int i = 0; i < k; i++) {
+        printf("%d ", extractMin(minHeap).value);
     }
     printf("\n");
 
-    free(topK);
+    freeMinHeap(minHeap);
+    free(elements);
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = 10;
+    int k = 3;
+
+    findTopKIntegers(arr, n, k);
+
     return 0;
 }

@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int count_divisors(int n) {
+    if (n == INT_MIN) {
+        n = INT_MAX; 
+    } else {
+        n = abs(n);
+    }
+    
+    if (n == 0) {
+        return 0;
+    }
+
+    int count = 0;
+    for (int i = 1; i * i <= n; i++) {
+        if (n % i == 0) {
+            count++;
+            if (i != n / i) {
+                count++;
+            }
+        }
+    }
+    
+    if (n == INT_MAX && n == abs(INT_MIN)) {
+         
+    }
+
+    return count;
+}
+
+int main(void) {
+    int num;
+    
+    if (scanf("%d", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    int divisors = count_divisors(num);
+    printf("%d\n", divisors);
+    
+    return EXIT_SUCCESS;
+}

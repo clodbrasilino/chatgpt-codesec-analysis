@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_occurring_divisor(int L, int R) {
+    if (L <= 0 || R <= 0 || L > R) {
+        return -1; 
+    }
+
+    int *counts = (int *)calloc(R + 1, sizeof(int));
+    if (counts == NULL) {
+        return -1;
+    }
+
+    for (int i = L; i <= R; i++) {
+        for (int j = 1; j * j <= i; j++) {
+            if (i % j == 0) {
+                counts[j]++;
+                if (j * j != i) {
+                    counts[i / j]++;
+                }
+            }
+        }
+    }
+
+    int max_div = 1;
+    int max_count = counts[1];
+
+    for (int i = 2; i <= R; i++) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+            max_div = i;
+        } else if (counts[i] == max_count) {
+            if (i > max_div) {
+                max_div = i;
+            }
+        }
+    }
+
+    free(counts);
+    return max_div;
+}
+
+int main(void) {
+    int L = 10;
+    int R = 20;
+
+    int result = max_occurring_divisor(L, R);
+    if (result != -1) {
+        printf("%d\n", result);
+    }
+
+    return 0;
+}

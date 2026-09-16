@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <regex.h>
+#include <string.h>
+
+int search_literals(const char *input, const char *pattern) {
+    int ret;
+    regex_t re;
+
+    ret = regcomp(&re, pattern, REG_EXTENDED|REG_NOSUB);
+    if (ret) return 0;
+
+    ret = regexec(&re, input, 0, NULL, 0);
+    regfree(&re);
+
+    return !ret;
+}
+
+int main() {
+    const char *input = "This is a test string with some literals.";
+    const char *pattern = "literals";
+
+    if (search_literals(input, pattern)) {
+        printf("Pattern found.\n");
+    } else {
+        printf("Pattern not found.\n");
+    }
+
+    return 0;
+}

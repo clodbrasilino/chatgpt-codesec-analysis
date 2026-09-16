@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <limits.h>
+
+int frequency_of_smallest(const int arr[], int size) {
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+
+    int min = INT_MAX;
+    int freq = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+            freq = 1;
+        } else if (arr[i] == min) {
+            freq++;
+        }
+    }
+
+    return freq;
+}
+
+int main(void) {
+    int arr1[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Frequency of smallest: %d\n", frequency_of_smallest(arr1, size1));
+
+    int arr2[] = {10, 20, 30, 40};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Frequency of smallest: %d\n", frequency_of_smallest(arr2, size2));
+
+    int arr3[] = {5};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Frequency of smallest: %d\n", frequency_of_smallest(arr3, size3));
+
+    int arr4[] = {10, 10, 10, 10};
+    int size4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("Frequency of smallest: %d\n", frequency_of_smallest(arr4, size4));
+
+    printf("Frequency of smallest: %d\n", frequency_of_smallest(NULL, 5));
+    printf("Frequency of smallest: %d\n", frequency_of_smallest(arr1, 0));
+
+    return 0;
+}

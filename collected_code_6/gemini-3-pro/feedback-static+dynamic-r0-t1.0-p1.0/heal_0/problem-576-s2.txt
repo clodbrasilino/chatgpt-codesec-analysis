@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isSubarray(const int* array, size_t arraySize, const int* subarray, size_t subarraySize) {
+    if (array == NULL || subarray == NULL) {
+        return false;
+    }
+    if (subarraySize == 0) {
+        return true;
+    }
+    if (arraySize < subarraySize) {
+        return false;
+    }
+
+    for (size_t i = 0; i <= arraySize - subarraySize; i++) {
+        bool match = true;
+        for (size_t j = 0; j < subarraySize; j++) {
+            if (array[i + j] != subarray[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    int sub[] = {3, 4, 5};
+    size_t arrSize = sizeof(arr) / sizeof(arr[0]);
+    size_t subSize = sizeof(sub) / sizeof(sub[0]);
+
+    if (isSubarray(arr, arrSize, sub, subSize)) {
+        printf("Array is a subarray.\n");
+    } else {
+        printf("Array is not a subarray.\n");
+    }
+
+    return 0;
+}
+```

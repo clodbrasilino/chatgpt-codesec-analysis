@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stddef.h>
+
+static void reverse(int *array, size_t start, size_t end) {
+    while (start < end) {
+        int temp = array[start];
+        array[start] = array[end];
+        array[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+int rotate_left(int *array, size_t size, long long positions) {
+    if (array == NULL) {
+        return -1;
+    }
+    if (size == 0) {
+        return 0;
+    }
+
+    long long effective_positions = positions % (long long)size;
+    if (effective_positions < 0) {
+        effective_positions += size;
+    }
+    if (effective_positions == 0) {
+        return 0;
+    }
+
+    size_t d = (size_t)effective_positions;
+
+    reverse(array, 0, d - 1);
+    reverse(array, d, size - 1);
+    reverse(array, 0, size - 1);
+
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    long long positions = 2;
+
+    int result = rotate_left(arr, size, positions);
+    if (result == 0) {
+        for (size_t i = 0; i < size; i++) {
+            printf("%d ", arr[i]);
+        }
+        printf("\n");
+    } else {
+        printf("Rotation failed.\n");
+    }
+
+    result = rotate_left(NULL, 5, 2);
+    printf("Null pointer handled %s.\n", result != 0 ? "correctly" : "incorrectly");
+
+    return 0;
+}
+```

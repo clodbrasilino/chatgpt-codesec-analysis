@@ -1,80 +1,54 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct {
-    char *key;
-    int count;
+    int first;
+    int second;
 } Tuple;
 
 typedef struct {
-    Tuple *tuples;
-    size_t size;
-    size_t capacity;
-} TupleList;
+    Tuple t;
+    int frequency;
+} FrequencyTuple;
 
-TupleList *init_tuple_list(size_t initial_capacity) {
-    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
-    list->tuples = (Tuple *)malloc(initial_capacity * sizeof(Tuple));
-    list->size = 0;
-    list->capacity = initial_capacity;
-    return list;
-}
-
-void free_tuple_list(TupleList *list) {
-    for (size_t i = 0; i < list->size; ++i) {
-        free(list->tuples[i].key);
-    }
-    free(list->tuples);
-    free(list);
-}
-
-int find_tuple_index(TupleList *list, const char *key) {
-    for (size_t i = 0; i < list->size; ++i) {
-        if (strcmp(list->tuples[i].key, key) == 0) {
-            return i;
+FrequencyTuple* assignFrequencies(Tuple* tuples, int n, int* returnSize) {
+    FrequencyTuple* fTuples = (FrequencyTuple*)malloc(n * sizeof(FrequencyTuple));
+    for (int i = 0; i < n; ++i) {
+        fTuples[i].t = tuples[i];
+        fTuples[i].frequency = 1;
+        for (int j = 0; j < i; ++j) {
+            if (fTuples[j].t.first == tuples[i].first && fTuples[j].t.second == tuples[i].second) {
+                fTuples[j].frequency++;
+                fTuples[i].frequency = 0;
+                break;
+            }
         }
     }
-    return -1;
-}
-
-void add_or_update_tuple(TupleList *list, const char *key) {
-    int index = find_tuple_index(list, key);
-    if (index == -1) {
-        if (list->size >= list->capacity) {
-            list->capacity *= 2;
-            list->tuples = (Tuple *)realloc(list->tuples, list->capacity * sizeof(Tuple));
+    
+    int count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (fTuples[i].frequency > 0) {
+            fTuples[count++] = fTuples[i];
         }
-        list->tuples[list->size].key = strdup(key);
-        list->tuples[list->size].count = 1;
-        list->size++;
-    } else {
-        list->tuples[index].count++;
     }
-}
 
-void assign_frequencies(TupleList *list, const char *const *keys, size_t num_keys) {
-    for (size_t i = 0; i < num_keys; ++i) {
-        add_or_update_tuple(list, keys[i]);
-    }
-}
-
-void print_tuple_list(const TupleList *list) {
-    for (size_t i = 0; i < list->size; ++i) {
-        printf("%s: %d\n", list->tuples[i].key, list->tuples[i].count);
-    }
+    *returnSize = count;
+    FrequencyTuple* result = (FrequencyTuple*)realloc(fTuples, count * sizeof(FrequencyTuple));
+    return result;
 }
 
 int main() {
-    const char *keys[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
-    size_t num_keys = sizeof(keys) / sizeof(keys[0]);
+    Tuple tuples[] = {{1, 2}, {2, 3}, {1, 2}, {3, 4}, {1, 2}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int returnSize;
+    FrequencyTuple* fTuples = assignFrequencies(tuples, n, &returnSize);
 
-    TupleList *list = init_tuple_list(4);
-    assign_frequencies(list, keys, num_keys);
-    print_tuple_list(list);
+    for (int i = 0; i < returnSize; ++i) {
+        printf("(%d, %d) -> %d\n", fTuples[i].t.first, fTuples[i].t.second, fTuples[i].frequency);
+    }
 
-    free_tuple_list(list);
+    free(fTuples);
     return 0;
 }
 ```

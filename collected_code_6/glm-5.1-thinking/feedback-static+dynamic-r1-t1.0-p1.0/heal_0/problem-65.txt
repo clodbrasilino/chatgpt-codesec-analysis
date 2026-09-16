@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+int list_sum(struct Node *head) {
+    if (head == NULL) {
+        return 0;
+    }
+    return head->data + list_sum(head->next);
+}
+
+void free_list(struct Node *head) {
+    struct Node *current = head;
+    struct Node *next_node;
+    while (current != NULL) {
+        next_node = current->next;
+        free(current);
+        current = next_node;
+    }
+}
+
+int main(void) {
+    struct Node *head = NULL;
+
+    struct Node *node1 = malloc(sizeof(struct Node));
+    if (node1 == NULL) {
+        return EXIT_FAILURE;
+    }
+    node1->data = 10;
+    node1->next = head;
+    head = node1;
+
+    struct Node *node2 = malloc(sizeof(struct Node));
+    if (node2 == NULL) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+    node2->data = 20;
+    node2->next = head;
+    head = node2;
+
+    struct Node *node3 = malloc(sizeof(struct Node));
+    if (node3 == NULL) {
+        free_list(head);
+        return EXIT_FAILURE;
+    }
+    node3->data = 30;
+    node3->next = head;
+    head = node3;
+
+    int total = list_sum(head);
+    printf("%d\n", total);
+
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}
+```

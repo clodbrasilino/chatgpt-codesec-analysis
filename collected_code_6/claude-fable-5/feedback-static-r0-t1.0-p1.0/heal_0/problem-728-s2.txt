@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long sum_two_lists(const int *list1, size_t len1, const int *list2, size_t len2)
+{
+    long total = 0;
+    size_t i;
+
+    if (list1 == NULL || list2 == NULL) {
+        fprintf(stderr, "Error: NULL list pointer\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (i = 0; i < len1; i++) {
+        total += (long)list1[i];
+    }
+
+    for (i = 0; i < len2; i++) {
+        total += (long)list2[i];
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {10, 20, 30, 40, 50};
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    long result;
+
+    result = sum_two_lists(list1, len1, list2, len2);
+
+    if (printf("Sum of both lists: %ld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long binomialCoeff(unsigned int n, unsigned int k)
+{
+    unsigned long long res = 1ULL;
+    unsigned int i;
+
+    if (k > n)
+    {
+        return 0ULL;
+    }
+
+    if (k > n - k)
+    {
+        k = n - k;
+    }
+
+    for (i = 0U; i < k; i++)
+    {
+        res = res * (unsigned long long)(n - i);
+        res = res / (unsigned long long)(i + 1U);
+    }
+
+    return res;
+}
+
+unsigned long long sumOfProduct(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    for (i = 0U; i < n; i++)
+    {
+        sum += binomialCoeff(n, i) * binomialCoeff(n, i + 1U);
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int scanResult;
+
+    printf("Enter n (0 to 30): ");
+    scanResult = scanf("%u", &n);
+
+    if (scanResult != 1)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 30U)
+    {
+        fprintf(stderr, "Error: n must be between 0 and 30\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of product of binomial coefficients: %llu\n", sumOfProduct(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This program computes the sum of products of consecutive binomial coefficients, i.e. Σ C(n, i) × C(n, i+1) for i from 0 to n−1 (which equals C(2n, n−1)).
+
+Key safety measures taken:
+
+- **CWE-703 avoidance**: The return value of `scanf` is checked before using the input, and an error path with a nonzero exit status is provided for invalid input.
+- **CWE-664 avoidance**: No dynamic memory or file handles are used, so there are no resource lifetime issues; all values are stack-allocated with well-defined lifetimes.
+- **CWE-710 avoidance**: The input range is bounded to `n <= 30` so intermediate products fit safely in `unsigned long long` without overflow (unsigned overflow would otherwise silently wrap). `main` uses the standard `int main(void)` signature, returns `EXIT_SUCCESS`/`EXIT_FAILURE`, and the binomial function guards against `k > n`.

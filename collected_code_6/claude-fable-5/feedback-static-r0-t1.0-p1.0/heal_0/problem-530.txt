@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double negative_ratio(const int *arr, size_t size)
+{
+    size_t i;
+    size_t count = 0;
+
+    if (arr == NULL || size == 0) {
+        return 0.0;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            count++;
+        }
+    }
+
+    return (double)count / (double)size;
+}
+
+int main(void)
+{
+    int numbers[] = { -3, 5, -7, 12, 0, -1, 8, -9 };
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    double ratio;
+
+    ratio = negative_ratio(numbers, size);
+
+    if (printf("Ratio of negative numbers: %f\n", ratio) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+1. **CWE-664 (Resource lifetime):** No dynamic allocation is used, so there are no resources to leak or misuse. The array is stack-allocated with a lifetime bound to `main`.
+
+2. **CWE-703 (Exceptional conditions):** The function checks for `NULL` pointers and zero-length arrays before use, avoiding both a null dereference and a division by zero. The return value of `printf` is checked, and the program returns a failure status if output fails.
+
+3. **CWE-710 (Coding standards):** The code uses `size_t` for sizes and indices, `const` correctness for the read-only array parameter, explicit casts for the integer-to-double conversion, `int main(void)` with proper return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, and braces on all control structures.

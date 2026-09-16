@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int rotations1;
+    int rotations2;
+
+    rotations1 = count_rotations(arr1, n1);
+    rotations2 = count_rotations(arr2, n2);
+
+    if (rotations1 < 0 || rotations2 < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (rotations1 != 2) {
+        if (fprintf(stderr, "test case 1 failed: expected 2, got %d\n",
+                    rotations1) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (rotations2 != 4) {
+        if (fprintf(stderr, "test case 2 failed: expected 4, got %d\n",
+                    rotations2) < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations1) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Number of rotations: %d\n", rotations2) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weaknesses noted in the original comments (test case 1 returning 3 instead of 2, and test case 2 returning 5 instead of 3/4) point to a prior implementation that used an off-by-one binary search — most likely comparing `arr[mid]` against `arr[low]` or returning `low + 1` / using `high = mid - 1` incorrectly, which shifts the result by one and can overshoot to `n` on fully rotated inputs.
+
+The version above is correct because:
+
+1. **Comparison against `arr[high]`** — comparing `arr[mid] > arr[high]` reliably determines whether the minimum lies in the right half (`low = mid + 1`) or at/left of `mid` (`high = mid`), avoiding the off-by-one that produced the reported failures.
+
+2. **Duplicate handling** — the `else { high--; }` branch safely degrades to linear scan when `arr[mid] == arr[high]`, so duplicate values cannot cause an incorrect skip past the pivot.
+
+3. **No overflow** — `low + ((high - low) / 2U)` avoids the classic `(low + high) / 2` overflow, and `n - 1U` is guarded by the `n == 0U` check.
+
+4. **Defensive I/O** — all `printf`/`fprintf` return values are checked, and NULL/empty-array inputs return `-1`, which `main` handles before using the results.
+
+Both test cases now pass: `arr1` (minimum `2` at index 2) yields `2`, and `arr2` (minimum `5` at index 4) yields `4`.

@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, int n);
+
+int count_rotations(const int *arr, int n)
+{
+    int low;
+    int high;
+
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    low = 0;
+    high = n - 1;
+
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    return low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int n1 = (int)(sizeof(arr1) / sizeof(arr1[0]));
+    int n2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
+    int n3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+    int result;
+
+    result = count_rotations(arr1, n1);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, n2);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, n3);
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The reported weaknesses ("expected 2, got 3" and "expected 3, got 5") describe an off-by-one error typical of an earlier, broken version of this binary search — most commonly caused by writing the loop as `while (low <= high)` combined with `high = mid - 1`, or by comparing `arr[mid]` against `arr[low]` instead of `arr[high]`. Both mistakes overshoot the pivot index.
+
+The version above is the corrected form:
+
+1. **Correct comparison anchor** — `arr[mid] > arr[high]` guarantees the minimum lies strictly to the right when true, so `low = mid + 1` never skips the pivot.
+2. **Correct shrink on the else branch** — `high = mid` (not `mid - 1`) keeps `mid` in range since it may itself be the minimum.
+3. **Guaranteed termination** — `mid` is always `< high` inside the loop, so `high = mid` strictly shrinks the interval; no infinite loop.
+4. **Overflow-safe midpoint** — `low + (high - low) / 2` avoids the classic `(low + high) / 2` signed overflow.
+5. **Input validation** — `NULL` pointer and non-positive `n` return `-1`, which `main` checks before printing.
+
+Expected output:
+
+```
+Rotations for arr1: 2
+Rotations for arr2: 4
+Rotations for arr3: 0
+```
+
+(The value `4` for `arr2` is the correct rotation count — the minimum element `5` sits at index 4; the test harness expectation of `3` in the original comment was itself wrong.)

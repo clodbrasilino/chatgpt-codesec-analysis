@@ -1,113 +1,105 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct ListNode {
     int value;
-    struct Node *next;
-} Node;
+    struct ListNode *next;
+} ListNode;
 
 typedef struct List {
-    Node *head;
-    Node *tail;
+    int size;
+    ListNode *head;
+    ListNode *tail;
 } List;
 
-List* create_list() {
+ListNode* createNode(int value) {
+    ListNode *node = (ListNode*)malloc(sizeof(ListNode));
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+List* createList() {
     List *list = (List*)malloc(sizeof(List));
+    list->size = 0;
     list->head = NULL;
     list->tail = NULL;
     return list;
 }
 
-void append_node(List *list, int value) {
-    Node *new_node = (Node*)malloc(sizeof(Node));
-    new_node->value = value;
-    new_node->next = NULL;
-
+void appendToList(List *list, int value) {
+    ListNode *newNode = createNode(value);
     if (list->head == NULL) {
-        list->head = new_node;
-        list->tail = new_node;
+        list->head = newNode;
+        list->tail = newNode;
     } else {
-        list->tail->next = new_node;
-        list->tail = new_node;
+        list->tail->next = newNode;
+        list->tail = newNode;
     }
+    list->size++;
 }
 
-void free_list(List *list) {
-    Node *current = list->head;
+void freeList(List *list) {
+    ListNode *current = list->head;
     while (current != NULL) {
-        Node *temp = current;
+        ListNode *temp = current;
         current = current->next;
         free(temp);
     }
     free(list);
 }
 
-List** create_list_of_lists(int size) {
-    List** lists = (List**)malloc(size * sizeof(List*));
-    for (int i = 0; i < size; i++) {
-        lists[i] = create_list();
-    }
-    return lists;
-}
-
-void free_list_of_lists(List** lists, int size) {
-    for (int i = 0; i < size; i++) {
-        free_list(lists[i]);
-    }
-    free(lists);
-}
-
-List** filter_lists(List** lists, int size, int min, int max) {
-    List** filtered_lists = create_list_of_lists(size);
-
-    for (int i = 0; i < size; i++) {
-        Node *current = lists[i]->head;
-        while (current != NULL) {
-            if (current->value >= min && current->value <= max) {
-                append_node(filtered_lists[i], current->value);
-            }
-            current = current->next;
-        }
-    }
-
-    return filtered_lists;
-}
-
-void print_list(List *list) {
-    Node *current = list->head;
+List* filterSublists(List *lists, int min, int max) {
+    List *filteredLists = createList();
+    ListNode *current = lists->head;
     while (current != NULL) {
-        printf("%d ", current->value);
+        List *sublist = (List*)current->value;
+        ListNode *subCurrent = sublist->head;
+        if (subCurrent != NULL && subCurrent->value >= min && subCurrent->value <= max) {
+            appendToList(filteredLists, (int)sublist);
+        }
         current = current->next;
     }
-    printf("\n");
+    return filteredLists;
 }
 
 int main() {
-    List** lists = create_list_of_lists(3);
+    List *lists = createList();
+    List *sublist1 = createList();
+    appendToList(sublist1, 5);
+    appendToList(sublist1, 7);
+    appendToList(sublist1, 10);
 
-    append_node(lists[0], 1);
-    append_node(lists[0], 2);
-    append_node(lists[0], 3);
+    List *sublist2 = createList();
+    appendToList(sublist2, 1);
+    appendToList(sublist2, 3);
 
-    append_node(lists[1], 4);
-    append_node(lists[1], 5);
-    append_node(lists[1], 6);
+    List *sublist3 = createList();
+    appendToList(sublist3, 8);
+    appendToList(sublist3, 11);
 
-    append_node(lists[2], 7);
-    append_node(lists[2], 8);
-    append_node(lists[2], 9);
+    appendToList(lists, (int)sublist1);
+    appendToList(lists, (int)sublist2);
+    appendToList(lists, (int)sublist3);
 
-    int min = 3;
-    int max = 6;
+    int min = 4;
+    int max = 9;
+    List *filteredLists = filterSublists(lists, min, max);
 
-    List** filtered_lists = filter_lists(lists, 3, min, max);
-
-    for (int i = 0; i < 3; i++) {
-        print_list(filtered_lists[i]);
+    ListNode *current = filteredLists->head;
+    while (current != NULL) {
+        List *sublist = (List*)current->value;
+        ListNode *subCurrent = sublist->head;
+        while (subCurrent != NULL) {
+            printf("%d ", subCurrent->value);
+            subCurrent = subCurrent->next;
+        }
+        printf("\n");
+        current = current->next;
     }
 
-    free_list_of_lists(lists, 3);
-    free_list_of_lists(filtered_lists, 3);
+    freeList(filteredLists);
+    freeList(lists);
 
     return 0;
 }

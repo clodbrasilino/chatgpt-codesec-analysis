@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_mean(const double data[], int size) {
+    double sum = 0.0;
+    int i;
+    for (i = 0; i < size; i++) {
+        sum += data[i];
+    }
+    return sum / size;
+}
+
+double calculate_standard_deviation(const double data[], int size) {
+    if (data == NULL || size <= 0) {
+        return -1.0;
+    }
+    
+    double mean = calculate_mean(data, size);
+    double sum_sq_diff = 0.0;
+    int i;
+    
+    for (i = 0; i < size; i++) {
+        double diff = data[i] - mean;
+        sum_sq_diff += diff * diff;
+    }
+    
+    return sqrt(sum_sq_diff / size);
+}
+
+int main(void) {
+    double data[] = {2.5, 3.5, 4.5, 5.5, 6.5};
+    int size = sizeof(data) / sizeof(data[0]);
+    
+    double sd = calculate_standard_deviation(data, size);
+    
+    if (sd < 0) {
+        fprintf(stderr, "Error: invalid input data\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Standard deviation: %.2f\n", sd);
+    
+    return EXIT_SUCCESS;
+}

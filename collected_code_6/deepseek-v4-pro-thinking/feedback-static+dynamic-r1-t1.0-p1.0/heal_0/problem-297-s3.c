@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct NestedItem {
+    int is_integer;
+    int value;
+    struct NestedItem **list;
+    size_t list_size;
+} NestedItem;
+
+static int count_integers(const NestedItem *item, size_t *count) {
+    if (count == NULL) return -1;
+    if (item == NULL) {
+        *count = 0;
+        return 0;
+    }
+    if (item->is_integer) {
+        *count = 1;
+        return 0;
+    }
+    if (item->list_size > 0 && item->list == NULL) return -1;
+
+    size_t total = 0;
+    for (size_t i = 0; i < item->list_size; ++i) {
+        if (item->list[i] == NULL) return -1;
+        size_t child_count = 0;
+        if (count_integers(item->list[i], &child_count) != 0) return -1;
+        if (total > SIZE_MAX - child_count) return -1;
+        total += child_count;
+    }
+    *count = total;
+    return 0;
+}
+
+static int fill_integers(const NestedItem *item, int *values, size_t *pos, size_t count) {
+    if (item == NULL || values == NULL || pos == NULL) return -1;
+
+    if (item->is_integer) {
+        if (*pos >= count) return -1;
+        values[*pos] = item->value;
+        (*pos)++;
+        return 0;
+    }
+
+    if (item->list_size > 0 && item->list == NULL) return -1;
+
+    for (size_t i = 0; i < item->list_size; ++i) {
+        if (item->list[i] == NULL) return -1;
+        if (fill_integers(item->list[i], values, pos, count) != 0) return -1;
+    }
+
+    return 0;
+}
+
+int flatten(const NestedItem *root, int **out, size_t *out_size) {
+    if (out == NULL || out_size == NULL) return -1;
+
+    *out = NULL;
+    *out_size = 0;
+
+    if (root == NULL) return 0;
+
+    size_t count = 0;
+    if (count_integers(root, &count) != 0) return -1;
+    if (count == 0) return 0;
+    if (count > SIZE_MAX / sizeof(int)) return -1;
+
+    int *values = malloc(count * sizeof(*values));
+    if (values == NULL) return -1;
+
+    size_t pos = 0;
+    if (fill_integers(root, values, &pos, count) != 0) {
+        free(values);
+        return -1;
+    }
+
+    if (pos != count) {
+        free(values);
+        return -1;
+    }
+
+    *out = values;
+    *out_size = count;
+    return 0;
+}
+
+int main(void) {
+    NestedItem n1 = { .is_integer = 1, .value = 1, .list = NULL, .list_size = 0 };
+    NestedItem n2 = { .is_integer = 1, .value = 2, .list = NULL, .list_size = 0 };
+    NestedItem n3 = { .is_integer = 1, .value = 3, .list = NULL, .list_size = 0 };
+    NestedItem n4 = { .is_integer = 1, .value = 4, .list = NULL, .list_size = 0 };
+    NestedItem n5 = { .is_integer = 1, .value = 5, .list = NULL, .list_size = 0 };
+    NestedItem n6 = { .is_integer = 1, .value = 6, .list = NULL, .list_size = 0 };
+
+    NestedItem *inner_children[] = { &n3, &n4 };
+    NestedItem inner = { .is_integer = 0, .value = 0, .list = inner_children, .list_size = 2 };
+
+    NestedItem *middle_children[] = { &n2, &inner, &n5 };
+    NestedItem middle = { .is_integer = 0, .value = 0, .list = middle_children, .list_size = 3 };
+
+    NestedItem *root_children[] = { &n1, &middle, &n6 };
+    NestedItem root = { .is_integer = 0, .value = 0, .list = root_children, .list_size = 3 };
+
+    int *flat = NULL;
+    size_t flat_size = 0;
+
+    if (flatten(&root, &flat, &flat_size) != 0) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < flat_size; ++i) {
+        printf("%d", flat[i]);
+        if (i + 1 < flat_size) {
+            putchar(' ');
+        }
+    }
+    putchar('\n');
+
+    free(flat);
+    return 0;
+}

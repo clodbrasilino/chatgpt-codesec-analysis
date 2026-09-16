@@ -2,46 +2,53 @@
 #include <stdlib.h>
 
 typedef struct {
-    int *array;
+    int *data;
     size_t length;
-} IntList;
+} List;
 
-int* get_last_elements(IntList *lists, size_t n_lists, size_t *out_length) {
-    if (n_lists == 0 || lists == NULL) {
-        *out_length = 0;
-        return NULL;
-    }
-    int *result = (int *)malloc(n_lists * sizeof(int));
-    if (result == NULL) {
-        *out_length = 0;
-        return NULL;
-    }
-    for (size_t i = 0; i < n_lists; ++i) {
-        if (lists[i].length > 0 && lists[i].array != NULL) {
-            result[i] = lists[i].array[lists[i].length - 1];
+List* createList(size_t length) {
+    List *list = (List *)malloc(sizeof(List));
+    list->data = (int *)malloc(length * sizeof(int));
+    list->length = length;
+    return list;
+}
+
+void freeList(List *list) {
+    free(list->data);
+    free(list);
+}
+
+int* getLastElements(List **sublists, size_t num_sublists) {
+    int *last_elements = (int *)malloc(num_sublists * sizeof(int));
+    for (size_t i = 0; i < num_sublists; ++i) {
+        if (sublists[i]->length > 0) {
+            last_elements[i] = sublists[i]->data[sublists[i]->length - 1];
         } else {
-            result[i] = 0; // assuming 0 is a safe default value
+            last_elements[i] = 0; // Assuming 0 is a default value for empty lists
         }
     }
-    *out_length = n_lists;
-    return result;
+    return last_elements;
 }
 
 int main() {
-    IntList lists[] = {
-        { .array = (int[]){1, 2, 3}, .length = 3 },
-        { .array = (int[]){4, 5}, .length = 2 },
-        { .array = (int[]){6}, .length = 1 },
-        { .array = NULL, .length = 0 }
-    };
-    size_t n_lists = sizeof(lists) / sizeof(lists[0]);
-    size_t out_length;
-    int *last_elements = get_last_elements(lists, n_lists, &out_length);
-    if (last_elements != NULL) {
-        for (size_t i = 0; i < out_length; ++i) {
-            printf("Last element of list %zu: %d\n", i, last_elements[i]);
-        }
-        free(last_elements);
+    size_t num_sublists = 3;
+
+    List *sublists[3] = {createList(5), createList(3), createList(4)};
+    sublists[0]->data[0] = 1; sublists[0]->data[1] = 2; sublists[0]->data[2] = 3; sublists[0]->data[3] = 4; sublists[0]->data[4] = 5;
+    sublists[1]->data[0] = 6; sublists[1]->data[1] = 7; sublists[1]->data[2] = 8;
+    sublists[2]->data[0] = 9; sublists[2]->data[1] = 10; sublists[2]->data[2] = 11; sublists[2]->data[3] = 12;
+
+    int *last_elements = getLastElements(sublists, num_sublists);
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        printf("%d ", last_elements[i]);
     }
+    printf("\n");
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        freeList(sublists[i]);
+    }
+    free(last_elements);
+
     return 0;
 }

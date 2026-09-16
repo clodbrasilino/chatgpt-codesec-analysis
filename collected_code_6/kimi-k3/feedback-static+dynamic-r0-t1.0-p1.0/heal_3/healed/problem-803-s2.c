@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_perfect_square(long long num)
+{
+    if (num < 0) {
+        return false;
+    }
+    
+    if (num == 0 || num == 1) {
+        return true;
+    }
+    
+    long long left = 1;
+    long long right = num;
+    
+    if (right > 3037000499LL) {
+        right = 3037000499LL;
+    }
+    
+    while (left <= right) {
+        long long mid = left + (right - left) / 2;
+        
+        if (mid <= num / mid) {
+            if (mid * mid == num) {
+                return true;
+            }
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return false;
+}
+
+int main(void)
+{
+    long long num;
+    
+    if (scanf("%lld", &num) != 1) {
+        return 1;
+    }
+    
+    if (is_perfect_square(num)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+    
+    return 0;
+}

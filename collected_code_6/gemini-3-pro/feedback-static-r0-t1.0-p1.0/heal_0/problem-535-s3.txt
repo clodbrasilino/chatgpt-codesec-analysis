@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define PI 3.14159265358979323846
+
+double calculate_cylinder_base_area(double radius);
+
+double calculate_cylinder_base_area(double radius) {
+    if (radius < 0.0) {
+        return -1.0;
+    }
+    return PI * radius * radius;
+}
+
+int main(void) {
+    double radius = 5.5;
+    double area;
+
+    area = calculate_cylinder_base_area(radius);
+
+    if (area < 0.0) {
+        fprintf(stderr, "Error: Invalid radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Base surface area: %.4f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+unsigned int toggleFirstLastBits(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    unsigned int highestBit = 0;
+    unsigned int temp = n;
+    while (temp > 0) {
+        highestBit = temp;
+        temp >>= 1;
+    }
+    
+    n ^= 1;
+    n ^= highestBit;
+    return n;
+}
+
+int main(void) {
+    unsigned int num = 42;
+    unsigned int result = toggleFirstLastBits(num);
+    
+    printf("Original: %u\n", num);
+    printf("After toggling: %u\n", result);
+    
+    return 0;
+}

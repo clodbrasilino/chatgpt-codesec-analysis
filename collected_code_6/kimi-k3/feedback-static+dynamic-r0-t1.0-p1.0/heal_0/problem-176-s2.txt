@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+
+double triangle_perimeter(double side1, double side2, double side3);
+
+int main(void)
+{
+    double side1, side2, side3, perimeter;
+    
+    printf("Enter the three sides of the triangle: ");
+    
+    if (scanf("%lf %lf %lf", &side1, &side2, &side3) != 3)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return 1;
+    }
+    
+    if (side1 <= 0.0 || side2 <= 0.0 || side3 <= 0.0)
+    {
+        fprintf(stderr, "Error: All sides must be positive\n");
+        return 1;
+    }
+    
+    if (side1 + side2 <= side3 || side2 + side3 <= side1 || side1 + side3 <= side2)
+    {
+        fprintf(stderr, "Error: Invalid triangle - sides do not satisfy triangle inequality\n");
+        return 1;
+    }
+    
+    perimeter = triangle_perimeter(side1, side2, side3);
+    printf("Perimeter of the triangle: %.2f\n", perimeter);
+    
+    return 0;
+}
+
+double triangle_perimeter(double side1, double side2, double side3)
+{
+    return side1 + side2 + side3;
+}
+```

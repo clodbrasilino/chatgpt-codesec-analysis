@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char **remove_digits(char **strings, const size_t *arr_size) {
+    for (size_t i = 0; i < *arr_size; ++i) {
+        if (strings[i] == NULL) continue;
+
+        char *write_ptr = strings[i];
+        for (char *read_ptr = strings[i]; *read_ptr; ++read_ptr) {
+            if (!isdigit((unsigned char)*read_ptr)) {
+                *write_ptr++ = *read_ptr;
+            }
+        }
+        *write_ptr = '\0';
+    }
+
+    return strings;
+}
+
+int main() {
+    char *strings[] = {"hello123", "world456", "example789", "test123", NULL};
+    size_t arr_size = 4;
+
+    remove_digits(strings, &arr_size);
+
+    for (size_t i = 0; i < arr_size; ++i) {
+        printf("%s\n", strings[i]);
+    }
+
+    return 0;
+}
+```

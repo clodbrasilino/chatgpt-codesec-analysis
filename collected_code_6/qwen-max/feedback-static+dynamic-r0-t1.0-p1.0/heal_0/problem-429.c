@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    size_t size;
+} Tuple;
+
+Tuple create_tuple(int elements[], size_t size) {
+    Tuple tuple;
+    tuple.data = (int*)malloc(size * sizeof(int));
+    if (!tuple.data) exit(EXIT_FAILURE);
+    for (size_t i = 0; i < size; ++i) {
+        tuple.data[i] = elements[i];
+    }
+    tuple.size = size;
+    return tuple;
+}
+
+void free_tuple(Tuple tuple) {
+    free(tuple.data);
+}
+
+Tuple elementwise_add(const Tuple t1, const Tuple t2) {
+    if (t1.size != t2.size) exit(EXIT_FAILURE);
+    Tuple result = create_tuple((int[]){0}, t1.size);
+    for (size_t i = 0; i < t1.size; ++i) {
+        result.data[i] = t1.data[i] + t2.data[i];
+    }
+    return result;
+}
+
+int main() {
+    int a[] = {1, 2, 3};
+    int b[] = {4, 5, 6};
+    Tuple t1 = create_tuple(a, 3);
+    Tuple t2 = create_tuple(b, 3);
+    
+    Tuple result = elementwise_add(t1, t2);
+    for (size_t i = 0; i < result.size; ++i) {
+        printf("%d ", result.data[i]);
+    }
+    printf("\n");
+
+    free_tuple(t1);
+    free_tuple(t2);
+    free_tuple(result);
+    return 0;
+}

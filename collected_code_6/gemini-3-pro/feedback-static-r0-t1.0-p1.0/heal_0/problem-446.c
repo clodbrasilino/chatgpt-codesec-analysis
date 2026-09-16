@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Tuple {
+    int *elements;
+    size_t size;
+};
+
+struct List {
+    int *elements;
+    size_t size;
+};
+
+void count_occurrences(const struct Tuple *tuple, const struct List *list, int **counts, size_t *counts_size) {
+    if (!tuple || !list || !counts || !counts_size) {
+        return;
+    }
+
+    *counts = (int *)calloc(list->size, sizeof(int));
+    if (!*counts) {
+        *counts_size = 0;
+        return;
+    }
+
+    *counts_size = list->size;
+
+    for (size_t i = 0; i < list->size; ++i) {
+        for (size_t j = 0; j < tuple->size; ++j) {
+            if (list->elements[i] == tuple->elements[j]) {
+                (*counts)[i]++;
+            }
+        }
+    }
+}
+
+int main(void) {
+    struct Tuple my_tuple;
+    struct List my_list;
+    int *counts = NULL;
+    size_t counts_size = 0;
+
+    int tuple_data[] = {1, 2, 3, 2, 4, 1, 5, 2};
+    my_tuple.elements = tuple_data;
+    my_tuple.size = sizeof(tuple_data) / sizeof(tuple_data[0]);
+
+    int list_data[] = {1, 2, 6};
+    my_list.elements = list_data;
+    my_list.size = sizeof(list_data) / sizeof(list_data[0]);
+
+    count_occurrences(&my_tuple, &my_list, &counts, &counts_size);
+
+    if (counts) {
+        for (size_t i = 0; i < counts_size; ++i) {
+            printf("%d ", counts[i]);
+        }
+        printf("\n");
+        free(counts);
+    }
+
+    return 0;
+}

@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+#define TUPLE_SIZE(tuple) (sizeof(tuple) / sizeof((tuple)[0]))
+
+void print_tuple_size(size_t size) {
+    if (size > 0) {
+        printf("Size of the tuple: %zu\n", size);
+    } else {
+        printf("Invalid tuple size\n");
+    }
+}
+
+int main(void) {
+    int my_tuple[] = {1, 2, 3, 4, 5};
+    size_t size = TUPLE_SIZE(my_tuple);
+    print_tuple_size(size);
+    return 0;
+}

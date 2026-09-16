@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_difference(const int *list, size_t size, size_t index, int *result) {
+    if (list == NULL || result == NULL) {
+        return -1;
+    }
+    if (size < 2 || index >= size - 1) {
+        return -1;
+    }
+    *result = list[index + 1] - list[index];
+    return 0;
+}
+
+int main(void) {
+    int list[] = {10, 25, 30, 47, 50};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int difference;
+    size_t i;
+
+    for (i = 0; i < size - 1; i++) {
+        if (find_difference(list, size, i, &difference) == 0) {
+            printf("Difference between index %zu and %zu: %d\n", i, i + 1, difference);
+        } else {
+            fprintf(stderr, "Error calculating difference at index %zu\n", i);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

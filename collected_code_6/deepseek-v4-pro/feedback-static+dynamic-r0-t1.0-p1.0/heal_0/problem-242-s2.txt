@@ -1,0 +1,22 @@
+```c
+#include <stddef.h>
+
+size_t count_total_characters(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+    
+    size_t count = 0;
+    while (str[count] != '\0') {
+        count++;
+    }
+    return count;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World!";
+    size_t total = count_total_characters(test_string);
+    
+    return (int)total;
+}
+```

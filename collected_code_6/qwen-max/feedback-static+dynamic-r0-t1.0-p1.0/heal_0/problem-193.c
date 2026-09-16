@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+    size_t capacity;
+} Tuple;
+
+Tuple create_tuple(size_t capacity) {
+    Tuple t = {0};
+    t.data = (int *)malloc(capacity * sizeof(int));
+    if (t.data == NULL) exit(EXIT_FAILURE);
+    t.capacity = capacity;
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    free(t->data);
+    t->data = NULL;
+    t->length = 0;
+    t->capacity = 0;
+}
+
+Tuple remove_duplicates(const Tuple *input) {
+    Tuple result = create_tuple(input->length);
+    for (size_t i = 0; i < input->length; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < result.length; ++j) {
+            if (result.data[j] == input->data[i]) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            result.data[result.length++] = input->data[i];
+        }
+    }
+    return result;
+}
+
+int main() {
+    Tuple tuple = create_tuple(6);
+    tuple.data[0] = 1;
+    tuple.data[1] = 2;
+    tuple.data[2] = 3;
+    tuple.data[3] = 2;
+    tuple.data[4] = 4;
+    tuple.data[5] = 1;
+    tuple.length = 6;
+
+    Tuple unique_tuple = remove_duplicates(&tuple);
+
+    for (size_t i = 0; i < unique_tuple.length; ++i) {
+        printf("%d ", unique_tuple.data[i]);
+    }
+    printf("\n");
+
+    free_tuple(&tuple);
+    free_tuple(&unique_tuple);
+    return 0;
+}

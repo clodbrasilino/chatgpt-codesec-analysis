@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_LISTS 100
+#define MAX_ELEMENTS 100
+
+typedef struct {
+    int *elements;
+    int size;
+} List;
+
+typedef struct {
+    List lists[MAX_LISTS];
+    int count;
+} ListOfLists;
+
+/* Possible weaknesses found:
+ *  Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+ */
+void create_list(List *list, int *elements, int size) {
+    list->elements = (int *)malloc(size * sizeof(int));
+    for (int i = 0; i < size; ++i) {
+        list->elements[i] = elements[i];
+    }
+    list->size = size;
+}
+
+void free_list(List *list) {
+    free(list->elements);
+    list->size = 0;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+ */
+void create_list_of_lists(ListOfLists *lol, int *sizes, int **elements, int count) {
+    lol->count = count;
+    for (int i = 0; i < count; ++i) {
+        create_list(&lol->lists[i], elements[i], sizes[i]);
+    }
+}
+
+void free_list_of_lists(ListOfLists *lol) {
+    for (int i = 0; i < lol->count; ++i) {
+        free_list(&lol->lists[i]);
+    }
+    lol->count = 0;
+}
+
+int find_frequency(ListOfLists *lol, int element) {
+    int freq = 0;
+    for (int i = 0; i < lol->count; ++i) {
+        for (int j = 0; j < lol->lists[i].size; ++j) {
+            if (lol->lists[i].elements[j] == element) {
+                freq++;
+            }
+        }
+    }
+    return freq;
+}
+
+int main() {
+    int sizes[] = {3, 2, 4};
+    int elements_1[] = {1, 2, 3};
+    int elements_2[] = {4, 5};
+    int elements_3[] = {1, 2, 3, 4};
+    int *elements[] = {elements_1, elements_2, elements_3};
+
+    ListOfLists lol;
+    create_list_of_lists(&lol, sizes, elements, 3);
+
+    int frequency = find_frequency(&lol, 2);
+    printf("Frequency: %d\n", frequency);
+
+    free_list_of_lists(&lol);
+    return 0;
+}

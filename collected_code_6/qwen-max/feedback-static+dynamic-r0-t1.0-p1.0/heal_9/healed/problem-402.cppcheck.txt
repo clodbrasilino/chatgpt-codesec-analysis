@@ -1,0 +1,49 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:8:25: error: Division by zero. [zerodiv]
+        long long q = a / m;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:47:34: note: Assignment 'p=1000000007', assigned value is 1000000007
+    long long n = 10, r = 3, p = 1000000007;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:48:36: note: Calling function 'ncrModp', 3rd argument 'p' value is 1000000007
+    printf("%lld\n", ncrModp(n, r, p));
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:40:42: note: Calling function 'modInverse', 2nd argument 'p' value is 1000000007
+    long long inv_r = modInverse(fac[r], p);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:9:23: note: Assignment 't=m', assigned value is 1000000007
+        long long t = m;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:11:13: note: Assignment 'a=t', assigned value is 1000000007
+        a = t;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:10:15: note: Assignment 'm=a%m', assigned value is 0
+        m = a % m;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:8:25: note: Division by zero
+        long long q = a / m;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:10:15: error: Division by zero. [zerodiv]
+        m = a % m;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:47:34: note: Assignment 'p=1000000007', assigned value is 1000000007
+    long long n = 10, r = 3, p = 1000000007;
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:48:36: note: Calling function 'ncrModp', 3rd argument 'p' value is 1000000007
+    printf("%lld\n", ncrModp(n, r, p));
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:40:42: note: Calling function 'modInverse', 2nd argument 'p' value is 1000000007
+    long long inv_r = modInverse(fac[r], p);
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:9:23: note: Assignment 't=m', assigned value is 1000000007
+        long long t = m;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:11:13: note: Assignment 'a=t', assigned value is 1000000007
+        a = t;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:10:15: note: Assignment 'm=a%m', assigned value is 0
+        m = a % m;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-402.c:10:15: note: Division by zero
+        m = a % m;
+              ^

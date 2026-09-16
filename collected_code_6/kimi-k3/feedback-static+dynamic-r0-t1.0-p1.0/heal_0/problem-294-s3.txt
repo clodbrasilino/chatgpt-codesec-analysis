@@ -1,0 +1,139 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_FLOAT,
+    TYPE_DOUBLE,
+    TYPE_CHAR
+} DataType;
+
+typedef struct {
+    DataType type;
+    union {
+        int i;
+        float f;
+        double d;
+        char c;
+    } value;
+} HeterogeneousElement;
+
+typedef struct {
+    HeterogeneousElement *elements;
+    size_t count;
+} HeterogeneousList;
+
+static double get_numeric_value(const HeterogeneousElement *elem) {
+    if (elem == NULL) {
+        return 0.0;
+    }
+    
+    switch (elem->type) {
+        case TYPE_INT:
+            return (double)elem->value.i;
+        case TYPE_FLOAT:
+            return (double)elem->value.f;
+        case TYPE_DOUBLE:
+            return elem->value.d;
+        case TYPE_CHAR:
+            return (double)elem->value.c;
+        default:
+            return 0.0;
+    }
+}
+
+bool find_maximum(const HeterogeneousList *list, double *max_value) {
+    if (list == NULL || max_value == NULL || list->elements == NULL || list->count == 0) {
+        return false;
+    }
+
+    *max_value = get_numeric_value(&list->elements[0]);
+    
+    for (size_t i = 1; i < list->count; i++) {
+        double current = get_numeric_value(&list->elements[i]);
+        if (current > *max_value) {
+            *max_value = current;
+        }
+    }
+    
+    return true;
+}
+
+HeterogeneousList* create_list(size_t capacity) {
+    if (capacity == 0) {
+        return NULL;
+    }
+    
+    HeterogeneousList *list = malloc(sizeof(HeterogeneousList));
+    if (list == NULL) {
+        return NULL;
+    }
+    
+    list->elements = calloc(capacity, sizeof(HeterogeneousElement));
+    if (list->elements == NULL) {
+        free(list);
+        return NULL;
+    }
+    
+    list->count = 0;
+    return list;
+}
+
+bool add_element(HeterogeneousList *list, const HeterogeneousElement *elem, size_t capacity) {
+    if (list == NULL || elem == NULL || list->count >= capacity) {
+        return false;
+    }
+    
+    list->elements[list->count] = *elem;
+    list->count++;
+    return true;
+}
+
+void destroy_list(HeterogeneousList *list) {
+    if (list != NULL) {
+        free(list->elements);
+        free(list);
+    }
+}
+
+int main(void) {
+    const size_t capacity = 5;
+    HeterogeneousList *list = create_list(capacity);
+    
+    if (list == NULL) {
+        fprintf(stderr, "Failed to create list\n");
+        return EXIT_FAILURE;
+    }
+
+    HeterogeneousElement e1 = {TYPE_INT, .value.i = 42};
+    HeterogeneousElement e2 = {TYPE_FLOAT, .value.f = 3.14f};
+    HeterogeneousElement e3 = {TYPE_DOUBLE, .value.d = 100.5};
+    HeterogeneousElement e4 = {TYPE_CHAR, .value.c = 'A'};
+    HeterogeneousElement e5 = {TYPE_INT, .value.i = -10};
+
+    if (!add_element(list, &e1, capacity) ||
+        !add_element(list, &e2, capacity) ||
+        !add_element(list, &e3, capacity) ||
+        !add_element(list, &e4, capacity) ||
+        !add_element(list, &e5, capacity)) {
+        fprintf(stderr, "Failed to add elements\n");
+        destroy_list(list);
+        return EXIT_FAILURE;
+    }
+
+    double max_val;
+    if (find_maximum(list, &max_val)) {
+        printf("Maximum value: %.2f\n", max_val);
+    } else {
+        fprintf(stderr, "Failed to find maximum\n");
+        destroy_list(list);
+        return EXIT_FAILURE;
+    }
+
+    destroy_list(list);
+    return EXIT_SUCCESS;
+}
+```

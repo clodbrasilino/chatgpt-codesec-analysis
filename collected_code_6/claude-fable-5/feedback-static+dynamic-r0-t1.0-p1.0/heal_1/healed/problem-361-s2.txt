@@ -1,0 +1,153 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+} List;
+
+typedef struct {
+    List *lists;
+    size_t count;
+} ListOfLists;
+
+static int list_init(List *list, const int *values, size_t count)
+{
+    if (list == NULL) {
+        return -1;
+    }
+    list->items = NULL;
+    list->count = 0;
+    if (count == 0 || values == NULL) {
+        return 0;
+    }
+    list->items = malloc(count * sizeof(int));
+    if (list->items == NULL) {
+        return -1;
+    }
+    memcpy(list->items, values, count * sizeof(int));
+    list->count = count;
+    return 0;
+}
+
+static void list_free(List *list)
+{
+    if (list != NULL) {
+        free(list->items);
+        list->items = NULL;
+        list->count = 0;
+    }
+}
+
+static void list_of_lists_free(ListOfLists *lol)
+{
+    if (lol != NULL) {
+        for (size_t i = 0; i < lol->count; i++) {
+            list_free(&lol->lists[i]);
+        }
+        free(lol->lists);
+        lol->lists = NULL;
+        lol->count = 0;
+    }
+}
+
+static int remove_empty_lists(ListOfLists *lol)
+{
+    if (lol == NULL) {
+        return -1;
+    }
+    if (lol->lists == NULL || lol->count == 0) {
+        return 0;
+    }
+    size_t write_index = 0;
+    for (size_t read_index = 0; read_index < lol->count; read_index++) {
+        if (lol->lists[read_index].count > 0) {
+            if (write_index != read_index) {
+                lol->lists[write_index] = lol->lists[read_index];
+                lol->lists[read_index].items = NULL;
+                lol->lists[read_index].count = 0;
+            }
+            write_index++;
+        } else {
+            list_free(&lol->lists[read_index]);
+        }
+    }
+    lol->count = write_index;
+    if (write_index == 0) {
+        free(lol->lists);
+        lol->lists = NULL;
+    } else {
+        List *shrunk = realloc(lol->lists, write_index * sizeof(List));
+        if (shrunk != NULL) {
+            lol->lists = shrunk;
+        }
+    }
+    return 0;
+}
+
+static void print_list_of_lists(const ListOfLists *lol)
+{
+    if (lol == NULL) {
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < lol->count; i++) {
+        printf("[");
+        for (size_t j = 0; j < lol->lists[i].count; j++) {
+            printf("%d", lol->lists[i].items[j]);
+            if (j + 1 < lol->lists[i].count) {
+                printf(", ");
+            }
+        }
+        printf("]");
+        if (i + 1 < lol->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    ListOfLists lol;
+    lol.count = 5;
+    lol.lists = malloc(lol.count * sizeof(List));
+    if (lol.lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    const int a[] = {1, 2, 3};
+    const int b[] = {4, 5};
+    const int c[] = {6};
+
+    if (list_init(&lol.lists[0], a, 3) != 0 ||
+        list_init(&lol.lists[1], NULL, 0) != 0 ||
+        list_init(&lol.lists[2], b, 2) != 0 ||
+        list_init(&lol.lists[3], NULL, 0) != 0 ||
+        list_init(&lol.lists[4], c, 1) != 0) {
+        fprintf(stderr, "List initialization failed\n");
+        list_of_lists_free(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before: ");
+    print_list_of_lists(&lol);
+
+    if (remove_empty_lists(&lol) != 0) {
+        fprintf(stderr, "Failed to remove empty lists\n");
+        list_of_lists_free(&lol);
+        return EXIT_FAILURE;
+    }
+
+    printf("After: ");
+    print_list_of_lists(&lol);
+
+    list_of_lists_free(&lol);
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the static analysis findings: the arrays `a`, `b`, and `c` are now declared as `const int[]` since they are never modified and are only passed to `list_init`, which already accepts a `const int *` parameter. No other changes were required, as the rest of the code was already sound with respect to the reported weaknesses.

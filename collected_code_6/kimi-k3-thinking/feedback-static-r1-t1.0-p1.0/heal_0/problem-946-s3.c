@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef struct {
+    unsigned char element;
+    size_t count;
+} ElementCount;
+
+int find_most_common(const char *text, ElementCount **results, size_t *result_count)
+{
+    size_t counts[256] = {0};
+    size_t i;
+    size_t max_count = 0;
+    size_t num_common = 0;
+    size_t idx = 0;
+    ElementCount *temp = NULL;
+
+    if (text == NULL || results == NULL || result_count == NULL) {
+        return -1;
+    }
+
+    *results = NULL;
+    *result_count = 0;
+
+    for (i = 0; text[i] != '\0'; i++) {
+        counts[(unsigned char)text[i]]++;
+    }
+
+    for (i = 0; i < 256; i++) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+        }
+    }
+
+    if (max_count == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < 256; i++) {
+        if (counts[i] == max_count) {
+            num_common++;
+        }
+    }
+
+    temp = (ElementCount *)malloc(num_common * sizeof(ElementCount));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < 256; i++) {
+        if (counts[i] == max_count) {
+            temp[idx].element = (unsigned char)i;
+            temp[idx].count = counts[i];
+            idx++;
+        }
+    }
+
+    *results = temp;
+    *result_count = num_common;
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "hello world, this is a sample text for testing";
+    ElementCount *results = NULL;
+    size_t result_count = 0;
+    size_t i;
+
+    if (find_most_common(text, &results, &result_count) != 0) {
+        fprintf(stderr, "Error: failed to analyze the text.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result_count == 0) {
+        printf("The text contains no elements.\n");
+        free(results);
+        return EXIT_SUCCESS;
+    }
+
+    printf("Most common element(s):\n");
+    for (i = 0; i < result_count; i++) {
+        if (isprint(results[i].element)) {
+            printf("'%c' occurs %zu time(s)\n", results[i].element, results[i].count);
+        } else {
+            printf("0x%02X occurs %zu time(s)\n", results[i].element, results[i].count);
+        }
+    }
+
+    free(results);
+    results = NULL;
+
+    return EXIT_SUCCESS;
+}

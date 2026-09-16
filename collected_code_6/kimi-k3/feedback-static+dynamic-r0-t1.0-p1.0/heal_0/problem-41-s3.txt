@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int *filter_even_numbers(const int *input_array, size_t array_size, size_t *result_size)
+{
+    int *even_numbers;
+    size_t i;
+    size_t even_count;
+
+    if (input_array == NULL || result_size == NULL) {
+        return NULL;
+    }
+
+    even_numbers = (int *)malloc(array_size * sizeof(int));
+    if (even_numbers == NULL && array_size > 0) {
+        return NULL;
+    }
+
+    even_count = 0;
+    for (i = 0; i < array_size; i++) {
+        if (input_array[i] % 2 == 0) {
+            even_numbers[even_count] = input_array[i];
+            even_count++;
+        }
+    }
+
+    *result_size = even_count;
+    return even_numbers;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t array_size = sizeof(numbers) / sizeof(numbers[0]);
+    size_t even_count;
+    int *even_numbers;
+    size_t i;
+
+    even_numbers = filter_even_numbers(numbers, array_size, &even_count);
+    
+    if (even_numbers == NULL) {
+        fprintf(stderr, "Error: Failed to allocate memory or invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Even numbers: ");
+    for (i = 0; i < even_count; i++) {
+        printf("%d ", even_numbers[i]);
+    }
+    printf("\n");
+
+    free(even_numbers);
+    even_numbers = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

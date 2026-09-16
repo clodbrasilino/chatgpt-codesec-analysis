@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long odd_fifth_power_sum(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    for (i = 0U; i < n; i++) {
+        unsigned long long odd = (2ULL * (unsigned long long)i) + 1ULL;
+        unsigned long long power = odd * odd * odd * odd * odd;
+        sum += power;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long result;
+
+    printf("Enter the value of n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 10000U) {
+        fprintf(stderr, "Error: n too large, risk of overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    result = odd_fifth_power_sum(n);
+    printf("Sum of fifth powers of first %u odd natural numbers: %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

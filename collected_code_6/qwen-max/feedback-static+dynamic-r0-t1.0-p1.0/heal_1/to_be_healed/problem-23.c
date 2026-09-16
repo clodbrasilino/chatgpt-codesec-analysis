@@ -1,54 +1,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+int findMaxSumOfList(int *list, int size) {
+    int sum = 0;
+    for (int i = 0; i < size; ++i) {
+        sum += list[i];
+    }
+    return sum;
+}
+
 /* Possible weaknesses found:
  *  Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
  */
-int findMaxSum(int **lists, int n, int *sizes) {
-    int max_sum = 0;
-    for (int i = 0; i < n; ++i) {
-        int sum = 0;
-        for (int j = 0; j < sizes[i]; ++j) {
-            sum += lists[i][j];
-        }
-        if (sum > max_sum) {
-            max_sum = sum;
-        }
+int findMaxSumOfLists(int **lists, int *sizes, int listsSize) {
+    int maxSum = 0;
+    for (int i = 0; i < listsSize; ++i) {
+        int currentSum = findMaxSumOfList(lists[i], sizes[i]);
+        maxSum = max(maxSum, currentSum);
     }
-    return max_sum;
+    return maxSum;
 }
 
 int main() {
-    int n = 3;
-    int *sizes = (int *)malloc(n * sizeof(int));
-    int **lists = (int **)malloc(n * sizeof(int *));
-    
-    sizes[0] = 3;
-    lists[0] = (int *)malloc(sizes[0] * sizeof(int));
-    lists[0][0] = 1;
-    lists[0][1] = 2;
-    lists[0][2] = 3;
+    int listsSizes[] = {3, 2, 4};
+    int numLists = sizeof(listsSizes) / sizeof(listsSizes[0]);
 
-    sizes[1] = 4;
-    lists[1] = (int *)malloc(sizes[1] * sizeof(int));
-    lists[1][0] = 4;
-    lists[1][1] = 5;
-    lists[1][2] = 6;
-    lists[1][3] = 7;
+    int *lists[numLists];
+    lists[0] = (int[]){1, 2, 3};
+    lists[1] = (int[]){4, 5};
+    lists[2] = (int[]){6, 7, 8, 9};
 
-    sizes[2] = 2;
-    lists[2] = (int *)malloc(sizes[2] * sizeof(int));
-    lists[2][0] = 8;
-    lists[2][1] = 9;
-
-    int result = findMaxSum(lists, n, sizes);
-    printf("Maximum sum: %d\n", result);
-
-    for (int i = 0; i < n; ++i) {
-        free(lists[i]);
-    }
-    free(lists);
-    free(sizes);
+    int result = findMaxSumOfLists((int **)lists, listsSizes, numLists);
+    printf("The maximum sum of elements in the list of lists is: %d\n", result);
 
     return 0;
 }

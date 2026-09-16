@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    const int *data;
+    size_t length;
+} Tuple;
+
+bool check_equal_lengths(const Tuple *tuples, size_t num_tuples) {
+    if (tuples == NULL) {
+        return false;
+    }
+
+    if (num_tuples == 0) {
+        return true;
+    }
+
+    size_t expected_length = tuples[0].length;
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        if (tuples[i].data == NULL && tuples[i].length > 0) {
+            return false;
+        }
+        if (tuples[i].length != expected_length) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *bool_str[] = {"false", "true"};
+
+    const int d1[] = {1, 2};
+    const int d2[] = {3, 4};
+    const int d3[] = {5, 6};
+
+    const Tuple t1[] = {
+        {d1, 2},
+        {d2, 2},
+        {d3, 2}
+    };
+
+    bool res1 = check_equal_lengths(t1, 3);
+    printf("%s\n", bool_str[res1]);
+
+    const int d4[] = {7, 8, 9};
+    
+    const Tuple t2[] = {
+        {d1, 2},
+        {d4, 3}
+    };
+
+    bool res2 = check_equal_lengths(t2, 2);
+    printf("%s\n", bool_str[res2]);
+
+    bool res3 = check_equal_lengths(NULL, 0);
+    printf("%s\n", bool_str[res3]);
+
+    bool res4 = check_equal_lengths(NULL, 1);
+    printf("%s\n", bool_str[res4]);
+
+    const Tuple t3[] = {
+        {NULL, 0},
+        {d1, 0}
+    };
+
+    bool res5 = check_equal_lengths(t3, 2);
+    printf("%s\n", bool_str[res5]);
+
+    return 0;
+}
+```

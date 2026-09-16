@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int match_words(char **word_list, int num_words, const char *word1, const char *word2) {
+    if (word_list == NULL || word1 == NULL || word2 == NULL || num_words <= 0) {
+        return 0;
+    }
+
+    if (word1[0] != 'p' || word2[0] != 'p') {
+        return 0;
+    }
+
+    int match1 = 0;
+    int match2 = 0;
+
+    for (int i = 0; i < num_words; i++) {
+        if (word_list[i] == NULL) {
+            continue;
+        }
+        if (word_list[i][0] == 'p') {
+            if (strcmp(word_list[i], word1) == 0) {
+                match1 = 1;
+            }
+            if (strcmp(word_list[i], word2) == 0) {
+                match2 = 1;
+            }
+        }
+    }
+
+    return (match1 && match2);
+}
+
+int main(void) {
+    const char *words[] = {"apple", "pear", "peach", "plum", "banana", "pineapple"};
+    int num_words = sizeof(words) / sizeof(words[0]);
+
+    char **word_list = malloc(num_words * sizeof(char *));
+    if (word_list == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < num_words; i++) {
+        word_list[i] = strdup(words[i]);
+        if (word_list[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(word_list[j]);
+            }
+            free(word_list);
+            return 1;
+        }
+    }
+
+    int result = match_words(word_list, num_words, "pear", "plum");
+
+    if (result) {
+        printf("Matches found.\n");
+    } else {
+        printf("Matches not found.\n");
+    }
+
+    for (int i = 0; i < num_words; i++) {
+        free(word_list[i]);
+    }
+    free(word_list);
+
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <errno.h>
+
+unsigned long long binomial_coefficient(unsigned int n, unsigned int k)
+{
+    unsigned long long result = 1;
+    unsigned int i;
+
+    if (k > n) {
+        return 0;
+    }
+
+    if (k > n - k) {
+        k = n - k;
+    }
+
+    for (i = 0; i < k; ++i) {
+        if (result > UINT64_MAX / (n - i)) {
+            errno = ERANGE;
+            return 0;
+        }
+        result = result * (n - i) / (i + 1);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    unsigned int n, k;
+    unsigned long long result;
+
+    if (scanf("%u %u", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    result = binomial_coefficient(n, k);
+
+    if (errno == ERANGE) {
+        fprintf(stderr, "Overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

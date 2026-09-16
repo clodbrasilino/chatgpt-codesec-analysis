@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+typedef struct {
+    Tuple *items;
+    size_t length;
+} TupleList;
+
+int tuple_list_has_k_elements(const TupleList *list, size_t k) {
+    if (list == NULL) {
+        return 0;
+    }
+    return list->length == k;
+}
+
+int all_tuples_have_k_elements(const TupleList *list, size_t k) {
+    if (list == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < list->length; i++) {
+        if (list->items == NULL || list->items[i].length != k) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+TupleList *create_tuple_list(size_t length) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (list == NULL) {
+        return NULL;
+    }
+    list->length = length;
+    if (length == 0) {
+        list->items = NULL;
+        return list;
+    }
+    list->items = (Tuple *)malloc(length * sizeof(Tuple));
+    if (list->items == NULL) {
+        free(list);
+        return NULL;
+    }
+    for (size_t i = 0; i < length; i++) {
+        list->items[i].data = NULL;
+        list->items[i].length = 0;
+    }
+    return list;
+}
+
+int add_tuple_to_list(TupleList *list, size_t index, size_t tuple_length, const int *values) {
+    if (list == NULL || list->items == NULL || index >= list->length || (tuple_length > 0 && values == NULL)) {
+        return 0;
+    }
+    if (tuple_length == 0) {
+        list->items[index].data = NULL;
+        list->items[index].length = 0;
+        return 1;
+    }
+    list->items[index].data = (int *)malloc(tuple_length * sizeof(int));
+    if (list->items[index].data == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < tuple_length; i++) {
+        list->items[index].data[i] = values[i];
+    }
+    list->items[index].length = tuple_length;
+    return 1;
+}
+
+void destroy_tuple_list(TupleList *list) {
+    if (list != NULL) {
+        if (list->items != NULL) {
+            for (size_t i = 0; i < list->length; i++) {
+                free(list->items[i].data);
+            }
+            free(list->items);
+        }
+        free(list);
+    }
+}
+
+int main(void) {
+    size_t k = 3;
+    TupleList *list = create_tuple_list(k);
+    if (list == NULL) {
+        return 1;
+    }
+
+    const int v1[] = {1, 2, 3};
+    const int v2[] = {4, 5, 6};
+    const int v3[] = {7, 8, 9};
+
+    if (!add_tuple_to_list(list, 0, 3, v1) ||
+        !add_tuple_to_list(list, 1, 3, v2) ||
+        !add_tuple_to_list(list, 2, 3, v3)) {
+        destroy_tuple_list(list);
+        return 1;
+    }
+
+    int has_k = tuple_list_has_k_elements(list, k);
+    int all_have_k = all_tuples_have_k_elements(list, k);
+
+    printf("List has %zu elements: %d\n", k, has_k);
+    printf("All tuples have %zu elements: %d\n", k, all_have_k);
+
+    destroy_tuple_list(list);
+    return 0;
+}

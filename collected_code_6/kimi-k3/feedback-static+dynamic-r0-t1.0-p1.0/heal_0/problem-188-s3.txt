@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool canBeProductOfTwoSquares(int n) {
+    if (n < 1) {
+        return false;
+    }
+    for (int a = 1; a <= sqrt(n); a++) {
+        int a_squared = a * a;
+        if (n % a_squared == 0) {
+            int b_squared = n / a_squared;
+            int b = sqrt(b_squared);
+            if (b * b == b_squared) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    int num;
+    printf("Enter a number: ");
+    scanf("%d", &num);
+    if (canBeProductOfTwoSquares(num)) {
+        printf("%d can be represented as product of two squares.\n", num);
+    } else {
+        printf("%d cannot be represented as product of two squares.\n", num);
+    }
+    return 0;
+}
+```

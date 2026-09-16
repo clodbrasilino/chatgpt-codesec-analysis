@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-115-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-115-s3.c:6:10: style: struct member 'Dictionary::keys' is never used. [unusedStructMember]
+    int *keys;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-115-s3.c:7:10: style: struct member 'Dictionary::values' is never used. [unusedStructMember]
+    int *values;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-115-s3.c:9:12: style: struct member 'Dictionary::capacity' is never used. [unusedStructMember]
+    size_t capacity;
+           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_4/healed/problem-115-s3.c:40:32: style: Variable 'non_empty_dict2' is assigned a value that is never used. [unreadVariable]
+    Dictionary non_empty_dict2 = {keys2, values2, 1, 1};
+                               ^

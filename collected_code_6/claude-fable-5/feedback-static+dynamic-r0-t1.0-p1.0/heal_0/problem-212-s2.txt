@@ -1,0 +1,61 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int fourth_power_sum(unsigned int n, unsigned long long *result)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 1U; i <= n; i++) {
+        unsigned long long value = (unsigned long long)i;
+        unsigned long long square;
+        unsigned long long fourth;
+
+        if (value != 0ULL && value > ULLONG_MAX / value) {
+            return -1;
+        }
+        square = value * value;
+
+        if (square != 0ULL && square > ULLONG_MAX / square) {
+            return -1;
+        }
+        fourth = square * square;
+
+        if (sum > ULLONG_MAX - fourth) {
+            return -1;
+        }
+        sum += fourth;
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long total = 0ULL;
+    int scan_status;
+
+    printf("Enter a natural number n: ");
+    scan_status = scanf("%u", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fourth_power_sum(n, &total) != 0) {
+        fprintf(stderr, "Computation failed due to overflow or invalid argument.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of fourth powers of the first %u natural numbers is %llu\n", n, total);
+    return EXIT_SUCCESS;
+}
+```

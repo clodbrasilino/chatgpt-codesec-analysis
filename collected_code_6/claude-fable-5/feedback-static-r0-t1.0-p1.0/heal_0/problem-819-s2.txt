@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    size_t count;
+} RunEntry;
+
+static int count_consecutive_duplicates(const int *numbers, size_t length,
+                                        RunEntry **runs_out, size_t *runs_len_out)
+{
+    RunEntry *runs;
+    size_t runs_len;
+    size_t i;
+
+    if (numbers == NULL || runs_out == NULL || runs_len_out == NULL) {
+        return -1;
+    }
+
+    *runs_out = NULL;
+    *runs_len_out = 0;
+
+    if (length == 0) {
+        return 0;
+    }
+
+    runs = malloc(length * sizeof(*runs));
+    if (runs == NULL) {
+        return -1;
+    }
+
+    runs_len = 0;
+    runs[runs_len].value = numbers[0];
+    runs[runs_len].count = 1;
+
+    for (i = 1; i < length; i++) {
+        if (numbers[i] == runs[runs_len].value) {
+            runs[runs_len].count++;
+        } else {
+            runs_len++;
+            runs[runs_len].value = numbers[i];
+            runs[runs_len].count = 1;
+        }
+    }
+    runs_len++;
+
+    *runs_out = runs;
+    *runs_len_out = runs_len;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 1, 2, 3, 3, 3, 4, 5, 5, 1, 1, 1, 1};
+    size_t length = sizeof(numbers) / sizeof(numbers[0]);
+    RunEntry *runs = NULL;
+    size_t runs_len = 0;
+    size_t i;
+
+    if (count_consecutive_duplicates(numbers, length, &runs, &runs_len) != 0) {
+        fprintf(stderr, "Failed to count consecutive duplicates\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < runs_len; i++) {
+        if (printf("Value %d appears %zu time(s) consecutively\n",
+                   runs[i].value, runs[i].count) < 0) {
+            free(runs);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(runs);
+    return EXIT_SUCCESS;
+}
+```
+
+Key design points addressing the CWEs you mentioned:
+
+- **CWE-664 (resource lifetime):** The heap allocation for `runs` has a single owner (`main`), is freed exactly once on every exit path, and the output pointer is initialized to `NULL` so callers never see an indeterminate pointer.
+- **CWE-703 (exceptional conditions):** `malloc` failure, `NULL` inputs, an empty list, and even `printf` failure are all checked and handled with distinct error paths.
+- **CWE-710 (coding standards):** Uses `size_t` for sizes/indices, `const`-correct parameters, `static` for internal linkage, `sizeof(*ptr)` allocation idiom, `EXIT_SUCCESS`/`EXIT_FAILURE`, and no implicit conversions or magic behavior.

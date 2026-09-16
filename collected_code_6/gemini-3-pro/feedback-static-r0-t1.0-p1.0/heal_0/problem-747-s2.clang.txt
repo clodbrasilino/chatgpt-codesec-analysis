@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s2.c:49:103: error: too few arguments to function call, expected 3, have 2
+   48 |                     L[i][j][k] = max3(max3(L[i - 1][j][k], L[i][j - 1][k], L[i][j][k - 1]),
+      |                                  ~~~~
+   49 |                                       max3(L[i - 1][j - 1][k], L[i - 1][j][k - 1], L[i][j - 1][k - 1]));
+      |                                                                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-747-s2.c:5:5: note: 'max3' declared here
+    5 | int max3(int a, int b, int c) {
+      |     ^    ~~~~~~~~~~~~~~~~~~~
+1 error generated.

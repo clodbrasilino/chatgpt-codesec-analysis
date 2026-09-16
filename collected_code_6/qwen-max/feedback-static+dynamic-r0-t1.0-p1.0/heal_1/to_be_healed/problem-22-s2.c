@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+bool findFirstDuplicate(int *arr, int size, int *duplicate) {
+    bool found = false;
+    for (int i = 0; i < size; ++i) {
+        for (int j = i + 1; j < size; ++j) {
+            if (arr[i] == arr[j]) {
+                *duplicate = arr[i];
+                found = true;
+                return found;
+            }
+        }
+    }
+    return found;
+}
+
+int main() {
+    int arr[] = {2, 5, 3, 2, 8, 4, 7, 5};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int duplicate;
+
+    if (findFirstDuplicate(arr, size, &duplicate)) {
+        printf("First duplicate element: %d\n", duplicate);
+    } else {
+        printf("No duplicates found.\n");
+    }
+
+    return 0;
+}

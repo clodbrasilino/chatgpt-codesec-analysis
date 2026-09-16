@@ -1,7 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-358-s2.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-358-s2.c:25:9: style: Variable 'list1' can be declared as const array [constVariable]
-    int list1[] = {10, 20, 30};
-        ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-358-s2.c:26:9: style: Variable 'list2' can be declared as const array [constVariable]
-    int list2[] = {3, 5, 7};
-        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-358-s2.c:6:10: warning: Either the condition 'result_len==NULL' is redundant or there is possible null pointer dereference: result_len. [nullPointerRedundantCheck]
+        *result_len = -1;
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-358-s2.c:5:80: note: Assuming that condition 'result_len==NULL' is not redundant
+    if (len1 == 0 || len2 == 0 || list1 == NULL || list2 == NULL || result_len == NULL) {
+                                                                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-358-s2.c:6:10: note: Null pointer dereference
+        *result_len = -1;
+         ^

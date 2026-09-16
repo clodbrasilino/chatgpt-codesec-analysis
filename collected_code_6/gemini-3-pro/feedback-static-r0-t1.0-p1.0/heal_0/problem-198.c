@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point p1;
+    Point p2;
+    Point p3;
+    double area;
+} Triangle;
+
+int find_largest_inscribed_triangle(double a, double b, Triangle *result) {
+    double sqrt3;
+
+    if (a <= 0.0 || b <= 0.0 || result == NULL) {
+        return -1;
+    }
+
+    sqrt3 = sqrt(3.0);
+
+    result->p1.x = a;
+    result->p1.y = 0.0;
+
+    result->p2.x = -a / 2.0;
+    result->p2.y = (b * sqrt3) / 2.0;
+
+    result->p3.x = -a / 2.0;
+    result->p3.y = -(b * sqrt3) / 2.0;
+
+    result->area = (3.0 * sqrt3 / 4.0) * a * b;
+
+    return 0;
+}
+
+int main(void) {
+    double a = 5.0;
+    double b = 3.0;
+    Triangle t;
+
+    if (find_largest_inscribed_triangle(a, b, &t) != 0) {
+        fprintf(stderr, "Invalid parameters provided for the ellipse.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Max Area: %f\n", t.area);
+    printf("Vertex 1: (%f, %f)\n", t.p1.x, t.p1.y);
+    printf("Vertex 2: (%f, %f)\n", t.p2.x, t.p2.y);
+    printf("Vertex 3: (%f, %f)\n", t.p3.x, t.p3.y);
+
+    return EXIT_SUCCESS;
+}

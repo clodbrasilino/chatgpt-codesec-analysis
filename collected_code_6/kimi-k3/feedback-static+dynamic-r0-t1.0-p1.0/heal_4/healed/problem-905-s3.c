@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+static unsigned long long binomial_coefficient(unsigned int n, unsigned int k)
+{
+    unsigned long long result = 1ULL;
+    unsigned int i;
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    for (i = 0U; i < k; i++) {
+        if (result > ULLONG_MAX / (n - i)) {
+            errno = ERANGE;
+            return 0ULL;
+        }
+        result = result * (n - i);
+        result = result / (i + 1U);
+    }
+    
+    return result;
+}
+
+static unsigned long long sum_of_squares(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int k;
+    
+    for (k = 0U; k <= n; k++) {
+        unsigned long long coeff;
+        unsigned long long square;
+        
+        errno = 0;
+        coeff = binomial_coefficient(n, k);
+        
+        if (errno == ERANGE) {
+            return 0ULL;
+        }
+        
+        if (coeff > 0ULL && ULLONG_MAX / coeff < coeff) {
+            errno = ERANGE;
+            return 0ULL;
+        }
+        square = coeff * coeff;
+        
+        if (ULLONG_MAX - sum < square) {
+            errno = ERANGE;
+            return 0ULL;
+        }
+        sum += square;
+    }
+    
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long result;
+    int scan_result;
+    
+    scan_result = scanf("%u", &n);
+    
+    if (scan_result != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    result = sum_of_squares(n);
+    
+    if (errno == ERANGE) {
+        return EXIT_FAILURE;
+    }
+    
+    (void)printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

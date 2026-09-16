@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int countRotations(const int arr[], int n) {
+    if (arr == NULL || n <= 0) return -1;
+    int i;
+    for (i = 0; i < n - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+            return i + 1;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%d\n", countRotations(arr1, n1));
+
+    int arr2[] = {1, 2, 3, 4, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%d\n", countRotations(arr2, n2));
+
+    int arr3[] = {2, 2, 2, 0, 2};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%d\n", countRotations(arr3, n3));
+
+    return 0;
+}

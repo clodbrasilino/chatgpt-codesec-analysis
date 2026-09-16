@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_element_count(const int *tuple, size_t tuple_size, int record) {
+    if (tuple == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < tuple_size; ++i) {
+        if (tuple[i] == record) {
+            return count;
+        }
+        count++;
+    }
+
+    return -1;
+}
+
+int main(void) {
+    int tuple[] = {10, 20, 30, 40, 50, 60};
+    size_t tuple_size = sizeof(tuple) / sizeof(tuple[0]);
+    int record = 40;
+
+    int count = find_element_count(tuple, tuple_size, record);
+
+    if (count != -1) {
+        printf("%d\n", count);
+    } else {
+        printf("Record not found\n");
+    }
+
+    return 0;
+}

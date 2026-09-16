@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_intersection(int *arr1, int size1, int *arr2, int size2, int *result_size) {
+    if (arr1 == NULL || arr2 == NULL || result_size == NULL) {
+        return NULL;
+    }
+    
+    if (size1 <= 0 || size2 <= 0) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int max_size = size1 < size2 ? size1 : size2;
+    int *result = (int*)malloc(max_size * sizeof(int));
+    
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    int count = 0;
+    
+    for (int i = 0; i < size1; i++) {
+        for (int j = 0; j < size2; j++) {
+            if (arr1[i] == arr2[j]) {
+                int found = 0;
+                for (int k = 0; k < count; k++) {
+                    if (result[k] == arr1[i]) {
+                        found = 1;
+                        break;
+                    }
+                }
+                
+                if (!found) {
+                    result[count] = arr1[i];
+                    count++;
+                }
+                break;
+            }
+        }
+    }
+    
+    if (count == 0) {
+        free(result);
+        *result_size = 0;
+        return NULL;
+    }
+    
+    result = (int*)realloc(result, count * sizeof(int));
+    
+    if (result == NULL && count > 0) {
+        *result_size = 0;
+        return NULL;
+    }
+    
+    *result_size = count;
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {3, 4, 5, 6, 7};
+    
+    int result_size = 0;
+    int *result = find_intersection(arr1, 5, arr2, 5, &result_size);
+    
+    if (result != NULL) {
+        printf("Intersection: ");
+        for (int i = 0; i < result_size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    } else {
+        printf("No intersection found or error occurred\n");
+    }
+    
+    return 0;
+}
+```

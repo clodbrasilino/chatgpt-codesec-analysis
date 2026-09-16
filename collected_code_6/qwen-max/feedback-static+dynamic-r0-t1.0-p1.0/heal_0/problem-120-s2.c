@@ -6,22 +6,20 @@ typedef struct {
     int second;
 } Tuple;
 
-int maxProductFromPairs(Tuple *tuples, int size) {
-    if (size < 2) return -1;
-    int maxProduct = tuples[0].first * tuples[0].second;
-    for (int i = 1; i < size; ++i) {
+int maxProduct(Tuple *tuples, int n) {
+    if (n <= 0) return 0;
+    int max = tuples[0].first * tuples[0].second;
+    for (int i = 1; i < n; ++i) {
         int product = tuples[i].first * tuples[i].second;
-        if (product > maxProduct) {
-            maxProduct = product;
-        }
+        if (product > max) max = product;
     }
-    return maxProduct;
+    return max;
 }
 
 int main() {
-    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}};
-    int size = sizeof(tuples) / sizeof(tuples[0]);
-    int result = maxProductFromPairs(tuples, size);
+    Tuple list[] = {{1, 2}, {3, 4}, {5, 6}};
+    int n = sizeof(list) / sizeof(list[0]);
+    int result = maxProduct(list, n);
     printf("Maximum product: %d\n", result);
     return 0;
 }

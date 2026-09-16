@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double sum_of_geometric_progression(double first_term, double common_ratio, int number_of_terms) {
+    if (number_of_terms <= 0) {
+        return 0.0;
+    }
+    if (common_ratio == 1.0) {
+        return first_term * number_of_terms;
+    }
+    return first_term * (1.0 - pow(common_ratio, number_of_terms)) / (1.0 - common_ratio);
+}
+
+int main(void) {
+    double first_term;
+    double common_ratio;
+    int number_of_terms;
+    double result;
+
+    printf("Enter first term: ");
+    if (scanf("%lf", &first_term) != 1) {
+        fprintf(stderr, "Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter common ratio: ");
+    if (scanf("%lf", &common_ratio) != 1) {
+        fprintf(stderr, "Invalid input for common ratio\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter number of terms: ");
+    if (scanf("%d", &number_of_terms) != 1) {
+        fprintf(stderr, "Invalid input for number of terms\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number_of_terms <= 0) {
+        fprintf(stderr, "Number of terms must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_geometric_progression(first_term, common_ratio, number_of_terms);
+    printf("Sum of geometric progression: %.10f\n", result);
+
+    return EXIT_SUCCESS;
+}
+```

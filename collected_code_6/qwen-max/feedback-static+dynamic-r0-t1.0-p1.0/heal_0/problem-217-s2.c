@@ -1,25 +1,24 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdbool.h>
 
-char find_first_repeated(const char *str) {
-    int chars[256] = {0};
+char find_first_repeated_char(const char *str) {
+    bool visited[256] = {false};
     for (int i = 0; str[i] != '\0'; ++i) {
-        if (chars[(unsigned char)str[i]] == 0) {
-            chars[(unsigned char)str[i]] = 1;
-        } else {
+        if (visited[(unsigned char)str[i]]) {
             return str[i];
         }
+        visited[(unsigned char)str[i]] = true;
     }
     return '\0';
 }
 
 int main() {
     const char *input = "programming";
-    char result = find_first_repeated(input);
-    if (result != '\0') {
-        printf("First repeated character: %c\n", result);
-    } else {
+    char result = find_first_repeated_char(input);
+    if (result == '\0') {
         printf("No repeated characters found.\n");
+    } else {
+        printf("First repeated character: %c\n", result);
     }
     return 0;
 }

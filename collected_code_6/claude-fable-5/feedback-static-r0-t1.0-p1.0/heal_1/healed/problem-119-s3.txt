@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_single_element(const int *arr, size_t n, int *result)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || result == NULL || n == 0U || (n % 2U) == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+        if ((mid % 2U) == 1U) {
+            mid--;
+        }
+        if (arr[mid] == arr[mid + 1U]) {
+            low = mid + 2U;
+        } else {
+            high = mid;
+        }
+    }
+
+    *result = arr[low];
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 1, 2, 2, 3, 4, 4, 5, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int value = 0;
+
+    if (find_single_element(arr, n, &value) != 0) {
+        fprintf(stderr, "Error: invalid input array\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("The element that appears once is: %d\n", value) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `[variableScope]` finding: the variable `mid` is now declared inside the `while` loop body rather than at function scope, since it is only used within each loop iteration. This limits its lifetime and visibility to where it is actually needed, which is a C99-and-later idiom that improves readability and reduces the chance of accidental misuse. All other defensive properties of the original code are preserved: NULL-pointer checks on `arr` and `result`, rejection of empty or even-length arrays (a valid input must have odd length for exactly one unpaired element), unsigned-safe midpoint calculation `low + ((high - low) / 2U)` to avoid overflow, and checked return values for `printf`.

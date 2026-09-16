@@ -1,0 +1,128 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} Row;
+
+static int row_compare(const Row *a, const Row *b, size_t idx)
+{
+    if (a->data[idx] < b->data[idx]) {
+        return -1;
+    }
+    if (a->data[idx] > b->data[idx]) {
+        return 1;
+    }
+    return 0;
+}
+
+static int sort_rows_by_index(Row *rows, size_t nrows, size_t idx)
+{
+    size_t i;
+
+    if (nrows == 0) {
+        return 0;
+    }
+    if (rows == NULL) {
+        return -1;
+    }
+    for (i = 0; i < nrows; i++) {
+        if (rows[i].data == NULL || rows[i].len <= idx) {
+            return -1;
+        }
+    }
+    for (i = 1; i < nrows; i++) {
+        Row key = rows[i];
+        size_t j = i;
+        while (j > 0 && row_compare(&rows[j - 1], &key, idx) > 0) {
+            rows[j] = rows[j - 1];
+            j--;
+        }
+        rows[j] = key;
+    }
+    return 0;
+}
+
+static void free_rows(Row *rows, size_t nrows)
+{
+    size_t i;
+
+    if (rows == NULL) {
+        return;
+    }
+    for (i = 0; i < nrows; i++) {
+        free(rows[i].data);
+    }
+    free(rows);
+}
+
+static void print_rows(const Row *rows, size_t nrows)
+{
+    size_t i;
+    size_t j;
+
+    for (i = 0; i < nrows; i++) {
+        for (j = 0; j < rows[i].len; j++) {
+            printf("%d ", rows[i].data[j]);
+        }
+        putchar('\n');
+    }
+}
+
+int main(void)
+{
+    enum { NROWS = 4, NCOLS = 3 };
+    const size_t sort_index = 1;
+    const int values[NROWS][NCOLS] = {
+        {7, 3, 9},
+        {1, 8, 2},
+        {4, 0, 6},
+        {2, 5, 1}
+    };
+    Row *rows;
+    size_t i;
+    size_t j;
+    int status = EXIT_FAILURE;
+
+    rows = malloc((size_t)NROWS * sizeof(*rows));
+    if (rows == NULL) {
+        fprintf(stderr, "error: out of memory\n");
+        return EXIT_FAILURE;
+    }
+    for (i = 0; i < (size_t)NROWS; i++) {
+        rows[i].data = NULL;
+        rows[i].len = 0;
+    }
+
+    for (i = 0; i < (size_t)NROWS; i++) {
+        rows[i].data = malloc((size_t)NCOLS * sizeof(*rows[i].data));
+        if (rows[i].data == NULL) {
+            fprintf(stderr, "error: out of memory\n");
+            goto cleanup;
+        }
+        rows[i].len = (size_t)NCOLS;
+        for (j = 0; j < (size_t)NCOLS; j++) {
+            rows[i].data[j] = values[i][j];
+        }
+    }
+
+    printf("Before sorting by index %zu:\n", sort_index);
+    print_rows(rows, (size_t)NROWS);
+
+    if (sort_rows_by_index(rows, (size_t)NROWS, sort_index) != 0) {
+        fprintf(stderr, "error: invalid sort index\n");
+        goto cleanup;
+    }
+
+    printf("After sorting by index %zu:\n", sort_index);
+    print_rows(rows, (size_t)NROWS);
+
+    status = EXIT_SUCCESS;
+
+cleanup:
+    free_rows(rows, (size_t)NROWS);
+    return status;
+}
+```

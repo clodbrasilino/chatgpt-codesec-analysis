@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int countUnsetBits(unsigned int num)
+{
+    unsigned int count = 0U;
+    while (num > 0U)
+    {
+        if ((num & 1U) == 0U)
+        {
+            count++;
+        }
+        num >>= 1U;
+    }
+    return count;
+}
+
+static unsigned long long totalUnsetBits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i = 1U;
+    for (;;)
+    {
+        total += (unsigned long long)countUnsetBits(i);
+        if (i == n)
+        {
+            break;
+        }
+        i++;
+    }
+    return total;
+}
+
+int main(int argc, const char *argv[])
+{
+    unsigned int n = 0U;
+
+    if (argc > 1)
+    {
+        char extra = '\0';
+        if (sscanf(argv[1], "%u %c", &n, &extra) != 1 || n < 1U)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        if (scanf("%u", &n) != 1)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+        if (n < 1U)
+        {
+            fprintf(stderr, "Error: input must be at least 1\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%llu\n", totalUnsetBits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Test case failures (expected 4/17, got 1):** The "got 1" strongly suggests the program was exiting with `EXIT_FAILURE` (status 1) rather than producing wrong arithmetic — the bit-counting logic itself is correct (`n=5` → 4, `n=14` → 17). The original argv parsing via `strtoul` rejected any input with trailing whitespace or a newline (`*end != '\0'`), which is a common way test harnesses pass arguments. The rewritten parsing uses `sscanf(argv[1], "%u %c", ...)`, which tolerates trailing whitespace while still rejecting genuine trailing garbage, so valid inputs like `"5\n"` or `"14 "` no longer cause a spurious failure exit.
+
+2. **cppcheck `constParameter` warning:** `argv` is now declared as `const char *argv[]`, since the program never modifies the argument strings. This also removed the need for `strtoul`'s non-const `char **endptr` out-parameter, simplifying the code and dropping the now-unneeded `<limits.h>` and `<errno.h>` includes.
+
+3. The `n < 1U` validation is preserved on both input paths, and the core `countUnsetBits`/`totalUnsetBits` logic is untouched since it was verified correct.

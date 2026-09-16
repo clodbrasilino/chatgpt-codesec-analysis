@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+int count_equal_numbers(int a, int b, int c) {
+    if (a == b && b == c) {
+        return 3;
+    } else if (a == b || a == c || b == c) {
+        return 2;
+    }
+    return 0;
+}
+
+int main(void) {
+    printf("%d\n", count_equal_numbers(1, 1, 1));
+    printf("%d\n", count_equal_numbers(1, 1, 2));
+    printf("%d\n", count_equal_numbers(1, 2, 2));
+    printf("%d\n", count_equal_numbers(1, 2, 3));
+    return 0;
+}

@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+static void sort_sides(double *a, double *b, double *c)
+{
+    double tmp;
+
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+    if (*b > *c) {
+        tmp = *b;
+        *b = *c;
+        *c = tmp;
+    }
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+}
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
+        return 0;
+    }
+
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+
+    sort_sides(&a, &b, &c);
+
+    return (a + b > c) ? 1 : 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The weakness was in the validity test `(c - b < a)`. While algebraically equivalent to the triangle inequality `a + b > c`, the two expressions behave differently under IEEE-754 floating-point arithmetic due to rounding:
+
+- **Test case failures explained:** With `c - b`, catastrophic cancellation or rounding in the subtraction can produce a result that incorrectly passes or fails the comparison. For example, with sides where `c - b` rounds down, a degenerate (invalid) triangle can be reported as valid (`expected False, got 1`), and conversely rounding up in the subtraction can reject a legitimately valid triangle (`expected True, got 0`).
+
+- **The fix** evaluates the inequality in its canonical form `a + b > c` after sorting, which matches the reference semantics the test suite expects. Since the sides are sorted so `c` is the largest, only one comparison is needed, and the sum `a + b` of the two smaller sides cannot overflow to infinity unless the inputs are already near `DBL_MAX` (in which case the result is still well-defined as invalid or valid consistently).
+
+The rest of the program (input validation via `scanf` return check, finiteness and positivity guards, sorting network) was already sound and is retained unchanged.

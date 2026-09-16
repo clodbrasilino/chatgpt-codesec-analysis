@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findMaxSubarraySum(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    int max_so_far = INT_MIN;
+    int current_max = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        current_max += arr[i];
+
+        if (max_so_far < current_max) {
+            max_so_far = current_max;
+        }
+
+        if (current_max < 0) {
+            current_max = 0;
+        }
+    }
+
+    return max_so_far;
+}
+
+int main(void) {
+    int arr[] = {-2, -3, 4, -1, -2, 1, 5, -3};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int max_sum = findMaxSubarraySum(arr, size);
+
+    printf("%d\n", max_sum);
+
+    return 0;
+}

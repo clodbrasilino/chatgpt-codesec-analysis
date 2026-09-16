@@ -3,97 +3,146 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
 typedef struct List {
-    int *data;
-    size_t len;
+    Node *head;
 } List;
 
-typedef struct ListList {
-    List **lists;
-    size_t count;
-} ListList;
-
-int compare_lists(const void *a, const void *b) {
-    List *list1 = *(List **)a;
-    List *list2 = *(List **)b;
-    if (list1->len != list2->len) return 0;
-    for (size_t i = 0; i < list1->len; i++) {
-        if (list1->data[i] != list2->data[i]) return 0;
+int list_cmp(Node *a, Node *b) {
+    while (a && b) {
+        if (a->data != b->data) {
+            return 0;
+        }
+        a = a->next;
+        b = b->next;
     }
-    return 1;
+    return a == NULL && b == NULL;
 }
 
-void free_list(List *list) {
-    free(list->data);
-    free(list);
-}
-
-void free_listlist(ListList *ll) {
-    for (size_t i = 0; i < ll->count; i++) {
-        free_list(ll->lists[i]);
-    }
-    free(ll->lists);
-    free(ll);
-}
-
-ListList* remove_duplicates(ListList *ll) {
-    qsort(ll->lists, ll->count, sizeof(List *), (int(*)(const void*, const void*))compare_lists);
-
-    size_t new_count = 1;
-    for (size_t i = 1; i < ll->count; i++) {
-        if (!compare_lists(&ll->lists[i-1], &ll->lists[i])) {
-            ll->lists[new_count++] = ll->lists[i];
-        } else {
-            free_list(ll->lists[i]);
+void insert_sorted(List **lists, List *insert_list, int size) {
+    if (*lists == NULL || list_cmp(insert_list->head, (*lists)->head)) {
+        insert_list->next = *lists;
+        *lists = insert_list;
+    } else {
+        List *current = *lists;
+        while (current->next && !list_cmp(insert_list->head, current->next->head)) {
+            current = current->next;
+        }
+        if (!list_cmp(insert_list->head, current->head)) {
+            insert_list->next = current->next;
+            current->next = insert_list;
         }
     }
+}
 
-    ListList *result = (ListList *)malloc(sizeof(ListList));
-    result->lists = (List **)realloc(ll->lists, new_count * sizeof(List *));
-    result->count = new_count;
+List* remove_duplicates(List *lists) {
+    if (lists == NULL) {
+        return NULL;
+    }
 
+    List *result = NULL;
+    while (lists) {
+        List *current = lists;
+        lists = lists->next;
+        if (result == NULL || !list_cmp(current->head, result->head)) {
+            insert_sorted(&result, current, 0);
+        } else {
+            while (current->head) {
+                Node *temp = current->head;
+                current->head = current->head->next;
+                free(temp);
+            }
+            free(current);
+        }
+    }
     return result;
 }
 
-List* create_list(int *data, size_t len) {
+Node* create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+List* create_list() {
     List *list = (List *)malloc(sizeof(List));
-    list->data = (int *)malloc(len * sizeof(int));
-    memcpy(list->data, data, len * sizeof(int));
-    list->len = len;
+    list->head = NULL;
+    list->next = NULL;
     return list;
 }
 
-ListList* create_listlist(size_t count) {
-    ListList *ll = (ListList *)malloc(sizeof(ListList));
-    ll->lists = (List **)malloc(count * sizeof(List *));
-    ll->count = count;
-    return ll;
+void add_to_list(List *list, int data) {
+    Node *new_node = create_node(data);
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+}
+
+void print_list(List *list) {
+    Node *current = list->head;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_lists(List *lists) {
+    while (lists) {
+        List *temp = lists;
+        lists = lists->next;
+        while (temp->head) {
+            Node *del_node = temp->head;
+            temp->head = temp->head->next;
+            free(del_node);
+        }
+        free(temp);
+    }
 }
 
 int main() {
-    int data1[] = {1, 2, 3};
-    int data2[] = {4, 5, 6};
-    int data3[] = {1, 2, 3};
+    List *lists = create_list();
+    List *l1 = create_list();
+    add_to_list(l1, 1);
+    add_to_list(l1, 2);
+    add_to_list(l1, 3);
 
-    List *list1 = create_list(data1, 3);
-    List *list2 = create_list(data2, 3);
-    List *list3 = create_list(data3, 3);
+    List *l2 = create_list();
+    add_to_list(l2, 4);
+    add_to_list(l2, 5);
 
-    ListList *ll = create_listlist(3);
-    ll->lists[0] = list1;
-    ll->lists[1] = list2;
-    ll->lists[2] = list3;
+    List *l3 = create_list();
+    add_to_list(l3, 1);
+    add_to_list(l3, 2);
+    add_to_list(l3, 3);
 
-    ListList *result = remove_duplicates(ll);
+    List *l4 = create_list();
+    add_to_list(l4, 6);
 
-    for (size_t i = 0; i < result->count; i++) {
-        for (size_t j = 0; j < result->lists[i]->len; j++) {
-            printf("%d ", result->lists[i]->data[j]);
-        }
-        printf("\n");
+    l1->next = l2;
+    l2->next = l3;
+    l3->next = l4;
+
+    List *result = remove_duplicates(l1);
+
+    while (result) {
+        print_list(result);
+        result = result->next;
     }
 
-    free_listlist(result);
+    free_lists(l1);
+
     return 0;
 }
 ```

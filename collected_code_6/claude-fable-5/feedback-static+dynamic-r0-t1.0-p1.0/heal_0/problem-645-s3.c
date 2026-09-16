@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 4
+#define COLS 3
+
+long long product_of_kth_index(const int tuples[][COLS], size_t rows, size_t cols, size_t k, int *status)
+{
+    long long product = 1;
+    size_t i;
+
+    if (status == NULL) {
+        return 0;
+    }
+
+    if (tuples == NULL || rows == 0 || cols == 0 || k >= cols) {
+        *status = -1;
+        return 0;
+    }
+
+    for (i = 0; i < rows; i++) {
+        product *= (long long)tuples[i][k];
+    }
+
+    *status = 0;
+    return product;
+}
+
+int main(void)
+{
+    int tuples[ROWS][COLS] = {
+        {5, 6, 7},
+        {1, 3, 5},
+        {8, 9, 19},
+        {2, 4, 6}
+    };
+    size_t k = 2;
+    int status = 0;
+    long long result;
+
+    result = product_of_kth_index(tuples, ROWS, COLS, k, &status);
+
+    if (status != 0) {
+        fprintf(stderr, "Error: invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Product of elements at index %zu: %lld\n", k, result);
+
+    return EXIT_SUCCESS;
+}

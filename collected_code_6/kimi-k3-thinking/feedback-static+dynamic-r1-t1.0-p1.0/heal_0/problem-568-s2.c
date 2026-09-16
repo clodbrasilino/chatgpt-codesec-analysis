@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define DICT_INITIAL_CAPACITY 16
+#define LIST_COUNT 5
+
+typedef struct {
+    char *key;
+    char *value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+typedef struct {
+    Dictionary **items;
+    size_t size;
+    size_t capacity;
+} DictList;
+
+static Dictionary *dict_create(void)
+{
+    Dictionary *dict = malloc(sizeof(*dict));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->entries = calloc(DICT_INITIAL_CAPACITY, sizeof(*dict->entries));
+    if (dict->entries == NULL) {
+        free(dict);
+        return NULL;
+    }
+    dict->size = 0;
+    dict->capacity = DICT_INITIAL_CAPACITY;
+    return dict;
+}
+
+static void dict_free(Dictionary *dict)
+{
+    if (dict == NULL) {
+        return;
+    }
+    if (dict->entries != NULL) {
+        for (size_t i = 0; i < dict->size; i++) {
+            free(dict->entries[i].key);
+            free(dict->entries[i].value);
+        }
+        free(dict->entries);
+    }
+    free(dict);
+}
+
+static DictList *dict_list_create(size_t count)
+{
+    if (count > SIZE_MAX / sizeof(Dictionary *)) {
+        return NULL;
+    }
+
+    DictList *list = malloc(sizeof(*list));
+    if (list == NULL) {
+        return NULL;
+    }
+
+    list->items = calloc(count > 0 ? count : 1, sizeof(*list->items));
+    if (list->items == NULL) {
+        free(list);
+        return NULL;
+    }
+    list->size = 0;
+    list->capacity = count;
+
+    for (size_t i = 0; i < count; i++) {
+        list->items[i] = dict_create();
+        if (list->items[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                dict_free(list->items[j]);
+            }
+            free(list->items);
+            free(list);
+            return NULL;
+        }
+        list->size++;
+    }
+
+    return list;
+}
+
+static void dict_list_free(DictList *list)
+{
+    if (list == NULL) {
+        return;
+    }
+    if (list->items != NULL) {
+        for (size_t i = 0; i < list->size; i++) {
+            dict_free(list->items[i]);
+        }
+        free(list->items);
+    }
+    free(list);
+}
+
+int main(void)
+{
+    DictList *list = dict_list_create(LIST_COUNT);
+    if (list == NULL) {
+        fprintf(stderr, "Failed to create dictionary list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Created %zu empty dictionaries\n", list->size);
+    for (size_t i = 0; i < list->size; i++) {
+        printf("Dictionary %zu: size=%zu, capacity=%zu\n",
+               i, list->items[i]->size, list->items[i]->capacity);
+    }
+
+    dict_list_free(list);
+    return EXIT_SUCCESS;
+}

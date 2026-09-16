@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+struct Tuple {
+    int id;
+    int value;
+};
+
+struct Aggregate {
+    int id;
+    long long total;
+};
+
+int calculate_max_aggregate(const struct Tuple *tuples, size_t size, long long *max_agg) {
+    if (tuples == NULL || size == 0 || max_agg == NULL) {
+        return -1;
+    }
+
+    struct Aggregate *aggs = (struct Aggregate *)malloc(size * sizeof(struct Aggregate));
+    if (aggs == NULL) {
+        return -1;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < unique_count; ++j) {
+            if (aggs[j].id == tuples[i].id) {
+                aggs[j].total += tuples[i].value;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            aggs[unique_count].id = tuples[i].id;
+            aggs[unique_count].total = tuples[i].value;
+            unique_count++;
+        }
+    }
+
+    long long current_max = LLONG_MIN;
+    for (size_t i = 0; i < unique_count; ++i) {
+        if (aggs[i].total > current_max) {
+            current_max = aggs[i].total;
+        }
+    }
+
+    *max_agg = current_max;
+    
+    free(aggs);
+    aggs = NULL;
+
+    return 0;
+}
+
+int main(void) {
+    struct Tuple tuples[] = {
+        {1, 15},
+        {2, 30},
+        {1, 25},
+        {3, 10},
+        {2, 12},
+        {4, -5}
+    };
+    
+    size_t size = sizeof(tuples) / sizeof(tuples[0]);
+    long long max_aggregate = 0;
+
+    int status = calculate_max_aggregate(tuples, size, &max_aggregate);
+    
+    if (status == 0) {
+        printf("%lld\n", max_aggregate);
+    } else {
+        fprintf(stderr, "Error calculating maximum aggregate.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

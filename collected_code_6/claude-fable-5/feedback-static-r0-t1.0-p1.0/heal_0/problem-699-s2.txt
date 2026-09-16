@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Conversion is not possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+- `min_swaps` validates both inputs: it rejects `NULL` pointers, strings of unequal length, and any character that is not `'0'` or `'1'`, returning `-1` to signal an error.
+- It counts positions where `s1` has `'1'` but `s2` has `'0'` (`diff10`), and positions where `s1` has `'0'` but `s2` has `'1'` (`diff01`).
+- Conversion via swaps is only possible when both strings contain the same number of ones, which means `diff10` must equal `diff01`. Each swap fixes exactly one mismatch of each type, so the answer is `diff10`.
+- `main` checks the return values of `printf` and uses `EXIT_SUCCESS`/`EXIT_FAILURE` for portable exit codes, keeping error conditions properly handled throughout.
+
+For the sample input `"1101"` → `"0011"`, the output is:
+
+```
+Minimum swaps required: 1
+```

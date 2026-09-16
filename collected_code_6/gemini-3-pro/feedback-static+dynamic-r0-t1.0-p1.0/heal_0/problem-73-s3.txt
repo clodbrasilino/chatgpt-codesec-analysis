@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string(const char *str, const char *pattern) {
+    regex_t regex;
+    regmatch_t match;
+    int status;
+    const char *p = str;
+    
+    if (str == NULL || pattern == NULL) {
+        return;
+    }
+
+    status = regcomp(&regex, pattern, REG_EXTENDED);
+    if (status != 0) {
+        return;
+    }
+
+    while (1) {
+        status = regexec(&regex, p, 1, &match, 0);
+        if (status == 0) {
+            if (match.rm_so > 0) {
+                fwrite(p, 1, match.rm_so, stdout);
+                printf("\n");
+            }
+            p += match.rm_eo;
+        } else {
+            if (*p != '\0') {
+                printf("%s\n", p);
+            }
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *text = "apple,banana;orange|grape pineapple";
+    const char *pattern = "[,;| ]+";
+
+    split_string(text, pattern);
+
+    return 0;
+}
+```

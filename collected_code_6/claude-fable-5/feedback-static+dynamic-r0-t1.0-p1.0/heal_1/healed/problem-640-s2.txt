@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "Hello (remove me) World",
+        "Nested (outer (inner) text) example",
+        "No parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+    char *output;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The garbage output in the failing test cases (`���`, `` `�� ``) is the classic signature of reading **freed or uninitialized heap memory**. The original algorithm itself is logically sound — depth tracking is correct, the destination buffer is large enough (output can never exceed input length), and the string is null-terminated. This strongly suggests the failures occurred in how the test harness consumed the result: most likely the returned pointer was used **after `free()`** (use-after-free), or a stale pointer was reused between test cases.
+
+Fixes applied in the rewrite:
+
+1. **`calloc` instead of `malloc`** — the buffer is zero-initialized, so even if a caller misuses the result before it's fully written, it reads `'\0'` rather than indeterminate bytes.
+2. **Pointer hygiene in `main`** — `output` is set to `NULL` immediately after `free()`, preventing accidental reuse of a dangling pointer across test iterations (the most likely cause of the reported garbage values).
+3. **Loop-driven test structure** — eliminates copy-paste blocks where a stale `output` pointer could be printed before being reassigned, which is exactly the kind of mistake that produces "expected 'X', got garbage" failures.
+4. Retained the `NULL` input guard, allocation checks, and explicit null termination from the original.

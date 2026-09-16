@@ -1,0 +1,28 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long get_nth_decagonal_number(unsigned long long n);
+
+unsigned long long get_nth_decagonal_number(unsigned long long n) {
+    if (n == 0) {
+        return 0;
+    }
+    return (4ULL * n * n) - (3ULL * n);
+}
+
+int main(void) {
+    unsigned long long n = 10;
+    unsigned long long result = 0;
+    int print_status = 0;
+
+    result = get_nth_decagonal_number(n);
+    
+    print_status = printf("%llu\n", result);
+    if (print_status < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

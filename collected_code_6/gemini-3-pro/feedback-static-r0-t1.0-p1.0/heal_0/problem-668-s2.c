@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void replace_multiple_chars(char *str, char target) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t write_index = 0;
+    size_t read_index = 0;
+    int in_sequence = 0;
+
+    while (str[read_index] != '\0') {
+        if (str[read_index] == target) {
+            if (!in_sequence) {
+                str[write_index++] = str[read_index];
+                in_sequence = 1;
+            }
+        } else {
+            str[write_index++] = str[read_index];
+            in_sequence = 0;
+        }
+        read_index++;
+    }
+    str[write_index] = '\0';
+}
+
+int main(void) {
+    char test_string1[] = "This    is   a      test   string.";
+    char test_string2[] = "aaabbbcccdddeee";
+    
+    replace_multiple_chars(NULL, ' ');
+
+    replace_multiple_chars(test_string1, ' ');
+    printf("%s\n", test_string1);
+
+    replace_multiple_chars(test_string2, 'a');
+    printf("%s\n", test_string2);
+
+    replace_multiple_chars(test_string2, 'c');
+    printf("%s\n", test_string2);
+
+    return 0;
+}

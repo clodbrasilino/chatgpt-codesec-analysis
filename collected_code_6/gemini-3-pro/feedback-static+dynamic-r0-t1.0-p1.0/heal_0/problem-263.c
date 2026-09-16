@@ -1,0 +1,167 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct KeyValuePair {
+    char *key;
+    char *value;
+    struct KeyValuePair *next;
+} KeyValuePair;
+
+typedef struct Dictionary {
+    KeyValuePair *head;
+} Dictionary;
+
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    KeyValuePair *current = dict->head;
+    while (current != NULL) {
+        KeyValuePair *next = current->next;
+        free(current->key);
+        free(current->value);
+        free(current);
+        current = next;
+    }
+    free(dict);
+}
+
+int add_or_update(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL || key == NULL || value == NULL) {
+        return -1;
+    }
+
+    KeyValuePair *current = dict->head;
+    while (current != NULL) {
+        if (strcmp(current->key, key) == 0) {
+            char *new_value = strdup(value);
+            if (new_value == NULL) {
+                return -1;
+            }
+            free(current->value);
+            current->value = new_value;
+            return 0;
+        }
+        current = current->next;
+    }
+
+    KeyValuePair *new_pair = (KeyValuePair*)malloc(sizeof(KeyValuePair));
+    if (new_pair == NULL) {
+        return -1;
+    }
+
+    new_pair->key = strdup(key);
+    if (new_pair->key == NULL) {
+        free(new_pair);
+        return -1;
+    }
+
+    new_pair->value = strdup(value);
+    if (new_pair->value == NULL) {
+        free(new_pair->key);
+        free(new_pair);
+        return -1;
+    }
+
+    new_pair->next = dict->head;
+    dict->head = new_pair;
+    return 0;
+}
+
+Dictionary* merge_dictionaries(const Dictionary *dict1, const Dictionary *dict2) {
+    if (dict1 == NULL && dict2 == NULL) {
+        return NULL;
+    }
+
+    Dictionary *merged_dict = create_dictionary();
+    if (merged_dict == NULL) {
+        return NULL;
+    }
+
+    if (dict1 != NULL) {
+        KeyValuePair *current = dict1->head;
+        while (current != NULL) {
+            if (add_or_update(merged_dict, current->key, current->value) != 0) {
+                free_dictionary(merged_dict);
+                return NULL;
+            }
+            current = current->next;
+        }
+    }
+
+    if (dict2 != NULL) {
+        KeyValuePair *current = dict2->head;
+        while (current != NULL) {
+            if (add_or_update(merged_dict, current->key, current->value) != 0) {
+                free_dictionary(merged_dict);
+                return NULL;
+            }
+            current = current->next;
+        }
+    }
+
+    return merged_dict;
+}
+
+void print_dictionary(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    KeyValuePair *current = dict->head;
+    while (current != NULL) {
+        printf("%s: %s\n", current->key, current->value);
+        current = current->next;
+    }
+}
+
+int main(void) {
+    Dictionary *dict1 = create_dictionary();
+    if (dict1 == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *dict2 = create_dictionary();
+    if (dict2 == NULL) {
+        free_dictionary(dict1);
+        return EXIT_FAILURE;
+    }
+
+    if (add_or_update(dict1, "key1", "value1") != 0 ||
+        add_or_update(dict1, "key2", "value2") != 0) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return EXIT_FAILURE;
+    }
+
+    if (add_or_update(dict2, "key2", "new_value2") != 0 ||
+        add_or_update(dict2, "key3", "value3") != 0) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return EXIT_FAILURE;
+    }
+
+    Dictionary *merged_dict = merge_dictionaries(dict1, dict2);
+    if (merged_dict == NULL) {
+        free_dictionary(dict1);
+        free_dictionary(dict2);
+        return EXIT_FAILURE;
+    }
+
+    print_dictionary(merged_dict);
+
+    free_dictionary(dict1);
+    free_dictionary(dict2);
+    free_dictionary(merged_dict);
+
+    return EXIT_SUCCESS;
+}

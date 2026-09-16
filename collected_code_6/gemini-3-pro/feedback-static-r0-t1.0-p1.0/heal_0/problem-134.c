@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int isLastElementEvenOrOdd(int* arr, size_t size, int p) {
+    if (arr == NULL || size == 0) {
+        return -1; 
+    }
+
+    int lastElement = arr[size - 1];
+
+    if (lastElement == 0 && p < 0) {
+        return -1;
+    }
+
+    if (p > 0) {
+        lastElement = lastElement << (p % 32); 
+    } else if (p < 0) {
+        lastElement = lastElement >> (abs(p) % 32);
+    }
+
+    if (lastElement % 2 == 0) {
+        return 1; 
+    } else {
+        return 0; 
+    }
+}
+
+int main(void) {
+    size_t size = 5;
+    int* arr = (int*)malloc(size * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        arr[i] = (int)(i + 1);
+    }
+
+    int p = 2;
+    int result = isLastElementEvenOrOdd(arr, size, p);
+
+    if (result == 1) {
+        printf("Even\n");
+    } else if (result == 0) {
+        printf("Odd\n");
+    } else {
+        printf("Error\n");
+    }
+
+    free(arr);
+    arr = NULL;
+
+    return EXIT_SUCCESS;
+}

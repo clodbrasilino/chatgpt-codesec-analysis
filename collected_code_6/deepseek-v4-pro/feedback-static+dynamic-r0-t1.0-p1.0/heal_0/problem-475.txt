@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Counter;
+
+void sort_counter_by_value(Counter *counter, int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1 - i; j++) {
+            if (counter[j].value > counter[j + 1].value) {
+                Counter temp = counter[j];
+                counter[j] = counter[j + 1];
+                counter[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main(void) {
+    Counter *counter = NULL;
+    int size = 0;
+    int input_key, input_value;
+
+    while (scanf("%d %d", &input_key, &input_value) == 2) {
+        Counter *new_counter = realloc(counter, sizeof(Counter) * (size + 1));
+        if (new_counter == NULL) {
+            free(counter);
+            return EXIT_FAILURE;
+        }
+        counter = new_counter;
+        counter[size].key = input_key;
+        counter[size].value = input_value;
+        size++;
+    }
+
+    sort_counter_by_value(counter, size);
+
+    for (int i = 0; i < size; i++) {
+        printf("%d %d\n", counter[i].key, counter[i].value);
+    }
+
+    free(counter);
+    return EXIT_SUCCESS;
+}
+```

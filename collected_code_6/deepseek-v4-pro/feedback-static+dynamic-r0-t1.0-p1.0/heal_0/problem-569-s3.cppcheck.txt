@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:9:59: style: Parameter 'sublist_counts' can be declared as pointer to const [constParameterPointer]
+char ***sort_sublists(char ***lists, int list_count, int *sublist_counts) {
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-569-s3.c:23:53: style: Parameter 'sublist_counts' can be declared as pointer to const [constParameterPointer]
+void free_lists(char ***lists, int list_count, int *sublist_counts) {
+                                                    ^

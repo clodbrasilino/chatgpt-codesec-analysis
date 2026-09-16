@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+long long gcd_extended(long long a, long long b, long long *x, long long *y) {
+    if (a == 0) {
+        *x = 0;
+        *y = 1;
+        return b;
+    }
+
+    long long x1, y1;
+    long long gcd = gcd_extended(b % a, a, &x1, &y1);
+
+    *x = y1 - (b / a) * x1;
+    *y = x1;
+
+    return gcd;
+}
+
+bool find_solution(long long a, long long b, long long n, long long *x, long long *y) {
+    if (a == 0 && b == 0) {
+        if (n == 0) {
+            *x = 0;
+            *y = 0;
+            return true;
+        }
+        return false;
+    }
+
+    long long x0, y0;
+    long long g = gcd_extended(abs(a), abs(b), &x0, &y0);
+
+    if (n % g != 0) {
+        return false;
+    }
+
+    *x = x0 * (n / g);
+    *y = y0 * (n / g);
+
+    if (a < 0) *x = -*x;
+    if (b < 0) *y = -*y;
+
+    return true;
+}
+
+int main(void) {
+    long long a, b, n;
+    long long x, y;
+
+    if (scanf("%lld %lld %lld", &a, &b, &n) != 3) {
+        return EXIT_FAILURE;
+    }
+
+    if (find_solution(a, b, n, &x, &y)) {
+        printf("x = %lld, y = %lld\n", x, y);
+    } else {
+        printf("No solution exists.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

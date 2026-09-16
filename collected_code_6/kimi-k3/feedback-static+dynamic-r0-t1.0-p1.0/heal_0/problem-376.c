@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} Tuple;
+
+int tuple_init(Tuple *t, size_t capacity) {
+    if (t == NULL) {
+        return -1;
+    }
+    t->data = (int *)malloc(capacity * sizeof(int));
+    if (t->data == NULL) {
+        return -1;
+    }
+    t->size = 0;
+    t->capacity = capacity;
+    return 0;
+}
+
+void tuple_free(Tuple *t) {
+    if (t != NULL && t->data != NULL) {
+        free(t->data);
+        t->data = NULL;
+        t->size = 0;
+        t->capacity = 0;
+    }
+}
+
+int tuple_append(Tuple *t, int value) {
+    if (t == NULL || t->data == NULL) {
+        return -1;
+    }
+    if (t->size >= t->capacity) {
+        size_t new_capacity = t->capacity * 2;
+        int *new_data = (int *)realloc(t->data, new_capacity * sizeof(int));
+        if (new_data == NULL) {
+            return -1;
+        }
+        t->data = new_data;
+        t->capacity = new_capacity;
+    }
+    t->data[t->size] = value;
+    t->size++;
+    return 0;
+}
+
+int tuple_remove_duplicates_replace(Tuple *t, int replacement) {
+    if (t == NULL || t->data == NULL || t->size == 0) {
+        return -1;
+    }
+    
+    size_t *counts = (size_t *)calloc(t->size, sizeof(size_t));
+    if (counts == NULL) {
+        return -1;
+    }
+    
+    for (size_t i = 0; i < t->size; i++) {
+        for (size_t j = 0; j < t->size; j++) {
+            if (t->data[i] == t->data[j]) {
+                counts[i]++;
+            }
+        }
+    }
+    
+    for (size_t i = 0; i < t->size; i++) {
+        if (counts[i] > 1) {
+            t->data[i] = replacement;
+        }
+    }
+    
+    free(counts);
+    return 0;
+}
+
+void tuple_print(const Tuple *t) {
+    if (t == NULL || t->data == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < t->size; i++) {
+        printf("%d", t->data[i]);
+        if (i < t->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    Tuple t;
+    if (tuple_init(&t, 4) != 0) {
+        fprintf(stderr, "Failed to initialize tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    int values[] = {1, 2, 3, 2, 4, 1, 5};
+    size_t num_values = sizeof(values) / sizeof(values[0]);
+    
+    for (size_t i = 0; i < num_values; i++) {
+        if (tuple_append(&t, values[i]) != 0) {
+            fprintf(stderr, "Failed to append value\n");
+            tuple_free(&t);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    printf("Original: ");
+    tuple_print(&t);
+    
+    if (tuple_remove_duplicates_replace(&t, -1) != 0) {
+        fprintf(stderr, "Failed to process tuple\n");
+        tuple_free(&t);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Modified: ");
+    tuple_print(&t);
+    
+    tuple_free(&t);
+    return EXIT_SUCCESS;
+}

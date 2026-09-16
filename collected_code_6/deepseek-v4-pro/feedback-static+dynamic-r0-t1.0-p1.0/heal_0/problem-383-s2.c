@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+unsigned int toggleOddBits(unsigned int num) {
+    unsigned int mask = 0xAAAAAAAA;
+    return num ^ mask;
+}
+
+int main(void) {
+    unsigned int testValues[] = {0, 1, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555};
+    int numTests = sizeof(testValues) / sizeof(testValues[0]);
+    int i;
+
+    for (i = 0; i < numTests; i++) {
+        printf("Original: 0x%08X -> Toggled: 0x%08X\n", 
+               testValues[i], toggleOddBits(testValues[i]));
+    }
+
+    return 0;
+}

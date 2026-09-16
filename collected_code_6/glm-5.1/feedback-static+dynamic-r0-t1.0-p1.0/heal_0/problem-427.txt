@@ -1,0 +1,122 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char* convert_date_format(const char* yyyy_mm_dd) {
+    if (yyyy_mm_dd == NULL) {
+        return NULL;
+    }
+
+    regex_t regex;
+    regmatch_t matches[4];
+    int ret = regcomp(&regex, "^([0-9]{4})-([0-9]{2})-([0-9]{2})$", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    ret = regexec(&regex, yyyy_mm_dd, 4, matches, 0);
+    regfree(&regex);
+
+    if (ret != 0) {
+        return NULL;
+    }
+
+    char* result = (char*)malloc(11);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    size_t remaining = 11;
+    size_t pos = 0;
+
+    if ((size_t)(matches[3].rm_eo - matches[3].rm_so) < remaining) {
+        size_t len = matches[3].rm_eo - matches[3].rm_so;
+        memcpy(result + pos, yyyy_mm_dd + matches[3].rm_so, len);
+        pos += len;
+        remaining -= len;
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    if (remaining > 0) {
+        result[pos] = '-';
+        pos++;
+        remaining--;
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    if ((size_t)(matches[2].rm_eo - matches[2].rm_so) < remaining) {
+        size_t len = matches[2].rm_eo - matches[2].rm_so;
+        memcpy(result + pos, yyyy_mm_dd + matches[2].rm_so, len);
+        pos += len;
+        remaining -= len;
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    if (remaining > 0) {
+        result[pos] = '-';
+        pos++;
+        remaining--;
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    if ((size_t)(matches[1].rm_eo - matches[1].rm_so) < remaining) {
+        size_t len = matches[1].rm_eo - matches[1].rm_so;
+        memcpy(result + pos, yyyy_mm_dd + matches[1].rm_so, len);
+        pos += len;
+        remaining -= len;
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    if (remaining > 0) {
+        result[pos] = '\0';
+    } else {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void) {
+    const char* date1 = "2023-10-25";
+    char* converted1 = convert_date_format(date1);
+    if (converted1 != NULL) {
+        printf("%s\n", converted1);
+        free(converted1);
+    }
+
+    const char* date2 = "2023-10-25-extra";
+    char* converted2 = convert_date_format(date2);
+    if (converted2 != NULL) {
+        printf("%s\n", converted2);
+        free(converted2);
+    }
+
+    char* converted3 = convert_date_format(NULL);
+    if (converted3 != NULL) {
+        printf("%s\n", converted3);
+        free(converted3);
+    }
+
+    const char* date4 = "2023-10-25";
+    char* converted4 = convert_date_format(date4);
+    if (converted4 != NULL) {
+        printf("%s\n", converted4);
+        free(converted4);
+    }
+
+    return 0;
+}
+```

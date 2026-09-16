@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int set_odd_bits(unsigned int num);
+
+unsigned int set_odd_bits(unsigned int num) {
+    unsigned int mask = 0;
+    size_t i;
+    for (i = 1; i < (sizeof(unsigned int) * 8); i += 2) {
+        mask |= (1U << i);
+    }
+    return num | mask;
+}
+
+int main(void) {
+    unsigned int num = 0;
+    
+    if (scanf("%u", &num) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%u\n", set_odd_bits(num));
+
+    return EXIT_SUCCESS;
+}
+```

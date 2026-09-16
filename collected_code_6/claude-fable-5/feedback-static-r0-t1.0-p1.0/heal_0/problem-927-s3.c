@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct TreeNode {
+    int value;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+
+struct TreeNode *create_node(int value)
+{
+    struct TreeNode *node = malloc(sizeof(struct TreeNode));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->value = value;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+int tree_height(const struct TreeNode *root)
+{
+    int left_height;
+    int right_height;
+
+    if (root == NULL) {
+        return 0;
+    }
+
+    left_height = tree_height(root->left);
+    right_height = tree_height(root->right);
+
+    if (left_height > right_height) {
+        return left_height + 1;
+    }
+    return right_height + 1;
+}
+
+void free_tree(struct TreeNode *root)
+{
+    if (root == NULL) {
+        return;
+    }
+    free_tree(root->left);
+    free_tree(root->right);
+    free(root);
+}
+
+int main(void)
+{
+    struct TreeNode *root = create_node(1);
+    root->left = create_node(2);
+    root->right = create_node(3);
+    root->left->left = create_node(4);
+    root->left->right = create_node(5);
+    root->left->left->left = create_node(6);
+
+    int height = tree_height(root);
+
+    if (printf("Height of the binary tree: %d\n", height) < 0) {
+        free_tree(root);
+        return EXIT_FAILURE;
+    }
+
+    free_tree(root);
+    return EXIT_SUCCESS;
+}

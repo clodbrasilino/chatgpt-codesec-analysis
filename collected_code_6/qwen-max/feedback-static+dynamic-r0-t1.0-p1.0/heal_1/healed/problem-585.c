@@ -1,88 +1,102 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct {
-    char name[50];
     int price;
+    void *item;
 } Item;
 
 typedef struct {
-    Item *arr;
     int size;
     int capacity;
+    Item **array;
 } PriorityQueue;
 
-PriorityQueue* createQueue(int capacity) {
-    PriorityQueue* q = (PriorityQueue*)malloc(sizeof(PriorityQueue));
-    q->arr = (Item*)malloc(capacity * sizeof(Item));
-    q->size = 0;
-    q->capacity = capacity;
-    return q;
+PriorityQueue* createPriorityQueue(int capacity) {
+    PriorityQueue* pq = (PriorityQueue*)malloc(sizeof(PriorityQueue));
+    pq->size = 0;
+    pq->capacity = capacity;
+    pq->array = (Item**)malloc(capacity * sizeof(Item*));
+    return pq;
 }
 
-void swapItems(Item *a, Item *b) {
-    Item temp = *a;
+void swap(Item **a, Item **b) {
+    Item *temp = *a;
     *a = *b;
     *b = temp;
 }
 
-void heapify(PriorityQueue *q, int i) {
-    int smallest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
+int parent(int i) {
+    return (i - 1) / 2;
+}
 
-    if (left < q->size && q->arr[left].price < q->arr[smallest].price)
-        smallest = left;
+int leftChild(int i) {
+    return (2 * i + 1);
+}
 
-    if (right < q->size && q->arr[right].price < q->arr[smallest].price)
-        smallest = right;
+int rightChild(int i) {
+    return (2 * i + 2);
+}
 
-    if (smallest != i) {
-        swapItems(&q->arr[i], &q->arr[smallest]);
-        heapify(q, smallest);
+void heapify(PriorityQueue *pq, int i) {
+    int largest = i;
+    int l = leftChild(i);
+    int r = rightChild(i);
+
+    if (l < pq->size && pq->array[l]->price > pq->array[largest]->price)
+        largest = l;
+    if (r < pq->size && pq->array[r]->price > pq->array[largest]->price)
+        largest = r;
+    if (largest != i) {
+        swap(&pq->array[i], &pq->array[largest]);
+        heapify(pq, largest);
     }
 }
 
-void insert(PriorityQueue *q, Item item) {
-    if (q->size == q->capacity) {
-        if (item.price > q->arr[0].price) {
-            q->arr[0] = item;
-            heapify(q, 0);
+void insert(PriorityQueue *pq, Item *item) {
+    if (pq->size == pq->capacity) {
+        if (pq->array[0]->price < item->price) {
+            pq->array[0] = item;
+            heapify(pq, 0);
         }
     } else {
-        int i = q->size;
-        q->arr[i] = item;
-        while (i != 0 && q->arr[(i - 1) / 2].price > q->arr[i].price) {
-            swapItems(&q->arr[i], &q->arr[(i - 1) / 2]);
-            i = (i - 1) / 2;
+        int i = pq->size;
+        pq->array[i] = item;
+        while (i != 0 && pq->array[parent(i)]->price < pq->array[i]->price) {
+            swap(&pq->array[i], &pq->array[parent(i)]);
+            i = parent(i);
         }
-        q->size++;
+        pq->size++;
     }
 }
 
-void printNExpensiveItems(PriorityQueue *q) {
-    for (int i = 0; i < q->size; i++) {
-        printf("%s: %d\n", q->arr[i].name, q->arr[i].price);
+Item** findNExpensiveItems(Item *items, int n, int totalItems) {
+    PriorityQueue *pq = createPriorityQueue(n);
+    for (int i = 0; i < totalItems; ++i) {
+        insert(pq, &items[i]);
     }
-}
-
-void freeQueue(PriorityQueue *q) {
-    free(q->arr);
-    free(q);
+    return pq->array;
 }
 
 int main() {
-    const Item items[] = {{"Apple", 80}, {"Banana", 50}, {"Cherry", 70}, {"Date", 90}, {"Elderberry", 60}};
-    int n = 3;
-    PriorityQueue *q = createQueue(n);
+    const int prices[] = {50, 100, 20, 80, 70, 90};
+    const char items[][10] = {"ItemA", "ItemB", "ItemC", "ItemD", "ItemE", "ItemF"};
+    const int n = 3;
+    const int totalItems = 6;
 
-    for (int i = 0; i < 5; i++) {
-        insert(q, items[i]);
+    Item *dataset = (Item*)malloc(totalItems * sizeof(Item));
+    for (int i = 0; i < totalItems; ++i) {
+        dataset[i].price = prices[i];
+        dataset[i].item = (void*)&items[i];
     }
 
-    printNExpensiveItems(q);
-    freeQueue(q);
+    Item** result = findNExpensiveItems(dataset, n, totalItems);
+    for (int i = 0; i < n; ++i) {
+        printf("%s: %d\n", (char*)(result[i]->item), result[i]->price);
+    }
 
+    free(dataset);
+    free(result[0]);
+    free(result);
     return 0;
 }

@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity * sizeof(char));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < len; i++) {
+        t->items[i] = str[i];
+    }
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("[]\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python3.0",
+        "item1",
+        "15.10"
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        Tuple *t = string_to_tuple(inputs[i]);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple: \"%s\"\n", inputs[i]);
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+        tuple_destroy(t);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fixes applied:**
+
+1. **Output format mismatch** — The test cases expected output in the form `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']` (square brackets, list-style), but `tuple_print` produced parenthesized output like `('p', 'y', ...)`. The print function now emits `[` and `]` delimiters.
+
+2. **Extraneous output polluting stdout** — The original `main` printed `Input string: "..."` and a `Tuple: ` prefix before the actual list, which meant the test harness (matching lines against the expected list) saw no matching output at all — hence `got <no output>`. Those extra `printf` calls have been removed so each input produces exactly one clean line containing only the list.
+
+3. **NULL-tuple print path** — Previously printed `(invalid)`, which also failed the expected format; it now prints an empty list `[]` to stay consistent with the bracketed output convention.
+
+The memory management (paired `malloc`/`free`, cleanup on partial allocation failure in `tuple_create`) was already correct and has been preserved unchanged.

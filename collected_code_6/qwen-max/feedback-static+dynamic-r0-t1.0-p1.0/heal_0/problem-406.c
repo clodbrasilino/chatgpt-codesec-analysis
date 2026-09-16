@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int find_parity(unsigned int n) {
+    int parity = 0;
+    while (n) {
+        parity = ~parity;
+        n = n & (n - 1);
+    }
+    return parity & 1;
+}
+
+int main() {
+    unsigned int num;
+    printf("Enter an integer: ");
+    if (scanf("%u", &num) == 1) {
+        int result = find_parity(num);
+        printf("Parity of %u is %s\n", num, (result ? "odd" : "even"));
+    } else {
+        fprintf(stderr, "Invalid input. Please enter a valid integer.\n");
+    }
+    return 0;
+}

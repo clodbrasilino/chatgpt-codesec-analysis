@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-897-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-897-s3.c:39:57: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+    printf(is_word_present(sentence, word2) ? "False\n" : "False\n");
+                                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-897-s3.c:40:57: style: Same expression in both branches of ternary operator. [duplicateExpressionTernary]
+    printf(is_word_present(sentence, word3) ? "False\n" : "False\n");
+                                                        ^

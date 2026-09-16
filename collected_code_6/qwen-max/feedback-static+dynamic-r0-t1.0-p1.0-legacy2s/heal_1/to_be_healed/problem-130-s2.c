@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int item;
+    int frequency;
+} ItemFrequency;
+
+int compare(const void *a, const void *b) {
+    return ((ItemFrequency *)b)->frequency - ((ItemFrequency *)a)->frequency;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int findMaxFrequencyItem(int *arr, int n, int *maxItem, int *maxFrequency) {
+    if (n <= 0) return -1;
+    ItemFrequency *items = (ItemFrequency *)malloc(n * sizeof(ItemFrequency));
+    if (items == NULL) return -1;
+
+    for (int i = 0; i < n; ++i) {
+        items[i].item = arr[i];
+        items[i].frequency = 1;
+    }
+
+    for (int i = 1; i < n; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (arr[i] == items[j].item) {
+                items[j].frequency++;
+                items[i].frequency = 0;
+                break;
+            }
+        }
+    }
+
+    qsort(items, n, sizeof(ItemFrequency), compare);
+
+    for (int i = 0; i < n; ++i) {
+        if (items[i].frequency > 0) {
+            *maxItem = items[i].item;
+            *maxFrequency = items[i].frequency;
+            break;
+        }
+    }
+
+    free(items);
+    return 0;
+}
+
+int main() {
+    int arr[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int maxItem, maxFrequency;
+
+    if (findMaxFrequencyItem(arr, n, &maxItem, &maxFrequency) == 0) {
+        printf("Item: %d, Frequency: %d\n", maxItem, maxFrequency);
+    } else {
+        printf("Error in finding the maximum frequency item.\n");
+    }
+
+    return 0;
+}

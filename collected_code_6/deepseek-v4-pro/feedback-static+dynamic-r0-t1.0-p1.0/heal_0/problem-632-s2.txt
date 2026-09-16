@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void move_zeroes_to_end(int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return;
+    }
+
+    int write_index = 0;
+    int read_index = 0;
+
+    for (read_index = 0; read_index < size; read_index++) {
+        if (arr[read_index] != 0) {
+            arr[write_index] = arr[read_index];
+            write_index++;
+        }
+    }
+
+    for (; write_index < size; write_index++) {
+        arr[write_index] = 0;
+    }
+}
+
+void print_array(int *arr, int size) {
+    printf("[");
+    for (int i = 0; i < size; i++) {
+        printf("%d", arr[i]);
+        if (i < size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main(void) {
+    int test1[] = {0, 1, 0, 3, 12};
+    int size1 = sizeof(test1) / sizeof(test1[0]);
+    
+    int test2[] = {0, 0, 0};
+    int size2 = sizeof(test2) / sizeof(test2[0]);
+    
+    int test3[] = {1, 2, 3};
+    int size3 = sizeof(test3) / sizeof(test3[0]);
+    
+    int test4[] = {0};
+    int size4 = sizeof(test4) / sizeof(test4[0]);
+
+    move_zeroes_to_end(test1, size1);
+    print_array(test1, size1);
+    
+    move_zeroes_to_end(test2, size2);
+    print_array(test2, size2);
+    
+    move_zeroes_to_end(test3, size3);
+    print_array(test3, size3);
+    
+    move_zeroes_to_end(test4, size4);
+    print_array(test4, size4);
+
+    return 0;
+}
+```

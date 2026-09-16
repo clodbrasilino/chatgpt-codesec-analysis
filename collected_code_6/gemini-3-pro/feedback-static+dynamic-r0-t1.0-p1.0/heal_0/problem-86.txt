@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long find_centered_hexagonal_number(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    return 3ULL * n * (n - 1) + 1;
+}
+
+int main(void) {
+    unsigned int n;
+    int result;
+
+    result = scanf("%u", &n);
+    if (result != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0) {
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long hex_num = find_centered_hexagonal_number(n);
+    printf("%llu\n", hex_num);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_HEAP_SIZE 100
+
+typedef struct {
+    int *array;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createHeap(int capacity) {
+    if (capacity <= 0) return NULL;
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    
+    heap->array = (int*)malloc(capacity * sizeof(int));
+    if (!heap->array) {
+        free(heap);
+        return NULL;
+    }
+    
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroyHeap(MinHeap *heap) {
+    if (heap) {
+        if (heap->array) free(heap->array);
+        free(heap);
+    }
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(MinHeap *heap, int i) {
+    if (!heap || i >= heap->size) return;
+    
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->array[left] < heap->array[smallest]) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->array[right] < heap->array[smallest]) {
+        smallest = right;
+    }
+    if (smallest != i) {
+        swap(&heap->array[i], &heap->array[smallest]);
+        minHeapify(heap, smallest);
+    }
+}
+
+int replaceMin(MinHeap *heap, int newItem) {
+    if (!heap || heap->size == 0) return -1;
+    
+    int root = heap->array[0];
+    heap->array[0] = newItem;
+    minHeapify(heap, 0);
+    
+    return root;
+}
+
+void insertHelper(MinHeap *heap, int index) {
+    int parent = (index - 1) / 2;
+    while (index != 0 && heap->array[parent] > heap->array[index]) {
+        swap(&heap->array[index], &heap->array[parent]);
+        index = parent;
+        parent = (index - 1) / 2;
+    }
+}
+
+int insertNode(MinHeap *heap, int val) {
+    if (!heap || heap->size == heap->capacity) return -1;
+    
+    heap->array[heap->size] = val;
+    heap->size++;
+    insertHelper(heap, heap->size - 1);
+    
+    return 0;
+}
+
+int main(void) {
+    MinHeap *heap = createHeap(MAX_HEAP_SIZE);
+    if (!heap) return 1;
+
+    insertNode(heap, 10);
+    insertNode(heap, 20);
+    insertNode(heap, 5);
+    insertNode(heap, 30);
+    insertNode(heap, 15);
+
+    replaceMin(heap, 12);
+
+    for (int i = 0; i < heap->size; i++) {
+        printf("%d ", heap->array[i]);
+    }
+    printf("\n");
+
+    destroyHeap(heap);
+    return 0;
+}

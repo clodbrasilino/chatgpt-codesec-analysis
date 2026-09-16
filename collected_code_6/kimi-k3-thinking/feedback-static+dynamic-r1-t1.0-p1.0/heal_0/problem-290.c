@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int find_longest_list(int **lists, const size_t *lengths, size_t count, int **longest, size_t *max_length)
+{
+    size_t i;
+    size_t max_index;
+
+    if (lists == NULL || lengths == NULL || longest == NULL || max_length == NULL || count == 0)
+    {
+        return -1;
+    }
+
+    max_index = 0;
+    for (i = 1; i < count; i++)
+    {
+        if (lengths[i] > lengths[max_index])
+        {
+            max_index = i;
+        }
+    }
+
+    *longest = lists[max_index];
+    *max_length = lengths[max_index];
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t num_lists;
+    size_t i;
+    size_t j;
+    int **lists;
+    size_t *lengths;
+    int *longest;
+    size_t max_length;
+    int status;
+
+    printf("Enter the number of lists: ");
+    if (scanf("%zu", &num_lists) != 1 || num_lists == 0 || num_lists > SIZE_MAX / sizeof(int *))
+    {
+        fprintf(stderr, "Invalid number of lists.\n");
+        return EXIT_FAILURE;
+    }
+
+    lists = malloc(num_lists * sizeof(*lists));
+    if (lists == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    lengths = malloc(num_lists * sizeof(*lengths));
+    if (lengths == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed.\n");
+        free(lists);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < num_lists; i++)
+    {
+        lists[i] = NULL;
+    }
+
+    status = EXIT_SUCCESS;
+
+    for (i = 0; i < num_lists; i++)
+    {
+        printf("Enter the length of list %zu: ", i + 1);
+        if (scanf("%zu", &lengths[i]) != 1 || lengths[i] > SIZE_MAX / sizeof(int))
+        {
+            fprintf(stderr, "Invalid length.\n");
+            status = EXIT_FAILURE;
+            break;
+        }
+
+        if (lengths[i] > 0)
+        {
+            lists[i] = malloc(lengths[i] * sizeof(*lists[i]));
+            if (lists[i] == NULL)
+            {
+                fprintf(stderr, "Memory allocation failed.\n");
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+
+        printf("Enter %zu element(s): ", lengths[i]);
+        for (j = 0; j < lengths[i]; j++)
+        {
+            if (scanf("%d", &lists[i][j]) != 1)
+            {
+                fprintf(stderr, "Invalid element.\n");
+                status = EXIT_FAILURE;
+                break;
+            }
+        }
+
+        if (status == EXIT_FAILURE)
+        {
+            break;
+        }
+    }
+
+    if (status == EXIT_SUCCESS)
+    {
+        if (find_longest_list(lists, lengths, num_lists, &longest, &max_length) != 0)
+        {
+            fprintf(stderr, "Failed to find the longest list.\n");
+            status = EXIT_FAILURE;
+        }
+        else
+        {
+            printf("Longest list (length %zu): ", max_length);
+            for (i = 0; i < max_length; i++)
+            {
+                printf("%d ", longest[i]);
+            }
+            printf("\n");
+        }
+    }
+
+    for (i = 0; i < num_lists; i++)
+    {
+        free(lists[i]);
+    }
+    free(lists);
+    free(lengths);
+
+    return status;
+}

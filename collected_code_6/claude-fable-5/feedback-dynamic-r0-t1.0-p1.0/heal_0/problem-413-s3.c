@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TUPLE_SIZE 3
+
+typedef struct {
+    int values[TUPLE_SIZE];
+} Tuple;
+
+int extract_nth_element(const Tuple *tuples, size_t count, size_t n, int *result)
+{
+    size_t i;
+
+    if (tuples == NULL || result == NULL) {
+        return -1;
+    }
+    if (n >= TUPLE_SIZE) {
+        return -1;
+    }
+    for (i = 0; i < count; i++) {
+        result[i] = tuples[i].values[n];
+    }
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        { { 1, 2, 3 } },
+        { { 4, 5, 6 } },
+        { { 7, 8, 9 } },
+        { { 10, 11, 12 } }
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t n = 1;
+    size_t i;
+    int *result;
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (extract_nth_element(tuples, count, n, result) != 0) {
+        fprintf(stderr, "Failed to extract element at index %zu\n", n);
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Element at index %zu of each tuple:\n", n);
+    for (i = 0; i < count; i++) {
+        printf("%d\n", result[i]);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}

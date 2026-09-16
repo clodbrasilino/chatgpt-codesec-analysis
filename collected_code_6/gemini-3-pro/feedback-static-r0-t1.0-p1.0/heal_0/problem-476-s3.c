@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findSumOfLargestAndSmallest(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    int smallest = array[0];
+    int largest = array[0];
+
+    for (size_t i = 1; i < size; ++i) {
+        if (array[i] < smallest) {
+            smallest = array[i];
+        }
+        if (array[i] > largest) {
+            largest = array[i];
+        }
+    }
+
+    return smallest + largest;
+}
+
+int main(void) {
+    int array[] = {5, 2, 9, 1, 7, 4};
+    size_t size = sizeof(array) / sizeof(array[0]);
+
+    int sum = findSumOfLargestAndSmallest(array, size);
+
+    printf("Sum of largest and smallest: %d\n", sum);
+
+    return EXIT_SUCCESS;
+}

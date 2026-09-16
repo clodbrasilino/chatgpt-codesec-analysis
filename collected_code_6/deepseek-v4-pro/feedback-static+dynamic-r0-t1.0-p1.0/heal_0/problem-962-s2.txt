@@ -1,0 +1,29 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_even_in_range(int l, int r) {
+    if (l > r) {
+        return 0;
+    }
+    if (l % 2 != 0) {
+        l++;
+    }
+    if (r % 2 != 0) {
+        r--;
+    }
+    if (l > r) {
+        return 0;
+    }
+    int n = ((r - l) / 2) + 1;
+    return n * (l + r) / 2;
+}
+
+int main(void) {
+    int l = 1;
+    int r = 10;
+    int result = sum_even_in_range(l, r);
+    printf("%d\n", result);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,46 @@
+#include <stddef.h>
+#include <stdio.h>
+
+void sort_list_by_index(int **list, size_t count, size_t inner_size, size_t index) {
+    if (list == NULL || count < 2 || index >= inner_size) {
+        return;
+    }
+
+    for (size_t i = 0; i < count; ++i) {
+        if (list[i] == NULL) {
+            return;
+        }
+    }
+
+    for (size_t i = 1; i < count; ++i) {
+        int *key = list[i];
+        size_t j = i;
+
+        while (j > 0 && list[j - 1][index] > key[index]) {
+            list[j] = list[j - 1];
+            --j;
+        }
+
+        list[j] = key;
+    }
+}
+
+int main(void) {
+    int a[] = {3, 1, 4};
+    int b[] = {1, 5, 9};
+    int c[] = {2, 6, 5};
+    int *list[] = {a, b, c};
+    size_t count = sizeof(list) / sizeof(list[0]);
+    size_t inner_size = sizeof(a) / sizeof(a[0]);
+
+    sort_list_by_index(list, count, inner_size, 1);
+
+    for (size_t i = 0; i < count; ++i) {
+        for (size_t j = 0; j < inner_size; ++j) {
+            printf("%d ", list[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

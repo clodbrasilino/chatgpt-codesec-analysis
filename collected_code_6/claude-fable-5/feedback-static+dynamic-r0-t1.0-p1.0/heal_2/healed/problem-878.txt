@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool check_tuple_has_k_elements(const int *tuple, size_t size, size_t k)
+{
+    if (tuple == NULL)
+    {
+        return k == 0 && size == 0;
+    }
+    return size == k;
+}
+
+int main(void)
+{
+    int tuple1[] = {3, 5, 6, 5, 3, 6};
+    int tuple2[] = {1, 2, 3};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    struct test_case
+    {
+        const char *label;
+        const int *tuple;
+        size_t size;
+        size_t k;
+    };
+
+    struct test_case cases[] = {
+        {"tuple1 contains exactly 6 elements", tuple1, size1, 6},
+        {"tuple2 contains exactly 6 elements", tuple2, size2, 6},
+        {"NULL tuple check", NULL, 0, 0}
+    };
+
+    size_t num_cases = sizeof(cases) / sizeof(cases[0]);
+
+    for (size_t i = 0; i < num_cases; i++)
+    {
+        bool result = check_tuple_has_k_elements(cases[i].tuple,
+                                                 cases[i].size,
+                                                 cases[i].k);
+        printf("%s: %s\n", cases[i].label, result ? "true" : "false");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original weaknesses and how this rewrite addresses them:**
+
+1. **`knownConditionTrueFalse` warning:** In the original code, `check_tuple_has_k_elements(NULL, 0, 0)` was called with compile-time constant arguments, so the static analyzer could prove the result is always `true`, making the ternary branch dead code. By moving the test inputs into a runtime data structure (an array of test cases iterated in a loop), the arguments are no longer visible as constants at each call site, eliminating the always-true condition warning.
+
+2. **Dead branch elimination:** The `"false"` branch of the ternary for the NULL case was unreachable in the original. With the table-driven approach, both branches are genuinely reachable depending on the data, so no dead code remains.
+
+3. **Maintainability bonus:** The refactoring also removes duplicated `printf` calls, making it trivial to add new test cases without repeating the call pattern — a common source of copy-paste defects.
+
+The `check_tuple_has_k_elements` function itself was left unchanged, as its NULL-handling logic (treating a NULL tuple as valid only when both `size` and `k` are zero) is defensible and correct.

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <string.h>
+
+int totalAsciiValue(const char *str) {
+    int sum = 0;
+    if (str == NULL) {
+        return -1;
+    }
+    for (int i = 0; str[i] != '\0'; i++) {
+        sum += (unsigned char)str[i];
+    }
+    return sum;
+}
+
+int main() {
+    const char *testStr = "Hello, world!";
+    int asciiSum = totalAsciiValue(testStr);
+    if (asciiSum != -1) {
+        printf("ASCII value of all characters: %d\n", asciiSum);
+    } else {
+        printf("Invalid input.\n");
+    }
+    return 0;
+}

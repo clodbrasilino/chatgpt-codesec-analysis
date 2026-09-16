@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    int size;
+} Tuple;
+
+typedef struct {
+    Tuple *tuples;
+    int count;
+} TupleList;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+    
+    if (tuple_a->size == 0 && tuple_b->size == 0) return 0;
+    if (tuple_a->size == 0) return 1;
+    if (tuple_b->size == 0) return -1;
+    
+    return tuple_a->data[0] - tuple_b->data[0];
+}
+
+void sort_tuples_by_first_element(TupleList *list) {
+    if (list == NULL || list->tuples == NULL || list->count <= 1) {
+        return;
+    }
+    
+    qsort(list->tuples, list->count, sizeof(Tuple), compare_tuples);
+}
+
+void print_tuple_list(const TupleList *list) {
+    if (list == NULL || list->tuples == NULL) {
+        return;
+    }
+    
+    for (int i = 0; i < list->count; i++) {
+        printf("(");
+        for (int j = 0; j < list->tuples[i].size; j++) {
+            printf("%d", list->tuples[i].data[j]);
+            if (j < list->tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i < list->count - 1) {
+            printf(", ");
+        }
+    }
+    printf("\n");
+}
+
+int main() {
+    int data1[] = {3, 2, 1};
+    int data2[] = {1, 5, 7};
+    int data3[] = {2, 4, 6};
+    int data4[] = {0, 8};
+    
+    Tuple tuples[] = {
+        {data1, 3},
+        {data2, 3},
+        {data3, 3},
+        {data4, 2}
+    };
+    
+    TupleList list = {tuples, 4};
+    
+    printf("Before sorting:\n");
+    print_tuple_list(&list);
+    
+    sort_tuples_by_first_element(&list);
+    
+    printf("After sorting:\n");
+    print_tuple_list(&list);
+    
+    return 0;
+}

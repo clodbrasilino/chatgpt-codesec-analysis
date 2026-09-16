@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int sum_of_squares(unsigned int n, unsigned long long *result)
+{
+    unsigned long long sum = 0ULL;
+    unsigned long long i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 1ULL; i <= (unsigned long long)n; i++) {
+        unsigned long long square = i * i;
+        if (sum > ULLONG_MAX - square) {
+            return -1;
+        }
+        sum += square;
+    }
+
+    *result = sum;
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long result = 0ULL;
+    int scan_status;
+
+    printf("Enter n: ");
+    scan_status = scanf("%u", &n);
+
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sum_of_squares(n, &result) != 0) {
+        fprintf(stderr, "Error: computation failed or overflow occurred.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of series up to %u^2 is %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The key change addresses the `[variableScope]` weakness: the variable `square` was previously declared at function scope but only used inside the `for` loop. It is now declared and initialized inside the loop body, reducing its scope to the smallest region where it is needed. This improves readability, prevents accidental misuse outside the loop, and allows the compiler to better reason about the variable's lifetime.
+
+All other defensive measures in the original code were already sound and have been preserved: the NULL check on the output pointer, the overflow guard using `ULLONG_MAX - square` before accumulation, validation of the `scanf` return value, and proper use of `EXIT_SUCCESS`/`EXIT_FAILURE` return codes.

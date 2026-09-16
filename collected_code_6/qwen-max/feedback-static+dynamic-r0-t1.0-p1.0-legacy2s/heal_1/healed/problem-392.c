@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+long f(long n, long *memo) {
+    if (n == 0) return 0;
+    if (memo[n] != -1) return memo[n];
+
+    long option1 = n;
+    long option2 = f(n / 2, memo) + f(n / 3, memo) + f(n / 4, memo) + f(n / 5, memo);
+    memo[n] = max(option1, option2);
+
+    return memo[n];
+}
+
+int main() {
+    long n;
+    printf("Enter a number: ");
+    scanf("%ld", &n);
+
+    long *memo = (long *)malloc((n + 1) * sizeof(long));
+    for (long i = 0; i <= n; i++) {
+        memo[i] = -1;
+    }
+
+    long result = f(n, memo);
+    printf("Maximum sum: %ld\n", result);
+
+    free(memo);
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool match_ab(const char *str)
+{
+    size_t len;
+    
+    if (str == NULL)
+        return false;
+    
+    len = strlen(str);
+    
+    if (len < 2)
+        return false;
+    
+    if (str[0] == 'a' && str[len - 1] == 'b')
+        return true;
+    
+    return false;
+}
+
+int main(void)
+{
+    const char *test1 = "acb";
+    const char *test2 = "ab";
+    const char *test3 = "axyzb";
+    const char *test4 = "abc";
+    const char *test5 = "bca";
+    
+    printf("%s: %s\n", test1, match_ab(test1) ? "match" : "no match");
+    printf("%s: %s\n", test2, match_ab(test2) ? "match" : "no match");
+    printf("%s: %s\n", test3, match_ab(test3) ? "match" : "no match");
+    printf("%s: %s\n", test4, match_ab(test4) ? "match" : "no match");
+    printf("%s: %s\n", test5, match_ab(test5) ? "match" : "no match");
+    
+    return 0;
+}

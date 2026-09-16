@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t count;
+} Tuple;
+
+static int max_int(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int maximize_tuples(const Tuple *a, const Tuple *b, Tuple *result)
+{
+    size_t i;
+
+    if ((a == NULL) || (b == NULL) || (result == NULL)) {
+        return -1;
+    }
+    if (a->count != b->count) {
+        return -1;
+    }
+    if ((a->pairs == NULL) || (b->pairs == NULL)) {
+        return -1;
+    }
+
+    result->pairs = malloc(a->count * sizeof(Pair));
+    if (result->pairs == NULL) {
+        result->count = 0U;
+        return -1;
+    }
+    result->count = a->count;
+
+    for (i = 0U; i < a->count; i++) {
+        result->pairs[i].first = max_int(a->pairs[i].first, b->pairs[i].first);
+        result->pairs[i].second = max_int(a->pairs[i].second, b->pairs[i].second);
+    }
+
+    return 0;
+}
+
+static void free_tuple(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->pairs);
+        t->pairs = NULL;
+        t->count = 0U;
+    }
+}
+
+static void print_tuple(const Tuple *t)
+{
+    size_t i;
+
+    if ((t == NULL) || (t->pairs == NULL)) {
+        return;
+    }
+
+    (void)printf("(");
+    for (i = 0U; i < t->count; i++) {
+        (void)printf("(%d, %d)", t->pairs[i].first, t->pairs[i].second);
+        if (i < (t->count - 1U)) {
+            (void)printf(", ");
+        }
+    }
+    (void)printf(")\n");
+}
+
+int main(void)
+{
+    Pair pairs_a[] = { {1, 3}, {4, 5}, {2, 9}, {1, 10} };
+    Pair pairs_b[] = { {6, 7}, {3, 9}, {1, 1}, {7, 3} };
+    Tuple a;
+    Tuple b;
+    Tuple result;
+    int status;
+
+    a.pairs = pairs_a;
+    a.count = sizeof(pairs_a) / sizeof(pairs_a[0]);
+    b.pairs = pairs_b;
+    b.count = sizeof(pairs_b) / sizeof(pairs_b[0]);
+    result.pairs = NULL;
+    result.count = 0U;
+
+    status = maximize_tuples(&a, &b, &result);
+    if (status != 0) {
+        (void)fprintf(stderr, "Failed to maximize tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    print_tuple(&result);
+    free_tuple(&result);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    int size;
+    int capacity;
+} TupleList;
+
+TupleList *create_list(int capacity) {
+    TupleList *list = (TupleList *)malloc(sizeof(TupleList));
+    if (!list) return NULL;
+    list->data = (Tuple *)malloc(sizeof(Tuple) * capacity);
+    if (!list->data) {
+        free(list);
+        return NULL;
+    }
+    list->size = 0;
+    list->capacity = capacity;
+    return list;
+}
+
+int append_tuple(TupleList *list, int first, int second) {
+    if (!list) return -1;
+    if (list->size >= list->capacity) {
+        int new_capacity = list->capacity * 2;
+        Tuple *new_data = (Tuple *)realloc(list->data, sizeof(Tuple) * new_capacity);
+        if (!new_data) return -1;
+        list->data = new_data;
+        list->capacity = new_capacity;
+    }
+    list->data[list->size].first = first;
+    list->data[list->size].second = second;
+    list->size++;
+    return 0;
+}
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *tuple_a = (const Tuple *)a;
+    const Tuple *tuple_b = (const Tuple *)b;
+    return tuple_a->first - tuple_b->first;
+}
+
+void sort_list(TupleList *list) {
+    if (!list || list->size == 0) return;
+    qsort(list->data, list->size, sizeof(Tuple), compare_tuples);
+}
+
+void print_list(const TupleList *list) {
+    if (!list) return;
+    for (int i = 0; i < list->size; i++) {
+        printf("(%d, %d)\n", list->data[i].first, list->data[i].second);
+    }
+}
+
+void destroy_list(TupleList *list) {
+    if (!list) return;
+    free(list->data);
+    free(list);
+}
+
+int main(void) {
+    TupleList *list = create_list(5);
+    if (!list) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (append_tuple(list, 3, 100) != 0 ||
+        append_tuple(list, 1, 200) != 0 ||
+        append_tuple(list, 2, 300) != 0 ||
+        append_tuple(list, 5, 400) != 0 ||
+        append_tuple(list, 4, 500) != 0) {
+        fprintf(stderr, "Failed to append tuple\n");
+        destroy_list(list);
+        return EXIT_FAILURE;
+    }
+
+    printf("Before sorting:\n");
+    print_list(list);
+
+    sort_list(list);
+
+    printf("\nAfter sorting:\n");
+    print_list(list);
+
+    destroy_list(list);
+    return EXIT_SUCCESS;
+}
+```

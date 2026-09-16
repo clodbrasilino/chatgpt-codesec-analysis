@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_lateral_surface_area(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    double slant_height = sqrt((radius * radius) + (height * height));
+    return M_PI * radius * slant_height;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double height = 0.0;
+    double area = 0.0;
+
+    if (scanf("%lf %lf", &radius, &height) != 2) {
+        return 1;
+    }
+
+    area = calculate_lateral_surface_area(radius, height);
+
+    if (area < 0.0) {
+        return 1;
+    }
+
+    printf("%.6f\n", area);
+
+    return 0;
+}

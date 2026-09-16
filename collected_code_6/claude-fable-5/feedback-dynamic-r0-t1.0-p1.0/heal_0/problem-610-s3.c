@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *create_node(int data)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+struct Node *append(struct Node *head, int data)
+{
+    struct Node *node = create_node(data);
+    if (head == NULL) {
+        return node;
+    }
+    struct Node *cur = head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return head;
+}
+
+struct Node *remove_kth(struct Node *head, size_t k, int *removed)
+{
+    if (head == NULL || removed == NULL) {
+        return head;
+    }
+    *removed = 0;
+    if (k == 1) {
+        struct Node *new_head = head->next;
+        free(head);
+        *removed = 1;
+        return new_head;
+    }
+    struct Node *prev = head;
+    size_t i = 1;
+    while (prev->next != NULL && i < k - 1) {
+        prev = prev->next;
+        i++;
+    }
+    if (prev->next == NULL) {
+        return head;
+    }
+    struct Node *target = prev->next;
+    prev->next = target->next;
+    free(target);
+    *removed = 1;
+    return head;
+}
+
+void print_list(const struct Node *head)
+{
+    const struct Node *cur = head;
+    while (cur != NULL) {
+        printf("%d ", cur->data);
+        cur = cur->next;
+    }
+    printf("\n");
+}
+
+void free_list(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    struct Node *head = NULL;
+    int i;
+    for (i = 1; i <= 5; i++) {
+        head = append(head, i * 10);
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    size_t k = 3;
+    int removed = 0;
+    head = remove_kth(head, k, &removed);
+    if (removed) {
+        printf("After removing element %zu: ", k);
+        print_list(head);
+    } else {
+        printf("Element %zu does not exist\n", k);
+    }
+
+    k = 10;
+    removed = 0;
+    head = remove_kth(head, k, &removed);
+    if (removed) {
+        printf("After removing element %zu: ", k);
+        print_list(head);
+    } else {
+        printf("Element %zu does not exist\n", k);
+    }
+
+    free_list(head);
+    return EXIT_SUCCESS;
+}

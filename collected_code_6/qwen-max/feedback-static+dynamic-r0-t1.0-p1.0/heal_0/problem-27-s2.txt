@@ -4,31 +4,22 @@
 #include <string.h>
 #include <ctype.h>
 
-char* remove_digits(char *str) {
-    char *src = str, *dst = str;
-    while (*src) {
-        if (!isdigit((unsigned char)*src)) {
-            *dst++ = *src;
+void remove_digits(char *str) {
+    char *write = str;
+    for (char *read = str; *read; read++) {
+        if (!isdigit((unsigned char)*read)) {
+            *write++ = *read;
         }
-        src++;
     }
-    *dst = '\0';
-    return str;
-}
-
-void strip_list(char **list, int size) {
-    for (int i = 0; i < size; ++i) {
-        remove_digits(list[i]);
-    }
+    *write = '\0';
 }
 
 int main() {
-    char *strings[] = {"hello123", "456world", "test789case", "no4digits"};
-    int size = sizeof(strings) / sizeof(strings[0]);
+    char *strings[] = {"hello123", "world4567", "test890"};
+    int num_strings = sizeof(strings) / sizeof(strings[0]);
 
-    strip_list(strings, size);
-
-    for (int i = 0; i < size; ++i) {
+    for (int i = 0; i < num_strings; i++) {
+        remove_digits(strings[i]);
         printf("%s\n", strings[i]);
     }
 

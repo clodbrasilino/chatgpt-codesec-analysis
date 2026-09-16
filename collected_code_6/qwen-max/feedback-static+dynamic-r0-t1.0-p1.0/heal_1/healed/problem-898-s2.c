@@ -1,95 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int data;
-    struct Node *next;
-} Node;
-
-Node* createNode(int data) {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    if (newNode == NULL) {
-        exit(EXIT_FAILURE);
-    }
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
-}
-
-void insertAtEnd(Node **head, int data) {
-    Node *newNode = createNode(data);
-    if (*head == NULL) {
-        *head = newNode;
-        return;
-    }
-    Node *temp = *head;
-    while (temp->next != NULL) {
-        temp = temp->next;
-    }
-    temp->next = newNode;
-}
-
-void freeList(Node *head) {
-    while (head != NULL) {
-        Node *temp = head;
-        head = head->next;
-        free(temp);
-    }
-}
-
-Node* extractSublist(Node *head, int start, int numElements) {
-    if (numElements <= 0 || head == NULL) {
+int* extract_elements(const int* list, int list_size, int start_index, int count, int* result_size) {
+    if (start_index < 0 || start_index + count > list_size || count <= 0) {
+        *result_size = 0;
         return NULL;
     }
-    Node *current = head;
-    for (int i = 1; i < start && current != NULL; ++i) {
-        current = current->next;
-    }
-    if (current == NULL) {
+
+    int* result = (int*) malloc(count * sizeof(int));
+    if (result == NULL) {
+        *result_size = 0;
         return NULL;
     }
-    Node *newHead = current, *tail = newHead;
-    for (int i = 0; i < numElements - 1 && current != NULL; ++i) {
-        current = current->next;
-        tail->next = current;
-        tail = tail->next;
+
+    for (int i = 0; i < count; ++i) {
+        result[i] = list[start_index + i];
     }
-    if (current != NULL) {
-        tail->next = NULL;
-        Node *prev = head;
-        while (prev->next != newHead) {
-            prev = prev->next;
-        }
-        prev->next = current;
-    }
-    return newHead;
+
+    *result_size = count;
+    return result;
 }
 
-void printList(Node *head) {
-    while (head != NULL) {
-        printf("%d -> ", head->data);
-        head = head->next;
-    }
-    printf("NULL\n");
+void free_result(int* result) {
+    free(result);
 }
 
 int main() {
-    Node *head = NULL;
-    insertAtEnd(&head, 1);
-    insertAtEnd(&head, 2);
-    insertAtEnd(&head, 3);
-    insertAtEnd(&head, 4);
-    insertAtEnd(&head, 5);
+    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    int start_index = 2;
+    int count = 4;
 
-    printf("Original list: ");
-    printList(head);
+    int result_size;
+    int* result = extract_elements(list, list_size, start_index, count, &result_size);
 
-    int start = 2, numElements = 3;
-    Node *extracted = extractSublist(head, start, numElements);
-    printf("Extracted sublist: ");
-    printList(extracted);
+    if (result != NULL) {
+        for (int i = 0; i < result_size; ++i) {
+            printf("%d ", result[i]);
+        }
+        free_result(result);
+    } else {
+        printf("Failed to extract elements.\n");
+    }
 
-    freeList(head);
-    freeList(extracted);
     return 0;
 }

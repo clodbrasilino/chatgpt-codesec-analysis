@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* array;
+    size_t length;
+} Sublist;
+
+int* get_last_elements(Sublist* sublists, size_t num_sublists) {
+    if (sublists == NULL || num_sublists == 0) {
+        return NULL;
+    }
+
+    int* last_elements = (int*)malloc(num_sublists * sizeof(int));
+    if (last_elements == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        if (sublists[i].array != NULL && sublists[i].length > 0) {
+            last_elements[i] = sublists[i].array[sublists[i].length - 1];
+        } else {
+            free(last_elements);
+            return NULL;
+        }
+    }
+
+    return last_elements;
+}
+
+int main() {
+    Sublist sublists[] = {
+        { .array = (int[]){1, 2, 3}, .length = 3 },
+        { .array = (int[]){4, 5, 6, 7}, .length = 4 },
+        { .array = (int[]){8, 9}, .length = 2 },
+    };
+    size_t num_sublists = sizeof(sublists) / sizeof(sublists[0]);
+
+    int* last_elements = get_last_elements(sublists, num_sublists);
+    if (last_elements != NULL) {
+        for (size_t i = 0; i < num_sublists; ++i) {
+            printf("%d ", last_elements[i]);
+        }
+        free(last_elements);
+    } else {
+        printf("Error getting last elements\n");
+    }
+
+    return 0;
+}

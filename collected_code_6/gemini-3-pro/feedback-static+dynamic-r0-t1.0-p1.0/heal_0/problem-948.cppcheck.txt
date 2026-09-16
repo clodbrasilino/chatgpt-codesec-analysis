@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:72:10: style: Variable 'p_a' can be declared as pointer to const [constVariablePointer]
+    int *p_a = (int *)get_tuple_item(my_tuple, 0);
+         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:73:13: style: Variable 'p_b' can be declared as pointer to const [constVariablePointer]
+    double *p_b = (double *)get_tuple_item(my_tuple, 1);
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-948.c:74:11: style: Variable 'p_c' can be declared as pointer to const [constVariablePointer]
+    char *p_c = (char *)get_tuple_item(my_tuple, 2);
+          ^

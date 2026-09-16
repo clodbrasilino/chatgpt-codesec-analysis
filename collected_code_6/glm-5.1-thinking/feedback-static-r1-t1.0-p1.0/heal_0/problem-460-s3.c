@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t len;
+} SubList;
+
+int *get_first_elements(const SubList *lists, size_t num_lists, size_t *out_len) {
+    if (lists == NULL || out_len == NULL) {
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < num_lists; i++) {
+        if (lists[i].data != NULL && lists[i].len > 0) {
+            count++;
+        }
+    }
+
+    if (count == 0) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL) {
+        *out_len = 0;
+        return NULL;
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < num_lists; i++) {
+        if (lists[i].data != NULL && lists[i].len > 0) {
+            result[index] = lists[i].data[0];
+            index++;
+        }
+    }
+
+    *out_len = count;
+    return result;
+}
+
+int main(void) {
+    SubList lists[3];
+    size_t num_lists = 3;
+
+    lists[0].data = malloc(2 * sizeof(int));
+    if (lists[0].data != NULL) {
+        lists[0].data[0] = 10;
+        lists[0].data[1] = 20;
+        lists[0].len = 2;
+    } else {
+        lists[0].len = 0;
+    }
+
+    lists[1].data = malloc(3 * sizeof(int));
+    if (lists[1].data != NULL) {
+        lists[1].data[0] = 30;
+        lists[1].data[1] = 40;
+        lists[1].data[2] = 50;
+        lists[1].len = 3;
+    } else {
+        lists[1].len = 0;
+    }
+
+    lists[2].data = malloc(1 * sizeof(int));
+    if (lists[2].data != NULL) {
+        lists[2].data[0] = 60;
+        lists[2].len = 1;
+    } else {
+        lists[2].len = 0;
+    }
+
+    size_t out_len = 0;
+    int *first_elements = get_first_elements(lists, num_lists, &out_len);
+
+    if (first_elements != NULL) {
+        for (size_t i = 0; i < out_len; i++) {
+            printf("%d\n", first_elements[i]);
+        }
+        free(first_elements);
+    }
+
+    for (size_t i = 0; i < num_lists; i++) {
+        free(lists[i].data);
+    }
+
+    return 0;
+}

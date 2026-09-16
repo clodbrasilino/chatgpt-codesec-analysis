@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int minPathSum(int** triangle, int numRows) {
+    if (triangle == NULL || numRows <= 0) {
+        return 0;
+    }
+    
+    int* dp = (int*)malloc((size_t)numRows * sizeof(int));
+    if (dp == NULL) {
+        return 0;
+    }
+    
+    for (int i = 0; i < numRows; i++) {
+        dp[i] = triangle[numRows - 1][i];
+    }
+    
+    for (int row = numRows - 2; row >= 0; row--) {
+        for (int col = 0; col <= row; col++) {
+            int left = dp[col];
+            int right = dp[col + 1];
+            dp[col] = triangle[row][col] + (left < right ? left : right);
+        }
+    }
+    
+    int result = dp[0];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int row0[] = {2};
+    int row1[] = {3, 4};
+    int row2[] = {6, 5, 7};
+    int row3[] = {4, 1, 8, 3};
+    
+    int* triangle[] = {row0, row1, row2, row3};
+    int numRows = 4;
+    
+    int result = minPathSum(triangle, numRows);
+    printf("Minimum path sum: %d\n", result);
+    
+    return 0;
+}

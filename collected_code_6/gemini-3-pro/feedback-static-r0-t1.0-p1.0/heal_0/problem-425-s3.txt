@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+struct Sublist {
+    int* elements;
+    size_t size;
+};
+
+size_t count_sublists_containing_element(struct Sublist* sublists, size_t num_sublists, int target) {
+    if (sublists == NULL && num_sublists > 0) {
+        return 0;
+    }
+
+    size_t count = 0;
+
+    for (size_t i = 0; i < num_sublists; ++i) {
+        if (sublists[i].elements == NULL) {
+            continue;
+        }
+        for (size_t j = 0; j < sublists[i].size; ++j) {
+            if (sublists[i].elements[j] == target) {
+                count++;
+                break;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5, 2};
+    int arr3[] = {6, 7, 8};
+    int arr4[] = {2, 9};
+
+    struct Sublist sublists[] = {
+        {arr1, sizeof(arr1) / sizeof(arr1[0])},
+        {arr2, sizeof(arr2) / sizeof(arr2[0])},
+        {arr3, sizeof(arr3) / sizeof(arr3[0])},
+        {arr4, sizeof(arr4) / sizeof(arr4[0])}
+    };
+
+    size_t num_sublists = sizeof(sublists) / sizeof(sublists[0]);
+    int target = 2;
+
+    size_t count = count_sublists_containing_element(sublists, num_sublists, target);
+
+    printf("%zu\n", count);
+
+    return 0;
+}
+```

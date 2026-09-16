@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static void swap_int(int *a, int *b)
+{
+    int tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
+static void comb_sort(int *arr, size_t n)
+{
+    size_t gap;
+    int swapped;
+    size_t i;
+
+    if (arr == NULL || n < 2U) {
+        return;
+    }
+
+    gap = n;
+    swapped = 1;
+
+    while ((gap > 1U) || (swapped != 0)) {
+        gap = (gap * 10U) / 13U;
+        if (gap < 1U) {
+            gap = 1U;
+        }
+
+        swapped = 0;
+        for (i = 0U; (i + gap) < n; i++) {
+            if (arr[i] > arr[i + gap]) {
+                swap_int(&arr[i], &arr[i + gap]);
+                swapped = 1;
+            }
+        }
+    }
+}
+
+static int print_array(const int *arr, size_t n)
+{
+    size_t i;
+
+    if (arr == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if (printf("%d ", arr[i]) < 0) {
+            return -1;
+        }
+    }
+
+    if (printf("\n") < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t n = 10U;
+    size_t i;
+    int *arr;
+    /* Possible weaknesses found:
+     *  Variable 'initial' can be declared as const array [constVariable]
+     */
+    int initial[10] = { 34, -7, 23, 0, 5, 89, -42, 17, 8, 1 };
+
+    arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        arr[i] = initial[i];
+    }
+
+    if (print_array(arr, n) != 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+
+    comb_sort(arr, n);
+
+    if (print_array(arr, n) != 0) {
+        free(arr);
+        return EXIT_FAILURE;
+    }
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

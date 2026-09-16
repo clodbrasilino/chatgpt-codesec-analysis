@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntArray;
+
+typedef struct {
+    IntArray *arrays;
+    size_t size;
+} NestedTuple;
+
+void init_int_array(IntArray *arr, size_t size) {
+    if (size > 0) {
+        arr->data = malloc(size * sizeof(int));
+        if (arr->data == NULL) {
+            arr->size = 0;
+            return;
+        }
+    } else {
+        arr->data = NULL;
+    }
+    arr->size = size;
+}
+
+void free_int_array(IntArray *arr) {
+    if (arr != NULL) {
+        free(arr->data);
+        arr->data = NULL;
+        arr->size = 0;
+    }
+}
+
+int init_nested_tuple(NestedTuple *nt, size_t size) {
+    if (size == 0) {
+        nt->arrays = NULL;
+        nt->size = 0;
+        return 1;
+    }
+    
+    nt->arrays = calloc(size, sizeof(IntArray));
+    if (nt->arrays == NULL) {
+        nt->size = 0;
+        return 0;
+    }
+    nt->size = size;
+    return 1;
+}
+
+void free_nested_tuple(NestedTuple *nt) {
+    if (nt != NULL) {
+        if (nt->arrays != NULL) {
+            for (size_t i = 0; i < nt->size; i++) {
+                free_int_array(&nt->arrays[i]);
+            }
+            free(nt->arrays);
+            nt->arrays = NULL;
+        }
+        nt->size = 0;
+    }
+}
+
+int subtract_nested_tuples(const NestedTuple *a, const NestedTuple *b, NestedTuple *result) {
+    if (a == NULL || b == NULL || result == NULL) {
+        return 0;
+    }
+    
+    if (a->size != b->size) {
+        return 0;
+    }
+    
+    if (!init_nested_tuple(result, a->size)) {
+        return 0;
+    }
+    
+    for (size_t i = 0; i < a->size; i++) {
+        if (a->arrays[i].size != b->arrays[i].size) {
+            free_nested_tuple(result);
+            return 0;
+        }
+        
+        size_t inner_size = a->arrays[i].size;
+        init_int_array(&result->arrays[i], inner_size);
+        
+        if (inner_size > 0 && result->arrays[i].data == NULL) {
+            free_nested_tuple(result);
+            return 0;
+        }
+        
+        for (size_t j = 0; j < inner_size; j++) {
+            result->arrays[i].data[j] = a->arrays[i].data[j] - b->arrays[i].data[j];
+        }
+    }
+    
+    return 1;
+}
+
+void print_nested_tuple(const NestedTuple *nt) {
+    if (nt == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    
+    printf("(");
+    for (size_t i = 0; i < nt->size; i++) {
+        printf("(");
+        for (size_t j = 0; j < nt->arrays[i].size; j++) {
+            printf("%d", nt->arrays[i].data[j]);
+            if (j < nt->arrays[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i < nt->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    NestedTuple a = {0};
+    NestedTuple b = {0};
+    NestedTuple result = {0};
+    
+    if (!init_nested_tuple(&a, 3)) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (!init_nested_tuple(&b, 3)) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_nested_tuple(&a);
+        return EXIT_FAILURE;
+    }
+    
+    init_int_array(&a.arrays[0], 2);
+    init_int_array(&a.arrays[1], 3);
+    init_int_array(&a.arrays[2], 1);
+    
+    init_int_array(&b.arrays[0], 2);
+    init_int_array(&b.arrays[1], 3);
+    init_int_array(&b.arrays[2], 1);
+    
+    if (a.arrays[0].data == NULL || a.arrays[1].data == NULL || 
+        a.arrays[2].data == NULL || b.arrays[0].data == NULL || 
+        b.arrays[1].data == NULL || b.arrays[2].data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_nested_tuple(&a);
+        free_nested_tuple(&b);
+        return EXIT_FAILURE;
+    }
+    
+    a.arrays[0].data[0] = 10;
+    a.arrays[0].data[1] = 20;
+    a.arrays[1].data[0] = 30;
+    a.arrays[1].data[1] = 40;
+    a.arrays[1].data[2] = 50;
+    a.arrays[2].data[0] = 60;
+    
+    b.arrays[0].data[0] = 1;
+    b.arrays[0].data[1] = 2;
+    b.arrays[1].data[0] = 3;
+    b.arrays[1].data[1] = 4;
+    b.arrays[1].data[2] = 5;
+    b.arrays[2].data[0] = 6;
+    
+    printf("Tuple A: ");
+    print_nested_tuple(&a);
+    
+    printf("Tuple B: ");
+    print_nested_tuple(&b);
+    
+    if (subtract_nested_tuples(&a, &b, &result)) {
+        printf("Result: ");
+        print_nested_tuple(&result);
+        free_nested_tuple(&result);
+    } else {
+        fprintf(stderr, "Subtraction failed: dimension mismatch\n");
+    }
+    
+    free_nested_tuple(&a);
+    free_nested_tuple(&b);
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_valid(const int *tup, size_t size)
+{
+    if (tup == NULL || size == 0U)
+    {
+        return false;
+    }
+
+    for (size_t i = 0U; i < size; i++)
+    {
+        if (tup[i] == 0)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void print_result(const char *label, const int *tup, size_t size)
+{
+    if (check_valid(tup, size))
+    {
+        (void)printf("%s: all values are valid\n", label);
+    }
+    else
+    {
+        (void)printf("%s: contains invalid values\n", label);
+    }
+}
+
+int main(void)
+{
+    int tuple1[] = {1, 1, 1, 1};
+    int tuple2[] = {1, 0, 1, 1};
+    int tuple3[] = {1, 1, 1};
+
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t size3 = sizeof(tuple3) / sizeof(tuple3[0]);
+
+    print_result("Tuple 1", tuple1, size1);
+    print_result("Tuple 2", tuple2, size2);
+    print_result("Tuple 3", tuple3, size3);
+    print_result("NULL tuple", NULL, 5U);
+
+    return 0;
+}
+```
+
+The key changes made to address the identified weaknesses:
+
+1. **Eliminated the `knownConditionTrueFalse` warning**: The original code had a literal `if (check_valid(NULL, 5U))` where static analysis could prove the condition is always false at the call site, making the true-branch dead code. By routing all calls through a common `print_result` helper function, the condition inside the helper is no longer a compile-time-provable constant at any single call site — the pointer and size are now function parameters, so both branches are reachable code.
+
+2. **Removed dead code**: The unreachable `printf("NULL tuple: all values are valid\n")` branch no longer exists as dead code; the helper's branches are exercised by different inputs.
+
+3. **Reduced duplication**: The four nearly identical if/else blocks were collapsed into one function, which also lowers cyclomatic complexity in `main` and makes the code easier to maintain and extend.
+
+4. **Preserved defensive programming**: The `NULL`/zero-size guard in `check_valid` is retained, and the NULL test case still executes at runtime, correctly printing "NULL tuple: contains invalid values".

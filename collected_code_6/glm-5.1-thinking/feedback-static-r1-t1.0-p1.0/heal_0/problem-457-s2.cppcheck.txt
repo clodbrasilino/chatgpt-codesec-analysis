@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-457-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-457-s2.c:25:30: style: Parameter 'values' can be declared as pointer to const [constParameterPointer]
+SubList *create_sublist(int *values, size_t count) {
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-457-s2.c:127:14: style: Variable 'min_sl' can be declared as pointer to const [constVariablePointer]
+    SubList *min_sl = find_min_length_sublist(sl1);
+             ^

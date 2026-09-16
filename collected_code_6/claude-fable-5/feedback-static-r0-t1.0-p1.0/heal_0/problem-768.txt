@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool has_odd_parity(unsigned int number)
+{
+    unsigned int count = 0U;
+
+    while (number != 0U)
+    {
+        count += (number & 1U);
+        number >>= 1U;
+    }
+
+    return ((count % 2U) == 1U);
+}
+
+int main(void)
+{
+    unsigned int value = 0U;
+    int scan_result = 0;
+
+    printf("Enter a non-negative integer: ");
+
+    scan_result = scanf("%u", &value);
+    if (scan_result != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (has_odd_parity(value))
+    {
+        printf("%u has odd parity.\n", value);
+    }
+    else
+    {
+        printf("%u has even parity.\n", value);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key points:**
+
+- `has_odd_parity` counts set bits and returns `true` when the count is odd.
+- The return value of `scanf` is checked (addresses CWE-703), and the program exits with `EXIT_FAILURE` on invalid input.
+- Only automatic storage is used, so there are no resource lifetime issues (CWE-664).
+- Unsigned arithmetic avoids undefined behavior from shifting signed values, `static` limits linkage appropriately, and `main(void)` with explicit exit codes follows standard-conforming practice (CWE-710).

@@ -1,0 +1,155 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *data;
+    int count;
+    int capacity;
+} TupleArray;
+
+int tuple_equals(const Tuple *a, const Tuple *b) {
+    return a->first == b->first && a->second == b->second;
+}
+
+int tuple_reverse_equals(const Tuple *a, const Tuple *b) {
+    return a->first == b->second && a->second == b->first;
+}
+
+int count_bidirectional_pairs(const TupleArray *tuples) {
+    int count = 0;
+    int *used;
+    int i, j;
+    
+    if (tuples == NULL || tuples->data == NULL || tuples->count <= 0) {
+        return 0;
+    }
+    
+    used = (int *)calloc((size_t)tuples->count, sizeof(int));
+    if (used == NULL) {
+        return -1;
+    }
+    
+    for (i = 0; i < tuples->count; i++) {
+        if (used[i]) {
+            continue;
+        }
+        
+        for (j = i + 1; j < tuples->count; j++) {
+            if (used[j]) {
+                continue;
+            }
+            
+            if (tuple_reverse_equals(&tuples->data[i], &tuples->data[j])) {
+                count++;
+                used[i] = 1;
+                used[j] = 1;
+                break;
+            }
+        }
+    }
+    
+    free(used);
+    return count;
+}
+
+int init_tuple_array(TupleArray *arr, int capacity) {
+    if (arr == NULL || capacity <= 0) {
+        return 0;
+    }
+    
+    arr->data = (Tuple *)malloc((size_t)capacity * sizeof(Tuple));
+    if (arr->data == NULL) {
+        return 0;
+    }
+    
+    arr->count = 0;
+    arr->capacity = capacity;
+    return 1;
+}
+
+void free_tuple_array(TupleArray *arr) {
+    if (arr != NULL && arr->data != NULL) {
+        free(arr->data);
+        arr->data = NULL;
+        arr->count = 0;
+        arr->capacity = 0;
+    }
+}
+
+int add_tuple(TupleArray *arr, int first, int second) {
+    if (arr == NULL || arr->data == NULL) {
+        return 0;
+    }
+    
+    if (arr->count >= arr->capacity) {
+        return 0;
+    }
+    
+    arr->data[arr->count].first = first;
+    arr->data[arr->count].second = second;
+    arr->count++;
+    return 1;
+}
+
+int main(void) {
+    TupleArray tuples;
+    int result;
+    
+    if (!init_tuple_array(&tuples, 8)) {
+        fprintf(stderr, "Failed to initialize tuple array\n");
+        return 1;
+    }
+    
+    if (!add_tuple(&tuples, 1, 2)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    if (!add_tuple(&tuples, 2, 1)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    if (!add_tuple(&tuples, 3, 4)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    if (!add_tuple(&tuples, 5, 6)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    if (!add_tuple(&tuples, 4, 3)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    if (!add_tuple(&tuples, 6, 5)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    if (!add_tuple(&tuples, 7, 8)) {
+        fprintf(stderr, "Failed to add tuple\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    
+    result = count_bidirectional_pairs(&tuples);
+    if (result < 0) {
+        fprintf(stderr, "Memory allocation failed during counting\n");
+        free_tuple_array(&tuples);
+        return 1;
+    }
+    
+    printf("Number of bidirectional pairs: %d\n", result);
+    
+    free_tuple_array(&tuples);
+    return 0;
+}

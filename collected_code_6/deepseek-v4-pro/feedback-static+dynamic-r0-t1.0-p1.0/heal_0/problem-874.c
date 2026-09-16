@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int is_concatenation(const char *str, const char *sub, int *count) {
+    if (str == NULL || sub == NULL || count == NULL) {
+        return 0;
+    }
+    
+    size_t str_len = strlen(str);
+    size_t sub_len = strlen(sub);
+    
+    if (sub_len == 0) {
+        return 0;
+    }
+    
+    if (str_len == 0) {
+        *count = 0;
+        return 1;
+    }
+    
+    if (str_len % sub_len != 0) {
+        return 0;
+    }
+    
+    *count = 0;
+    for (size_t i = 0; i < str_len; i += sub_len) {
+        if (strncmp(str + i, sub, sub_len) != 0) {
+            return 0;
+        }
+        (*count)++;
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    const char *test_str = "abcabcabc";
+    const char *test_sub = "abc";
+    int count = 0;
+    
+    if (is_concatenation(test_str, test_sub, &count)) {
+        printf("'%s' is a concatenation of '%s' repeated %d times\n", 
+               test_str, test_sub, count);
+    } else {
+        printf("'%s' is not a concatenation of '%s'\n", test_str, test_sub);
+    }
+    
+    const char *test_str2 = "hello";
+    const char *test_sub2 = "lo";
+    int count2 = 0;
+    
+    if (is_concatenation(test_str2, test_sub2, &count2)) {
+        printf("'%s' is a concatenation of '%s' repeated %d times\n", 
+               test_str2, test_sub2, count2);
+    } else {
+        printf("'%s' is not a concatenation of '%s'\n", test_str2, test_sub2);
+    }
+    
+    return 0;
+}

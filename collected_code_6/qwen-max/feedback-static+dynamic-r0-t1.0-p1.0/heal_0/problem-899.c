@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool canBeSortedByCorners(int arr[], int n) {
+    if (n <= 2) return true;
+
+    int i, j;
+    for (i = 0; i < n-1 && arr[i] <= arr[i+1]; i++);
+    if (i == n-1) return true; // already sorted
+
+    for (j = n-1; j > 0 && arr[j] >= arr[j-1]; j--);
+    if (j == 0) return true; // already reverse sorted
+
+    if (i == 0 || j == n-1) return false;
+
+    for (int k = i+1; k < j && arr[k] <= arr[k+1]; k++);
+    for (int l = j-1; l > i && arr[l] >= arr[l-1]; l--);
+
+    return ((arr[i-1] <= arr[j]) && (arr[i] >= arr[j+1]));
+}
+
+int main() {
+    int arr1[] = {3, 2, 4, 5, 6};
+    int arr2[] = {1, 3, 2, 6, 4, 5};
+    int arr3[] = {5, 4, 3, 2, 1};
+
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+
+    printf("Can arr1 be sorted by corners: %s\n", canBeSortedByCorners(arr1, n1) ? "Yes" : "No");
+    printf("Can arr2 be sorted by corners: %s\n", canBeSortedByCorners(arr2, n2) ? "Yes" : "No");
+    printf("Can arr3 be sorted by corners: %s\n", canBeSortedByCorners(arr3, n3) ? "Yes" : "No");
+
+    return 0;
+}

@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    Node *head;
+    size_t length;
+} List;
+
+static Node *create_node(int value)
+{
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        return NULL;
+    }
+    new_node->data = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+static int list_append(List *list, int value)
+{
+    if (list == NULL) {
+        return -1;
+    }
+
+    Node *new_node = create_node(value);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (list->head == NULL) {
+        list->head = new_node;
+    } else {
+        Node *current = list->head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
+    }
+
+    list->length++;
+    return 0;
+}
+
+static void list_init(List *list)
+{
+    if (list != NULL) {
+        list->head = NULL;
+        list->length = 0U;
+    }
+}
+
+static void list_destroy(List *list)
+{
+    if (list == NULL) {
+        return;
+    }
+
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+
+    list->head = NULL;
+    list->length = 0U;
+}
+
+static const List *find_min_length_list(const List *lists, size_t list_count)
+{
+    if (lists == NULL || list_count == 0U) {
+        return NULL;
+    }
+
+    const List *min_list = &lists[0];
+    size_t i;
+
+    for (i = 1U; i < list_count; ++i) {
+        if (lists[i].length < min_list->length) {
+            min_list = &lists[i];
+        }
+    }
+
+    return min_list;
+}
+
+int main(void)
+{
+    List lists[3];
+    size_t i;
+    int result = EXIT_SUCCESS;
+
+    for (i = 0U; i < 3U; ++i) {
+        list_init(&lists[i]);
+    }
+
+    if (list_append(&lists[0], 10) != 0 ||
+        list_append(&lists[0], 20) != 0 ||
+        list_append(&lists[0], 30) != 0) {
+        result = EXIT_FAILURE;
+    }
+
+    if (result == EXIT_SUCCESS &&
+        (list_append(&lists[1], 5) != 0)) {
+        result = EXIT_FAILURE;
+    }
+
+    if (result == EXIT_SUCCESS &&
+        (list_append(&lists[2], 1) != 0 ||
+         list_append(&lists[2], 2) != 0)) {
+        result = EXIT_FAILURE;
+    }
+
+    if (result == EXIT_SUCCESS) {
+        const List *min_list = find_min_length_list(lists, 3U);
+        if (min_list != NULL) {
+            printf("Minimum length: %zu\n", min_list->length);
+        } else {
+            result = EXIT_FAILURE;
+        }
+    }
+
+    for (i = 0U; i < 3U; ++i) {
+        list_destroy(&lists[i]);
+    }
+
+    return result;
+}

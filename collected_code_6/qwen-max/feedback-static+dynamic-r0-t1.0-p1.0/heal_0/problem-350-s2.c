@@ -1,48 +1,23 @@
 #include <stdio.h>
 #include <string.h>
-#include <limits.h>
+#include <ctype.h>
 
-int find_min_char(const char *str) {
-    int counts[256] = {0};
-    int len = strlen(str);
-    for (int i = 0; i < len; i++) {
-        counts[(unsigned char)str[i]]++;
-    }
-
-    int min_count = INT_MAX;
-    char min_char = '\0';
-    for (int i = 0; i < 256; i++) {
-        if (counts[i] > 0 && counts[i] < min_count) {
-            min_count = counts[i];
-            min_char = (char)i;
-        }
-    }
-
-    return min_char;
-}
-
-char *minimize_string_length(char *str, char ch) {
-    int len = strlen(str);
-    char *result = (char *)malloc(len + 1);
-    int k = 0;
-
-    for (int i = 0; i < len; i++) {
+char* minimize_string_length(char *str, char ch) {
+    int i, j = 0, len;
+    len = strlen(str);
+    for (i = 0; i < len; i++) {
         if (str[i] != ch) {
-            result[k++] = str[i];
+            str[j++] = str[i];
         }
     }
-    result[k] = '\0';
-
-    return result;
+    str[j] = '\0';
+    return str;
 }
 
 int main() {
-    char str[] = "aabccbb";
-    char min_char = find_min_char(str);
-    char *result = minimize_string_length(str, min_char);
-    printf("Original: %s\n", str);
-    printf("Minimized: %s\n", result);
-
-    free(result);
+    char str[] = "example character";
+    char ch = 'a';
+    char* result = minimize_string_length(str, ch);
+    printf("%s\n", result);
     return 0;
 }

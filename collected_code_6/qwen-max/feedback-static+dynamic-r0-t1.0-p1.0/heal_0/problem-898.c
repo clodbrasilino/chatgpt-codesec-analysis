@@ -1,43 +1,61 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int* extract_elements(int *list, int list_size, int start_index, int count, int *return_size) {
-    if (start_index < 0 || start_index >= list_size || count <= 0 || start_index + count > list_size) {
-        *return_size = 0;
-        return NULL;
-    }
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
 
-    int *result = (int *)malloc(count * sizeof(int));
-    if (result == NULL) {
-        *return_size = 0;
-        return NULL;
-    }
+Node* createNode(int data) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) return NULL;
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
 
-    for (int i = 0; i < count; ++i) {
-        result[i] = list[start_index + i];
+void freeList(Node *head) {
+    Node *temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
     }
+}
 
-    *return_size = count;
-    return result;
+Node* extractSublist(Node *head, int count) {
+    if (head == NULL || count <= 0) return NULL;
+    Node *newHead = NULL, *current = head, *previous = NULL, *newCurrent;
+    while (current != NULL && count > 0) {
+        if (newHead == NULL) {
+            newHead = current;
+            newCurrent = newHead;
+        } else {
+            newCurrent->next = current;
+            newCurrent = newCurrent->next;
+        }
+        previous = current;
+        current = current->next;
+        count--;
+    }
+    if (previous != NULL) previous->next = NULL;
+    return newHead;
 }
 
 int main() {
-    int list[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-    int list_size = sizeof(list) / sizeof(list[0]);
-    int start_index = 2;
-    int count = 5;
+    Node *head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
 
-    int return_size;
-    int *extracted = extract_elements(list, list_size, start_index, count, &return_size);
+    Node *sublist = extractSublist(head, 3);
 
-    if (extracted != NULL) {
-        for (int i = 0; i < return_size; ++i) {
-            printf("%d ", extracted[i]);
-        }
-        free(extracted);
-    } else {
-        printf("Failed to extract elements.\n");
+    for (Node *temp = sublist; temp != NULL; temp = temp->next) {
+        printf("%d\n", temp->data);
     }
+
+    freeList(head);
+    freeList(sublist);
 
     return 0;
 }

@@ -1,0 +1,124 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int **remove_column(int **matrix, size_t rows, size_t cols, size_t col_to_remove)
+{
+    int **result;
+    size_t i, j, m;
+
+    if (matrix == NULL || rows == 0 || cols == 0 || col_to_remove >= cols) {
+        return NULL;
+    }
+
+    result = malloc(rows * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < rows; i++) {
+        size_t k = 0;
+
+        if (matrix[i] == NULL) {
+            for (m = 0; m < i; m++) {
+                free(result[m]);
+            }
+            free(result);
+            return NULL;
+        }
+        result[i] = malloc((cols - 1) * sizeof(*result[i]));
+        if (result[i] == NULL) {
+            for (m = 0; m < i; m++) {
+                free(result[m]);
+            }
+            free(result);
+            return NULL;
+        }
+        for (j = 0; j < cols; j++) {
+            if (j != col_to_remove) {
+                result[i][k] = matrix[i][j];
+                k++;
+            }
+        }
+    }
+
+    return result;
+}
+
+void free_matrix(int **matrix, size_t rows)
+{
+    size_t i;
+
+    if (matrix == NULL) {
+        return;
+    }
+
+    for (i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+void print_matrix(const int **matrix, size_t rows, size_t cols)
+{
+    size_t i, j;
+
+    if (matrix == NULL) {
+        return;
+    }
+
+    for (i = 0; i < rows; i++) {
+        if (matrix[i] == NULL) {
+            return;
+        }
+        for (j = 0; j < cols; j++) {
+            printf("%4d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void)
+{
+    const size_t rows = 3;
+    const size_t cols = 4;
+    const size_t col_to_remove = 2;
+    int **matrix;
+    int **result;
+    size_t i, j, m;
+
+    matrix = malloc(rows * sizeof(*matrix));
+    if (matrix == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < rows; i++) {
+        matrix[i] = malloc(cols * sizeof(*matrix[i]));
+        if (matrix[i] == NULL) {
+            for (m = 0; m < i; m++) {
+                free(matrix[m]);
+            }
+            free(matrix);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < cols; j++) {
+            matrix[i][j] = (int)(i * cols + j + 1);
+        }
+    }
+
+    printf("Original matrix:\n");
+    print_matrix((const int **)matrix, rows, cols);
+
+    result = remove_column(matrix, rows, cols, col_to_remove);
+    if (result == NULL) {
+        free_matrix(matrix, rows);
+        return EXIT_FAILURE;
+    }
+
+    printf("Matrix after removing column %zu:\n", col_to_remove);
+    print_matrix((const int **)result, rows, cols - 1);
+
+    free_matrix(matrix, rows);
+    free_matrix(result, rows);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,140 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} Tuple;
+
+typedef struct Node {
+    char *value;
+    struct Node *next;
+} Node;
+
+typedef struct {
+    char *key;
+    Node *values;
+} Group;
+
+typedef struct {
+    Group *groups;
+    size_t size;
+    size_t capacity;
+} GroupList;
+
+GroupList *create_group_list(size_t initial_capacity) {
+    if (initial_capacity == 0) return NULL;
+    GroupList *gl = malloc(sizeof(GroupList));
+    if (!gl) return NULL;
+    gl->groups = malloc(initial_capacity * sizeof(Group));
+    if (!gl->groups) {
+        free(gl);
+        return NULL;
+    }
+    gl->size = 0;
+    gl->capacity = initial_capacity;
+    return gl;
+}
+
+void add_to_group(GroupList *gl, const char *key, const char *value) {
+    if (!gl || !key || !value) return;
+
+    for (size_t i = 0; i < gl->size; ++i) {
+        if (strcmp(gl->groups[i].key, key) == 0) {
+            Node *new_node = malloc(sizeof(Node));
+            if (!new_node) return;
+            new_node->value = strdup(value);
+            if (!new_node->value) {
+                free(new_node);
+                return;
+            }
+            new_node->next = gl->groups[i].values;
+            gl->groups[i].values = new_node;
+            return;
+        }
+    }
+
+    if (gl->size == gl->capacity) {
+        size_t new_capacity = gl->capacity * 2;
+        Group *new_groups = realloc(gl->groups, new_capacity * sizeof(Group));
+        if (!new_groups) return;
+        gl->groups = new_groups;
+        gl->capacity = new_capacity;
+    }
+
+    gl->groups[gl->size].key = strdup(key);
+    if (!gl->groups[gl->size].key) return;
+    
+    Node *new_node = malloc(sizeof(Node));
+    if (!new_node) {
+        free(gl->groups[gl->size].key);
+        return;
+    }
+    new_node->value = strdup(value);
+    if (!new_node->value) {
+        free(new_node);
+        free(gl->groups[gl->size].key);
+        return;
+    }
+    new_node->next = NULL;
+    gl->groups[gl->size].values = new_node;
+    gl->size++;
+}
+
+void free_group_list(GroupList *gl) {
+    if (!gl) return;
+    for (size_t i = 0; i < gl->size; ++i) {
+        free(gl->groups[i].key);
+        Node *current = gl->groups[i].values;
+        while (current) {
+            Node *next = current->next;
+            free(current->value);
+            free(current);
+            current = next;
+        }
+    }
+    free(gl->groups);
+    free(gl);
+}
+
+void print_groups(const GroupList *gl) {
+    if (!gl) return;
+    for (size_t i = 0; i < gl->size; ++i) {
+        printf("%s: [", gl->groups[i].key);
+        Node *current = gl->groups[i].values;
+        while (current) {
+            printf("%s%s", current->value, current->next ? ", " : "");
+            current = current->next;
+        }
+        printf("]\n");
+    }
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {"apple", "fruit"},
+        {"carrot", "vegetable"},
+        {"banana", "fruit"},
+        {"broccoli", "vegetable"},
+        {"chicken", "meat"}
+    };
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+
+    GroupList *gl = create_group_list(4);
+    if (!gl) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        add_to_group(gl, tuples[i].second, tuples[i].first);
+    }
+
+    print_groups(gl);
+    free_group_list(gl);
+
+    return EXIT_SUCCESS;
+}
+```

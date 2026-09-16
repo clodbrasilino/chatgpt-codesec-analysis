@@ -2,34 +2,58 @@
 #include <stdlib.h>
 
 int compare(const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
+    return (*(int*)a - *(int*)b);
 }
 
-int findLargestSubset(int *arr, int n) {
-    qsort(arr, n, sizeof(int), compare);
-    int dp[n];
-    for (int i = 0; i < n; i++) {
-        dp[i] = 1;
+int* largestDivisibleSubset(int* nums, int numsSize, int* returnSize) {
+    if (numsSize == 0) {
+        *returnSize = 0;
+        return NULL;
     }
-    for (int i = 1; i < n; i++) {
-        for (int j = 0; j < i; j++) {
-            if (arr[i] % arr[j] == 0 && dp[j] + 1 > dp[i]) {
+
+    qsort(nums, numsSize, sizeof(int), compare);
+
+    int* dp = (int*)calloc(numsSize, sizeof(int));
+    int* parent = (int*)calloc(numsSize, sizeof(int));
+    int maxIndex = 0;
+
+    for (int i = 1; i < numsSize; ++i) {
+        for (int j = 0; j < i; ++j) {
+            if (nums[i] % nums[j] == 0 && dp[i] < dp[j] + 1) {
                 dp[i] = dp[j] + 1;
+                parent[i] = j;
             }
         }
-    }
-    int max = 0;
-    for (int i = 0; i < n; i++) {
-        if (dp[i] > max) {
-            max = dp[i];
+        if (dp[i] > dp[maxIndex]) {
+            maxIndex = i;
         }
     }
-    return max;
+
+    *returnSize = dp[maxIndex] + 1;
+    int* result = (int*)malloc(*returnSize * sizeof(int));
+    int index = *returnSize - 1;
+    while (maxIndex >= 0) {
+        result[index--] = nums[maxIndex];
+        maxIndex = parent[maxIndex];
+    }
+
+    free(dp);
+    free(parent);
+    return result;
 }
 
 int main() {
-    int arr[] = {1, 2, 3, 4, 8, 9, 12, 16};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    printf("The size of the largest subset is: %d\n", findLargestSubset(arr, n));
+    int nums[] = {1, 2, 3, 4, 6, 8, 9, 12};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int returnSize;
+
+    int* result = largestDivisibleSubset(nums, numsSize, &returnSize);
+
+    for (int i = 0; i < returnSize; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
     return 0;
 }

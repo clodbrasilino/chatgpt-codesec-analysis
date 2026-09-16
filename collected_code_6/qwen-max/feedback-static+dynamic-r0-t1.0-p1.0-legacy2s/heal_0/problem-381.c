@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+} IntList;
+
+int compare(const void *a, const void *b) {
+    const IntList **listA = (const IntList **)a;
+    const IntList **listB = (const IntList **)b;
+    if ((*listA)->data[0] < (*listB)->data[0]) return -1;
+    if ((*listA)->data[0] > (*listB)->data[0]) return 1;
+    return 0;
+}
+
+void sortLists(IntList *lists, size_t count, int index) {
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i].size <= (size_t)index) {
+            fprintf(stderr, "Error: Index out of bounds\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    qsort(lists, count, sizeof(IntList), compare);
+}
+
+void printList(const IntList *list) {
+    for (size_t i = 0; i < list->size; ++i) {
+        printf("%d ", list->data[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    IntList lists[] = {
+        { .data = (int[]){3, 2, 1}, .size = 3 },
+        { .data = (int[]){5, 4, 3}, .size = 3 },
+        { .data = (int[]){7, 6, 5}, .size = 3 }
+    };
+    size_t count = sizeof(lists) / sizeof(lists[0]);
+
+    sortLists(lists, count, 0);
+
+    for (size_t i = 0; i < count; ++i) {
+        printList(&lists[i]);
+    }
+
+    return 0;
+}

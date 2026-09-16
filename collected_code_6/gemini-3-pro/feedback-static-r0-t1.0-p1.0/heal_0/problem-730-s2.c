@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    if (!head) {
+        return;
+    }
+    
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+}
+
+void printList(Node* head) {
+    Node* temp = head;
+    while (temp) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(Node* head) {
+    Node* temp;
+    while (head) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void removeConsecutiveDuplicates(Node* head) {
+    if (!head) {
+        return;
+    }
+
+    Node* current = head;
+    Node* nextNext;
+
+    while (current->next != NULL) {
+        if (current->data == current->next->data) {
+            nextNext = current->next->next;
+            free(current->next);
+            current->next = nextNext;
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+int main(void) {
+    Node* head = NULL;
+    
+    appendNode(&head, 1);
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    appendNode(&head, 3);
+    appendNode(&head, 3);
+    appendNode(&head, 4);
+    appendNode(&head, 5);
+    appendNode(&head, 5);
+    
+    removeConsecutiveDuplicates(head);
+    
+    printList(head);
+    
+    freeList(head);
+    
+    return EXIT_SUCCESS;
+}

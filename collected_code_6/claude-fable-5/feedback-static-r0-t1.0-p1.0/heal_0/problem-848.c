@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double trapezium_area(double base1, double base2, double height)
+{
+    return 0.5 * (base1 + base2) * height;
+}
+
+int main(void)
+{
+    double base1;
+    double base2;
+    double height;
+    double area;
+
+    printf("Enter the length of the first parallel side: ");
+    if (scanf("%lf", &base1) != 1) {
+        fprintf(stderr, "Error: invalid input for first side.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the length of the second parallel side: ");
+    if (scanf("%lf", &base2) != 1) {
+        fprintf(stderr, "Error: invalid input for second side.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base1 <= 0.0 || base2 <= 0.0 || height <= 0.0) {
+        fprintf(stderr, "Error: all dimensions must be positive values.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = trapezium_area(base1, base2, height);
+
+    printf("The area of the trapezium is: %.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

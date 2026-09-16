@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int count_digits(long long num) {
+    int count = 0;
+    
+    if (num == 0) {
+        return 1;
+    }
+    
+    if (num < 0) {
+        if (num == LLONG_MIN) {
+            num = LLONG_MAX;
+        } else {
+            num = -num;
+        }
+    }
+    
+    while (num != 0) {
+        num /= 10;
+        count++;
+    }
+    
+    return count;
+}
+
+int add_and_count_digits(int a, int b) {
+    long long sum = (long long)a + (long long)b;
+    return count_digits(sum);
+}
+
+int main(void) {
+    int num1, num2;
+    int result;
+    
+    printf("Enter two integers: ");
+    
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = add_and_count_digits(num1, num2);
+    printf("Number of digits in sum: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

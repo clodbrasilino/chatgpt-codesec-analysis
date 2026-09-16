@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+void clear_tuples(Tuple *tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return;
+    }
+    for (size_t i = 0; i < count; ++i) {
+        tuples[i].first = 0;
+        tuples[i].second = 0;
+    }
+}
+
+int main() {
+    Tuple *tuples = malloc(5 * sizeof(Tuple));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (size_t i = 0; i < 5; ++i) {
+        tuples[i].first = i + 1;
+        tuples[i].second = (i + 1) * 2;
+    }
+
+    clear_tuples(tuples, 5);
+
+    for (size_t i = 0; i < 5; ++i) {
+        printf("Tuple %zu: (%d, %d)\n", i, tuples[i].first, tuples[i].second);
+    }
+
+    free(tuples);
+    return 0;
+}

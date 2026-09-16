@@ -1,34 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void rotate_list(int *arr, int n, int k) {
-    if (n == 0 || k % n == 0) return;
-    k = k % n;
-    int *temp = malloc(k * sizeof(int));
-    if (temp == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(1);
+void rotate_list(int *arr, int len, int k) {
+    int *temp, *new_arr;
+    int i;
+
+    if (len == 0 || k % len == 0) return;
+    
+    k = k % len;
+    new_arr = (int *)malloc(len * sizeof(int));
+    if (!new_arr) exit(EXIT_FAILURE);
+    
+    temp = arr + len - k;
+    for (i = 0; i < k; i++) {
+        new_arr[i] = temp[i];
     }
-    for (int i = 0; i < k; ++i) {
-        temp[i] = arr[n - k + i];
+    
+    for (i = k; i < len; i++) {
+        new_arr[i] = arr[i - k];
     }
-    for (int i = n - k - 1; i >= 0; --i) {
-        arr[i + k] = arr[i];
+    
+    for (i = 0; i < len; i++) {
+        arr[i] = new_arr[i];
     }
-    for (int i = 0; i < k; ++i) {
-        arr[i] = temp[i];
-    }
-    free(temp);
+
+    free(new_arr);
 }
 
 int main() {
     int arr[] = {1, 2, 3, 4, 5};
-    int n = sizeof(arr) / sizeof(arr[0]);
+    int len = sizeof(arr) / sizeof(arr[0]);
     int k = 2;
 
-    rotate_list(arr, n, k);
+    rotate_list(arr, len, k);
 
-    for (int i = 0; i < n; ++i) {
+    for (int i = 0; i < len; i++) {
         printf("%d ", arr[i]);
     }
 

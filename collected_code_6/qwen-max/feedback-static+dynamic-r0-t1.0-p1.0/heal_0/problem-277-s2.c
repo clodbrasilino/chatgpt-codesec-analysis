@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry **entries;
+    int size;
+} Dictionary;
+
+Dictionary *create_dictionary(int size) {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    dict->size = 0;
+    dict->entries = (DictEntry**)malloc(size * sizeof(DictEntry*));
+    return dict;
+}
+
+void add_entry(Dictionary *dict, const char *key, int value) {
+    if (dict->size == 0 || dict->entries[dict->size-1]) {
+        dict->entries[dict->size] = (DictEntry *)malloc(sizeof(DictEntry));
+        dict->entries[dict->size]->key = strdup(key);
+        dict->entries[dict->size]->value = value;
+        dict->size++;
+    }
+}
+
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; i++) {
+        free(dict->entries[i]->key);
+        free(dict->entries[i]);
+    }
+    free(dict->entries);
+    free(dict);
+}
+
+Dictionary *filter_values(Dictionary *dict, int (*predicate)(int)) {
+    Dictionary *filtered = create_dictionary(dict->size);
+    for (int i = 0; i < dict->size; i++) {
+        if (predicate(dict->entries[i]->value)) {
+            add_entry(filtered, dict->entries[i]->key, dict->entries[i]->value);
+        }
+    }
+    return filtered;
+}
+
+int is_even(int value) {
+    return (value % 2) == 0;
+}
+
+int main() {
+    Dictionary *dict = create_dictionary(5);
+    add_entry(dict, "apple", 4);
+    add_entry(dict, "banana", 3);
+    add_entry(dict, "cherry", 2);
+    add_entry(dict, "date", 1);
+    
+    Dictionary *even_dict = filter_values(dict, is_even);
+
+    for (int i = 0; i < even_dict->size; i++) {
+        printf("%s: %d\n", even_dict->entries[i]->key, even_dict->entries[i]->value);
+    }
+
+    free_dictionary(even_dict);
+    free_dictionary(dict);
+
+    return 0;
+}

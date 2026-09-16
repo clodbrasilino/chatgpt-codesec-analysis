@@ -1,0 +1,92 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+double largest_triangle_area(double semi_major, double semi_minor);
+
+double largest_triangle_area(double semi_major, double semi_minor)
+{
+    double coefficient = 0.0;
+    double product = 0.0;
+
+    if (semi_major <= 0.0 || semi_minor <= 0.0)
+    {
+        return -1.0;
+    }
+
+    if (semi_major > DBL_MAX / semi_minor)
+    {
+        return -1.0;
+    }
+
+    product = semi_major * semi_minor;
+    coefficient = (3.0 * sqrt(3.0)) / 4.0;
+
+    if (product > DBL_MAX / coefficient)
+    {
+        return -1.0;
+    }
+
+    return coefficient * product;
+}
+
+int main(void)
+{
+    double a = 0.0;
+    double b = 0.0;
+    double area = 0.0;
+    int scanned = 0;
+
+    printf("Enter semi-major axis (a): ");
+    scanned = scanf("%lf", &a);
+    if (scanned != 1)
+    {
+        fprintf(stderr, "Error: invalid input for semi-major axis.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter semi-minor axis (b): ");
+    scanned = scanf("%lf", &b);
+    if (scanned != 1)
+    {
+        fprintf(stderr, "Error: invalid input for semi-minor axis.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (a <= 0.0 || b <= 0.0)
+    {
+        fprintf(stderr, "Error: axes must be positive values.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (b > a)
+    {
+        double tmp = a;
+        a = b;
+        b = tmp;
+    }
+
+    area = largest_triangle_area(a, b);
+    if (area < 0.0)
+    {
+        fprintf(stderr, "Error: could not compute triangle area.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Largest inscribed triangle area: %.15f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the weaknesses that were addressed:
+
+1. **Wrong result magnitude (test case 2: expected `105.222...`, got `11.691...`)** — the expected value equals `(3√3/4) · a · b` with `a·b = 81`, while the buggy output corresponds to `(3√3/4) · a²/b` (i.e. `9` instead of `81` for `a = b = 9`). The rewritten function computes the mathematically correct closed-form area of the largest inscribed triangle in an ellipse, `(3√3/4) · a · b`, using the product of both semi-axes exactly once.
+
+2. **Float precision (test case 1: got `45.466335296630859`, a value with single-precision rounding artifacts)** — the buggy implementation evidently performed intermediate arithmetic in `float`. The rewrite keeps every computation in `double`, uses `sqrt` from `<math.h>` (double-precision), and prints with `%.15f` so no precision is silently lost.
+
+3. **Overflow-check ordering** — the original checked `coefficient > DBL_MAX / (semi_major * semi_minor)` after the multiplication; the rewrite stores the validated product first and compares `product > DBL_MAX / coefficient`, guaranteeing the guarded multiplication cannot overflow before being checked.
+
+4. **Input validation preserved** — non-numeric input, non-positive axes, and the `b > a` normalization swap are all retained, and error paths return `EXIT_FAILURE` with diagnostics on `stderr`.

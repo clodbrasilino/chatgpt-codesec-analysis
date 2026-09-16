@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <limits.h>
+#include <stdlib.h>
+
+size_t shortest_word_length(const char *sentence)
+{
+    size_t shortest = 0;
+    size_t current = 0;
+    int found = 0;
+    size_t i = 0;
+
+    if (sentence == NULL) {
+        return 0;
+    }
+
+    while (sentence[i] != '\0') {
+        if (!isspace((unsigned char)sentence[i])) {
+            current++;
+        } else {
+            if (current > 0) {
+                if (!found || current < shortest) {
+                    shortest = current;
+                    found = 1;
+                }
+                current = 0;
+            }
+        }
+        i++;
+    }
+
+    if (current > 0) {
+        if (!found || current < shortest) {
+            shortest = current;
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        return 0;
+    }
+
+    return shortest;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over a lazy dog";
+    size_t result;
+
+    result = shortest_word_length(text);
+
+    if (result == 0) {
+        if (printf("No words found.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    if (printf("Shortest word length: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

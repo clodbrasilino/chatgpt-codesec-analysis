@@ -1,6 +1,6 @@
 ```c
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
     int a;
@@ -8,42 +8,31 @@ typedef struct {
 } Tuple;
 
 int is_all_none(Tuple t) {
-    return (t.a == -1 && t.b == -1);
+    return t.a == 0 && t.b == 0;
 }
 
-void remove_none_tuples(Tuple **list, int *size) {
-    int i, k = 0;
-    for (i = 0; i < *size; ++i) {
-        if (!is_all_none((*list)[i])) {
-            (*list)[k++] = (*list)[i];
+Tuple* remove_all_none(Tuple *tuples, int n, int *new_size) {
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (!is_all_none(tuples[i])) {
+            tuples[count++] = tuples[i];
         }
     }
-    *size = k;
+    *new_size = count;
+    return tuples;
 }
 
 int main() {
-    Tuple *list = NULL;
-    int size, i;
+    Tuple tuples[] = {{1, 2}, {0, 0}, {3, 4}, {0, 0}, {5, 6}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int new_size;
 
-    size = 5;
-    list = malloc(size * sizeof(Tuple));
-    if (list == NULL) {
-        return 1;
+    Tuple *filtered_tuples = remove_all_none(tuples, n, &new_size);
+
+    for (int i = 0; i < new_size; i++) {
+        printf("(%d, %d)\n", filtered_tuples[i].a, filtered_tuples[i].b);
     }
 
-    list[0] = (Tuple){1, 2};
-    list[1] = (Tuple){-1, -1};
-    list[2] = (Tuple){3, 4};
-    list[3] = (Tuple){-1, -1};
-    list[4] = (Tuple){5, 6};
-
-    remove_none_tuples(&list, &size);
-
-    for (i = 0; i < size; ++i) {
-        printf("(%d, %d)\n", list[i].a, list[i].b);
-    }
-
-    free(list);
     return 0;
 }
 ```

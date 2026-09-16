@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int sequential_search(const int *arr, size_t size, int target);
+
+int sequential_search(const int *arr, size_t size, int target) {
+    if (arr == NULL || size == 0) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (arr[i] == target) {
+            return (int)i; 
+        }
+    }
+
+    return -1;
+}
+
+int main(void) {
+    const int data[] = {12, 34, 54, 2, 3, 90, 45};
+    const size_t size = sizeof(data) / sizeof(data[0]);
+    int target = 90;
+
+    int result = sequential_search(data, size, target);
+
+    if (result != -1) {
+        printf("Element %d found at index %d\n", target, result);
+    } else {
+        printf("Element %d not found in the array\n", target);
+    }
+    
+    target = 99;
+    result = sequential_search(data, size, target);
+
+    if (result != -1) {
+        printf("Element %d found at index %d\n", target, result);
+    } else {
+        printf("Element %d not found in the array\n", target);
+    }
+
+    return 0;
+}

@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *values;
+    size_t count;
+} Tuple;
+
+void clear_tuple_values(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    if (tuple->values != NULL) {
+        free(tuple->values);
+        tuple->values = NULL;
+    }
+    
+    tuple->count = 0;
+}
+
+Tuple* create_tuple(size_t count) {
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->values = (int*)malloc(count * sizeof(int));
+    if (tuple->values == NULL && count > 0) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->count = count;
+    
+    for (size_t i = 0; i < count; i++) {
+        tuple->values[i] = 0;
+    }
+    
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    
+    clear_tuple_values(tuple);
+    free(tuple);
+}
+
+int main(void) {
+    Tuple *tuple1 = create_tuple(5);
+    Tuple *tuple2 = create_tuple(3);
+    Tuple *tuple3 = NULL;
+    
+    if (tuple1 != NULL) {
+        for (size_t i = 0; i < tuple1->count; i++) {
+            tuple1->values[i] = (int)(i * 10);
+        }
+    }
+    
+    if (tuple2 != NULL) {
+        for (size_t i = 0; i < tuple2->count; i++) {
+            tuple2->values[i] = (int)(i * 5);
+        }
+    }
+    
+    clear_tuple_values(tuple1);
+    clear_tuple_values(tuple2);
+    clear_tuple_values(tuple3);
+    
+    if (tuple1 != NULL) {
+        printf("Tuple1 after clear: count=%zu, values=%p\n", 
+               tuple1->count, (void*)tuple1->values);
+    }
+    
+    if (tuple2 != NULL) {
+        printf("Tuple2 after clear: count=%zu, values=%p\n", 
+               tuple2->count, (void*)tuple2->values);
+    }
+    
+    destroy_tuple(tuple1);
+    destroy_tuple(tuple2);
+    
+    return 0;
+}
+```

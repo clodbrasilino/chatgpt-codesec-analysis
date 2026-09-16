@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int* generate_magic_square(int n) {
+    if (n <= 0 || n % 2 == 0) {
+        return NULL;
+    }
+    if ((size_t)n * n > INT_MAX) {
+        return NULL;
+    }
+    size_t total = (size_t)n * n;
+    int *grid = (int *)malloc(total * sizeof(int));
+    if (grid == NULL) {
+        return NULL;
+    }
+    for (size_t i = 0; i < total; i++) {
+        grid[i] = 0;
+    }
+    int row = n - 1;
+    int col = n / 2;
+    for (int k = 1; k <= (int)total; k++) {
+        grid[(size_t)row * n + col] = k;
+        int next_row = (row + 1) % n;
+        int next_col = (col + 1) % n;
+        if (grid[(size_t)next_row * n + next_col] != 0) {
+            row = (row - 1 + n) % n;
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+    return grid;
+}
+
+void print_magic_square(const int *grid, int n) {
+    if (grid == NULL || n <= 0) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", grid[(size_t)i * n + j]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    int *grid = generate_magic_square(n);
+    if (grid == NULL) {
+        return 1;
+    }
+    print_magic_square(grid, n);
+    free(grid);
+    return 0;
+}
+```

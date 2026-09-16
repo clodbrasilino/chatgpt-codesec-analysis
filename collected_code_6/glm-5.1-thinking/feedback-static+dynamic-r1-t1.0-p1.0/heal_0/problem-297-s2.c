@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum { DATA, LIST } NodeType;
+
+typedef struct Node {
+    NodeType type;
+    union {
+        int data;
+        struct Node *list;
+    } value;
+    struct Node *next;
+} Node;
+
+Node* create_data_node(int data) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->type = DATA;
+    node->value.data = data;
+    node->next = NULL;
+    return node;
+}
+
+Node* create_list_node(Node* sublist) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    if (!node) return NULL;
+    node->type = LIST;
+    node->value.list = sublist;
+    node->next = NULL;
+    return node;
+}
+
+void free_list(Node* head) {
+    while (head) {
+        Node* next = head->next;
+        if (head->type == LIST) {
+            free_list(head->value.list);
+        }
+        free(head);
+        head = next;
+    }
+}
+
+Node* append(Node* head, Node* item) {
+    if (!item) {
+        free_list(head);
+        return NULL;
+    }
+    if (!head) return item;
+    Node* curr = head;
+    while (curr->next) curr = curr->next;
+    curr->next = item;
+    return head;
+}
+
+Node* flatten(Node* head) {
+    if (!head) return NULL;
+
+    Node dummy;
+    dummy.next = head;
+    Node* prev = &dummy;
+    Node* curr = head;
+
+    while (curr) {
+        if (curr->type == LIST) {
+            Node* sublist = flatten(curr->value.list);
+            Node* next = curr->next;
+
+            prev->next = sublist ? sublist : next;
+
+            if (sublist) {
+                Node* tail = sublist;
+                while (tail->next) tail = tail->next;
+                tail->next = next;
+            }
+
+            curr->next = NULL;
+            curr->value.list = NULL;
+            free(curr);
+
+            curr = prev->next;
+        } else {
+            prev = curr;
+            curr = curr->next;
+        }
+    }
+    return dummy.next;
+}
+
+void print_list(Node* head) {
+    Node* curr = head;
+    while (curr) {
+        if (curr->type == DATA) {
+            printf("%d ", curr->value.data);
+        } else if (curr->type == LIST) {
+            printf("[ ");
+            print_list(curr->value.list);
+            printf("] ");
+        }
+        curr = curr->next;
+    }
+}
+
+int main(void) {
+    Node* l1 = NULL;
+    l1 = append(l1, create_data_node(2));
+    l1 = append(l1, create_data_node(3));
+    if (!l1) return EXIT_FAILURE;
+
+    Node* l2_inner = NULL;
+    l2_inner = append(l2_inner, create_data_node(6));
+    l2_inner = append(l2_inner, create_data_node(7));
+    if (!l2_inner) return EXIT_FAILURE;
+
+    Node* l2 = NULL;
+    l2 = append(l2, create_data_node(5));
+    l2 = append(l2, create_list_node(l2_inner));
+    if (!l2) return EXIT_FAILURE;
+
+    Node* root = NULL;
+    root = append(root, create_data_node(1));
+    root = append(root, create_list_node(l1));
+    root = append(root, create_data_node(4));
+    root = append(root, create_list_node(l2));
+    if (!root) return EXIT_FAILURE;
+
+    printf("Original: ");
+    print_list(root);
+    printf("\n");
+
+    Node* flattened = flatten(root);
+
+    printf("Flattened: ");
+    print_list(flattened);
+    printf("\n");
+
+    free_list(flattened);
+
+    return EXIT_SUCCESS;
+}

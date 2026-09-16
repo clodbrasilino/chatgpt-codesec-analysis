@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_median(int a, int b, int c);
+
+int find_median(int a, int b, int c) {
+    if ((a >= b && a <= c) || (a >= c && a <= b)) {
+        return a;
+    }
+    if ((b >= a && b <= c) || (b >= c && b <= a)) {
+        return b;
+    }
+    return c;
+}
+
+int main(void) {
+    int num1 = 15;
+    int num2 = 5;
+    int num3 = 20;
+    int median;
+
+    median = find_median(num1, num2, num3);
+
+    if (printf("The median of %d, %d, and %d is: %d\n", num1, num2, num3, median) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

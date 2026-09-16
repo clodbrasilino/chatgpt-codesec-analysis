@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long sum_xor_all_pairs(const int *arr, size_t n)
+{
+    unsigned long long total = 0;
+    unsigned int bit;
+
+    if (arr == NULL || n < 2) {
+        return 0;
+    }
+
+    for (bit = 0; bit < (unsigned int)(sizeof(int) * CHAR_BIT); bit++) {
+        unsigned long long count_set = 0;
+        size_t i;
+
+        for (i = 0; i < n; i++) {
+            if (((unsigned int)arr[i] >> bit) & 1U) {
+                count_set++;
+            }
+        }
+
+        total += count_set * (unsigned long long)(n - count_set) * (1ULL << bit);
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int data[] = {7, 3, 5};
+    size_t n = sizeof(data) / sizeof(data[0]);
+    unsigned long long result;
+
+    result = sum_xor_all_pairs(data, n);
+
+    if (printf("Sum of XOR of all pairs: %llu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

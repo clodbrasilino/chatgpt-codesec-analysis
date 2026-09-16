@@ -1,0 +1,88 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int nth_digit(long long numerator, long long denominator, long long n, int *digit)
+{
+    long long remainder;
+    long long i;
+
+    if (digit == NULL) {
+        return -1;
+    }
+
+    if (denominator == 0) {
+        return -1;
+    }
+
+    if (n < 1) {
+        return -1;
+    }
+
+    if (numerator < 0) {
+        numerator = -numerator;
+    }
+
+    if (denominator < 0) {
+        denominator = -denominator;
+    }
+
+    if (numerator >= denominator) {
+        return -1;
+    }
+
+    remainder = numerator % denominator;
+
+    for (i = 0; i < n - 1; i++) {
+        remainder = (remainder * 10) % denominator;
+    }
+
+    *digit = (int)((remainder * 10) / denominator);
+
+    return 0;
+}
+
+int main(void)
+{
+    long long numerator;
+    long long denominator;
+    long long n;
+    int digit;
+    int result;
+
+    printf("Enter numerator: ");
+    if (scanf("%lld", &numerator) != 1) {
+        fprintf(stderr, "Invalid input for numerator.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter denominator: ");
+    if (scanf("%lld", &denominator) != 1) {
+        fprintf(stderr, "Invalid input for denominator.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for n.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = nth_digit(numerator, denominator, n, &digit);
+
+    if (result != 0) {
+        fprintf(stderr, "Error: invalid arguments (denominator must be nonzero, n >= 1, and fraction must be proper).\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The digit at position %lld is: %d\n", n, digit);
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on how this code avoids the specified weaknesses:
+
+- **CWE-664**: No dynamically allocated resources or files are used, so there is no resource lifetime to mismanage. The output is passed back through a pointer that is validated before use.
+- **CWE-703**: All exceptional conditions are checked — division by zero, invalid `n`, improper fractions, null output pointer, and every `scanf` return value is verified before the values are used.
+- **CWE-710**: The code uses standard headers, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, explicit `void` in `main`'s parameter list, consistent bracing, and no implicit conversions that lose meaning (the final cast to `int` is safe since a digit is always 0–9).

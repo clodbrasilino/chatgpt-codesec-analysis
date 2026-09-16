@@ -1,0 +1,14 @@
+#include <stdio.h>
+
+int findAsciiValue(char c) {
+    return (int)c;
+}
+
+int main(void) {
+    char inputChar = 'A';
+    int asciiValue = findAsciiValue(inputChar);
+    
+    printf("The ASCII value of '%c' is %d\n", inputChar, asciiValue);
+    
+    return 0;
+}

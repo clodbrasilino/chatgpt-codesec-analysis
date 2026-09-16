@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long countIntegralCoordinates(long long x1, long long y1, long long x2, long long y2) {
+    long long minX, maxX, minY, maxY;
+    long long width, height;
+    
+    if (x1 > x2) {
+        minX = x2;
+        maxX = x1;
+    } else {
+        minX = x1;
+        maxX = x2;
+    }
+    
+    if (y1 > y2) {
+        minY = y2;
+        maxY = y1;
+    } else {
+        minY = y1;
+        maxY = y2;
+    }
+    
+    if (maxX > 0 && minX < LLONG_MIN + maxX) {
+        return -1;
+    }
+    width = maxX - minX;
+    
+    if (maxY > 0 && minY < LLONG_MIN + maxY) {
+        return -1;
+    }
+    height = maxY - minY;
+    
+    if (width > 0 && height > LLONG_MAX / width) {
+        return -1;
+    }
+    
+    return width * height;
+}
+
+int main(void) {
+    long long x1, y1, x2, y2;
+    long long result;
+    
+    if (printf("Enter x1 y1: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%lld %lld", &x1, &y1) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Enter x2 y2: ") < 0) {
+        return EXIT_FAILURE;
+    }
+    if (scanf("%lld %lld", &x2, &y2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = countIntegralCoordinates(x1, y1, x2, y2);
+    
+    if (result < 0) {
+        fprintf(stderr, "Overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (printf("Integral coordinates inside square: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

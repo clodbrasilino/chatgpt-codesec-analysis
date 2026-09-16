@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_occurring_divisor(int L, int R) {
+    if (L > R || L <= 0) {
+        return -1;
+    }
+
+    int *count = (int *)calloc(R + 1, sizeof(int));
+    if (count == NULL) {
+        return -1;
+    }
+
+    for (int i = 1; i <= R; i++) {
+        int start = (L % i == 0) ? L : L + (i - L % i);
+        for (int j = start; j <= R; j += i) {
+            count[i]++;
+        }
+    }
+
+    int max_count = 0;
+    int ans = 1;
+
+    for (int i = 1; i <= R; i++) {
+        if (count[i] >= max_count) {
+            max_count = count[i];
+            ans = i;
+        }
+    }
+
+    free(count);
+    return ans;
+}
+
+int main() {
+    int L = 10;
+    int R = 20;
+    
+    int result = max_occurring_divisor(L, R);
+    if (result != -1) {
+        printf("Maximum occurring divisor in [%d, %d] is %d\n", L, R, result);
+    } else {
+        printf("Invalid interval or memory allocation failed.\n");
+    }
+
+    return 0;
+}
+```

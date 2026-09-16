@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+ */
+int checkLastElement(int *arr, int n, int p) {
+    int *temp = (int *)malloc(n * sizeof(int));
+    if (temp == NULL) {
+        return -1;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        temp[i] = arr[i];
+    }
+    
+    for (int i = 0; i < p; i++) {
+        for (int j = 0; j < n - 1; j++) {
+            temp[j] = temp[j] + temp[j + 1];
+        }
+    }
+    
+    int lastElement = temp[n - 1];
+    free(temp);
+    
+    return lastElement % 2;
+}
+
+int main() {
+    int n, p;
+    printf("Enter the size of array: ");
+    scanf("%d", &n);
+    
+    int *arr = (int *)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        printf("Memory allocation failed\n");
+        return 1;
+    }
+    
+    printf("Enter %d elements: ", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    printf("Enter the number of operations: ");
+    scanf("%d", &p);
+    
+    int result = checkLastElement(arr, n, p);
+    
+    if (result == -1) {
+        printf("Memory allocation failed\n");
+        free(arr);
+        return 1;
+    }
+    
+    if (result == 0) {
+        printf("The last element is even\n");
+    } else {
+        printf("The last element is odd\n");
+    }
+    
+    free(arr);
+    return 0;
+}

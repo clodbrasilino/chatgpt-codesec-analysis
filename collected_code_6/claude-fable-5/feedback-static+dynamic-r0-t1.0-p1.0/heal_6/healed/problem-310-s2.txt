@@ -1,0 +1,107 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity > 0 ? capacity : 1);
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    if (len == 0) {
+        return NULL;
+    }
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    memcpy(t->items, str, len);
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    const char *inputs[] = {
+        "python3.0",
+        "item1",
+        "15.10"
+    };
+    size_t num_inputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < num_inputs; i++) {
+        Tuple *t = string_to_tuple(inputs[i]);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            return EXIT_FAILURE;
+        }
+
+        tuple_print(t);
+
+        tuple_destroy(t);
+    }
+
+    fflush(stdout);
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes from reviewing the original source:
+
+1. **The "no output" failures were most likely environmental rather than logical.** The core logic (`string_to_tuple`, `tuple_print`) was sound. However, the original mixed `setvbuf(stdout, NULL, _IONBF, 0)` with repeated `fflush` calls and `fputs`/`fputc`/`fprintf` combinations, which can behave unpredictably if the test harness redirects or captures stdout in unusual ways. The rewrite removes the `setvbuf` call, uses plain `printf` throughout, and flushes explicitly after each tuple is printed, guaranteeing output reaches the pipe before any potential abnormal termination.
+
+2. **Simplified allocation:** `capacity * sizeof(char)` is redundant since `sizeof(char)` is 1 by definition; removed for clarity while keeping the zero-capacity guard (`malloc(1)`) so a valid pointer is always returned.
+
+3. **Memory safety is preserved:** every allocation is checked, `tuple_destroy` is null-safe, and there are no leaks on either the success or failure paths — the partial-allocation failure in `tuple_create` correctly frees the struct before returning `NULL`.
+
+4. **Output format matches the expected test vectors exactly:** `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']`, `['i', 't', 'e', 'm', '1']`, and `['1', '5', '.', '1', '0']`, each followed by a newline.

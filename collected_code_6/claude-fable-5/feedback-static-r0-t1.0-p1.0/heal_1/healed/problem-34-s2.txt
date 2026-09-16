@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_missing_number(const int *arr, size_t size, int *missing)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || missing == NULL || size == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = size - 1U;
+
+    if (arr[low] != (int)low + 1) {
+        *missing = 1;
+        return 0;
+    }
+
+    if (arr[high] == (int)size) {
+        return -1;
+    }
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+        if (arr[mid] == (int)mid + 1) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    *missing = (int)low + 1;
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 5, 6, 7, 8};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int missing = 0;
+    int result;
+
+    result = find_missing_number(arr, size, &missing);
+
+    if (result == 0) {
+        if (printf("Missing number: %d\n", missing) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No missing number found\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+The only weakness identified in the comments was the `[variableScope]` issue for `mid`. This has been fixed by moving the declaration of `mid` from function scope into the `while` loop body, where it is initialized at the point of declaration and only exists where it is actually used. The rest of the code was already robust: it validates all pointer arguments and the size before use, handles the edge cases where the missing number is 1 or where no number is missing, and uses overflow-safe midpoint calculation (`low + (high - low) / 2`). The `printf` return values are also checked, so no further changes were required.

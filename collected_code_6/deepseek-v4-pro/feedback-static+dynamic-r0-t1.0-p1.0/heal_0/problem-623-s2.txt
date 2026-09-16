@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+
+double *power_elements(const double *list, size_t length, double n) {
+    if (list == NULL && length > 0) {
+        errno = EINVAL;
+        return NULL;
+    }
+    
+    double *result = (double *)malloc(length * sizeof(double));
+    if (result == NULL) {
+        errno = ENOMEM;
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < length; i++) {
+        result[i] = pow(list[i], n);
+        if (errno == EDOM || errno == ERANGE) {
+            free(result);
+            return NULL;
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    double input[] = {2.0, 3.0, 4.0, 5.0};
+    size_t length = sizeof(input) / sizeof(input[0]);
+    double exponent = 3.0;
+    
+    double *result = power_elements(input, length, exponent);
+    if (result == NULL) {
+        fprintf(stderr, "Error computing powers\n");
+        return EXIT_FAILURE;
+    }
+    
+    for (size_t i = 0; i < length; i++) {
+        printf("%.2f^%.2f = %.2f\n", input[i], exponent, result[i]);
+    }
+    
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

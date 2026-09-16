@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+bool differ_by_one_bit(uint32_t a, uint32_t b) {
+    uint32_t xor_val = a ^ b;
+    if (xor_val == 0) {
+        return false;
+    }
+    return (xor_val & (xor_val - 1)) == 0;
+}
+
+int main(void) {
+    uint32_t num1;
+    uint32_t num2;
+
+    if (scanf("%u %u", &num1, &num2) != 2) {
+        return 1;
+    }
+
+    if (differ_by_one_bit(num1, num2)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t find_left_insertion_point(const int *array, size_t length, int value) {
+    if (array == NULL) {
+        return 0;
+    }
+    size_t low = 0;
+    size_t high = length;
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (array[mid] < value) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return low;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 4, 4, 5, 6, 8};
+    size_t len = sizeof(arr) / sizeof(arr[0]);
+    
+    size_t pos1 = find_left_insertion_point(arr, len, 4);
+    printf("%zu\n", pos1);
+    
+    size_t pos2 = find_left_insertion_point(arr, len, 3);
+    printf("%zu\n", pos2);
+    
+    size_t pos3 = find_left_insertion_point(arr, len, 0);
+    printf("%zu\n", pos3);
+    
+    size_t pos4 = find_left_insertion_point(arr, len, 10);
+    printf("%zu\n", pos4);
+    
+    size_t pos5 = find_left_insertion_point(NULL, 0, 5);
+    printf("%zu\n", pos5);
+    
+    return 0;
+}

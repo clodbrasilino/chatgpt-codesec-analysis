@@ -1,0 +1,1 @@
+sscanf(argv[1], "%u %c", &n, &extra) != 1

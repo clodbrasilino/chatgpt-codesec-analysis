@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+long long minSumAbsoluteDifferences(int* arr1, int* arr2, size_t n) {
+    if (arr1 == NULL || arr2 == NULL || n == 0) {
+        return -1;
+    }
+
+    qsort(arr1, n, sizeof(int), compare);
+    qsort(arr2, n, sizeof(int), compare);
+
+    long long min_sum = 0;
+    for (size_t i = 0; i < n; i++) {
+        min_sum += llabs((long long)arr1[i] - (long long)arr2[i]);
+    }
+
+    return min_sum;
+}
+
+int main() {
+    int arr1[] = {4, 1, 8, 7};
+    int arr2[] = {2, 3, 6, 5};
+    size_t n = sizeof(arr1) / sizeof(arr1[0]);
+
+    long long result = minSumAbsoluteDifferences(arr1, arr2, n);
+    
+    if (result != -1) {
+        printf("%lld\n", result);
+    } else {
+        printf("Error: Invalid input arrays.\n");
+    }
+
+    return 0;
+}

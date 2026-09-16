@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stddef.h>
+
+size_t count_char(const char *str, char ch)
+{
+    size_t count = 0;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (*str == ch) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    const char *text = "programming in c is powerful";
+    char target = 'r';
+    size_t result;
+
+    result = count_char(text, target);
+
+    if (printf("The character '%c' occurs %zu times in \"%s\"\n",
+               target, result, text) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

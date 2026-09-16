@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_28_days(int month) {
+    return (month == 2);
+}
+
+int main() {
+    int month;
+    printf("Enter the month number: ");
+    if (scanf("%d", &month) != 1 || month < 1 || month > 12) {
+        printf("Invalid input. Please enter a valid month number.\n");
+        return 1;
+    }
+    if (has_28_days(month)) {
+        printf("The month contains 28 days.\n");
+    } else {
+        printf("The month does not necessarily contain 28 days.\n");
+    }
+    return 0;
+}
+```

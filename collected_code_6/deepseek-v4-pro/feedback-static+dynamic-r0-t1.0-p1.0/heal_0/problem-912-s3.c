@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long gcd(unsigned long long a, unsigned long long b) {
+    while (b != 0) {
+        unsigned long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+unsigned long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k > n - k) {
+        k = n - k;
+    }
+    unsigned long long result = 1;
+    for (int i = 0; i < k; i++) {
+        if (result > (unsigned long long)-1 / (n - i)) {
+            return 0;
+        }
+        result = result * (n - i) / (i + 1);
+    }
+    return result;
+}
+
+unsigned long long lobb_number(int m, int n) {
+    if (m < 0 || n < 0) {
+        return 0;
+    }
+    
+    unsigned long long numerator = 2 * m + 1;
+    unsigned long long binom = binomial_coefficient(2 * n, m + n);
+    
+    if (binom == 0 && (2 * n) >= (m + n) && (m + n) >= 0) {
+        return 0;
+    }
+    
+    unsigned long long product = numerator * binom;
+    unsigned long long denominator = m + n + 1;
+    
+    if (denominator == 0) {
+        return 0;
+    }
+    
+    return product / denominator;
+}
+
+int main(void) {
+    int m, n;
+    
+    printf("Enter m: ");
+    if (scanf("%d", &m) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    if (m < 0 || n < 0) {
+        fprintf(stderr, "Inputs must be non-negative\n");
+        return 1;
+    }
+    
+    unsigned long long result = lobb_number(m, n);
+    printf("L(%d, %d) = %llu\n", m, n, result);
+    
+    return 0;
+}

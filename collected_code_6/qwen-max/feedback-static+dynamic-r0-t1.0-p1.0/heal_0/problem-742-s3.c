@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_tetrahedron_area(double edge_length) {
+    return sqrt(3) * pow(edge_length, 2);
+}
+
+int main() {
+    double edge_length;
+    printf("Enter the edge length of the tetrahedron: ");
+    if (scanf("%lf", &edge_length) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+    double area = calculate_tetrahedron_area(edge_length);
+    printf("The area of the tetrahedron is: %.2f\n", area);
+    return 0;
+}

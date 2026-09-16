@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+static unsigned long long binomial_coefficient(unsigned int n, unsigned int k)
+{
+    unsigned long long result = 1ULL;
+    unsigned int i;
+    
+    if (k > n - k) {
+        k = n - k;
+    }
+    
+    for (i = 0U; i < k; i++) {
+        if (result > ULLONG_MAX / (n - i)) {
+            errno = ERANGE;
+            return 0ULL;
+        }
+        result = result * (n - i);
+        result = result / (i + 1U);
+    }
+    
+    return result;
+}
+
+static unsigned long long sum_of_squares(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'coeff' can be reduced. [variableScope]
+     */
+    unsigned long long coeff;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'square' can be reduced. [variableScope]
+     */
+    unsigned long long square;
+    unsigned int k;
+    
+    for (k = 0U; k <= n; k++) {
+        coeff = binomial_coefficient(n, k);
+        if (errno == ERANGE) {
+            return 0ULL;
+        }
+        
+        if (coeff > 0ULL && ULLONG_MAX / coeff < coeff) {
+            errno = ERANGE;
+            return 0ULL;
+        }
+        square = coeff * coeff;
+        
+        if (ULLONG_MAX - sum < square) {
+            errno = ERANGE;
+            return 0ULL;
+        }
+        sum += square;
+    }
+    
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long result;
+    int scan_result;
+    
+    (void)printf("Enter n: ");
+    scan_result = scanf("%u", &n);
+    
+    if (scan_result != 1) {
+        (void)fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    result = sum_of_squares(n);
+    
+    if (errno == ERANGE) {
+        (void)fprintf(stderr, "Arithmetic overflow occurred\n");
+        return EXIT_FAILURE;
+    }
+    
+    (void)printf("Sum of squares of binomial coefficients: %llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

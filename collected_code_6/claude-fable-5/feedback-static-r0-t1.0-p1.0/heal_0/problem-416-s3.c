@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long maxSum(long long *dp, long long n)
+{
+    if (n <= 1)
+        return n;
+    if (dp[n] != -1)
+        return dp[n];
+    long long divided = maxSum(dp, n / 2) + maxSum(dp, n / 3) + maxSum(dp, n / 4);
+    dp[n] = (divided > n) ? divided : n;
+    return dp[n];
+}
+
+long long findMaxSum(long long n)
+{
+    if (n < 0)
+        return -1;
+    if (n <= 1)
+        return n;
+    long long *dp = malloc((size_t)(n + 1) * sizeof(long long));
+    if (dp == NULL)
+        return -1;
+    for (long long i = 0; i <= n; i++)
+        dp[i] = -1;
+    long long result = maxSum(dp, n);
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    long long n = 60;
+    long long result = findMaxSum(n);
+    if (result < 0)
+    {
+        fprintf(stderr, "Error computing result for %lld\n", n);
+        return EXIT_FAILURE;
+    }
+    printf("Maximum sum for %lld is %lld\n", n, result);
+    return EXIT_SUCCESS;
+}

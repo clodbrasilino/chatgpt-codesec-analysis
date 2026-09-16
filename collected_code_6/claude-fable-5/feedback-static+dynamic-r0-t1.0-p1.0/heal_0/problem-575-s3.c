@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_nth_non_multiple(long long n, long long k, long long *result);
+
+int find_nth_non_multiple(long long n, long long k, long long *result)
+{
+    long long q;
+    long long r;
+    long long block;
+
+    if (result == NULL) {
+        return -1;
+    }
+    if (n <= 0) {
+        return -1;
+    }
+    if (k <= 1) {
+        return -1;
+    }
+
+    q = (n - 1) / (k - 1);
+    r = (n - 1) % (k - 1);
+
+    if (q > (LLONG_MAX - r - 1) / k) {
+        return -1;
+    }
+
+    block = q * k;
+    *result = block + r + 1;
+    return 0;
+}
+
+int main(void)
+{
+    long long n;
+    long long k;
+    long long answer;
+    int status;
+
+    printf("Enter n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the number whose multiples are excluded: ");
+    if (scanf("%lld", &k) != 1) {
+        fprintf(stderr, "Invalid input for k\n");
+        return EXIT_FAILURE;
+    }
+
+    status = find_nth_non_multiple(n, k, &answer);
+    if (status != 0) {
+        fprintf(stderr, "Cannot compute result: invalid arguments or overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %lld-th number that is not a multiple of %lld is %lld\n", n, k, answer);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int radix_sort(int arr[], size_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    if (arr == NULL || n > (size_t)-1 / sizeof(unsigned int)) {
+        return -1;
+    }
+    unsigned int sign_mask = 1u << (sizeof(unsigned int) * CHAR_BIT - 1);
+    unsigned int *buf1 = malloc(n * sizeof(unsigned int));
+    if (buf1 == NULL) {
+        return -1;
+    }
+    unsigned int *buf2 = malloc(n * sizeof(unsigned int));
+    if (buf2 == NULL) {
+        free(buf1);
+        return -1;
+    }
+    for (size_t i = 0; i < n; i++) {
+        buf1[i] = (unsigned int)arr[i] ^ sign_mask;
+    }
+    unsigned int *src = buf1;
+    unsigned int *dst = buf2;
+    size_t total_bits = sizeof(unsigned int) * CHAR_BIT;
+    for (size_t bit = 0; bit < total_bits; bit++) {
+        size_t zeros = 0;
+        for (size_t i = 0; i < n; i++) {
+            if (((src[i] >> bit) & 1u) == 0) {
+                zeros++;
+            }
+        }
+        size_t zero_pos = 0;
+        size_t one_pos = zeros;
+        for (size_t i = 0; i < n; i++) {
+            if (((src[i] >> bit) & 1u) == 0) {
+                dst[zero_pos++] = src[i];
+            } else {
+                dst[one_pos++] = src[i];
+            }
+        }
+        unsigned int *tmp = src;
+        src = dst;
+        dst = tmp;
+    }
+    for (size_t i = 0; i < n; i++) {
+        arr[i] = (int)(src[i] ^ sign_mask);
+    }
+    free(buf1);
+    free(buf2);
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {5, -3, 2, -8, 10, 0, -1, 7};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    if (radix_sort(arr, n) != 0) {
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int invert_tuples(const Tuple *input, size_t count, Tuple **output)
+{
+    Tuple *result;
+    size_t i;
+
+    if (input == NULL || output == NULL || count == 0U) {
+        return -1;
+    }
+
+    if (count > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+
+    result = malloc(count * sizeof(Tuple));
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        result[i].first = ~input[i].first;
+        result[i].second = ~input[i].second;
+    }
+
+    *output = result;
+    return 0;
+}
+
+int main(void)
+{
+    Tuple list[] = {
+        {7, 8},
+        {9, 11},
+        {10, 12},
+        {10, 11}
+    };
+    size_t count = sizeof(list) / sizeof(list[0]);
+    Tuple *inverted = NULL;
+    size_t i;
+
+    if (invert_tuples(list, count, &inverted) != 0) {
+        fprintf(stderr, "Failed to invert tuples\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original tuples:\n");
+    for (i = 0U; i < count; i++) {
+        printf("(%d, %d)\n", list[i].first, list[i].second);
+    }
+
+    printf("Inverted tuples:\n");
+    for (i = 0U; i < count; i++) {
+        printf("(%d, %d)\n", inverted[i].first, inverted[i].second);
+    }
+
+    free(inverted);
+    inverted = NULL;
+
+    return EXIT_SUCCESS;
+}

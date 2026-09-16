@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int isEquilateral(double a, double b, double c) {
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+    if (a + b <= c || b + c <= a || c + a <= b) {
+        return 0;
+    }
+    return (a == b && b == c);
+}
+
+int main(void) {
+    double a, b, c;
+    int result;
+
+    printf("Enter three sides of the triangle: ");
+    result = scanf("%lf %lf %lf", &a, &b, &c);
+
+    if (result != 3) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (isEquilateral(a, b, c)) {
+        printf("The triangle is equilateral.\n");
+    } else {
+        printf("The triangle is not equilateral.\n");
+    }
+
+    return 0;
+}

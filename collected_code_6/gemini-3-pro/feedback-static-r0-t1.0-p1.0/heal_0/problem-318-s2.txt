@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double max_cuboid_volume(double sum_of_sides) {
+    if (sum_of_sides <= 0) {
+        return 0.0;
+    }
+    double side = sum_of_sides / 12.0;
+    return side * side * side;
+}
+
+int main(void) {
+    double sum_of_sides = 0;
+    
+    if (scanf("%lf", &sum_of_sides) != 1) {
+        return 1;
+    }
+
+    if (sum_of_sides < 0) {
+        return 1;
+    }
+
+    double volume = max_cuboid_volume(sum_of_sides);
+    printf("%f\n", volume);
+
+    return 0;
+}
+```

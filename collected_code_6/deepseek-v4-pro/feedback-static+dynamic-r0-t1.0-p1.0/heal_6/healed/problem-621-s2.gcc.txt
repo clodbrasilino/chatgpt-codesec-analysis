@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c: In function 'increment_numeric_values':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:42:33: error: 'LLONG_MAX' undeclared (first use in this function)
+   42 |             if ((k > 0 && num > LLONG_MAX - k) || (k < 0 && num < LLONG_MIN - k)) {
+      |                                 ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:5:1: note: 'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+    4 | #include <ctype.h>
+  +++ |+#include <limits.h>
+    5 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:42:33: note: each undeclared identifier is reported only once for each function it appears in
+   42 |             if ((k > 0 && num > LLONG_MAX - k) || (k < 0 && num < LLONG_MIN - k)) {
+      |                                 ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:42:67: error: 'LLONG_MIN' undeclared (first use in this function)
+   42 |             if ((k > 0 && num > LLONG_MAX - k) || (k < 0 && num < LLONG_MIN - k)) {
+      |                                                                   ^~~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-621-s2.c:42:67: note: 'LLONG_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'

@@ -1,0 +1,4 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-67-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-67-s3.c:32:5: warning: %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'signed int'. [invalidPrintfArgType_uint]
+    printf("%llu\n", bell_number(10));
+    ^

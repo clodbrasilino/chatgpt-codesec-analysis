@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+static void sort_sides(double *a, double *b, double *c)
+{
+    double tmp;
+
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+    if (*b > *c) {
+        tmp = *b;
+        *b = *c;
+        *c = tmp;
+    }
+    if (*a > *b) {
+        tmp = *a;
+        *a = *b;
+        *b = tmp;
+    }
+}
+
+int is_valid_triangle(double a, double b, double c)
+{
+    if (!isfinite(a) || !isfinite(b) || !isfinite(c)) {
+        return 0;
+    }
+
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+
+    sort_sides(&a, &b, &c);
+
+    return (c - b < a) ? 1 : 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and how the rewrite fixes them:**
+
+1. **False positive (`expected False, got 1`):** The original code contained a shortcut `if (!isfinite(a + b)) return 1;`. Any pair of large finite sides whose sum overflowed to infinity was unconditionally declared valid, without a proper comparison against `c`. The rewrite eliminates the addition entirely. Since `b` and `c` are both finite, positive, and sorted (`c >= b`), the subtraction `c - b` can never overflow, so no infinity shortcut is needed.
+
+2. **False negative (`expected True, got 0`):** The comparison `a + b > c` is numerically fragile. When `a` is small relative to `b` and `c`, the sum `a + b` can lose the contribution of `a` to rounding, causing a genuinely valid triangle to be rejected. The rearranged test `c - b < a` is far more robust: after sorting, `b` and `c` are the two closest-in-magnitude operands, and by Sterbenz's lemma the subtraction `c - b` is exact (or nearly so) precisely in the borderline cases where the original formulation failed.
+
+The transformation `a + b > c` → `c - b < a` is algebraically identical but numerically superior, resolving both the overflow-induced false positive and the rounding-induced false negative with a single comparison.

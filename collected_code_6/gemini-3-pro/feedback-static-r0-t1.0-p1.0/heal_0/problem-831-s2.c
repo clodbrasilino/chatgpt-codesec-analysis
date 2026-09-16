@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_equal_pairs(const int *arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return 0;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 1, 2, 1};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    int pairs = count_equal_pairs(arr, size);
+    
+    printf("Number of equal element pairs: %d\n", pairs);
+
+    return 0;
+}

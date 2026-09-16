@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findPeakElement(const int *arr, size_t n)
+{
+    if (arr == NULL || n == 0) {
+        return -1;
+    }
+
+    size_t low = 0;
+    size_t high = n - 1;
+
+    while (low < high) {
+        size_t mid = low + (high - low) / 2;
+        if (arr[mid] < arr[mid + 1]) {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr[] = {1, 3, 20, 4, 1, 0};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    int peakIndex = findPeakElement(arr, n);
+
+    if (peakIndex < 0 || (size_t)peakIndex >= n) {
+        fprintf(stderr, "Invalid peak index computed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Peak element is %d at index %d\n", arr[peakIndex], peakIndex) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the always-false `n == 0` check in `main`**: Since `arr` is a fixed-size array with 6 elements, `sizeof(arr) / sizeof(arr[0])` is a compile-time constant of 6, making the condition dead code (as flagged by the static analyzer).
+
+2. **Moved the emptiness/validity check into `findPeakElement`**: The function now defensively validates its inputs (`NULL` pointer or `n == 0`) and returns `-1` as an error sentinel. This is the correct place for the check, since the function could be called with arbitrary arguments in other contexts, and it also prevents the `n - 1` underflow on `size_t` when `n == 0`.
+
+3. **Preserved the post-call validation**: The `peakIndex < 0 || (size_t)peakIndex >= n` check in `main` now serves a real purpose — it catches the `-1` error sentinel — so it is no longer redundant.

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+uint64_t entringer_number(int n, int k) {
+    if (n < 0 || k < 0 || k >= n) {
+        return 0;
+    }
+    
+    uint64_t *table = (uint64_t *)calloc((size_t)(n + 1), sizeof(uint64_t));
+    if (table == NULL) {
+        return 0;
+    }
+    
+    table[0] = 1;
+    
+    for (int i = 1; i <= n; i++) {
+        uint64_t *new_row = (uint64_t *)calloc((size_t)(i + 1), sizeof(uint64_t));
+        if (new_row == NULL) {
+            free(table);
+            return 0;
+        }
+        
+        for (int j = 0; j <= i; j++) {
+            if (j == 0) {
+                new_row[j] = 0;
+            } else {
+                new_row[j] = new_row[j - 1] + table[j - 1];
+            }
+        }
+        
+        free(table);
+        table = new_row;
+    }
+    
+    uint64_t result = table[k];
+    free(table);
+    return result;
+}
+
+int main(void) {
+    int n = 5;
+    int k = 2;
+    
+    uint64_t result = entringer_number(n, k);
+    printf("E(%d, %d) = %llu\n", n, k, (unsigned long long)result);
+    
+    return 0;
+}

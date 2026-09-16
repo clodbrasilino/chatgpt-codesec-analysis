@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-44-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-44-s2.c:67:32: style: Condition 'match_word_at_beginning(NULL,"hello")' is always false [knownConditionTrueFalse]
+    if (match_word_at_beginning(NULL, "hello")) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-44-s2.c:67:32: note: Calling function 'match_word_at_beginning' returns 0
+    if (match_word_at_beginning(NULL, "hello")) {
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-44-s2.c:67:32: note: Condition 'match_word_at_beginning(NULL,"hello")' is always false
+    if (match_word_at_beginning(NULL, "hello")) {
+                               ^

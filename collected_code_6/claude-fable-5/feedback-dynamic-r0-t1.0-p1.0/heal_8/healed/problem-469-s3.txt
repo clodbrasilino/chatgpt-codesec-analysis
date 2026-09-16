@@ -1,0 +1,108 @@
+## Analysis
+
+The algorithm implements the classic "Best Time to Buy and Sell Stock IV" problem (at most `k` transactions) using an O(k·n) DP with the `maxDiff` optimization plus the O(n) greedy shortcut when `k >= n/2`.
+
+Tracing the reported failures ("got 0", "got 5") against the code, the suspicious areas are:
+
+1. **Result read from the wrong buffer** — after the final `prev`/`curr` swap, the answer lives in `prev`. If it were read from `curr` (as in the buggy version the tests hit), the result would be the *previous* transaction count's value or a stale zeroed buffer, producing exactly the "got 0" / "got 5" symptoms.
+2. **Edge-guard correctness** — `prices == NULL`, `n <= 1`, `k <= 0` must return 0 without touching memory.
+3. **Buffer hygiene** — both buffers must be freed regardless of the swap parity, and allocation failures must not leak the first buffer.
+
+The rewritten version below reads the result from the correct buffer after the swap loop, keeps the greedy fast path, checks both allocations, and frees both pointers (safe regardless of how many swaps occurred).
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxProfit(int k, const int *prices, int n)
+{
+    int *prev;
+    int *curr;
+    int *tmp;
+    int t;
+    int d;
+    int maxDiff;
+    int result;
+
+    if (prices == NULL || n <= 1 || k <= 0) {
+        return 0;
+    }
+
+    if (k >= n / 2) {
+        result = 0;
+        for (d = 1; d < n; d++) {
+            if (prices[d] > prices[d - 1]) {
+                result += prices[d] - prices[d - 1];
+            }
+        }
+        return result;
+    }
+
+    prev = calloc((size_t)n, sizeof(int));
+    if (prev == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curr = calloc((size_t)n, sizeof(int));
+    if (curr == NULL) {
+        free(prev);
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (t = 1; t <= k; t++) {
+        maxDiff = prev[0] - prices[0];
+        curr[0] = 0;
+        for (d = 1; d < n; d++) {
+            curr[d] = curr[d - 1];
+            if (prices[d] + maxDiff > curr[d]) {
+                curr[d] = prices[d] + maxDiff;
+            }
+            if (prev[d] - prices[d] > maxDiff) {
+                maxDiff = prev[d] - prices[d];
+            }
+        }
+        tmp = prev;
+        prev = curr;
+        curr = tmp;
+    }
+
+    result = prev[n - 1];
+
+    free(prev);
+    free(curr);
+
+    return result;
+}
+
+int main(void)
+{
+    int prices1[] = {10, 22, 5, 75, 65, 80};
+    int prices2[] = {3, 2, 6, 5, 0, 3};
+    int prices3[] = {2, 4, 1};
+    int n1 = (int)(sizeof(prices1) / sizeof(prices1[0]));
+    int n2 = (int)(sizeof(prices2) / sizeof(prices2[0]));
+    int n3 = (int)(sizeof(prices3) / sizeof(prices3[0]));
+    int profit;
+
+    profit = maxProfit(2, prices1, n1);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices2, n2);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    profit = maxProfit(2, prices3, n3);
+    printf("Maximum profit with at most %d transactions: %d\n", 2, profit);
+
+    return EXIT_SUCCESS;
+}
+```
+
+## Verification against the failing test expectations
+
+- `maxProfit(2, {10,22,5,75,65,80}, 6)` → **87** (buy 10/sell 22, buy 5/sell 80)
+- `maxProfit(2, {3,2,6,5,0,3}, 6)` → **7** (buy 2/sell 6, buy 0/sell 3) — was "got 0", now correct
+- `maxProfit(2, {2,4,1}, 3)` → **2** (buy 2/sell 4) — was "got 0", now correct via the greedy fast path since `k >= n/2`
+
+The key correctness point is that after each iteration the buffers are swapped, so the final DP row is in `prev`, not `curr` — reading `prev[n - 1]` yields the correct answer for all `k`.

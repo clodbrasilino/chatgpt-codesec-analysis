@@ -3,32 +3,21 @@
 
 int multiply(int a, int b) {
     int result = 0;
-    int positive = 1;
-
-    if (b < 0) {
-        positive = -positive;
-        b = -b;
-    }
-
-    while (b > 0) {
+    int multiplier = (b < 0) ? -1 : 1;
+    while (b != 0) {
         if (b & 1) {
-            result += a;
+            result += a * multiplier;
         }
         a <<= 1;
         b >>= 1;
     }
-
-    return positive == 1 ? result : -result;
+    return result;
 }
 
 int main() {
-    int a, b;
-    printf("Enter two integers: ");
-    scanf("%d %d", &a, &b);
-
-    int result = multiply(a, b);
-    printf("Result: %d\n", result);
-
+    int a = 5;
+    int b = 6;
+    printf("%d * %d = %d\n", a, b, multiply(a, b));
     return 0;
 }
 ```

@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+long long sum_of_repeated_elements(const int *arr, size_t size) {
+    if (arr == NULL || size == 0) {
+        return 0;
+    }
+
+    bool *visited = (bool *)calloc(size, sizeof(bool));
+    if (visited == NULL) {
+        return 0; 
+    }
+
+    long long sum = 0;
+
+    for (size_t i = 0; i < size; i++) {
+        if (visited[i]) {
+            continue;
+        }
+
+        bool is_repeated = false;
+        for (size_t j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                is_repeated = true;
+                visited[j] = true;
+            }
+        }
+
+        if (is_repeated) {
+            sum += arr[i];
+        }
+    }
+
+    free(visited);
+    return sum;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 4, 5, 1, 6, 1};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+
+    long long result = sum_of_repeated_elements(arr, size);
+    
+    printf("%lld\n", result);
+
+    return 0;
+}

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double cylinder_volume(double radius, double height) {
+    if (radius <= 0.0 || height <= 0.0) {
+        return -1.0;
+    }
+    return M_PI * radius * radius * height;
+}
+
+int main(void) {
+    double radius, height, volume;
+    char input[128];
+    
+    printf("Enter radius: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    radius = strtod(input, NULL);
+    
+    printf("Enter height: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        return 1;
+    }
+    height = strtod(input, NULL);
+    
+    volume = cylinder_volume(radius, height);
+    
+    if (volume < 0.0) {
+        printf("Error: Radius and height must be positive values.\n");
+        return 1;
+    }
+    
+    printf("Volume of cylinder: %.2f\n", volume);
+    
+    return 0;
+}

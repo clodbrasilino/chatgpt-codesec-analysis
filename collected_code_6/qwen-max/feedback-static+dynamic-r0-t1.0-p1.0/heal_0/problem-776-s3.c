@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool is_vowel(char c) {
+    return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' ||
+           c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+}
+
+int count_characters_with_vowel_neighbors(const char *str) {
+    int count = 0;
+    size_t len = strlen(str);
+
+    for (size_t i = 1; i < len - 1; ++i) {
+        if (is_vowel(str[i - 1]) && is_vowel(str[i + 1])) {
+            count++;
+        }
+    }
+
+    if (len > 1) {
+        if (is_vowel(str[len - 2])) {
+            count++;
+        }
+        if (is_vowel(str[1])) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    const char *test_str = "example";
+    int result = count_characters_with_vowel_neighbors(test_str);
+    printf("Count: %d\n", result);
+    return 0;
+}

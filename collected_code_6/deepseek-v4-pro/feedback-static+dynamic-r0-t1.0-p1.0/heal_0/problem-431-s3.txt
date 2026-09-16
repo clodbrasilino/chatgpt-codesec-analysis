@@ -1,0 +1,71 @@
+```c
+#include <stdbool.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+bool haveCommonElement(struct ListNode *list1, struct ListNode *list2) {
+    for (struct ListNode *p = list1; p != NULL; p = p->next) {
+        for (struct ListNode *q = list2; q != NULL; q = q->next) {
+            if (p->val == q->val) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+struct ListNode *createNode(int val) {
+    struct ListNode *node = (struct ListNode *)malloc(sizeof(struct ListNode));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+struct ListNode *appendNode(struct ListNode *head, int val) {
+    struct ListNode *newNode = createNode(val);
+    if (head == NULL) {
+        return newNode;
+    }
+    struct ListNode *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+    return head;
+}
+
+void freeList(struct ListNode *head) {
+    while (head != NULL) {
+        struct ListNode *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    struct ListNode *list1 = NULL;
+    struct ListNode *list2 = NULL;
+
+    list1 = appendNode(list1, 1);
+    list1 = appendNode(list1, 2);
+    list1 = appendNode(list1, 3);
+
+    list2 = appendNode(list2, 4);
+    list2 = appendNode(list2, 5);
+    list2 = appendNode(list2, 3);
+
+    bool result = haveCommonElement(list1, list2);
+
+    freeList(list1);
+    freeList(list2);
+
+    return result ? 0 : 1;
+}
+```

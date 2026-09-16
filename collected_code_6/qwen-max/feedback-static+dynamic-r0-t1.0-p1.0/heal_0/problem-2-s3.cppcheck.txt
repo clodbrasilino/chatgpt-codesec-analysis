@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-2-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-2-s3.c:31:31: style: Condition 'size1>size2' is always false [knownConditionTrueFalse]
+    int maxResultSize = size1 > size2 ? size1 : size2;
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-2-s3.c:29:31: note: Assignment 'size1=sizeof(list1)/sizeof(list1[0])', assigned value is 3
+    int size1 = sizeof(list1) / sizeof(list1[0]);
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-2-s3.c:31:31: note: Condition 'size1>size2' is always false
+    int maxResultSize = size1 > size2 ? size1 : size2;
+                              ^

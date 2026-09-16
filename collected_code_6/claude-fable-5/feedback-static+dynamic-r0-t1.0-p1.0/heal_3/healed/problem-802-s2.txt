@@ -1,0 +1,82 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid;
+
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result != 2) {
+        fprintf(stderr, "Error computing rotations for arr1: expected 2, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result != 4) {
+        fprintf(stderr, "Error computing rotations for arr2: expected 4, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result != 0) {
+        fprintf(stderr, "Error computing rotations for arr3: expected 0, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes on the original code and the reported weakness:
+
+The comment claimed test case 1 returned 3 instead of 2. Tracing the algorithm as written against `{15, 18, 2, 3, 6, 12}`:
+
+1. `low=0, high=5`: `arr[0]=15 > arr[5]=12`, so no early return. `mid=2`, `arr[2]=2 <= arr[5]=12`, so `high=2`.
+2. `low=0, high=2`: `arr[0]=15 > arr[2]=2`. `mid=1`, `arr[1]=18 > arr[2]=2`, so `low=2`.
+3. `low == high`, loop exits, returns `2`. Correct.
+
+The failure described in the comment is characteristic of an earlier buggy revision — typically caused by one of these classic mistakes:
+
+- Using `low = mid` instead of `low = mid + 1U` (infinite loop or off-by-one).
+- Comparing `arr[mid] >= arr[high]` instead of strict `>`, which mishandles the pivot itself and can overshoot by one (yielding 3 instead of 2).
+- Computing `mid` as `(low + high + 1) / 2` biasing toward the upper half.
+
+The rewritten version above keeps the correct invariants: `arr[mid] > arr[high]` guarantees the pivot lies strictly right of `mid` (hence `low = mid + 1`), while otherwise the pivot is at `mid` or left of it (hence `high = mid`). The `arr[low] <= arr[high]` early-exit correctly handles already-sorted subranges, including the unrotated `arr3` case. The `size_t` midpoint calculation `low + (high - low) / 2` also avoids any overflow concerns.

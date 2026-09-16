@@ -1,0 +1,83 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long maxSubarraySumRepeated(const int *arr, size_t n, int k)
+{
+    long long total;
+    long long best;
+    long long cur;
+    size_t len;
+    size_t i;
+
+    if (arr == NULL || n == 0U || k <= 0) {
+        return 0LL;
+    }
+
+    total = 0LL;
+    for (i = 0U; i < n; i++) {
+        total += (long long)arr[i];
+    }
+
+    len = (k >= 2) ? (n * 2U) : n;
+    best = LLONG_MIN;
+    cur = 0LL;
+
+    for (i = 0U; i < len; i++) {
+        const long long v = (long long)arr[i % n];
+        if (cur > 0LL) {
+            cur = cur + v;
+        } else {
+            cur = v;
+        }
+        if (cur > best) {
+            best = cur;
+        }
+    }
+
+    if ((k > 2) && (total > 0LL)) {
+        best += (long long)(k - 2) * total;
+    }
+
+    return best;
+}
+
+static int runTest(const int *arr, size_t n, int k)
+{
+    long long result;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    result = maxSubarraySumRepeated(arr, n, k);
+    if (printf("Largest contiguous sum with k=%d: %lld\n", k, result) < 0) {
+        return -1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    static const int arr1[] = { 10, 20, -30, -1 };
+    static const int arr2[] = { -1, 10, 20 };
+    static const int arr3[] = { -5, -2, -8 };
+    static const int arr4[] = { 1, 2 };
+
+    if (runTest(arr1, sizeof(arr1) / sizeof(arr1[0]), 2) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (runTest(arr2, sizeof(arr2) / sizeof(arr2[0]), 2) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (runTest(arr3, sizeof(arr3) / sizeof(arr3[0]), 3) != 0) {
+        return EXIT_FAILURE;
+    }
+    if (runTest(arr4, sizeof(arr4) / sizeof(arr4[0]), 5) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

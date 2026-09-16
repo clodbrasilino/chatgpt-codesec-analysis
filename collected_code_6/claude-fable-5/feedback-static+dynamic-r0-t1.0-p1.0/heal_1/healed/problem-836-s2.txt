@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+size_t max_sum_subarray_length(const long long *arr, size_t n)
+{
+    long long max_sum;
+    long long current_sum;
+    size_t max_len;
+    size_t current_len;
+    size_t i;
+
+    if (arr == NULL || n == 0U) {
+        return 0U;
+    }
+
+    max_sum = arr[0];
+    current_sum = arr[0];
+    max_len = 1U;
+    current_len = 1U;
+
+    for (i = 1U; i < n; i++) {
+        if (current_sum < 0LL) {
+            current_sum = arr[i];
+            current_len = 1U;
+        } else if (arr[i] > 0LL && current_sum > LLONG_MAX - arr[i]) {
+            current_sum = LLONG_MAX;
+            current_len++;
+        } else {
+            current_sum += arr[i];
+            current_len++;
+        }
+
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+            max_len = current_len;
+        } else if (current_sum == max_sum && current_len > max_len) {
+            max_len = current_len;
+        }
+    }
+
+    return max_len;
+}
+
+int main(void)
+{
+    long long arr[] = { -2LL, 1LL, -3LL, 4LL, -1LL, 2LL, 1LL, -5LL, 4LL };
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    size_t result;
+
+    result = max_sum_subarray_length(arr, n);
+
+    if (result == 0U) {
+        if (printf("Invalid input or empty array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Length of subarray with maximum sum: %zu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key changes:**
+
+1. **`invalidTestForOverflow` fixed:** The original test `current_sum + arr[i] < arr[i]` relies on signed integer overflow to detect wrap-around, which is undefined behavior in C. Optimizing compilers (GCC, Clang with `-O2`) legally rewrite it to `current_sum < 0LL`, so I made that transformation explicit and well-defined. This is also the mathematically correct Kadane's condition: restart the subarray when the running sum is negative.
+
+2. **Remaining overflow hazard closed:** Even with the corrected condition, `current_sum += arr[i]` could still overflow when both operands are large and positive. The guard `arr[i] > 0LL && current_sum > LLONG_MAX - arr[i]` detects this *before* the addition (using only well-defined arithmetic, since `LLONG_MAX - arr[i]` cannot underflow when `arr[i] > 0`) and saturates the sum at `LLONG_MAX` instead of invoking UB. Underflow toward `LLONG_MIN` is impossible on that branch because `current_sum >= 0` is guaranteed there.
+
+3. Everything else (NULL/zero-length guard, `printf` return-value checks, `EXIT_SUCCESS`/`EXIT_FAILURE` usage, `%zu` for `size_t`) was already correct and is preserved.

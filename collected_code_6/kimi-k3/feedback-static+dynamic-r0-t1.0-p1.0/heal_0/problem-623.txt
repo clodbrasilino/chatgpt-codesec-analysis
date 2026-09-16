@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double *nth_power(const double *list, size_t size, int n)
+{
+    double *result;
+    size_t i;
+
+    if (list == NULL || size == 0)
+    {
+        return NULL;
+    }
+
+    result = (double *)malloc(size * sizeof(double));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        result[i] = pow(list[i], n);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    double list[] = {1.0, 2.0, 3.0, 4.0, 5.0};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int n = 2;
+    double *result;
+    size_t i;
+
+    result = nth_power(list, size, n);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: Failed to compute nth power.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original list: ");
+    for (i = 0; i < size; i++)
+    {
+        printf("%.2f ", list[i]);
+    }
+    printf("\n");
+
+    printf("List raised to the power of %d: ", n);
+    for (i = 0; i < size; i++)
+    {
+        printf("%.2f ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+int count_xor_even_pairs(int arr[], int n) {
+    int even_count = 0, odd_count = 0;
+    for (int i = 0; i < n; ++i) {
+        if (arr[i] % 2 == 0) {
+            even_count++;
+        } else {
+            odd_count++;
+        }
+    }
+    return even_count * (even_count - 1) / 2 + odd_count * (odd_count - 1) / 2;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    printf("%d\n", count_xor_even_pairs(arr, n));
+    return 0;
+}

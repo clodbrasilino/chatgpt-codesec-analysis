@@ -1,0 +1,35 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_jumps(int d, int j1, int j2, int j3) {
+    if (d < 0) d = -d;
+    
+    int max_jump = j1;
+    if (j2 > max_jump) max_jump = j2;
+    if (j3 > max_jump) max_jump = j3;
+    
+    if (d == 0) return 0;
+    if (d == j1 || d == j2 || d == j3) return 1;
+    
+    if (max_jump >= d) return 2;
+    
+    int jumps = d / max_jump;
+    int rem = d % max_jump;
+    
+    if (rem == 0) return jumps;
+    return jumps + 1;
+}
+
+int main(void) {
+    int d = 10;
+    int j1 = 2;
+    int j2 = 3;
+    int j3 = 4;
+    
+    int result = min_jumps(d, j1, j2, j3);
+    printf("%d\n", result);
+    
+    return 0;
+}
+```

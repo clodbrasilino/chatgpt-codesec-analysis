@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+Tuple maximize_tuples(const Tuple *a, const Tuple *b) {
+    Tuple result = {0, 0};
+    if (a == NULL || b == NULL) {
+        return result;
+    }
+    result.first = (a->first > b->first) ? a->first : b->first;
+    result.second = (a->second > b->second) ? a->second : b->second;
+    return result;
+}
+
+int main(void) {
+    Tuple t1 = {6, 7};
+    Tuple t2 = {5, 9};
+    Tuple result;
+
+    result = maximize_tuples(&t1, &t2);
+
+    if (printf("Maximized tuple: (%d, %d)\n", result.first, result.second) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

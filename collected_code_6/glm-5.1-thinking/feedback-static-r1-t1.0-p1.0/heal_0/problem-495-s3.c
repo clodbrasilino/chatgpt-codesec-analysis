@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_lowercase_substrings(const char *str) {
+    regex_t regex;
+    int ret = regcomp(&regex, "[[:lower:]]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    const char *p = str;
+    size_t out_idx = 0;
+    regmatch_t match;
+
+    while (1) {
+        ret = regexec(&regex, p, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            strcpy(result + out_idx, p);
+            out_idx += strlen(p);
+            break;
+        }
+
+        if (match.rm_so > 0) {
+            memcpy(result + out_idx, p, match.rm_so);
+            out_idx += match.rm_so;
+        }
+
+        p += match.rm_eo;
+    }
+
+    result[out_idx] = '\0';
+    regfree(&regex);
+
+    char *shrunk = realloc(result, out_idx + 1);
+    return shrunk != NULL ? shrunk : result;
+}
+
+int main(void) {
+    const char *input = "HelloWorldABCdefGHI";
+    char *output = remove_lowercase_substrings(input);
+    
+    if (output != NULL) {
+        printf("Original: %s\nResult: %s\n", input, output);
+        free(output);
+    } else {
+        fprintf(stderr, "Memory allocation or regex compilation failed\n");
+        return 1;
+    }
+    
+    return 0;
+}

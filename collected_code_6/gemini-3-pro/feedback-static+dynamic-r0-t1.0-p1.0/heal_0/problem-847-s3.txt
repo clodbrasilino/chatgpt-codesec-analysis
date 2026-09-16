@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Tuple {
+    Node* list;
+} Tuple;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+Node* copy_list_from_tuple(const Tuple* tuple) {
+    if (!tuple || !tuple->list) {
+        return NULL;
+    }
+
+    Node* copied_list = NULL;
+    Node* current_copied = NULL;
+    Node* current_original = tuple->list;
+
+    while (current_original) {
+        Node* new_node = create_node(current_original->data);
+
+        if (!copied_list) {
+            copied_list = new_node;
+            current_copied = copied_list;
+        } else {
+            current_copied->next = new_node;
+            current_copied = current_copied->next;
+        }
+        current_original = current_original->next;
+    }
+
+    return copied_list;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current) {
+        Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    Tuple my_tuple;
+    my_tuple.list = create_node(1);
+    my_tuple.list->next = create_node(2);
+    my_tuple.list->next->next = create_node(3);
+
+    Node* copied = copy_list_from_tuple(&my_tuple);
+
+    Node* current = copied;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+
+    free_list(my_tuple.list);
+    free_list(copied);
+
+    return EXIT_SUCCESS;
+}
+```

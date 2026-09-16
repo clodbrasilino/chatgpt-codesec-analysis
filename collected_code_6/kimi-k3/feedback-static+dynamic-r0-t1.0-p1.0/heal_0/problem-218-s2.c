@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_VAL 10000
+
+int minOperations(int src, int target) {
+    if (src == target) {
+        return 0;
+    }
+    
+    if (src <= 0 || target <= 0 || src > MAX_VAL || target > MAX_VAL) {
+        return -1;
+    }
+    
+    int visited[MAX_VAL + 1] = {0};
+    int queue[MAX_VAL + 1];
+    int front = 0;
+    int rear = 0;
+    int operations = 0;
+    
+    queue[rear++] = src;
+    visited[src] = 1;
+    
+    while (front < rear) {
+        int size = rear - front;
+        
+        for (int i = 0; i < size; i++) {
+            int current = queue[front++];
+            
+            if (current == target) {
+                return operations;
+            }
+            
+            int next = current * 2;
+            if (next <= MAX_VAL && !visited[next]) {
+                visited[next] = 1;
+                queue[rear++] = next;
+            }
+            
+            next = current - 1;
+            if (next > 0 && !visited[next]) {
+                visited[next] = 1;
+                queue[rear++] = next;
+            }
+        }
+        
+        operations++;
+    }
+    
+    return -1;
+}
+
+int main(void) {
+    int src, target;
+    
+    printf("Enter source number: ");
+    if (scanf("%d", &src) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter target number: ");
+    if (scanf("%d", &target) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = minOperations(src, target);
+    
+    if (result == -1) {
+        printf("Cannot reach target from source\n");
+    } else {
+        printf("Minimum operations: %d\n", result);
+    }
+    
+    return EXIT_SUCCESS;
+}

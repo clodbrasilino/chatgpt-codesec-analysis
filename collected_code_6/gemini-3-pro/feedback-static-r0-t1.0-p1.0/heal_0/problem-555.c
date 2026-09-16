@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long calculate_difference(int n) {
+    if (n < 0) {
+        return 0;
+    }
+    
+    unsigned long long sum_of_n = 0;
+    unsigned long long sum_of_cubes = 0;
+    unsigned long long i;
+    
+    for (i = 1; i <= (unsigned long long)n; i++) {
+        sum_of_n += i;
+        sum_of_cubes += i * i * i;
+    }
+    
+    return sum_of_cubes - sum_of_n;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = calculate_difference(n);
+    printf("%llu\n", result);
+    
+    return EXIT_SUCCESS;
+}

@@ -3,89 +3,84 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAX_WORDS 1000
-#define MAX_WORD_LENGTH 100
+#define MAX_WORDS 1024
+#define MAX_WORD_LENGTH 64
 
 typedef struct {
-    char word[MAX_WORD_LENGTH];
-    bool exists;
-} Word;
+    char words[MAX_WORDS][MAX_WORD_LENGTH];
+    int count;
+} WordSet;
 
-Word dictionary[MAX_WORDS] = {0};
-
-int add_word(const char *word) {
-    for (int i = 0; i < MAX_WORDS; ++i) {
-        if (!dictionary[i].exists) {
-            strncpy(dictionary[i].word, word, MAX_WORD_LENGTH - 1);
-            dictionary[i].word[MAX_WORD_LENGTH - 1] = '\0';
-            dictionary[i].exists = true;
-            return i;
-        }
-    }
-    return -1;
+void init_word_set(WordSet *set) {
+    set->count = 0;
 }
 
-bool is_duplicate(const char *word) {
-    for (int i = 0; i < MAX_WORDS; ++i) {
-        if (dictionary[i].exists && strcmp(dictionary[i].word, word) == 0) {
-            return true;
-        }
+bool add_word(WordSet *set, const char *word) {
+    if (set->count >= MAX_WORDS) return false;
+    for (int i = 0; i < set->count; i++) {
+        if (strcmp(set->words[i], word) == 0) return true;
     }
-    return false;
+    strncpy(set->words[set->count], word, MAX_WORD_LENGTH - 1);
+    set->words[set->count][MAX_WORD_LENGTH - 1] = '\0';
+    set->count++;
+    return true;
 }
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'Python Exercises Practice Solution', got <no output>
-  *  test case 0 failed: expected 'Python Exercises Practice Solution', got <no output>
-  *  test case 2 failed: expected 'Python Exercises Practice Solution', got <no output>
+  *  test case 0 failed: expected 'Python Exercises Practice Solution', got Python Exercises Practice Solution Exercises
+  *  test case 1 failed: expected 'Python Exercises Practice Solution', got Python Exercises Practice Solution Python
+  *  test case 2 failed: expected 'Python Exercises Practice Solution', got Python Exercises Practice Solution Practice
   */
 
-char* remove_duplicates(char *input) {
-    if (input == NULL) return NULL;
-
-    char *output = (char *)malloc(strlen(input) * 2 + 1);
-    if (output == NULL) return NULL;
-
-    output[0] = '\0';
-    char *token = strtok(input, " ");
-    int output_index = 0;
-
+char* remove_duplicates(const char *input) {
+    WordSet set;
+    init_word_set(&set);
+    char *token, *output = NULL, *temp = strdup(input);
+    token = strtok(temp, " ");
     while (token != NULL) {
-        if (!is_duplicate(token)) {
-            int len = strlen(token);
-            strncat(output, token, len);
-            if (output_index + len < strlen(input) * 2) {
-                output[output_index + len] = ' ';
-                output_index += len + 1;
+        if (add_word(&set, token)) {
+            if (output == NULL) {
+                output = malloc(strlen(token) + 2);
+                if (output == NULL) goto cleanup;
+                sprintf(output, "%s ", token);
+            } else {
+                int new_len = strlen(output) + strlen(token) + 2;
+                char *new_output = realloc(output, new_len);
+                if (new_output == NULL) goto cleanup;
+                output = new_output;
+                sprintf(output + strlen(output), "%s ", token);
             }
-            add_word(token);
         }
         token = strtok(NULL, " ");
     }
-
-    if (output_index > 0 && output[output_index - 1] == ' ') {
-        output[output_index - 1] = '\0';
-    } else if (output_index == 0) {
-        output[0] = '\0';
+    if (output) {
+        output[strlen(output) - 1] = '\0';
+        char *result = strdup(output);
+        free(output);
+        free(temp);
+        return result;
     }
-
-    return output;
+cleanup:
+    free(output);
+    free(temp);
+    return NULL;
 }
 
 int main() {
-    char input[] = "Python Exercises Practice Solution";
+    const char *input = "Python Exercises Practice Solution";
     char *result = remove_duplicates(input);
-    printf("%s\n", result);
-    free(result);
-
-    input[0] = '\0';
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("Error: Allocation failed.\n");
+    }
+    input = "this is a test this is only a test";
     result = remove_duplicates(input);
-    printf("%s\n", result == NULL ? "" : result);
-    free(result);
-
-    strcpy(input, "Python Exercises Practice Solution");
-    result = remove_duplicates(input);
-    printf("%s\n", result);
-    free(result);
-
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    } else {
+        printf("Error: Allocation failed.\n");
+    }
     return 0;
 }

@@ -1,0 +1,68 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+#include <stddef.h>
+
+long long max_subarray_sum(const int *arr, size_t n, int *status)
+{
+    if (arr == NULL || n == 0U || status == NULL) {
+        if (status != NULL) {
+            *status = -1;
+        }
+        return 0;
+    }
+
+    long long best = (long long)arr[0];
+    long long current = (long long)arr[0];
+
+    for (size_t i = 1U; i < n; i++) {
+        long long value = (long long)arr[i];
+
+        if (current > 0) {
+            if (value > 0 && current > LLONG_MAX - value) {
+                *status = -2;
+                return 0;
+            }
+            current = current + value;
+        } else {
+            current = value;
+        }
+
+        if (current > best) {
+            best = current;
+        }
+    }
+
+    *status = 0;
+    return best;
+}
+
+int main(void)
+{
+    int data[] = { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+    size_t n = sizeof(data) / sizeof(data[0]);
+    int status = 0;
+
+    long long result = max_subarray_sum(data, n, &status);
+
+    if (status != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return 1;
+        }
+        return 1;
+    }
+
+    if (printf("Largest contiguous subarray sum: %lld\n", result) < 0) {
+        return 1;
+    }
+
+    return 0;
+}
+```
+
+The key change addresses the flagged weakness: the original test `current + value > value` performs the addition *before* checking, meaning a signed overflow (undefined behavior) can occur during the very check meant to guard against it. Optimizing compilers are permitted to assume signed overflow never happens and may reduce that condition to `current > 0`, silently removing any intended protection.
+
+The rewrite:
+
+1. Uses the well-defined Kadane condition `current > 0` directly, which is the semantically correct decision (extend the subarray only if the running sum is positive).
+2. Adds a genuine pre-addition overflow guard (`current > LLONG_MAX - value`) that detects potential overflow *without* ever performing an overflowing operation, reporting it via a distinct status code `-2`. An underflow check is unnecessary since `current` is only added to when it is positive and `value` only when it is positive.

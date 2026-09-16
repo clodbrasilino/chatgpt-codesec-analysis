@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:106:17: style: Condition 'result3==NULL' is always true [knownConditionTrueFalse]
+    if (result3 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:105:44: note: Calling function 'remove_non_alphanumeric' returns 0
+    char *result3 = remove_non_alphanumeric(NULL);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:105:44: note: Assignment 'result3=remove_non_alphanumeric(NULL)', assigned value is 0
+    char *result3 = remove_non_alphanumeric(NULL);
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:106:17: note: Condition 'result3==NULL' is always true
+    if (result3 == NULL) {
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:105:11: style: Variable 'result3' can be declared as pointer to const [constVariablePointer]
+    char *result3 = remove_non_alphanumeric(NULL);
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-676-s3.c:65:26: style: Variable 'match_len' is assigned a value that is never used. [unreadVariable]
+        size_t match_len = matches[0].rm_eo - matches[0].rm_so;
+                         ^

@@ -1,0 +1,30 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void calculate_sum_and_average(unsigned int n, unsigned long long *sum, double *average) {
+    if (sum == NULL || average == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    *sum = (unsigned long long)n * (n + 1) / 2;
+    *average = n > 0 ? (double)*sum / n : 0.0;
+}
+
+int main(void) {
+    unsigned int n;
+    unsigned long long sum = 0;
+    double average = 0.0;
+
+    if (scanf("%u", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    calculate_sum_and_average(n, &sum, &average);
+
+    printf("Sum: %llu\n", sum);
+    printf("Average: %.2f\n", average);
+
+    return EXIT_SUCCESS;
+}
+```

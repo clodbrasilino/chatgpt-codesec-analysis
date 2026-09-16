@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count01 = 0;
+    int count10 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') ||
+            (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '0') {
+                count01++;
+            } else {
+                count10++;
+            }
+        }
+    }
+
+    if (count01 != count10) {
+        return -1;
+    }
+
+    return count01;
+}
+
+void print_result(const char *s1, const char *s2)
+{
+    int result;
+
+    result = min_swaps(s1, s2);
+
+    if (result < 0) {
+        printf("Not Possible\n");
+    } else {
+        printf("Minimum swaps required: %d\n", result);
+    }
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    const char *c = "1100";
+    const char *d = "0011";
+    const char *e = "110";
+    const char *f = "1011";
+    const char *g = "111";
+    const char *h = "000";
+
+    print_result(a, b);
+    print_result(c, d);
+    print_result(e, f);
+    print_result(g, h);
+    print_result(NULL, b);
+
+    return 0;
+}
+```
+
+The key fix here addresses the weakness noted in the original comment: the raw `-1` sentinel value must never leak to the output. All error conditions (`NULL` pointers, mismatched lengths, non-binary characters, and unbalanced mismatch counts) funnel through the single negative return value, and `print_result` is the only place that interprets it, translating any negative result into the expected `"Not Possible"` string rather than exposing the internal error code. Test case 1 (`"1101"` vs `"1011"`) now correctly produces `Minimum swaps required: 1`, while the length-mismatch, unbalanced, and `NULL` cases all print `Not Possible`.

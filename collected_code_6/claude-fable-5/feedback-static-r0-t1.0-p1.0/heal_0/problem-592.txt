@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long binomialCoeff(unsigned int n, unsigned int k)
+{
+    unsigned long long res = 1ULL;
+    unsigned int i;
+
+    if (k > n) {
+        return 0ULL;
+    }
+    if (k > (n - k)) {
+        k = n - k;
+    }
+    for (i = 0U; i < k; i++) {
+        res = (res * (unsigned long long)(n - i)) / (unsigned long long)(i + 1U);
+    }
+    return res;
+}
+
+static int sumOfProductOfBinomials(unsigned int n, unsigned long long *result)
+{
+    if (result == NULL) {
+        return -1;
+    }
+    if (n > 31U) {
+        return -1;
+    }
+    if (n == 0U) {
+        *result = 0ULL;
+        return 0;
+    }
+    *result = binomialCoeff(2U * n, n - 1U);
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    unsigned long long answer = 0ULL;
+    int scanResult;
+
+    printf("Enter n (0 to 31): ");
+    scanResult = scanf("%u", &n);
+    if (scanResult != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (sumOfProductOfBinomials(n, &answer) != 0) {
+        fprintf(stderr, "Error: n out of supported range.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Sum of product of binomial coefficients for n = %u is %llu\n", n, answer);
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+This program computes the sum of products of consecutive binomial coefficients:
+
+$$\sum_{i=0}^{n-1} \binom{n}{i}\binom{n}{i+1} = \binom{2n}{n-1}$$
+
+Using the Vandermonde identity, the entire sum collapses to a single binomial coefficient, so no loop over products is needed.
+
+**Safety measures taken (per the CWE requirements):**
+
+- **CWE-703**: The return value of `scanf` is checked, the output pointer is validated for `NULL`, and error paths return `EXIT_FAILURE` with messages to `stderr`.
+- **CWE-664 / overflow control**: Input is capped at `n = 31` so that `C(62, 30)` fits safely within `unsigned long long`, and the binomial computation divides at each step to keep intermediate values minimal.
+- **CWE-710**: All variables are initialized, functions have internal linkage where appropriate (`static`), `main` uses the standard `(void)` signature, and unsigned arithmetic underflow (the `n == 0` case) is explicitly handled before computing `n - 1`.

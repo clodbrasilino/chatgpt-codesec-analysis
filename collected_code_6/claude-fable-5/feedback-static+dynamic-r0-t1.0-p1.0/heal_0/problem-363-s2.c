@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int add_k_to_tuple(const int *input, size_t length, int k, int *output)
+{
+    size_t i;
+
+    if (input == NULL || output == NULL || length == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < length; i++) {
+        output[i] = input[i] + k;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int tuple[] = {1, 3, 4, 5, 6};
+    size_t length = sizeof(tuple) / sizeof(tuple[0]);
+    int k = 4;
+    int *result;
+    size_t i;
+
+    result = malloc(length * sizeof(int));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (add_k_to_tuple(tuple, length, k, result) != 0) {
+        fprintf(stderr, "Invalid input\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("Original tuple: (");
+    for (i = 0U; i < length; i++) {
+        printf("%d", tuple[i]);
+        if (i < length - 1U) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    printf("Result tuple: (");
+    for (i = 0U; i < length; i++) {
+        printf("%d", result[i]);
+        if (i < length - 1U) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}

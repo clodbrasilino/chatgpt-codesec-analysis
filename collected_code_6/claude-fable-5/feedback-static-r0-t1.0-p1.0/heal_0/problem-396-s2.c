@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int starts_ends_same(const char *str, int *result)
+{
+    regex_t re;
+    int rc;
+
+    if (str == NULL || result == NULL) {
+        return -1;
+    }
+
+    if (str[0] == '\0') {
+        *result = 0;
+        return 0;
+    }
+
+    rc = regcomp(&re, "^\\(.\\)\\(.*\\1\\)\\{0,1\\}$", 0);
+    if (rc != 0) {
+        return -1;
+    }
+
+    rc = regexec(&re, str, 0, NULL, 0);
+    regfree(&re);
+
+    if (rc == 0) {
+        *result = 1;
+        return 0;
+    }
+
+    if (rc == REG_NOMATCH) {
+        *result = 0;
+        return 0;
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    const char *tests[] = { "abca", "aba", "a", "abc", "", "racecar", "hello" };
+    size_t count = sizeof(tests) / sizeof(tests[0]);
+    size_t i;
+    int result;
+
+    for (i = 0; i < count; i++) {
+        if (starts_ends_same(tests[i], &result) != 0) {
+            fprintf(stderr, "Error processing string: \"%s\"\n", tests[i]);
+            return EXIT_FAILURE;
+        }
+        if (result == 1) {
+            printf("\"%s\": starts and ends with the same character\n", tests[i]);
+        } else {
+            printf("\"%s\": does not start and end with the same character\n", tests[i]);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

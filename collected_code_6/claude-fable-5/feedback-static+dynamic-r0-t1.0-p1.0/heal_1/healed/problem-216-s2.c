@@ -1,0 +1,238 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum { NODE_INT, NODE_LIST } NodeType;
+
+typedef struct Node {
+    NodeType type;
+    int value;
+    struct Node *child;
+    struct Node *next;
+} Node;
+
+static Node *create_int_node(int value);
+static Node *create_list_node(Node *child);
+static bool append_node(Node **head, Node *node);
+static bool append_int(Node **head, int value);
+static bool append_list(Node **head, Node *child);
+static bool nodes_equal(const Node *a, const Node *b);
+static bool lists_equal(const Node *a, const Node *b);
+static bool list_contains(const Node *list, const Node *elem);
+static bool is_subset(const Node *sub, const Node *super);
+static void free_list(Node *head);
+static void print_list(const Node *head);
+
+static Node *create_int_node(int value)
+{
+    Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = NODE_INT;
+    node->value = value;
+    node->child = NULL;
+    node->next = NULL;
+    return node;
+}
+
+static Node *create_list_node(Node *child)
+{
+    Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = NODE_LIST;
+    node->value = 0;
+    node->child = child;
+    node->next = NULL;
+    return node;
+}
+
+static bool append_node(Node **head, Node *node)
+{
+    Node *cur;
+
+    if (head == NULL || node == NULL) {
+        return false;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return true;
+    }
+    cur = *head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return true;
+}
+
+static bool append_int(Node **head, int value)
+{
+    Node *node = create_int_node(value);
+
+    if (node == NULL) {
+        return false;
+    }
+    if (!append_node(head, node)) {
+        free(node);
+        return false;
+    }
+    return true;
+}
+
+static bool append_list(Node **head, Node *child)
+{
+    Node *node = create_list_node(child);
+
+    if (node == NULL) {
+        return false;
+    }
+    if (!append_node(head, node)) {
+        free(node);
+        return false;
+    }
+    return true;
+}
+
+static bool nodes_equal(const Node *a, const Node *b)
+{
+    if (a == NULL || b == NULL) {
+        return a == b;
+    }
+    if (a->type != b->type) {
+        return false;
+    }
+    if (a->type == NODE_INT) {
+        return a->value == b->value;
+    }
+    return lists_equal(a->child, b->child);
+}
+
+static bool lists_equal(const Node *a, const Node *b)
+{
+    while (a != NULL && b != NULL) {
+        if (!nodes_equal(a, b)) {
+            return false;
+        }
+        a = a->next;
+        b = b->next;
+    }
+    return a == NULL && b == NULL;
+}
+
+static bool list_contains(const Node *list, const Node *elem)
+{
+    const Node *cur;
+
+    for (cur = list; cur != NULL; cur = cur->next) {
+        if (nodes_equal(cur, elem)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool is_subset(const Node *sub, const Node *super)
+{
+    const Node *cur;
+
+    for (cur = sub; cur != NULL; cur = cur->next) {
+        if (!list_contains(super, cur)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+static void free_list(Node *head)
+{
+    Node *next;
+
+    while (head != NULL) {
+        next = head->next;
+        if (head->type == NODE_LIST) {
+            free_list(head->child);
+        }
+        free(head);
+        head = next;
+    }
+}
+
+static void print_list(const Node *head)
+{
+    const Node *cur;
+
+    printf("[");
+    for (cur = head; cur != NULL; cur = cur->next) {
+        if (cur->type == NODE_INT) {
+            printf("%d", cur->value);
+        } else {
+            print_list(cur->child);
+        }
+        if (cur->next != NULL) {
+            printf(", ");
+        }
+    }
+    printf("]");
+}
+
+int main(void)
+{
+    Node *list_a = NULL;
+    Node *list_b = NULL;
+    Node *inner_a = NULL;
+    Node *inner_b = NULL;
+
+    if (!append_int(&list_a, 1) || !append_int(&list_a, 2)) {
+        free_list(list_a);
+        return EXIT_FAILURE;
+    }
+    if (!append_int(&inner_a, 3) || !append_int(&inner_a, 4)) {
+        free_list(list_a);
+        free_list(inner_a);
+        return EXIT_FAILURE;
+    }
+    if (!append_list(&list_a, inner_a)) {
+        free_list(list_a);
+        free_list(inner_a);
+        return EXIT_FAILURE;
+    }
+
+    if (!append_int(&list_b, 2) || !append_int(&list_b, 1) || !append_int(&list_b, 5)) {
+        free_list(list_a);
+        free_list(list_b);
+        return EXIT_FAILURE;
+    }
+    if (!append_int(&inner_b, 3) || !append_int(&inner_b, 4)) {
+        free_list(list_a);
+        free_list(list_b);
+        free_list(inner_b);
+        return EXIT_FAILURE;
+    }
+    if (!append_list(&list_b, inner_b)) {
+        free_list(list_a);
+        free_list(list_b);
+        free_list(inner_b);
+        return EXIT_FAILURE;
+    }
+
+    printf("List A: ");
+    print_list(list_a);
+    printf("\n");
+
+    printf("List B: ");
+    print_list(list_b);
+    printf("\n");
+
+    printf("A equals B: %s\n", lists_equal(list_a, list_b) ? "true" : "false");
+    printf("A subset of B: %s\n", is_subset(list_a, list_b) ? "true" : "false");
+    printf("B subset of A: %s\n", is_subset(list_b, list_a) ? "true" : "false");
+
+    free_list(list_a);
+    free_list(list_b);
+    return EXIT_SUCCESS;
+}

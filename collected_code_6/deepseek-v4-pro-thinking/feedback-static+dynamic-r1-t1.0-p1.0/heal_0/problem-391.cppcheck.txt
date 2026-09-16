@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-391.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-391.c:75:56: style: Parameter 'depths' can be declared as pointer to const [constParameterPointer]
+DictNode *lists_to_nested_dict(char ***key_lists, int *depths, int *values, int count) {
+                                                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-391.c:75:69: style: Parameter 'values' can be declared as pointer to const [constParameterPointer]
+DictNode *lists_to_nested_dict(char ***key_lists, int *depths, int *values, int count) {
+                                                                    ^

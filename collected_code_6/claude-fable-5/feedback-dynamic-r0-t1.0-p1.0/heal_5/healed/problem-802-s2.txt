@@ -1,0 +1,74 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+    size_t mid;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr1\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr2\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result < 0) {
+        fprintf(stderr, "Error computing rotations for arr3\n");
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Analysis notes: The comment flagged a failure where test case 1 (`arr1`) was expected to return 2 (the index of the minimum element, 2, which equals the rotation count) but a prior version returned 3. That typically happens when the binary search uses `low = mid` instead of `low = mid + 1`, or `high = mid - 1` instead of `high = mid`, causing off-by-one convergence errors or skipping over the pivot.
+
+The version above uses the correct invariant-preserving updates:
+
+- `low = mid + 1U` when `arr[mid] > arr[high]` (the pivot lies strictly to the right of `mid`).
+- `high = mid` when `arr[mid] <= arr[high]` (the pivot is at `mid` or to its left, so `mid` must remain in range).
+
+Verified behavior: `arr1` returns 2, `arr2` returns 4, `arr3` returns 0. The function also safely handles `NULL` input and zero-length arrays, avoids the `n - 1` underflow on `size_t` by checking `n == 0U` first, and uses overflow-safe midpoint computation (`low + (high - low) / 2`).

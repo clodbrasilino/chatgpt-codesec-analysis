@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int is_even(int number);
+
+int is_even(int number)
+{
+    return ((number & 1) == 0);
+}
+
+int main(void)
+{
+    int number = 0;
+    int result = 0;
+
+    printf("Enter an integer: ");
+
+    result = scanf("%d", &number);
+    if (result != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_even(number))
+    {
+        printf("%d is even.\n", number);
+    }
+    else
+    {
+        printf("%d is odd.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation uses the bitwise AND operator (`& 1`) to test the least significant bit: if it is `0`, the number is even; if it is `1`, the number is odd. This works correctly for negative numbers as well on two's complement systems.
+
+Key points addressing the CWEs you mentioned:
+
+- **CWE-703**: The return value of `scanf` is checked to ensure a valid integer was actually read before using it, and an error path returns `EXIT_FAILURE` with a diagnostic to `stderr`.
+- **CWE-664**: No dynamically allocated or external resources are used, so there are no lifetime management issues; all variables are initialized before use.
+- **CWE-710**: The code follows standard conventions — `int main(void)` signature, forward function declaration, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, braces on all control blocks, and no implicit conversions or undefined behavior.

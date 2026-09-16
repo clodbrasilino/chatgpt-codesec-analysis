@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long nth_decagonal(long long n)
+{
+    return 4LL * n * n - 3LL * n;
+}
+
+int main(void)
+{
+    long long n;
+    int result;
+
+    printf("Enter n: ");
+    result = scanf("%lld", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1) {
+        fprintf(stderr, "n must be a positive integer\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 1518500249LL) {
+        fprintf(stderr, "n is too large, result would overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %lld-th decagonal number is %lld\n", n, nth_decagonal(n));
+
+    return EXIT_SUCCESS;
+}

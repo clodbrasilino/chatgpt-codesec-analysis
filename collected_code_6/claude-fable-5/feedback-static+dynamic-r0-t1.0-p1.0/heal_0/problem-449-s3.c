@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+int isValidTriangle(double x1, double y1, double x2, double y2, double x3, double y3)
+{
+    double area;
+
+    area = 0.5 * fabs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
+
+    if (area > 1e-9)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double x1;
+    double y1;
+    double x2;
+    double y2;
+    double x3;
+    double y3;
+    int result;
+
+    printf("Enter coordinates of point 1 (x y): ");
+    if (scanf("%lf %lf", &x1, &y1) != 2)
+    {
+        fprintf(stderr, "Invalid input for point 1\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coordinates of point 2 (x y): ");
+    if (scanf("%lf %lf", &x2, &y2) != 2)
+    {
+        fprintf(stderr, "Invalid input for point 2\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coordinates of point 3 (x y): ");
+    if (scanf("%lf %lf", &x3, &y3) != 2)
+    {
+        fprintf(stderr, "Invalid input for point 3\n");
+        return EXIT_FAILURE;
+    }
+
+    result = isValidTriangle(x1, y1, x2, y2, x3, y3);
+
+    if (result == 1)
+    {
+        printf("The triangle is valid.\n");
+    }
+    else
+    {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

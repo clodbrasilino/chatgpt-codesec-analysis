@@ -1,42 +1,54 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
  /* Possible weaknesses found:
-  *  test case 1 failed: expected 'string', got `��
-  *  test case 0 failed: expected 'python', got  ��
-  *  test case 2 failed: expected 'alpha', got ���
+  *  test case 0 failed: expected 'python', got <no output>
+  *  test case 2 failed: expected 'alpha', got <no output>
+  *  test case 1 failed: expected 'string', got <no output>
   */
 
-char* remove_parenthesis(const char *s) {
-    int len = strlen(s);
-    char *result = (char*)malloc((len + 1) * sizeof(char));
+char* remove_parenthesis(char *str) {
+    int len = strlen(str);
+    char *result = (char*)malloc(len + 1);
     if (result == NULL) return NULL;
-    
-    int r_index = 0;
-    int p_count = 0;
+    char *write_pos = result;
+    int parenthesis_level = 0;
 
-    for (int i = 0; i < len; i++) {
-        if (s[i] == '(') {
-            p_count++;
-        } else if (s[i] == ')') {
-            if (p_count > 0) {
-                p_count--;
+    for (char *read_pos = str; *read_pos; read_pos++) {
+        if (*read_pos == '(') {
+            parenthesis_level++;
+        } else if (*read_pos == ')') {
+            if (parenthesis_level > 0) {
+                parenthesis_level--;
             }
-        } else if (p_count == 0) {
-            result[r_index++] = s[i];
+        } else {
+            *write_pos++ = *read_pos;
+        }
+
+        if (parenthesis_level == 0 && *read_pos != '(' && *read_pos != ')') {
+            *write_pos++ = *read_pos;
         }
     }
 
-    result[r_index] = '\0';
+    *write_pos = '\0';
     return result;
 }
 
 int main() {
-    const char input[] = "Hello (World, this is a (test)) string.";
-    char *output = remove_parenthesis(input);
-    if (output != NULL) {
-        printf("%s\n", output);
-        free(output);
-    }
+    char input1[] = "Example (with (nested) parenthesis) string.";
+    char input2[] = "python (is a) programming language";
+    char input3[] = "alpha(beta(gamma)) delta";
+
+    char *output1 = remove_parenthesis(input1);
+    char *output2 = remove_parenthesis(input2);
+    char *output3 = remove_parenthesis(input3);
+
+    printf("%s\n", output1 ? output1 : "");
+    printf("%s\n", output2 ? output2 : "");
+    printf("%s\n", output3 ? output3 : "");
+
+    free(output1);
+    free(output2);
+    free(output3);
     return 0;
 }

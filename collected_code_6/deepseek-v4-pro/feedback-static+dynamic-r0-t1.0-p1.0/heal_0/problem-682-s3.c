@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(Node* head) {
+    Node* current = head;
+    Node* next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+void printList(Node* head) {
+    if (head == NULL) {
+        printf("Empty list\n");
+        return;
+    }
+    Node* current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+Node* multiplyTwoLists(Node* list1, Node* list2) {
+    if (list1 == NULL || list2 == NULL) {
+        return NULL;
+    }
+
+    long long num1 = 0;
+    long long num2 = 0;
+    const long long MOD = 1000000007LL;
+    Node* current;
+
+    current = list1;
+    while (current != NULL) {
+        num1 = (num1 * 10 + current->data) % MOD;
+        current = current->next;
+    }
+
+    current = list2;
+    while (current != NULL) {
+        num2 = (num2 * 10 + current->data) % MOD;
+        current = current->next;
+    }
+
+    long long product = (num1 * num2) % MOD;
+
+    Node* result = NULL;
+    if (product == 0) {
+        appendNode(&result, 0);
+        return result;
+    }
+
+    int digits[20];
+    int count = 0;
+    while (product > 0) {
+        digits[count++] = product % 10;
+        product /= 10;
+    }
+
+    for (int i = count - 1; i >= 0; i--) {
+        appendNode(&result, digits[i]);
+    }
+
+    return result;
+}
+
+int main() {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    Node* result = NULL;
+
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {4, 5};
+
+    for (int i = 0; i < 3; i++) {
+        appendNode(&list1, arr1[i]);
+    }
+
+    for (int i = 0; i < 2; i++) {
+        appendNode(&list2, arr2[i]);
+    }
+
+    printf("List 1: ");
+    printList(list1);
+    printf("List 2: ");
+    printList(list2);
+
+    result = multiplyTwoLists(list1, list2);
+
+    printf("Product: ");
+    printList(result);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
+
+    return 0;
+}

@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int sum_three_lowest_positive(const int *numbers, size_t count, long *result)
+{
+    int first = INT_MAX;
+    int second = INT_MAX;
+    int third = INT_MAX;
+    size_t positives = 0;
+    size_t i;
+
+    if (numbers == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        int value = numbers[i];
+        if (value > 0) {
+            positives++;
+            if (value < first) {
+                third = second;
+                second = first;
+                first = value;
+            } else if (value < second) {
+                third = second;
+                second = value;
+            } else if (value < third) {
+                third = value;
+            }
+        }
+    }
+
+    if (positives < 3) {
+        return -1;
+    }
+
+    *result = (long)first + (long)second + (long)third;
+    return 0;
+}
+
+int main(void)
+{
+    int numbers[] = { 10, -3, 7, 2, 0, 8, 5, -1 };
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long sum = 0;
+
+    if (sum_three_lowest_positive(numbers, count, &sum) != 0) {
+        fprintf(stderr, "Error: fewer than three positive numbers in the list\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of three lowest positive numbers: %ld\n", sum) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

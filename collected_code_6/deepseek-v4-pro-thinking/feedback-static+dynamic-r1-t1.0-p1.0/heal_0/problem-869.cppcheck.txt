@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869.c:75:13: style: Condition 'sub==NULL' is always true [knownConditionTrueFalse]
+    if (sub == NULL) {
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869.c:74:39: note: Calling function 'int_list_from_array' returns 0
+    IntNode *sub = int_list_from_array(values, count);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869.c:74:39: note: Assignment 'sub=int_list_from_array(values,count)', assigned value is 0
+    IntNode *sub = int_list_from_array(values, count);
+                                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-869.c:75:13: note: Condition 'sub==NULL' is always true
+    if (sub == NULL) {
+            ^

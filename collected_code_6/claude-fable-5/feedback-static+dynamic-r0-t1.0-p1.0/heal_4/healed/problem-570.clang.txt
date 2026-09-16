@@ -1,0 +1,24 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:24:35: error: use of undeclared identifier 'capac'
+   24 |             size_t new_capacity = capac
+      |                                   ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:24:40: error: expected ';' at end of declaration
+   24 |             size_t new_capacity = capac
+      |                                        ^
+      |                                        ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:24:40: error: expected '}'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:23:34: note: to match this '{'
+   23 |         if (len + 1 >= capacity) {
+      |                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:24:40: error: expected '}'
+   24 |             size_t new_capacity = capac
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:18:36: note: to match this '{'
+   18 |     while ((c = fgetc(fp)) != EOF) {
+      |                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:24:40: error: expected '}'
+   24 |             size_t new_capacity = capac
+      |                                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_4/healed/problem-570.c:6:1: note: to match this '{'
+    6 | {
+      | ^
+5 errors generated.

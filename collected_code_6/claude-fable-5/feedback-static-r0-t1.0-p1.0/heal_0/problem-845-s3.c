@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+static long long count_factorial_digits(int n)
+{
+    double sum;
+    int i;
+
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n <= 1) {
+        return 1;
+    }
+
+    sum = 0.0;
+    for (i = 2; i <= n; i++) {
+        sum += log10((double)i);
+    }
+
+    return (long long)floor(sum) + 1;
+}
+
+int main(void)
+{
+    int n;
+    long long digits;
+
+    printf("Enter a non-negative integer: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    digits = count_factorial_digits(n);
+    if (digits < 0) {
+        fprintf(stderr, "Error: input must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of digits in %d! is %lld\n", n, digits);
+
+    return EXIT_SUCCESS;
+}

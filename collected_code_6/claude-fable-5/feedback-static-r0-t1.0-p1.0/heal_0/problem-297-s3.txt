@@ -1,0 +1,192 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    NODE_INT,
+    NODE_LIST
+} NodeType;
+
+typedef struct Node {
+    NodeType type;
+    union {
+        int value;
+        struct Node *sublist;
+    } data;
+    struct Node *next;
+} Node;
+
+static Node *make_int(int value)
+{
+    Node *n = malloc(sizeof(Node));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->type = NODE_INT;
+    n->data.value = value;
+    n->next = NULL;
+    return n;
+}
+
+static Node *make_list(Node *sublist)
+{
+    Node *n = malloc(sizeof(Node));
+    if (n == NULL) {
+        return NULL;
+    }
+    n->type = NODE_LIST;
+    n->data.sublist = sublist;
+    n->next = NULL;
+    return n;
+}
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        if (head->type == NODE_LIST) {
+            free_list(head->data.sublist);
+        }
+        free(head);
+        head = next;
+    }
+}
+
+static int flatten_append(const Node *head, Node **out_head, Node **out_tail)
+{
+    const Node *cur = head;
+    while (cur != NULL) {
+        if (cur->type == NODE_INT) {
+            Node *n = make_int(cur->data.value);
+            if (n == NULL) {
+                return -1;
+            }
+            if (*out_tail != NULL) {
+                (*out_tail)->next = n;
+            } else {
+                *out_head = n;
+            }
+            *out_tail = n;
+        } else {
+            if (flatten_append(cur->data.sublist, out_head, out_tail) != 0) {
+                return -1;
+            }
+        }
+        cur = cur->next;
+    }
+    return 0;
+}
+
+int flatten(const Node *head, Node **result)
+{
+    Node *flat_head = NULL;
+    Node *flat_tail = NULL;
+
+    if (result == NULL) {
+        return -1;
+    }
+    *result = NULL;
+
+    if (flatten_append(head, &flat_head, &flat_tail) != 0) {
+        free_list(flat_head);
+        return -1;
+    }
+
+    *result = flat_head;
+    return 0;
+}
+
+static void print_list(const Node *head)
+{
+    printf("[");
+    while (head != NULL) {
+        if (head->type == NODE_INT) {
+            printf("%d", head->data.value);
+        } else {
+            print_list(head->data.sublist);
+        }
+        if (head->next != NULL) {
+            printf(", ");
+        }
+        head = head->next;
+    }
+    printf("]");
+}
+
+static Node *build_sample(void)
+{
+    Node *three = make_int(3);
+    Node *inner = (three != NULL) ? make_list(three) : NULL;
+    if (inner == NULL) {
+        free_list(three);
+        return NULL;
+    }
+
+    Node *two = make_int(2);
+    if (two == NULL) {
+        free_list(inner);
+        return NULL;
+    }
+    two->next = inner;
+
+    Node *mid = make_list(two);
+    if (mid == NULL) {
+        free_list(two);
+        return NULL;
+    }
+
+    Node *four = make_int(4);
+    if (four == NULL) {
+        free_list(mid);
+        return NULL;
+    }
+    mid->next = four;
+
+    Node *five = make_int(5);
+    Node *outer = (five != NULL) ? make_list(five) : NULL;
+    if (outer == NULL) {
+        free_list(five);
+        free_list(mid);
+        return NULL;
+    }
+    four->next = outer;
+
+    Node *one = make_int(1);
+    if (one == NULL) {
+        free_list(mid);
+        return NULL;
+    }
+    one->next = mid;
+
+    return one;
+}
+
+int main(void)
+{
+    Node *nested = build_sample();
+    if (nested == NULL) {
+        fprintf(stderr, "Failed to build nested list\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Nested:    ");
+    print_list(nested);
+    printf("\n");
+
+    Node *flat = NULL;
+    if (flatten(nested, &flat) != 0) {
+        fprintf(stderr, "Failed to flatten list\n");
+        free_list(nested);
+        return EXIT_FAILURE;
+    }
+
+    printf("Flattened: ");
+    print_list(flat);
+    printf("\n");
+
+    free_list(flat);
+    free_list(nested);
+
+    return EXIT_SUCCESS;
+}
+```

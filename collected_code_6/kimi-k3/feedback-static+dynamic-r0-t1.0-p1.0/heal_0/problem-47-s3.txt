@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int last_digit_factorial_division(unsigned long long a, unsigned long long b) {
+    unsigned long long result = 1;
+    unsigned long long i;
+
+    if (a < b) {
+        return -1;
+    }
+
+    for (i = b + 1; i <= a; ++i) {
+        result = (result * (i % 10)) % 10;
+        if (result == 0) {
+            break;
+        }
+    }
+
+    return (int)result;
+}
+
+int main(void) {
+    unsigned long long a, b;
+    int last_digit;
+
+    printf("Enter two numbers (a and b): ");
+    if (scanf("%llu %llu", &a, &b) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    last_digit = last_digit_factorial_division(a, b);
+    if (last_digit == -1) {
+        fprintf(stderr, "Error: a must be greater than or equal to b\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Last digit of %llu! / %llu! is: %d\n", a, b, last_digit);
+
+    return EXIT_SUCCESS;
+}
+```

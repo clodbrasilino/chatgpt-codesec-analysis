@@ -1,0 +1,84 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key;
+    int value;
+} Tuple;
+
+int compare_keys(const void *a, const void *b) {
+    int arg1 = ((const Tuple *)a)->key;
+    int arg2 = ((const Tuple *)b)->key;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int compare_values(const void *a, const void *b) {
+    int arg1 = ((const Tuple *)a)->value;
+    int arg2 = ((const Tuple *)b)->value;
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+int count_unique_keys_for_value(Tuple *tuples, size_t size, int target_value) {
+    if (tuples == NULL || size == 0) {
+        return 0;
+    }
+
+    Tuple *sorted = (Tuple *)malloc(size * sizeof(Tuple));
+    if (sorted == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        sorted[i] = tuples[i];
+    }
+
+    qsort(sorted, size, sizeof(Tuple), compare_keys);
+
+    size_t unique_count = 0;
+    int prev_key = 0;
+    int has_prev = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (sorted[i].value == target_value) {
+            if (!has_prev || sorted[i].key != prev_key) {
+                unique_count++;
+                prev_key = sorted[i].key;
+                has_prev = 1;
+            }
+        }
+    }
+
+    free(sorted);
+    return (int)unique_count;
+}
+
+int main(void) {
+    Tuple data[] = {
+        {1, 10},
+        {2, 10},
+        {1, 10},
+        {3, 20},
+        {4, 20},
+        {4, 20},
+        {5, 30}
+    };
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+
+    int count_10 = count_unique_keys_for_value(data, data_size, 10);
+    int count_20 = count_unique_keys_for_value(data, data_size, 20);
+    int count_30 = count_unique_keys_for_value(data, data_size, 30);
+    int count_40 = count_unique_keys_for_value(data, data_size, 40);
+
+    printf("%d\n", count_10);
+    printf("%d\n", count_20);
+    printf("%d\n", count_30);
+    printf("%d\n", count_40);
+
+    return 0;
+}
+```

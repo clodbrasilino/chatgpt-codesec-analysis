@@ -1,0 +1,5 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-570-s2.c:14:46: error: call to undeclared library function 'tolower' with type 'int (int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   14 |     for (char *p = lower_word; *p; p++) *p = tolower((unsigned char)*p);
+      |                                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_5/healed/problem-570-s2.c:14:46: note: include the header <ctype.h> or explicitly provide a declaration for 'tolower'
+1 error generated.

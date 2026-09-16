@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+double pentagon_area(double side) {
+    return 0.25 * sqrt(5.0 * (5.0 + 2.0 * sqrt(5.0))) * pow(side, 2);
+}
+
+int main() {
+    double side;
+    printf("Enter the length of a side: ");
+    if (scanf("%lf", &side) != 1 || side <= 0) {
+        fprintf(stderr, "Invalid input. Please enter a positive number.\n");
+        return 1;
+    }
+    double area = pentagon_area(side);
+    printf("The area of the pentagon is: %f\n", area);
+    return 0;
+}

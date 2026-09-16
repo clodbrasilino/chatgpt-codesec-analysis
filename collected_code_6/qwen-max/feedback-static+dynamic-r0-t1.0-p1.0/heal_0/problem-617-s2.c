@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <math.h>
+
+int min_jumps(int d, int jump_length) {
+    return (jump_length == 0) ? d : ceil((double)d / jump_length);
+}
+
+int main() {
+    int d, jump_length;
+    printf("Enter the destination d and the jump length: ");
+    scanf("%d %d", &d, &jump_length);
+    if (d < 0 || jump_length < 0) {
+        return 1;
+    }
+    int jumps = min_jumps(d, jump_length);
+    printf("Minimum number of jumps required: %d\n", jumps);
+    return 0;
+}

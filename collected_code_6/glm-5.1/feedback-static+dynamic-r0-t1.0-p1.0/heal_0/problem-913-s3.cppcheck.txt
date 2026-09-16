@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-913-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-913-s3.c:53:24: error: Null pointer dereference: test6 [nullPointer]
+    printf("%s: %d\n", test6, ends_with_number(test6));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-913-s3.c:44:25: note: Assignment 'test6=NULL', assigned value is 0
+    const char *test6 = NULL;
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-913-s3.c:53:24: note: Null pointer dereference
+    printf("%s: %d\n", test6, ends_with_number(test6));
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-913-s3.c:53:24: error: Null pointer dereference [nullPointer]
+    printf("%s: %d\n", test6, ends_with_number(test6));
+                       ^

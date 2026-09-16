@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <regex.h>
+
+int findSequences(const char *input) {
+    regex_t regex;
+    int reti;
+
+    reti = regcomp(&regex, "^[A-Z][a-z]+$", REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile regex\n");
+        return 1;
+    }
+
+    reti = regexec(&regex, input, 0, NULL, 0);
+    regfree(&regex);
+
+    return reti == 0 ? 1 : 0;
+}
+
+int main(void) {
+    const char *testString = "Abcdef";
+    if (findSequences(testString)) {
+        printf("Match found: %s\n", testString);
+    } else {
+        printf("No match found: %s\n", testString);
+    }
+    return 0;
+}

@@ -5,31 +5,28 @@
 typedef struct {
     char *key;
     int value;
-} DictionaryEntry;
+} DictEntry;
 
 typedef struct {
-    DictionaryEntry *entries;
-    int count;
-    int capacity;
+    DictEntry *entries;
+    int size;
 } Dictionary;
 
-void initDictionary(Dictionary *dict, int capacity) {
-    dict->entries = (DictionaryEntry *)malloc(capacity * sizeof(DictionaryEntry));
-    dict->count = 0;
-    dict->capacity = capacity;
-}
-
-void freeDictionary(Dictionary *dict) {
-    for (int i = 0; i < dict->count; i++) {
-        free(dict->entries[i].key);
+void dictionary_add(Dictionary *dict, const char *key, int value) {
+    for (int i = 0; i < dict->size; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            dict->entries[i].value += value;
+            return;
+        }
     }
-    free(dict->entries);
-    dict->count = 0;
-    dict->capacity = 0;
+
+    dict->entries[dict->size].key = strdup(key);
+    dict->entries[dict->size].value = value;
+    dict->size += 1;
 }
 
-int findKey(Dictionary *dict, const char *key) {
-    for (int i = 0; i < dict->count; i++) {
+int find_entry(const Dictionary *dict, const char *key) {
+    for (int i = 0; i < dict->size; ++i) {
         if (strcmp(dict->entries[i].key, key) == 0) {
             return i;
         }
@@ -37,52 +34,54 @@ int findKey(Dictionary *dict, const char *key) {
     return -1;
 }
 
-void addOrUpdateEntry(Dictionary *dict, const char *key, int value) {
-    int index = findKey(dict, key);
-    if (index != -1) {
-        dict->entries[index].value += value;
-    } else {
-        if (dict->count == dict->capacity) {
-            dict->capacity *= 2;
-            dict->entries = (DictionaryEntry *)realloc(dict->entries, dict->capacity * sizeof(DictionaryEntry));
-        }
-        dict->entries[dict->count].key = strdup(key);
-        dict->entries[dict->count].value = value;
-        dict->count++;
+Dictionary *combine_dictionaries(const Dictionary *dict1, const Dictionary *dict2) {
+    Dictionary *result = (Dictionary *)malloc(sizeof(Dictionary));
+    result->entries = (DictEntry *)malloc((dict1->size + dict2->size) * sizeof(DictEntry));
+    result->size = 0;
+
+    for (int i = 0; i < dict1->size; ++i) {
+        dictionary_add(result, dict1->entries[i].key, dict1->entries[i].value);
     }
+
+    for (int i = 0; i < dict2->size; ++i) {
+        dictionary_add(result, dict2->entries[i].key, dict2->entries[i].value);
+    }
+
+    return result;
 }
 
-void combineDictionaries(Dictionary *dest, const Dictionary *src) {
-    for (int i = 0; i < src->count; i++) {
-        addOrUpdateEntry(dest, src->entries[i].key, src->entries[i].value);
+void free_dictionary(Dictionary *dict) {
+    for (int i = 0; i < dict->size; ++i) {
+        free(dict->entries[i].key);
     }
-}
-
-void printDictionary(const Dictionary *dict) {
-    for (int i = 0; i < dict->count; i++) {
-        printf("%s: %d\n", dict->entries[i].key, dict->entries[i].value);
-    }
+    free(dict->entries);
+    free(dict);
 }
 
 int main() {
-    Dictionary dict1, dict2, combined;
-    initDictionary(&dict1, 4);
-    initDictionary(&dict2, 4);
-    initDictionary(&combined, 4);
+    Dictionary dict1 = {NULL, 0};
+    dict1.entries = (DictEntry *)malloc(3 * sizeof(DictEntry));
+    dict1.size = 3;
+    dict1.entries[0] = (DictEntry){.key = "apple", .value = 10};
+    dict1.entries[1] = (DictEntry){.key = "banana", .value = 20};
+    dict1.entries[2] = (DictEntry){.key = "cherry", .value = 30};
 
-    addOrUpdateEntry(&dict1, "apple", 3);
-    addOrUpdateEntry(&dict1, "banana", 2);
-    addOrUpdateEntry(&dict2, "apple", 5);
-    addOrUpdateEntry(&dict2, "orange", 4);
+    Dictionary dict2 = {NULL, 0};
+    dict2.entries = (DictEntry *)malloc(3 * sizeof(DictEntry));
+    dict2.size = 3;
+    dict2.entries[0] = (DictEntry){.key = "apple", .value = 5};
+    dict2.entries[1] = (DictEntry){.key = "banana", .value = 15};
+    dict2.entries[2] = (DictEntry){.key = "date", .value = 25};
 
-    combineDictionaries(&combined, &dict1);
-    combineDictionaries(&combined, &dict2);
+    Dictionary *combined = combine_dictionaries(&dict1, &dict2);
 
-    printDictionary(&combined);
+    for (int i = 0; i < combined->size; ++i) {
+        printf("%s: %d\n", combined->entries[i].key, combined->entries[i].value);
+    }
 
-    freeDictionary(&dict1);
-    freeDictionary(&dict2);
-    freeDictionary(&combined);
+    free_dictionary(combined);
+    free_dictionary(&dict1);
+    free_dictionary(&dict2);
 
     return 0;
 }

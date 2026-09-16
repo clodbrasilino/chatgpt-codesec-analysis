@@ -1,0 +1,177 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_STRING,
+    TYPE_TUPLE
+} ElementType;
+
+typedef struct TupleElement TupleElement;
+
+struct TupleElement {
+    ElementType type;
+    union {
+        int int_val;
+        char *str_val;
+        struct Tuple *tuple_val;
+    } data;
+};
+
+typedef struct Tuple {
+    size_t size;
+    TupleElement **elements;
+} Tuple;
+
+Tuple* create_tuple(size_t size) {
+    if (size == 0) return NULL;
+    Tuple *t = (Tuple*)malloc(sizeof(Tuple));
+    if (!t) return NULL;
+    t->size = size;
+    t->elements = (TupleElement**)calloc(size, sizeof(TupleElement*));
+    if (!t->elements) {
+        free(t);
+        return NULL;
+    }
+    return t;
+}
+
+TupleElement* create_int_element(int val) {
+    TupleElement *e = (TupleElement*)malloc(sizeof(TupleElement));
+    if (!e) return NULL;
+    e->type = TYPE_INT;
+    e->data.int_val = val;
+    return e;
+}
+
+TupleElement* create_string_element(const char *val) {
+    if (!val) return NULL;
+    TupleElement *e = (TupleElement*)malloc(sizeof(TupleElement));
+    if (!e) return NULL;
+    e->type = TYPE_STRING;
+    e->data.str_val = strdup(val);
+    if (!e->data.str_val) {
+        free(e);
+        return NULL;
+    }
+    return e;
+}
+
+TupleElement* create_tuple_element(Tuple *val) {
+    if (!val) return NULL;
+    TupleElement *e = (TupleElement*)malloc(sizeof(TupleElement));
+    if (!e) return NULL;
+    e->type = TYPE_TUPLE;
+    e->data.tuple_val = val;
+    return e;
+}
+
+void free_tuple(Tuple *t);
+
+void free_element(TupleElement *e) {
+    if (!e) return;
+    switch (e->type) {
+        case TYPE_STRING:
+            free(e->data.str_val);
+            break;
+        case TYPE_TUPLE:
+            free_tuple(e->data.tuple_val);
+            break;
+        case TYPE_INT:
+        default:
+            break;
+    }
+    free(e);
+}
+
+void free_tuple(Tuple *t) {
+    if (!t) return;
+    if (t->elements) {
+        for (size_t i = 0; i < t->size; i++) {
+            free_element(t->elements[i]);
+        }
+        free(t->elements);
+    }
+    free(t);
+}
+
+Tuple* remove_nested_tuples(const Tuple *input) {
+    if (!input) return NULL;
+
+    size_t new_size = 0;
+    for (size_t i = 0; i < input->size; i++) {
+        if (input->elements[i] && input->elements[i]->type != TYPE_TUPLE) {
+            new_size++;
+        }
+    }
+
+    Tuple *result = create_tuple(new_size);
+    if (!result && new_size > 0) return NULL;
+
+    size_t index = 0;
+    for (size_t i = 0; i < input->size; i++) {
+        if (input->elements[i] && input->elements[i]->type != TYPE_TUPLE) {
+            TupleElement *e = input->elements[i];
+            TupleElement *new_e = NULL;
+            if (e->type == TYPE_INT) {
+                new_e = create_int_element(e->data.int_val);
+            } else if (e->type == TYPE_STRING) {
+                new_e = create_string_element(e->data.str_val);
+            }
+            
+            if (!new_e) {
+                free_tuple(result);
+                return NULL;
+            }
+            result->elements[index++] = new_e;
+        }
+    }
+
+    return result;
+}
+
+void print_tuple(const Tuple *t) {
+    if (!t) return;
+    printf("(");
+    for (size_t i = 0; i < t->size; i++) {
+        TupleElement *e = t->elements[i];
+        if (!e) continue;
+        if (e->type == TYPE_INT) {
+            printf("%d", e->data.int_val);
+        } else if (e->type == TYPE_STRING) {
+            printf("'%s'", e->data.str_val);
+        } else if (e->type == TYPE_TUPLE) {
+            print_tuple(e->data.tuple_val);
+        }
+        if (i < t->size - 1) printf(", ");
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    Tuple *t = create_tuple(4);
+    if (!t) return 1;
+
+    t->elements[0] = create_int_element(1);
+    t->elements[1] = create_string_element("hello");
+
+    Tuple *nested = create_tuple(2);
+    if (nested) {
+        nested->elements[0] = create_int_element(2);
+        nested->elements[1] = create_int_element(3);
+    }
+    t->elements[2] = create_tuple_element(nested);
+    
+    t->elements[3] = create_int_element(4);
+
+    Tuple *flattened = remove_nested_tuples(t);
+    
+    if (flattened) {
+        print_tuple(flattened);
+        free_tuple(flattened);
+    }
+
+    free_tuple(t);
+    return 0;
+}

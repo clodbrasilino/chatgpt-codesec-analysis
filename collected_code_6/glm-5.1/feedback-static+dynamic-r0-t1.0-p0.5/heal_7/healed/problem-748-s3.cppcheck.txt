@@ -1,0 +1,22 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:128:16: style: Condition 'input5!=NULL' is always false [knownConditionTrueFalse]
+    if (input5 != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:127:26: note: Assignment 'input5=NULL', assigned value is 0
+    const char *input5 = NULL;
+                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:128:16: note: Condition 'input5!=NULL' is always false
+    if (input5 != NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:138:21: style: Condition 'result5!=NULL' is always false [knownConditionTrueFalse]
+        if (result5 != NULL) {
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:137:35: note: Calling function 'add_spaces' returns 0
+        char *result5 = add_spaces(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:137:35: note: Assignment 'result5=add_spaces(NULL)', assigned value is 0
+        char *result5 = add_spaces(NULL);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p0.5/heal_7/healed/problem-748-s3.c:138:21: note: Condition 'result5!=NULL' is always false
+        if (result5 != NULL) {
+                    ^

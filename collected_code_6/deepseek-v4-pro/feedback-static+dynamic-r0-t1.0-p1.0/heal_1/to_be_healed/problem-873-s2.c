@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 21, got <no output>
+  *  test case 2 failed: expected 34, got <no output>
+  *  test case 0 failed: expected 13, got <no output>
+  */
+
+unsigned long long fibonacci(int n) {
+    if (n < 0) {
+        fprintf(stderr, "Error: Input must be non-negative\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a non-negative integer: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    unsigned long long result = fibonacci(n);
+    printf("Fibonacci(%d) = %llu\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

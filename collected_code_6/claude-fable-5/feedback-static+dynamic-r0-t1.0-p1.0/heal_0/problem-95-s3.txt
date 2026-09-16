@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} SubList;
+
+int min_sublist_length(const SubList *lists, size_t count, size_t *result)
+{
+    size_t i;
+    size_t min_len;
+
+    if (lists == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    min_len = lists[0].length;
+    for (i = 1U; i < count; i++) {
+        if (lists[i].length < min_len) {
+            min_len = lists[i].length;
+        }
+    }
+
+    *result = min_len;
+    return 0;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3, 4};
+    int b[] = {5, 6};
+    int c[] = {7, 8, 9};
+    SubList lists[3];
+    size_t min_len = 0U;
+
+    lists[0].data = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].data = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].data = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    if (min_sublist_length(lists, 3U, &min_len) != 0) {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Minimum sublist length: %zu\n", min_len) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

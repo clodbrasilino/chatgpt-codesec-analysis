@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char findFirstNonRepeatedChar(const char *str) {
+    if (str == NULL) {
+        return '\0';
+    }
+
+    int count[256] = {0};
+    int i;
+
+    for (i = 0; str[i] != '\0'; i++) {
+        count[(unsigned char)str[i]]++;
+    }
+
+    for (i = 0; str[i] != '\0'; i++) {
+        if (count[(unsigned char)str[i]] == 1) {
+            return str[i];
+        }
+    }
+
+    return '\0';
+}
+
+int main(void) {
+    const char *testStr1 = "swiss";
+    const char *testStr2 = "aabbcc";
+    const char *testStr3 = "programming";
+    
+    char result1 = findFirstNonRepeatedChar(testStr1);
+    if (result1 != '\0') {
+        printf("First non-repeated character in '%s' is '%c'\n", testStr1, result1);
+    } else {
+        printf("No non-repeated character found in '%s'\n", testStr1);
+    }
+
+    char result2 = findFirstNonRepeatedChar(testStr2);
+    if (result2 != '\0') {
+        printf("First non-repeated character in '%s' is '%c'\n", testStr2, result2);
+    } else {
+        printf("No non-repeated character found in '%s'\n", testStr2);
+    }
+
+    char result3 = findFirstNonRepeatedChar(testStr3);
+    if (result3 != '\0') {
+        printf("First non-repeated character in '%s' is '%c'\n", testStr3, result3);
+    } else {
+        printf("No non-repeated character found in '%s'\n", testStr3);
+    }
+
+    return 0;
+}

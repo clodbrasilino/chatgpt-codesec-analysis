@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int a;
+    int b;
+    int c;
+} Tuple;
+
+bool hasNoneValue(Tuple t) {
+    if (t.a == 0 || t.b == 0 || t.c == 0) {
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    Tuple t1 = {1, 2, 3};
+    Tuple t2 = {0, 2, 3};
+
+    bool result1 = hasNoneValue(t1);
+    bool result2 = hasNoneValue(t2);
+
+    if (result1) {
+        printf("Tuple t1 has a none value.\n");
+    } else {
+        printf("Tuple t1 does not have any none value.\n");
+    }
+
+    if (result2) {
+        printf("Tuple t2 has a none value.\n");
+    } else {
+        printf("Tuple t2 does not have any none value.\n");
+    }
+
+    return 0;
+}
+```

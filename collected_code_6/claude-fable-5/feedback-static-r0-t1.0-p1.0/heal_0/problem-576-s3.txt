@@ -1,0 +1,69 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool isSubarray(const int *arr, size_t arrLen, const int *sub, size_t subLen)
+{
+    size_t i;
+    size_t j;
+
+    if (arr == NULL || sub == NULL) {
+        return false;
+    }
+
+    if (subLen == 0U) {
+        return true;
+    }
+
+    if (subLen > arrLen) {
+        return false;
+    }
+
+    for (i = 0U; i <= (arrLen - subLen); i++) {
+        for (j = 0U; j < subLen; j++) {
+            if (arr[i + j] != sub[j]) {
+                break;
+            }
+        }
+        if (j == subLen) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    int mainArr[] = { 2, 3, 0, 5, 1, 1, 2 };
+    int subArr[] = { 3, 0, 5, 1 };
+    int notSubArr[] = { 1, 1, 5 };
+    size_t mainLen = sizeof(mainArr) / sizeof(mainArr[0]);
+    size_t subLen = sizeof(subArr) / sizeof(subArr[0]);
+    size_t notSubLen = sizeof(notSubArr) / sizeof(notSubArr[0]);
+
+    if (isSubarray(mainArr, mainLen, subArr, subLen)) {
+        if (printf("First array is a subarray\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("First array is not a subarray\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (isSubarray(mainArr, mainLen, notSubArr, notSubLen)) {
+        if (printf("Second array is a subarray\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Second array is not a subarray\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

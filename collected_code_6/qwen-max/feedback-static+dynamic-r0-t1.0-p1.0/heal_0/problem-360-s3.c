@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long int nth_carol_number(int n) {
+    unsigned long long int result = 0;
+    unsigned long long int base = 2;
+
+    for (int i = 1; i <= n; i++) {
+        result = (base - 1) * ((base - 1) + 2) - 1;
+        base *= 2;
+    }
+
+    return result;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1 || n < 1) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long int carol_number = nth_carol_number(n);
+    printf("The %d'th Carol number is: %llu\n", n, carol_number);
+
+    return EXIT_SUCCESS;
+}

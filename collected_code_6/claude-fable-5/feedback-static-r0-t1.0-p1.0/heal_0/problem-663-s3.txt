@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long largest_k(long long x, long long y, long long n)
+{
+    if (x <= 0 || y < 0 || y >= x || n < y) {
+        return -1;
+    }
+    return ((n - y) / x) * x + y;
+}
+
+int main(void)
+{
+    long long x;
+    long long y;
+    long long n;
+    long long result;
+
+    printf("Enter x (divisor): ");
+    if (scanf("%lld", &x) != 1) {
+        fprintf(stderr, "Invalid input for x\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter y (remainder): ");
+    if (scanf("%lld", &y) != 1) {
+        fprintf(stderr, "Invalid input for y\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter n (upper bound): ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input for n\n");
+        return EXIT_FAILURE;
+    }
+
+    result = largest_k(x, y, n);
+
+    if (result < 0) {
+        printf("No valid k exists for the given inputs\n");
+    } else {
+        printf("Largest k such that k %% %lld == %lld and k <= %lld is: %lld\n",
+               x, y, n, result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solves the classic problem: given a divisor `x`, a remainder `y`, and an upper bound `n`, find the largest `k <= n` such that `k % x == y`.
+
+Key safety points addressed:
+
+- **CWE-703**: Every `scanf` return value is checked, and invalid input causes a clean failure exit rather than operating on uninitialized values. The function validates that `x > 0` (avoiding division/modulo by zero), `0 <= y < x` (a valid remainder), and `n >= y` (a solution exists), returning a sentinel `-1` otherwise.
+- **CWE-664**: No dynamic resources (memory, files) are allocated, so nothing can leak or be used outside its lifetime; all variables are stack-scoped and initialized before use.
+- **CWE-710**: The code uses `int main(void)`, consistent `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, braces on all control blocks, no implicit conversions that lose data, and matching format specifiers (`%lld` for `long long`).
+
+The math itself: the largest multiple-of-`x`-plus-`y` not exceeding `n` is computed as `((n - y) / x) * x + y`, which cannot overflow since it is always `<= n`.

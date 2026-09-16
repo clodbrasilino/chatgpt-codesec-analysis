@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int convertListToInteger(const int *list, size_t size, int *result) {
+    if (list == NULL || result == NULL || size == 0) {
+        return -1;
+    }
+
+    long long temp_result = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        int num = list[i];
+        
+        if (num < 0 || num > 9) {
+            return -1;
+        }
+
+        if (temp_result > (LLONG_MAX - num) / 10) {
+            return -1;
+        }
+
+        temp_result = temp_result * 10 + num;
+    }
+
+    if (temp_result > INT_MAX) {
+        return -1;
+    }
+
+    *result = (int)temp_result;
+    return 0;
+}
+
+int main(void) {
+    int digits[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(digits) / sizeof(digits[0]);
+    int result = 0;
+
+    if (convertListToInteger(digits, size, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        printf("Error converting list to integer.\n");
+    }
+
+    int overflow_digits[] = {2, 1, 4, 7, 4, 8, 3, 6, 4, 8};
+    size_t overflow_size = sizeof(overflow_digits) / sizeof(overflow_digits[0]);
+    
+    if (convertListToInteger(overflow_digits, overflow_size, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        printf("Error converting list to integer.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 30, got 0
+  *  test case 1 failed: expected 273, got 1
+  *  test case 2 failed: expected 2664, got 1
+  */
+
+bool is_smart_number(int n) {
+    int count = 0;
+    if (n % 2 == 0) {
+        count++;
+        while (n % 2 == 0)
+            n /= 2;
+    }
+    for (int i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            count++;
+            while (n % i == 0)
+                n /= i;
+        }
+    }
+    if (n > 2)
+        count++;
+    return (count & (count - 1)) == 0 && count > 0;
+}
+
+int find_nth_smart_number(int n) {
+    int count = 1;
+    int number = 4;
+    while (true) {
+        if (is_smart_number(number)) {
+            if (count == n)
+                break;
+            count++;
+        }
+        number++;
+    }
+    return number;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        printf("Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+    int nth_smart_number = find_nth_smart_number(n);
+    printf("The %dth smart number is: %d\n", n, nth_smart_number);
+    return 0;
+}

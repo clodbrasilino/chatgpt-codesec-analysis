@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+uint64_t tetrahedral(uint64_t n) {
+    return n * (n + 1) * (n + 2) / 6;
+}
+
+int main(int argc, const char *argv[]) {
+    uint64_t n;
+    char *endptr;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    n = strtoull(argv[1], &endptr, 10);
+    if (errno != 0 || *endptr != '\0') {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 1812857ULL) {
+        fprintf(stderr, "Input too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", (unsigned long long)tetrahedral(n));
+    return EXIT_SUCCESS;
+}

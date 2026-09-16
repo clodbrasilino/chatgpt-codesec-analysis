@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int median_of_three(int *arr, int low, int high) {
+    int mid = low + (high - low) / 2;
+    
+    if (arr[mid] < arr[low])
+        swap(&arr[mid], &arr[low]);
+    if (arr[high] < arr[low])
+        swap(&arr[high], &arr[low]);
+    if (arr[high] < arr[mid])
+        swap(&arr[high], &arr[mid]);
+    
+    swap(&arr[mid], &arr[high]);
+    
+    return arr[high];
+}
+
+int partition_improved(int *arr, int low, int high) {
+    int pivot = median_of_three(arr, low, high);
+    
+    int i = low;
+    
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
+            swap(&arr[i], &arr[j]);
+            i++;
+        }
+    }
+    
+    swap(&arr[i], &arr[high]);
+    return i;
+}
+
+int quickselect_improved(int *arr, int low, int high, int k) {
+    while (low <= high) {
+        if (low == high) {
+            return arr[low];
+        }
+        
+        int pivot_index = partition_improved(arr, low, high);
+        
+        if (pivot_index == k) {
+            return arr[pivot_index];
+        } else if (pivot_index < k) {
+            low = pivot_index + 1;
+        } else {
+            high = pivot_index - 1;
+        }
+    }
+    
+    return -1;
+}
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 3, got <no output>
+  *  test case 1 failed: expected 8, got <no output>
+  *  test case 2 failed: expected 36, got <no output>
+  */
+
+int find_kth_element(const int *arr, int size, int k) {
+    if (arr == NULL || size <= 0 || k < 0 || k >= size) {
+        fprintf(stderr, "Invalid input parameters\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    int *temp_arr = (int *)malloc(size * sizeof(int));
+    if (temp_arr == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (int i = 0; i < size; i++) {
+        temp_arr[i] = arr[i];
+    }
+    
+    int result = quickselect_improved(temp_arr, 0, size - 1, k);
+    
+    free(temp_arr);
+    return result;
+}
+
+int main(void) {
+    int arr[] = {10, 20, 30, 40, 50};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    int result = find_kth_element(arr, size, k);
+    printf("Element at index %d: %d\n", k, result);
+    
+    int arr2[] = {3, 8, 36};
+    size = sizeof(arr2) / sizeof(arr2[0]);
+    
+    for (int i = 0; i < size; i++) {
+        result = find_kth_element(arr2, size, i);
+        printf("Element at index %d: %d\n", i, result);
+    }
+    
+    return 0;
+}

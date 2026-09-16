@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head, int value) {
+    if (*head == NULL) {
+        *head = createNode(value);
+    } else {
+        struct Node* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = createNode(value);
+    }
+}
+
+struct Node* modifiedRunLengthEncoding(struct Node* head) {
+    struct Node* current = head;
+    struct Node* previous = NULL;
+    struct Node* result = NULL;
+
+    while (current != NULL) {
+        int count = 1;
+        while (current->next != NULL && current->value == current->next->value) {
+            count++;
+            current = current->next;
+        }
+
+        if (count == 1) {
+            if (previous != NULL && previous->value == 1) {
+                appendNode(&result, previous->value);
+                previous->value = 0;
+            }
+            appendNode(&result, current->value);
+        } else {
+            if (previous != NULL && previous->value != 1) {
+                appendNode(&result, 1);
+            }
+            previous = createNode(count);
+            appendNode(&result, previous->value);
+            appendNode(&result, current->value);
+        }
+
+        current = current->next;
+    }
+
+    return result;
+}
+
+void printList(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->value);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* current = head;
+    while (current != NULL) {
+        struct Node* next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    appendNode(&head, 1);
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 2);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    
+    printf("Original list:\n");
+    printList(head);
+
+    struct Node* encoded = modifiedRunLengthEncoding(head);
+
+    printf("Encoded list:\n");
+    printList(encoded);
+
+    freeList(head);
+    freeList(encoded);
+    
+    return 0;
+}

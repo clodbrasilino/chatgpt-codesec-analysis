@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+long long count_sequences(int length, const int *values, int num_values) {
+    if (length < 0 || num_values <= 0 || values == NULL) {
+        return 0;
+    }
+
+    if (length == 0) {
+        return 1;
+    }
+
+    int max_sum = 0;
+    for (int i = 0; i < num_values; i++) {
+        if (values[i] > 0) {
+            max_sum += values[i];
+        }
+    }
+    max_sum *= length;
+
+    long long *dp = (long long *)calloc(max_sum + 1, sizeof(long long));
+    long long *next_dp = (long long *)calloc(max_sum + 1, sizeof(long long));
+
+    if (dp == NULL || next_dp == NULL) {
+        free(dp);
+        free(next_dp);
+        return 0;
+    }
+
+    dp[0] = 1;
+
+    for (int step = 0; step < length; step++) {
+        memset(next_dp, 0, (max_sum + 1) * sizeof(long long));
+        for (int current_sum = 0; current_sum <= max_sum; current_sum++) {
+            if (dp[current_sum] > 0) {
+                for (int i = 0; i < num_values; i++) {
+                    int next_sum = current_sum + values[i];
+                    if (next_sum >= 0 && next_sum <= max_sum) {
+                        next_dp[next_sum] += dp[current_sum];
+                    }
+                }
+            }
+        }
+        long long *temp = dp;
+        dp = next_dp;
+        next_dp = temp;
+    }
+
+    long long total_sequences = 0;
+    for (int i = 0; i <= max_sum; i++) {
+        total_sequences += dp[i];
+    }
+
+    free(dp);
+    free(next_dp);
+
+    return total_sequences;
+}
+
+int main() {
+    int length = 3;
+    int values[] = {1, -1};
+    int num_values = sizeof(values) / sizeof(values[0]);
+
+    long long result = count_sequences(length, values, num_values);
+    printf("%lld\n", result);
+
+    int length2 = 4;
+    int values2[] = {1, -1, 2};
+    int num_values2 = sizeof(values2) / sizeof(values2[0]);
+
+    long long result2 = count_sequences(length2, values2, num_values2);
+    printf("%lld\n", result2);
+
+    return 0;
+}
+```

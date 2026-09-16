@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Tuple {
+    int *elements;
+    int size;
+} Tuple;
+
+typedef struct NestedTuple {
+    Tuple **tuples;
+    int size;
+} NestedTuple;
+
+NestedTuple* createNestedTuple(int size) {
+    NestedTuple *nt = (NestedTuple*)malloc(sizeof(NestedTuple));
+    if (nt == NULL) {
+        return NULL;
+    }
+    nt->tuples = (Tuple**)calloc(size, sizeof(Tuple*));
+    if (nt->tuples == NULL) {
+        free(nt);
+        return NULL;
+    }
+    nt->size = size;
+    return nt;
+}
+
+Tuple* createTuple(const int *elements, int size) {
+    Tuple *t = (Tuple*)malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->elements = (int*)malloc(size * sizeof(int));
+    if (t->elements == NULL) {
+        free(t);
+        return NULL;
+    }
+    for (int i = 0; i < size; i++) {
+        t->elements[i] = elements[i];
+    }
+    t->size = size;
+    return t;
+}
+
+void freeTuple(Tuple *t) {
+    if (t != NULL) {
+        free(t->elements);
+        free(t);
+    }
+}
+
+void freeNestedTuple(NestedTuple *nt) {
+    if (nt == NULL) {
+        return;
+    }
+    for (int i = 0; i < nt->size; i++) {
+        freeTuple(nt->tuples[i]);
+    }
+    free(nt->tuples);
+    free(nt);
+}
+
+NestedTuple* addNestedTuples(NestedTuple *a, NestedTuple *b) {
+    if (a == NULL || b == NULL || a->size != b->size) {
+        return NULL;
+    }
+    
+    NestedTuple *result = createNestedTuple(a->size);
+    if (result == NULL) {
+        return NULL;
+    }
+    
+    for (int i = 0; i < a->size; i++) {
+        if (a->tuples[i] == NULL || b->tuples[i] == NULL || 
+            a->tuples[i]->size != b->tuples[i]->size) {
+            freeNestedTuple(result);
+            return NULL;
+        }
+        
+        int tupleSize = a->tuples[i]->size;
+        Tuple *sumTuple = createTuple(a->tuples[i]->elements, tupleSize);
+        if (sumTuple == NULL) {
+            freeNestedTuple(result);
+            return NULL;
+        }
+        
+        for (int j = 0; j < tupleSize; j++) {
+            sumTuple->elements[j] += b->tuples[i]->elements[j];
+        }
+        
+        result->tuples[i] = sumTuple;
+    }
+    
+    return result;
+}
+
+void printNestedTuple(NestedTuple *nt) {
+    if (nt == NULL) {
+        printf("NULL\n");
+        return;
+    }
+    printf("[");
+    for (int i = 0; i < nt->size; i++) {
+        printf("(");
+        if (nt->tuples[i] != NULL) {
+            for (int j = 0; j < nt->tuples[i]->size; j++) {
+                printf("%d", nt->tuples[i]->elements[j]);
+                if (j < nt->tuples[i]->size - 1) {
+                    printf(", ");
+                }
+            }
+        }
+        printf(")");
+        if (i < nt->size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main() {
+    const int elements1[] = {1, 2, 3};
+    const int elements2[] = {4, 5, 6};
+    const int elements3[] = {7, 8, 9};
+    const int elements4[] = {10, 11, 12};
+    
+    Tuple *t1 = createTuple(elements1, 3);
+    Tuple *t2 = createTuple(elements2, 3);
+    Tuple *t3 = createTuple(elements3, 3);
+    Tuple *t4 = createTuple(elements4, 3);
+    
+    if (t1 == NULL || t2 == NULL || t3 == NULL || t4 == NULL) {
+        freeTuple(t1);
+        freeTuple(t2);
+        freeTuple(t3);
+        freeTuple(t4);
+        return 1;
+    }
+    
+    NestedTuple *nt1 = createNestedTuple(2);
+    NestedTuple *nt2 = createNestedTuple(2);
+    
+    if (nt1 == NULL || nt2 == NULL) {
+        freeNestedTuple(nt1);
+        freeNestedTuple(nt2);
+        freeTuple(t1);
+        freeTuple(t2);
+        freeTuple(t3);
+        freeTuple(t4);
+        return 1;
+    }
+    
+    nt1->tuples[0] = t1;
+    nt1->tuples[1] = t2;
+    nt2->tuples[0] = t3;
+    nt2->tuples[1] = t4;
+    
+    NestedTuple *result = addNestedTuples(nt1, nt2);
+    
+    if (result != NULL) {
+        printNestedTuple(result);
+        freeNestedTuple(result);
+    } else {
+        printf("Addition failed\n");
+    }
+    
+    freeNestedTuple(nt1);
+    freeNestedTuple(nt2);
+    
+    return 0;
+}

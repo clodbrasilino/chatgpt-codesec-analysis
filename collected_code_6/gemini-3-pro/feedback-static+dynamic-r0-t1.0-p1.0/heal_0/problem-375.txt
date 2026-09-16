@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double round_to_nearest_multiple(double num, double mult) {
+    if (mult == 0.0) {
+        return num;
+    }
+    return round(num / mult) * mult;
+}
+
+int main(void) {
+    double number = 23.7;
+    double multiple = 5.0;
+    
+    double result = round_to_nearest_multiple(number, multiple);
+    
+    if (printf("%.2f\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

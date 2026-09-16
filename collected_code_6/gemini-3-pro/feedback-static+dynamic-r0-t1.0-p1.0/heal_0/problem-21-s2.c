@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* find_multiples(int n, int m) {
+    if (m <= 0) {
+        return NULL;
+    }
+
+    int* multiples = (int*)malloc(m * sizeof(int));
+    if (multiples == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < m; i++) {
+        multiples[i] = n * (i + 1);
+    }
+
+    return multiples;
+}
+
+int main(void) {
+    int n = 5;
+    int m = 10;
+
+    int* result = find_multiples(n, m);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to allocate memory or invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < m; i++) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+
+    free(result);
+
+    return EXIT_SUCCESS;
+}

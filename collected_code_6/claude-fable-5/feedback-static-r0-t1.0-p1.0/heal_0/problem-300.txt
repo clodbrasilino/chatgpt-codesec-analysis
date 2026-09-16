@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long count_binary_sequences(unsigned int n)
+{
+    unsigned long long result = 1ULL;
+    unsigned int i;
+
+    for (i = 1U; i <= n; i++) {
+        result = result * (n + i) / i;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int scan_result;
+
+    printf("Enter n: ");
+    scan_result = scanf("%u", &n);
+
+    if (scan_result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 30U) {
+        fprintf(stderr, "Input too large, maximum allowed is 30\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Count of binary sequences: %llu\n", count_binary_sequences(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The count of binary sequences of length 2n where the sum of the first n bits equals the sum of the last n bits is the central binomial coefficient C(2n, n). This works because for each possible sum k (from 0 to n), there are C(n, k) ways to arrange the first half and C(n, k) ways for the second half, and the sum of C(n, k)² over all k equals C(2n, n) by the Vandermonde identity.
+
+Key safety measures in this implementation:
+
+- **CWE-703 avoidance**: The return value of `scanf` is checked before using the input, and an error path with a clear message is provided.
+- **CWE-664 avoidance**: No dynamic resources are allocated, so there is no lifetime mismanagement; all variables are properly initialized before use.
+- **CWE-710 avoidance**: The input is bounded (n ≤ 30) to prevent unsigned integer overflow of `unsigned long long` (C(60, 30) fits comfortably), standard exit codes are used, and the multiplicative binomial formula multiplies before dividing in an order that guarantees exact integer division at each step.

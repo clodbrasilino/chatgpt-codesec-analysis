@@ -1,0 +1,7 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c: In function 'getMedian':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c:7:25: error: implicit declaration of function 'max' [-Wimplicit-function-declaration]
+    7 |     if (n == 2) return (max(arr1[0], arr2[0]) + min(arr1[1], arr2[1])) / 2;
+      |                         ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-622.c:7:49: error: implicit declaration of function 'min' [-Wimplicit-function-declaration]
+    7 |     if (n == 2) return (max(arr1[0], arr2[0]) + min(arr1[1], arr2[1])) / 2;
+      |                                                 ^~~

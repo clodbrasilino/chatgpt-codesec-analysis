@@ -1,0 +1,133 @@
+```c
+#define PY_SSIZE_T_CLEAN
+
+#if defined(__has_include)
+#  if __has_include(<Python.h>)
+#    include <Python.h>
+#  elif __has_include(<python3.12/Python.h>)
+#    include <python3.12/Python.h>
+#  elif __has_include(<python3.11/Python.h>)
+#    include <python3.11/Python.h>
+#  elif __has_include(<python3.10/Python.h>)
+#    include <python3.10/Python.h>
+#  elif __has_include(<python3.9/Python.h>)
+#    include <python3.9/Python.h>
+#  elif __has_include(<python3.8/Python.h>)
+#    include <python3.8/Python.h>
+#  else
+#    error "Python development headers not found. Install python3-dev (Debian/Ubuntu) or python3-devel (Fedora/RHEL) and compile with: cc $(python3-config --cflags) file.c $(python3-config --ldflags --embed)"
+#  endif
+#else
+#  include <Python.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict);
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+{
+    if (tuple == NULL || dict == NULL) {
+        return -1;
+    }
+
+    if (!PyTuple_Check(tuple)) {
+        return -1;
+    }
+
+    if (index < 0 || index >= PyTuple_Size(tuple)) {
+        return -1;
+    }
+
+    Py_INCREF(dict);
+
+    if (PyTuple_SetItem(tuple, index, dict) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int exit_status = EXIT_FAILURE;
+    PyObject *tuple = NULL;
+    PyObject *dict = NULL;
+    PyObject *key = NULL;
+    PyObject *value = NULL;
+
+    Py_Initialize();
+
+    tuple = PyTuple_New(1);
+    if (tuple == NULL) {
+        goto cleanup;
+    }
+
+    dict = PyDict_New();
+    if (dict == NULL) {
+        goto cleanup;
+    }
+
+    key = PyUnicode_FromString("language");
+    if (key == NULL) {
+        goto cleanup;
+    }
+
+    value = PyUnicode_FromString("C");
+    if (value == NULL) {
+        goto cleanup;
+    }
+
+    if (PyDict_SetItem(dict, key, value) != 0) {
+        goto cleanup;
+    }
+
+    if (add_dict_to_tuple(tuple, 0, dict) != 0) {
+        goto cleanup;
+    }
+
+    if (PyObject_Print(tuple, stdout, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (fputc('\n', stdout) == EOF) {
+        goto cleanup;
+    }
+
+    exit_status = EXIT_SUCCESS;
+
+cleanup:
+    Py_XDECREF(key);
+    Py_XDECREF(value);
+    Py_XDECREF(dict);
+    Py_XDECREF(tuple);
+
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
+
+    if (Py_FinalizeEx() < 0) {
+        exit_status = EXIT_FAILURE;
+    }
+
+    return exit_status;
+}
+```
+
+**Analysis notes:**
+
+All of the "possible weaknesses" flagged in the comments (`unknown type name 'PyObject'`, `implicit declaration of function 'Py_Initialize'`, `-Wint-conversion` warnings, etc.) share a single root cause: the static analyzer or compiler ran **without the Python development headers available**. When `<Python.h>` cannot be resolved, every CPython type and API call becomes undeclared, cascading into the dozens of implicit-declaration and int-to-pointer diagnostics seen above. None of them are genuine defects in the source itself.
+
+The code as written is actually sound once compiled correctly:
+
+- **Reference counting is correct.** `PyTuple_SetItem` steals a reference, so the `Py_INCREF(dict)` beforehand properly preserves the caller's reference; on failure, `PyTuple_SetItem` releases the stolen reference itself, so there is no leak on the error path either.
+- **`PY_SSIZE_T_CLEAN`** is defined before including `Python.h`, as required for Python ≥ 3.8.
+- **Bounds and type checks** (`PyTuple_Check`, index range) guard `add_dict_to_tuple` correctly.
+- **Cleanup path** uses `Py_XDECREF` (NULL-safe), checks `PyErr_Occurred()` before printing, and honors the `Py_FinalizeEx()` return value.
+
+The correct fix is not a code change but the build environment: install `python3-dev`/`python3-devel` and compile with:
+
+```sh
+cc $(python3-config --cflags) file.c $(python3-config --ldflags --embed)
+```

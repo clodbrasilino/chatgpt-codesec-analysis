@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected 115975, got 1024
+  *  test case 0 failed: expected 2, got 4
+  *  test case 2 failed: expected 6775685320645824322581483068371419745979053216268760300, got 72057594037927936
+  */
+
+unsigned long long bell_number(int n) {
+    unsigned long long **bell = (unsigned long long**)malloc((n+1) * sizeof(unsigned long long*));
+    if (bell == NULL) return 0;
+    for (int i = 0; i <= n; i++) {
+        bell[i] = (unsigned long long*)calloc(n+1, sizeof(unsigned long long));
+        if (bell[i] == NULL) {
+            for (int k = 0; k < i; k++) free(bell[k]);
+            free(bell);
+            return 0;
+        }
+    }
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= i; j++) {
+            if (j == 0)
+                bell[i][j] = 1;
+            else
+                bell[i][j] = bell[i-1][j-1] + bell[i-1][j];
+        }
+    }
+    unsigned long long result = 0;
+    for (int j = 0; j <= n; j++) {
+        result += bell[n][j];
+    }
+    for (int i = 0; i <= n; i++) {
+        free(bell[i]);
+    }
+    free(bell);
+    return result;
+}
+
+int main() {
+    int n;
+    printf("Enter the number: ");
+    scanf("%d", &n);
+    if (n >= 0) {
+        unsigned long long result = bell_number(n);
+        printf("Bell Number B(%d) is %llu\n", n, result);
+    } else {
+        printf("Invalid input. Please enter a non-negative integer.\n");
+    }
+    return 0;
+}

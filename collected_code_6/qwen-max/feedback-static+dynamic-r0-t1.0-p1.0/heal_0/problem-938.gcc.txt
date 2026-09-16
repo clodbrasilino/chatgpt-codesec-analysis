@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938.c: In function 'findClosest':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938.c:11:20: error: implicit declaration of function 'fmax' [-Wimplicit-function-declaration]
+   11 |         int diff = fmax(A[p], fmax(B[q], C[r])) - fmin(A[p], fmin(B[q], C[r]));
+      |                    ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938.c:4:1: note: include '<math.h>' or provide a declaration of 'fmax'
+    3 | #include <limits.h>
+  +++ |+#include <math.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938.c:11:51: error: implicit declaration of function 'fmin' [-Wimplicit-function-declaration]
+   11 |         int diff = fmax(A[p], fmax(B[q], C[r])) - fmin(A[p], fmin(B[q], C[r]));
+      |                                                   ^~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-938.c:11:51: note: include '<math.h>' or provide a declaration of 'fmin'

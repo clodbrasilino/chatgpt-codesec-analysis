@@ -1,0 +1,50 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort_list_of_lists(int **list, size_t num_lists, size_t inner_size, size_t index) {
+    if (list == NULL || num_lists == 0 || inner_size == 0 || index >= inner_size) {
+        return;
+    }
+    for (size_t i = 0; i < num_lists; i++) {
+        if (list[i] == NULL) {
+            return;
+        }
+    }
+    for (size_t i = 0; i < num_lists - 1; i++) {
+        size_t min_idx = i;
+        for (size_t j = i + 1; j < num_lists; j++) {
+            if (list[j][index] < list[min_idx][index]) {
+                min_idx = j;
+            }
+        }
+        if (min_idx != i) {
+            int *temp = list[i];
+            list[i] = list[min_idx];
+            list[min_idx] = temp;
+        }
+    }
+}
+
+int main(void) {
+    int row1[] = {3, 2, 1};
+    int row2[] = {1, 5, 6};
+    int row3[] = {2, 1, 4};
+    
+    int *lists[] = {row1, row2, row3};
+    size_t num_lists = sizeof(lists) / sizeof(lists[0]);
+    size_t inner_size = sizeof(row1) / sizeof(row1[0]);
+    size_t index = 1;
+    
+    sort_list_of_lists(lists, num_lists, inner_size, index);
+    
+    for (size_t i = 0; i < num_lists; i++) {
+        for (size_t j = 0; j < inner_size; j++) {
+            printf("%d ", lists[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
+```

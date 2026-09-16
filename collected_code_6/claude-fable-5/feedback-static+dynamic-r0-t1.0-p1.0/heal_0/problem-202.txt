@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_even_chars(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = malloc(len + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    j = 0U;
+    for (i = 0U; i < len; i++) {
+        if ((i % 2U) == 0U) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *text = "abcdefgh";
+    char *filtered;
+
+    filtered = remove_even_chars(text);
+    if (filtered == NULL) {
+        fprintf(stderr, "Failed to process string\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Original: %s\n", text) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %s\n", filtered) < 0) {
+        free(filtered);
+        return EXIT_FAILURE;
+    }
+
+    free(filtered);
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation keeps characters at odd positions (1st, 3rd, 5th, ...) and removes those at even positions (2nd, 4th, ...). Key safety measures include:
+
+- **CWE-664 avoidance**: The allocated buffer is freed exactly once on every exit path, and the pointer is never used after being freed.
+- **CWE-703 avoidance**: All return values are checked, including `malloc` and `printf`, and a `NULL` input is handled gracefully.
+- **CWE-710 avoidance**: Consistent use of `size_t` for indexing, unsigned literals to match operand types, `const` correctness on read-only parameters, and standard exit codes via `EXIT_SUCCESS`/`EXIT_FAILURE`.

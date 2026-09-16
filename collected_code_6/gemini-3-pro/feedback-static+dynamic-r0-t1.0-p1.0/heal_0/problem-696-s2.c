@@ -1,0 +1,182 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct ListList {
+    Node* list;
+    struct ListList* next;
+} ListList;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        return NULL;
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+ListList* create_list_list(Node* list) {
+    ListList* new_ll = (ListList*)malloc(sizeof(ListList));
+    if (!new_ll) {
+        return NULL;
+    }
+    new_ll->list = list;
+    new_ll->next = NULL;
+    return new_ll;
+}
+
+void append_node(Node** head, int data) {
+    if (!head) return;
+    Node* new_node = create_node(data);
+    if (!new_node) return;
+    
+    if (!*head) {
+        *head = new_node;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = new_node;
+}
+
+void append_list_list(ListList** head, Node* list) {
+    if (!head) return;
+    ListList* new_ll = create_list_list(list);
+    if (!new_ll) return;
+    
+    if (!*head) {
+        *head = new_ll;
+        return;
+    }
+    ListList* temp = *head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = new_ll;
+}
+
+ListList* zip_list_of_lists(ListList* l1, ListList* l2) {
+    ListList* result = NULL;
+    ListList* temp1 = l1;
+    ListList* temp2 = l2;
+    
+    while (temp1 != NULL && temp2 != NULL) {
+        ListList* result_tail = result;
+        while (result_tail && result_tail->next) {
+            result_tail = result_tail->next;
+        }
+        
+        Node* zipped_sublist = NULL;
+        Node* curr_zipped = NULL;
+        
+        Node* n1 = temp1->list;
+        Node* n2 = temp2->list;
+        
+        while (n1 != NULL && n2 != NULL) {
+            Node* new_node1 = create_node(n1->data);
+            Node* new_node2 = create_node(n2->data);
+            
+            if (!new_node1 || !new_node2) {
+                free(new_node1);
+                free(new_node2);
+                return result; 
+            }
+            
+            if (curr_zipped == NULL) {
+                zipped_sublist = new_node1;
+                zipped_sublist->next = new_node2;
+                curr_zipped = new_node2;
+            } else {
+                curr_zipped->next = new_node1;
+                new_node1->next = new_node2;
+                curr_zipped = new_node2;
+            }
+            n1 = n1->next;
+            n2 = n2->next;
+        }
+        
+        append_list_list(&result, zipped_sublist);
+        
+        temp1 = temp1->next;
+        temp2 = temp2->next;
+    }
+    return result;
+}
+
+void free_list(Node* head) {
+    while (head) {
+        Node* temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_list_list(ListList* head) {
+    while (head) {
+        ListList* temp = head;
+        head = head->next;
+        free_list(temp->list);
+        free(temp);
+    }
+}
+
+void print_list_list(ListList* head) {
+    ListList* temp_ll = head;
+    while (temp_ll) {
+        printf("[");
+        Node* temp = temp_ll->list;
+        while (temp) {
+            printf("%d", temp->data);
+            if (temp->next) printf(", ");
+            temp = temp->next;
+        }
+        printf("]");
+        if (temp_ll->next) printf(" -> ");
+        temp_ll = temp_ll->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* l1_1 = NULL;
+    append_node(&l1_1, 1);
+    append_node(&l1_1, 2);
+    
+    Node* l1_2 = NULL;
+    append_node(&l1_2, 3);
+    append_node(&l1_2, 4);
+
+    ListList* list1 = NULL;
+    append_list_list(&list1, l1_1);
+    append_list_list(&list1, l1_2);
+
+    Node* l2_1 = NULL;
+    append_node(&l2_1, 5);
+    append_node(&l2_1, 6);
+    
+    Node* l2_2 = NULL;
+    append_node(&l2_2, 7);
+    append_node(&l2_2, 8);
+
+    ListList* list2 = NULL;
+    append_list_list(&list2, l2_1);
+    append_list_list(&list2, l2_2);
+
+    ListList* result = zip_list_of_lists(list1, list2);
+
+    print_list_list(result);
+
+    free_list_list(list1);
+    free_list_list(list2);
+    free_list_list(result);
+
+    return 0;
+}

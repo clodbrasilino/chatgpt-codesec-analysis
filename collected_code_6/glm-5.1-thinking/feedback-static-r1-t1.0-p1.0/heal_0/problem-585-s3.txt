@@ -1,0 +1,156 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    double price;
+} Item;
+
+typedef struct {
+    Item *data;
+    size_t capacity;
+    size_t size;
+} MinHeap;
+
+void swap(Item *a, Item *b) {
+    Item temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify_up(MinHeap *heap, size_t index) {
+    if (index == 0) {
+        return;
+    }
+    size_t parent = (index - 1) / 2;
+    if (heap->data[index].price < heap->data[parent].price) {
+        swap(&heap->data[index], &heap->data[parent]);
+        heapify_up(heap, parent);
+    }
+}
+
+void heapify_down(MinHeap *heap, size_t index) {
+    size_t smallest = index;
+    size_t left = 2 * index + 1;
+    size_t right = 2 * index + 2;
+
+    if (left < heap->size && heap->data[left].price < heap->data[smallest].price) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->data[right].price < heap->data[smallest].price) {
+        smallest = right;
+    }
+    if (smallest != index) {
+        swap(&heap->data[index], &heap->data[smallest]);
+        heapify_down(heap, smallest);
+    }
+}
+
+int heap_push(MinHeap *heap, Item item) {
+    if (heap->size >= heap->capacity) {
+        return -1;
+    }
+    heap->data[heap->size] = item;
+    heap->size++;
+    heapify_up(heap, heap->size - 1);
+    return 0;
+}
+
+int heap_pop(MinHeap *heap, Item *out) {
+    if (heap->size == 0) {
+        return -1;
+    }
+    if (out != NULL) {
+        *out = heap->data[0];
+    }
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    heapify_down(heap, 0);
+    return 0;
+}
+
+double heap_peek_price(MinHeap *heap) {
+    if (heap->size == 0) {
+        return -1.0;
+    }
+    return heap->data[0].price;
+}
+
+Item *find_n_expensive(Item *dataset, size_t dataset_size, size_t n, size_t *result_size) {
+    if (dataset == NULL || n == 0 || dataset_size == 0) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    size_t target_n = n;
+    if (target_n > dataset_size) {
+        target_n = dataset_size;
+    }
+
+    MinHeap heap;
+    heap.capacity = target_n;
+    heap.size = 0;
+    heap.data = (Item *)malloc(target_n * sizeof(Item));
+    if (heap.data == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < dataset_size; i++) {
+        if (heap.size < target_n) {
+            heap_push(&heap, dataset[i]);
+        } else {
+            if (dataset[i].price > heap_peek_price(&heap)) {
+                Item discarded;
+                heap_pop(&heap, &discarded);
+                heap_push(&heap, dataset[i]);
+            }
+        }
+    }
+
+    Item *result = (Item *)malloc(target_n * sizeof(Item));
+    if (result == NULL) {
+        free(heap.data);
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (size_t i = 0; i < target_n; i++) {
+        Item item;
+        if (heap_pop(&heap, &item) == 0) {
+            result[i] = item;
+        }
+    }
+
+    free(heap.data);
+    *result_size = target_n;
+    return result;
+}
+
+int main(void) {
+    Item dataset[] = {
+        {1, 10.5},
+        {2, 25.0},
+        {3, 15.2},
+        {4, 50.0},
+        {5, 5.0},
+        {6, 30.1},
+        {7, 45.8}
+    };
+    size_t dataset_size = sizeof(dataset) / sizeof(dataset[0]);
+    size_t n = 3;
+    size_t result_size = 0;
+
+    Item *expensive_items = find_n_expensive(dataset, dataset_size, n, &result_size);
+
+    if (expensive_items != NULL) {
+        for (size_t i = 0; i < result_size; i++) {
+            printf("Item ID: %d, Price: %.2f\n", expensive_items[i].id, expensive_items[i].price);
+        }
+        free(expensive_items);
+    }
+
+    return 0;
+}
+```

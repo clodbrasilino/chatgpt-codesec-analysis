@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+int sum_tuple_elements(const Tuple *tuples, size_t num_tuples, long long *total_sum) {
+    if (tuples == NULL || total_sum == NULL) {
+        return -1;
+    }
+
+    *total_sum = 0;
+
+    for (size_t i = 0; i < num_tuples; ++i) {
+        if (tuples[i].elements == NULL && tuples[i].size > 0) {
+            return -1;
+        }
+        for (size_t j = 0; j < tuples[i].size; ++j) {
+            *total_sum += tuples[i].elements[j];
+        }
+    }
+
+    return 0;
+}
+
+int main(void) {
+    int elems1[] = {1, 2, 3};
+    int elems2[] = {4, 5};
+    int elems3[] = {6, 7, 8, 9};
+
+    Tuple tuples[] = {
+        {elems1, sizeof(elems1) / sizeof(elems1[0])},
+        {elems2, sizeof(elems2) / sizeof(elems2[0])},
+        {elems3, sizeof(elems3) / sizeof(elems3[0])}
+    };
+
+    size_t num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+    long long total_sum = 0;
+
+    if (sum_tuple_elements(tuples, num_tuples, &total_sum) == 0) {
+        printf("Sum: %lld\n", total_sum);
+    } else {
+        printf("Error calculating sum.\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

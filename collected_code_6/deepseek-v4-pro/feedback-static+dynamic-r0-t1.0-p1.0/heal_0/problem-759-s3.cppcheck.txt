@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s3.c:52:31: style: Condition 'has_digits' is always true [knownConditionTrueFalse]
+    if (!has_decimal_point && has_digits) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s3.c:44:23: note: Assuming that condition '!has_digits' is not redundant
+    if (*p != '\0' || !has_digits) {
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s3.c:48:27: note: Assuming condition is false
+    if (has_decimal_point && decimal_places <= 2) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-759-s3.c:52:31: note: Condition 'has_digits' is always true
+    if (!has_decimal_point && has_digits) {
+                              ^

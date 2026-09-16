@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort_array(int *arr, int n) {
+    int count[3] = {0, 0, 0};
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+    int index = 0;
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < count[i]; j++) {
+            arr[index++] = i;
+        }
+    }
+}
+
+int main() {
+    int arr[] = {0, 2, 1, 2, 0};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    sort_array(arr, n);
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    return 0;
+}

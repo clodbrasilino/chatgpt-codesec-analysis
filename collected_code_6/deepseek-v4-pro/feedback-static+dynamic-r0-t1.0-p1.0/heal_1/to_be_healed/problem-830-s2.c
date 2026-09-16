@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+double round_up_to_digits(double value, int digits) {
+    if (digits < 0) {
+        errno = EINVAL;
+        return value;
+    }
+    
+    if (value == 0.0) {
+        return 0.0;
+    }
+    
+    if (!isfinite(value)) {
+        errno = EDOM;
+        return value;
+    }
+    
+    double factor = pow(10.0, digits);
+    
+    if (!isfinite(factor)) {
+        errno = ERANGE;
+        return value;
+    }
+    
+    if (value > 0.0) {
+        return ceil(value * factor) / factor;
+    } else {
+        return -ceil(-value * factor) / factor;
+    }
+}
+
+int main(void) {
+    double test_values[] = {3.14159, -2.71828, 0.0, 123.456, -987.654, 1.005, -1.005};
+    size_t num_values = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_values; i++) {
+        printf("Original: %f\n", test_values[i]);
+        for (int digits = 0; digits <= 3; digits++) {
+            errno = 0;
+            double result = round_up_to_digits(test_values[i], digits);
+            if (errno != 0) {
+                printf("  digits=%d: error occurred (errno=%d)\n", digits, errno);
+            } else {
+                printf("  digits=%d: %f\n", digits, result);
+            }
+        }
+        printf("\n");
+    }
+    
+    errno = 0;
+    /* Possible weaknesses found:
+     *  Value stored to 'result' during its initialization is never read [deadcode.DeadStores]
+     *  Variable 'result' is assigned a value that is never used. [unreadVariable]
+     */
+    double result = round_up_to_digits(3.14159, -1);
+    if (errno != 0) {
+        printf("Test with negative digits: error (errno=%d)\n", errno);
+    }
+    
+    return EXIT_SUCCESS;
+}

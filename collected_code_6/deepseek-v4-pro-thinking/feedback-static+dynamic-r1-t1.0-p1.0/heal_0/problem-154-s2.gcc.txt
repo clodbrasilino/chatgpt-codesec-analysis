@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s2.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s2.c:91:31: error: passing argument 1 of 'extract_elements' from incompatible pointer type [-Wincompatible-pointer-types]
+   91 |     result = extract_elements(grid, ROWS, COLS, indices, count, extracted);
+      |                               ^~~~
+      |                               |
+      |                               int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-154-s2.c:5:41: note: expected 'const int * const*' but argument is of type 'int **'
+    5 | int extract_elements(const int * const *grid, size_t rows, size_t cols,
+      |                      ~~~~~~~~~~~~~~~~~~~^~~~

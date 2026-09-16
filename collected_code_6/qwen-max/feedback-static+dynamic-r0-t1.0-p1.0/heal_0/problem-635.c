@@ -1,59 +1,88 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void pushHeap(int *heap, int *size, int value) {
-    int i = (*size)++;
-    heap[i] = value;
-    while (i != 0 && heap[(i - 1) / 2] > heap[i]) {
-        int temp = heap[i];
-        heap[i] = heap[(i - 1) / 2];
-        heap[(i - 1) / 2] = temp;
-        i = (i - 1) / 2;
+typedef struct {
+    int *array;
+    size_t size;
+    size_t capacity;
+} MinHeap;
+
+void minHeapInit(MinHeap *heap, size_t capacity) {
+    heap->array = (int *)malloc(capacity * sizeof(int));
+    if (heap->array == NULL) {
+        exit(EXIT_FAILURE);
     }
+    heap->capacity = capacity;
+    heap->size = 0;
 }
 
-int popHeap(int *heap, int *size) {
-    if (*size == 0) {
-        return -1; // Indicate an empty heap
+void minHeapFree(MinHeap *heap) {
+    free(heap->array);
+    heap->array = NULL;
+    heap->size = 0;
+    heap->capacity = 0;
+}
+
+void minHeapInsert(MinHeap *heap, int value) {
+    if (heap->size + 1 > heap->capacity) {
+        heap->capacity *= 2;
+        heap->array = (int *)realloc(heap->array, heap->capacity * sizeof(int));
+        if (heap->array == NULL) {
+            exit(EXIT_FAILURE);
+        }
     }
-    int root = heap[0];
-    heap[0] = heap[--(*size)];
-    int i = 0;
+
+    size_t i = heap->size;
+    while (i > 0 && heap->array[(i - 1) / 2] > value) {
+        heap->array[i] = heap->array[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+    heap->array[i] = value;
+    heap->size++;
+}
+
+int minHeapExtractMin(MinHeap *heap) {
+    if (heap->size == 0) {
+        exit(EXIT_FAILURE);
+    }
+    int root = heap->array[0];
+    heap->array[0] = heap->array[--heap->size];
+    size_t i = 0;
     while (1) {
-        int smallest = i;
-        if (2 * i + 1 < *size && heap[2 * i + 1] < heap[smallest]) {
-            smallest = 2 * i + 1;
+        size_t left = 2 * i + 1;
+        size_t right = 2 * i + 2;
+        size_t minIdx = i;
+        if (left < heap->size && heap->array[left] < heap->array[minIdx]) {
+            minIdx = left;
         }
-        if (2 * i + 2 < *size && heap[2 * i + 2] < heap[smallest]) {
-            smallest = 2 * i + 2;
+        if (right < heap->size && heap->array[right] < heap->array[minIdx]) {
+            minIdx = right;
         }
-        if (smallest == i) {
+        if (minIdx != i) {
+            int temp = heap->array[i];
+            heap->array[i] = heap->array[minIdx];
+            heap->array[minIdx] = temp;
+            i = minIdx;
+        } else {
             break;
         }
-        int temp = heap[i];
-        heap[i] = heap[smallest];
-        heap[smallest] = temp;
-        i = smallest;
     }
     return root;
 }
 
 int main() {
-    int heap[100];
-    int size = 0;
-    int data[] = {5, 3, 8, 1, 4, 7, 6, 2};
-    int n = sizeof(data) / sizeof(data[0]);
+    MinHeap heap;
+    minHeapInit(&heap, 10);
 
-    for (int i = 0; i < n; i++) {
-        pushHeap(heap, &size, data[i]);
+    int values[] = {34, 23, 1, 56, 78, 22, 9, 7, 11, 4};
+    for (int i = 0; i < 10; ++i) {
+        minHeapInsert(&heap, values[i]);
     }
 
-    for (int i = 0; i < n; i++) {
-        int value = popHeap(heap, &size);
-        if (value != -1) {
-            printf("%d\n", value);
-        }
+    while (heap.size > 0) {
+        printf("%d\n", minHeapExtractMin(&heap));
     }
 
+    minHeapFree(&heap);
     return 0;
 }

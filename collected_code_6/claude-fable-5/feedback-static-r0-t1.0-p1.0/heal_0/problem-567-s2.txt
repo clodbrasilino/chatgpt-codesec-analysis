@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_sorted(const int *list, size_t length)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return false;
+    }
+
+    if (length < 2U) {
+        return true;
+    }
+
+    for (i = 1U; i < length; i++) {
+        if (list[i - 1U] > list[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int sorted_list[] = {1, 2, 3, 4, 5};
+    int unsorted_list[] = {5, 1, 4, 2, 3};
+    int single_item[] = {42};
+    size_t sorted_len = sizeof(sorted_list) / sizeof(sorted_list[0]);
+    size_t unsorted_len = sizeof(unsorted_list) / sizeof(unsorted_list[0]);
+    size_t single_len = sizeof(single_item) / sizeof(single_item[0]);
+
+    if (is_sorted(sorted_list, sorted_len)) {
+        (void)printf("List 1 is sorted.\n");
+    } else {
+        (void)printf("List 1 is not sorted.\n");
+    }
+
+    if (is_sorted(unsorted_list, unsorted_len)) {
+        (void)printf("List 2 is sorted.\n");
+    } else {
+        (void)printf("List 2 is not sorted.\n");
+    }
+
+    if (is_sorted(single_item, single_len)) {
+        (void)printf("List 3 is sorted.\n");
+    } else {
+        (void)printf("List 3 is not sorted.\n");
+    }
+
+    if (is_sorted(NULL, 0U)) {
+        (void)printf("NULL list is sorted.\n");
+    } else {
+        (void)printf("NULL list is not sorted.\n");
+    }
+
+    return 0;
+}
+```

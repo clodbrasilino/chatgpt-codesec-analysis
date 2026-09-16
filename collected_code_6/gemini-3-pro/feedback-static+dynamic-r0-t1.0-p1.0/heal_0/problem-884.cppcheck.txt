@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c:40:28: style: Condition 'check_bits_in_range(test_val_3,left_3,right_3)' is always false [knownConditionTrueFalse]
+    if (check_bits_in_range(test_val_3, left_3, right_3)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c:40:28: note: Calling function 'check_bits_in_range' returns 0
+    if (check_bits_in_range(test_val_3, left_3, right_3)) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-884.c:40:28: note: Condition 'check_bits_in_range(test_val_3,left_3,right_3)' is always false
+    if (check_bits_in_range(test_val_3, left_3, right_3)) {
+                           ^

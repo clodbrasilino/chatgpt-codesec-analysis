@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+int find_gcd_of_array(int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+
+    int result = arr[0];
+    for (int i = 1; i < n; i++) {
+        result = gcd(result, arr[i]);
+        if (result == 1) {
+            return 1;
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int arr[] = {2, 4, 6, 8, 16};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int result = find_gcd_of_array(arr, n);
+    
+    if (result != -1) {
+        printf("GCD of array elements is: %d\n", result);
+    } else {
+        printf("Invalid input array size.\n");
+    }
+
+    return 0;
+}

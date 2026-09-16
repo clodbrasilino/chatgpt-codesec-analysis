@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *tuples_to_set(const int *tuples, size_t tuple_count, size_t *set_count) {
+    if (tuples == NULL || set_count == NULL || tuple_count == 0) {
+        if (set_count != NULL) {
+            *set_count = 0;
+        }
+        return NULL;
+    }
+
+    int *set = malloc(tuple_count * sizeof(int));
+    if (set == NULL) {
+        *set_count = 0;
+        return NULL;
+    }
+
+    *set_count = 0;
+
+    for (size_t i = 0; i < tuple_count; i++) {
+        int is_duplicate = 0;
+        for (size_t j = 0; j < *set_count; j++) {
+            if (set[j] == tuples[i]) {
+                is_duplicate = 1;
+                break;
+            }
+        }
+        if (!is_duplicate) {
+            set[*set_count] = tuples[i];
+            (*set_count)++;
+        }
+    }
+
+    if (*set_count == 0) {
+        free(set);
+        return NULL;
+    }
+
+    int *temp = realloc(set, *set_count * sizeof(int));
+    if (temp != NULL) {
+        set = temp;
+    }
+
+    return set;
+}
+
+int main(void) {
+    int tuples[] = {5, 2, 8, 2, 5, 1, 8, 9, 1};
+    size_t tuple_count = sizeof(tuples) / sizeof(tuples[0]);
+    size_t set_count = 0;
+
+    int *set = tuples_to_set(tuples, tuple_count, &set_count);
+
+    if (set != NULL) {
+        for (size_t i = 0; i < set_count; i++) {
+            printf("%d ", set[i]);
+        }
+        printf("\n");
+        free(set);
+    } else {
+        printf("Set is empty or memory allocation failed.\n");
+    }
+
+    return 0;
+}

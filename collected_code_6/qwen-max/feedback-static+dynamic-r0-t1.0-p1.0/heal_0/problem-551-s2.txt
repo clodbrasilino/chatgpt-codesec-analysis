@@ -2,91 +2,94 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int val;
-    struct Node *next;
-} Node;
-
-typedef struct List {
-    Node *head;
-    struct List *sublist;
+typedef struct {
+    int *data;
+    int size;
 } List;
 
-List* createList() {
-    return (List*)calloc(1, sizeof(List));
-}
+typedef struct {
+    List **arrays;
+    int row_count;
+    int col_count;
+} NestedList;
 
-void insertNode(List *list, int val) {
-    Node *newNode = (Node*)malloc(sizeof(Node));
-    newNode->val = val;
-    newNode->next = list->head;
-    list->head = newNode;
-}
-
-List* getColumn(List *matrix, int col) {
-    if (!matrix || col < 0) return NULL;
-    List *result = createList();
-    List *current = matrix;
-    while (current) {
-        if (col == 0) {
-            for (Node *n = current->head; n != NULL; n = n->next) {
-                insertNode(result, n->val);
-            }
-        } else {
-            if (current->sublist) {
-                List *res = getColumn(current->sublist, col - 1);
-                for (Node *n = res->head; n != NULL; n = n->next) {
-                    insertNode(result, n->val);
-                }
-                free(res->sublist);
-                free(res);
-            }
-        }
-        current = current->sublist;
+List* create_list(int *data, int size) {
+    List *lst = (List*)malloc(sizeof(List));
+    lst->data = (int*)malloc(size * sizeof(int));
+    for (int i = 0; i < size; ++i) {
+        lst->data[i] = data[i];
     }
-    return result;
+    lst->size = size;
+    return lst;
 }
 
-void printList(List *list) {
-    for (Node *n = list->head; n != NULL; n = n->next) {
-        printf("%d ", n->val);
+NestedList* create_nested_list(int rows, int cols, int **data) {
+    NestedList *nest_list = (NestedList*)malloc(sizeof(NestedList));
+    nest_list->arrays = (List**)malloc(rows * sizeof(List*));
+    for (int i = 0; i < rows; ++i) {
+        nest_list->arrays[i] = create_list(data[i], cols);
     }
-    printf("\n");
+    nest_list->row_count = rows;
+    nest_list->col_count = cols;
+    return nest_list;
 }
 
-void freeList(List *list) {
-    while (list) {
-        Node *curr = list->head;
-        while (curr) {
-            Node *next = curr->next;
-            free(curr);
-            curr = next;
+List* extract_column(NestedList *nl, int col) {
+    if (col >= 0 && col < nl->col_count) {
+        List *result = (List*)malloc(sizeof(List));
+        result->data = (int*)malloc(nl->row_count * sizeof(int));
+        result->size = nl->row_count;
+        for (int i = 0; i < nl->row_count; ++i) {
+            result->data[i] = nl->arrays[i]->data[col];
         }
-        List *nextSub = list->sublist;
-        free(list);
-        list = nextSub;
+        return result;
+    }
+    return NULL;
+}
+
+void free_list(List *lst) {
+    if (lst) {
+        free(lst->data);
+        free(lst);
+    }
+}
+
+void free_nested_list(NestedList *nl) {
+    if (nl) {
+        for (int i = 0; i < nl->row_count; ++i) {
+            free_list(nl->arrays[i]);
+        }
+        free(nl->arrays);
+        free(nl);
+    }
+}
+
+void print_list(List *lst) {
+    if (lst) {
+        for (int i = 0; i < lst->size; ++i) {
+            printf("%d ", lst->data[i]);
+        }
+        printf("\n");
     }
 }
 
 int main() {
-    List *matrix = createList();
-    List *sublist1 = createList();
-    List *sublist2 = createList();
+    int data1[] = {1, 2, 3};
+    int data2[] = {4, 5, 6};
+    int data3[] = {7, 8, 9};
 
-    insertNode(matrix, 1);
-    insertNode(sublist1, 2);
-    insertNode(sublist1, 5);
-    insertNode(sublist2, 3);
-    insertNode(sublist2, 8);
+    int **data = (int**)(malloc(3 * sizeof(int*)));
+    data[0] = data1;
+    data[1] = data2;
+    data[2] = data3;
 
-    matrix->sublist = sublist1;
-    sublist1->sublist = sublist2;
+    NestedList *nl = create_nested_list(3, 3, data);
 
-    List *col = getColumn(matrix, 1);
-    printList(col);
+    List *column = extract_column(nl, 1);
+    print_list(column);
 
-    freeList(matrix);
-    freeList(col);
+    free_list(column);
+    free_nested_list(nl);
 
     return 0;
 }

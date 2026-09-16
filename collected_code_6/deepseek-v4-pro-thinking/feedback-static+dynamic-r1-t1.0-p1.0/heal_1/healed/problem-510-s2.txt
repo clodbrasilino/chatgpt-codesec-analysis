@@ -1,0 +1,127 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+static unsigned long long add_ull(unsigned long long a, unsigned long long b)
+{
+    if (a > ULLONG_MAX - b) {
+        return ULLONG_MAX;
+    }
+    return a + b;
+}
+
+static unsigned long long mul_ull(unsigned long long a, unsigned long long b)
+{
+    if (a != 0 && b > ULLONG_MAX / a) {
+        return ULLONG_MAX;
+    }
+    return a * b;
+}
+
+static unsigned long long pow2_minus_one(int exp)
+{
+    if (exp <= 0) {
+        return 0;
+    }
+    if (exp >= 64) {
+        return ULLONG_MAX;
+    }
+    return (1ULL << exp) - 1;
+}
+
+static unsigned long long pow2_ull(int exp)
+{
+    if (exp <= 0) {
+        return 1;
+    }
+    if (exp >= 64) {
+        return ULLONG_MAX;
+    }
+    return 1ULL << exp;
+}
+
+static void count_non_one_rec(const int *arr, int n, int start,
+                              unsigned long long k, unsigned long long prod,
+                              unsigned long long *count)
+{
+    for (int i = start; i < n; i++) {
+        if (arr[i] <= 1) {
+            continue;
+        }
+        if (prod > (k - 1) / arr[i]) {
+            continue;
+        }
+        unsigned long long new_prod = prod * arr[i];
+        *count = add_ull(*count, 1);
+        count_non_one_rec(arr, n, i + 1, k, new_prod, count);
+    }
+}
+
+static unsigned long long count_positive_subsequences(const int *arr, int n,
+                                                       unsigned long long k)
+{
+    if (k <= 1) {
+        return 0;
+    }
+
+    int ones = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 1) {
+            ones++;
+        }
+    }
+
+    unsigned long long non_one_count = 0;
+    count_non_one_rec(arr, n, 0, k, 1, &non_one_count);
+
+    if (ones > 64) {
+        return ULLONG_MAX;
+    }
+
+    unsigned long long ones_subsets = pow2_minus_one(ones);
+    unsigned long long ones_total = (ones == 64) ? ULLONG_MAX : pow2_ull(ones);
+
+    return add_ull(mul_ull(non_one_count, ones_total), ones_subsets);
+}
+
+unsigned long long countSubsequences(const int arr[], int n, int k)
+{
+    if (arr == NULL || n <= 0 || k <= 0) {
+        return 0;
+    }
+
+    int zero_count = 0;
+    int positive_count = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            zero_count++;
+        } else if (arr[i] > 0) {
+            positive_count++;
+        }
+    }
+
+    unsigned long long total = 0;
+
+    if (zero_count > 0) {
+        if (n > 64) {
+            total = ULLONG_MAX;
+        } else {
+            total = pow2_minus_one(n) - pow2_minus_one(positive_count);
+        }
+    }
+
+    total = add_ull(total, count_positive_subsequences(arr, n, (unsigned long long)k));
+    return total;
+}
+
+int main(void)
+{
+    int arr[] = {2, 0, 3, 1};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+    int k = 5;
+    unsigned long long result = countSubsequences(arr, n, k);
+    printf("%llu\n", result);
+    return 0;
+}
+```

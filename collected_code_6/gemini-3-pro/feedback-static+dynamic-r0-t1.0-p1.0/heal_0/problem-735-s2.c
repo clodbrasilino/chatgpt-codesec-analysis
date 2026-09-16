@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <limits.h>
+
+unsigned int toggle_middle_bits(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    int pos = 0;
+    unsigned int temp = n;
+    while (temp > 0) {
+        pos++;
+        temp >>= 1;
+    }
+
+    if (pos <= 2) {
+        return n;
+    }
+
+    unsigned int mask = ((1U << (pos - 2)) - 1) << 1;
+    
+    return n ^ mask;
+}
+
+int main(void) {
+    unsigned int num;
+    
+    if (scanf("%u", &num) != 1) {
+        return 1;
+    }
+    
+    unsigned int result = toggle_middle_bits(num);
+    
+    printf("%u\n", result);
+    
+    return 0;
+}

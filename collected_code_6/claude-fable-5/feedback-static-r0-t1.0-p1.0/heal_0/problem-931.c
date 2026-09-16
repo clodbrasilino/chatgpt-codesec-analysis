@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static unsigned long long sum_of_cubes(unsigned int n)
+{
+    unsigned long long half_sum = ((unsigned long long)n * (n + 1ULL)) / 2ULL;
+    return half_sum * half_sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    unsigned long long result;
+
+    printf("Enter a positive integer n: ");
+    if (scanf("%u", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U) {
+        fprintf(stderr, "Error: n must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 92681U) {
+        fprintf(stderr, "Error: n too large, result would overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_cubes(n);
+
+    if (printf("Sum of series: %llu\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

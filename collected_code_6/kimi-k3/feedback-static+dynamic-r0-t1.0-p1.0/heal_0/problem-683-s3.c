@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+#include <limits.h>
+
+bool isSumOfTwoSquares(int n) {
+    if (n < 0) {
+        return false;
+    }
+    
+    if (n == 0) {
+        return true;
+    }
+    
+    int limit = (int)sqrt((double)n);
+    
+    for (int i = 0; i <= limit; i++) {
+        long long iSquared = (long long)i * i;
+        if (iSquared > n) {
+            break;
+        }
+        
+        long long remainder = n - iSquared;
+        int j = (int)sqrt((double)remainder);
+        
+        if (j >= 0 && (long long)j * j == remainder) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+int main(void) {
+    int testCases[] = {0, 1, 2, 4, 5, 8, 10, 13, 25, 50, 65, 85, 100, 3, 6, 7, 11, 12, 14, 15, 19, 21, 22, 23, 24, 27, 28, 30, 31, 33, 35, 39, 43, 44, 46, 47, 48, 51, 54, 55, 56, 57, 59, 62, 63, 66, 67, 69, 70, 71, 75, 77, 78, 79, 83, 86, 87, 88, 91, 92, 93, 94, 95, 96, 99};
+    size_t numTests = sizeof(testCases) / sizeof(testCases[0]);
+    
+    for (size_t i = 0; i < numTests; i++) {
+        int num = testCases[i];
+        if (isSumOfTwoSquares(num)) {
+            printf("%d can be represented as sum of two squares\n", num);
+        } else {
+            printf("%d cannot be represented as sum of two squares\n", num);
+        }
+    }
+    
+    return 0;
+}

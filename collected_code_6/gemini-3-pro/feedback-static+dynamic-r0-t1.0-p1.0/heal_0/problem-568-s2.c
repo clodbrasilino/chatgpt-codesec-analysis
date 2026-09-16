@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Dictionary {
+    void* data;
+} Dictionary;
+
+typedef struct Node {
+    Dictionary* dict;
+    struct Node* next;
+} Node;
+
+typedef struct List {
+    Node* head;
+    size_t size;
+} List;
+
+Dictionary* create_dictionary(void) {
+    Dictionary* dict = malloc(sizeof(Dictionary));
+    if (!dict) {
+        return NULL;
+    }
+    dict->data = NULL;
+    return dict;
+}
+
+void free_dictionary(Dictionary* dict) {
+    if (dict) {
+        free(dict);
+    }
+}
+
+List* create_empty_dict_list(size_t num_dicts) {
+    List* list = malloc(sizeof(List));
+    if (!list) {
+        return NULL;
+    }
+    
+    list->head = NULL;
+    list->size = 0;
+
+    Node** current = &(list->head);
+
+    for (size_t i = 0; i < num_dicts; ++i) {
+        Node* new_node = malloc(sizeof(Node));
+        if (!new_node) {
+            Node* temp = list->head;
+            while (temp) {
+                Node* next = temp->next;
+                free_dictionary(temp->dict);
+                free(temp);
+                temp = next;
+            }
+            free(list);
+            return NULL;
+        }
+
+        new_node->dict = create_dictionary();
+        if (!new_node->dict) {
+            free(new_node);
+            Node* temp = list->head;
+            while (temp) {
+                Node* next = temp->next;
+                free_dictionary(temp->dict);
+                free(temp);
+                temp = next;
+            }
+            free(list);
+            return NULL;
+        }
+
+        new_node->next = NULL;
+        *current = new_node;
+        current = &(new_node->next);
+        list->size++;
+    }
+
+    return list;
+}
+
+void free_dict_list(List* list) {
+    if (!list) {
+        return;
+    }
+    
+    Node* current = list->head;
+    while (current) {
+        Node* next = current->next;
+        free_dictionary(current->dict);
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+int main(void) {
+    size_t num_dicts = 5;
+    List* dict_list = create_empty_dict_list(num_dicts);
+    
+    if (!dict_list) {
+        fprintf(stderr, "Failed to create dictionary list\n");
+        return 1;
+    }
+    
+    printf("Successfully created a list of %zu empty dictionaries.\n", dict_list->size);
+    
+    free_dict_list(dict_list);
+    
+    return 0;
+}

@@ -1,55 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <limits.h>
 
-void find_min_indices(const int *arr, int n, int **result, int *result_count) {
-    if (n == 0) return;
-    *result = NULL;
-    *result_count = 0;
-
-    int min_val = INT_MAX;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] < min_val) {
-            min_val = arr[i];
+void find_min_indices(const int *list, int list_size, int **indices, int *indices_size) {
+    if (list == NULL || list_size <= 0) return;
+    
+    *indices = (int *)malloc(list_size * sizeof(int));
+    if (*indices == NULL) return;
+    
+    int min_value = list[0];
+    for (int i = 1; i < list_size; i++) {
+        if (list[i] < min_value) {
+            min_value = list[i];
         }
     }
-
-    int count = 0;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] == min_val) {
-            count++;
-        }
-    }
-
-    *result = (int*)malloc(count * sizeof(int));
-    if (*result == NULL) {
-        *result_count = 0;
-        return;
-    }
-
-    *result_count = 0;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] == min_val) {
-            (*result)[*result_count] = i;
-            (*result_count)++;
+    
+    *indices_size = 0;
+    for (int i = 0; i < list_size; i++) {
+        if (list[i] == min_value) {
+            (*indices)[(*indices_size)++] = i;
         }
     }
 }
 
 int main() {
-    int arr[] = {4, 2, 5, 2, 3};
-    int n = sizeof(arr) / sizeof(arr[0]);
-    int *result = NULL;
-    int result_count = 0;
-
-    find_min_indices(arr, n, &result, &result_count);
-
-    printf("Indices of minimum values: ");
-    for (int i = 0; i < result_count; i++) {
-        printf("%d ", result[i]);
+    int list[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int list_size = sizeof(list) / sizeof(list[0]);
+    int *indices = NULL;
+    int indices_size = 0;
+    
+    find_min_indices(list, list_size, &indices, &indices_size);
+    
+    for (int i = 0; i < indices_size; i++) {
+        printf("Index: %d\n", indices[i]);
     }
-    printf("\n");
-
-    free(result);
+    
+    free(indices);
+    
     return 0;
 }

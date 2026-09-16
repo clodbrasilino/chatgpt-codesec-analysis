@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool is_undulating(int num) {
+    if (num < 100) {
+        return false;
+    }
+
+    char str[32];
+    snprintf(str, sizeof(str), "%d", num);
+    int len = strlen(str);
+
+    if (str[0] == str[1]) {
+        return false;
+    }
+
+    for (int i = 0; i < len - 2; i++) {
+        if (str[i] != str[i + 2]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int test_cases[] = {101, 121, 131, 141, 151, 161, 171, 181, 191,
+                       202, 212, 232, 242, 252, 262, 272, 282, 292,
+                       303, 313, 323, 343, 353, 363, 373, 383, 393,
+                       404, 414, 424, 434, 454, 464, 474, 484, 494,
+                       505, 515, 525, 535, 545, 565, 575, 585, 595,
+                       606, 616, 626, 636, 646, 656, 676, 686, 696,
+                       707, 717, 727, 737, 747, 757, 767, 787, 797,
+                       808, 818, 828, 838, 848, 858, 868, 878, 898,
+                       909, 919, 929, 939, 949, 959, 969, 979, 989,
+                       100, 122, 123, 111, 999, 1234, 12121, 98989, 10101};
+    int num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int i = 0; i < num_tests; i++) {
+        printf("%d: %s\n", test_cases[i], is_undulating(test_cases[i]) ? "true" : "false");
+    }
+
+    return 0;
+}

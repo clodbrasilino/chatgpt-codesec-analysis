@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity > 0 ? capacity : 1);
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (len > 0) {
+        memcpy(t->items, str, len);
+    }
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        fflush(stdout);
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    char buffer[4096];
+
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        if (buffer[0] == '\0') {
+            continue;
+        }
+
+        Tuple *t = string_to_tuple(buffer);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            continue;
+        }
+
+        tuple_print(t);
+
+        tuple_destroy(t);
+    }
+
+    fflush(stdout);
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The core logic of the original code was actually sound — `string_to_tuple` correctly copies the string bytes, `tuple_print` produces exactly the expected format (e.g., `['p', 'y', 't', 'h', 'o', 'n', '3', '.', '0']`), and memory management is clean with no leaks or double-frees.
+
+The reported failures (`<no output>` for all test cases) point to an output-buffering/delivery problem rather than a logic bug, since the expected strings match what `tuple_print` would emit. The fixes ensuring correct behavior in the rewritten version are:
+
+1. **`setvbuf(stdout, NULL, _IONBF, 0)`** — disables stdout buffering entirely, so output is delivered immediately even if the process is killed or the pipe is closed abruptly by the test harness.
+2. **`fflush(stdout)` after every print** — a defensive redundancy guaranteeing each line reaches the consumer before the next read from stdin.
+3. **`strcspn(buffer, "\r\n")`** — strips both `\n` and `\r`, so Windows-style line endings (`\r\n`) in test input don't produce a stray `'\r'` element in the tuple output, which would also cause a mismatch.
+4. **Zero-capacity safety** — `tuple_create` allocates at least 1 byte, avoiding implementation-defined `malloc(0)` behavior.
+5. **Bounded input** — `fgets` with `sizeof(buffer)` prevents any buffer overflow on long lines.
+
+The code is memory-safe: every allocation path is checked, partial allocation failure in `tuple_create` frees the struct before returning, and each tuple is destroyed after printing.

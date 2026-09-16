@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int gcd(unsigned int a, unsigned int b) {
+    while (b != 0) {
+        unsigned int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+unsigned int lcm(unsigned int a, unsigned int b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    return (a / gcd(a, b)) * b;
+}
+
+int main(void) {
+    unsigned int num1 = 0;
+    unsigned int num2 = 0;
+
+    if (scanf("%u %u", &num1, &num2) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (num1 == 0 || num2 == 0) {
+        fprintf(stderr, "Inputs must be positive integers\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned int result = lcm(num1, num2);
+    printf("%u\n", result);
+
+    return EXIT_SUCCESS;
+}

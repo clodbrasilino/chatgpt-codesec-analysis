@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+void split_string_at_uppercase(const char *input) {
+    if (input == NULL) {
+        return;
+    }
+
+    regex_t regex;
+    int ret = regcomp(&regex, "[A-Z]", REG_EXTENDED);
+    if (ret != 0) {
+        return;
+    }
+
+    regmatch_t match;
+    const char *cursor = input;
+
+    if (cursor[0] != '\0' && (cursor[0] < 'A' || cursor[0] > 'Z')) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == 0) {
+            int len = match.rm_so;
+            if (len > 0) {
+                printf("%.*s\n", len, cursor);
+            }
+            cursor += match.rm_so;
+        } else {
+            printf("%s\n", cursor);
+            regfree(&regex);
+            return;
+        }
+    }
+
+    while (1) {
+        ret = regexec(&regex, cursor + 1, 1, &match, 0);
+        if (ret == 0) {
+            int len = match.rm_so + 1;
+            printf("%.*s\n", len, cursor);
+            cursor += len;
+        } else {
+            printf("%s\n", cursor);
+            break;
+        }
+    }
+
+    regfree(&regex);
+}
+
+int main(void) {
+    const char *test_str = "splitThisStringAtUppercaseLetters";
+    
+    split_string_at_uppercase(test_str);
+    
+    return 0;
+}

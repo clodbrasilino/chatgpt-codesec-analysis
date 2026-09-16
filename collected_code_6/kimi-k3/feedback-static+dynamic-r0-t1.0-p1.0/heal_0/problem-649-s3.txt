@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+
+int sum_range(const int *arr, size_t size, size_t start, size_t end, long long *result)
+{
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (start >= size || end >= size || start > end) {
+        return -1;
+    }
+    
+    *result = 0;
+    
+    for (size_t i = start; i <= end; i++) {
+        *result += arr[i];
+    }
+    
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t start = 2;
+    size_t end = 5;
+    long long result = 0;
+    
+    if (sum_range(arr, size, start, end, &result) != 0) {
+        fprintf(stderr, "Error: Invalid parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sum of elements from index %zu to %zu: %lld\n", start, end, result);
+    
+    return EXIT_SUCCESS;
+}
+```

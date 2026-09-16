@@ -1,0 +1,28 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:217:13: error: use of undeclared identifier 'fprint'; did you mean 'fprintf'?
+  217 |             fprint
+      |             ^~~~~~
+      |             fprintf
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/_stdio.h:245:6: note: 'fprintf' declared here
+  245 | int      fprintf(FILE * __restrict, const char * __restrict, ...) __printflike(2, 3);
+      |          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:217:19: error: expected ';' after expression
+  217 |             fprint
+      |                   ^
+      |                   ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:217:19: error: expected '}'
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:216:27: note: to match this '{'
+  216 |         if (line == NULL) {
+      |                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:217:19: error: expected '}'
+  217 |             fprint
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:213:20: note: to match this '{'
+  213 |     if (argc >= 2) {
+      |                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:217:19: error: expected '}'
+  217 |             fprint
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-621-s2.c:209:1: note: to match this '{'
+  209 | {
+      | ^
+5 errors generated.

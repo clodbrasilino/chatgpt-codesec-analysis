@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+void remove_extra_spaces(char *str) {
+    if (str == NULL) return;
+    
+    char *src, *dst;
+    for (src = dst = str; *src != '\0'; src++) {
+        if (*src == ' ') {
+            while (*src == ' ') src++;
+            *dst++ = ' ';
+            src--;
+        } else {
+            *dst++ = *src;
+        }
+    }
+    *dst = '\0';
+}
+
+int main() {
+    char input[] = "This  is   a    test";
+    remove_extra_spaces(input);
+    printf("%s\n", input);
+    return 0;
+}

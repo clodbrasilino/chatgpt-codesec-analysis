@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-859.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-859.c:225:27: style: Condition 'n>0' is always true [knownConditionTrueFalse]
+    if (head == NULL && n > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-859.c:222:13: note: Assignment 'n=3', assigned value is 3
+    int n = 3;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-859.c:225:27: note: Condition 'n>0' is always true
+    if (head == NULL && n > 0) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-859.c:76:27: style: Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+Node* create_sublist(int* elements, int n, unsigned long long mask) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3/feedback-static-r0-t1.0-p1.0/heal_0/problem-859.c:197:23: style: Parameter 'arr' can be declared as pointer to const [constParameterPointer]
+Node* build_list(int* arr, int n) {
+                      ^

@@ -1,0 +1,119 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char key[64];
+    int value;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+int dict_init(Dictionary *dict, size_t initial_capacity) {
+    if (!dict || initial_capacity == 0) {
+        return -1;
+    }
+    dict->entries = malloc(initial_capacity * sizeof(DictEntry));
+    if (!dict->entries) {
+        return -1;
+    }
+    dict->size = 0;
+    dict->capacity = initial_capacity;
+    return 0;
+}
+
+void dict_free(Dictionary *dict) {
+    if (dict) {
+        free(dict->entries);
+        dict->entries = NULL;
+        dict->size = 0;
+        dict->capacity = 0;
+    }
+}
+
+int dict_add(Dictionary *dict, const char *key, int value) {
+    if (!dict || !key || !dict->entries) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        size_t new_capacity = dict->capacity * 2;
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (!new_entries) {
+            return -1;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+    strncpy(dict->entries[dict->size].key, key, sizeof(dict->entries[dict->size].key) - 1);
+    dict->entries[dict->size].key[sizeof(dict->entries[dict->size].key) - 1] = '\0';
+    dict->entries[dict->size].value = value;
+    dict->size++;
+    return 0;
+}
+
+int dict_filter_by_value(const Dictionary *input, Dictionary *output, int (*predicate)(int)) {
+    if (!input || !output || !predicate || !input->entries || !output->entries) {
+        return -1;
+    }
+    
+    output->size = 0;
+    
+    for (size_t i = 0; i < input->size; i++) {
+        if (predicate(input->entries[i].value)) {
+            if (dict_add(output, input->entries[i].key, input->entries[i].value) != 0) {
+                return -1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+int is_positive(int value) {
+    return value > 0;
+}
+
+int main(void) {
+    Dictionary input;
+    Dictionary filtered;
+    
+    if (dict_init(&input, 4) != 0) {
+        fprintf(stderr, "Failed to initialize input dictionary\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (dict_init(&filtered, 4) != 0) {
+        fprintf(stderr, "Failed to initialize filtered dictionary\n");
+        dict_free(&input);
+        return EXIT_FAILURE;
+    }
+    
+    dict_add(&input, "apple", 5);
+    dict_add(&input, "banana", -2);
+    dict_add(&input, "cherry", 0);
+    dict_add(&input, "date", 15);
+    dict_add(&input, "elderberry", -10);
+    
+    if (dict_filter_by_value(&input, &filtered, is_positive) != 0) {
+        fprintf(stderr, "Failed to filter dictionary\n");
+        dict_free(&input);
+        dict_free(&filtered);
+        return EXIT_FAILURE;
+    }
+    
+    printf("Filtered dictionary (values > 0):\n");
+    for (size_t i = 0; i < filtered.size; i++) {
+        printf("  %s: %d\n", filtered.entries[i].key, filtered.entries[i].value);
+    }
+    
+    dict_free(&input);
+    dict_free(&filtered);
+    
+    return EXIT_SUCCESS;
+}
+```

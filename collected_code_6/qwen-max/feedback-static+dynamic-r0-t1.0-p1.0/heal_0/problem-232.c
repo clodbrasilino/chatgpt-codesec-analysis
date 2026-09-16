@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)b - *(int *)a);
+}
+
+int *get_n_largest(int *data, int size, int n, int *result_size) {
+    if (size <= 0 || n <= 0 || n > size) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    *result_size = n;
+    int *largest = malloc(n * sizeof(int));
+    if (largest == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    qsort(data, size, sizeof(int), compare);
+
+    for (int i = 0; i < n; ++i) {
+        largest[i] = data[i];
+    }
+
+    return largest;
+}
+
+int main() {
+    int data[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    int size = sizeof(data) / sizeof(data[0]);
+    int n = 5;
+    int result_size;
+
+    int *largest = get_n_largest(data, size, n, &result_size);
+    if (largest != NULL) {
+        for (int i = 0; i < result_size; ++i) {
+            printf("%d ", largest[i]);
+        }
+        free(largest);
+    } else {
+        printf("Error: Unable to retrieve n largest elements.\n");
+    }
+
+    return 0;
+}

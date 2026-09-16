@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+void filter_alphanumeric(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    char *dst = str;
+    char *src = str;
+
+    while (*src != '\0') {
+        if (isalnum((unsigned char)*src)) {
+            *dst = *src;
+            dst++;
+        }
+        src++;
+    }
+
+    *dst = '\0';
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    filter_alphanumeric(argv[1]);
+
+    printf("%s\n", argv[1]);
+
+    return EXIT_SUCCESS;
+}

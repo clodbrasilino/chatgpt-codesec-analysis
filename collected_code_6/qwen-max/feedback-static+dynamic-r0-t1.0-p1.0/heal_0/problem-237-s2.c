@@ -1,44 +1,55 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
-    int id;
+    char *value;
     int count;
-} Record;
+} Tuple;
 
 int compare(const void *a, const void *b) {
-    return ((Record *)a)->count - ((Record *)b)->count;
+    return strcmp(((Tuple *)a)->value, ((Tuple *)b)->value);
 }
 
-int checkOccurrences(Record *records, int n) {
-    qsort(records, n, sizeof(Record), compare);
-    int current_count = records[0].count;
-    int group_size = 1;
-    for (int i = 1; i < n; i++) {
-        if (records[i].count == current_count) {
-            group_size++;
-        } else {
-            if (group_size > 1) {
-                return 1;
-            }
-            group_size = 1;
-            current_count = records[i].count;
+int checkSimilarOccurrences(Tuple *tuples, int size) {
+    if (size <= 1) return 0;
+
+    qsort(tuples, size, sizeof(Tuple), compare);
+
+    int matchCount = 1;
+    for (int i = 1; i < size; ++i) {
+        if (strcmp(tuples[i-1].value, tuples[i].value) == 0) {
+            tuples[i-1].count++;
+            tuples[i].count = 0;
         }
     }
-    if (group_size > 1) {
-        return 1;
+
+    for (int i = 0; i < size; ++i) {
+        if (tuples[i].count > 0) {
+            for (int j = i + 1; j < size; ++j) {
+                if (tuples[j].count == tuples[i].count && strcmp(tuples[i].value, tuples[j].value) != 0) {
+                    return 1;
+                }
+            }
+        }
     }
+
     return 0;
 }
 
 int main() {
-    Record records[] = {{1, 3}, {2, 3}, {3, 2}, {4, 2}, {5, 1}};
-    int n = sizeof(records) / sizeof(records[0]);
-    int result = checkOccurrences(records, n);
-    if (result) {
-        puts("There are records with the same occurrences.");
-    } else {
-        puts("All records have unique occurrences.");
-    }
+    Tuple tuples[] = {
+        {"apple", 0},
+        {"banana", 0},
+        {"apple", 0},
+        {"orange", 0},
+        {"banana", 0},
+        {"pear", 0}
+    };
+    int size = sizeof(tuples) / sizeof(tuples[0]);
+
+    int result = checkSimilarOccurrences(tuples, size);
+    printf("Result: %s\n", result ? "True" : "False");
+
     return 0;
 }

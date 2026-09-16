@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int set_even_bits(unsigned int num)
+{
+    unsigned int mask = 0U;
+    unsigned int bit = 1U;
+    size_t i;
+    size_t total_bits = sizeof(unsigned int) * CHAR_BIT;
+
+    for (i = 0U; i < total_bits; i += 2U) {
+        mask |= bit;
+        if (i + 2U < total_bits) {
+            bit <<= 2U;
+        }
+    }
+
+    return num | mask;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    unsigned int result = 0U;
+    int scan_status;
+
+    printf("Enter an unsigned integer: ");
+
+    scan_status = scanf("%u", &number);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = set_even_bits(number);
+
+    printf("Original number: %u\n", number);
+    printf("Number with all even bits set: %u\n", result);
+
+    return EXIT_SUCCESS;
+}

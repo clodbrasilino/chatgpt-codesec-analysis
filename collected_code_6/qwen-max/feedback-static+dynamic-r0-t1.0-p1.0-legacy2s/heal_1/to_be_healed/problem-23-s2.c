@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'sizes' can be declared as pointer to const [constParameterPointer]
+ */
+int find_max_sum(int **lists, int n, int *sizes) {
+    int max_sum = INT_MIN;
+    for (int i = 0; i < n; ++i) {
+        int current_sum = 0;
+        for (int j = 0; j < sizes[i]; ++j) {
+            current_sum += lists[i][j];
+        }
+        if (current_sum > max_sum) {
+            max_sum = current_sum;
+        }
+    }
+    return max_sum;
+}
+
+int main() {
+    int n = 3;
+    int sizes[] = {3, 2, 4};
+    /* Possible weaknesses found:
+     *  Variable 'lists' can be declared as const array [constVariable]
+     */
+    int lists[3][4] = {
+        {1, 2, 3},
+        {4, 5},
+        {6, -1, -2, 7}
+    };
+    int *lists_ptr[3] = {
+        lists[0],
+        lists[1],
+        lists[2]
+    };
+
+    int result = find_max_sum((int **)lists_ptr, n, sizes);
+    printf("The maximum sum is: %d\n", result);
+
+    return 0;
+}

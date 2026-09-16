@@ -1,0 +1,54 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+void reverseArray(int arr[], int start, int end) {
+    if (arr == NULL) {
+        return;
+    }
+    while (start < end) {
+        int temp = arr[start];
+        arr[start] = arr[end];
+        arr[end] = temp;
+        start++;
+        end--;
+    }
+}
+
+void splitAndAdd(int arr[], int n, int k) {
+    if (arr == NULL || n <= 0 || k < 0) {
+        return;
+    }
+    
+    k = k % n;
+    
+    if (k == 0) {
+        return;
+    }
+
+    reverseArray(arr, 0, k - 1);
+    reverseArray(arr, k, n - 1);
+    reverseArray(arr, 0, n - 1);
+}
+
+void printArray(const int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return;
+    }
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main(void) {
+    int arr[] = {12, 10, 5, 6, 52, 36};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+
+    splitAndAdd(arr, n, k);
+    printArray(arr, n);
+
+    return 0;
+}
+```

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool match_a_followed_by_b(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    if (*str != 'a') {
+        return false;
+    }
+    str++;
+
+    if (*str == 'b') {
+        str++;
+    }
+
+    return *str == '\0';
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "a",
+        "ab",
+        "abb",
+        "b",
+        "bac",
+        "aC",
+        NULL
+    };
+
+    for (size_t i = 0; test_cases[i] != NULL; i++) {
+        bool result = match_a_followed_by_b(test_cases[i]);
+        printf("'%s': %s\n", test_cases[i], result ? "true" : "false");
+    }
+
+    return 0;
+}

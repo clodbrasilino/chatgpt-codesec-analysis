@@ -1,0 +1,79 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point vertices[6];
+} Hexagon;
+
+Hexagon* calculate_hex_grid(int rows, int cols, double size, double origin_x, double origin_y) {
+    if (rows <= 0 || cols <= 0 || size <= 0.0) {
+        return NULL;
+    }
+
+    size_t total_hexagons = (size_t)rows * (size_t)cols;
+    Hexagon* grid = malloc(total_hexagons * sizeof(Hexagon));
+    if (!grid) {
+        return NULL;
+    }
+
+    double horiz_spacing = size * 1.5;
+    double vert_spacing = size * sqrt(3.0);
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            double cx = origin_x + c * horiz_spacing;
+            double cy = origin_y + r * vert_spacing;
+            if (c % 2 != 0) {
+                cy += vert_spacing / 2.0;
+            }
+
+            size_t index = (size_t)r * cols + c;
+            for (int i = 0; i < 6; i++) {
+                double angle_rad = M_PI / 180.0 * (60.0 * i);
+                grid[index].vertices[i].x = cx + size * cos(angle_rad);
+                grid[index].vertices[i].y = cy + size * sin(angle_rad);
+            }
+        }
+    }
+
+    return grid;
+}
+
+int main(void) {
+    int rows = 3;
+    int cols = 4;
+    double size = 10.0;
+    double origin_x = 0.0;
+    double origin_y = 0.0;
+
+    Hexagon* grid = calculate_hex_grid(rows, cols, size, origin_x, origin_y);
+    if (!grid) {
+        fprintf(stderr, "Allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < cols; c++) {
+            size_t index = (size_t)r * cols + c;
+            printf("Hexagon [%d, %d]:\n", r, c);
+            for (int i = 0; i < 6; i++) {
+                printf("  (%.2f, %.2f)\n", grid[index].vertices[i].x, grid[index].vertices[i].y);
+            }
+        }
+    }
+
+    free(grid);
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* elements;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    Tuple* tuples;
+    size_t size;
+} NestedTuple;
+
+Tuple* add_tuples(const Tuple* t1, const Tuple* t2) {
+    if (!t1 || !t2 || t1->size != t2->size) {
+        return NULL;
+    }
+
+    Tuple* result = (Tuple*)malloc(sizeof(Tuple));
+    if (!result) {
+        return NULL;
+    }
+
+    result->size = t1->size;
+    result->elements = (int*)malloc(result->size * sizeof(int));
+    if (!result->elements) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < result->size; ++i) {
+        result->elements[i] = t1->elements[i] + t2->elements[i];
+    }
+
+    return result;
+}
+
+NestedTuple* add_nested_tuples(const NestedTuple* nt1, const NestedTuple* nt2) {
+    if (!nt1 || !nt2 || nt1->size != nt2->size) {
+        return NULL;
+    }
+
+    NestedTuple* result = (NestedTuple*)malloc(sizeof(NestedTuple));
+    if (!result) {
+        return NULL;
+    }
+
+    result->size = nt1->size;
+    result->tuples = (Tuple*)malloc(result->size * sizeof(Tuple));
+    if (!result->tuples) {
+        free(result);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < result->size; ++i) {
+        Tuple* added = add_tuples(&nt1->tuples[i], &nt2->tuples[i]);
+        if (!added) {
+            for (size_t j = 0; j < i; ++j) {
+                free(result->tuples[j].elements);
+            }
+            free(result->tuples);
+            free(result);
+            return NULL;
+        }
+        result->tuples[i].size = added->size;
+        result->tuples[i].elements = added->elements;
+        free(added); 
+    }
+
+    return result;
+}
+
+void free_nested_tuple(NestedTuple* nt) {
+    if (!nt) {
+        return;
+    }
+    if (nt->tuples) {
+        for (size_t i = 0; i < nt->size; ++i) {
+            free(nt->tuples[i].elements);
+        }
+        free(nt->tuples);
+    }
+    free(nt);
+}
+
+void print_nested_tuple(const NestedTuple* nt) {
+    if (!nt) {
+        return;
+    }
+    printf("(");
+    for (size_t i = 0; i < nt->size; ++i) {
+        printf("(");
+        for (size_t j = 0; j < nt->tuples[i].size; ++j) {
+            printf("%d", nt->tuples[i].elements[j]);
+            if (j < nt->tuples[i].size - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+        if (i < nt->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+}
+
+int main(void) {
+    int arr1_1[] = {1, 2, 3};
+    int arr1_2[] = {4, 5, 6};
+    Tuple t1_1 = {arr1_1, 3};
+    Tuple t1_2 = {arr1_2, 3};
+    Tuple t_arr1[] = {t1_1, t1_2};
+    NestedTuple nt1 = {t_arr1, 2};
+
+    int arr2_1[] = {7, 8, 9};
+    int arr2_2[] = {10, 11, 12};
+    Tuple t2_1 = {arr2_1, 3};
+    Tuple t2_2 = {arr2_2, 3};
+    Tuple t_arr2[] = {t2_1, t2_2};
+    NestedTuple nt2 = {t_arr2, 2};
+
+    NestedTuple* result = add_nested_tuples(&nt1, &nt2);
+    if (result) {
+        print_nested_tuple(result);
+        free_nested_tuple(result);
+    }
+
+    return 0;
+}

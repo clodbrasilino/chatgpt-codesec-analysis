@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+void remove_lowercase_substrings(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    size_t len = strlen(str);
+    char *result = (char *)malloc(len + 1);
+    
+    if (result == NULL) {
+        return;
+    }
+
+    size_t j = 0;
+    
+    for (size_t i = 0; i < len; i++) {
+        if (!islower((unsigned char)str[i])) {
+            result[j++] = str[i];
+        }
+    }
+    
+    result[j] = '\0';
+    
+    strcpy(str, result);
+    
+    free(result);
+}
+
+int main(void) {
+    char test_str1[] = "Hello World!";
+    char test_str2[] = "abcDEFghiJKL";
+    char test_str3[] = "ALLCAPS";
+    char test_str4[] = "alllower";
+    
+    remove_lowercase_substrings(test_str1);
+    printf("%s\n", test_str1);
+    
+    remove_lowercase_substrings(test_str2);
+    printf("%s\n", test_str2);
+    
+    remove_lowercase_substrings(test_str3);
+    printf("%s\n", test_str3);
+    
+    remove_lowercase_substrings(test_str4);
+    printf("%s\n", test_str4);
+    
+    return 0;
+}

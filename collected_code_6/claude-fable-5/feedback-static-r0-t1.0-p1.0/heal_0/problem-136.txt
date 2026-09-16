@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TIER1_LIMIT 100.0
+#define TIER2_LIMIT 300.0
+#define TIER1_RATE 1.50
+#define TIER2_RATE 2.50
+#define TIER3_RATE 4.00
+#define FIXED_CHARGE 50.0
+#define MAX_UNITS 1000000.0
+
+int calculate_bill(double units, double *bill)
+{
+    double amount;
+
+    if (bill == NULL) {
+        return -1;
+    }
+
+    if (units < 0.0 || units > MAX_UNITS) {
+        return -1;
+    }
+
+    if (units <= TIER1_LIMIT) {
+        amount = units * TIER1_RATE;
+    } else if (units <= TIER2_LIMIT) {
+        amount = (TIER1_LIMIT * TIER1_RATE)
+               + ((units - TIER1_LIMIT) * TIER2_RATE);
+    } else {
+        amount = (TIER1_LIMIT * TIER1_RATE)
+               + ((TIER2_LIMIT - TIER1_LIMIT) * TIER2_RATE)
+               + ((units - TIER2_LIMIT) * TIER3_RATE);
+    }
+
+    amount += FIXED_CHARGE;
+    *bill = amount;
+
+    return 0;
+}
+
+int main(void)
+{
+    double units = 0.0;
+    double bill = 0.0;
+    int result;
+
+    printf("Enter units consumed: ");
+
+    result = scanf("%lf", &units);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (calculate_bill(units, &bill) != 0) {
+        fprintf(stderr, "Error: units must be between 0 and %.0f.\n",
+                MAX_UNITS);
+        return EXIT_FAILURE;
+    }
+
+    printf("Units consumed : %.2f\n", units);
+    printf("Total bill     : %.2f\n", bill);
+
+    return EXIT_SUCCESS;
+}
+```

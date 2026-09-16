@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findMaxOccuringDivisor(int L, int R) {
+    if (L <= 0 || R <= 0 || L > R) {
+        return -1;
+    }
+
+    int *count = (int *)calloc(R + 1, sizeof(int));
+    if (!count) {
+        return -1;
+    }
+
+    for (int i = 1; i <= R; i++) {
+        int start = (L % i == 0) ? L : L + (i - (L % i));
+        for (int j = start; j <= R; j += i) {
+            count[i]++;
+        }
+    }
+
+    int maxDivisor = -1;
+    int maxCount = -1;
+
+    for (int i = 1; i <= R; i++) {
+        if (count[i] > maxCount) {
+            maxCount = count[i];
+            maxDivisor = i;
+        } else if (count[i] == maxCount) {
+            if (i > maxDivisor) {
+                maxDivisor = i;
+            }
+        }
+    }
+
+    free(count);
+    return maxDivisor;
+}
+
+int main(void) {
+    int L = 10;
+    int R = 20;
+    
+    int result = findMaxOccuringDivisor(L, R);
+    if (result != -1) {
+        printf("%d\n", result);
+    } else {
+        printf("Error\n");
+    }
+    
+    return 0;
+}

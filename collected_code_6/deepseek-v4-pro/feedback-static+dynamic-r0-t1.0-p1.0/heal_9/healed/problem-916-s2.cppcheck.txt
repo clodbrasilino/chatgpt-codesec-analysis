@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-916-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-916-s2.c:65:32: style: Condition 'find_triplet(arr3,n3,sum3)' is always false [knownConditionTrueFalse]
+    printf("%s\n", find_triplet(arr3, n3, sum3) ? "Triplet found" : "Triplet not found");
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-916-s2.c:65:32: note: Calling function 'find_triplet' returns 0
+    printf("%s\n", find_triplet(arr3, n3, sum3) ? "Triplet found" : "Triplet not found");
+                               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static+dynamic-r0-t1.0-p1.0/heal_9/healed/problem-916-s2.c:65:32: note: Condition 'find_triplet(arr3,n3,sum3)' is always false
+    printf("%s\n", find_triplet(arr3, n3, sum3) ? "Triplet found" : "Triplet not found");
+                               ^

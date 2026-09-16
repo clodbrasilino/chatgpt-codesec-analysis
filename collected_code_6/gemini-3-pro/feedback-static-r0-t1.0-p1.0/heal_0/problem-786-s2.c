@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_insertion_point(const int *arr, size_t size, int target) {
+    if (arr == NULL) {
+        return -1;
+    }
+
+    size_t left = 0;
+    size_t right = size;
+
+    while (left < right) {
+        size_t mid = left + (right - left) / 2;
+        if (arr[mid] <= target) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+
+    return (int)left;
+}
+
+int main(void) {
+    int arr[] = {1, 3, 5, 5, 7, 9};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    int target = 5;
+
+    int index = find_insertion_point(arr, size, target);
+    
+    if (index >= 0) {
+        printf("Insertion point for %d is at index %d\n", target, index);
+    } else {
+        printf("Error: Invalid array.\n");
+    }
+
+    target = 6;
+    index = find_insertion_point(arr, size, target);
+    
+    if (index >= 0) {
+        printf("Insertion point for %d is at index %d\n", target, index);
+    } else {
+        printf("Error: Invalid array.\n");
+    }
+
+    target = 0;
+    index = find_insertion_point(arr, size, target);
+    
+    if (index >= 0) {
+        printf("Insertion point for %d is at index %d\n", target, index);
+    } else {
+        printf("Error: Invalid array.\n");
+    }
+    
+    target = 10;
+    index = find_insertion_point(arr, size, target);
+    
+    if (index >= 0) {
+        printf("Insertion point for %d is at index %d\n", target, index);
+    } else {
+        printf("Error: Invalid array.\n");
+    }
+
+    return 0;
+}

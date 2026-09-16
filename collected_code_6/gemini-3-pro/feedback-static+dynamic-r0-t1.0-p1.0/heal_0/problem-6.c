@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool differ_by_one_bit(uint32_t a, uint32_t b);
+
+bool differ_by_one_bit(uint32_t a, uint32_t b) {
+    uint32_t diff = a ^ b;
+    return (diff != 0) && ((diff & (diff - 1)) == 0);
+}
+
+int main(void) {
+    uint32_t test_cases[][2] = {
+        {10, 11},
+        {10, 14},
+        {0, 0},
+        {8, 0},
+        {255, 127}
+    };
+    
+    size_t num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (size_t i = 0; i < num_cases; i++) {
+        uint32_t a = test_cases[i][0];
+        uint32_t b = test_cases[i][1];
+        
+        if (differ_by_one_bit(a, b)) {
+            printf("%u and %u differ by exactly one bit position.\n", a, b);
+        } else {
+            printf("%u and %u do not differ by exactly one bit position.\n", a, b);
+        }
+    }
+    
+    return 0;
+}

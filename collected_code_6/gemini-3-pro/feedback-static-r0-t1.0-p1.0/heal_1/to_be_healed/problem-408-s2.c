@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Element {
+    int value;
+    int index_arr1;
+    int index_arr2;
+};
+
+void swap(struct Element* a, struct Element* b) {
+    struct Element temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(struct Element heap[], int size, int i) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < size && heap[left].value < heap[smallest].value) {
+        smallest = left;
+    }
+
+    if (right < size && heap[right].value < heap[smallest].value) {
+        smallest = right;
+    }
+
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        minHeapify(heap, size, smallest);
+    }
+}
+
+void buildMinHeap(struct Element heap[], int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) {
+        minHeapify(heap, size, i);
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'arr1' can be declared as const array [constParameter]
+ *  Parameter 'arr2' can be declared as const array [constParameter]
+ */
+void findKSmallestPairs(int arr1[], int size1, int arr2[], int size2, int k) {
+    if (size1 == 0 || size2 == 0 || k <= 0) {
+        return;
+    }
+
+    if (k > size1 * size2) {
+        k = size1 * size2;
+    }
+
+    struct Element* heap = (struct Element*)malloc(size1 * sizeof(struct Element));
+    if (heap == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < size1; i++) {
+        heap[i].value = arr1[i] + arr2[0];
+        heap[i].index_arr1 = i;
+        heap[i].index_arr2 = 0;
+    }
+
+    int heapSize = size1;
+    buildMinHeap(heap, heapSize);
+
+    for (int count = 0; count < k; count++) {
+        struct Element root = heap[0];
+        printf("(%d, %d)\n", arr1[root.index_arr1], arr2[root.index_arr2]);
+
+        if (root.index_arr2 + 1 < size2) {
+            root.index_arr2++;
+            root.value = arr1[root.index_arr1] + arr2[root.index_arr2];
+        } else {
+            root.value = 2147483647; 
+        }
+
+        heap[0] = root;
+        minHeapify(heap, heapSize, 0);
+    }
+
+    free(heap);
+}
+
+int main() {
+    int arr1[] = {1, 7, 11};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+
+    int arr2[] = {2, 4, 6};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    int k = 3;
+
+    findKSmallestPairs(arr1, size1, arr2, size2, k);
+
+    return 0;
+}

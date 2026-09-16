@@ -1,0 +1,207 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int col;
+    int row;
+} HeapNode;
+
+typedef struct {
+    HeapNode *data;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createMinHeap(int capacity) {
+    if (capacity <= 0) return NULL;
+    MinHeap *heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->data = (HeapNode*)malloc(sizeof(HeapNode) * capacity);
+    if (!heap->data) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void swap(HeapNode *a, HeapNode *b) {
+    HeapNode temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(MinHeap *heap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < heap->size && heap->data[left].value < heap->data[smallest].value) {
+        smallest = left;
+    }
+    if (right < heap->size && heap->data[right].value < heap->data[smallest].value) {
+        smallest = right;
+    }
+    if (smallest != idx) {
+        swap(&heap->data[idx], &heap->data[smallest]);
+        minHeapify(heap, smallest);
+    }
+}
+
+void insertMinHeap(MinHeap *heap, HeapNode node) {
+    if (!heap || heap->size >= heap->capacity) return;
+    int i = heap->size++;
+    heap->data[i] = node;
+    while (i != 0 && heap->data[(i - 1) / 2].value > heap->data[i].value) {
+        swap(&heap->data[i], &heap->data[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+}
+
+HeapNode extractMin(MinHeap *heap) {
+    HeapNode root = {0, -1, -1};
+    if (!heap || heap->size <= 0) return root;
+    if (heap->size == 1) {
+        heap->size--;
+        return heap->data[0];
+    }
+    root = heap->data[0];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->size--;
+    minHeapify(heap, 0);
+    return root;
+}
+
+void freeMinHeap(MinHeap *heap) {
+    if (heap) {
+        if (heap->data) {
+            free(heap->data);
+        }
+        free(heap);
+    }
+}
+
+int* findTopKFrequent(int** lists, int numLists, const int* listSizes, int k, int* returnSize) {
+    if (!lists || numLists <= 0 || !listSizes || k <= 0 || !returnSize) {
+        if (returnSize) *returnSize = 0;
+        return NULL;
+    }
+
+    MinHeap* heap = createMinHeap(numLists);
+    if (!heap) {
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < numLists; i++) {
+        if (listSizes[i] > 0) {
+            HeapNode node = {lists[i][0], 0, i};
+            insertMinHeap(heap, node);
+        }
+    }
+
+    int currentVal = -1;
+    int currentCount = 0;
+    
+    typedef struct {
+        int value;
+        int count;
+    } FreqNode;
+    
+    int maxTotalElements = 0;
+    for(int i = 0; i < numLists; i++) {
+        maxTotalElements += listSizes[i];
+    }
+    
+    FreqNode* freqs = (FreqNode*)malloc(sizeof(FreqNode) * maxTotalElements);
+    if (!freqs) {
+        freeMinHeap(heap);
+        *returnSize = 0;
+        return NULL;
+    }
+    int uniqueCount = 0;
+    int initialized = 0;
+
+    while (heap->size > 0) {
+        HeapNode minNode = extractMin(heap);
+        
+        if (!initialized) {
+            currentVal = minNode.value;
+            currentCount = 1;
+            initialized = 1;
+        } else if (minNode.value == currentVal) {
+            currentCount++;
+        } else {
+            freqs[uniqueCount].value = currentVal;
+            freqs[uniqueCount].count = currentCount;
+            uniqueCount++;
+            currentVal = minNode.value;
+            currentCount = 1;
+        }
+
+        if (minNode.col + 1 < listSizes[minNode.row]) {
+            HeapNode nextNode = {lists[minNode.row][minNode.col + 1], minNode.col + 1, minNode.row};
+            insertMinHeap(heap, nextNode);
+        }
+    }
+    
+    if (initialized) {
+        freqs[uniqueCount].value = currentVal;
+        freqs[uniqueCount].count = currentCount;
+        uniqueCount++;
+    }
+
+    freeMinHeap(heap);
+
+    for (int i = 0; i < uniqueCount - 1; i++) {
+        for (int j = 0; j < uniqueCount - i - 1; j++) {
+            if (freqs[j].count < freqs[j+1].count) {
+                FreqNode temp = freqs[j];
+                freqs[j] = freqs[j+1];
+                freqs[j+1] = temp;
+            }
+        }
+    }
+
+    int resSize = k < uniqueCount ? k : uniqueCount;
+    int* result = (int*)malloc(resSize * sizeof(int));
+    if (!result) {
+        free(freqs);
+        *returnSize = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < resSize; i++) {
+        result[i] = freqs[i].value;
+    }
+
+    free(freqs);
+    *returnSize = resSize;
+    return result;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 4, 5};
+    int list2[] = {2, 4, 6, 8};
+    int list3[] = {1, 2, 4, 9};
+    
+    int* lists[] = {list1, list2, list3};
+    int listSizes[] = {5, 4, 4};
+    int numLists = 3;
+    int k = 2;
+    int returnSize;
+
+    int* result = findTopKFrequent(lists, numLists, listSizes, k, &returnSize);
+
+    if (result) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+
+    return 0;
+}

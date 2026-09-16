@@ -2,85 +2,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int value;
-    struct Node *next;
-} Node;
-
-Node* create_node(int value) {
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    new_node->value = value;
-    new_node->next = NULL;
-    return new_node;
-}
-
-void insert_end(Node **head, int value) {
-    if (*head == NULL) {
-        *head = create_node(value);
-    } else {
-        Node *current = *head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = create_node(value);
+void remove_negatives(int **list, int *size) {
+    int *new_list = (int *)malloc(*size * sizeof(int));
+    if (new_list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(1);
     }
-}
-
-void remove_negatives(Node **head) {
-    Node *current = *head;
-    Node *prev = NULL;
-    while (current != NULL) {
-        if (current->value < 0) {
-            if (prev == NULL) {
-                *head = current->next;
-                free(current);
-                current = *head;
-            } else {
-                prev->next = current->next;
-                free(current);
-                current = prev->next;
-            }
-        } else {
-            prev = current;
-            current = current->next;
+    int j = 0;
+    for (int i = 0; i < *size; i++) {
+        if ((*list)[i] >= 0) {
+            new_list[j++] = (*list)[i];
         }
     }
-}
-
-void print_list(Node *head) {
-    while (head != NULL) {
-        printf("%d -> ", head->value);
-        head = head->next;
-    }
-    printf("NULL\n");
-}
-
-void free_list(Node *head) {
-    Node *current = head;
-    while (current != NULL) {
-        Node *temp = current;
-        current = current->next;
-        free(temp);
-    }
+    free(*list);
+    *list = new_list;
+    *size = j;
 }
 
 int main() {
-    Node *head = NULL;
-    insert_end(&head, -3);
-    insert_end(&head, 4);
-    insert_end(&head, -2);
-    insert_end(&head, 5);
-    insert_end(&head, 6);
+    int size = 5;
+    int *list = (int *)malloc(size * sizeof(int));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    list[0] = -1;
+    list[1] = 2;
+    list[2] = -3;
+    list[3] = 4;
+    list[4] = -5;
 
-    printf("Original list: ");
-    print_list(head);
+    remove_negatives(&list, &size);
 
-    remove_negatives(&head);
+    for (int i = 0; i < size; i++) {
+        printf("%d ", list[i]);
+    }
+    printf("\n");
 
-    printf("List after removing negatives: ");
-    print_list(head);
-
-    free_list(head);
+    free(list);
     return 0;
 }
 ```

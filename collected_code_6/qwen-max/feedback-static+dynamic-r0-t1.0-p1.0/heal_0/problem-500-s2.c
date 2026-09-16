@@ -2,35 +2,39 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* concatenateList(const char *list[], int length) {
-    size_t total_length = 0;
-    for (int i = 0; i < length; ++i) {
-        total_length += strlen(list[i]);
-    }
-    
-    char *result = (char *)malloc(total_length + 1);
-    if (!result) {
-        return NULL;
-    }
-    
+char* concatenate_elements(char **list, int length) {
+    if (length <= 0) return NULL;
+
+    char *result = malloc(1);
+    if (result == NULL) return NULL;
     result[0] = '\0';
+
     for (int i = 0; i < length; ++i) {
-        strcat(result, list[i]);
+        const size_t len_result = strlen(result);
+        const size_t len_next = strlen(list[i]);
+        const size_t new_len = len_result + len_next + 1;
+        char *new_result = realloc(result, new_len);
+        if (new_result == NULL) {
+            free(result);
+            return NULL;
+        }
+        result = new_result;
+        strcat(result + len_result, list[i]);
     }
-    
+
     return result;
 }
 
 int main() {
-    const char *fruits[] = {"apple", "banana", "orange"};
-    int length = sizeof(fruits) / sizeof(fruits[0]);
+    char *elements[] = {"Hello", " ", "World", "!"};
+    int num_elements = 4;
 
-    char *concatenatedString = concatenateList(fruits, length);
-    if (concatenatedString != NULL) {
-        printf("%s\n", concatenatedString);
-        free(concatenatedString);
+    char *concatenated = concatenate_elements(elements, num_elements);
+    if (concatenated != NULL) {
+        printf("%s\n", concatenated);
+        free(concatenated);
     } else {
-        perror("Failed to concatenate list");
+        fprintf(stderr, "Memory allocation failed\n");
     }
 
     return 0;

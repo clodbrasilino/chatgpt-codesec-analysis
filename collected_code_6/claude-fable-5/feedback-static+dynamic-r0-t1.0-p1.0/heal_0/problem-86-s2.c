@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int centered_hexagonal(long long n, long long *result)
+{
+    if (n < 1 || result == NULL) {
+        return -1;
+    }
+    if (n > 1000000000LL) {
+        return -1;
+    }
+    *result = 3LL * n * (n - 1LL) + 1LL;
+    return 0;
+}
+
+int main(void)
+{
+    long long n = 0;
+    long long value = 0;
+
+    printf("Enter n: ");
+    if (scanf("%lld", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (centered_hexagonal(n, &value) != 0) {
+        fprintf(stderr, "n must be between 1 and 1000000000\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %lld-th centered hexagonal number is %lld\n", n, value);
+    return EXIT_SUCCESS;
+}

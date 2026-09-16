@@ -1,0 +1,129 @@
+```c
+#define PY_SSIZE_T_CLEAN
+
+#if defined(__has_include)
+#  if __has_include(<Python.h>)
+#    include <Python.h>
+#  elif __has_include(<python3.12/Python.h>)
+#    include <python3.12/Python.h>
+#  elif __has_include(<python3.11/Python.h>)
+#    include <python3.11/Python.h>
+#  elif __has_include(<python3.10/Python.h>)
+#    include <python3.10/Python.h>
+#  else
+#    error "Python.h not found: install python3-dev and compile with $(python3-config --cflags --ldflags)"
+#  endif
+#else
+#  include <Python.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict);
+
+static int add_dict_to_tuple(PyObject *tuple, Py_ssize_t index, PyObject *dict)
+{
+    if (tuple == NULL || dict == NULL) {
+        return -1;
+    }
+
+    if (!PyTuple_Check(tuple)) {
+        return -1;
+    }
+
+    if (index < 0 || index >= PyTuple_Size(tuple)) {
+        return -1;
+    }
+
+    Py_INCREF(dict);
+
+    if (PyTuple_SetItem(tuple, index, dict) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int exit_status = EXIT_FAILURE;
+    PyObject *tuple = NULL;
+    PyObject *dict = NULL;
+    PyObject *key = NULL;
+    PyObject *value = NULL;
+
+    Py_Initialize();
+
+    tuple = PyTuple_New(1);
+    if (tuple == NULL) {
+        goto cleanup;
+    }
+
+    dict = PyDict_New();
+    if (dict == NULL) {
+        goto cleanup;
+    }
+
+    key = PyUnicode_FromString("language");
+    if (key == NULL) {
+        goto cleanup;
+    }
+
+    value = PyUnicode_FromString("C");
+    if (value == NULL) {
+        goto cleanup;
+    }
+
+    if (PyDict_SetItem(dict, key, value) != 0) {
+        goto cleanup;
+    }
+
+    if (add_dict_to_tuple(tuple, 0, dict) != 0) {
+        goto cleanup;
+    }
+
+    if (PyObject_Print(tuple, stdout, 0) != 0) {
+        goto cleanup;
+    }
+
+    if (fputc('\n', stdout) == EOF) {
+        goto cleanup;
+    }
+
+    exit_status = EXIT_SUCCESS;
+
+cleanup:
+    Py_XDECREF(key);
+    Py_XDECREF(value);
+    Py_XDECREF(dict);
+    Py_XDECREF(tuple);
+
+    if (PyErr_Occurred()) {
+        PyErr_Print();
+    }
+
+    if (Py_FinalizeEx() < 0) {
+        exit_status = EXIT_FAILURE;
+    }
+
+    return exit_status;
+}
+```
+
+The diagnostics annotated in the original source were all cascading errors from a single root cause: `Python.h` was not found on the build system, so every Python API type (`PyObject`, `Py_ssize_t`) and function (`PyTuple_New`, `Py_INCREF`, etc.) appeared undeclared, triggering implicit-declaration and int-to-pointer conversion warnings. The code itself is logically sound — no source-level changes were required beyond ensuring the header resolves.
+
+To fix the root cause, compile with the proper flags:
+
+```sh
+gcc example.c $(python3-config --cflags --ldflags --embed) -o example
+```
+
+and install the development headers if missing (`sudo apt install python3-dev` on Debian/Ubuntu, `sudo dnf install python3-devel` on Fedora).
+
+A few notes on the code's correctness as written:
+
+- **Reference counting is balanced**: `PyTuple_SetItem` steals a reference, so the `Py_INCREF(dict)` before it compensates, allowing the unconditional `Py_XDECREF(dict)` in cleanup. On `PyTuple_SetItem` failure the stolen reference is released by the API itself, so no leak occurs on that path either.
+- **`PY_SSIZE_T_CLEAN`** is correctly defined before the include, which is mandatory since Python 3.10.
+- **`Py_FinalizeEx()`** is properly checked, unlike the older `Py_Finalize()` which cannot report errors.
+- The `goto cleanup` single-exit pattern is idiomatic for CPython embedding and avoids leaks on every error path.

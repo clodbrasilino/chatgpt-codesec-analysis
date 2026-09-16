@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* split_and_add(const int* arr, int size, int k, int* out_size) {
+    if (arr == NULL || size <= 0) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    if (k < 0) {
+        k = 0;
+    } else if (k > size) {
+        k = size;
+    }
+
+    int* result = (int*)malloc(size * sizeof(int));
+    if (result == NULL) {
+        *out_size = 0;
+        return NULL;
+    }
+
+    for (int i = k; i < size; ++i) {
+        result[i - k] = arr[i];
+    }
+    for (int i = 0; i < k; ++i) {
+        result[size - k + i] = arr[i];
+    }
+
+    *out_size = size;
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int k = 2;
+    int out_size = 0;
+
+    int* result = split_and_add(arr, size, k, &out_size);
+
+    if (result != NULL && out_size > 0) {
+        for (int i = 0; i < out_size; ++i) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+
+    return 0;
+}

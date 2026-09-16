@@ -1,32 +1,27 @@
 #include <stdio.h>
 #include <string.h>
 
-int find_first_max_even_length(const char *str) {
-    int max_len = 0;
-    const char *word_start = str;
-    
-    while (*str) {
-        if (*str == ' ') {
-            int word_len = (int)(str - word_start);
-            if (word_len % 2 == 0 && word_len > max_len) {
-                max_len = word_len;
-            }
-            word_start = str + 1;
+int findFirstMaxLengthEvenWord(const char *words[], int n, const char **result) {
+    int maxLength = 0;
+    for (int i = 0; i < n; ++i) {
+        size_t length = strlen(words[i]);
+        if (length % 2 == 0 && length >= maxLength) {
+            maxLength = length;
+            *result = words[i];
         }
-        str++;
     }
-    
-    int last_word_len = (int)(str - word_start);
-    if (last_word_len % 2 == 0 && last_word_len > max_len) {
-        max_len = last_word_len;
-    }
-    
-    return max_len;
+    return maxLength;
 }
 
 int main() {
-    const char *input = "a quick brown fox";
-    int result = find_first_max_even_length(input);
-    printf("First maximum even length: %d\n", result);
+    const char *words[] = {"hello", "world", "a", "ab", "abcd", "abcdef"};
+    const char *result = NULL;
+    int n = sizeof(words) / sizeof(words[0]);
+    int maxLength = findFirstMaxLengthEvenWord(words, n, &result);
+    if (maxLength > 0) {
+        printf("The first maximum length even word is: %s with length %d\n", result, maxLength);
+    } else {
+        printf("No even length word found.\n");
+    }
     return 0;
 }

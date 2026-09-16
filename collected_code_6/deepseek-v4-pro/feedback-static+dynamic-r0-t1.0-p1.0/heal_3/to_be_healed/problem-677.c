@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected False, got 1
+  *  test case 2 failed: expected True, got 0
+  */
+
+bool is_valid_triangle(float a, float b, float c) {
+    if (a <= 0 || b <= 0 || c <= 0) {
+        return false;
+    }
+    if (a + b <= c || a + c <= b || b + c <= a) {
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    float side1, side2, side3;
+    
+    printf("Enter three side lengths: ");
+    if (scanf("%f %f %f", &side1, &side2, &side3) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (is_valid_triangle(side1, side2, side3)) {
+        printf("Valid triangle\n");
+    } else {
+        printf("Invalid triangle\n");
+    }
+    
+    return 0;
+}

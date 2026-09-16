@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s2.c:12:30: style: Condition 'small!=NULL' is always true [knownConditionTrueFalse]
+    if (big == NULL && small != NULL) return false;
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s2.c:11:15: note: Assuming condition 'small==NULL' is false
+    if (small == NULL) return true;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-216-s2.c:12:30: note: Condition 'small!=NULL' is always true
+    if (big == NULL && small != NULL) return false;
+                             ^

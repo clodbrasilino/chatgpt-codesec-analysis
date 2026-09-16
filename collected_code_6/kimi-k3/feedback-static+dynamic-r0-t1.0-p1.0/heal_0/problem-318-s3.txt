@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+
+double findMaxVolume(double sumOfSides) {
+    if (sumOfSides <= 0.0) {
+        return 0.0;
+    }
+    
+    double side = sumOfSides / 3.0;
+    double volume = side * side * side;
+    
+    return volume;
+}
+
+int main(void) {
+    double sumOfSides;
+    
+    printf("Enter the sum of sides: ");
+    
+    if (scanf("%lf", &sumOfSides) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (sumOfSides < 0.0) {
+        printf("Sum of sides cannot be negative\n");
+        return 1;
+    }
+    
+    double maxVolume = findMaxVolume(sumOfSides);
+    
+    printf("Maximum volume of cuboid: %.6f\n", maxVolume);
+    
+    return 0;
+}
+```

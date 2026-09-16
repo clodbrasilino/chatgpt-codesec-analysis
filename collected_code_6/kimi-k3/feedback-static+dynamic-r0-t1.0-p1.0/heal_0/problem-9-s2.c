@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_rotations(const char *str)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int is_rotation;
+    
+    if (str == NULL)
+    {
+        return -1;
+    }
+    
+    len = strlen(str);
+    
+    if (len == 0)
+    {
+        return 0;
+    }
+    
+    for (i = 1; i <= len; i++)
+    {
+        is_rotation = 1;
+        for (j = 0; j < len; j++)
+        {
+            if (str[j] != str[(j + i) % len])
+            {
+                is_rotation = 0;
+                break;
+            }
+        }
+        
+        if (is_rotation)
+        {
+            return (int)i;
+        }
+    }
+    
+    return (int)len;
+}
+
+int main(void)
+{
+    const char *test1 = "abcabc";
+    const char *test2 = "aaaa";
+    const char *test3 = "abcd";
+    const char *test4 = "";
+    const char *test5 = "a";
+    
+    int result;
+    
+    result = min_rotations(test1);
+    if (result >= 0)
+    {
+        printf("String: \"%s\" -> Min rotations: %d\n", test1, result);
+    }
+    
+    result = min_rotations(test2);
+    if (result >= 0)
+    {
+        printf("String: \"%s\" -> Min rotations: %d\n", test2, result);
+    }
+    
+    result = min_rotations(test3);
+    if (result >= 0)
+    {
+        printf("String: \"%s\" -> Min rotations: %d\n", test3, result);
+    }
+    
+    result = min_rotations(test4);
+    if (result >= 0)
+    {
+        printf("String: \"%s\" -> Min rotations: %d\n", test4, result);
+    }
+    
+    result = min_rotations(test5);
+    if (result >= 0)
+    {
+        printf("String: \"%s\" -> Min rotations: %d\n", test5, result);
+    }
+    
+    return EXIT_SUCCESS;
+}

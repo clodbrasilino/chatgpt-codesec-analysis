@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} Tuple;
+
+void extract_elementwise(Tuple t1, Tuple t2, Tuple *result) {
+    if (t1.length != t2.length) {
+        return;
+    }
+    result->data = (int *)malloc(t1.length * sizeof(int));
+    if (result->data == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < t1.length; ++i) {
+        result->data[i] = t1.data[i] & t2.data[i];
+    }
+    result->length = t1.length;
+}
+
+int main() {
+    int a[] = {1, 2, 3};
+    int b[] = {3, 2, 1};
+    Tuple t1 = {a, 3};
+    Tuple t2 = {b, 3};
+    Tuple result = {NULL, 0};
+
+    extract_elementwise(t1, t2, &result);
+
+    for (size_t i = 0; i < result.length; ++i) {
+        printf("%d ", result.data[i]);
+    }
+    free(result.data);
+    return 0;
+}
+```

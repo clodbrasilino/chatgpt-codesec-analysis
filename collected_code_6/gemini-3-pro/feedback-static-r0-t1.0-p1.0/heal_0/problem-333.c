@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Sublist {
+    int first;
+    int second;
+};
+
+int compare_sublists(const void *a, const void *b) {
+    int val_a = ((const struct Sublist *)a)->second;
+    int val_b = ((const struct Sublist *)b)->second;
+    
+    if (val_a < val_b) return -1;
+    if (val_a > val_b) return 1;
+    return 0;
+}
+
+void sort_sublists(struct Sublist *list, size_t size) {
+    if (list != NULL && size > 0) {
+        qsort(list, size, sizeof(struct Sublist), compare_sublists);
+    }
+}
+
+int main(void) {
+    struct Sublist list[] = {
+        {1, 5},
+        {2, 1},
+        {3, 4},
+        {4, 2},
+        {5, 3}
+    };
+    size_t size = sizeof(list) / sizeof(list[0]);
+    
+    sort_sublists(list, size);
+    
+    for (size_t i = 0; i < size; i++) {
+        printf("{%d, %d}\n", list[i].first, list[i].second);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int max_of_three(int a, int b, int c);
+
+int max_of_three(int a, int b, int c)
+{
+    int max = a;
+
+    if (b > max) {
+        max = b;
+    }
+    if (c > max) {
+        max = c;
+    }
+
+    return max;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    int c;
+    int result;
+
+    printf("Enter three integers: ");
+
+    if (scanf("%d %d %d", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = max_of_three(a, b, c);
+
+    printf("Maximum: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key design decisions:
+
+- **CWE-703 mitigation**: The return value of `scanf` is checked against the expected number of successfully scanned items (3). If input is invalid, the program reports an error to `stderr` and exits with a failure status rather than operating on uninitialized values.
+- **CWE-664 mitigation**: No dynamically allocated resources, file handles, or other lifetime-managed resources are used, so there is nothing to leak or misuse. All variables are stack-local with clear scope.
+- **CWE-710 mitigation**: The code follows standard C conventions — `int main(void)` signature, explicit function prototype before use, `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>` instead of magic numbers, braces on all control statements, and no implicit declarations.

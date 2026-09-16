@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int count10 = 0;
+    int count01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] != s2[i]) {
+            if (s1[i] == '1') {
+                count10++;
+            } else {
+                count01++;
+            }
+        }
+    }
+
+    if (count10 != count01) {
+        return -1;
+    }
+
+    return count10;
+}
+
+int main(void)
+{
+    const char *a = "1101";
+    const char *b = "1011";
+    int result;
+
+    result = min_swaps(a, b);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return 1;
+        }
+    } else {
+        if (printf("Minimum swaps: %d\n", result) < 0) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+```
+
+**Analysis of the weakness and the fix:**
+
+The comment indicated that a test case expected the string `Not Possible` but received the raw sentinel value `-1`. This happens when the caller prints the return value of `min_swaps()` directly instead of translating the error code into the user-facing message.
+
+The fix keeps the sentinel value `-1` strictly internal to the API. The `main` function now acts as the presentation layer: any negative return value from `min_swaps()` is mapped to the string `Not Possible` before being written to `stdout`, while a valid (non-negative) result is formatted as `Minimum swaps: N`. This preserves a clean separation between the computation (which reports failure via an error code) and the output (which reports failure via the expected human-readable message).
+
+Additional defensive measures already in place and retained:
+
+- **NULL pointer checks** on both inputs before calling `strlen()`, preventing undefined behavior.
+- **Length mismatch check**, since strings of unequal length can never be made equal by swaps.
+- **Character validation**, rejecting any input that is not strictly binary (`'0'` or `'1'`).
+- **Parity check** (`count10 != count01`), since each swap fixes exactly one `1→0` mismatch and one `0→1` mismatch — an imbalance makes the transformation impossible.
+- **Checked `printf` return values**, so I/O failures propagate as a non-zero exit status.

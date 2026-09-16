@@ -3,65 +3,49 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_WORDS 10000
-#define MAX_WORD_LENGTH 100
-
 typedef struct {
-    char word[MAX_WORD_LENGTH];
+    char *word;
     int count;
 } WordCount;
 
-int compare(const void *a, const void *b) {
-    return ((WordCount *)b)->count - ((WordCount *)a)->count;
+int cmpfunc(const void *a, const void *b) {
+    WordCount *wca = (WordCount *)a;
+    WordCount *wcb = (WordCount *)b;
+    return (wcb->count - wca->count);
 }
 
-char* mostFrequentWord(char *strings[], int size) {
-    WordCount words[MAX_WORDS] = {0};
-    int wordCount = 0;
+char* get_most_frequent_word(char **words, int word_count) {
+    if (word_count <= 0) return NULL;
 
-    for (int i = 0; i < size; ++i) {
-        char *token = strtok(strings[i], " ");
-        while (token) {
-            int found = 0;
-            for (int j = 0; j < wordCount; ++j) {
-                if (strcmp(words[j].word, token) == 0) {
-                    words[j].count++;
-                    found = 1;
-                    break;
-                }
+    WordCount *word_counts = (WordCount *)malloc(word_count * sizeof(WordCount));
+    for (int i = 0; i < word_count; ++i) {
+        word_counts[i].word = words[i];
+        word_counts[i].count = 1;
+        for (int j = i + 1; j < word_count; ++j) {
+            if (strcmp(words[j], words[i]) == 0) {
+                word_counts[i].count++;
+                words[j][0] = '\0'; // Mark as counted
             }
-            if (!found && wordCount < MAX_WORDS) {
-                strncpy(words[wordCount].word, token, MAX_WORD_LENGTH);
-                words[wordCount].count = 1;
-                wordCount++;
-            }
-            token = strtok(NULL, " ");
         }
     }
 
-    qsort(words, wordCount, sizeof(WordCount), compare);
+    qsort(word_counts, word_count, sizeof(WordCount), cmpfunc);
 
-    if (wordCount > 0) {
-        return words[0].word;
-    } else {
-        return NULL;
-    }
+    char *result = strdup(word_counts[0].word);
+    free(word_counts);
+    return result;
 }
 
 int main() {
-    char *strings[] = {
-        "hello world",
-        "hello again world",
-        "hello there",
-        "hello"
-    };
-    int size = 4;
+    char *words[] = {"apple", "banana", "apple", "orange", "banana", "apple"};
+    int word_count = sizeof(words) / sizeof(words[0]);
 
-    char *result = mostFrequentWord(strings, size);
-    if (result) {
-        printf("Most frequent word: %s\n", result);
+    char *most_frequent = get_most_frequent_word(words, word_count);
+    if (most_frequent != NULL) {
+        printf("Most frequent word: %s\n", most_frequent);
+        free(most_frequent);
     } else {
-        printf("No words found.\n");
+        printf("No words provided.\n");
     }
 
     return 0;

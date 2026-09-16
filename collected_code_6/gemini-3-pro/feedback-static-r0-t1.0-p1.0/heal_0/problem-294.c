@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_DOUBLE
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    union {
+        int int_val;
+        double double_val;
+    } data;
+} Element;
+
+typedef enum {
+    STATUS_OK = 0,
+    STATUS_ERROR_INVALID_INPUT = -1
+} Status;
+
+Status find_max(const Element *list, size_t size, Element *max_out);
+
+Status find_max(const Element *list, size_t size, Element *max_out) {
+    if (list == NULL || max_out == NULL || size == 0) {
+        return STATUS_ERROR_INVALID_INPUT;
+    }
+
+    *max_out = list[0];
+    double current_max = (list[0].type == TYPE_INT) ? (double)list[0].data.int_val : list[0].data.double_val;
+
+    for (size_t i = 1; i < size; ++i) {
+        double val = (list[i].type == TYPE_INT) ? (double)list[i].data.int_val : list[i].data.double_val;
+        if (val > current_max) {
+            current_max = val;
+            *max_out = list[i];
+        }
+    }
+
+    return STATUS_OK;
+}
+
+int main(void) {
+    size_t size = 5;
+    Element *list = (Element *)malloc(size * sizeof(Element));
+    
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list[0].type = TYPE_INT;
+    list[0].data.int_val = 15;
+
+    list[1].type = TYPE_DOUBLE;
+    list[1].data.double_val = 42.7;
+
+    list[2].type = TYPE_INT;
+    list[2].data.int_val = -89;
+
+    list[3].type = TYPE_DOUBLE;
+    list[3].data.double_val = 42.69;
+
+    list[4].type = TYPE_INT;
+    list[4].data.int_val = 14;
+
+    Element max_element;
+    Status status = find_max(list, size, &max_element);
+
+    if (status == STATUS_OK) {
+        if (max_element.type == TYPE_INT) {
+            printf("%d\n", max_element.data.int_val);
+        } else if (max_element.type == TYPE_DOUBLE) {
+            printf("%f\n", max_element.data.double_val);
+        }
+    }
+
+    free(list);
+    list = NULL;
+
+    return (status == STATUS_OK) ? EXIT_SUCCESS : EXIT_FAILURE;
+}

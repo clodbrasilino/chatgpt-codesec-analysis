@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *createNode(int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void removeConsecutiveDuplicates(struct Node *head) {
+    if (head == NULL) {
+        return;
+    }
+    struct Node *current = head;
+    while (current->next != NULL) {
+        if (current->data == current->next->data) {
+            struct Node *temp = current->next;
+            current->next = temp->next;
+            free(temp);
+        } else {
+            current = current->next;
+        }
+    }
+}
+
+void printList(struct Node *node) {
+    while (node != NULL) {
+        printf("%d ", node->data);
+        node = node->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node *head) {
+    struct Node *tmp;
+    while (head != NULL) {
+        tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+int main(void) {
+    struct Node *head = createNode(1);
+    head->next = createNode(1);
+    head->next->next = createNode(2);
+    head->next->next->next = createNode(3);
+    head->next->next->next->next = createNode(3);
+    head->next->next->next->next->next = createNode(3);
+
+    printList(head);
+    removeConsecutiveDuplicates(head);
+    printList(head);
+
+    freeList(head);
+    return 0;
+}

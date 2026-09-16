@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum { NODE_INT, NODE_LIST } NodeType;
+
+typedef struct Node {
+    NodeType type;
+    int value;
+    struct Node *child;
+    struct Node *next;
+} Node;
+
+static Node *create_int_node(int value);
+static Node *create_list_node(Node *child);
+static bool append_node(Node **head, Node *node);
+static bool append_int(Node **head, int value);
+static bool append_list(Node **head, Node *child);
+static bool nodes_equal(const Node *a, const Node *b);
+static bool lists_equal(const Node *a, const Node *b);
+static bool list_contains(const Node *list, const Node *elem);
+static bool is_subset(const Node *sub, const Node *super);
+static void free_list(Node *head);
+static void print_list(const Node *head);
+
+static Node *create_int_node(int value)
+{
+    Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = NODE_INT;
+    node->value = value;
+    node->child = NULL;
+    node->next = NULL;
+    return node;
+}
+
+static Node *create_list_node(Node *child)
+{
+    Node *node = malloc(sizeof(*node));
+
+    if (node == NULL) {
+        return NULL;
+    }
+    node->type = NODE_LIST;
+    node->value = 0;
+    node->child = child;
+    node->next = NULL;
+    return node;
+}
+
+static bool append_node(Node **head, Node *node)
+{
+    Node *cur;
+
+    if (head == NULL || node == NULL) {
+        return false;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return true;
+    }
+    cur = *head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+    return true;
+}
+
+static bool append_int(Node **head, int value)
+{
+    Node *node = create_int_node(value);
+
+    if (node == NULL) {
+        return false;
+    }
+    if (!append_node(head, node)) {
+        free(node);
+        return false;
+    }
+    return true;
+}
+
+static bool append_list(Node **head, Node *child)
+{
+    Node *node = create_list_node(child);
+
+    if (node == NULL) {
+        return false;
+    }
+    if (!append_node

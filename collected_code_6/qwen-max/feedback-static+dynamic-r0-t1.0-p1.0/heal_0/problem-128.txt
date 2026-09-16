@@ -3,38 +3,52 @@
 #include <stdlib.h>
 #include <string.h>
 
-char **filter_long_words(char *words[], int num_words, int min_length, int *filtered_count) {
-    char **result = (char **)malloc(num_words * sizeof(char *));
-    if (result == NULL) return NULL;
-
-    *filtered_count = 0;
-    for (int i = 0; i < num_words; ++i) {
-        if (strlen(words[i]) > min_length) {
-            result[*filtered_count] = words[i];
-            (*filtered_count)++;
+char **filter_long_words(char *words[], int word_count, int n, int *result_count) {
+    char **result = NULL;
+    *result_count = 0;
+    
+    for (int i = 0; i < word_count; ++i) {
+        if (strlen(words[i]) > n) {
+            result = (char **)realloc(result, (*result_count + 1) * sizeof(char *));
+            if (result == NULL) {
+                exit(1);
+            }
+            result[*result_count] = strdup(words[i]);
+            if (result[*result_count] == NULL) {
+                while (*result_count) {
+                    free(result[--(*result_count)]);
+                }
+                free(result);
+                exit(1);
+            }
+            (*result_count)++;
         }
     }
 
     return result;
 }
 
+void free_result(char **result, int result_count) {
+    for (int i = 0; i < result_count; ++i) {
+        free(result[i]);
+    }
+    free(result);
+}
+
 int main() {
-    char *words[] = {"hello", "world", "a", "of", "programming"};
-    int num_words = 5;
-    int min_length = 3;
-    int filtered_count = 0;
+    char *words[] = {"hello", "world", "a", "ab", "abc", "abcd"};
+    int word_count = 6;
+    int n = 2;
+    int result_count = 0;
 
-    char **filtered_words = filter_long_words(words, num_words, min_length, &filtered_count);
-    if (filtered_words == NULL) {
-        printf("Memory allocation failed.\n");
-        return 1;
+    char **filtered_words = filter_long_words(words, word_count, n, &result_count);
+
+    for (int i = 0; i < result_count; ++i) {
+        printf("%s ", filtered_words[i]);
     }
+    printf("\n");
 
-    for (int i = 0; i < filtered_count; ++i) {
-        printf("%s\n", filtered_words[i]);
-    }
-
-    free(filtered_words);
+    free_result(filtered_words, result_count);
     return 0;
 }
 ```

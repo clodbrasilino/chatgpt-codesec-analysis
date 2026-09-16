@@ -1,0 +1,117 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#define HASH_TABLE_SIZE 1024
+
+typedef struct HashNode {
+    int key;
+    int count;
+    struct HashNode* next;
+} HashNode;
+
+typedef struct {
+    HashNode* buckets[HASH_TABLE_SIZE];
+} HashTable;
+
+HashTable* create_hash_table() {
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+    if (!table) {
+        return NULL;
+    }
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        table->buckets[i] = NULL;
+    }
+    return table;
+}
+
+unsigned int hash_function(int key) {
+    return (unsigned int)key % HASH_TABLE_SIZE;
+}
+
+bool insert_or_update(HashTable* table, int key) {
+    if (!table) return false;
+    unsigned int index = hash_function(key);
+    HashNode* current = table->buckets[index];
+    
+    while (current) {
+        if (current->key == key) {
+            current->count++;
+            return true;
+        }
+        current = current->next;
+    }
+    
+    HashNode* new_node = (HashNode*)malloc(sizeof(HashNode));
+    if (!new_node) return false;
+    
+    new_node->key = key;
+    new_node->count = 1;
+    new_node->next = table->buckets[index];
+    table->buckets[index] = new_node;
+    return true;
+}
+
+void print_frequencies(const HashTable* table) {
+    if (!table) return;
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        HashNode* current = table->buckets[i];
+        while (current) {
+            printf("Element: %d, Frequency: %d\n", current->key, current->count);
+            current = current->next;
+        }
+    }
+}
+
+void free_hash_table(HashTable* table) {
+    if (!table) return;
+    for (int i = 0; i < HASH_TABLE_SIZE; ++i) {
+        HashNode* current = table->buckets[i];
+        while (current) {
+            HashNode* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(table);
+}
+
+void calculate_frequencies(int** list_of_lists, int num_lists, const int* sizes) {
+    if (!list_of_lists || !sizes) return;
+
+    HashTable* table = create_hash_table();
+    if (!table) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return;
+    }
+
+    for (int i = 0; i < num_lists; ++i) {
+        if (!list_of_lists[i]) continue;
+        for (int j = 0; j < sizes[i]; ++j) {
+            if (!insert_or_update(table, list_of_lists[i][j])) {
+                fprintf(stderr, "Failed to insert element\n");
+                free_hash_table(table);
+                return;
+            }
+        }
+    }
+
+    print_frequencies(table);
+    free_hash_table(table);
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3, 2};
+    int list2[] = {3, 4, 1, 5};
+    int list3[] = {1, 1, 5, 6};
+
+    int* list_of_lists[] = {list1, list2, list3};
+    
+    const int sizes[] = {4, 4, 4};
+    int num_lists = 3;
+
+    calculate_frequencies(list_of_lists, num_lists, sizes);
+
+    return EXIT_SUCCESS;
+}

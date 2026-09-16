@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned int toggle_first_last_bits(unsigned int num) {
+    unsigned int num_bits = sizeof(num) * CHAR_BIT;
+    
+    unsigned int first_bit_mask = 1U << (num_bits - 1);
+    unsigned int last_bit_mask = 1U;
+    
+    unsigned int combined_mask = first_bit_mask | last_bit_mask;
+    
+    return num ^ combined_mask;
+}
+
+int main(void) {
+    unsigned int number;
+    unsigned int result;
+    
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = toggle_first_last_bits(number);
+    
+    printf("%u\n", result);
+    
+    return EXIT_SUCCESS;
+}

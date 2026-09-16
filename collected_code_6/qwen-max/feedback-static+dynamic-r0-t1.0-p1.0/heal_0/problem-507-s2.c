@@ -2,37 +2,37 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct ListNode {
+typedef struct Node {
     char *word;
-    struct ListNode *next;
-} ListNode;
+    struct Node *next;
+} Node;
 
-ListNode* create_node(char *data) {
-    ListNode *newNode = (ListNode*)malloc(sizeof(ListNode));
-    newNode->word = strdup(data);
-    newNode->next = NULL;
-    return newNode;
+Node* create_node(char *str) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->word = strdup(str);
+    new_node->next = NULL;
+    return new_node;
 }
 
-void add_node(ListNode **head, char *data) {
-    ListNode *newNode = create_node(data);
+void append_node(Node **head, char *str) {
     if (*head == NULL) {
-        *head = newNode;
-    } else {
-        ListNode *current = *head;
-        while (current->next != NULL) {
-            current = current->next;
-        }
-        current->next = newNode;
+        *head = create_node(str);
+        return;
     }
+    
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = create_node(str);
 }
 
-int remove_word(ListNode **head, const char *wordToRemove) {
-    ListNode *current = *head;
-    ListNode *previous = NULL;
-
+void delete_word(Node **head, const char *target) {
+    Node *current = *head;
+    Node *previous = NULL;
+    
     while (current != NULL) {
-        if (strcmp(current->word, wordToRemove) == 0) {
+        if (strcmp(current->word, target) == 0) {
             if (previous == NULL) {
                 *head = current->next;
             } else {
@@ -40,26 +40,27 @@ int remove_word(ListNode **head, const char *wordToRemove) {
             }
             free(current->word);
             free(current);
-            return 1; // Word removed
+            current = previous ? previous->next : *head;
+        } else {
+            previous = current;
+            current = current->next;
         }
-        previous = current;
-        current = current->next;
     }
-    return 0; // Word not found
 }
 
-void print_list(ListNode *head) {
-    while (head != NULL) {
-        printf("%s -> ", head->word);
-        head = head->next;
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%s -> ", current->word);
+        current = current->next;
     }
     printf("NULL\n");
 }
 
-void free_list(ListNode *head) {
-    ListNode *current = head;
+void free_list(Node *head) {
+    Node *current = head;
     while (current != NULL) {
-        ListNode *next = current->next;
+        Node *next = current->next;
         free(current->word);
         free(current);
         current = next;
@@ -67,22 +68,21 @@ void free_list(ListNode *head) {
 }
 
 int main() {
-    ListNode *head = NULL;
+    Node *words = NULL;
     
-    add_node(&head, "apple");
-    add_node(&head, "banana");
-    add_node(&head, "cherry");
-    add_node(&head, "date");
+    append_node(&words, "hello");
+    append_node(&words, "world");
+    append_node(&words, "hello");
+    append_node(&words, "test");
+    append_node(&words, "remove");
     
-    printf("Original list: ");
-    print_list(head);
+    print_list(words);
     
-    remove_word(&head, "banana");
-    remove_word(&head, "date");
-
-    printf("Modified list: ");
-    print_list(head);
-
-    free_list(head);
+    delete_word(&words, "hello");
+    delete_word(&words, "remove");
+    
+    print_list(words);
+    
+    free_list(words);
     return 0;
 }

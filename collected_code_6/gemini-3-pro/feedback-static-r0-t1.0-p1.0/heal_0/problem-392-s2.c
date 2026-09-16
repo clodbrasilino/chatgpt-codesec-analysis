@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long findMaxSum(long long n) {
+    if (n == 0) {
+        return 0;
+    }
+
+    long long *dp = (long long *)malloc((n + 1) * sizeof(long long));
+    if (dp == NULL) {
+        return -1; 
+    }
+
+    dp[0] = 0;
+
+    for (long long i = 1; i <= n; i++) {
+        long long sum = 0;
+        sum += dp[i / 2];
+        sum += dp[i / 3];
+        sum += dp[i / 4];
+        sum += dp[i / 5];
+
+        if (sum > i) {
+            dp[i] = sum;
+        } else {
+            dp[i] = i;
+        }
+    }
+
+    long long result = dp[n];
+    free(dp);
+
+    return result;
+}
+
+int main() {
+    long long n;
+
+    if (scanf("%lld", &n) != 1) {
+        return 1;
+    }
+    
+    if (n < 0) {
+        return 1;
+    }
+
+    if (n > 1000000) {
+        long long sum = findMaxSum(n / 2) + findMaxSum(n / 3) + findMaxSum(n / 4) + findMaxSum(n / 5);
+        if (sum > n) {
+             printf("%lld\n", sum);
+        } else {
+             printf("%lld\n", n);
+        }
+    } else {
+        long long result = findMaxSum(n);
+        if (result == -1) {
+            return 1;
+        }
+        printf("%lld\n", result);
+    }
+
+    return 0;
+}

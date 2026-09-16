@@ -1,0 +1,72 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+double sum_of_gp(double a, double r, int n)
+{
+    if (n <= 0) {
+        return 0.0;
+    }
+
+    if (fabs(r - 1.0) < 1e-12) {
+        return a * (double)n;
+    }
+
+    return a * (pow(r, (double)n) - 1.0) / (r - 1.0);
+}
+
+int main(void)
+{
+    double a;
+    double r;
+    int n;
+    double result;
+
+    printf("Enter the first term: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for first term.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &r) != 1) {
+        fprintf(stderr, "Invalid input for common ratio.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the number of terms: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input for number of terms.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Number of terms must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_gp(a, r, n);
+
+    if (isinf(result) || isnan(result)) {
+        fprintf(stderr, "Result out of representable range.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (fabs(result - round(result)) < 1e-9) {
+        printf("Sum of the geometric progression: %.0f\n", result);
+    } else {
+        printf("Sum of the geometric progression: %f\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weakness:** The original code read the inputs in the order *first term → number of terms → common ratio*, while the test harness supplied them in the order *first term → common ratio → number of terms*. This silently swapped `r` and `n`:
+
+- Test 0: `a=1, r=2, n=5` → expected 31 (1+2+4+8+16), but with the swap it computed `r=5, n=2` → (5²−1)/4 = **6**.
+- Test 1: `a=1, r=4, n=5` → expected 341, but computed `r=5, n=4` → (5⁴−1)/4 = **156**.
+- Test 2: `a=2, r=3, n=6` → expected 728 = 2·(3⁶−1)/2, but computed `r=6, n=3` → 2·(6³−1)/5 = **86**.
+
+The fix is simply reordering the prompts/`scanf` calls so the common ratio is read before the number of terms. The GP sum formula itself, the `r == 1` special case, and the overflow/NaN checks were all correct.

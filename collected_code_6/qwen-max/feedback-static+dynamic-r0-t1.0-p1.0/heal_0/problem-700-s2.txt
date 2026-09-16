@@ -2,25 +2,69 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int count_elements_in_range(int *list, int list_size, int lower_bound, int upper_bound) {
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+int countRange(struct Node *head, int lower, int upper) {
     int count = 0;
-    for (int i = 0; i < list_size; i++) {
-        if (list[i] >= lower_bound && list[i] <= upper_bound) {
+    struct Node *current = head;
+    while (current != NULL) {
+        if (current->data >= lower && current->data <= upper) {
             count++;
         }
+        current = current->next;
     }
     return count;
 }
 
+struct Node* createNode(int data) {
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtEnd(struct Node **head, int data) {
+    struct Node *newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+    } else {
+        struct Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+void freeList(struct Node *head) {
+    struct Node *current = head;
+    while (current != NULL) {
+        struct Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
 int main() {
-    int list[] = {1, 5, 10, 15, 20, 25, 30};
-    int list_size = sizeof(list) / sizeof(list[0]);
-    int lower_bound = 10;
-    int upper_bound = 20;
+    struct Node *head = NULL;
+    insertAtEnd(&head, 5);
+    insertAtEnd(&head, 10);
+    insertAtEnd(&head, 15);
+    insertAtEnd(&head, 20);
 
-    int result = count_elements_in_range(list, list_size, lower_bound, upper_bound);
-    printf("Number of elements in range: %d\n", result);
+    int lower = 7;
+    int upper = 17;
 
+    int result = countRange(head, lower, upper);
+    printf("Number of elements in range [%d, %d]: %d\n", lower, upper, result);
+
+    freeList(head);
     return 0;
 }
 ```

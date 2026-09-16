@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int set_rightmost_unset_bit(unsigned int n)
+{
+    if (n == ~0U)
+    {
+        return n;
+    }
+    return n | (n + 1U);
+}
+
+int main(void)
+{
+    unsigned int values[] = { 0U, 10U, 15U, 21U, ~0U };
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++)
+    {
+        unsigned int result = set_rightmost_unset_bit(values[i]);
+        if (printf("Input: %u -> Output: %u\n", values[i], result) < 0)
+        {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

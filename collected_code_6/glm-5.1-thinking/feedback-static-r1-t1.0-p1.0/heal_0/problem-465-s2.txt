@@ -1,0 +1,130 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    char *value;
+} DictItem;
+
+typedef struct {
+    DictItem *items;
+    size_t size;
+    size_t capacity;
+} Dictionary;
+
+Dictionary dict_create(size_t capacity) {
+    Dictionary dict = {NULL, 0, 0};
+    if (capacity > 0) {
+        dict.items = (DictItem *)malloc(capacity * sizeof(DictItem));
+        if (dict.items != NULL) {
+            dict.capacity = capacity;
+        }
+    }
+    return dict;
+}
+
+void dict_destroy(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        free(dict->items[i].key);
+        free(dict->items[i].value);
+    }
+    free(dict->items);
+    dict->items = NULL;
+    dict->size = 0;
+    dict->capacity = 0;
+}
+
+int dict_add(Dictionary *dict, const char *key, const char *value) {
+    if (dict == NULL) {
+        return -1;
+    }
+    if (dict->size >= dict->capacity) {
+        size_t new_cap = dict->capacity == 0 ? 4 : dict->capacity * 2;
+        DictItem *new_items = (DictItem *)realloc(dict->items, new_cap * sizeof(DictItem));
+        if (new_items == NULL) {
+            return -1;
+        }
+        dict->items = new_items;
+        dict->capacity = new_cap;
+    }
+    dict->items[dict->size].key = key ? strdup(key) : NULL;
+    dict->items[dict->size].value = value ? strdup(value) : NULL;
+    if ((key != NULL && dict->items[dict->size].key == NULL) ||
+        (value != NULL && dict->items[dict->size].value == NULL)) {
+        free(dict->items[dict->size].key);
+        free(dict->items[dict->size].value);
+        return -1;
+    }
+    dict->size++;
+    return 0;
+}
+
+int dict_drop_empty(Dictionary *dict) {
+    if (dict == NULL) {
+        return -1;
+    }
+    size_t valid_count = 0;
+    for (size_t i = 0; i < dict->size; i++) {
+        if (dict->items[i].value != NULL && dict->items[i].value[0] != '\0') {
+            if (valid_count != i) {
+                dict->items[valid_count] = dict->items[i];
+            }
+            valid_count++;
+        } else {
+            free(dict->items[i].key);
+            free(dict->items[i].value);
+        }
+    }
+    dict->size = valid_count;
+    if (valid_count == 0) {
+        free(dict->items);
+        dict->items = NULL;
+        dict->capacity = 0;
+    } else if (valid_count < dict->capacity) {
+        DictItem *new_items = (DictItem *)realloc(dict->items, valid_count * sizeof(DictItem));
+        if (new_items != NULL) {
+            dict->items = new_items;
+            dict->capacity = valid_count;
+        }
+    }
+    return 0;
+}
+
+void dict_print(const Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->size; i++) {
+        printf("%s: %s\n", 
+               dict->items[i].key ? dict->items[i].key : "NULL", 
+               dict->items[i].value ? dict->items[i].value : "NULL");
+    }
+}
+
+int main(void) {
+    Dictionary dict = dict_create(4);
+    
+    dict_add(&dict, "key1", "value1");
+    dict_add(&dict, "key2", "");
+    dict_add(&dict, "key3", NULL);
+    dict_add(&dict, "key4", "value4");
+    dict_add(&dict, "key5", "value5");
+
+    printf("Before:\n");
+    dict_print(&dict);
+
+    dict_drop_empty(&dict);
+
+    printf("\nAfter:\n");
+    dict_print(&dict);
+
+    dict_destroy(&dict);
+    
+    return 0;
+}
+```

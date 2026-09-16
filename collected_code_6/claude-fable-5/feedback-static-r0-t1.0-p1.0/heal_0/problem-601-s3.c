@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+static int comparePairs(const void *a, const void *b)
+{
+    const Pair *pa = (const Pair *)a;
+    const Pair *pb = (const Pair *)b;
+
+    if (pa->second < pb->second) {
+        return -1;
+    }
+    if (pa->second > pb->second) {
+        return 1;
+    }
+    return 0;
+}
+
+int longestChain(Pair *pairs, size_t n)
+{
+    size_t i;
+    int count;
+    int currentEnd;
+
+    if (pairs == NULL || n == 0) {
+        return 0;
+    }
+
+    qsort(pairs, n, sizeof(Pair), comparePairs);
+
+    count = 1;
+    currentEnd = pairs[0].second;
+
+    for (i = 1; i < n; i++) {
+        if (pairs[i].first > currentEnd) {
+            count++;
+            currentEnd = pairs[i].second;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    size_t n = 5;
+    size_t i;
+    int result;
+    Pair *pairs;
+
+    pairs = (Pair *)malloc(n * sizeof(Pair));
+    if (pairs == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    pairs[0].first = 5;
+    pairs[0].second = 24;
+    pairs[1].first = 39;
+    pairs[1].second = 60;
+    pairs[2].first = 15;
+    pairs[2].second = 28;
+    pairs[3].first = 27;
+    pairs[3].second = 40;
+    pairs[4].first = 50;
+    pairs[4].second = 90;
+
+    printf("Input pairs:\n");
+    for (i = 0; i < n; i++) {
+        printf("(%d, %d)\n", pairs[i].first, pairs[i].second);
+    }
+
+    result = longestChain(pairs, n);
+    printf("Length of the longest chain: %d\n", result);
+
+    free(pairs);
+    pairs = NULL;
+
+    return EXIT_SUCCESS;
+}

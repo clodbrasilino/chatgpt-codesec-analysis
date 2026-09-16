@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+typedef struct Sublist {
+    Node* head;
+    int length;
+} Sublist;
+
+Sublist* find_min_length_sublist(Sublist** sublists, int num_sublists) {
+    if (!sublists || num_sublists <= 0) {
+        return NULL;
+    }
+
+    Sublist* min_sublist = NULL;
+    int min_length = INT_MAX;
+
+    for (int i = 0; i < num_sublists; ++i) {
+        if (sublists[i] && sublists[i]->length < min_length) {
+            min_length = sublists[i]->length;
+            min_sublist = sublists[i];
+        }
+    }
+
+    return min_sublist;
+}
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+Sublist* create_sublist(int length, int start_data) {
+    Sublist* sub = (Sublist*)malloc(sizeof(Sublist));
+    if (!sub) {
+        exit(EXIT_FAILURE);
+    }
+    sub->length = length;
+    sub->head = NULL;
+
+    if (length > 0) {
+        sub->head = create_node(start_data);
+        Node* current = sub->head;
+        for (int i = 1; i < length; ++i) {
+            current->next = create_node(start_data + i);
+            current = current->next;
+        }
+    }
+    return sub;
+}
+
+void free_sublist(Sublist* sub) {
+    if (!sub) return;
+    Node* current = sub->head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(sub);
+}
+
+int main(void) {
+    int num_sublists = 3;
+    Sublist** sublists = (Sublist**)malloc(num_sublists * sizeof(Sublist*));
+    if (!sublists) {
+        return EXIT_FAILURE;
+    }
+
+    sublists[0] = create_sublist(5, 10);
+    sublists[1] = create_sublist(2, 20);
+    sublists[2] = create_sublist(4, 30);
+
+    /* Possible weaknesses found:
+     *  Variable 'min_sublist' can be declared as pointer to const [constVariablePointer]
+     */
+    Sublist* min_sublist = find_min_length_sublist(sublists, num_sublists);
+
+    if (min_sublist) {
+        printf("%d\n", min_sublist->length);
+    }
+
+    for (int i = 0; i < num_sublists; ++i) {
+        free_sublist(sublists[i]);
+    }
+    free(sublists);
+
+    return EXIT_SUCCESS;
+}

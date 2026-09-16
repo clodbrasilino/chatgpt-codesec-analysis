@@ -1,0 +1,66 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int* elements;
+    size_t length;
+} Tuple;
+
+bool check_equal_length(Tuple* tuples, size_t num_tuples) {
+    if (tuples == NULL || num_tuples == 0) {
+        return false;
+    }
+
+    size_t first_length = tuples[0].length;
+
+    for (size_t i = 1; i < num_tuples; i++) {
+        if (tuples[i].length != first_length) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    size_t num_tuples = 3;
+    Tuple* tuples = malloc(num_tuples * sizeof(Tuple));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    tuples[0].length = 3;
+    tuples[0].elements = malloc(tuples[0].length * sizeof(int));
+    
+    tuples[1].length = 3;
+    tuples[1].elements = malloc(tuples[1].length * sizeof(int));
+    
+    tuples[2].length = 3;
+    tuples[2].elements = malloc(tuples[2].length * sizeof(int));
+
+    if (tuples[0].elements == NULL || tuples[1].elements == NULL || tuples[2].elements == NULL) {
+        for (size_t i = 0; i < num_tuples; i++) {
+            free(tuples[i].elements);
+        }
+        free(tuples);
+        return 1;
+    }
+
+    bool result = check_equal_length(tuples, num_tuples);
+
+    if (result) {
+        printf("All tuples have equal length.\n");
+    } else {
+        printf("Not all tuples have equal length.\n");
+    }
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        free(tuples[i].elements);
+    }
+    free(tuples);
+
+    return 0;
+}
+```

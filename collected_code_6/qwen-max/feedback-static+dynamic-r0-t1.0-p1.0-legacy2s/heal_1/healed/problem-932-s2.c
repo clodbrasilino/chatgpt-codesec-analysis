@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRINGS 100
+#define MAX_STRING_LENGTH 50
+
+int compare_strings(const void *a, const void *b) {
+    return strcmp(*(const char * const *)a, *(const char * const *)b);
+}
+
+int is_duplicate(const char *strings[], int index) {
+    if (index == 0) return 0;
+    return strcmp(strings[index], strings[index-1]) == 0;
+}
+
+void remove_duplicates(char *strings[], int *count) {
+    qsort(strings, *count, sizeof(char *), compare_strings);
+    int unique_index = 0;
+    for (int i = 0; i < *count; ++i) {
+        if (!is_duplicate(strings, i)) {
+            strings[unique_index++] = strings[i];
+        }
+    }
+    *count = unique_index;
+}
+
+int main() {
+    char *strings[MAX_STRINGS] = {
+        "apple", "banana", "apple", "orange", "banana", "grape", "grape"
+    };
+    int count = 7;
+
+    remove_duplicates(strings, &count);
+
+    for (int i = 0; i < count; ++i) {
+        printf("%s\n", strings[i]);
+    }
+
+    return 0;
+}

@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+
+long long countSubsequences(const int* arr, int n, int k) {
+    if (k <= 0) {
+        return 0;
+    }
+
+    long long total_subarrays = (long long)n * (n + 1) / 2;
+    long long non_zero_subarrays = 0;
+    int curr_len = 0;
+    int i;
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] == 0) {
+            non_zero_subarrays += (long long)curr_len * (curr_len + 1) / 2;
+            curr_len = 0;
+        } else {
+            curr_len++;
+        }
+    }
+    non_zero_subarrays += (long long)curr_len * (curr_len + 1) / 2;
+
+    long long zero_containing = total_subarrays - non_zero_subarrays;
+    long long count = zero_containing;
+
+    int seg_start = -1;
+    for (i = 0; i < n; i++) {
+        if (arr[i] != 0) {
+            if (seg_start == -1) {
+                seg_start = i;
+            }
+        } else {
+            if (seg_start != -1) {
+                int seg_len = i - seg_start;
+                double prod = 1.0;
+                int left = 0;
+                int right;
+                for (right = 0; right < seg_len; right++) {
+                    prod *= arr[seg_start + right];
+                    while (prod >= k && left <= right) {
+                        prod /= arr[seg_start + left];
+                        left++;
+                    }
+                    count += (right - left + 1);
+                }
+                seg_start = -1;
+            }
+        }
+    }
+
+    if (seg_start != -1) {
+        int seg_len = n - seg_start;
+        double prod = 1.0;
+        int left = 0;
+        int right;
+        for (right = 0; right < seg_len; right++) {
+            prod *= arr[seg_start + right];
+            while (prod >= k && left <= right) {
+                prod /= arr[seg_start + left];
+                left++;
+            }
+            count += (right - left + 1);
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 10;
+    long long result = countSubsequences(arr, n, k);
+    printf("%lld\n", result);
+    return 0;
+}
+```

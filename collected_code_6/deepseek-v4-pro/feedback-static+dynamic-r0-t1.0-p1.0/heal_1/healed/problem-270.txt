@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sumEvenAtEvenPositions(const int *arr, int size) {
+    int sum = 0;
+    if (arr == NULL || size <= 0) {
+        return 0;
+    }
+    for (int i = 0; i < size; i += 2) {
+        if (arr[i] % 2 == 0) {
+            sum += arr[i];
+        }
+    }
+    return sum;
+}
+
+int main(void) {
+    int test1[] = {2, 3, 4, 5, 6, 7, 8};
+    int size1 = sizeof(test1) / sizeof(test1[0]);
+    printf("Sum test1: %d\n", sumEvenAtEvenPositions(test1, size1));
+
+    int test2[] = {1, 2, 3, 4, 5, 6};
+    int size2 = sizeof(test2) / sizeof(test2[0]);
+    printf("Sum test2: %d\n", sumEvenAtEvenPositions(test2, size2));
+
+    int test3[] = {10, 1, 12, 3, 14, 5, 16, 7};
+    int size3 = sizeof(test3) / sizeof(test3[0]);
+    printf("Sum test3: %d\n", sumEvenAtEvenPositions(test3, size3));
+
+    int test4[] = {2};
+    int size4 = sizeof(test4) / sizeof(test4[0]);
+    printf("Sum test4: %d\n", sumEvenAtEvenPositions(test4, size4));
+
+    printf("Null test: %d\n", sumEvenAtEvenPositions(NULL, 5));
+    printf("Zero size: %d\n", sumEvenAtEvenPositions(test1, 0));
+
+    return 0;
+}
+```

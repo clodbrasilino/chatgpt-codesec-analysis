@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int id;
+    int count;
+} RecordCount;
+
+typedef struct {
+    int count;
+    int freq;
+} FreqCount;
+
+void check_occurrences(const int* tuples, int num_tuples) {
+    if (tuples == NULL || num_tuples <= 0) {
+        return;
+    }
+
+    RecordCount* recordCounts = (RecordCount*)calloc(num_tuples, sizeof(RecordCount));
+    if (recordCounts == NULL) {
+        return;
+    }
+
+    int num_unique_records = 0;
+
+    for (int i = 0; i < num_tuples; i++) {
+        int found = 0;
+        for (int j = 0; j < num_unique_records; j++) {
+            if (recordCounts[j].id == tuples[i]) {
+                recordCounts[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            recordCounts[num_unique_records].id = tuples[i];
+            recordCounts[num_unique_records].count = 1;
+            num_unique_records++;
+        }
+    }
+
+    FreqCount* freqCounts = (FreqCount*)calloc(num_unique_records, sizeof(FreqCount));
+    if (freqCounts == NULL) {
+        free(recordCounts);
+        return;
+    }
+
+    int num_unique_freqs = 0;
+
+    for (int i = 0; i < num_unique_records; i++) {
+        int found = 0;
+        for (int j = 0; j < num_unique_freqs; j++) {
+            if (freqCounts[j].count == recordCounts[i].count) {
+                freqCounts[j].freq++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            freqCounts[num_unique_freqs].count = recordCounts[i].count;
+            freqCounts[num_unique_freqs].freq = 1;
+            num_unique_freqs++;
+        }
+    }
+
+    for (int i = 0; i < num_unique_freqs; i++) {
+        if (freqCounts[i].freq > 1) {
+            printf("Records occurring %d times: %d\n", freqCounts[i].count, freqCounts[i].freq);
+        }
+    }
+
+    free(recordCounts);
+    free(freqCounts);
+}
+
+int main(void) {
+    int tuples[] = {1, 2, 2, 3, 3, 4, 4, 4, 5, 5, 5};
+    int num_tuples = sizeof(tuples) / sizeof(tuples[0]);
+
+    check_occurrences(tuples, num_tuples);
+
+    return 0;
+}

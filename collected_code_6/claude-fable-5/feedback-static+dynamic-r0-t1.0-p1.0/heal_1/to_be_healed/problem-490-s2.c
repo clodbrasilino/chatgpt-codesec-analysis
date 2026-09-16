@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t count;
+} PairList;
+
+static PairList extract_symmetric_pairs(const Pair *input, size_t n)
+{
+    PairList result;
+    size_t i;
+    size_t j;
+
+    result.pairs = NULL;
+    result.count = 0;
+
+    if (input == NULL || n == 0) {
+        return result;
+    }
+
+    result.pairs = malloc(n * sizeof(Pair));
+    if (result.pairs == NULL) {
+        return result;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (input[i].first == input[j].second &&
+                input[i].second == input[j].first) {
+                result.pairs[result.count].first = input[i].first;
+                result.pairs[result.count].second = input[i].second;
+                result.count++;
+                break;
+            }
+        }
+    }
+
+    if (result.count == 0) {
+        free(result.pairs);
+        result.pairs = NULL;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    Pair input[] = {
+        {1, 2},
+        {3, 4},
+        {2, 1},
+        {5, 6},
+        {4, 3},
+        {7, 8}
+    };
+    size_t n = sizeof(input) / sizeof(input[0]);
+    PairList result;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'i' can be reduced. [variableScope]
+     */
+    size_t i;
+
+    result = extract_symmetric_pairs(input, n);
+
+    if (result.count == 0) {
+        printf("No symmetric pairs found.\n");
+    } else {
+        printf("Symmetric pairs:\n");
+        for (i = 0; i < result.count; i++) {
+            printf("(%d, %d)\n", result.pairs[i].first, result.pairs[i].second);
+        }
+    }
+
+    free(result.pairs);
+    result.pairs = NULL;
+
+    return EXIT_SUCCESS;
+}

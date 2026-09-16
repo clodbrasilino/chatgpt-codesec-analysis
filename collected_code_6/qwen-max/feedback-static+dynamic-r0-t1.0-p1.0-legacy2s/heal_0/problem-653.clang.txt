@@ -1,0 +1,39 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:70:23: error: assigning to 'List' (aka 'struct List') from incompatible type 'List *' (aka 'struct List *'); dereference with *
+   70 |         map->lists[i] = create_list();
+      |                       ^ ~~~~~~~~~~~~~
+      |                         *
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:78:19: error: passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+   78 |         free_list(map->lists[i]);
+      |                   ^~~~~~~~~~~~~
+      |                   &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:33:22: note: passing argument to parameter 'list' here
+   33 | void free_list(List *list) {
+      |                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:79:14: error: passing 'List' (aka 'struct List') to parameter of incompatible type 'void *'
+   79 |         free(map->lists[i]);
+      |              ^~~~~~~~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/malloc/_malloc.h:56:37: note: passing argument to parameter here
+   56 | void  free(void * __unsafe_indexable);
+      |                                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:98:25: error: passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+   98 |             add_to_list(map->lists[index], pairs[i].value);
+      |                         ^~~~~~~~~~~~~~~~~
+      |                         &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:49:24: note: passing argument to parameter 'list' here
+   49 | void add_to_list(List *list, char *value) {
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:101:25: error: passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+  101 |             add_to_list(map->lists[map->size], pairs[i].value);
+      |                         ^~~~~~~~~~~~~~~~~~~~~
+      |                         &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:49:24: note: passing argument to parameter 'list' here
+   49 | void add_to_list(List *list, char *value) {
+      |                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:117:20: error: passing 'List' (aka 'struct List') to parameter of incompatible type 'List *' (aka 'struct List *'); take the address with &
+  117 |         print_list(map->lists[i]);
+      |                    ^~~~~~~~~~~~~
+      |                    &
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-653.c:107:23: note: passing argument to parameter 'list' here
+  107 | void print_list(List *list) {
+      |                       ^
+6 errors generated.

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    /* Possible weaknesses found:
+     *  Variable 'tupleA' can be declared as pointer to const [constVariablePointer]
+     */
+    Tuple *tupleA = (Tuple *)a;
+    /* Possible weaknesses found:
+     *  Variable 'tupleB' can be declared as pointer to const [constVariablePointer]
+     */
+    Tuple *tupleB = (Tuple *)b;
+    return (tupleA->a - tupleB->a);
+}
+
+int findCombinations(Tuple *tuples, int n, int target, int *result, int *returnSize) {
+    qsort(tuples, n, sizeof(Tuple), compare);
+    int count = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            if (tuples[i].a + tuples[j].a == target) {
+                result[count * 2] = tuples[i].a;
+                result[count * 2 + 1] = tuples[j].a;
+                count++;
+            }
+        }
+    }
+    *returnSize = count * 2;
+    return count;
+}
+
+int main() {
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 6}, {7, 8}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int target = 9;
+    int *result = (int *)malloc(n * 2 * sizeof(int));
+    int returnSize;
+    int count = findCombinations(tuples, n, target, result, &returnSize);
+
+    for (int i = 0; i < count; ++i) {
+        printf("(%d, %d)\n", result[i * 2], result[i * 2 + 1]);
+    }
+
+    free(result);
+    return 0;
+}

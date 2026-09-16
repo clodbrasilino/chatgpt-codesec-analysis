@@ -1,0 +1,12 @@
+#include <stdio.h>
+
+double surface_area_of_cube(double side) {
+    return 6 * side * side;
+}
+
+int main() {
+    double side = 5.0;
+    double area = surface_area_of_cube(side);
+    printf("Surface Area: %f\n", area);
+    return 0;
+}

@@ -1,0 +1,31 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int round_to_nearest_multiple(int number, int multiple) {
+    if (multiple == 0) {
+        return 0;
+    }
+    int remainder = number % multiple;
+    if (remainder < abs(multiple) / 2) {
+        return number - remainder;
+    } else {
+        return number + (multiple - remainder);
+    }
+}
+
+int main() {
+    int number, multiple;
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        return 1;
+    }
+    printf("Enter the multiple: ");
+    if (scanf("%d", &multiple) != 1) {
+        return 1;
+    }
+    int result = round_to_nearest_multiple(number, multiple);
+    printf("Rounded number: %d\n", result);
+    return 0;
+}
+```

@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static long minJumps(long jumpLength, long d)
+{
+    if (jumpLength <= 0 || d < 0)
+    {
+        return -1;
+    }
+    if (d == 0)
+    {
+        return 0;
+    }
+    if (d < jumpLength)
+    {
+        return 2;
+    }
+    return (d + jumpLength - 1) / jumpLength;
+}
+
+int main(void)
+{
+    long jumpLength = 0;
+    long d = 0;
+    long result = 0;
+
+    printf("Enter jump length: ");
+    if (scanf("%ld", &jumpLength) != 1)
+    {
+        fprintf(stderr, "Invalid input for jump length\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter target distance d: ");
+    if (scanf("%ld", &d) != 1)
+    {
+        fprintf(stderr, "Invalid input for distance\n");
+        return EXIT_FAILURE;
+    }
+
+    result = minJumps(jumpLength, d);
+    if (result < 0)
+    {
+        fprintf(stderr, "Invalid values: jump length must be positive and distance non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Minimum number of jumps required: %ld\n", result);
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+- If `d == 0`, we are already at the target, so 0 jumps are needed.
+- If `d` is an exact multiple of the jump length (covered by the ceiling division when `d >= jumpLength`), we jump straight along the x-axis.
+- If `d` is smaller than the jump length, we can always reach the point in exactly 2 jumps by forming a triangle (jump off-axis and back), since two jumps of equal length can reach any point within distance `2 * jumpLength`.
+- Otherwise, the answer is the ceiling of `d / jumpLength`, computed safely with integer arithmetic as `(d + jumpLength - 1) / jumpLength`.
+
+**Safety considerations addressed:**
+
+- All `scanf` return values are checked before using the variables (CWE-703).
+- The function validates its inputs and signals errors via a sentinel return value, which the caller checks (CWE-664, CWE-703).
+- No dynamic resources are allocated, `main` returns proper exit codes, and standard types/idioms are used throughout (CWE-710).

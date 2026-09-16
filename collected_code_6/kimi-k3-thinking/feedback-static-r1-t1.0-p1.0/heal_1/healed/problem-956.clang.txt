@@ -1,0 +1,13 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:14: error: call to undeclared function 'regexec'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:23: error: use of undeclared identifier 'regex'
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |                       ^~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:30: error: use of undeclared identifier 'cursor'
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |                              ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-956.c:1:42: error: use of undeclared identifier 'match'
+    1 | int status = regexec(&regex, cursor, 1, &match, 0);
+      |                                          ^~~~~
+4 errors generated.

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int binary_to_decimal(const char *binary, unsigned long *result)
+{
+    size_t len;
+    size_t i;
+    unsigned long value = 0UL;
+
+    if (binary == NULL || result == NULL) {
+        return -1;
+    }
+
+    len = strlen(binary);
+    if (len == 0U || len > (sizeof(unsigned long) * 8U)) {
+        return -1;
+    }
+
+    for (i = 0U; i < len; i++) {
+        if (binary[i] != '0' && binary[i] != '1') {
+            return -1;
+        }
+        if (value > (ULONG_MAX >> 1)) {
+            return -1;
+        }
+        value = (value << 1) | (unsigned long)(binary[i] - '0');
+    }
+
+    *result = value;
+    return 0;
+}
+
+int main(void)
+{
+    char input[128];
+    unsigned long decimal = 0UL;
+    size_t len;
+
+    printf("Enter a binary number: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        fprintf(stderr, "Error: failed to read input.\n");
+        return 1;
+    }
+
+    len = strlen(input);
+    if (len > 0U && input[len - 1U] == '\n') {
+        input[len - 1U] = '\0';
+    }
+
+    if (binary_to_decimal(input, &decimal) != 0) {
+        fprintf(stderr, "Error: invalid binary number.\n");
+        return 1;
+    }
+
+    printf("Decimal equivalent: %lu\n", decimal);
+    return 0;
+}

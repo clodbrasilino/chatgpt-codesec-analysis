@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+typedef struct {
+    Tuple *pairs;
+    size_t count;
+    size_t capacity;
+} TupleList;
+
+void initTupleList(TupleList *list, size_t initialCapacity) {
+    if (!list) return;
+    list->pairs = (Tuple *)malloc(initialCapacity * sizeof(Tuple));
+    if (!list->pairs) {
+        list->count = 0;
+        list->capacity = 0;
+        return;
+    }
+    list->count = 0;
+    list->capacity = initialCapacity;
+}
+
+void addTuple(TupleList *list, int first, int second) {
+    if (!list || !list->pairs) return;
+    
+    if (list->count >= list->capacity) {
+        size_t newCapacity = list->capacity * 2;
+        if (newCapacity == 0) newCapacity = 1;
+        Tuple *newPairs = (Tuple *)realloc(list->pairs, newCapacity * sizeof(Tuple));
+        if (!newPairs) return;
+        list->pairs = newPairs;
+        list->capacity = newCapacity;
+    }
+    
+    list->pairs[list->count].first = first;
+    list->pairs[list->count].second = second;
+    list->count++;
+}
+
+void freeTupleList(TupleList *list) {
+    if (!list) return;
+    free(list->pairs);
+    list->pairs = NULL;
+    list->count = 0;
+    list->capacity = 0;
+}
+
+TupleList findSymmetricPairs(const TupleList *inputList) {
+    TupleList result;
+    initTupleList(&result, 4);
+    if (!inputList || !inputList->pairs || !result.pairs) return result;
+
+    for (size_t i = 0; i < inputList->count; i++) {
+        for (size_t j = i + 1; j < inputList->count; j++) {
+            if (inputList->pairs[i].first == inputList->pairs[j].second &&
+                inputList->pairs[i].second == inputList->pairs[j].first) {
+                addTuple(&result, inputList->pairs[i].first, inputList->pairs[i].second);
+                break;
+            }
+        }
+    }
+    return result;
+}
+
+int main() {
+    TupleList inputList;
+    initTupleList(&inputList, 10);
+    
+    if (!inputList.pairs) {
+        return 1;
+    }
+
+    addTuple(&inputList, 11, 20);
+    addTuple(&inputList, 30, 40);
+    addTuple(&inputList, 5, 10);
+    addTuple(&inputList, 40, 30);
+    addTuple(&inputList, 10, 5);
+    addTuple(&inputList, 20, 11);
+    
+    TupleList symmetricPairs = findSymmetricPairs(&inputList);
+    
+    if (symmetricPairs.pairs) {
+        for (size_t i = 0; i < symmetricPairs.count; i++) {
+            printf("(%d, %d)\n", symmetricPairs.pairs[i].first, symmetricPairs.pairs[i].second);
+        }
+    }
+    
+    freeTupleList(&inputList);
+    freeTupleList(&symmetricPairs);
+    
+    return 0;
+}

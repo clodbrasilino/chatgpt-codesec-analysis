@@ -1,0 +1,97 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "py(remove me)thon",
+        "str(outer (inner) text)ing",
+        "alpha"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha"
+    };
+    size_t num_tests;
+    size_t i;
+
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            free(output);
+            return EXIT_FAILURE;
+        }
+        printf("%s\n", output);
+        free(output);
+        output = NULL;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The garbage output described in the comments (`��h`, `` `�h ``, `�h`) is the classic signature of reading freed or uninitialized heap memory. That symptom would arise from an earlier version of the code that either:
+
+1. **Freed the buffer before printing it** (use-after-free), e.g. calling `free(output)` before the `strcmp`/`fprintf`.
+2. **Returned a pointer to a stack-allocated buffer** from `remove_parentheses`, which is destroyed when the function returns.
+3. **Used `malloc` without null-terminating** the result, printing trailing garbage.
+
+The version shown above is already correct with respect to all three issues:
+
+- The buffer is allocated with `calloc(len + 1, ...)`, guaranteeing zero-initialization and room for the terminator, and `result[j] = '\0'` explicitly terminates the string.
+- The allocation check prevents dereferencing a `NULL` return.
+- `free(output)` is called only *after* all uses of the buffer (`strcmp`, `fprintf`, `printf`), on both the failure path and the success path, so there is no use-after-free and no leak.
+- `output = NULL` after freeing defends against accidental dangling-pointer reuse.
+- Unbalanced parentheses are handled defensively (`depth` never goes negative), and `NULL` input returns `NULL` rather than crashing.
+
+The test cases pass: `"py(remove me)thon"` → `"python"`, `"str(outer (inner) text)ing"` → `"string"` (nested parentheses handled by the depth counter), and `"alpha"` passes through unchanged.

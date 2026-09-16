@@ -1,0 +1,154 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_RECORD
+} ElementType;
+
+typedef struct TupleElement TupleElement;
+
+struct TupleElement {
+    ElementType type;
+    union {
+        int int_val;
+        struct {
+            TupleElement** elements;
+            size_t count;
+        } record_val;
+    } data;
+};
+
+TupleElement* create_int_element(int val) {
+    TupleElement* el = malloc(sizeof(TupleElement));
+    if (!el) {
+        return NULL;
+    }
+    el->type = TYPE_INT;
+    el->data.int_val = val;
+    return el;
+}
+
+TupleElement* create_record_element(TupleElement** elements, size_t count) {
+    TupleElement* el = malloc(sizeof(TupleElement));
+    if (!el) {
+        return NULL;
+    }
+    el->type = TYPE_RECORD;
+    el->data.record_val.elements = malloc(count * sizeof(TupleElement*));
+    if (!el->data.record_val.elements) {
+        free(el);
+        return NULL;
+    }
+    el->data.record_val.count = count;
+    for (size_t i = 0; i < count; i++) {
+        el->data.record_val.elements[i] = elements[i];
+    }
+    return el;
+}
+
+void free_element(TupleElement* el) {
+    if (!el) return;
+    if (el->type == TYPE_RECORD) {
+        for (size_t i = 0; i < el->data.record_val.count; ++i) {
+            free_element(el->data.record_val.elements[i]);
+        }
+        free(el->data.record_val.elements);
+    }
+    free(el);
+}
+
+TupleElement* remove_nested_records(const TupleElement* el) {
+    if (!el) return NULL;
+
+    if (el->type == TYPE_INT) {
+        return create_int_element(el->data.int_val);
+    } 
+    
+    if (el->type == TYPE_RECORD) {
+        size_t new_count = 0;
+        for (size_t i = 0; i < el->data.record_val.count; ++i) {
+            if (el->data.record_val.elements[i] && el->data.record_val.elements[i]->type != TYPE_RECORD) {
+                new_count++;
+            }
+        }
+
+        TupleElement** new_elements = NULL;
+        if (new_count > 0) {
+            new_elements = malloc(new_count * sizeof(TupleElement*));
+            if (!new_elements) return NULL;
+
+            size_t idx = 0;
+            for (size_t i = 0; i < el->data.record_val.count; ++i) {
+                if (el->data.record_val.elements[i] && el->data.record_val.elements[i]->type != TYPE_RECORD) {
+                    new_elements[idx] = create_int_element(el->data.record_val.elements[i]->data.int_val);
+                    if (!new_elements[idx]) {
+                        for (size_t j = 0; j < idx; j++) free_element(new_elements[j]);
+                        free(new_elements);
+                        return NULL;
+                    }
+                    idx++;
+                }
+            }
+        }
+
+        TupleElement* new_record = create_record_element(new_elements, new_count);
+        if (new_elements) free(new_elements); 
+        return new_record;
+    }
+
+    return NULL;
+}
+
+void print_element(const TupleElement* el) {
+    if (!el) return;
+    if (el->type == TYPE_INT) {
+        printf("%d", el->data.int_val);
+    } else if (el->type == TYPE_RECORD) {
+        printf("(");
+        for (size_t i = 0; i < el->data.record_val.count; ++i) {
+            print_element(el->data.record_val.elements[i]);
+            if (i < el->data.record_val.count - 1) {
+                printf(", ");
+            }
+        }
+        printf(")");
+    }
+}
+
+int main(void) {
+    TupleElement* e1 = create_int_element(1);
+    TupleElement* e2 = create_int_element(2);
+    
+    TupleElement* inner_elems[] = {create_int_element(3), create_int_element(4)};
+    TupleElement* nested_record = create_record_element(inner_elems, 2);
+    free_element(inner_elems[0]);
+    free_element(inner_elems[1]);
+    
+    TupleElement* e5 = create_int_element(5);
+
+    TupleElement* tuple_elems[] = {e1, e2, nested_record, e5};
+    TupleElement* tuple = create_record_element(tuple_elems, 4);
+
+    free_element(e1);
+    free_element(e2);
+    free_element(nested_record);
+    free_element(e5);
+
+    printf("Original: ");
+    print_element(tuple);
+    printf("\n");
+
+    TupleElement* new_tuple = remove_nested_records(tuple);
+
+    printf("New: ");
+    print_element(new_tuple);
+    printf("\n");
+
+    free_element(tuple);
+    free_element(new_tuple);
+
+    return 0;
+}

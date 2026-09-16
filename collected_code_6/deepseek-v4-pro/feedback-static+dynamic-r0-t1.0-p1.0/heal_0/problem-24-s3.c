@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <limits.h>
+
+int binary_to_decimal(const char *binary, long *result) {
+    if (binary == NULL || result == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (*binary == '\0') {
+        errno = EINVAL;
+        return -1;
+    }
+
+    long decimal = 0;
+    const char *p = binary;
+
+    while (*p != '\0') {
+        if (*p != '0' && *p != '1') {
+            errno = EINVAL;
+            return -1;
+        }
+
+        if (decimal > (LONG_MAX - (*p - '0')) / 2) {
+            errno = ERANGE;
+            return -1;
+        }
+
+        decimal = decimal * 2 + (*p - '0');
+        p++;
+    }
+
+    *result = decimal;
+    return 0;
+}
+
+int main(void) {
+    char input[128];
+    long result;
+
+    printf("Enter a binary number: ");
+    if (fgets(input, sizeof(input), stdin) == NULL) {
+        perror("Input error");
+        return 1;
+    }
+
+    input[strcspn(input, "\n")] = '\0';
+
+    if (binary_to_decimal(input, &result) != 0) {
+        switch (errno) {
+            case EINVAL:
+                fprintf(stderr, "Invalid input: please provide a valid binary number\n");
+                break;
+            case ERANGE:
+                fprintf(stderr, "Error: result exceeds range of long\n");
+                break;
+            default:
+                fprintf(stderr, "Unexpected error occurred\n");
+                break;
+        }
+        return 1;
+    }
+
+    printf("Decimal equivalent: %ld\n", result);
+    return 0;
+}

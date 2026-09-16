@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_odd_elements(const int *list, size_t size) {
+    size_t count = 0;
+    if (list == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < size; ++i) {
+        if (list[i] % 2 != 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int expected_elements[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    size_t size = sizeof(expected_elements) / sizeof(expected_elements[0]);
+    
+    size_t odd_count = count_odd_elements(expected_elements, size);
+    
+    printf("Number of odd elements: %zu\n", odd_count);
+    
+    return 0;
+}

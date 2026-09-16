@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int gcd(int a, int b) {
+    if (a < 0) a = -a;
+    if (b < 0) b = -b;
+    
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+long long sum_of_common_divisors(int a, int b) {
+    if (a == 0 && b == 0) {
+        return 0; 
+    }
+
+    int g = gcd(a, b);
+    if (g == 0) {
+        return 0;
+    }
+
+    long long sum = 0;
+    for (int i = 1; i * i <= g; i++) {
+        if (g % i == 0) {
+            sum += i;
+            if (i * i != g) {
+                sum += (g / i);
+            }
+        }
+    }
+    return sum;
+}
+
+int main() {
+    int num1, num2;
+    
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_of_common_divisors(num1, num2);
+    printf("%lld\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

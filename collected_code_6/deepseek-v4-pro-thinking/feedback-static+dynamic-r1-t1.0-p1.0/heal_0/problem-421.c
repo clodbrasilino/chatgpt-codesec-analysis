@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+char *join_tuple(const char **tuple, size_t count, const char *delimiter) {
+    if (count == 0) {
+        char *empty = malloc(1);
+        if (empty == NULL) {
+            return NULL;
+        }
+        empty[0] = '\0';
+        return empty;
+    }
+
+    if (tuple == NULL || delimiter == NULL) {
+        return NULL;
+    }
+
+    size_t delimiter_length = strlen(delimiter);
+    size_t total_length = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        size_t element_length = strlen(tuple[i]);
+        if (total_length > SIZE_MAX - element_length) {
+            return NULL;
+        }
+        total_length += element_length;
+    }
+
+    if (count > 1 && delimiter_length > 0) {
+        size_t separator_count = count - 1;
+        if (delimiter_length > SIZE_MAX / separator_count) {
+            return NULL;
+        }
+        size_t separators_length = delimiter_length * separator_count;
+        if (total_length > SIZE_MAX - separators_length) {
+            return NULL;
+        }
+        total_length += separators_length;
+    }
+
+    if (total_length == SIZE_MAX) {
+        return NULL;
+    }
+
+    char *result = malloc(total_length + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *position = result;
+    for (size_t i = 0; i < count; ++i) {
+        size_t element_length = strlen(tuple[i]);
+        memcpy(position, tuple[i], element_length);
+        position += element_length;
+        if (i < count - 1) {
+            memcpy(position, delimiter, delimiter_length);
+            position += delimiter_length;
+        }
+    }
+    *position = '\0';
+
+    return result;
+}
+
+int main(void) {
+    const char *tuple[] = {"alpha", "beta", "gamma"};
+    const char *delimiter = "-";
+
+    char *result = join_tuple(tuple, sizeof(tuple) / sizeof(tuple[0]), delimiter);
+    if (result == NULL) {
+        fprintf(stderr, "Failed to concatenate tuple\n");
+        return 1;
+    }
+
+    printf("%s\n", result);
+    free(result);
+
+    return 0;
+}

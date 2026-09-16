@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+double divide(double dividend, double divisor, int *status) {
+    if (divisor == 0.0) {
+        *status = 0;
+        return 0.0;
+    }
+    *status = 1;
+    return dividend / divisor;
+}
+
+int main(void) {
+    double num1 = 0.0;
+    double num2 = 0.0;
+    double result = 0.0;
+    int status = 0;
+
+    printf("Enter dividend: ");
+    if (scanf("%lf", &num1) != 1) {
+        fprintf(stderr, "Invalid input for dividend\n");
+        return 1;
+    }
+
+    printf("Enter divisor: ");
+    if (scanf("%lf", &num2) != 1) {
+        fprintf(stderr, "Invalid input for divisor\n");
+        return 1;
+    }
+
+    result = divide(num1, num2, &status);
+
+    if (status == 0) {
+        fprintf(stderr, "Error: Division by zero\n");
+        return 1;
+    }
+
+    printf("Quotient: %.2f\n", result);
+    return 0;
+}

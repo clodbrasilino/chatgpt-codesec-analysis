@@ -5,7 +5,7 @@
 int maxProfit(int k, const int* prices, int n) {
     if (n == 0 || k == 0) return 0;
 
-    if (k >= n / 2) {
+    if (2 * k > n) {
         int profit = 0;
         for (int i = 1; i < n; i++) {
             if (prices[i] > prices[i - 1]) {
@@ -15,36 +15,56 @@ int maxProfit(int k, const int* prices, int n) {
         return profit;
     }
 
-    int *buy = (int *)malloc((k + 1) * sizeof(int));
-    int *sell = (int *)malloc((k + 1) * sizeof(int));
+    int dp[k + 1][n];
+    for (int i = 0; i <= k; i++) dp[i][0] = 0;
+    for (int j = 0; j < n; j++) dp[0][j] = 0;
 
     for (int i = 1; i <= k; i++) {
-        buy[i] = INT_MIN;
-        sell[i] = 0;
-    }
-
-    for (int i = 0; i < n; i++) {
-        for (int j = 1; j <= k; j++) {
-            buy[j] = (buy[j] > sell[j - 1] - prices[i]) ? buy[j] : sell[j - 1] - prices[i];
-            sell[j] = (sell[j] > buy[j] + prices[i]) ? sell[j] : buy[j] + prices[i];
+        int maxDiff = INT_MIN;
+        for (int j = 1; j < n; j++) {
+            maxDiff = (maxDiff > dp[i - 1][j - 1] - prices[j - 1]) ? maxDiff : dp[i - 1][j - 1] - prices[j - 1];
+            dp[i][j] = (dp[i][j - 1] > prices[j] + maxDiff) ? dp[i][j - 1] : prices[j] + maxDiff;
         }
     }
 
-    int max_profit = 0;
-    for (int i = 1; i <= k; i++) {
-        max_profit = (max_profit > sell[i]) ? max_profit : sell[i];
-    }
-
-    free(buy);
-    free(sell);
-    return max_profit;
+    return dp[k][n - 1];
 }
 
 int main() {
-    int prices[] = {3, 3, 5, 0, 0, 3, 1, 4};
-    int n = sizeof(prices) / sizeof(prices[0]);
     int k = 2;
-    int max_profit = maxProfit(k, prices, n);
-    printf("Maximum Profit: %d\n", max_profit);
+    int prices[] = {3, 2, 6, 5, 0, 3};
+    int n = sizeof(prices) / sizeof(prices[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices, n));
+
+    k = 1;
+    int prices2[] = {1, 2, 3};
+    n = sizeof(prices2) / sizeof(prices2[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices2, n));
+
+    k = 2;
+    int prices3[] = {2, 4, 1};
+    n = sizeof(prices3) / sizeof(prices3[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices3, n));
+
+    k = 2;
+    int prices4[] = {7, 6, 4, 3, 1};
+    n = sizeof(prices4) / sizeof(prices4[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices4, n));
+
+    k = 1;
+    int prices5[] = {7, 1, 5, 3, 6, 4};
+    n = sizeof(prices5) / sizeof(prices5[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices5, n));
+
+    k = 2;
+    int prices6[] = {3, 3, 5, 0, 0, 3, 1, 4};
+    n = sizeof(prices6) / sizeof(prices6[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices6, n));
+
+    k = 2;
+    int prices7[] = {1, 2, 3, 4, 5};
+    n = sizeof(prices7) / sizeof(prices7[0]);
+    printf("Maximum profit: %d\n", maxProfit(k, prices7, n));
+
     return 0;
 }

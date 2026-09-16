@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected ['p', 'y', 't', 'h', 'o', 'n'], got <no output>
+  */
+
+int* decode_list(const int* encoded, int size, int* return_size) {
+    *return_size = 0;
+    for (int i = 0; i < size; i += 2) {
+        if (i + 1 < size) *return_size += encoded[i];
+    }
+
+    int* decoded = (int*)malloc(*return_size * sizeof(int));
+    if (!decoded) {
+        *return_size = 0;
+        return NULL;
+    }
+
+    int index = 0;
+    for (int i = 0; i < size; i += 2) {
+        if (i + 1 < size) {
+            for (int j = 0; j < encoded[i]; ++j) {
+                decoded[index++] = encoded[i + 1];
+            }
+        }
+    }
+
+    return decoded;
+}
+
+int main() {
+    int encoded[] = {6, 112, 1, 121, 0, 116, 1, 104, 1, 111, 1, 110};
+    int size = sizeof(encoded) / sizeof(encoded[0]);
+    int return_size;
+
+    int* decoded = decode_list(encoded, size, &return_size);
+    if (decoded) {
+        for (int i = 0; i < return_size; ++i) {
+            putchar((char)decoded[i]);
+        }
+        putchar('\n');
+        free(decoded);
+    } else {
+        printf("Memory allocation failed\n");
+    }
+
+    return 0;
+}

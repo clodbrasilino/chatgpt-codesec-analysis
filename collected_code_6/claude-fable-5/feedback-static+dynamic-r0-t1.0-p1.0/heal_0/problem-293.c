@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double find_third_side(double side_a, double side_b, int find_hypotenuse, int *status)
+{
+    double result = 0.0;
+
+    if (status == NULL) {
+        return 0.0;
+    }
+
+    *status = 0;
+
+    if (side_a <= 0.0 || side_b <= 0.0) {
+        *status = -1;
+        return 0.0;
+    }
+
+    if (find_hypotenuse != 0) {
+        result = sqrt((side_a * side_a) + (side_b * side_b));
+    } else {
+        if (side_b <= side_a) {
+            *status = -2;
+            return 0.0;
+        }
+        result = sqrt((side_b * side_b) - (side_a * side_a));
+    }
+
+    if (!isfinite(result)) {
+        *status = -3;
+        return 0.0;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    double side_a = 0.0;
+    double side_b = 0.0;
+    int choice = 0;
+    int status = 0;
+    double third_side = 0.0;
+
+    printf("Enter 1 to find the hypotenuse, 0 to find a missing leg: ");
+    if (scanf("%d", &choice) != 1) {
+        fprintf(stderr, "Error: invalid input for choice.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (choice != 0 && choice != 1) {
+        fprintf(stderr, "Error: choice must be 0 or 1.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (choice == 1) {
+        printf("Enter the two legs: ");
+    } else {
+        printf("Enter the known leg and the hypotenuse: ");
+    }
+
+    if (scanf("%lf %lf", &side_a, &side_b) != 2) {
+        fprintf(stderr, "Error: invalid input for sides.\n");
+        return EXIT_FAILURE;
+    }
+
+    third_side = find_third_side(side_a, side_b, choice, &status);
+
+    if (status == -1) {
+        fprintf(stderr, "Error: side lengths must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (status == -2) {
+        fprintf(stderr, "Error: hypotenuse must be greater than the leg.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (status == -3) {
+        fprintf(stderr, "Error: computation produced a non-finite result.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The third side is: %.6f\n", third_side);
+
+    return EXIT_SUCCESS;
+}

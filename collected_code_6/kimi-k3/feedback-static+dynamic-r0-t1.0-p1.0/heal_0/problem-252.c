@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double real;
+    double imag;
+} Complex;
+
+typedef struct {
+    double magnitude;
+    double angle;
+} Polar;
+
+int complex_to_polar(const Complex *c, Polar *p) {
+    if (c == NULL || p == NULL) {
+        return -1;
+    }
+    p->magnitude = hypot(c->real, c->imag);
+    p->angle = atan2(c->imag, c->real);
+    return 0;
+}
+
+int main(void) {
+    Complex c = {3.0, 4.0};
+    Polar p = {0.0, 0.0};
+    
+    if (complex_to_polar(&c, &p) != 0) {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+    
+    printf("Magnitude: %f\n", p.magnitude);
+    printf("Angle: %f radians\n", p.angle);
+    
+    return 0;
+}

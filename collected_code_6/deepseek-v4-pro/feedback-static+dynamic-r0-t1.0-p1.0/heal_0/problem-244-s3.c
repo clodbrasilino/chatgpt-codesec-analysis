@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+long long next_perfect_square(long long n) {
+    if (n < 0) {
+        return 0;
+    }
+    long long root = (long long)sqrt((double)n);
+    long long next_root = root + 1;
+    return next_root * next_root;
+}
+
+int main(void) {
+    long long test_values[] = {-5, 0, 1, 2, 9, 16, 25, 26};
+    int count = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (int i = 0; i < count; i++) {
+        printf("Next perfect square after %lld is %lld\n", 
+               test_values[i], next_perfect_square(test_values[i]));
+    }
+    
+    return 0;
+}

@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 1000
+
+typedef struct {
+    int first;
+    int second;
+    int count;
+} Pair;
+
+typedef struct {
+    Pair *pairs;
+    size_t size;
+    size_t capacity;
+} PairMap;
+
+int init_map(PairMap *map, size_t capacity) {
+    if (map == NULL || capacity == 0 || capacity > MAX_SIZE) {
+        return -1;
+    }
+    map->pairs = malloc(capacity * sizeof(Pair));
+    if (map->pairs == NULL) {
+        return -1;
+    }
+    map->size = 0;
+    map->capacity = capacity;
+    return 0;
+}
+
+void free_map(PairMap *map) {
+    if (map != NULL && map->pairs != NULL) {
+        free(map->pairs);
+        map->pairs = NULL;
+        map->size = 0;
+        map->capacity = 0;
+    }
+}
+
+int add_pair(PairMap *map, int first, int second) {
+    size_t i;
+    if (map == NULL || map->pairs == NULL) {
+        return -1;
+    }
+    for (i = 0; i < map->size; i++) {
+        if (map->pairs[i].first == first && map->pairs[i].second == second) {
+            map->pairs[i].count++;
+            return 0;
+        }
+    }
+    if (map->size >= map->capacity) {
+        return -1;
+    }
+    map->pairs[map->size].first = first;
+    map->pairs[map->size].second = second;
+    map->pairs[map->size].count = 1;
+    map->size++;
+    return 0;
+}
+
+int get_count(const PairMap *map, int first, int second) {
+    size_t i;
+    if (map == NULL || map->pairs == NULL) {
+        return 0;
+    }
+    for (i = 0; i < map->size; i++) {
+        if (map->pairs[i].first == first && map->pairs[i].second == second) {
+            return map->pairs[i].count;
+        }
+    }
+    return 0;
+}
+
+int count_same_pairs(const int *list1_first, const int *list1_second, size_t len1,
+                     const int *list2_first, const int *list2_second, size_t len2) {
+    PairMap map1;
+    PairMap map2;
+    int total = 0;
+    size_t i;
+
+    if (list1_first == NULL || list1_second == NULL || 
+        list2_first == NULL || list2_second == NULL ||
+        len1 == 0 || len2 == 0 || len1 > MAX_SIZE || len2 > MAX_SIZE) {
+        return 0;
+    }
+
+    if (init_map(&map1, len1) != 0) {
+        return 0;
+    }
+    if (init_map(&map2, len2) != 0) {
+        free_map(&map1);
+        return 0;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if (add_pair(&map1, list1_first[i], list1_second[i]) != 0) {
+            free_map(&map1);
+            free_map(&map2);
+            return 0;
+        }
+    }
+
+    for (i = 0; i < len2; i++) {
+        if (add_pair(&map2, list2_first[i], list2_second[i]) != 0) {
+            free_map(&map1);
+            free_map(&map2);
+            return 0;
+        }
+    }
+
+    for (i = 0; i < map1.size; i++) {
+        int count1 = map1.pairs[i].count;
+        int count2 = get_count(&map2, map1.pairs[i].first, map1.pairs[i].second);
+        total += (count1 < count2) ? count1 : count2;
+    }
+
+    free_map(&map1);
+    free_map(&map2);
+    return total;
+}
+
+int main(void) {
+    int list1_first[] = {1, 2, 3, 1, 2};
+    /* Possible weaknesses found:
+     *  Variable 'list1_second' can be declared as const array [constVariable]
+     */
+    int list1_second[] = {10, 20, 30, 10, 25};
+    int list2_first[] = {1, 2, 1, 4, 2};
+    /* Possible weaknesses found:
+     *  Variable 'list2_second' can be declared as const array [constVariable]
+     */
+    int list2_second[] = {10, 20, 10, 40, 20};
+    size_t len1 = sizeof(list1_first) / sizeof(list1_first[0]);
+    size_t len2 = sizeof(list2_first) / sizeof(list2_first[0]);
+    int result;
+
+    result = count_same_pairs(list1_first, list1_second, len1,
+                              list2_first, list2_second, len2);
+
+    printf("Count of same pairs: %d\n", result);
+
+    return 0;
+}

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool is_palindrome(unsigned long long num) {
+    unsigned long long original = num;
+    unsigned long long reversed = 0;
+    
+    while (num > 0) {
+        if (reversed > (ULLONG_MAX - (num % 10)) / 10) {
+            return false;
+        }
+        reversed = reversed * 10 + (num % 10);
+        num /= 10;
+    }
+    
+    return original == reversed;
+}
+
+unsigned long long previous_palindrome(unsigned long long num) {
+    if (num == 0) {
+        return 0;
+    }
+    
+    unsigned long long candidate = num - 1;
+    
+    while (candidate > 0) {
+        if (is_palindrome(candidate)) {
+            return candidate;
+        }
+        candidate--;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    unsigned long long num;
+    
+    printf("Enter a number: ");
+    
+    if (scanf("%llu", &num) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    unsigned long long result = previous_palindrome(num);
+    
+    if (result == 0 && num <= 1) {
+        printf("No previous palindrome exists\n");
+    } else {
+        printf("Previous palindrome: %llu\n", result);
+    }
+    
+    return 0;
+}

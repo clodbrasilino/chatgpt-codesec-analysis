@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char **shortlist_words(const char *const *words, size_t count, size_t n, size_t *result_count)
+{
+    char **result;
+    size_t i;
+    size_t j = 0;
+
+    if (result_count == NULL) {
+        return NULL;
+    }
+    *result_count = 0;
+
+    if (words == NULL || count == 0) {
+        return NULL;
+    }
+
+    result = malloc(count * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (words[i] != NULL && strlen(words[i]) > n) {
+            size_t len = strlen(words[i]);
+            result[j] = malloc(len + 1);
+            if (result[j] == NULL) {
+                size_t k;
+                for (k = 0; k < j; k++) {
+                    free(result[k]);
+                }
+                free(result);
+                return NULL;
+            }
+            memcpy(result[j], words[i], len + 1);
+            j++;
+        }
+    }
+
+    *result_count = j;
+    return result;
+}
+
+void free_words(char **words, size_t count)
+{
+    size_t i;
+
+    if (words == NULL) {
+        return;
+    }
+
+    for (i = 0; i < count; i++) {
+        free(words[i]);
+    }
+    free(words);
+}
+
+int main(void)
+{
+    const char *words[] = {"apple", "hi", "banana", "cat", "strawberry", "dog"};
+    const size_t count = sizeof(words) / sizeof(words[0]);
+    const size_t n = 3;
+    size_t result_count = 0;
+    char **result;
+    size_t i;
+
+    result = shortlist_words(words, count, n, &result_count);
+    if (result == NULL) {
+        fprintf(stderr, "Error: failed to shortlist words\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Words longer than %zu characters:\n", n);
+    for (i = 0; i < result_count; i++) {
+        printf("%s\n", result[i]);
+    }
+
+    free_words(result, result_count);
+
+    return EXIT_SUCCESS;
+}

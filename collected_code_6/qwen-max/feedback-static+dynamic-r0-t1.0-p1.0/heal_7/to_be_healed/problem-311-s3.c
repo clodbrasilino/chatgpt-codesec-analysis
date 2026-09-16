@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <limits.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 14, got 11
+  *  test case 1 failed: expected 14, got 13
+  *  test case 2 failed: expected 15, got 31
+  */
+
+unsigned int setLeftMostUnsetBit(unsigned int n) {
+    unsigned int bit = 1;
+    while (bit < (1U << (sizeof(unsigned int) * CHAR_BIT - 1)) && (n & bit)) {
+        bit <<= 1;
+    }
+    if (bit != (1U << (sizeof(unsigned int) * CHAR_BIT - 1))) {
+        n |= bit;
+    }
+    return n;
+}
+
+int main() {
+    unsigned int num = 0b101010;
+    printf("Original number: %u (in binary: %08b)\n", num, num);
+    num = setLeftMostUnsetBit(num);
+    printf("After setting left most unset bit: %u (in binary: %08b)\n", num, num);
+    return 0;
+}

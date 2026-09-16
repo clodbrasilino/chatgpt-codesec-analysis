@@ -1,0 +1,38 @@
+#include <stdio.h>
+
+int findRotationCount(const int arr[], int n) {
+    if (n == 0) return 0;
+    int low = 0, high = n - 1;
+    while (low <= high) {
+        if (arr[low] <= arr[high]) return low;
+        int mid = low + (high - low) / 2;
+        int next = (mid + 1) % n;
+        int prev = (mid + n - 1) % n;
+        if (arr[mid] <= arr[next] && arr[mid] <= arr[prev])
+            return mid;
+        else if (arr[mid] <= arr[high])
+            high = mid - 1;
+        else
+            low = mid + 1;
+    }
+    return 0;
+}
+
+int main() {
+    const int arr1[] = {15, 18, 2, 3, 6, 12};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int rotationCount1 = findRotationCount(arr1, n1);
+    printf("The array is rotated %d times.\n", rotationCount1);
+
+    const int arr2[] = {7, 9, 11, 12, 5};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int rotationCount2 = findRotationCount(arr2, n2);
+    printf("The array is rotated %d times.\n", rotationCount2);
+
+    const int arr3[] = {1, 2, 3, 4, 5};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int rotationCount3 = findRotationCount(arr3, n3);
+    printf("The array is rotated %d times.\n", rotationCount3);
+
+    return 0;
+}

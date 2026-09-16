@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+char *remove_uppercase_substrings(const char *input) {
+    regex_t regex;
+    int ret;
+    regmatch_t match;
+    size_t capacity;
+    size_t length;
+    char *result;
+    const char *cursor;
+
+    ret = regcomp(&regex, "[A-Z]+", REG_EXTENDED);
+    if (ret != 0) {
+        return NULL;
+    }
+
+    length = strlen(input);
+    capacity = length + 1;
+    result = (char *)malloc(capacity);
+    if (result == NULL) {
+        regfree(&regex);
+        return NULL;
+    }
+
+    cursor = input;
+    size_t result_idx = 0;
+
+    while (1) {
+        ret = regexec(&regex, cursor, 1, &match, 0);
+        if (ret == REG_NOMATCH) {
+            size_t remaining = strlen(cursor);
+            if (result_idx + remaining >= capacity) {
+                capacity = result_idx + remaining + 1;
+                char *temp = (char *)realloc(result, capacity);
+                if (temp == NULL) {
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                result = temp;
+            }
+            memcpy(result + result_idx, cursor, remaining);
+            result_idx += remaining;
+            break;
+        } else if (ret != 0) {
+            free(result);
+            regfree(&regex);
+            return NULL;
+        }
+
+        size_t prefix_len = match.rm_so;
+        if (prefix_len > 0) {
+            if (result_idx + prefix_len >= capacity) {
+                capacity = (result_idx + prefix_len) * 2 + 1;
+                char *temp = (char *)realloc(result, capacity);
+                if (temp == NULL) {
+                    free(result);
+                    regfree(&regex);
+                    return NULL;
+                }
+                result = temp;
+            }
+            memcpy(result + result_idx, cursor, prefix_len);
+            result_idx += prefix_len;
+        }
+
+        cursor += match.rm_eo;
+    }
+
+    result[result_idx] = '\0';
+    
+    char *shrunk = (char *)realloc(result, result_idx + 1);
+    if (shrunk != NULL) {
+        result = shrunk;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    char *result = remove_uppercase_substrings("HelloWORLDEveryoneTHISIsATest");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    result = remove_uppercase_substrings("NO_LOWER_CASE_HERE");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+    
+    result = remove_uppercase_substrings("only_lower_case_here");
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

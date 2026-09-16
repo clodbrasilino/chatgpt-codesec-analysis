@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double square_pyramid_surface_area(double base_length, double slant_height)
+{
+    return (base_length * base_length) + (2.0 * base_length * slant_height);
+}
+
+int main(void)
+{
+    double base_length;
+    double slant_height;
+    double area;
+
+    printf("Enter the base length of the square pyramid: ");
+    if (scanf("%lf", &base_length) != 1) {
+        fprintf(stderr, "Error: invalid input for base length.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the slant height of the square pyramid: ");
+    if (scanf("%lf", &slant_height) != 1) {
+        fprintf(stderr, "Error: invalid input for slant height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (base_length <= 0.0 || slant_height <= 0.0) {
+        fprintf(stderr, "Error: dimensions must be positive values.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = square_pyramid_surface_area(base_length, slant_height);
+
+    printf("Surface area of the square pyramid: %.2f\n", area);
+
+    return EXIT_SUCCESS;
+}
+```
+
+The formula used is: **Surface Area = b² + 2bl**, where `b` is the base length and `l` is the slant height.
+
+Key safety measures addressing the specified CWEs:
+
+- **CWE-703**: Every `scanf` return value is checked to ensure valid input was actually read, and dimensions are validated to be positive before computation.
+- **CWE-710**: The code follows standard conventions — `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE` return codes, errors written to `stderr`, and consistent typing with `double`.
+- **CWE-664**: No dynamic resources (heap allocations, file handles) are used, so there are no resource lifetime issues; all variables are stack-local with well-defined scope.

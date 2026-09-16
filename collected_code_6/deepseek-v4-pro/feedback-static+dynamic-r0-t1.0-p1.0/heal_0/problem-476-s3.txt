@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <limits.h>
+
+int sum_of_min_max(int arr[], int size) {
+    if (size <= 0) {
+        return 0;
+    }
+
+    int min = INT_MAX;
+    int max = INT_MIN;
+
+    for (int i = 0; i < size; i++) {
+        if (arr[i] < min) {
+            min = arr[i];
+        }
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+
+    return min + max;
+}
+
+int main(void) {
+    int arr1[] = {5, 2, 9, 1, 7};
+    int size1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Sum: %d\n", sum_of_min_max(arr1, size1));
+
+    int arr2[] = {-10, 0, 25, 3, -5};
+    int size2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Sum: %d\n", sum_of_min_max(arr2, size2));
+
+    int arr3[] = {42};
+    int size3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Sum: %d\n", sum_of_min_max(arr3, size3));
+
+    printf("Sum: %d\n", sum_of_min_max(NULL, 0));
+
+    return 0;
+}
+```

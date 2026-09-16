@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool check_tuple_has_k_elements(const int *tuple, size_t size, size_t k)
+{
+    if (tuple == NULL)
+    {
+        return false;
+    }
+    return size == k;
+}
+
+static void print_check_result(const char *label, bool result)
+{
+    printf("%s: %s\n", label, result ? "true" : "false");
+}
+
+int main(void)
+{
+    int tuple1[] = {3, 5, 6, 5, 3, 6};
+    int tuple2[] = {1, 2, 3};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+
+    print_check_result("Tuple 1 contains exactly 6 elements",
+                       check_tuple_has_k_elements(tuple1, size1, 6));
+
+    print_check_result("Tuple 2 contains exactly 6 elements",
+                       check_tuple_has_k_elements(tuple2, size2, 6));
+
+    const int *null_tuple = NULL;
+    print_check_result("NULL tuple check",
+                       check_tuple_has_k_elements(null_tuple, 0, 0));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the original code and the fixes applied:**
+
+1. **`knownConditionTrueFalse` warning** — The static analyzer flagged `check_tuple_has_k_elements(NULL, 0, 0)` because the compiler/analyzer can prove at the call site that the argument is a compile-time `NULL` literal, making the branch outcome deterministic and the `true` branch dead code. Passing the pointer through a variable (`null_tuple`) preserves the runtime NULL-safety test path without the analyzer collapsing the condition to a constant.
+
+2. **Duplicated branching logic** — The original three `if/else` blocks repeated identical print patterns. Extracting `print_check_result()` eliminates the dead-branch structure entirely: the boolean result is consumed as data (via the ternary operator) rather than as a control-flow condition, which removes the "always false condition" class of warning by construction.
+
+3. **What was already correct and kept** — The `NULL` guard inside `check_tuple_has_k_elements` is good defensive practice; the `sizeof(arr)/sizeof(arr[0])` idiom for element counts is correct; `size_t` is the appropriate type for sizes; and `const int *` correctly documents that the function does not mutate the array.

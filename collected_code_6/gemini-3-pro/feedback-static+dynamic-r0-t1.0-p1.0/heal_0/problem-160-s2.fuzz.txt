@@ -1,0 +1,6 @@
+problem-160-s2.c:34:11:medium:UBSan: division by zero (AFL crash: id:000003,sig:06,src:000014,time:46386,execs:24761,op:havoc,rep:1)
+problem-160-s2.c:38:0:high:ASan: FPE (AFL crash: id:000003,sig:06,src:000014,time:46386,execs:24761,op:havoc,rep:1)
+problem-160-s2.c:38:13:medium:UBSan: signed integer overflow: -15358179 * 1111111111111 cannot be represented in type 'long long' (AFL crash: id:000000,sig:06,src:000001,time:12188,execs:6214,op:havoc,rep:2)
+problem-160-s2.c:38:13:medium:UBSan: signed integer overflow: 204871361 * 3444444444444444444 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000009,time:21439,execs:11097,op:havoc,rep:2)
+problem-160-s2.c:39:13:medium:UBSan: signed integer overflow: -170492847 * 3444444444444444444 cannot be represented in type 'long long' (AFL crash: id:000001,sig:06,src:000009,time:21439,execs:11097,op:havoc,rep:2)
+problem-160-s2.c:39:13:medium:UBSan: signed integer overflow: -193 * 244444444444444447 cannot be represented in type 'long long' (AFL crash: id:000002,sig:06,src:000014,time:31005,execs:16364,op:havoc,rep:5)

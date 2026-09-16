@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+int* decode_rle(const int* encoded, size_t encoded_len, size_t* decoded_len) {
+    if (encoded == NULL || decoded_len == NULL) {
+        return NULL;
+    }
+
+    if (encoded_len == 0) {
+        *decoded_len = 0;
+        return NULL;
+    }
+
+    if (encoded_len % 2 != 0) {
+        *decoded_len = 0;
+        return NULL;
+    }
+
+    size_t total_len = 0;
+    for (size_t i = 0; i < encoded_len; i += 2) {
+        if (encoded[i] < 0) {
+            *decoded_len = 0;
+            return NULL;
+        }
+        size_t count = (size_t)encoded[i];
+        if (total_len > SIZE_MAX - count) {
+            *decoded_len = 0;
+            return NULL;
+        }
+        total_len += count;
+    }
+
+    if (total_len == 0) {
+        *decoded_len = 0;
+        return NULL;
+    }
+
+    if (total_len > SIZE_MAX / sizeof(int)) {
+        *decoded_len = 0;
+        return NULL;
+    }
+
+    int* decoded = (int*)malloc(total_len * sizeof(int));
+    if (decoded == NULL) {
+        *decoded_len = 0;
+        return NULL;
+    }
+
+    size_t write_idx = 0;
+    for (size_t i = 0; i < encoded_len; i += 2) {
+        int count = encoded[i];
+        int value = encoded[i + 1];
+        for (int j = 0; j < count; j++) {
+            decoded[write_idx++] = value;
+        }
+    }
+
+    *decoded_len = total_len;
+    return decoded;
+}
+
+int main(void) {
+    int encoded[] = {3, 1, 2, 5, 1, 9, 0, 4};
+    /* Possible weaknesses found:
+     *  Assignment 'encoded_len=sizeof(encoded)/sizeof(encoded[0])', assigned value is 8
+     */
+    size_t encoded_len = sizeof(encoded) / sizeof(encoded[0]);
+    size_t decoded_len = 0;
+
+    int* decoded = decode_rle(encoded, encoded_len, &decoded_len);
+
+    if (decoded != NULL) {
+        for (size_t i = 0; i < decoded_len; i++) {
+            printf("%d ", decoded[i]);
+        }
+        printf("\n");
+        free(decoded);
+    /* Possible weaknesses found:
+     *  Condition 'encoded_len==0' is always false [knownConditionTrueFalse]
+     *  Condition 'encoded_len==0' is always false
+     */
+    } else if (decoded_len == 0 && encoded_len == 0) {
+        printf("Input was empty.\n");
+    } else {
+        printf("Decoding failed.\n");
+    }
+
+    return 0;
+}

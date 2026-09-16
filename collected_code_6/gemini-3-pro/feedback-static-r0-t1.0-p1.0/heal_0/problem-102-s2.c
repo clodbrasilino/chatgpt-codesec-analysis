@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char* snake_to_camel(const char* snake_case_str) {
+    if (snake_case_str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(snake_case_str);
+    char* camel_case_str = (char*)malloc(len + 1);
+    if (camel_case_str == NULL) {
+        return NULL;
+    }
+
+    size_t j = 0;
+    int capitalize_next = 0;
+
+    for (size_t i = 0; i < len; ++i) {
+        if (snake_case_str[i] == '_') {
+            capitalize_next = 1;
+        } else {
+            if (capitalize_next) {
+                camel_case_str[j++] = toupper((unsigned char)snake_case_str[i]);
+                capitalize_next = 0;
+            } else {
+                camel_case_str[j++] = snake_case_str[i];
+            }
+        }
+    }
+    camel_case_str[j] = '\0';
+
+    return camel_case_str;
+}
+
+int main(void) {
+    const char* snake1 = "this_is_a_test";
+    char* camel1 = snake_to_camel(snake1);
+    if (camel1 != NULL) {
+        printf("%s -> %s\n", snake1, camel1);
+        free(camel1);
+    }
+
+    const char* snake2 = "single";
+    char* camel2 = snake_to_camel(snake2);
+    if (camel2 != NULL) {
+        printf("%s -> %s\n", snake2, camel2);
+        free(camel2);
+    }
+
+    const char* snake3 = "_leading_underscore";
+    char* camel3 = snake_to_camel(snake3);
+    if (camel3 != NULL) {
+        printf("%s -> %s\n", snake3, camel3);
+        free(camel3);
+    }
+
+    return 0;
+}

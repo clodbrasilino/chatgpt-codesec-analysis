@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double maxAveragePath(int** matrix, int n) {
+    if (matrix == NULL || n <= 0) {
+        return 0.0;
+    }
+    for (int i = 0; i < n; i++) {
+        if (matrix[i] == NULL) {
+            return 0.0;
+        }
+    }
+    if (n == 1) {
+        return (double)matrix[0][0];
+    }
+    long long* dp = malloc(n * sizeof(long long));
+    if (dp == NULL) {
+        return 0.0;
+    }
+    dp[0] = (long long)matrix[0][0];
+    for (int j = 1; j < n; j++) {
+        dp[j] = dp[j - 1] + (long long)matrix[0][j];
+    }
+    for (int i = 1; i < n; i++) {
+        dp[0] += (long long)matrix[i][0];
+        for (int j = 1; j < n; j++) {
+            if (dp[j - 1] > dp[j]) {
+                dp[j] = dp[j - 1] + (long long)matrix[i][j];
+            } else {
+                dp[j] += (long long)matrix[i][j];
+            }
+        }
+    }
+    long long maxSum = dp[n - 1];
+    free(dp);
+    return (double)maxSum / (2.0 * n - 1.0);
+}
+
+int main(void) {
+    int n = 3;
+    int** matrix = malloc(n * sizeof(int*));
+    if (matrix == NULL) {
+        return EXIT_FAILURE;
+    }
+    for (int i = 0; i < n; i++) {
+        matrix[i] = malloc(n * sizeof(int));
+        if (matrix[i] == NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrix[j]);
+            }
+            free(matrix);
+            return EXIT_FAILURE;
+        }
+    }
+    matrix[0][0] = 1;
+    matrix[0][1] = 2;
+    matrix[0][2] = 3;
+    matrix[1][0] = 4;
+    matrix[1][1] = 5;
+    matrix[1][2] = 6;
+    matrix[2][0] = 7;
+    matrix[2][1] = 8;
+    matrix[2][2] = 9;
+    double result = maxAveragePath(matrix, n);
+    printf("%f\n", result);
+    for (int i = 0; i < n; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    return EXIT_SUCCESS;
+}
+```

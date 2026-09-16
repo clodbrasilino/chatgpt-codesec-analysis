@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static double max_average_path(const int *matrix, size_t n)
+{
+    long long *dp;
+    size_t i;
+    size_t j;
+    double result;
+
+    if (matrix == NULL || n == 0U) {
+        return 0.0;
+    }
+
+    dp = malloc(n * n * sizeof(*dp));
+    if (dp == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    dp[0] = (long long)matrix[0];
+
+    for (j = 1U; j < n; j++) {
+        dp[j] = dp[j - 1U] + (long long)matrix[j];
+    }
+
+    for (i = 1U; i < n; i++) {
+        dp[i * n] = dp[(i - 1U) * n] + (long long)matrix[i * n];
+        for (j = 1U; j < n; j++) {
+            long long up = dp[(i - 1U) * n + j];
+            long long left = dp[i * n + (j - 1U)];
+            long long best = (up > left) ? up : left;
+            dp[i * n + j] = best + (long long)matrix[i * n + j];
+        }
+    }
+
+    result = (double)dp[n * n - 1U] / (double)(2U * n - 1U);
+
+    free(dp);
+
+    return result;
+}
+
+int main(void)
+{
+    size_t n;
+    size_t i;
+    size_t total;
+    int *matrix;
+    double answer;
+
+    printf("Enter matrix size n: ");
+    if (scanf("%zu", &n) != 1) {
+        fprintf(stderr, "Invalid input for size\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0U || n > 1000U) {
+        fprintf(stderr, "Size out of allowed range (1..1000)\n");
+        return EXIT_FAILURE;
+    }
+
+    total = n * n;
+    matrix = malloc(total * sizeof(*matrix));
+    if (matrix == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter %zu matrix elements:\n", total);
+    for (i = 0U; i < total; i++) {
+        if (scanf("%d", &matrix[i]) != 1) {
+            fprintf(stderr, "Invalid matrix element\n");
+            free(matrix);
+            return EXIT_FAILURE;
+        }
+    }
+
+    answer = max_average_path(matrix, n);
+    printf("Maximum average path value: %f\n", answer);
+
+    free(matrix);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution finds the path from the top-left to the bottom-right corner (moving only right or down) with the maximum average. Since every such path in an n×n matrix has exactly 2n−1 cells, maximizing the average is equivalent to maximizing the sum, which is done with dynamic programming in O(n²) time.
+
+Key safety measures taken:
+- All `malloc` results are checked before use, and memory is freed on every exit path (addresses CWE-664).
+- All `scanf` return values are validated, and the matrix size is bounded to prevent overflow in `n * n` (addresses CWE-703).
+- `size_t` is used consistently for sizes/indices, `long long` accumulators prevent intermediate overflow, and the code compiles cleanly under strict warning flags (addresses CWE-710).

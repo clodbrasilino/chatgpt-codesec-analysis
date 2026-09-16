@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char **items;
+    size_t len;
+} Tuple;
+
+void free_tuple(Tuple *tuple) {
+    if (tuple == NULL) {
+        return;
+    }
+    if (tuple->items != NULL) {
+        for (size_t i = 0; i < tuple->len; i++) {
+            free(tuple->items[i]);
+        }
+        free(tuple->items);
+    }
+    free(tuple);
+}
+
+Tuple *string_list_to_tuple(char **list) {
+    if (list == NULL) {
+        return NULL;
+    }
+    size_t len = 0;
+    while (list[len] != NULL) {
+        len++;
+    }
+    Tuple *tuple = malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    tuple->len = len;
+    if (len == 0) {
+        tuple->items = NULL;
+        return tuple;
+    }
+    tuple->items = malloc(len * sizeof(char *));
+    if (tuple->items == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    for (size_t i = 0; i < len; i++) {
+        tuple->items[i] = strdup(list[i]);
+        if (tuple->items[i] == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(tuple->items[j]);
+            }
+            free(tuple->items);
+            free(tuple);
+            return NULL;
+        }
+    }
+    return tuple;
+}
+
+int main(void) {
+    char *list[] = {"apple", "banana", "cherry", NULL};
+    Tuple *tuple = string_list_to_tuple(list);
+    if (tuple == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+    for (size_t i = 0; i < tuple->len; i++) {
+        printf("%zu: %s\n", i, tuple->items[i]);
+    }
+    free_tuple(tuple);
+    return EXIT_SUCCESS;
+}

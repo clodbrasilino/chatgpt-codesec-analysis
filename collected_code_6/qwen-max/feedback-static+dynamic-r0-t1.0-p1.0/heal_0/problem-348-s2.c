@@ -1,24 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-long long countSequences(int *arr, int n, int k) {
-    long long dp[k + 1];
-    for (int i = 0; i <= k; ++i) dp[i] = 0;
-    dp[0] = 1;
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = k; j >= arr[i]; --j) {
-            dp[j] += dp[j - arr[i]];
-        }
+int count_sequences(long long arr[], int n, int k, long long dp[51][51][201]) {
+    if (n == 0) {
+        return k == 0 ? 1 : 0;
     }
-
-    return dp[k];
+    if (dp[n][k][100 + arr[0]] != -1) {
+        return dp[n][k][100 + arr[0]];
+    }
+    if (arr[0] > k) {
+        return dp[n][k][100 + arr[0]] = count_sequences(arr + 1, n - 1, k, dp);
+    } else {
+        return dp[n][k][100 + arr[0]] = (count_sequences(arr + 1, n - 1, k - arr[0], dp) + 
+                                        count_sequences(arr + 1, n - 1, k, dp)) % 1000000007;
+    }
 }
 
 int main() {
-    int arr[] = {1, 2, 3};
+    long long arr[] = {1, 2, 3};
     int n = sizeof(arr) / sizeof(arr[0]);
-    int k = 3;
-    printf("%lld\n", countSequences(arr, n, k));
+    int k;
+    printf("Enter the length of the sequence: ");
+    scanf("%d", &k);
+    
+    long long dp[51][51][201];
+    for (int i = 0; i < 51; ++i) {
+        for (int j = 0; j < 51; ++j) {
+            for (int k = 0; k < 201; ++k) {
+                dp[i][j][k] = -1;
+            }
+        }
+    }
+
+    int result = count_sequences(arr, n, k, dp);
+    printf("Total sequences: %d\n", result);
+
     return 0;
 }

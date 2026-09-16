@@ -6,14 +6,18 @@ int max(int a, int b) {
 }
 
 int f(int n, int *memo) {
-    if (n == 0) return 0;
+    if (n < 2) return n;
+
     if (memo[n] != -1) return memo[n];
 
-    int option1 = n;
-    int option2 = f(n / 2, memo) + f(n / 3, memo) + f(n / 4, memo) + f(n / 5, memo);
-    memo[n] = max(option1, option2);
+    int a = f(n / 2, memo);
+    int b = f(n / 3, memo);
+    int c = f(n / 4, memo);
+    int d = f(n / 5, memo);
 
-    return memo[n];
+    int val = max(n, a + b + c + d);
+    memo[n] = val;
+    return val;
 }
 
 int main() {
@@ -21,13 +25,13 @@ int main() {
     printf("Enter a number: ");
     scanf("%d", &n);
 
-    int *memo = (int *)malloc((n + 1) * sizeof(int));
-    for (int i = 0; i <= n; i++) {
+    int *memo = (int *)calloc(n + 1, sizeof(int));
+    for (int i = 0; i <= n; ++i) {
         memo[i] = -1;
     }
 
     int result = f(n, memo);
-    printf("Maximum sum: %d\n", result);
+    printf("Maximum sum possible: %d\n", result);
 
     free(memo);
     return 0;

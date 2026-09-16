@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_tuples(const int *first_tuple, int first_size, const int *second_tuple, int second_size) {
+    if (first_tuple == NULL || second_tuple == NULL) {
+        return false;
+    }
+    
+    if (first_size != second_size) {
+        return false;
+    }
+    
+    if (first_size < 0) {
+        return false;
+    }
+    
+    for (int i = 0; i < first_size; i++) {
+        if (second_tuple[i] <= first_tuple[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main(void) {
+    /* Possible weaknesses found:
+     *  Variable 'first_tuple' can be declared as const array [constVariable]
+     */
+    int first_tuple[] = {1, 2, 3, 4};
+    /* Possible weaknesses found:
+     *  Variable 'second_tuple' can be declared as const array [constVariable]
+     */
+    int second_tuple[] = {2, 3, 4, 5};
+    int size = 4;
+    
+    if (check_tuples(first_tuple, size, second_tuple, size)) {
+        printf("All elements in second tuple are greater\n");
+    } else {
+        printf("Not all elements in second tuple are greater\n");
+    }
+    
+    /* Possible weaknesses found:
+     *  Variable 'first_tuple2' can be declared as const array [constVariable]
+     */
+    int first_tuple2[] = {1, 5, 3};
+    /* Possible weaknesses found:
+     *  Variable 'second_tuple2' can be declared as const array [constVariable]
+     */
+    int second_tuple2[] = {2, 3, 4};
+    int size2 = 3;
+    
+    if (check_tuples(first_tuple2, size2, second_tuple2, size2)) {
+        printf("All elements in second tuple are greater\n");
+    } else {
+        printf("Not all elements in second tuple are greater\n");
+    }
+    
+    return 0;
+}

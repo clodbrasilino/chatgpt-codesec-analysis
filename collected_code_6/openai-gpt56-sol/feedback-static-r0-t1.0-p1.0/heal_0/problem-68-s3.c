@@ -1,0 +1,47 @@
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+
+static bool is_monotonic(const int *array, size_t length)
+{
+    bool nondecreasing = true;
+    bool nonincreasing = true;
+
+    if (array == NULL && length != 0U) {
+        return false;
+    }
+
+    for (size_t i = 1U; i < length; ++i) {
+        if (array[i] < array[i - 1U]) {
+            nondecreasing = false;
+        }
+
+        if (array[i] > array[i - 1U]) {
+            nonincreasing = false;
+        }
+
+        if (!nondecreasing && !nonincreasing) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const int array[] = {1, 2, 2, 3, 4};
+    const size_t length = sizeof(array) / sizeof(array[0]);
+
+    if (is_monotonic(array, length)) {
+        if (puts("The array is monotonic.") == EOF) {
+            return 1;
+        }
+    } else {
+        if (puts("The array is not monotonic.") == EOF) {
+            return 1;
+        }
+    }
+
+    return 0;
+}

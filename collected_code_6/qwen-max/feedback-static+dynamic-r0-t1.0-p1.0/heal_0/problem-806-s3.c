@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int findMaxRunOfUppercase(const char *str) {
+    int max_run = 0;
+    int current_run = 0;
+
+    for (const char *p = str; *p; ++p) {
+        if (isupper(*p)) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+    }
+
+    return max_run;
+}
+
+int main() {
+    const char *input = "AAbBCcDDeEEeFFF";
+    int max_run = findMaxRunOfUppercase(input);
+    printf("Maximum run of uppercase characters: %d\n", max_run);
+    return 0;
+}

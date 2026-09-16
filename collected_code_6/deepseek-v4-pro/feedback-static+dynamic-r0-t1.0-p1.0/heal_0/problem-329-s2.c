@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_negative(const int *arr, size_t len) {
+    if (arr == NULL) {
+        return -1;
+    }
+
+    int count = 0;
+    for (size_t i = 0; i < len; ++i) {
+        if (arr[i] < 0) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int numbers[] = {-5, 10, -3, 0, -8, 7};
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+
+    int result = count_negative(numbers, len);
+    if (result == -1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Negative count: %d\n", result);
+    return EXIT_SUCCESS;
+}

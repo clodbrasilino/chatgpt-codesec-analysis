@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_remainder(const int arr[], int size, int n) {
+    if (n == 0 || size <= 0) {
+        return -1;
+    }
+    
+    int result = 1;
+    for (int i = 0; i < size; i++) {
+        result = (result * (arr[i] % n)) % n;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int arr[] = {100, 10, 5, 25, 35, 14};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int n = 11;
+    
+    int remainder = find_remainder(arr, size, n);
+    
+    if (remainder != -1) {
+        printf("%d\n", remainder);
+    } else {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

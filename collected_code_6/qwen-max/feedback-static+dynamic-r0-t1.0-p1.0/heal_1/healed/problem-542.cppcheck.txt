@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-542.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-542.c:13:34: error: Uninitialized variable: pmatch [uninitvar]
+            for (int i = 0; i <= pmatch[0].rm_eo - pmatch[0].rm_so; i++) {
+                                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-542.c:14:30: error: Uninitialized variable: pmatch[0].rm_so [legacyUninitvar]
+                str[pmatch[0].rm_so + i] = replacement[0];
+                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-542.c:12:21: style: Variable 'len' is assigned a value that is never used. [unreadVariable]
+            int len = 0;
+                    ^

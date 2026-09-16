@@ -1,0 +1,177 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef enum {
+    LIST_ITEM_INT,
+    LIST_ITEM_LIST
+} ListItemType;
+
+typedef struct ListItem {
+    ListItemType type;
+    union {
+        int val;
+        struct List* list;
+    } data;
+    struct ListItem* next;
+} ListItem;
+
+typedef struct List {
+    ListItem* head;
+} List;
+
+List* create_list() {
+    List* list = (List*)malloc(sizeof(List));
+    if (!list) {
+        exit(EXIT_FAILURE);
+    }
+    list->head = NULL;
+    return list;
+}
+
+ListItem* create_int_item(int val) {
+    ListItem* item = (ListItem*)malloc(sizeof(ListItem));
+    if (!item) {
+        exit(EXIT_FAILURE);
+    }
+    item->type = LIST_ITEM_INT;
+    item->data.val = val;
+    item->next = NULL;
+    return item;
+}
+
+ListItem* create_list_item(List* list) {
+    ListItem* item = (ListItem*)malloc(sizeof(ListItem));
+    if (!item) {
+        exit(EXIT_FAILURE);
+    }
+    item->type = LIST_ITEM_LIST;
+    item->data.list = list;
+    item->next = NULL;
+    return item;
+}
+
+void append_item(List* list, ListItem* new_item) {
+    if (!list || !new_item) return;
+    if (!list->head) {
+        list->head = new_item;
+    } else {
+        ListItem* curr = list->head;
+        while (curr->next) {
+            curr = curr->next;
+        }
+        curr->next = new_item;
+    }
+}
+
+void free_list(List* list) {
+    if (!list) return;
+    ListItem* curr = list->head;
+    while (curr) {
+        ListItem* temp = curr;
+        curr = curr->next;
+        if (temp->type == LIST_ITEM_LIST) {
+            free_list(temp->data.list);
+        }
+        free(temp);
+    }
+    free(list);
+}
+
+bool are_items_equal(ListItem* a, ListItem* b);
+
+bool are_lists_equal(List* a, List* b) {
+    if (!a && !b) return true;
+    if (!a || !b) return false;
+
+    ListItem* curr_a = a->head;
+    ListItem* curr_b = b->head;
+
+    while (curr_a && curr_b) {
+        if (!are_items_equal(curr_a, curr_b)) {
+            return false;
+        }
+        curr_a = curr_a->next;
+        curr_b = curr_b->next;
+    }
+
+    return curr_a == NULL && curr_b == NULL;
+}
+
+bool are_items_equal(ListItem* a, ListItem* b) {
+    if (a->type != b->type) return false;
+    if (a->type == LIST_ITEM_INT) {
+        return a->data.val == b->data.val;
+    } else {
+        return are_lists_equal(a->data.list, b->data.list);
+    }
+}
+
+bool is_item_in_list(ListItem* item, List* list) {
+    if (!list) return false;
+    ListItem* curr = list->head;
+    while (curr) {
+        if (are_items_equal(item, curr)) {
+            return true;
+        }
+        curr = curr->next;
+    }
+    return false;
+}
+
+bool is_subset(List* sub, List* super) {
+    if (!sub) return true;
+    if (!super) return false;
+
+    ListItem* curr = sub->head;
+    while (curr) {
+        if (!is_item_in_list(curr, super)) {
+            return false;
+        }
+        curr = curr->next;
+    }
+    return true;
+}
+
+int main(void) {
+    List* superList = create_list();
+    append_item(superList, create_int_item(1));
+    append_item(superList, create_int_item(2));
+    
+    List* innerListSuper = create_list();
+    append_item(innerListSuper, create_int_item(3));
+    append_item(innerListSuper, create_int_item(4));
+    append_item(superList, create_list_item(innerListSuper));
+
+    List* subList = create_list();
+    append_item(subList, create_int_item(2));
+    
+    List* innerListSub = create_list();
+    append_item(innerListSub, create_int_item(3));
+    append_item(innerListSub, create_int_item(4));
+    append_item(subList, create_list_item(innerListSub));
+
+    List* notSubList = create_list();
+    append_item(notSubList, create_int_item(1));
+    append_item(notSubList, create_int_item(5));
+
+    if (is_subset(subList, superList)) {
+        printf("subList is a subset of superList.\n");
+    } else {
+        printf("subList is NOT a subset of superList.\n");
+    }
+
+    if (is_subset(notSubList, superList)) {
+        printf("notSubList is a subset of superList.\n");
+    } else {
+        printf("notSubList is NOT a subset of superList.\n");
+    }
+
+    free_list(superList);
+    free_list(subList);
+    free_list(notSubList);
+
+    return EXIT_SUCCESS;
+}
+```

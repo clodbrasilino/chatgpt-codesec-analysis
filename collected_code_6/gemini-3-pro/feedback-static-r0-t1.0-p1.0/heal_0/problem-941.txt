@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef enum {
+    TYPE_INT,
+    TYPE_TUPLE
+} ElementType;
+
+typedef struct {
+    ElementType type;
+    int value;
+} Element;
+
+typedef struct Node {
+    Element data;
+    struct Node* next;
+} Node;
+
+size_t count_until_tuple(const Node* head) {
+    size_t count = 0;
+    const Node* current = head;
+    
+    while (current != NULL) {
+        if (current->data.type == TYPE_TUPLE) {
+            break;
+        }
+        count++;
+        current = current->next;
+    }
+    
+    return count;
+}
+
+Node* create_node(ElementType type, int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    new_node->data.type = type;
+    new_node->data.value = value;
+    new_node->next = NULL;
+    
+    return new_node;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node* head = create_node(TYPE_INT, 10);
+    head->next = create_node(TYPE_INT, 20);
+    head->next->next = create_node(TYPE_INT, 30);
+    head->next->next->next = create_node(TYPE_TUPLE, 0);
+    head->next->next->next->next = create_node(TYPE_INT, 40);
+
+    size_t count = count_until_tuple(head);
+    
+    printf("%zu\n", count);
+
+    free_list(head);
+
+    return EXIT_SUCCESS;
+}
+```

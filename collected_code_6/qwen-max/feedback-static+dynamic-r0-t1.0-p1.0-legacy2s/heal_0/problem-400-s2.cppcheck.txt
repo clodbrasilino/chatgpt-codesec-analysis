@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-400-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-400-s2.c:10:46: style: Clarify calculation precedence for '-' and '?'. [clarifyCalculation]
+    return ((Tuple *)a)->x - ((Tuple *)b)->x ? ((Tuple *)a)->x - ((Tuple *)b)->x : ((Tuple *)a)->y - ((Tuple *)b)->y;
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_0/problem-400-s2.c:13:28: style: Parameter 'tupleList' can be declared as pointer to const [constParameterPointer]
+int countUniqueTuples(int *tupleList, size_t tupleCount, int *outUniqueCount) {
+                           ^

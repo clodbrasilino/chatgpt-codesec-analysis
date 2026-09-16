@@ -1,0 +1,125 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *createNode(int data)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int appendNode(struct Node **head, int data)
+{
+    struct Node *node = createNode(data);
+    if (node == NULL) {
+        return -1;
+    }
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+    struct Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+size_t listLength(const struct Node *head)
+{
+    size_t count = 0;
+    while (head != NULL) {
+        count++;
+        head = head->next;
+    }
+    return count;
+}
+
+int splitList(struct Node *head, size_t firstLength,
+              struct Node **first, struct Node **second)
+{
+    if (first == NULL || second == NULL) {
+        return -1;
+    }
+    *first = NULL;
+    *second = NULL;
+    if (firstLength > listLength(head)) {
+        return -1;
+    }
+    if (firstLength == 0) {
+        *second = head;
+        return 0;
+    }
+    *first = head;
+    struct Node *current = head;
+    for (size_t i = 1; i < firstLength; i++) {
+        current = current->next;
+    }
+    *second = current->next;
+    current->next = NULL;
+    return 0;
+}
+
+void printList(const struct Node *head)
+{
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node *head)
+{
+    while (head != NULL) {
+        struct Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    struct Node *list = NULL;
+    struct Node *first = NULL;
+    struct Node *second = NULL;
+
+    for (int i = 1; i <= 7; i++) {
+        if (appendNode(&list, i) != 0) {
+            freeList(list);
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    printList(list);
+
+    if (splitList(list, 3, &first, &second) != 0) {
+        freeList(list);
+        fprintf(stderr, "Split failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("First part: ");
+    printList(first);
+    printf("Second part: ");
+    printList(second);
+
+    freeList(first);
+    freeList(second);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+
+unsigned long long get_nth_octagonal_number(int n) {
+    unsigned long long un;
+    
+    if (n <= 0) {
+        return 0;
+    }
+    
+    un = (unsigned long long)n;
+    return un * ((3ULL * un) - 2ULL);
+}
+
+int main(void) {
+    int n = 10;
+    unsigned long long result;
+
+    result = get_nth_octagonal_number(n);
+    printf("%llu\n", result);
+
+    return 0;
+}
+```

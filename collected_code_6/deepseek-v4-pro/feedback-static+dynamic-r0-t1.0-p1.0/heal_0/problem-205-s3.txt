@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int count_inversions(Tuple *tuples, int size) {
+    int count = 0;
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (tuples[i].first > tuples[j].first &&
+                tuples[i].second > tuples[j].second) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int n;
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return 1;
+    }
+
+    Tuple *tuples = malloc((size_t)n * sizeof(*tuples));
+    if (tuples == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d %d", &tuples[i].first, &tuples[i].second) != 2) {
+            free(tuples);
+            return 1;
+        }
+    }
+
+    int result = count_inversions(tuples, n);
+    printf("%d\n", result);
+
+    free(tuples);
+    return 0;
+}
+```

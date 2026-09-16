@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+double round_up_to_digits(double num, int digits) {
+    if (digits < 0) {
+        return num;
+    }
+    
+    double multiplier = pow(10.0, digits);
+    double result = ceil(num * multiplier) / multiplier;
+    
+    return result;
+}
+
+int main(void) {
+    double number1 = 12.3456;
+    int digits1 = 2;
+    double result1 = round_up_to_digits(number1, digits1);
+    printf("%.4f rounded up to %d digits is %.4f\n", number1, digits1, result1);
+
+    double number2 = 9.876543;
+    int digits2 = 3;
+    double result2 = round_up_to_digits(number2, digits2);
+    printf("%.6f rounded up to %d digits is %.6f\n", number2, digits2, result2);
+
+    double number3 = -4.567;
+    int digits3 = 1;
+    double result3 = round_up_to_digits(number3, digits3);
+    printf("%.3f rounded up to %d digits is %.3f\n", number3, digits3, result3);
+
+    return 0;
+}
+```

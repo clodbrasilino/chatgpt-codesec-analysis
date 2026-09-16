@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_smaller_than_index(const int *tuple1, const int *tuple2, int size) {
+    if (tuple1 == NULL || tuple2 == NULL || size < 0) {
+        return false;
+    }
+    for (int i = 0; i < size; i++) {
+        if (tuple2[i] >= tuple1[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    int tuple1[] = {10, 20, 30, 40};
+    /* Possible weaknesses found:
+     *  Variable 'tuple2' can be declared as const array [constVariable]
+     */
+    int tuple2[] = {5, 15, 25, 35};
+    int size = sizeof(tuple1) / sizeof(tuple1[0]);
+
+    if (check_smaller_than_index(tuple1, tuple2, size)) {
+        printf("All elements of second tuple are smaller than corresponding elements in first tuple.\n");
+    } else {
+        printf("Not all elements of second tuple are smaller than corresponding elements in first tuple.\n");
+    }
+
+    return 0;
+}

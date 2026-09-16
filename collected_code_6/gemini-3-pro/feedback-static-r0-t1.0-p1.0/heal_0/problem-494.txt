@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <errno.h>
+
+unsigned int binary_tuple_to_int(const int *tuple, size_t size) {
+    if (tuple == NULL) {
+        errno = EINVAL;
+        return 0;
+    }
+
+    if (size == 0 || size > sizeof(unsigned int) * 8) {
+        errno = ERANGE;
+        return 0;
+    }
+
+    unsigned int result = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+        if (tuple[i] != 0 && tuple[i] != 1) {
+            errno = EINVAL;
+            return 0;
+        }
+        result = (result << 1) | (unsigned int)tuple[i];
+    }
+
+    errno = 0;
+    return result;
+}
+
+int main(void) {
+    int tuple1[] = {1, 0, 1, 1};
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    unsigned int result1 = binary_tuple_to_int(tuple1, size1);
+    if (errno == 0) {
+        printf("%u\n", result1);
+    } 
+
+    int tuple2[] = {1, 1, 0, 1, 0};
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    unsigned int result2 = binary_tuple_to_int(tuple2, size2);
+    if (errno == 0) {
+        printf("%u\n", result2);
+    }
+
+    return 0;
+}
+```

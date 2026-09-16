@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int is_seen(char **seen, size_t count, const char *word) {
+    for (size_t i = 0; i < count; i++) {
+        if (strcmp(seen[i], word) == 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+char *remove_duplicate_words(const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+    char *copy = malloc(len + 1);
+    if (copy == NULL) {
+        return NULL;
+    }
+    memcpy(copy, str, len + 1);
+
+    char *result = malloc(len + 1);
+    if (result == NULL) {
+        free(copy);
+        return NULL;
+    }
+
+    char **seen = NULL;
+    size_t seen_count = 0;
+    size_t current_len = 0;
+
+    char *token = strtok(copy, " \t\n");
+    while (token != NULL) {
+        if (!is_seen(seen, seen_count, token)) {
+            size_t token_len = strlen(token);
+            char *key = malloc(token_len + 1);
+            if (key != NULL) {
+                memcpy(key, token, token_len + 1);
+                char **new_seen = realloc(seen, (seen_count + 1) * sizeof(char *));
+                if (new_seen != NULL) {
+                    seen = new_seen;
+                    seen[seen_count++] = key;
+
+                    if (current_len > 0) {
+                        result[current_len++] = ' ';
+                    }
+                    memcpy(result + current_len, token, token_len);
+                    current_len += token_len;
+                } else {
+                    free(key);
+                }
+            }
+        }
+        token = strtok(NULL, " \t\n");
+    }
+
+    result[current_len] = '\0';
+    
+    for (size_t i = 0; i < seen_count; i++) {
+        free(seen[i]);
+    }
+    free(seen);
+    free(copy);
+
+    char *final_result = realloc(result, current_len + 1);
+    if (final_result == NULL) {
+        final_result = result;
+    }
+
+    return final_result;
+}
+
+int main(void) {
+    const char *text = "hello world hello this is a test test world";
+    char *unique = remove_duplicate_words(text);
+    if (unique != NULL) {
+        printf("%s\n", unique);
+        free(unique);
+    }
+    return 0;
+}

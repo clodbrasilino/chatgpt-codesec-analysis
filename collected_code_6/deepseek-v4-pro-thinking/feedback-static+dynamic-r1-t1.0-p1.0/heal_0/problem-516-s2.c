@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+int radix_sort(int *arr, size_t n) {
+    if (n == 0) return 0;
+    if (arr == NULL) return -1;
+    if (n > SIZE_MAX / sizeof(int)) return -1;
+
+    int min_val = arr[0];
+    int max_val = arr[0];
+    for (size_t i = 1; i < n; i++) {
+        if (arr[i] < min_val) min_val = arr[i];
+        if (arr[i] > max_val) max_val = arr[i];
+    }
+
+    long long range = (long long)max_val - min_val;
+    int *output = malloc(n * sizeof(int));
+    if (output == NULL) return -1;
+
+    int count[10];
+
+    for (long long exp = 1; exp <= range; exp *= 10) {
+        memset(count, 0, sizeof(count));
+
+        for (size_t i = 0; i < n; i++) {
+            int digit = (int)((((long long)arr[i] - min_val) / exp) % 10);
+            count[digit]++;
+        }
+
+        for (int i = 1; i < 10; i++) {
+            count[i] += count[i - 1];
+        }
+
+        for (size_t i = n; i > 0; i--) {
+            size_t idx = i - 1;
+            int digit = (int)((((long long)arr[idx] - min_val) / exp) % 10);
+            output[count[digit] - 1] = arr[idx];
+            count[digit]--;
+        }
+
+        memcpy(arr, output, n * sizeof(int));
+    }
+
+    free(output);
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {170, -45, 75, 90, -802, 24, 2, 66, 0, -1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+
+    if (radix_sort(arr, n) != 0) {
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <math.h>
+#include <errno.h>
+#include <limits.h>
+
+int64_t smallest_triangular_index(int n)
+{
+    if (n < 1 || n > 18) {
+        return -1;
+    }
+
+    if (n == 1) {
+        return 1;
+    }
+
+    int64_t lower = 1;
+    for (int i = 1; i < n; i++) {
+        if (lower > INT64_MAX / 10) {
+            return -1;
+        }
+        lower *= 10;
+    }
+
+    double sqrt_arg = 2.0 * (double)lower;
+    double sqrt_val = sqrt(sqrt_arg);
+    
+    if (sqrt_val < 0.0 || sqrt_val > (double)INT64_MAX) {
+        return -1;
+    }
+
+    int64_t k = (int64_t)ceil(sqrt_val - 0.5);
+
+    if (k < 1 || k > INT64_MAX / 2) {
+        return -1;
+    }
+
+    int64_t triangular = k * (k + 1) / 2;
+
+    int64_t digits = 0;
+    int64_t temp = triangular;
+    
+    if (temp == 0) {
+        digits = 1;
+    } else {
+        while (temp > 0) {
+            temp /= 10;
+            digits++;
+        }
+    }
+
+    if (digits != n) {
+        return -1;
+    }
+
+    return k;
+}
+
+int main(void)
+{
+    int test_values[] = {1, 2, 3, 4, 5, 10};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+
+    for (size_t i = 0; i < num_tests; i++) {
+        int n = test_values[i];
+        int64_t result = smallest_triangular_index(n);
+        
+        if (result == -1) {
+            printf("Error: Invalid input or overflow for n = %d\n", n);
+        } else {
+            printf("Smallest triangular number with %d digits is at index: %lld\n", 
+                   n, (long long)result);
+        }
+    }
+
+    return 0;
+}

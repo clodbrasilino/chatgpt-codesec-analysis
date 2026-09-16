@@ -1,0 +1,81 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdlib.h>
+
+static bool reverse_number(int num, int *result)
+{
+    int reversed = 0;
+
+    if (num < 0 || result == NULL) {
+        return false;
+    }
+
+    while (num != 0) {
+        int digit = num % 10;
+
+        if (reversed > (INT_MAX - digit) / 10) {
+            return false;
+        }
+
+        reversed = reversed * 10 + digit;
+        num /= 10;
+    }
+
+    *result = reversed;
+    return true;
+}
+
+static bool is_one_less_than_twice_reverse(int num, bool *answer)
+{
+    int reversed = 0;
+
+    if (answer == NULL || num < 0) {
+        return false;
+    }
+
+    if (!reverse_number(num, &reversed)) {
+        return false;
+    }
+
+    if (reversed > (INT_MAX - 1) / 2) {
+        return false;
+    }
+
+    *answer = (num == (2 * reversed) - 1);
+    return true;
+}
+
+int main(void)
+{
+    int number = 0;
+    bool answer = false;
+
+    if (printf("Enter a non-negative integer: ") < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (scanf("%d", &number) != 1) {
+        (void)fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!is_one_less_than_twice_reverse(number, &answer)) {
+        (void)fprintf(stderr, "Computation failed for input %d.\n", number);
+        return EXIT_FAILURE;
+    }
+
+    if (answer) {
+        if (printf("%d is one less than twice its reverse.\n", number) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("%d is not one less than twice its reverse.\n", number) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

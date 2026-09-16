@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int list_modulo(const int *a, const int *b, int *result, size_t size) {
+    if (a == NULL || b == NULL || result == NULL) {
+        return -1;
+    }
+    if (size == 0) {
+        return 0;
+    }
+    for (size_t i = 0; i < size; i++) {
+        if (b[i] == 0) {
+            return -1;
+        }
+        result[i] = a[i] % b[i];
+    }
+    return 0;
+}
+
+int main(void) {
+    int a[] = {10, 25, 33, 44, 50};
+    /* Possible weaknesses found:
+     *  Variable 'b' can be declared as const array [constVariable]
+     */
+    int b[] = {3, 4, 7, 6, 11};
+    size_t size = sizeof(a) / sizeof(a[0]);
+    int result[5];
+
+    if (list_modulo(a, b, result, size) == 0) {
+        for (size_t i = 0; i < size; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+    } else {
+        printf("Error calculating modulo\n");
+    }
+
+    /* Possible weaknesses found:
+     *  Variable 'c' can be declared as const array [constVariable]
+     */
+    int c[] = {10, 20, 30};
+    /* Possible weaknesses found:
+     *  Variable 'd' can be declared as const array [constVariable]
+     */
+    int d[] = {2, 0, 5};
+    int res2[3];
+
+    if (list_modulo(c, d, res2, 3) != 0) {
+        printf("Division by zero handled\n");
+    }
+
+    /* Possible weaknesses found:
+     *  Condition 'list_modulo(NULL,b,result,size)!=0' is always true
+     *  Condition 'list_modulo(NULL,b,result,size)!=0' is always true [knownConditionTrueFalse]
+     *  Calling function 'list_modulo' returns -1
+     */
+    if (list_modulo(NULL, b, result, size) != 0) {
+        printf("Null pointer handled\n");
+    }
+
+    return 0;
+}

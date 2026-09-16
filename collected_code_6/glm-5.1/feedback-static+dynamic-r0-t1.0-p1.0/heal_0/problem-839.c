@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *first;
+    int second;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *tupleA = (const Tuple *)a;
+    const Tuple *tupleB = (const Tuple *)b;
+    return strcmp(tupleA->first, tupleB->first);
+}
+
+void sort_tuples(Tuple *tuples, size_t count) {
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+int main(void) {
+    size_t count = 5;
+    Tuple *tuples = (Tuple *)malloc(count * sizeof(Tuple));
+    if (tuples == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].first = "zebra";
+    tuples[0].second = 5;
+    tuples[1].first = "apple";
+    tuples[1].second = 2;
+    tuples[2].first = "mango";
+    tuples[2].second = 9;
+    tuples[3].first = "banana";
+    tuples[3].second = 4;
+    tuples[4].first = "cherry";
+    tuples[4].second = 1;
+
+    sort_tuples(tuples, count);
+
+    for (size_t i = 0; i < count; i++) {
+        printf("(%s, %d)\n", tuples[i].first, tuples[i].second);
+    }
+
+    free(tuples);
+    tuples = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+
+#define TUPLE_SIZE 3
+
+typedef struct {
+    char *items[TUPLE_SIZE];
+} StringTuple;
+
+static char *concat_strings(const char *a, const char *b)
+{
+    size_t len_a;
+    size_t len_b;
+    char *result;
+
+    if (a == NULL || b == NULL) {
+        return NULL;
+    }
+
+    len_a = strlen(a);
+    len_b = strlen(b);
+
+    if (len_a > SIZE_MAX - len_b - 1U) {
+        return NULL;
+    }
+
+    result = malloc(len_a + len_b + 1U);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    memcpy(result, a, len_a);
+    memcpy(result + len_a, b, len_b + 1U);
+
+    return result;
+}
+
+static void free_tuple(StringTuple *t)
+{
+    size_t i;
+
+    if (t == NULL) {
+        return;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        free(t->items[i]);
+        t->items[i] = NULL;
+    }
+}
+
+static int concat_tuples(const char *const *t1, const char *const *t2, StringTuple *out)
+{
+    size_t i;
+
+    if (t1 == NULL || t2 == NULL || out == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        out->items[i] = NULL;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        out->items[i] = concat_strings(t1[i], t2[i]);
+        if (out->items[i] == NULL) {
+            free_tuple(out);
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+static int print_tuple(const StringTuple *t)
+{
+    size_t i;
+
+    if (t == NULL) {
+        return -1;
+    }
+
+    if (printf("[") < 0) {
+        return -1;
+    }
+
+    for (i = 0; i < TUPLE_SIZE; i++) {
+        if (printf("'%s'", t->items[i]) < 0) {
+            return -1;
+        }
+        if (i < TUPLE_SIZE - 1U) {
+            if (printf(", ") < 0) {
+                return -1;
+            }
+        }
+    }
+
+    if (printf("]\n") < 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *test_first[][TUPLE_SIZE] = {
+        {"Manjeet", "Nikhil", "Akshat"},
+        {"Shaik", "Ayesha", "Sanya"},
+        {"Harpreet", "Priyanka", "Muskan"}
+    };
+    const char *test_second[][TUPLE_SIZE] = {
+        {" Singh", " Meherwal", " Garg"},
+        {" Dawood", " Begum", " Singh"},
+        {"Kour", " Agarwal", "Sethi"}
+    };
+    size_t num_tests;
+    size_t i;
+    StringTuple result;
+
+    num_tests = sizeof(test_first) / sizeof(test_first[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        if (concat_tuples(test_first[i], test_second[i], &result) != 0) {
+            fprintf(stderr, "Error: tuple concatenation failed\n");
+            return EXIT_FAILURE;
+        }
+
+        if (print_tuple(&result) != 0) {
+            free_tuple(&result);
+            return EXIT_FAILURE;
+        }
+
+        free_tuple(&result);
+    }
+
+    return EXIT_SUCCESS;
+}

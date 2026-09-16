@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findOddOccurrence(const int arr[], int n) {
+    if (arr == NULL || n <= 0) {
+        return -1;
+    }
+    
+    int result = 0;
+    for (int i = 0; i < n; i++) {
+        result ^= arr[i];
+    }
+    return result;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 2, 3, 1, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = findOddOccurrence(arr, n);
+    
+    if (result != -1) {
+        printf("Element occurring odd number of times: %d\n", result);
+    } else {
+        printf("Invalid input\n");
+    }
+    
+    return 0;
+}

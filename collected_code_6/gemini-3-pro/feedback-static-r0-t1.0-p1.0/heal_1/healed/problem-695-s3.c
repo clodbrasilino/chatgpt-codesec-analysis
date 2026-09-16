@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool check_elements(const int* tuple1, const int* tuple2, size_t size) {
+    if (tuple1 == NULL || tuple2 == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        if (tuple2[i] <= tuple1[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const int tuple1[] = {1, 2, 3, 4};
+    const int tuple2[] = {2, 4, 6, 8};
+    size_t size = sizeof(tuple1) / sizeof(tuple1[0]);
+
+    bool result = check_elements(tuple1, tuple2, size);
+
+    if (result) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    const int tuple3[] = {1, 2, 3, 4};
+    const int tuple4[] = {2, 1, 6, 8};
+
+    result = check_elements(tuple3, tuple4, size);
+
+    if (result) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}

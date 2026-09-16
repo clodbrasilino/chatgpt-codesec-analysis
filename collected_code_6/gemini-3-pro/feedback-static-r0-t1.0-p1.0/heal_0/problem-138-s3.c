@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool can_be_sum_of_nonzero_powers_of_two(long long n) {
+    if (n <= 0) {
+        return false;
+    }
+    return (n % 2 == 0);
+}
+
+int main(void) {
+    long long n = 0;
+    
+    if (scanf("%lld", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+
+    if (can_be_sum_of_nonzero_powers_of_two(n)) {
+        printf("Yes\n");
+    } else {
+        printf("No\n");
+    }
+
+    return EXIT_SUCCESS;
+}

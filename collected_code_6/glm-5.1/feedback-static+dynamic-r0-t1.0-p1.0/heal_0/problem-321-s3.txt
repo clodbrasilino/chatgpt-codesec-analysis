@@ -1,0 +1,73 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+
+char* find_demlo_number(int n) {
+    if (n <= 0) {
+        return NULL;
+    }
+
+    int size = n + 1;
+    char *result = (char *)malloc(size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (i < 9) {
+            result[i] = '1' + i;
+        } else {
+            result[i] = '9';
+        }
+    }
+    result[n] = '\0';
+
+    char *endptr = NULL;
+    errno = 0;
+    long long val = strtoll(result, &endptr, 10);
+
+    if (errno == ERANGE || *endptr != '\0') {
+        free(result);
+        return NULL;
+    }
+
+    long long square = val * val;
+    if (square < 0 || (val != 0 && square / val != val)) {
+        free(result);
+        return NULL;
+    }
+
+    long long sq_size = 0;
+    long long temp = square;
+    do {
+        sq_size++;
+        temp /= 10;
+    } while (temp > 0);
+
+    char *final_result = (char *)malloc(sq_size + 1);
+    if (final_result == NULL) {
+        free(result);
+        return NULL;
+    }
+
+    snprintf(final_result, sq_size + 1, "%lld", square);
+    free(result);
+
+    return final_result;
+}
+
+int main(void) {
+    int n = 5;
+    char *demlo = find_demlo_number(n);
+    if (demlo != NULL) {
+        printf("%s\n", demlo);
+        free(demlo);
+    } else {
+        printf("Error: Invalid input or resource allocation failure.\n");
+    }
+    return 0;
+}
+```

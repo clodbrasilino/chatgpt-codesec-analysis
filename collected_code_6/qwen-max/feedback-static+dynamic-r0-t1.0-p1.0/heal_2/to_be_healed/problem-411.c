@@ -1,49 +1,56 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <regex.h>
 #include <ctype.h>
+#include <regex.h>
  /* Possible weaknesses found:
-  *  test case 0 failed: expected 'AndroidTv', got NRI_tv
-  *  test case 2 failed: expected 'AppleWatch', got apple_watch
-  *  test case 1 failed: expected 'GooglePixel', got google_pixel
+  *  test case 2 failed: expected 'AppleWatch', got <no output>
+  *  test case 1 failed: expected 'GooglePixel', got <no output>
+  *  test case 0 failed: expected 'AndroidTv', got <no output>
   */
 
-char* snake_to_camel(const char* snake) {
-    regex_t regex;
-    regmatch_t pmatch[2];
-    int nmatch = 2;
-    const size_t len = strlen(snake);
-    char* camel = (char*)malloc(len + 1);
-    if (!camel) return NULL;
+char* snake_to_camel(const char *input) {
+    regex_t re;
+    regmatch_t match[2];
+    const char *p = input;
+    char *output, *q;
+    int len;
 
-    int rc = regcomp(&regex, "(_[a-z])", REG_EXTENDED | REG_NOSUB);
-    if (rc) {
-        free(camel);
+    if (regcomp(&re, "(_[a-z])", REG_EXTENDED | REG_NEWLINE) != 0) {
         return NULL;
     }
 
-    char* dest = camel;
-    for (const char* src = snake; *src; ) {
-        if (regexec(&regex, src, nmatch, pmatch, 0) == 0 && pmatch[0].rm_so == 0) {
-            *dest++ = toupper(src[1]);
-            src += 2;
+    len = strlen(input);
+    output = malloc(len + 1);
+    if (!output) {
+        return NULL;
+    }
+    q = output;
+
+    while (*p) {
+        if (regexec(&re, p, 2, match, 0) == 0 && match[1].rm_so == 0) {
+            *q++ = toupper(p[1]);
+            p += 2;  // Skip the underscore and the following character
         } else {
-            *dest++ = *src++;
+            *q++ = *p++;
         }
     }
-    *dest = '\0';
+    *q = '\0';
 
-    regfree(&regex);
-    return camel;
+    regfree(&re);
+    return output;
 }
 
 int main() {
-    const char* snake = "this_is_a_snake_case_string";
-    char* camel = snake_to_camel(snake);
-    if (camel) {
-        printf("%s\n", camel);
-        free(camel);
+    const char *input = "this_is_a_snake_case_string";
+    char *output = snake_to_camel(input);
+
+    if (output) {
+        printf("%s\n", output);
+        free(output);
+    } else {
+        fprintf(stderr, "Error converting string.\n");
     }
+
     return 0;
 }

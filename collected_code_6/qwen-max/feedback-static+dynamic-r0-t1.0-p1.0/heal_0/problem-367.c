@@ -1,48 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
 
 typedef struct TreeNode {
-    int value;
-    struct TreeNode *left, *right;
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
 } TreeNode;
 
-TreeNode* newNode(int value) {
-    TreeNode* node = (TreeNode*)malloc(sizeof(TreeNode));
-    node->value = value;
-    node->left = NULL;
-    node->right = NULL;
-    return node;
+TreeNode* createNode(int val) {
+    TreeNode *newNode = (TreeNode*)malloc(sizeof(TreeNode));
+    if (newNode == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    newNode->val = val;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
 }
 
-int height(TreeNode* node) {
-    if (node == NULL) return 0;
-    return 1 + (height(node->left) > height(node->right) ? height(node->left) : height(node->right));
+int checkBalance(TreeNode *node, bool *balanced) {
+    if (node == NULL) {
+        *balanced = true;
+        return 0;
+    }
+
+    bool leftBalanced = true;
+    int leftHeight = checkBalance(node->left, &leftBalanced);
+
+    bool rightBalanced = true;
+    int rightHeight = checkBalance(node->right, &rightBalanced);
+
+    if (!leftBalanced || !rightBalanced)
+        *balanced = false;
+    else if (abs(leftHeight - rightHeight) > 1)
+        *balanced = false;
+    else
+        *balanced = true;
+
+    return 1 + (leftHeight > rightHeight ? leftHeight : rightHeight);
 }
 
-int isBalanced(TreeNode* node) {
-    if (node == NULL) return 1;
-    int lh = height(node->left);
-    int rh = height(node->right);
-
-    if (abs(lh - rh) <= 1 && isBalanced(node->left) && isBalanced(node->right))
-        return 1;
-
-    return 0;
+bool isBalancedTree(TreeNode *root) {
+    bool balanced = true;
+    checkBalance(root, &balanced);
+    return balanced;
 }
 
 int main() {
-    TreeNode *root = newNode(1);
-    root->left = newNode(2);
-    root->right = newNode(3);
-    root->left->left = newNode(4);
-    root->left->right = newNode(5);
-    root->left->left->left = newNode(6);
+    TreeNode *root = createNode(1);
+    root->left = createNode(2);
+    root->right = createNode(2);
+    root->left->left = createNode(3);
+    root->left->right = createNode(3);
+    root->left->left->left = createNode(4);
+    root->left->left->right = createNode(4);
 
-    if (isBalanced(root)) {
-        printf("The tree is balanced\n");
-    } else {
-        printf("The tree is not balanced\n");
-    }
+    if (isBalancedTree(root))
+        printf("The tree is balanced.\n");
+    else
+        printf("The tree is not balanced.\n");
 
     return 0;
 }

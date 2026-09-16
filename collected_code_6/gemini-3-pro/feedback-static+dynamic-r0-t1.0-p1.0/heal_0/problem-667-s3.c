@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <ctype.h>
+
+int count_vowels(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int count = 0;
+    while (*str != '\0') {
+        char ch = tolower((unsigned char)*str);
+        if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u') {
+            count++;
+        }
+        str++;
+    }
+    return count;
+}
+
+int main(void) {
+    const char *test_string = "Hello, World!";
+    int vowels = count_vowels(test_string);
+    printf("Number of vowels: %d\n", vowels);
+    return 0;
+}

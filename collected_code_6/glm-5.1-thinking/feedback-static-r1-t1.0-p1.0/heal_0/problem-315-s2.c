@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stddef.h>
+
+size_t find_first_max_even_word_len(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    size_t max_len = 0;
+    size_t current_len = 0;
+
+    for (size_t i = 0; ; i++) {
+        unsigned char c = str[i];
+
+        if (c == '\0') {
+            if (current_len > 0 && current_len % 2 == 0 && current_len > max_len) {
+                max_len = current_len;
+            }
+            break;
+        }
+
+        if (isspace(c)) {
+            if (current_len > 0 && current_len % 2 == 0 && current_len > max_len) {
+                max_len = current_len;
+            }
+            current_len = 0;
+        } else {
+            current_len++;
+        }
+    }
+
+    return max_len;
+}
+
+int main(void) {
+    const char *text1 = "This is a test string containing several words";
+    const char *text2 = "hello world";
+    const char *text3 = NULL;
+    
+    size_t len1 = find_first_max_even_word_len(text1);
+    size_t len2 = find_first_max_even_word_len(text2);
+    size_t len3 = find_first_max_even_word_len(text3);
+    
+    printf("%zu\n", len1);
+    printf("%zu\n", len2);
+    printf("%zu\n", len3);
+    
+    return 0;
+}

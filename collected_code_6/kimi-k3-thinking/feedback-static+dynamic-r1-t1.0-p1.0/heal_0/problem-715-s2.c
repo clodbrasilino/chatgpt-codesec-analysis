@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdint.h>
+#include <ctype.h>
+
+typedef struct {
+    int *data;
+    size_t size;
+    size_t capacity;
+} IntTuple;
+
+static int tuple_init(IntTuple *tuple, size_t initial_capacity)
+{
+    if (tuple == NULL) {
+        return -1;
+    }
+    if (initial_capacity == 0) {
+        initial_capacity = 1;
+    }
+    tuple->data = malloc(initial_capacity * sizeof(*tuple->data));
+    if (tuple->data == NULL) {
+        return -1;
+    }
+    tuple->size = 0;
+    tuple->capacity = initial_capacity;
+    return 0;
+}
+
+static int tuple_push(IntTuple *tuple, int value)
+{
+    if (tuple == NULL) {
+        return -1;
+    }
+    if (tuple->size == tuple->capacity) {
+        if (tuple->capacity > SIZE_MAX / (2 * sizeof(*tuple->data))) {
+            return -1;
+        }
+        size_t new_capacity = tuple->capacity * 2;
+        int *new_data = realloc(tuple->data, new_capacity * sizeof(*new_data));
+        if (new_data == NULL) {
+            return -1;
+        }
+        tuple->data = new_data;
+        tuple->capacity = new_capacity;
+    }
+    tuple->data[tuple->size] = value;
+    tuple->size++;
+    return 0;
+}
+
+static void tuple_free(IntTuple *tuple)
+{
+    if (tuple != NULL) {
+        free(tuple->data);
+        tuple->data = NULL;
+        tuple->size = 0;
+        tuple->capacity = 0;
+    }
+}
+
+int string_to_tuple(const char *str, IntTuple *tuple)
+{
+    if (str == NULL || tuple == NULL) {
+        return -1;
+    }
+
+    if (tuple_init(tuple, 4) != 0) {
+        return -1;
+    }
+
+    const char *p = str;
+    while (*p != '\0') {
+        while (*p == ' ' || *p == '\t' || *p == '\n' || *p == ',' ||
+               *p == '(' || *p == ')') {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
+
+        errno = 0;
+        char *end = NULL;
+        long value = strtol(p, &end, 10);
+        if (end == p) {
+            tuple_free(tuple);
+            return -1;
+        }
+        if (errno == ERANGE || value > INT_MAX || value < INT_MIN) {
+            tuple_free(tuple);
+            return -1;
+        }
+        if (tuple_push(tuple, (int)value) != 0) {
+            tuple_free(tuple);
+            return -1;
+        }
+        p = end;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const char *input = "(1, 2, 3, 4, 5)";
+    IntTuple tuple;
+
+    if (string_to_tuple(input, &tuple) != 0) {
+        fprintf(stderr, "Error: failed to convert string to tuple\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Tuple: (");
+    for (size_t i = 0; i < tuple.size; i++) {
+        printf("%d", tuple.data[i]);
+        if (i + 1 < tuple.size) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    tuple_free(&tuple);
+    return EXIT_SUCCESS;
+}

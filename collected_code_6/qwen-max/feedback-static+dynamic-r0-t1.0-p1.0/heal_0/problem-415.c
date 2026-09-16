@@ -1,38 +1,39 @@
 #include <stdio.h>
 #include <limits.h>
 
-void find_pair_with_highest_product(int arr[], int n, int *x, int *y) {
+void findMaxProductPair(int arr[], int n, int *max1, int *max2) {
     if (n < 2) return;
-    int max1 = INT_MIN, max2 = INT_MIN;
-    int min1 = INT_MAX, min2 = INT_MAX;
-    for (int i = 0; i < n; i++) {
-        if (arr[i] > max1) {
-            max2 = max1;
-            max1 = arr[i];
-        } else if (arr[i] > max2) {
-            max2 = arr[i];
-        }
-        if (arr[i] < min1) {
-            min2 = min1;
-            min1 = arr[i];
-        } else if (arr[i] < min2) {
-            min2 = arr[i];
-        }
-    }
-    if (max1 * max2 > min1 * min2) {
-        *x = max1;
-        *y = max2;
+
+    if (arr[0] > arr[1]) {
+        *max1 = arr[0];
+        *max2 = arr[1];
     } else {
-        *x = min1;
-        *y = min2;
+        *max1 = arr[1];
+        *max2 = arr[0];
+    }
+
+    for (int i = 2; i < n; i++) {
+        if (arr[i] > *max1) {
+            *max2 = *max1;
+            *max1 = arr[i];
+        } else if (arr[i] > *max2) {
+            *max2 = arr[i];
+        }
     }
 }
 
 int main() {
     int arr[] = {1, 4, 3, 6, 7, 0};
     int n = sizeof(arr) / sizeof(arr[0]);
-    int x, y;
-    find_pair_with_highest_product(arr, n, &x, &y);
-    printf("The pair with the highest product is: (%d, %d)\n", x, y);
+    int max1, max2;
+
+    findMaxProductPair(arr, n, &max1, &max2);
+
+    if (max1 != INT_MIN && max2 != INT_MIN) {
+        printf("Pair with highest product: %d, %d\n", max1, max2);
+    } else {
+        printf("Array does not have enough elements.\n");
+    }
+
     return 0;
 }

@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool matches_pattern(const char *str) {
+    if (str == NULL) {
+        return false;
+    }
+
+    size_t len = strlen(str);
+
+    if (len < 1 || str[0] != 'a') {
+        return false;
+    }
+
+    for (size_t i = 1; i < len; i++) {
+        if (str[i] != 'b') {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    const char *test_cases[] = {
+        "a",
+        "ab",
+        "abb",
+        "abbb",
+        "b",
+        "ba",
+        "abc",
+        "aab",
+        "",
+        NULL
+    };
+
+    size_t num_cases = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (size_t i = 0; i < num_cases; i++) {
+        if (test_cases[i] == NULL) {
+            continue;
+        }
+        
+        bool result = matches_pattern(test_cases[i]);
+        
+        if (result) {
+            printf("\"%s\" matches the pattern.\n", test_cases[i]);
+        } else {
+            printf("\"%s\" does not match the pattern.\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

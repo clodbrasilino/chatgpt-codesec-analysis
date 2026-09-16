@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool diff_first_even_odd(const int *arr, size_t n, int *result)
+{
+    bool found_even = false;
+    bool found_odd = false;
+    int first_even = 0;
+    int first_odd = 0;
+    size_t i;
+
+    if (arr == NULL || result == NULL || n == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < n; i++) {
+        if ((arr[i] % 2) == 0) {
+            if (!found_even) {
+                first_even = arr[i];
+                found_even = true;
+            }
+        } else {
+            if (!found_odd) {
+                first_odd = arr[i];
+                found_odd = true;
+            }
+        }
+        if (found_even && found_odd) {
+            break;
+        }
+    }
+
+    if (!found_even || !found_odd) {
+        return false;
+    }
+
+    if ((first_odd > 0 && first_even < (INT_MIN + first_odd)) ||
+        (first_odd < 0 && first_even > (INT_MAX + first_odd))) {
+        return false;
+    }
+
+    *result = first_even - first_odd;
+    return true;
+}
+
+int main(void)
+{
+    int numbers[] = {1, 3, 5, 7, 4, 1, 6, 8};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int diff = 0;
+
+    if (diff_first_even_odd(numbers, count, &diff)) {
+        if (printf("Difference: %d\n", diff) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Could not compute difference.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

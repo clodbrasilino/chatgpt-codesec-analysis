@@ -1,33 +1,32 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <regex.h>
 #include <string.h>
+#include <regex.h>
 
-void remove_non_alphanumeric(char *str) {
+void sanitize_string(char *str) {
     regex_t regex;
     regmatch_t pmatch[1];
-    const char *pattern = "[^a-zA-Z0-9]";
+    char *ptr = str;
 
-    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+    if (regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED | REG_NOSUB) != 0) {
         return;
     }
 
-    while (regexec(&regex, str, 1, pmatch, 0) == 0) {
-        memmove(str + pmatch[0].rm_so, str + pmatch[0].rm_eo, strlen(str + pmatch[0].rm_eo) + 1);
+    while (ptr && *ptr) {
+        if (regexec(&regex, ptr, 1, pmatch, 0) == 0) {
+            memmove(ptr, ptr + pmatch[0].rm_eo - pmatch[0].rm_so, strlen(ptr + pmatch[0].rm_eo - pmatch[0].rm_so) + 1);
+        } else {
+            ptr++;
+        }
     }
 
     regfree(&regex);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        return EXIT_FAILURE;
-    }
-
-    char *input = argv[1];
-    remove_non_alphanumeric(input);
-
-    printf("%s\n", input);
-
-    return EXIT_SUCCESS;
+int main() {
+    char str[] = "Hello, World! 123";
+    printf("Original: %s\n", str);
+    sanitize_string(str);
+    printf("Sanitized: %s\n", str);
+    return 0;
 }

@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+double cuboid_surface_area(double length, double width, double height) {
+    return 2.0 * (length * width + width * height + height * length);
+}
+
+int main(void) {
+    double length, width, height;
+    
+    printf("Enter length, width, and height of cuboid: ");
+    if (scanf("%lf %lf %lf", &length, &width, &height) != 3) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (length <= 0 || width <= 0 || height <= 0) {
+        printf("Dimensions must be positive\n");
+        return 1;
+    }
+    
+    printf("Surface area: %.2f\n", cuboid_surface_area(length, width, height));
+    
+    return 0;
+}

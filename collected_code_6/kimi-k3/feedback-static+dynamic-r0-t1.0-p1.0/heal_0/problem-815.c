@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void sort_array(int arr[], int n) {
+    int count0 = 0, count1 = 0, count2 = 0;
+    int i;
+
+    for (i = 0; i < n; i++) {
+        if (arr[i] == 0)
+            count0++;
+        else if (arr[i] == 1)
+            count1++;
+        else if (arr[i] == 2)
+            count2++;
+    }
+
+    i = 0;
+    while (count0 > 0) {
+        arr[i++] = 0;
+        count0--;
+    }
+    while (count1 > 0) {
+        arr[i++] = 1;
+        count1--;
+    }
+    while (count2 > 0) {
+        arr[i++] = 2;
+        count2--;
+    }
+}
+
+int main(void) {
+    int n;
+    int i;
+    int *arr;
+
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    arr = malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+        if (arr[i] < 0 || arr[i] > 2) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    sort_array(arr, n);
+
+    for (i = 0; i < n; i++) {
+        printf("%d", arr[i]);
+        if (i < n - 1) {
+            printf(" ");
+        }
+    }
+    printf("\n");
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,175 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+enum { MAP_SIZE = 1024 };
+
+typedef struct ValueNode {
+    int value;
+    struct ValueNode *next;
+} ValueNode;
+
+typedef struct MapEntry {
+    int key;
+    ValueNode *values;
+    struct MapEntry *next;
+} MapEntry;
+
+typedef struct {
+    MapEntry *buckets[MAP_SIZE];
+} Map;
+
+static unsigned int hash(int key) {
+    return (unsigned int)key % MAP_SIZE;
+}
+
+Map *create_map(void) {
+    Map *map = malloc(sizeof(Map));
+    if (!map) {
+        return NULL;
+    }
+    for (int i = 0; i < MAP_SIZE; i++) {
+        map->buckets[i] = NULL;
+    }
+    return map;
+}
+
+static ValueNode *create_value_node(int value) {
+    ValueNode *node = malloc(sizeof(ValueNode));
+    if (!node) {
+        return NULL;
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+static MapEntry *create_map_entry(int key, int value) {
+    MapEntry *entry = malloc(sizeof(MapEntry));
+    if (!entry) {
+        return NULL;
+    }
+    entry->key = key;
+    entry->values = create_value_node(value);
+    if (!entry->values) {
+        free(entry);
+        return NULL;
+    }
+    entry->next = NULL;
+    return entry;
+}
+
+static int add_to_map(Map *map, int key, int value) {
+    if (!map) {
+        return -1;
+    }
+    unsigned int idx = hash(key);
+    MapEntry *entry = map->buckets[idx];
+    while (entry) {
+        if (entry->key == key) {
+            ValueNode *vnode = create_value_node(value);
+            if (!vnode) {
+                return -1;
+            }
+            vnode->next = entry->values;
+            entry->values = vnode;
+            return 0;
+        }
+        entry = entry->next;
+    }
+    MapEntry *new_entry = create_map_entry(key, value);
+    if (!new_entry) {
+        return -1;
+    }
+    new_entry->next = map->buckets[idx];
+    map->buckets[idx] = new_entry;
+    return 0;
+}
+
+static void free_value_list(ValueNode *head) {
+    ValueNode *curr = head;
+    while (curr) {
+        ValueNode *next = curr->next;
+        free(curr);
+        curr = next;
+    }
+}
+
+void free_map(Map *map) {
+    if (!map) {
+        return;
+    }
+    for (int i = 0; i < MAP_SIZE; i++) {
+        MapEntry *entry = map->buckets[i];
+        while (entry) {
+            MapEntry *next = entry->next;
+            free_value_list(entry->values);
+            free(entry);
+            entry = next;
+        }
+    }
+    free(map);
+}
+
+typedef struct {
+    int key;
+    int value;
+} KeyValuePair;
+
+Map *group_key_value_pairs(const KeyValuePair *pairs, size_t count) {
+    if (!pairs) {
+        return NULL;
+    }
+    Map *map = create_map();
+    if (!map) {
+        return NULL;
+    }
+    for (size_t i = 0; i < count; i++) {
+        if (add_to_map(map, pairs[i].key, pairs[i].value) != 0) {
+            free_map(map);
+            return NULL;
+        }
+    }
+    return map;
+}
+
+static void print_map(const Map *map) {
+    if (!map) {
+        return;
+    }
+    for (int i = 0; i < MAP_SIZE; i++) {
+        MapEntry *entry = map->buckets[i];
+        while (entry) {
+            printf("Key: %d, Values: [", entry->key);
+            ValueNode *vnode = entry->values;
+            while (vnode) {
+                printf("%d", vnode->value);
+                if (vnode->next) {
+                    printf(", ");
+                }
+                vnode = vnode->next;
+            }
+            printf("]\n");
+            entry = entry->next;
+        }
+    }
+}
+
+int main(void) {
+    KeyValuePair pairs[] = {
+        {1, 10}, {2, 20}, {1, 15}, {3, 30}, {2, 25}, {3, 35}, {3, 40}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+    
+    Map *map = group_key_value_pairs(pairs, count);
+    if (!map) {
+        fprintf(stderr, "Failed to create map\n");
+        return 1;
+    }
+    
+    print_map(map);
+    free_map(map);
+    
+    return 0;
+}
+```

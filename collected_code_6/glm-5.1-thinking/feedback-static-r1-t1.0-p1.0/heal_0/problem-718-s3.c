@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+Node *create_alternate_list(Node *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node *new_head = NULL;
+    Node *new_tail = NULL;
+    Node *current = head;
+    int take = 1;
+
+    while (current != NULL) {
+        if (take) {
+            Node *new_node = create_node(current->data);
+            if (new_node == NULL) {
+                while (new_head != NULL) {
+                    Node *tmp = new_head;
+                    new_head = new_head->next;
+                    free(tmp);
+                }
+                return NULL;
+            }
+            if (new_head == NULL) {
+                new_head = new_node;
+                new_tail = new_node;
+            } else {
+                new_tail->next = new_node;
+                new_tail = new_node;
+            }
+        }
+        take = !take;
+        current = current->next;
+    }
+
+    return new_head;
+}
+
+Node *append(Node *head, int data) {
+    Node *node = create_node(data);
+    if (node == NULL) {
+        Node *cur = head;
+        while (cur != NULL) {
+            Node *tmp = cur;
+            cur = cur->next;
+            free(tmp);
+        }
+        return NULL;
+    }
+    if (head == NULL) {
+        return node;
+    }
+    Node *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return head;
+}
+
+void print_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *tmp = current;
+        current = current->next;
+        free(tmp);
+    }
+}
+
+int main(void) {
+    Node *list = NULL;
+    int values[] = {1, 2, 3, 4, 5, 6, 7, 8};
+    size_t count = sizeof(values) / sizeof(values[0]);
+
+    for (size_t i = 0; i < count; i++) {
+        list = append(list, values[i]);
+        if (list == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return 1;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(list);
+
+    Node *alt_list = create_alternate_list(list);
+    if (alt_list == NULL && list != NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_list(list);
+        return 1;
+    }
+
+    printf("Alternate list: ");
+    print_list(alt_list);
+
+    free_list(list);
+    free_list(alt_list);
+
+    return 0;
+}

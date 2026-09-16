@@ -3,94 +3,79 @@
 #include <stdlib.h>
 
 typedef struct Node {
-    int data;
+    int value;
     struct Node* next;
 } Node;
 
-Node* create_node(int data) {
+Node* create_node(int value) {
     Node* new_node = (Node*)malloc(sizeof(Node));
     if (new_node == NULL) {
         return NULL;
     }
-    new_node->data = data;
+    new_node->value = value;
     new_node->next = NULL;
     return new_node;
 }
 
-void append_node(Node** head, int data) {
-    Node* new_node = create_node(data);
-    if (*head == NULL) {
-        *head = new_node;
-    } else {
-        Node* temp = *head;
-        while (temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = new_node;
+void free_list(Node* head) {
+    Node* current = head;
+    Node* next;
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
     }
 }
 
-Node** split_list(Node* head, int length, int* first_length, int* second_length) {
+Node* split_list(Node* head, int length) {
     if (head == NULL || length <= 0) {
-        *first_length = 0;
-        *second_length = 0;
-        return (Node*[]){NULL, NULL};
+        return NULL;
     }
 
+    Node* first_part_head = head;
+    Node* second_part_head = NULL;
     Node* current = head;
-    for (int i = 1; i < length && current != NULL; ++i) {
+    Node* previous = NULL;
+
+    int i;
+    for (i = 1; i < length && current != NULL; i++) {
+        previous = current;
         current = current->next;
     }
 
     if (current == NULL) {
-        *first_length = 0;
-        *second_length = 0;
-        return (Node*[]){NULL, NULL};
+        return second_part_head;
     }
 
-    *first_length = length - 1;
-    *second_length = 0;
-
-    Node* list1 = head;
-    Node* list2 = current->next;
-    current->next = NULL;
-
-    Node* temp = list2;
-    while (temp != NULL) {
-        ++*second_length;
-        temp = temp->next;
+    second_part_head = current;
+    if (previous != NULL) {
+        previous->next = NULL;
     }
 
-    return (Node*[]){list1, list2};
+    return second_part_head;
 }
 
 int main() {
-    Node* head = NULL;
-    append_node(&head, 10);
-    append_node(&head, 20);
-    append_node(&head, 30);
-    append_node(&head, 40);
-    append_node(&head, 50);
+    Node* head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+    head->next->next->next = create_node(4);
 
-    int first_length = 0, second_length = 0;
-    Node** result = split_list(head, 3, &first_length, &second_length);
+    int split_length = 2;
+    Node* second_part_head = split_list(head, split_length);
 
-    Node* list1 = result[0];
-    Node* list2 = result[1];
-
-    printf("First list: ");
-    for (int i = 0; i < first_length; ++i) {
-        printf("%d -> ", list1->data);
-        list1 = list1->next;
+    for (Node* current = head; current != NULL; current = current->next) {
+        printf("%d ", current->value);
     }
     printf("\n");
 
-    printf("Second list: ");
-    for (int i = 0; i < second_length; ++i) {
-        printf("%d -> ", list2->data);
-        list2 = list2->next;
+    for (Node* current = second_part_head; current != NULL; current = current->next) {
+        printf("%d ", current->value);
     }
     printf("\n");
+
+    free_list(head);
+    free_list(second_part_head);
 
     return 0;
 }

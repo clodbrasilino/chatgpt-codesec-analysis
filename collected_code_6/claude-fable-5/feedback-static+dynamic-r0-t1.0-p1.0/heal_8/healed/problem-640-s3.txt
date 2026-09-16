@@ -1,0 +1,105 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *tests[] = {
+        "python(java)",
+        "string(remove)",
+        "alpha(beta(gamma)delta)",
+        "Hello (remove me) World",
+        "abc(def(ghi)jkl)mno",
+        "no parentheses here"
+    };
+    const char *expected[] = {
+        "python",
+        "string",
+        "alpha",
+        "Hello  World",
+        "abcmno",
+        "no parentheses here"
+    };
+    size_t num_tests;
+    size_t i;
+    int status;
+
+    status = EXIT_SUCCESS;
+    num_tests = sizeof(tests) / sizeof(tests[0]);
+
+    for (i = 0; i < num_tests; i++) {
+        char *output = remove_parentheses(tests[i]);
+        if (output == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            return EXIT_FAILURE;
+        }
+        if (strcmp(output, expected[i]) != 0) {
+            fprintf(stderr, "test case %zu failed: expected '%s', got '%s'\n",
+                    i, expected[i], output);
+            status = EXIT_FAILURE;
+        }
+        if (printf("%s\n", output) < 0) {
+            free(output);
+            return EXIT_FAILURE;
+        }
+        free(output);
+        output = NULL;
+    }
+
+    return status;
+}
+```
+
+**Analysis notes:**
+
+The garbage output described in the original comments (`got 4�`, `got �3�`) is the classic signature of reading **uninitialized or non-null-terminated heap memory** — almost certainly from an earlier version of `remove_parentheses` that used `malloc` without terminating the result string, or that returned a pointer to a local buffer.
+
+The version above is safe because:
+
+1. **`calloc(len + 1, sizeof(char))`** — the buffer is zero-initialized and includes room for the terminator, so even a missed `result[j] = '\0'` couldn't produce garbage.
+2. **Explicit `result[j] = '\0';`** — defensive redundancy alongside `calloc`.
+3. **`NULL` input guard** — prevents `strlen(NULL)` undefined behavior.
+4. **Allocation failure check** — `calloc` result is verified before use, and `main` handles the `NULL` return path.
+5. **No buffer overflow** — `j` can never exceed `i`, so writes stay within `len + 1` bytes.
+6. **No memory leaks** — `output` is freed on every path, including the `printf` failure path.
+7. **Balanced depth tracking** — unmatched `)` characters are tolerated (`depth > 0` check) rather than driving `depth` negative and corrupting the filtering logic.
+
+All six test cases, including nested parentheses (`alpha(beta(gamma)delta)`) and interleaved text (`abc(def(ghi)jkl)mno`), pass with this implementation.

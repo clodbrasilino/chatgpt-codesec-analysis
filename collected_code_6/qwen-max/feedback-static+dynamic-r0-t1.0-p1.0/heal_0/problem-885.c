@@ -1,35 +1,37 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
-bool areIsomorphic(char* s1, char* s2) {
-    if (strlen(s1) != strlen(s2)) {
-        return false;
+bool areIsomorphic(char *s1, char *s2) {
+    int m = 128;
+    int map_s1[128] = {0};
+    int map_s2[128] = {0};
+
+    if (strlen(s1) != strlen(s2)) return false;
+
+    for (int i = 0; s1[i] && s2[i]; i++) {
+        if (map_s1[s1[i]] != map_s2[s2[i]]) return false;
+        map_s1[s1[i]] = i + 1;
+        map_s2[s2[i]] = i + 1;
     }
 
-    int len = strlen(s1);
-    int map1[256] = {0}, map2[256] = {0};
-
-    for (int i = 0; i < len; i++) {
-        if (map1[(unsigned char)s1[i]] != map2[(unsigned char)s2[i]]) {
-            return false;
-        }
-        map1[(unsigned char)s1[i]] = i + 1;
-        map2[(unsigned char)s2[i]] = i + 1;
-    }
     return true;
 }
 
 int main() {
-    char *s1 = "paper";
-    char *s2 = "title";
+    char str1[] = "egg";
+    char str2[] = "add";
+    if (areIsomorphic(str1, str2))
+        printf("Yes\n");
+    else
+        printf("No\n");
 
-    if (areIsomorphic(s1, s2)) {
-        printf("The strings are isomorphic.\n");
-    } else {
-        printf("The strings are not isomorphic.\n");
-    }
+    char str3[] = "foo";
+    char str4[] = "bar";
+    if (areIsomorphic(str3, str4))
+        printf("Yes\n");
+    else
+        printf("No\n");
 
     return 0;
 }

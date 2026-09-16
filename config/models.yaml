@@ -74,23 +74,34 @@ models:
     base_url: https://api.deepseek.com
     reasoning: false
   - id: deepseek-v4-pro
-    provider: deepseek
+    # 2026-09-10: routed via DashScope (Bailian) at user request — single
+    # aliyun account for all China-hosted models. Verified by probe: accepts
+    # temperature/top_p on the base path; enable_thinking toggles reasoning
+    # (reasoning_content returned). DashScope pricing ¥12/M in + ¥24/M out
+    # flat (vs first-party off-peak ~¥4.7/¥14) — chosen for account
+    # simplicity, not price. NOTE: all deepseek cells completed before
+    # 2026-09-10 used the first-party API (api.deepseek.com).
+    provider: dashscope
     model_id: deepseek-v4-pro
-    api_key_env: DEEPSEEK_API_KEY
-    base_url: https://api.deepseek.com
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     reasoning: false
     extra_body:
-      thinking:
-        type: disabled
+      enable_thinking: false
   - id: deepseek-v4-pro-thinking
-    provider: deepseek
+    provider: dashscope
     model_id: deepseek-v4-pro
-    api_key_env: DEEPSEEK_API_KEY
-    base_url: https://api.deepseek.com
+    api_key_env: DASHSCOPE_API_KEY
+    base_url: https://dashscope.aliyuncs.com/compatible-mode/v1
     reasoning: true
-    # 16k so long reasoning chains don't exhaust the budget before content
+    extra_body:
+      enable_thinking: true
+    # 32k so long reasoning chains don't exhaust the budget before content
     # is emitted (empty-content responses raise + retry client-side).
-    max_tokens: 16384
+    # 2026-09-09: raised 16k -> 32k; task 510's reasoning chain exceeded 16k
+    # on all 15 attempts (finish_reason=length, empty content). The cap is
+    # not a target: samples finishing below 16k are unaffected.
+    max_tokens: 32768
 
   # ---- Qwen (DashScope compatible-mode) ----
   - id: qwen-max

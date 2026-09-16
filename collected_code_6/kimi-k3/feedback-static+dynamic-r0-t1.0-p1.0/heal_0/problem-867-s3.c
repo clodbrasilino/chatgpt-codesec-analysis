@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int add_min_to_make_even(const int *arr, size_t size, int *result) {
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (size == 0) {
+        *result = 0;
+        return 0;
+    }
+    
+    long long sum = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] > 0 && sum > LLONG_MAX - arr[i]) {
+            return -1;
+        }
+        if (arr[i] < 0 && sum < LLONG_MIN - arr[i]) {
+            return -1;
+        }
+        sum += arr[i];
+    }
+    
+    *result = (sum % 2 == 0) ? 0 : 1;
+    return 0;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {2, 4, 6, 8};
+    int arr3[] = {1, 3, 5};
+    int result = 0;
+    
+    if (add_min_to_make_even(arr1, sizeof(arr1) / sizeof(arr1[0]), &result) == 0) {
+        printf("Array 1 - Minimum number to add: %d\n", result);
+    } else {
+        fprintf(stderr, "Error processing array 1\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (add_min_to_make_even(arr2, sizeof(arr2) / sizeof(arr2[0]), &result) == 0) {
+        printf("Array 2 - Minimum number to add: %d\n", result);
+    } else {
+        fprintf(stderr, "Error processing array 2\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (add_min_to_make_even(arr3, sizeof(arr3) / sizeof(arr3[0]), &result) == 0) {
+        printf("Array 3 - Minimum number to add: %d\n", result);
+    } else {
+        fprintf(stderr, "Error processing array 3\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

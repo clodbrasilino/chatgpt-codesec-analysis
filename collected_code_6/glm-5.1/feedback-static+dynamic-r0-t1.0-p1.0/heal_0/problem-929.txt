@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+} Tuple;
+
+size_t count_repeated_items(const Tuple *t) {
+    if (t == NULL || t->items == NULL || t->count == 0) {
+        return 0;
+    }
+
+    size_t repeated = 0;
+    int *seen = (int *)malloc(t->count * sizeof(int));
+    if (seen == NULL) {
+        return 0;
+    }
+
+    for (size_t i = 0; i < t->count; i++) {
+        seen[i] = 0;
+    }
+
+    for (size_t i = 0; i < t->count; i++) {
+        if (seen[i] == 1) {
+            continue;
+        }
+
+        size_t frequency = 1;
+        seen[i] = 1;
+
+        for (size_t j = i + 1; j < t->count; j++) {
+            if (t->items[i] == t->items[j]) {
+                frequency++;
+                seen[j] = 1;
+            }
+        }
+
+        if (frequency > 1) {
+            repeated += frequency;
+        }
+    }
+
+    free(seen);
+    return repeated;
+}
+
+int main(void) {
+    int data[] = {1, 2, 3, 2, 4, 1, 1, 5, 2};
+    Tuple t;
+    t.items = data;
+    t.count = sizeof(data) / sizeof(data[0]);
+
+    size_t result = count_repeated_items(&t);
+    printf("%zu\n", result);
+
+    return 0;
+}
+```

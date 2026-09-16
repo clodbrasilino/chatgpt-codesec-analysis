@@ -1,0 +1,24 @@
+#include <stdio.h>
+
+int find_first_odd(int *numbers, int length) {
+    for (int i = 0; i < length; ++i) {
+        if (numbers[i] % 2 != 0) {
+            return numbers[i];
+        }
+    }
+    return -1; // Assuming -1 as indicator that there is no odd number in the list
+}
+
+int main() {
+    int numbers[] = {2, 4, 6, 8, 3, 5, 7};
+    int length = sizeof(numbers) / sizeof(numbers[0]);
+    int firstOdd = find_first_odd(numbers, length);
+    
+    if (firstOdd != -1) {
+        printf("The first odd number is: %d\n", firstOdd);
+    } else {
+        printf("There are no odd numbers in the list.\n");
+    }
+    
+    return 0;
+}

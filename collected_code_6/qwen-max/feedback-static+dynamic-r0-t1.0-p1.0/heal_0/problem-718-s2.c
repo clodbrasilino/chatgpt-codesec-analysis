@@ -1,70 +1,70 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node {
+typedef struct Node {
     int data;
     struct Node* next;
-};
+} Node;
 
-struct Node* createNode(int data) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    if (newNode == NULL) {
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (new_node == NULL) {
         return NULL;
     }
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
 }
 
-void insertAtEnd(struct Node** head, int data) {
-    struct Node* newNode = createNode(data);
-    if (*head == NULL) {
-        *head = newNode;
-        return;
-    }
-    struct Node* temp = *head;
-    while (temp->next != NULL) {
-        temp = temp->next;
-    }
-    temp->next = newNode;
-}
-
-struct Node* alternateElements(struct Node* head) {
-    struct Node* newHead = NULL;
-    int isEven = 1;
+void free_list(Node* head) {
+    Node* temp;
     while (head != NULL) {
-        if (isEven % 2 == 1) {
-            insertAtEnd(&newHead, head->data);
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+Node* alternate_elements(Node* head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    Node* new_head = NULL;
+    Node* new_tail = NULL;
+    Node* current = head;
+
+    while (current != NULL && current->next != NULL) {
+        if (new_head == NULL) {
+            new_head = create_node(current->data);
+            new_tail = new_head;
+        } else {
+            new_tail->next = create_node(current->data);
+            new_tail = new_tail->next;
         }
-        head = head->next;
-        isEven++;
+        current = current->next->next;
     }
-    return newHead;
-}
 
-void printList(struct Node* head) {
-    while (head != NULL) {
-        printf("%d -> ", head->data);
-        head = head->next;
-    }
-    printf("NULL\n");
+    return new_head;
 }
 
 int main() {
-    struct Node* list = NULL;
-    insertAtEnd(&list, 1);
-    insertAtEnd(&list, 2);
-    insertAtEnd(&list, 3);
-    insertAtEnd(&list, 4);
-    insertAtEnd(&list, 5);
+    Node* head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+    head->next->next->next = create_node(4);
+    head->next->next->next->next = create_node(5);
 
-    printf("Original List: ");
-    printList(list);
+    Node* alternate = alternate_elements(head);
 
-    struct Node* alternateList = alternateElements(list);
+    Node* temp = alternate;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
 
-    printf("Alternate Elements: ");
-    printList(alternateList);
+    free_list(head);
+    free_list(alternate);
 
     return 0;
 }

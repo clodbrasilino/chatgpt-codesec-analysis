@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int count_bidirectional_pairs(const Tuple *tuples, size_t n)
+{
+    int count = 0;
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL || n == 0) {
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (tuples[i].first == tuples[j].second &&
+                tuples[i].second == tuples[j].first) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    size_t n = 5;
+    Tuple *tuples = malloc(n * sizeof(Tuple));
+    int result;
+
+    if (tuples == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    tuples[0].first = 5;  tuples[0].second = 6;
+    tuples[1].first = 1;  tuples[1].second = 2;
+    tuples[2].first = 6;  tuples[2].second = 5;
+    tuples[3].first = 9;  tuples[3].second = 1;
+    tuples[4].first = 2;  tuples[4].second = 1;
+
+    result = count_bidirectional_pairs(tuples, n);
+
+    if (printf("Bidirectional pairs: %d\n", result) < 0) {
+        free(tuples);
+        return EXIT_FAILURE;
+    }
+
+    free(tuples);
+    return EXIT_SUCCESS;
+}

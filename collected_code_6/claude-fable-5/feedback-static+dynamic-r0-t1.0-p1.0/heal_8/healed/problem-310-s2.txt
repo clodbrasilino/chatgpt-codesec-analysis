@@ -1,0 +1,108 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *items;
+    size_t count;
+} Tuple;
+
+static Tuple *tuple_create(size_t capacity)
+{
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    t->items = malloc(capacity > 0 ? capacity : 1);
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    t->count = 0;
+    return t;
+}
+
+static void tuple_destroy(Tuple *t)
+{
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+static Tuple *string_to_tuple(const char *str)
+{
+    if (str == NULL) {
+        return NULL;
+    }
+
+    size_t len = strlen(str);
+
+    Tuple *t = tuple_create(len);
+    if (t == NULL) {
+        return NULL;
+    }
+
+    if (len > 0) {
+        memcpy(t->items, str, len);
+    }
+    t->count = len;
+
+    return t;
+}
+
+static void tuple_print(const Tuple *t)
+{
+    if (t == NULL) {
+        printf("(invalid)\n");
+        fflush(stdout);
+        return;
+    }
+    printf("[");
+    for (size_t i = 0; i < t->count; i++) {
+        printf("'%c'", t->items[i]);
+        if (i + 1 < t->count) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    fflush(stdout);
+}
+
+int main(void)
+{
+    char buffer[4096];
+
+    setvbuf(stdout, NULL, _IONBF, 0);
+
+    while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        buffer[strcspn(buffer, "\r\n")] = '\0';
+
+        if (buffer[0] == '\0') {
+            continue;
+        }
+
+        Tuple *t = string_to_tuple(buffer);
+        if (t == NULL) {
+            fprintf(stderr, "Failed to convert string to tuple\n");
+            continue;
+        }
+
+        tuple_print(t);
+
+        tuple_destroy(t);
+    }
+
+    fflush(stdout);
+    return EXIT_SUCCESS;
+}
+```
+
+The key fixes addressing the identified weaknesses:
+
+1. **`string_to_tuple` no longer returns `NULL` for empty strings** — previously a zero-length input caused a `NULL` return, which `main` treated as a fatal error and exited with `EXIT_FAILURE` before producing any output. This is the most likely cause of the "`<no output>`" failures if any preceding line in the input stream was empty (e.g., stray blank line or CRLF handling edge case): the program aborted the entire loop before processing the real test lines.
+
+2. **`main` no longer terminates on a conversion failure** — instead of `return EXIT_FAILURE`, it now logs to `stderr` and continues, so one bad line can't suppress output for all subsequent test cases.
+
+3. **Unbuffered stdout via `setvbuf`** — guards against output being lost in a buffered pipe if the process is terminated before a flush, another common cause of harnesses seeing no output.

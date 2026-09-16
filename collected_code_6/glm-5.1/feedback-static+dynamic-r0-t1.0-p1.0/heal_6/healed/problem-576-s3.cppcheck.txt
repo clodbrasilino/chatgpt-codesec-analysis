@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-576-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-576-s3.c:69:9: style: Condition 'null_result' is always false [knownConditionTrueFalse]
+    if (null_result) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-576-s3.c:68:35: note: Calling function 'is_subarray' returns 0
+    bool null_result = is_subarray(null_arr, 6, arr2, 3);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-576-s3.c:68:35: note: Assignment 'null_result=is_subarray(null_arr,6,arr2,3)', assigned value is 0
+    bool null_result = is_subarray(null_arr, 6, arr2, 3);
+                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_6/healed/problem-576-s3.c:69:9: note: Condition 'null_result' is always false
+    if (null_result) {
+        ^

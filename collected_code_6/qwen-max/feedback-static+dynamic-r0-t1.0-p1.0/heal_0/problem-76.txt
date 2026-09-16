@@ -1,0 +1,21 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_squares(int width, int height) {
+    int count = 0;
+    int size = (width < height) ? width : height;
+    for (int s = 1; s <= size; ++s) {
+        count += (width - s + 1) * (height - s + 1);
+    }
+    return count;
+}
+
+int main() {
+    int width = 4;
+    int height = 3;
+    int result = count_squares(width, height);
+    printf("Number of squares: %d\n", result);
+    return 0;
+}
+```

@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long cube_sum_odd(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned int i;
+
+    for (i = 0U; i < n; i++) {
+        unsigned long long odd = (2ULL * (unsigned long long)i) + 1ULL;
+        sum += odd * odd * odd;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n = 0U;
+    int result;
+
+    printf("Enter n: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 100000U) {
+        fprintf(stderr, "Error: n too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Cube sum of first %u odd natural numbers: %llu\n", n, cube_sum_odd(n));
+
+    return EXIT_SUCCESS;
+}

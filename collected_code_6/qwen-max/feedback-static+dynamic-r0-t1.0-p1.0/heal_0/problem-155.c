@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t toggle_even_bits(uint32_t num) {
+    uint32_t mask = 0xAAAAAAAA; // Mask to identify even bits
+    return num ^ mask;
+}
+
+int main() {
+    uint32_t number = 0b10101010101010101010101010101010; // Example number
+    uint32_t result = toggle_even_bits(number);
+    printf("Original: %u, Toggled Even Bits: %u\n", number, result);
+    return 0;
+}

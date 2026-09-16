@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c:38:33: style: Condition 'result_null' is always false [knownConditionTrueFalse]
+    printf("Result Null: %s\n", result_null ? "true" : "false");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c:37:37: note: Calling function 'list_contains' returns 0
+    bool result_null = list_contains(NULL, 0, elements_a, elements_a_len);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c:37:37: note: Assignment 'result_null=list_contains(NULL,0,elements_a,elements_a_len)', assigned value is 0
+    bool result_null = list_contains(NULL, 0, elements_a, elements_a_len);
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c:38:33: note: Condition 'result_null' is always false
+    printf("Result Null: %s\n", result_null ? "true" : "false");
+                                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c:5:25: style: Parameter 'list' can be declared as pointer to const [constParameterPointer]
+bool list_contains(int *list, size_t list_len, int *elements, size_t elements_len) {
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-942.c:5:53: style: Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+bool list_contains(int *list, size_t list_len, int *elements, size_t elements_len) {
+                                                    ^

@@ -1,0 +1,58 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    const char **keys;
+    size_t key_count;
+    int value;
+} KeyValueList;
+
+typedef struct DictNode {
+    char *key;
+    int value;
+    struct DictNode *child;
+    struct DictNode *next;
+} DictNode;
+
+static DictNode *create_dict_node(const char *key, int value);
+static void free_dict(DictNode *node);
+static DictNode *find_child(DictNode *node, const char *key);
+static DictNode *insert_path(DictNode **root, const KeyValueList *list);
+static void print_dict(const DictNode *node, int depth);
+
+static DictNode *create_dict_node(const char *key, int value) {
+    DictNode *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+
+    node->key = malloc(strlen(key) + 1);
+    if (node->key == NULL) {
+        free(node);
+        return NULL;
+    }
+
+    strcpy(node->key, key);
+    node->value = value;
+    node->child = NULL;
+    node->next = NULL;
+
+    return node;
+}
+
+static void free_dict(DictNode *node) {
+    while (node != NULL) {
+        DictNode *next = node->next;
+        free_dict(node->child);
+        free(node->key);
+        free(node);
+        node = next;
+    }
+}
+
+static DictNode *find_child(DictNode *node, const char *key) {
+    while (node != NULL) {
+        if (strcmp(node->key, key

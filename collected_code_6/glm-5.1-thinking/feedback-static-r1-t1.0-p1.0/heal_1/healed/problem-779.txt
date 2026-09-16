@@ -1,0 +1,103 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} IntList;
+
+typedef struct {
+    IntList *sublists;
+    size_t size;
+} IntListOfLists;
+
+bool are_lists_equal(const IntList *a, const IntList *b) {
+    if (a == NULL || b == NULL) {
+        return false;
+    }
+    if (a->size != b->size) {
+        return false;
+    }
+    if (a->size == 0) {
+        return true;
+    }
+    if (a->elements == NULL || b->elements == NULL) {
+        return false;
+    }
+    for (size_t i = 0; i < a->size; i++) {
+        if (a->elements[i] != b->elements[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+size_t count_unique_lists(const IntListOfLists *lol) {
+    if (lol == NULL || lol->sublists == NULL || lol->size == 0) {
+        return 0;
+    }
+    size_t unique_count = 0;
+    bool *is_duplicate = calloc(lol->size, sizeof(bool));
+    if (is_duplicate == NULL) {
+        return 0;
+    }
+    for (size_t i = 0; i < lol->size; i++) {
+        if (is_duplicate[i]) {
+            continue;
+        }
+        unique_count++;
+        for (size_t j = i + 1; j < lol->size; j++) {
+            if (!is_duplicate[j] && are_lists_equal(&lol->sublists[i], &lol->sublists[j])) {
+                is_duplicate[j] = true;
+            }
+        }
+    }
+    free(is_duplicate);
+    return unique_count;
+}
+
+int main(void) {
+    size_t num_lists = 4;
+    IntListOfLists lol;
+    lol.size = num_lists;
+    lol.sublists = malloc(num_lists * sizeof(IntList));
+    if (lol.sublists == NULL) {
+        return 1;
+    }
+
+    int data1[] = {1, 2, 3};
+    int data2[] = {1, 2, 3};
+    int data3[] = {4, 5};
+    int data4[] = {1, 2, 4};
+
+    const size_t sizes[] = {3, 3, 2, 3};
+    int *datas[] = {data1, data2, data3, data4};
+
+    for (size_t i = 0; i < num_lists; i++) {
+        lol.sublists[i].size = sizes[i];
+        lol.sublists[i].elements = malloc(sizes[i] * sizeof(int));
+        if (lol.sublists[i].elements == NULL) {
+            for (size_t j = 0; j < i; j++) {
+                free(lol.sublists[j].elements);
+            }
+            free(lol.sublists);
+            return 1;
+        }
+        for (size_t k = 0; k < sizes[i]; k++) {
+            lol.sublists[i].elements[k] = datas[i][k];
+        }
+    }
+
+    size_t unique = count_unique_lists(&lol);
+    printf("%zu\n", unique);
+
+    for (size_t i = 0; i < num_lists; i++) {
+        free(lol.sublists[i].elements);
+    }
+    free(lol.sublists);
+
+    return 0;
+}
+```

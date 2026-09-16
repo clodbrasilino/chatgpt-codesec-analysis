@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long binomialCoeff(unsigned int n, unsigned int k)
+{
+    unsigned long long result = 1ULL;
+    unsigned int i;
+
+    if (k > n)
+    {
+        return 0ULL;
+    }
+
+    if (k > n - k)
+    {
+        k = n - k;
+    }
+
+    for (i = 0U; i < k; i++)
+    {
+        result = result * (unsigned long long)(n - i);
+        result = result / (unsigned long long)(i + 1U);
+    }
+
+    return result;
+}
+
+static int sumOfProduct(unsigned int n, unsigned long long *out)
+{
+    if (out == NULL)
+    {
+        return -1;
+    }
+
+    if (n == 0U || n > 31U)
+    {
+        return -1;
+    }
+
+    *out = binomialCoeff(2U * n, n - 1U);
+    return 0;
+}
+
+int main(void)
+{
+    unsigned int n = 3U;
+    unsigned long long answer = 0ULL;
+
+    if (sumOfProduct(n, &answer) != 0)
+    {
+        (void)fprintf(stderr, "Invalid input: n must be between 1 and 31\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Sum of product of binomial coefficients for n = %u is %llu\n", n, answer) < 0)
+    {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

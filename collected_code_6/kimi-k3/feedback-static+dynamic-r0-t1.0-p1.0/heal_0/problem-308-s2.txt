@@ -1,0 +1,76 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int compare_desc(const void *a, const void *b)
+{
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+    return (x < y) - (x > y);
+}
+
+int *find_largest_products(const int *list1, size_t size1, const int *list2, size_t size2, size_t count)
+{
+    if (list1 == NULL || list2 == NULL || size1 == 0 || size2 == 0 || count == 0 || count > size1 * size2)
+    {
+        return NULL;
+    }
+
+    int *products = malloc(size1 * size2 * sizeof(int));
+    if (products == NULL)
+    {
+        return NULL;
+    }
+
+    size_t idx = 0;
+    for (size_t i = 0; i < size1; i++)
+    {
+        for (size_t j = 0; j < size2; j++)
+        {
+            products[idx++] = list1[i] * list2[j];
+        }
+    }
+
+    qsort(products, size1 * size2, sizeof(int), compare_desc);
+
+    int *result = malloc(count * sizeof(int));
+    if (result == NULL)
+    {
+        free(products);
+        return NULL;
+    }
+
+    for (size_t i = 0; i < count; i++)
+    {
+        result[i] = products[i];
+    }
+
+    free(products);
+    return result;
+}
+
+int main(void)
+{
+    int list1[] = {1, 7, 3, 9};
+    int list2[] = {2, 5, 8};
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+    size_t count = 3;
+
+    int *result = find_largest_products(list1, size1, list2, size2, count);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Error: failed to compute largest products\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Largest %zu products:\n", count);
+    for (size_t i = 0; i < count; i++)
+    {
+        printf("%d\n", result[i]);
+    }
+
+    free(result);
+    return EXIT_SUCCESS;
+}
+```

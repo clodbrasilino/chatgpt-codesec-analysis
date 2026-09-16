@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+int romanToInt(const char *s) {
+    const int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    const char *roman[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    int i, num = 0;
+
+    for (i = 0; i < 13; ++i) {
+        while (strncmp(s, roman[i], strlen(roman[i])) == 0) {
+            num += values[i];
+            s += strlen(roman[i]);
+        }
+    }
+
+    return num;
+}
+
+int main() {
+    const char *inputs[] = {"MCMXCIV", "MMMCMXCIX", "CCCXCIX", "CMI"};
+    const int expected_outputs[] = {1994, 3999, 399, 901};
+    const int test_cases = 4;
+    const int cases[] = {0, 1, 2, 3};
+
+    for (int i = 0; i < test_cases; ++i) {
+        int result = romanToInt(inputs[cases[i]]);
+        if (result == expected_outputs[cases[i]]) {
+            printf("Correct: %s -> %d\n", inputs[cases[i]], result);
+        } else {
+            printf("Incorrect: %s -> %d (Expected: %d)\n", inputs[cases[i]], result, expected_outputs[cases[i]]);
+        }
+    }
+
+    return 0;
+}

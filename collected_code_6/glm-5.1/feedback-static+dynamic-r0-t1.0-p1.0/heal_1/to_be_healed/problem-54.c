@@ -1,0 +1,75 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int *counting_sort(int *array, size_t length, int max_val) {
+    int *output = NULL;
+    int *count = NULL;
+    size_t i;
+
+    if (array == NULL) {
+        return NULL;
+    }
+
+    if (length == 0) {
+        return NULL;
+    }
+
+    count = (int *)calloc(max_val + 1, sizeof(int));
+    if (count == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < length; i++) {
+        if (array[i] < 0 || array[i] > max_val) {
+            free(count);
+            return NULL;
+        }
+        count[array[i]]++;
+    }
+
+    for (i = 1; i <= (size_t)max_val; i++) {
+        count[i] += count[i - 1];
+    }
+
+    output = (int *)malloc(length * sizeof(int));
+    if (output == NULL) {
+        free(count);
+        return NULL;
+    }
+
+    for (i = length; i > 0; i--) {
+        output[count[array[i - 1]] - 1] = array[i - 1];
+        count[array[i - 1]]--;
+    }
+
+    for (i = 0; i < length; i++) {
+        array[i] = output[i];
+    }
+
+    free(count);
+    free(output);
+
+    return array;
+}
+
+int main() {
+    int arr[] = {4, 2, 2, 8, 3, 3, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int max_val = 8;
+    size_t i;
+
+    /* Possible weaknesses found:
+     *  Variable 'sorted' can be declared as pointer to const [constVariablePointer]
+     */
+    int *sorted = counting_sort(arr, n, max_val);
+    if (sorted == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return EXIT_SUCCESS;
+}

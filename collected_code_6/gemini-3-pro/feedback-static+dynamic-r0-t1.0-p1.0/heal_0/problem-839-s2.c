@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *first;
+    char *second;
+} Tuple;
+
+int compare_tuples(const void *a, const void *b) {
+    const Tuple *tupleA = (const Tuple *)a;
+    const Tuple *tupleB = (const Tuple *)b;
+    return strcmp(tupleA->first, tupleB->first);
+}
+
+void sort_tuples(Tuple *tuples, size_t count) {
+    if (tuples == NULL || count == 0) {
+        return;
+    }
+    qsort(tuples, count, sizeof(Tuple), compare_tuples);
+}
+
+int main(void) {
+    Tuple tuples[] = {
+        {"zebra", "animal"},
+        {"apple", "fruit"},
+        {"mango", "fruit"},
+        {"banana", "fruit"}
+    };
+    
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    
+    sort_tuples(tuples, count);
+    
+    for (size_t i = 0; i < count; i++) {
+        printf("(\"%s\", \"%s\")\n", tuples[i].first, tuples[i].second);
+    }
+    
+    return 0;
+}

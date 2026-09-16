@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+} Tuple;
+
+typedef struct Node {
+    Tuple data;
+    struct Node* next;
+} Node;
+
+Node* create_node(Tuple t) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return NULL;
+    }
+    newNode->data = t;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void free_list(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int extract_rear_value(Node** head) {
+    if (*head == NULL || (*head)->next == NULL) {
+        return -1;
+    }
+
+    Node* current = *head;
+    while (current->next->next != NULL) {
+        current = current->next;
+    }
+
+    int rearValue = current->next->data.value;
+    free(current->next);
+    current->next = NULL;
+    return rearValue;
+}
+
+int main() {
+    Tuple t1 = {10};
+    Tuple t2 = {20};
+    Tuple t3 = {30};
+
+    Node* head = create_node(t1);
+    head->next = create_node(t2);
+    head->next->next = create_node(t3);
+
+    int rearValue = extract_rear_value(&head);
+    printf("Rear value: %d\n", rearValue);
+
+    free_list(head);
+    return 0;
+}

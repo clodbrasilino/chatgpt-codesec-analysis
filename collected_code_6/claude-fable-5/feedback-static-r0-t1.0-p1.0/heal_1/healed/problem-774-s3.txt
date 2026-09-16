@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+int is_valid_email(const char *email)
+{
+    regex_t regex;
+    int ret;
+    const char *pattern = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+
+    if (email == NULL) {
+        return 0;
+    }
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED | REG_NOSUB);
+    if (ret != 0) {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex compilation failed: %s\n", errbuf);
+        return -1;
+    }
+
+    ret = regexec(&regex, email, 0, NULL, 0);
+
+    if (ret == 0) {
+        regfree(&regex);
+        return 1;
+    } else if (ret == REG_NOMATCH) {
+        regfree(&regex);
+        return 0;
+    } else {
+        char errbuf[256];
+        regerror(ret, &regex, errbuf, sizeof(errbuf));
+        fprintf(stderr, "Regex execution failed: %s\n", errbuf);
+        regfree(&regex);
+        return -1;
+    }
+}
+
+int main(void)
+{
+    const char *test_emails[] = {
+        "user@example.com",
+        "john.doe@company.co.uk",
+        "invalid.email",
+        "@missing-local.org",
+        "no-at-sign.com",
+        "user@domain",
+        "user+tag@example.io"
+    };
+    size_t count = sizeof(test_emails) / sizeof(test_emails[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = is_valid_email(test_emails[i]);
+        if (result == 1) {
+            printf("%s : valid\n", test_emails[i]);
+        } else if (result == 0) {
+            printf("%s : invalid\n", test_emails[i]);
+        } else {
+            fprintf(stderr, "Error validating: %s\n", test_emails[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Fixed the `variableScope` warning**: The `result` variable is now declared inside the `for` loop body, reducing its scope to exactly where it's used.
+
+2. **Fixed a latent use-after-free bug**: In the original code, `regfree(&regex)` was called *before* the error branch that passed `&regex` to `regerror()`. Passing a freed `regex_t` to `regerror()` is undefined behavior. The rewrite calls `regfree()` only after any use of the compiled regex, including the error-reporting path.
+
+Everything else (regex pattern, `NULL` guard, return-code convention of `1`/`0`/`-1`, and the test harness) is preserved as-is since it was functionally correct.

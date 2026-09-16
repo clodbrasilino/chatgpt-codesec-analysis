@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_positive(const int *arr, size_t size) {
+    int count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int numbers[] = {-5, 10, 0, 3, -2, 8, -1, 7};
+    size_t len = sizeof(numbers) / sizeof(numbers[0]);
+    int result = count_positive(numbers, len);
+    printf("%d\n", result);
+    return 0;
+}

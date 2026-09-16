@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdint.h>
+
+char *camel_to_snake(const char *input)
+{
+    char *output;
+    size_t input_len;
+    size_t i;
+    size_t out_pos;
+
+    if (input == NULL)
+    {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+
+    if (input_len > (SIZE_MAX - 1) / 2)
+    {
+        return NULL;
+    }
+
+    output = malloc(2 * input_len + 1);
+    if (output == NULL)
+    {
+        return NULL;
+    }
+
+    out_pos = 0;
+    for (i = 0; i < input_len; i++)
+    {
+        unsigned char c = (unsigned char)input[i];
+
+        if (isupper(c))
+        {
+            if (out_pos != 0)
+            {
+                output[out_pos++] = '_';
+            }
+            output[out_pos++] = (char)tolower(c);
+        }
+        else if (c == ' ' || c == '-')
+        {
+            if (out_pos != 0 && output[out_pos - 1] != '_')
+            {
+                output[out_pos++] = '_';
+            }
+        }
+        else
+        {
+            output[out_pos++] = (char)c;
+        }
+    }
+    output[out_pos] = '\0';
+
+    return output;
+}
+
+int main(void)
+{
+    char input[256];
+    char *result;
+
+    if (fgets(input, sizeof(input), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    input[strcspn(input, "\r\n")] = '\0';
+
+    result = camel_to_snake(input);
+    if (result == NULL)
+    {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", result);
+    free(result);
+
+    return EXIT_SUCCESS;
+}

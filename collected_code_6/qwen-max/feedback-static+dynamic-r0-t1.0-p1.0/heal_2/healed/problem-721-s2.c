@@ -1,50 +1,57 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <float.h>
-#include <math.h>
-#include <limits.h>
 
-double findMaxPathAverage(const int *matrix, int n) {
-    double dp[n][n];
+double maxAveragePath(int **matrix, int n) {
+    double dp[n][n], maxAvg = 0.0;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             if (i == 0 && j == 0) {
-                dp[i][j] = matrix[0];
+                dp[i][j] = matrix[0][0];
             } else if (i == 0) {
-                dp[i][j] = dp[i][j-1] + matrix[j];
+                dp[i][j] = dp[i][j-1] + matrix[i][j];
             } else if (j == 0) {
-                dp[i][j] = dp[i-1][j] + matrix[i*n];
+                dp[i][j] = dp[i-1][j] + matrix[i][j];
             } else {
-                dp[i][j] = fmax(dp[i-1][j], dp[i][j-1]) + matrix[i*n + j];
+                dp[i][j] = (dp[i-1][j] > dp[i][j-1]) ? dp[i-1][j] : dp[i][j-1];
+                dp[i][j] += matrix[i][j];
+            }
+            dp[i][j] /= (i + j + 1);
+            if (dp[i][j] > maxAvg) {
+                maxAvg = dp[i][j];
             }
         }
     }
-    return dp[n-1][n-1] / (2.0 * n - 1.0);
+    return maxAvg;
 }
 
 int main() {
     int n;
-    printf("Enter the size of the square matrix: ");
-    if (scanf("%d", &n) != 1 || n <= 0 || n > INT_MAX / sizeof(int)) {
+    printf("Enter the size of the matrix: ");
+    scanf("%d", &n);
+
+    if (n <= 0) {
+        printf("Size must be positive.\n");
         return 1;
     }
 
-    const int *matrix = (const int *)malloc(n * n * sizeof(int));
-    if (!matrix) {
-        return 1;
+    int **matrix = (int **)malloc(n * sizeof(int *));
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = (int *)malloc(n * sizeof(int));
     }
 
-    printf("Enter the elements of the matrix:\n");
-    for (int i = 0; i < n * n; ++i) {
-        if (scanf("%d", &((int *)matrix)[i]) != 1) {
-            free((void *)matrix);
-            return 1;
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            scanf("%d", &matrix[i][j]);
         }
     }
 
-    double maxAvg = findMaxPathAverage(matrix, n);
-    printf("Maximum average path: %.2f\n", maxAvg);
+    double result = maxAveragePath(matrix, n);
+    printf("Maximum average path: %.2f\n", result);
 
-    free((void *)matrix);
+    for (int i = 0; i < n; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+
     return 0;
 }

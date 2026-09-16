@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'tuple' can be declared as const array [constParameter]
+ */
+char *join_tuple(char *tuple[], size_t count, const char *delimiter) {
+    if (tuple == NULL || delimiter == NULL || count == 0) {
+        return NULL;
+    }
+
+    size_t delimiter_len = strlen(delimiter);
+    size_t total_len = 1;
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (tuple[i] == NULL) {
+            return NULL;
+        }
+        total_len += strlen(tuple[i]);
+        if (i < count - 1) {
+            total_len += delimiter_len;
+        }
+    }
+
+    char *result = (char *)malloc(total_len);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    char *ptr = result;
+    for (i = 0; i < count; i++) {
+        size_t elem_len = strlen(tuple[i]);
+        memcpy(ptr, tuple[i], elem_len);
+        ptr += elem_len;
+        if (i < count - 1) {
+            memcpy(ptr, delimiter, delimiter_len);
+            ptr += delimiter_len;
+        }
+    }
+    *ptr = '\0';
+
+    return result;
+}
+
+int main(void) {
+    char *tuple[] = {"apple", "banana", "cherry", "date"};
+    size_t count = sizeof(tuple) / sizeof(tuple[0]);
+    const char *delimiter = " | ";
+
+    char *result = join_tuple(tuple, count, delimiter);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+        result = NULL;
+    }
+
+    char *empty_tuple[] = {""};
+    result = join_tuple(empty_tuple, 1, delimiter);
+    if (result != NULL) {
+        printf("%s\n", result);
+        free(result);
+        result = NULL;
+    }
+
+    /* Possible weaknesses found:
+     *  Calling function 'join_tuple' returns 0
+     *  Assignment 'result=join_tuple(NULL,count,delimiter)', assigned value is 0
+     */
+    result = join_tuple(NULL, count, delimiter);
+    /* Possible weaknesses found:
+     *  Condition 'result==NULL' is always true
+     *  Condition 'result==NULL' is always true [knownConditionTrueFalse]
+     */
+    if (result == NULL) {
+        printf("NULL input handled correctly\n");
+    }
+
+    return 0;
+}

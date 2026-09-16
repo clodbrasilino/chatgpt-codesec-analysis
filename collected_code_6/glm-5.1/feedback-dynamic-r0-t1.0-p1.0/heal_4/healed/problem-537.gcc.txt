@@ -1,0 +1,10 @@
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_string.h:228,
+                 from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/string.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-dynamic-r0-t1.0-p1.0/heal_4/healed/problem-537.c:3:
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-dynamic-r0-t1.0-p1.0/heal_4/healed/problem-537.c: In function 'find_first_repeated_word':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-dynamic-r0-t1.0-p1.0/heal_4/healed/problem-537.c:97:17: error: passing argument 1 of '__builtin___strncpy_chk' from incompatible pointer type [-Wincompatible-pointer-types]
+   97 |         strncpy(words, "None", 5);
+      |                 ^~~~~
+      |                 |
+      |                 char **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-dynamic-r0-t1.0-p1.0/heal_4/healed/problem-537.c:97:17: note: expected 'char *' but argument is of type 'char **'

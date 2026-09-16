@@ -4,40 +4,50 @@
 typedef struct {
     int *data;
     size_t size;
-} List;
+} IntList;
 
-int compare(const void *a, const void *b, size_t index) {
-    List *listA = (List *)a;
-    List *listB = (List *)b;
-    if (index >= listA->size || index >= listB->size) {
-        return 0;
-    }
-    return (listA->data[index] - listB->data[index]);
+int compare(const void *a, const void *b, void *arg) {
+    size_t index = *(size_t *)arg;
+    return ((IntList *)a)->data[index] - ((IntList *)b)->data[index];
 }
 
-int customCompare(const void *a, const void *b) {
-    return compare(a, b, 2); // Sort by the 2nd element (index 1)
+void qsort_r(void *base, size_t nmemb, size_t size, int (*compar)(const void *, const void *, void *), void *arg) {
+    if (nmemb > 1) {
+        char *p = (char *)base;
+        size_t i, k;
+        for (i = 1, k = 0; i < nmemb; i++) {
+            if (compar(p + (k * size), p + (i * size), arg) > 0) {
+                k = i;
+            }
+        }
+        char tmp[size];
+        memcpy(tmp, p + (k * size), size);
+        memmove(p + size, p, k * size);
+        memcpy(p, tmp, size);
+        qsort_r(p + size, nmemb - 1, size, compar, arg);
+    }
 }
 
-void printList(List *list) {
-    for (size_t i = 0; i < list->size; ++i) {
-        printf("%d ", list->data[i]);
-    }
-    printf("\n");
+void sort_lists_by_index(IntList *lists, size_t list_count, size_t index) {
+    qsort_r(lists, list_count, sizeof(IntList), compare, &index);
 }
 
 int main() {
-    size_t numLists = 3;
-    List lists[] = {
-        { .data = (int[]){5, 3, 7}, .size = 3 },
-        { .data = (int[]){1, 9, 2}, .size = 3 },
-        { .data = (int[]){8, 4, 6}, .size = 3 }
+    IntList lists[3] = {
+        { .data = (int[]){5, 2, 8}, .size = 3 },
+        { .data = (int[]){1, 4, 3}, .size = 3 },
+        { .data = (int[]){9, 7, 6}, .size = 3 }
     };
+    size_t list_count = 3;
+    size_t index = 1;
 
-    qsort(lists, numLists, sizeof(List), customCompare);
+    sort_lists_by_index(lists, list_count, index);
 
-    for (size_t i = 0; i < numLists; ++i) {
-        printList(&lists[i]);
+    for (size_t i = 0; i < list_count; i++) {
+        for (size_t j = 0; j < lists[i].size; j++) {
+            printf("%d ", lists[i].data[j]);
+        }
+        printf("\n");
     }
 
     return 0;

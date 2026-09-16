@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_tetrahedron_area(double edge_length) {
+    if (edge_length <= 0) {
+        return -1.0;
+    }
+    return sqrt(3.0) * edge_length * edge_length;
+}
+
+int main(void) {
+    double edge_length;
+    double area;
+
+    printf("Enter the edge length of the tetrahedron: ");
+    if (scanf("%lf", &edge_length) != 1) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_tetrahedron_area(edge_length);
+
+    if (area < 0) {
+        fprintf(stderr, "Error: Edge length must be greater than zero.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The surface area of the tetrahedron is: %.6lf\n", area);
+
+    return EXIT_SUCCESS;
+}

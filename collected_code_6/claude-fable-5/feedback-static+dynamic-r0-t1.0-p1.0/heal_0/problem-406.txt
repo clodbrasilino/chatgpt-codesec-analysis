@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_parity(unsigned int n)
+{
+    int parity = 0;
+
+    while (n != 0U) {
+        parity ^= 1;
+        n &= (n - 1U);
+    }
+
+    return parity;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%u", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = find_parity(number);
+
+    if (result == 1) {
+        printf("The number %u has odd parity.\n", number);
+    } else {
+        printf("The number %u has even parity.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation uses Brian Kernighan's algorithm (`n &= n - 1`) which clears the lowest set bit on each iteration, making it efficient. Key safety points:
+
+- **Input validation**: The return value of `scanf` is checked, so malformed input is handled gracefully instead of operating on an uninitialized or garbage value (addresses CWE-703).
+- **Unsigned arithmetic**: Using `unsigned int` avoids undefined behavior from signed overflow or right-shifting negative values.
+- **Initialization**: All variables are initialized before use, and no dynamic resources (files, memory) are acquired, so there is nothing to leak or misuse across its lifetime (addresses CWE-664).
+- **Standards adherence**: `main` uses the `(void)` prototype, returns `EXIT_SUCCESS`/`EXIT_FAILURE`, and all functions have explicit types and prototypes (addresses CWE-710).

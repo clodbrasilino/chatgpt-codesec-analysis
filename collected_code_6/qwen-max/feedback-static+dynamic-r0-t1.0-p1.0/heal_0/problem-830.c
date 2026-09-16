@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <math.h>
+
+double round_to_digits(double num, int digits) {
+    double factor = pow(10, digits);
+    return ceil(num * factor) / factor;
+}
+
+int main() {
+    double number = 3.14159;
+    int digits = 2;
+    double result = round_to_digits(number, digits);
+    printf("%.2f\n", result);
+    return 0;
+}

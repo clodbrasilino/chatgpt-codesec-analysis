@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSubsequenceLength(const int arr[], int n) {
+    if (n <= 1) {
+        return n;
+    }
+    
+    int maxLen = 1;
+    int currentLen = 1;
+    
+    for (int i = 1; i < n; i++) {
+        if (arr[i] != arr[i - 1]) {
+            currentLen++;
+            if (currentLen > maxLen) {
+                maxLen = currentLen;
+            }
+        } else {
+            currentLen = 1;
+        }
+    }
+    
+    return maxLen;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    if (n <= 0) {
+        return EXIT_FAILURE;
+    }
+    
+    int *arr = malloc((size_t)n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+    
+    int result = maxSubsequenceLength(arr, n);
+    printf("%d\n", result);
+    
+    free(arr);
+    return EXIT_SUCCESS;
+}

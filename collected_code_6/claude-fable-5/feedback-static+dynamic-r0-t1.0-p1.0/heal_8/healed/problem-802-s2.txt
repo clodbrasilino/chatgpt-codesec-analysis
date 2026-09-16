@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid;
+
+        if (arr[low] <= arr[high]) {
+            return (int)low;
+        }
+
+        mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else {
+            high = mid;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {1, 2, 3, 4, 5};
+    int result;
+
+    result = count_rotations(arr1, sizeof(arr1) / sizeof(arr1[0]));
+    if (result != 2) {
+        fprintf(stderr, "Error computing rotations for arr1: expected 2, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr1: %d\n", result);
+
+    result = count_rotations(arr2, sizeof(arr2) / sizeof(arr2[0]));
+    if (result != 4) {
+        fprintf(stderr, "Error computing rotations for arr2: expected 4, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr2: %d\n", result);
+
+    result = count_rotations(arr3, sizeof(arr3) / sizeof(arr3[0]));
+    if (result != 0) {
+        fprintf(stderr, "Error computing rotations for arr3: expected 0, got %d\n", result);
+        return EXIT_FAILURE;
+    }
+    printf("Rotations for arr3: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weakness comment claims test case 1 failed with "expected 2, got 3", suggesting an off-by-one error existed in an earlier version of the binary search — most likely from computing `mid` with rounding up, using `low = mid` instead of `low = mid + 1`, or using `high = mid - 1` instead of `high = mid`.
+
+Tracing the presented algorithm against `arr1 = {15, 18, 2, 3, 6, 12}`:
+
+1. `low=0, high=5`: `arr[0]=15 > arr[5]=12`, so `mid=2`; `arr[2]=2 > 12` is false → `high=2`
+2. `low=0, high=2`: `arr[0]=15 > arr[2]=2`, so `mid=1`; `arr[1]=18 > 2` is true → `low=2`
+3. `low == high` → return `2` ✓
+
+The other cases also verify: `arr2` returns 4 (minimum `5` at index 4), and `arr3` short-circuits immediately via `arr[low] <= arr[high]` returning 0 for the non-rotated array.
+
+Key correctness properties preserved in the rewrite:
+
+- **NULL/empty guard** returning `-1` prevents undefined behavior on invalid input.
+- **Overflow-safe midpoint** via `low + (high - low) / 2` rather than `(low + high) / 2`.
+- **Loop invariant**: the minimum always lies within `[low, high]`; `arr[mid] > arr[high]` guarantees the pivot is strictly right of `mid`, justifying `low = mid + 1`, while the else branch keeps `mid` as a candidate with `high = mid`, ensuring termination without skipping the answer.
+- The early-exit check `arr[low] <= arr[high]` handles already-sorted subranges and duplicated-free sorted input in O(1) per iteration.
+
+One remaining limitation worth noting: the algorithm assumes **distinct elements**. With duplicates (e.g., `{2, 2, 2, 0, 2}`), `arr[mid] > arr[high]` comparisons become ambiguous and the result may be wrong; handling that requires an O(n) fallback (`high--` when `arr[mid] == arr[high]`). Additionally, returning `int` caps usable array sizes at `INT_MAX`, which is acceptable here but worth documenting in a production API.

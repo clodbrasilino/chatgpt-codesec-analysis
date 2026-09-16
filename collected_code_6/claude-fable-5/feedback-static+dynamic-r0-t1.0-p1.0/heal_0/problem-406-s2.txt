@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int find_parity(unsigned int n)
+{
+    unsigned int parity = 0U;
+
+    while (n != 0U)
+    {
+        parity ^= (n & 1U);
+        n >>= 1U;
+    }
+
+    return parity;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%u", &number) != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (find_parity(number) == 0U)
+    {
+        printf("The number %u has even parity.\n", number);
+    }
+    else
+    {
+        printf("The number %u has odd parity.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+- `find_parity` iterates through each bit of the number, XOR-ing the least significant bit into an accumulator. The result is `0` for even parity (even number of set bits) and `1` for odd parity.
+- The return value of `scanf` is explicitly checked, and a failure path returns `EXIT_FAILURE` — this handles exceptional input conditions properly.
+- Unsigned types are used consistently to avoid signed/unsigned mismatches and undefined behavior from shifting signed values.
+- `main` uses the standard `int main(void)` signature and returns `EXIT_SUCCESS`/`EXIT_FAILURE` from `<stdlib.h>`, adhering to standard coding conventions.
+- No dynamic resources (memory, files) are allocated, so there is nothing to leak or mismanage over its lifetime.

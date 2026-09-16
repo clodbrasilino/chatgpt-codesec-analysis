@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void left_rotate_string(char *str, int n) {
+    if (str == NULL || n <= 0) {
+        return;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+    
+    n = n % len;
+    if (n == 0) {
+        return;
+    }
+    
+    char *temp = malloc(len + 1);
+    if (temp == NULL) {
+        return;
+    }
+    
+    memcpy(temp, str, n);
+    memmove(str, str + n, len - n + 1);
+    memcpy(str + len - n, temp, n);
+    
+    free(temp);
+}
+
+int main(void) {
+    char str[] = "HelloWorld";
+    int rotations = 3;
+    
+    printf("Original string: %s\n", str);
+    left_rotate_string(str, rotations);
+    printf("After left rotation by %d: %s\n", rotations, str);
+    
+    return 0;
+}

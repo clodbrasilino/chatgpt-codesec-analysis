@@ -1,0 +1,67 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char* decimal_to_binary(int n) {
+    if (n == 0) {
+        char* result = (char*)malloc(2 * sizeof(char));
+        if (result == NULL) {
+            exit(EXIT_FAILURE);
+        }
+        result[0] = '0';
+        result[1] = '\0';
+        return result;
+    }
+
+    int temp = n;
+    int num_bits = 0;
+
+    while (temp > 0) {
+        num_bits++;
+        temp >>= 1;
+    }
+
+    char* result = (char*)malloc((num_bits + 1) * sizeof(char));
+    if (result == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    int index = num_bits - 1;
+
+    while (n > 0) {
+        result[index--] = (n % 2) + '0';
+        n /= 2;
+    }
+
+    result[num_bits] = '\0';
+
+    return result;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <decimal_integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char* endptr;
+    long val = strtol(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || val < 0) {
+        fprintf(stderr, "Error: Argument must be a non-negative decimal integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    char* binary_str = decimal_to_binary((int)val);
+    if (binary_str == NULL) {
+        fprintf(stderr, "Error: Memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%s\n", binary_str);
+
+    free(binary_str);
+
+    return EXIT_SUCCESS;
+}
+```

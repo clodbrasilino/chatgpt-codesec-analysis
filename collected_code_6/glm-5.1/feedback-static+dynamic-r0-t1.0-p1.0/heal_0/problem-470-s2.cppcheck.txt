@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-470-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-470-s2.c:4:24: style: Parameter 'a' can be declared as pointer to const [constParameterPointer]
+int *pairwise_add(int *a, int *b, size_t size) {
+                       ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-470-s2.c:4:32: style: Parameter 'b' can be declared as pointer to const [constParameterPointer]
+int *pairwise_add(int *a, int *b, size_t size) {
+                               ^

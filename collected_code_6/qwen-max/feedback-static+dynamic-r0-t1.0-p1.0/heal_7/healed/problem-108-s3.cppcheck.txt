@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:121:22: error: Using pointer to local variable 'new_head' that is out of scope. [invalidLifetime]
+            if (heads[i] == min_node) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:123:46: note: Address of variable taken here.
+                heads[i] = iterators[i].next(&new_head);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:123:46: note: Passed to initializer list.
+                heads[i] = iterators[i].next(&new_head);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:122:23: note: Variable created here.
+                Node *new_head = NULL;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:121:22: note: Using pointer to local variable 'new_head' that is out of scope.
+            if (heads[i] == min_node) {
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:161:11: style: Variable 'list1' can be declared as pointer to const [constVariablePointer]
+    Node *list1 = &n1_1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:169:11: style: Variable 'list2' can be declared as pointer to const [constVariablePointer]
+    Node *list2 = &n2_1;
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-108-s3.c:173:14: style: Variable 'iterators' can be declared as const array [constVariable]
+    Iterator iterators[] = {it1, it2};
+             ^

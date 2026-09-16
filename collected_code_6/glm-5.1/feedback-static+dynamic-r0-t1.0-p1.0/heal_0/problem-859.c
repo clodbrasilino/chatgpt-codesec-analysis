@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int** generate_sublists(const int* list, size_t size, size_t* return_size, size_t** return_col_sizes) {
+    size_t total = 1;
+    for (size_t i = 0; i < size; ++i) {
+        if (total > (size_t)-1 / 2) {
+            *return_size = 0;
+            *return_col_sizes = NULL;
+            return NULL;
+        }
+        total *= 2;
+    }
+
+    int** result = (int**)malloc(total * sizeof(int*));
+    *return_col_sizes = (size_t*)malloc(total * sizeof(size_t));
+    if (!result || !*return_col_sizes) {
+        free(result);
+        free(*return_col_sizes);
+        *return_size = 0;
+        *return_col_sizes = NULL;
+        return NULL;
+    }
+
+    *return_size = total;
+
+    for (size_t i = 0; i < total; ++i) {
+        size_t count = 0;
+        size_t temp = i;
+        for (size_t j = 0; j < size; ++j) {
+            if (temp & 1) {
+                count++;
+            }
+            temp >>= 1;
+        }
+
+        (*return_col_sizes)[i] = count;
+        if (count > 0) {
+            result[i] = (int*)malloc(count * sizeof(int));
+            if (!result[i]) {
+                for (size_t k = 0; k < i; ++k) {
+                    free(result[k]);
+                }
+                free(result);
+                free(*return_col_sizes);
+                *return_size = 0;
+                *return_col_sizes = NULL;
+                return NULL;
+            }
+        } else {
+            result[i] = NULL;
+        }
+
+        size_t idx = 0;
+        temp = i;
+        for (size_t j = 0; j < size; ++j) {
+            if (temp & 1) {
+                result[i][idx++] = list[j];
+            }
+            temp >>= 1;
+        }
+    }
+
+    return result;
+}
+
+void free_sublists(int** sublists, size_t size, size_t* col_sizes) {
+    if (!sublists) return;
+    for (size_t i = 0; i < size; ++i) {
+        if (col_sizes && col_sizes[i] > 0) {
+            free(sublists[i]);
+        }
+    }
+    free(sublists);
+    free(col_sizes);
+}
+
+int main(void) {
+    int list[] = {1, 2, 3};
+    size_t size = sizeof(list) / sizeof(list[0]);
+
+    size_t return_size = 0;
+    size_t* return_col_sizes = NULL;
+
+    int** sublists = generate_sublists(list, size, &return_size, &return_col_sizes);
+
+    if (sublists) {
+        for (size_t i = 0; i < return_size; ++i) {
+            printf("[");
+            for (size_t j = 0; j < return_col_sizes[i]; ++j) {
+                printf("%d", sublists[i][j]);
+                if (j < return_col_sizes[i] - 1) {
+                    printf(", ");
+                }
+            }
+            printf("]\n");
+        }
+
+        free_sublists(sublists, return_size, return_col_sizes);
+    }
+
+    return 0;
+}

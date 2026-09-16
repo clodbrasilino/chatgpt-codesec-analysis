@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_last_removed_position(const int *original_array, size_t original_size, const int *current_array, size_t current_size) {
+    if (!original_array || !current_array || original_size == 0 || current_size >= original_size) {
+        return -1; 
+    }
+
+    size_t i = 0;
+    size_t j = 0;
+    int last_removed_index = -1;
+
+    while (i < original_size && j < current_size) {
+        if (original_array[i] == current_array[j]) {
+            i++;
+            j++;
+        } else {
+            last_removed_index = (int)i;
+            i++;
+        }
+    }
+
+    if (j == current_size && i < original_size) {
+        last_removed_index = (int)(original_size - 1);
+    }
+
+    return last_removed_index;
+}
+
+int main(void) {
+    int original[] = {1, 2, 3, 4, 5};
+    int current[] = {1, 2, 4, 5};
+    
+    size_t original_size = sizeof(original) / sizeof(original[0]);
+    size_t current_size = sizeof(current) / sizeof(current[0]);
+
+    int pos = find_last_removed_position(original, original_size, current, current_size);
+    
+    if (pos != -1) {
+        printf("Position of removed element: %d\n", pos);
+    } else {
+        printf("No element removed or invalid input.\n");
+    }
+
+    return 0;
+}

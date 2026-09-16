@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double calculate_rectangle_area(double width, double height) {
+    if (width < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return width * height;
+}
+
+int main(void) {
+    double width = 0.0;
+    double height = 0.0;
+    double area = 0.0;
+
+    if (scanf("%lf %lf", &width, &height) != 2) {
+        fprintf(stderr, "Invalid input format.\n");
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_rectangle_area(width, height);
+    
+    if (area < 0.0) {
+        fprintf(stderr, "Dimensions cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

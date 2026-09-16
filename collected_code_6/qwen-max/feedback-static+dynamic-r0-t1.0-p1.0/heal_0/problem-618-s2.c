@@ -1,101 +1,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
+typedef struct List {
     int value;
-    struct Node *next;
-} Node;
+    struct List* next;
+} List;
 
-Node* create_node(int value) {
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    if (!new_node) return NULL;
+List* create_node(int value) {
+    List* new_node = (List*)malloc(sizeof(List));
+    if (new_node == NULL) {
+        exit(EXIT_FAILURE);
+    }
     new_node->value = value;
     new_node->next = NULL;
     return new_node;
 }
 
-void free_list(Node *head) {
-    Node *current = head;
-    while (current != NULL) {
-        Node *temp = current;
-        current = current->next;
+void append_to_list(List** head, int value) {
+    List* new_node = create_node(value);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        List* temp = *head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = new_node;
+    }
+}
+
+List* divide_lists(List* list1, List* list2) {
+    List* result = NULL;
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->value % list2->value == 0) {
+            append_to_list(&result, list1->value / list2->value);
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    return result;
+}
+
+void print_list(List* list) {
+    while (list != NULL) {
+        printf("%d -> ", list->value);
+        list = list->next;
+    }
+    printf("NULL\n");
+}
+
+void free_list(List* list) {
+    while (list != NULL) {
+        List* temp = list;
+        list = list->next;
         free(temp);
     }
 }
 
-Node* divide_lists(Node *list1, Node *list2, Node **result1, Node **result2) {
-    if (list1 == NULL || list2 == NULL) return NULL;
-
-    *result1 = NULL;
-    *result2 = NULL;
-
-    Node *tail1 = NULL;
-    Node *tail2 = NULL;
-
-    while (list1 != NULL && list2 != NULL) {
-        Node *temp = create_node(list1->value);
-        if (temp == NULL) return NULL;
-
-        if (*result1 == NULL) {
-            *result1 = temp;
-            tail1 = temp;
-        } else {
-            tail1->next = temp;
-            tail1 = temp;
-        }
-
-        temp = create_node(list2->value);
-        if (temp == NULL) return NULL;
-
-        if (*result2 == NULL) {
-            *result2 = temp;
-            tail2 = temp;
-        } else {
-            tail2->next = temp;
-            tail2 = temp;
-        }
-
-        list1 = list1->next;
-        list2 = list2->next;
-    }
-
-    if (list1 != NULL) {
-        tail1->next = list1;
-    }
-
-    if (list2 != NULL) {
-        tail2->next = list2;
-    }
-
-    return *result1;
-}
-
 int main() {
-    Node *list1 = create_node(1);
-    list1->next = create_node(2);
-    list1->next->next = create_node(3);
+    List* list1 = NULL;
+    append_to_list(&list1, 10);
+    append_to_list(&list1, 20);
+    append_to_list(&list1, 30);
 
-    Node *list2 = create_node(4);
-    list2->next = create_node(5);
-    list2->next->next = create_node(6);
+    List* list2 = NULL;
+    append_to_list(&list2, 2);
+    append_to_list(&list2, 4);
+    append_to_list(&list2, 5);
 
-    Node *result1 = NULL;
-    Node *result2 = NULL;
+    List* result = divide_lists(list1, list2);
 
-    divide_lists(list1, list2, &result1, &result2);
+    printf("Result of division:\n");
+    print_list(result);
 
-    for (Node *current = result1; current != NULL; current = current->next) {
-        printf("%d ", current->value);
-    }
-    printf("\n");
-
-    for (Node *current = result2; current != NULL; current = current->next) {
-        printf("%d ", current->value);
-    }
-    printf("\n");
-
-    free_list(result1);
-    free_list(result2);
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
 
     return 0;
 }

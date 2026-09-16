@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static void reverse_list(int *list, size_t length)
+{
+    size_t i;
+    size_t j;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    int temp;
+
+    if (list == NULL || length < 2U) {
+        return;
+    }
+
+    i = 0U;
+    j = length - 1U;
+    while (i < j) {
+        temp = list[i];
+        list[i] = list[j];
+        list[j] = temp;
+        i++;
+        j--;
+    }
+}
+
+static void reverse_all_lists(int **lists, const size_t *lengths, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL || lengths == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        reverse_list(lists[i], lengths[i]);
+    }
+}
+
+static void print_all_lists(int **lists, const size_t *lengths, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (lists == NULL || lengths == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        printf("[");
+        for (j = 0U; j < lengths[i]; j++) {
+            if (j > 0U) {
+                printf(", ");
+            }
+            printf("%d", lists[i][j]);
+        }
+        printf("]\n");
+    }
+}
+
+static void free_all_lists(int **lists, size_t count)
+{
+    size_t i;
+
+    if (lists == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < count; i++) {
+        free(lists[i]);
+        lists[i] = NULL;
+    }
+    free(lists);
+}
+
+int main(void)
+{
+    const size_t count = 3U;
+    /* Possible weaknesses found:
+     *  Variable 'lengths' can be declared as const array [constVariable]
+     */
+    size_t lengths[3] = { 4U, 3U, 5U };
+    int initial_values[3][5] = {
+        { 1, 2, 3, 4, 0 },
+        { 10, 20, 30, 0, 0 },
+        { 5, 6, 7, 8, 9 }
+    };
+    int **lists;
+    size_t i;
+    size_t j;
+
+    lists = malloc(count * sizeof(int *));
+    if (lists == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < count; i++) {
+        lists[i] = malloc(lengths[i] * sizeof(int));
+        if (lists[i] == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            free_all_lists(lists, i);
+            return EXIT_FAILURE;
+        }
+        for (j = 0U; j < lengths[i]; j++) {
+            lists[i][j] = initial_values[i][j];
+        }
+    }
+
+    printf("Original lists:\n");
+    print_all_lists(lists, lengths, count);
+
+    reverse_all_lists(lists, lengths, count);
+
+    printf("Reversed lists:\n");
+    print_all_lists(lists, lengths, count);
+
+    free_all_lists(lists, count);
+
+    return EXIT_SUCCESS;
+}

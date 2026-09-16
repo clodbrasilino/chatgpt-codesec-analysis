@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'arr' can be declared as const array [constParameter]
+ */
+bool isMajorityElement(int arr[], int size, int key) {
+    if (arr == NULL || size <= 0) {
+        return false;
+    }
+
+    int low = 0;
+    int high = size - 1;
+    int firstOccurrence = -1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == key) {
+            firstOccurrence = mid;
+            high = mid - 1;
+        } else if (arr[mid] > key) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+
+    if (firstOccurrence == -1) {
+        return false;
+    }
+
+    int lastIndex = firstOccurrence + size / 2;
+    if (lastIndex < size && arr[lastIndex] == key) {
+        return true;
+    }
+
+    return false;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 3, 3, 3, 10};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int key = 3;
+
+    if (isMajorityElement(arr, size, key)) {
+        printf("Element %d is a majority element.\n", key);
+    } else {
+        printf("Element %d is not a majority element.\n", key);
+    }
+
+    return 0;
+}

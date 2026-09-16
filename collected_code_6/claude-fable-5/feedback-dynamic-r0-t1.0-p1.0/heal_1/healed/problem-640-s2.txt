@@ -1,0 +1,94 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *remove_parentheses(const char *input)
+{
+    size_t len;
+    size_t i;
+    size_t j;
+    int depth;
+    char *result;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    result = calloc(len + 1, sizeof(char));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    depth = 0;
+    j = 0;
+    for (i = 0; i < len; i++) {
+        if (input[i] == '(') {
+            depth++;
+        } else if (input[i] == ')') {
+            if (depth > 0) {
+                depth--;
+            }
+        } else if (depth == 0) {
+            result[j] = input[i];
+            j++;
+        }
+    }
+    result[j] = '\0';
+
+    return result;
+}
+
+int main(void)
+{
+    const char *test1 = "Hello (remove me) World";
+    const char *test2 = "Nested (outer (inner) text) example";
+    const char *test3 = "No parentheses here";
+    char *output;
+
+    output = remove_parentheses(test1);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", output);
+    free(output);
+
+    output = remove_parentheses(test2);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", output);
+    free(output);
+
+    output = remove_parentheses(test3);
+    if (output == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+    printf("%s\n", output);
+    free(output);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The original `remove_parentheses` logic is actually sound: it allocates `len + 1` bytes, tracks nesting depth correctly, only copies characters at depth zero, and terminates the string with `'\0'`. The garbage output described in the comments (`��`, `` `� ``) is the classic symptom of reading uninitialized or freed memory — typically caused by a caller using the buffer after `free()`, a missing null terminator, or a harness reading the buffer before it was written.
+
+Changes made to harden against those reported failures:
+
+1. **`malloc` replaced with `calloc`** — the entire buffer is zero-initialized, so even if any code path reads beyond the written portion, it encounters `'\0'` rather than indeterminate bytes. This directly eliminates the "garbage characters" class of failure.
+2. **Explicit null termination retained** (`result[j] = '\0';`) — redundant with `calloc` but defensively kept, so correctness doesn't silently depend on the allocator choice if someone reverts to `malloc` later.
+3. **NULL input and allocation-failure checks retained** — every allocation is verified before use, and every buffer is freed exactly once after its final use, preventing use-after-free and leaks.
+
+Expected output:
+
+```
+Hello  World
+Nested  example
+No parentheses here
+```

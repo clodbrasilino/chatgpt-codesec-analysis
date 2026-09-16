@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+double distance(Point p1, Point p2) {
+    return sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+}
+
+int is_valid_triangle(Point p1, Point p2, Point p3) {
+    double a = distance(p1, p2);
+    double b = distance(p2, p3);
+    double c = distance(p3, p1);
+
+    if (a + b > c && a + c > b && b + c > a) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    Point p1 = {0.0, 0.0};
+    Point p2 = {4.0, 0.0};
+    Point p3 = {2.0, 3.0};
+
+    if (is_valid_triangle(p1, p2, p3)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return 0;
+}
+```

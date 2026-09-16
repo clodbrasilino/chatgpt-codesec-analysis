@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+long long product_of_kth_index(Tuple *tuples, size_t num_tuples, size_t k) {
+    if (!tuples || num_tuples == 0) {
+        return 0;
+    }
+
+    long long product = 1;
+    int valid_product = 0;
+
+    for (size_t i = 0; i < num_tuples; i++) {
+        if (tuples[i].elements && k < tuples[i].size) {
+            product *= tuples[i].elements[k];
+            valid_product = 1;
+        } else {
+            return 0;
+        }
+    }
+
+    return valid_product ? product : 0;
+}
+
+int main() {
+    int elements1[] = {1, 2, 3};
+    int elements2[] = {4, 5, 6};
+    int elements3[] = {7, 8, 9};
+
+    Tuple tuples[3];
+    tuples[0].elements = elements1;
+    tuples[0].size = 3;
+    
+    tuples[1].elements = elements2;
+    tuples[1].size = 3;
+    
+    tuples[2].elements = elements3;
+    tuples[2].size = 3;
+
+    size_t k = 1;
+    long long result = product_of_kth_index(tuples, 3, k);
+    
+    printf("%lld\n", result);
+
+    return 0;
+}

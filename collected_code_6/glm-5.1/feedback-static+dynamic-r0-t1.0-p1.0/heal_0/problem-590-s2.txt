@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Rectangular;
+
+typedef struct {
+    double r;
+    double theta;
+} Polar;
+
+Rectangular polar_to_rect(const Polar *p) {
+    Rectangular rect;
+    if (p == NULL) {
+        rect.x = 0.0;
+        rect.y = 0.0;
+        return rect;
+    }
+
+    if (p->r < 0.0) {
+        rect.x = 0.0;
+        rect.y = 0.0;
+        return rect;
+    }
+
+    if (!isfinite(p->r) || !isfinite(p->theta)) {
+        rect.x = 0.0;
+        rect.y = 0.0;
+        return rect;
+    }
+
+    rect.x = p->r * cos(p->theta);
+    rect.y = p->r * sin(p->theta);
+
+    return rect;
+}
+
+int main(void) {
+    Polar p;
+    p.r = 2.5;
+    p.theta = M_PI / 4.0;
+
+    Rectangular r = polar_to_rect(&p);
+
+    printf("Rectangular coordinates: x = %f, y = %f\n", r.x, r.y);
+
+    return 0;
+}
+```

@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef enum { INT_TYPE, STR_TYPE } ElementType;
+
+typedef struct {
+    union {
+        int i;
+        char *s;
+    };
+    ElementType type;
+} MixedType;
+
+int compareMixed(const void *a, const void *b) {
+    const MixedType *x = (const MixedType *)a;
+    const MixedType *y = (const MixedType *)b;
+
+    if (x->type == INT_TYPE && y->type == INT_TYPE) {
+        return x->i - y->i;
+    }
+    if (x->type == STR_TYPE && y->type == STR_TYPE) {
+        return strcmp(x->s, y->s);
+    }
+    if (x->type == INT_TYPE && y->type == STR_TYPE) {
+        return -1;
+    }
+    return 1;
+}
+
+void sortMixedList(MixedType *list, size_t n) {
+    qsort(list, n, sizeof(MixedType), compareMixed);
+}
+
+void freeMixedList(MixedType *list, size_t n) {
+    for (size_t i = 0; i < n; ++i) {
+        if (list[i].type == STR_TYPE) {
+            free(list[i].s);
+        }
+    }
+    free(list);
+}
+
+int main() {
+    MixedType list[] = {
+        {.i = 2, .type = INT_TYPE},
+        {.s = "banana", .type = STR_TYPE},
+        {.i = 1, .type = INT_TYPE},
+        {.s = "apple", .type = STR_TYPE},
+        {.i = 3, .type = INT_TYPE}
+    };
+
+    size_t n = sizeof(list) / sizeof(list[0]);
+
+    sortMixedList(list, n);
+
+    for (size_t i = 0; i < n; ++i) {
+        if (list[i].type == INT_TYPE) {
+            printf("%d\n", list[i].i);
+        } else {
+            printf("%s\n", list[i].s);
+        }
+    }
+
+    freeMixedList(list, n);
+
+    return 0;
+}

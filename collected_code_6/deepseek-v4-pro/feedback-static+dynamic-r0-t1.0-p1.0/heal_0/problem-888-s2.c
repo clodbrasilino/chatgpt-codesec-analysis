@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+
+typedef struct Tuple {
+    int value;
+    struct Tuple **children;
+    int child_count;
+} Tuple;
+
+Tuple *create_tuple(int value, int child_count, ...) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) {
+        return NULL;
+    }
+    tuple->value = value;
+    tuple->child_count = child_count;
+    tuple->children = NULL;
+    
+    if (child_count > 0) {
+        tuple->children = (Tuple **)malloc(sizeof(Tuple *) * child_count);
+        if (!tuple->children) {
+            free(tuple);
+            return NULL;
+        }
+        
+        va_list args;
+        va_start(args, child_count);
+        for (int i = 0; i < child_count; i++) {
+            tuple->children[i] = va_arg(args, Tuple *);
+        }
+        va_end(args);
+    }
+    
+    return tuple;
+}
+
+void free_tuple(Tuple *tuple) {
+    if (!tuple) {
+        return;
+    }
+    
+    if (tuple->children) {
+        for (int i = 0; i < tuple->child_count; i++) {
+            free_tuple(tuple->children[i]);
+        }
+        free(tuple->children);
+    }
+    
+    free(tuple);
+}
+
+int subtract_tuple(Tuple *tuple) {
+    if (!tuple) {
+        return 0;
+    }
+    
+    if (tuple->child_count == 0) {
+        return tuple->value;
+    }
+    
+    int result = tuple->value;
+    
+    for (int i = 0; i < tuple->child_count; i++) {
+        if (i == 0) {
+            result -= subtract_tuple(tuple->children[i]);
+        } else {
+            result -= subtract_tuple(tuple->children[i]);
+        }
+    }
+    
+    return result;
+}
+
+int main(void) {
+    Tuple *t1 = create_tuple(10, 2, 
+        create_tuple(3, 0),
+        create_tuple(2, 0)
+    );
+    
+    Tuple *t2 = create_tuple(20, 3,
+        create_tuple(5, 0),
+        create_tuple(4, 0),
+        create_tuple(3, 0)
+    );
+    
+    Tuple *nested = create_tuple(100, 2,
+        create_tuple(30, 1, create_tuple(10, 0)),
+        create_tuple(20, 0)
+    );
+    
+    printf("Result 1 (10-3-2): %d\n", subtract_tuple(t1));
+    printf("Result 2 (20-5-4-3): %d\n", subtract_tuple(t2));
+    printf("Result 3 (100-(30-10)-20): %d\n", subtract_tuple(nested));
+    
+    free_tuple(t1);
+    free_tuple(t2);
+    free_tuple(nested);
+    
+    return 0;
+}

@@ -1,57 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int data;
-    struct Node *next;
-} Node;
-
-typedef struct List {
-    Node *head;
-    struct List *next_list;
-} List;
-
-int count_and_square_lists(List *lists) {
-    if (lists == NULL) return 0;
-    int count = 1;
-    while (lists->next_list != NULL) {
-        lists = lists->next_list;
-        count++;
+int count_and_square_lists(void **lists, size_t list_count) {
+    int count = 0;
+    for (size_t i = 0; i < list_count; ++i) {
+        if (lists[i] != NULL) {
+            count++;
+        }
     }
     return count * count;
 }
 
 int main() {
-    // Example list of lists initialization
-    List *lists = (List *)malloc(sizeof(List));
-    lists->head = (Node *)malloc(sizeof(Node));
-    lists->head->data = 10;
-    lists->head->next = NULL;
-    lists->next_list = (List *)malloc(sizeof(List));
-    lists->next_list->head = (Node *)malloc(sizeof(Node));
-    lists->next_list->head->data = 20;
-    lists->next_list->head->next = NULL;
-    lists->next_list->next_list = (List *)malloc(sizeof(List));
-    lists->next_list->next_list->head = (Node *)malloc(sizeof(Node));
-    lists->next_list->next_list->head->data = 30;
-    lists->next_list->next_list->head->next = NULL;
-    lists->next_list->next_list->next_list = NULL;
+    void *list1 = (void*)malloc(1);  // Example non-NULL pointer representing a list
+    void *list2 = (void*)malloc(1);
+    void *list3 = NULL;              // Example NULL pointer representing an empty list
+    void *lists[] = {list1, list2, list3};
 
-    int result = count_and_square_lists(lists);
-    printf("Squared count: %d\n", result);
+    size_t list_count = sizeof(lists) / sizeof(lists[0]);
+    int result = count_and_square_lists(lists, list_count);
 
-    // Free allocated memory
-    while (lists != NULL) {
-        List *temp = lists;
-        Node *node = temp->head;
-        while (node != NULL) {
-            Node *next_node = node->next;
-            free(node);
-            node = next_node;
-        }
-        lists = temp->next_list;
-        free(temp);
-    }
+    printf("%d\n", result);
 
+    free(list1);
+    free(list2);
     return 0;
 }

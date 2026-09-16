@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-810.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-810.c:4:28: style: Parameter 'elements' can be declared as pointer to const [constParameterPointer]
+void iterate_elements(int *elements, int *counts, size_t size) {
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-810.c:4:43: style: Parameter 'counts' can be declared as pointer to const [constParameterPointer]
+void iterate_elements(int *elements, int *counts, size_t size) {
+                                          ^

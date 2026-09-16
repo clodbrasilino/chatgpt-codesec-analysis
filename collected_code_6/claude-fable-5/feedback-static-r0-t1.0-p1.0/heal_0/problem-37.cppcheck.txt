@@ -1,0 +1,37 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:127:37: style: Condition 'add_int(items,filled,42L)!=0' is always false [knownConditionTrueFalse]
+    if (add_int(items, filled, 42L) != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:127:16: note: Calling function 'add_int' returns 0
+    if (add_int(items, filled, 42L) != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:127:37: note: Condition 'add_int(items,filled,42L)!=0' is always false
+    if (add_int(items, filled, 42L) != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:139:37: style: Condition 'add_int(items,filled,-7L)!=0' is always false [knownConditionTrueFalse]
+    if (add_int(items, filled, -7L) != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:139:16: note: Calling function 'add_int' returns 0
+    if (add_int(items, filled, -7L) != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:139:37: note: Condition 'add_int(items,filled,-7L)!=0' is always false
+    if (add_int(items, filled, -7L) != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:151:37: style: Condition 'add_int(items,filled,13L)!=0' is always false [knownConditionTrueFalse]
+    if (add_int(items, filled, 13L) != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:151:16: note: Calling function 'add_int' returns 0
+    if (add_int(items, filled, 13L) != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:151:37: note: Condition 'add_int(items,filled,13L)!=0' is always false
+    if (add_int(items, filled, 13L) != 0) {
+                                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:163:36: style: Condition 'add_int(items,filled,0L)!=0' is always false [knownConditionTrueFalse]
+    if (add_int(items, filled, 0L) != 0) {
+                                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:163:16: note: Calling function 'add_int' returns 0
+    if (add_int(items, filled, 0L) != 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/claude-fable-5/feedback-static-r0-t1.0-p1.0/heal_0/problem-37.c:163:36: note: Condition 'add_int(items,filled,0L)!=0' is always false
+    if (add_int(items, filled, 0L) != 0) {
+                                   ^

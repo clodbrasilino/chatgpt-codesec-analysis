@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int *elements;
+    size_t length;
+} IntList;
+
+static long long list_sum(const IntList *list)
+{
+    long long sum = 0;
+    size_t i;
+
+    for (i = 0; i < list->length; i++) {
+        sum += list->elements[i];
+    }
+    return sum;
+}
+
+const IntList *find_max_sum_list(const IntList *lists, size_t count)
+{
+    const IntList *best = NULL;
+    long long best_sum = LLONG_MIN;
+    size_t i;
+
+    if (lists == NULL || count == 0) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        long long current_sum = list_sum(&lists[i]);
+        if (best == NULL || current_sum > best_sum) {
+            best_sum = current_sum;
+            best = &lists[i];
+        }
+    }
+    return best;
+}
+
+int main(void)
+{
+    int a[] = {1, 2, 3};
+    int b[] = {10, 20, 30};
+    int c[] = {-5, -10};
+    IntList lists[3];
+    const IntList *result;
+    size_t i;
+
+    lists[0].elements = a;
+    lists[0].length = sizeof(a) / sizeof(a[0]);
+    lists[1].elements = b;
+    lists[1].length = sizeof(b) / sizeof(b[0]);
+    lists[2].elements = c;
+    lists[2].length = sizeof(c) / sizeof(c[0]);
+
+    result = find_max_sum_list(lists, 3);
+    if (result == NULL) {
+        fprintf(stderr, "No list found\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("List with highest sum: ");
+    for (i = 0; i < result->length; i++) {
+        printf("%d ", result->elements[i]);
+    }
+    printf("\nSum: %lld\n", list_sum(result));
+
+    return EXIT_SUCCESS;
+}

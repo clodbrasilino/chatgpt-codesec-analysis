@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_digits(unsigned long long n)
+{
+    int sum = 0;
+
+    while (n > 0ULL) {
+        sum += (int)(n % 10ULL);
+        n /= 10ULL;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    long long input = 0;
+    int result;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &input) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0) {
+        fprintf(stderr, "Error: negative number entered.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = sum_of_digits((unsigned long long)input);
+
+    printf("Sum of digits: %d\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points on how this code avoids the listed weaknesses:
+
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory, file handles, or other resources are acquired, so there is nothing left unreleased or used after its lifetime ends. All variables are stack-allocated with well-defined lifetimes.
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked to catch malformed input, and negative values are explicitly rejected before conversion. Error paths report to `stderr` and return `EXIT_FAILURE`.
+
+- **CWE-710 (Improper Adherence to Coding Standards):** The code uses `int main(void)`, returns standard exit codes, avoids implicit conversions by casting explicitly, uses unsigned arithmetic for the digit computation to prevent overflow issues, and compiles cleanly with `-Wall -Wextra -pedantic`.

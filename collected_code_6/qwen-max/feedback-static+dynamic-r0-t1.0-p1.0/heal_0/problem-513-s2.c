@@ -7,71 +7,60 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-Node* create_node(const char *str) {
+Node* create_node(char *val) {
     Node *new_node = (Node*)malloc(sizeof(Node));
     if (new_node == NULL) return NULL;
-    new_node->value = strdup(str);
-    if (new_node->value == NULL) {
-        free(new_node);
-        return NULL;
-    }
+    new_node->value = val;
     new_node->next = NULL;
     return new_node;
 }
 
-Node* append_to_list(Node *head, const char *str) {
-    if (head == NULL) return create_node(str);
-    Node *current = head;
-    while (current->next != NULL) {
-        current = current->next;
+void append_node(Node **head, char *val) {
+    Node *new_node = create_node(val);
+    if (*head == NULL) {
+        *head = new_node;
+    } else {
+        Node *current = *head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_node;
     }
-    current->next = create_node(str);
-    return head;
-}
-
-Node* tuple_to_list(Node *tuple, const char *str) {
-    if (tuple == NULL) return NULL;
-    Node *list = create_node(tuple->value);
-    if (list == NULL) return NULL;
-    tuple = tuple->next;
-    while (tuple != NULL) {
-        list = append_to_list(list, str);
-        if (tuple->value == NULL) break;
-        list = append_to_list(list, tuple->value);
-        tuple = tuple->next;
-    }
-    return list;
 }
 
 void free_list(Node *head) {
-    while (head != NULL) {
-        Node *temp = head;
-        head = head->next;
+    Node *current = head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
         free(temp->value);
         free(temp);
     }
 }
 
-void print_list(Node *head) {
-    while (head != NULL) {
-        printf("%s -> ", head->value);
-        head = head->next;
+Node* tuple_to_list(Node *tuple, const char *separator) {
+    Node *list = NULL;
+    for (Node *item = tuple; item != NULL; item = item->next) {
+        append_node(&list, item->value);
+        append_node(&list, (char *)separator);  // Cast to char* for simplicity
     }
-    printf("NULL\n");
+    return list;
 }
 
 int main() {
-    Node *tuple = create_node("1");
-    tuple = append_to_list(tuple, "2");
-    tuple = append_to_list(tuple, "3");
+    Node *tuple = NULL;
+    append_node(&tuple, strdup("apple"));
+    append_node(&tuple, strdup("banana"));
+    append_node(&tuple, strdup("cherry"));
 
-    const char *separator = "X";
+    const char *separator = " - ";
     Node *list = tuple_to_list(tuple, separator);
 
-    print_list(list);
+    for (Node *item = list; item != NULL; item = item->next) {
+        printf("%s\n", item->value);
+    }
 
     free_list(tuple);
     free_list(list);
-
     return 0;
 }

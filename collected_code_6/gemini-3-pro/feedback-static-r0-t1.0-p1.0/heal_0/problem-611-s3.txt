@@ -1,0 +1,55 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int* elements;
+    int size;
+} Tuple;
+
+int find_max_nth_column(Tuple* tuple_list, int num_tuples, int n) {
+    if (tuple_list == NULL || num_tuples <= 0 || n < 0) {
+        return INT_MIN;
+    }
+
+    int max_val = INT_MIN;
+    int found = 0;
+
+    for (int i = 0; i < num_tuples; ++i) {
+        if (tuple_list[i].elements != NULL && n < tuple_list[i].size) {
+            if (!found || tuple_list[i].elements[n] > max_val) {
+                max_val = tuple_list[i].elements[n];
+                found = 1;
+            }
+        }
+    }
+
+    return found ? max_val : INT_MIN;
+}
+
+int main() {
+    int elems1[] = {1, 5, 9};
+    Tuple t1 = {elems1, 3};
+
+    int elems2[] = {2, 8, 4};
+    Tuple t2 = {elems2, 3};
+
+    int elems3[] = {3, 1, 7};
+    Tuple t3 = {elems3, 3};
+
+    Tuple tuple_list[] = {t1, t2, t3};
+    int num_tuples = 3;
+    int n = 1;
+
+    int max_val = find_max_nth_column(tuple_list, num_tuples, n);
+
+    if (max_val != INT_MIN) {
+        printf("%d\n", max_val);
+    } else {
+        printf("Invalid input or column out of bounds.\n");
+    }
+
+    return 0;
+}
+```

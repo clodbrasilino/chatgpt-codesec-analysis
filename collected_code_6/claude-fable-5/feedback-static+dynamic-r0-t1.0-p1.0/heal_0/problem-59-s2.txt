@@ -1,0 +1,39 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long octagonal_number(long long n)
+{
+    if (n < 1) {
+        return -1;
+    }
+    if (n > 1000000000LL) {
+        return -1;
+    }
+    return n * (3LL * n - 2LL);
+}
+
+int main(void)
+{
+    long long n = 0;
+    long long result = 0;
+    int scan_status = 0;
+
+    printf("Enter n: ");
+    scan_status = scanf("%lld", &n);
+    if (scan_status != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = octagonal_number(n);
+    if (result < 0) {
+        fprintf(stderr, "n must be between 1 and 1000000000\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The %lld-th octagonal number is %lld\n", n, result);
+    return EXIT_SUCCESS;
+}
+```

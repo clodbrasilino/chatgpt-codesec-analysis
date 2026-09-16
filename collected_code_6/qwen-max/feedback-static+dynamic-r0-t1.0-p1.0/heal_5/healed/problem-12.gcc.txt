@@ -1,0 +1,15 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-12.c: In function 'compare_qsort':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-12.c:19:39: error: passing argument 2 of 'strtol' from incompatible pointer type [-Wincompatible-pointer-types]
+   19 |     int cols = (int)strtol((char *)a, &endptr, 10);
+      |                                       ^~~~~~~
+      |                                       |
+      |                                       const char **
+In file included from /Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/stdlib.h:58,
+                 from /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-12.c:2:
+/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk/usr/include/_stdlib.h:186:54: note: expected 'char **' but argument is of type 'const char **'
+  186 | long     strtol(const char *__str, char *_LIBC_CSTR *__endptr, int __base);
+      |                                    ~~~~~~~~~~~~~~~~~~^~~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-12.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_5/healed/problem-12.c:45:28: error: variable-sized object may not be initialized except with an empty initializer
+   45 |     int data[rows][cols] = {
+      |                            ^

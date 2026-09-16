@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+static int comparePairs(const void *a, const void *b)
+{
+    const Pair *pa = (const Pair *)a;
+    const Pair *pb = (const Pair *)b;
+
+    if (pa->second < pb->second) {
+        return -1;
+    }
+    if (pa->second > pb->second) {
+        return 1;
+    }
+    return 0;
+}
+
+int findLongestChain(Pair *pairs, size_t n)
+{
+    size_t i;
+    int count;
+    int currentEnd;
+
+    if (pairs == NULL || n == 0U) {
+        return 0;
+    }
+
+    qsort(pairs, n, sizeof(Pair), comparePairs);
+
+    count = 1;
+    currentEnd = pairs[0].second;
+
+    for (i = 1U; i < n; i++) {
+        if (pairs[i].first > currentEnd) {
+            count++;
+            currentEnd = pairs[i].second;
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    size_t n = 5U;
+    size_t i;
+    int result;
+    Pair *pairs;
+
+    const Pair input[] = {
+        {5, 24},
+        {39, 60},
+        {15, 28},
+        {27, 40},
+        {50, 90}
+    };
+
+    pairs = (Pair *)malloc(n * sizeof(Pair));
+    if (pairs == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < n; i++) {
+        pairs[i] = input[i];
+    }
+
+    result = findLongestChain(pairs, n);
+    printf("Length of the longest chain: %d\n", result);
+
+    free(pairs);
+    pairs = NULL;
+
+    return EXIT_SUCCESS;
+}

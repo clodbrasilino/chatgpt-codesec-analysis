@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t count_negative(const int *array, size_t size) {
+    if (array == NULL || size == 0) {
+        return 0;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size; i++) {
+        if (array[i] < 0) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int data[] = {4, -1, -5, 9, 0, -2, 7, -8};
+    size_t data_size = sizeof(data) / sizeof(data[0]);
+
+    size_t negative_count = count_negative(data, data_size);
+
+    printf("%zu\n", negative_count);
+
+    return 0;
+}

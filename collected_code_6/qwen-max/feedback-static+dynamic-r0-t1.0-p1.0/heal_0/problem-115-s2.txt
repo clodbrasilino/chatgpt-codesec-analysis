@@ -1,18 +1,15 @@
 ```c
+#include <stdio.h>
 #include <stdbool.h>
-#include <stdlib.h>
+#include <stddef.h>
 
 typedef struct {
-    void* data;
-    size_t size;
+    int count;
 } Dictionary;
 
-bool are_dictionaries_empty(Dictionary* dictionaries, size_t count) {
-    if (dictionaries == NULL || count <= 0) {
-        return true;
-    }
-    for (size_t i = 0; i < count; ++i) {
-        if (dictionaries[i].data != NULL || dictionaries[i].size > 0) {
+bool areAllDictionariesEmpty(const Dictionary *dictionaries, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        if (dictionaries[i].count != 0) {
             return false;
         }
     }
@@ -20,16 +17,17 @@ bool are_dictionaries_empty(Dictionary* dictionaries, size_t count) {
 }
 
 int main() {
-    Dictionary dicts[3] = {{NULL, 0}, {NULL, 0}, {NULL, 0}};
-    size_t count = 3;
-
-    bool result = are_dictionaries_empty(dicts, count);
-    if (result) {
-        // All dictionaries are empty
+    Dictionary dictionaries[] = {
+        {0},
+        {0},
+        {0}
+    };
+    size_t length = sizeof(dictionaries) / sizeof(dictionaries[0]);
+    if (areAllDictionariesEmpty(dictionaries, length)) {
+        printf("All dictionaries are empty.\n");
     } else {
-        // At least one dictionary is not empty
+        printf("Not all dictionaries are empty.\n");
     }
-
     return 0;
 }
 ```

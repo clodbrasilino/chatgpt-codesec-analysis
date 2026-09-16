@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long count_set_bits(unsigned int n)
+{
+    unsigned long long total = 0;
+    unsigned int i;
+
+    for (i = 1; i != 0 && i <= n; i++) {
+        unsigned int v = i;
+        while (v != 0) {
+            v &= (v - 1);
+            total++;
+        }
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int result;
+
+    printf("Enter a positive integer: ");
+    result = scanf("%u", &n);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n == 0) {
+        fprintf(stderr, "Error: input must be at least 1\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Total set bits from 1 to %u: %llu\n", n, count_set_bits(n));
+
+    return EXIT_SUCCESS;
+}

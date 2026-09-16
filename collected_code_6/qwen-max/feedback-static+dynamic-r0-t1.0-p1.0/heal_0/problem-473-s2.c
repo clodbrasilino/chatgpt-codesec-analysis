@@ -4,95 +4,77 @@
 
 typedef struct {
     int *elements;
-    size_t size;
+    int size;
 } Tuple;
 
 int compare(const void *a, const void *b) {
-    return (*(int*)a - *(int*)b);
+    return (*(int *)a - *(int *)b);
 }
 
-int areTuplesEqual(Tuple a, Tuple b) {
-    if (a.size != b.size) return 0;
-    qsort(a.elements, a.size, sizeof(int), compare);
-    qsort(b.elements, b.size, sizeof(int), compare);
-    for (size_t i = 0; i < a.size; ++i) {
-        if (a.elements[i] != b.elements[i]) return 0;
+int tupleEqual(Tuple t1, Tuple t2) {
+    if (t1.size != t2.size) return 0;
+    qsort(t1.elements, t1.size, sizeof(int), compare);
+    qsort(t2.elements, t2.size, sizeof(int), compare);
+    for (int i = 0; i < t1.size; ++i) {
+        if (t1.elements[i] != t2.elements[i]) return 0;
     }
     return 1;
 }
 
-Tuple* findIntersection(Tuple *tuples, size_t count, size_t *intersectionCount) {
-    *intersectionCount = 0;
-    if (count == 0) return NULL;
-
-    Tuple *result = malloc(count * sizeof(Tuple));
-    if (!result) return NULL;
-
-    for (size_t i = 0; i < count; ++i) {
-        result[i] = tuples[i];
-        result[i].elements = malloc(tuples[i].size * sizeof(int));
-        if (!result[i].elements) {
-            free(result);
-            return NULL;
-        }
-        memcpy(result[i].elements, tuples[i].elements, tuples[i].size * sizeof(int));
+Tuple findIntersection(Tuple *tuples, int count) {
+    Tuple intersection;
+    intersection.size = tuples[0].size;
+    intersection.elements = (int *)malloc(intersection.size * sizeof(int));
+    for (int i = 0; i < intersection.size; ++i) {
+        intersection.elements[i] = tuples[0].elements[i];
     }
 
-    *intersectionCount = 1;
-    for (size_t i = 1; i < count; ++i) {
-        int found = 0;
-        for (size_t j = 0; j < *intersectionCount; ++j) {
-            if (areTuplesEqual(result[j], tuples[i])) {
-                found = 1;
-                break;
+    for (int i = 1; i < count; ++i) {
+        int j = 0, k = 0;
+        while (j < intersection.size && k < tuples[i].size) {
+            if (intersection.elements[j] < tuples[i].elements[k]) {
+                intersection.elements[j] = 0;
+                j++;
+            } else if (intersection.elements[j] > tuples[i].elements[k]) {
+                k++;
+            } else {
+                j++;
+                k++;
             }
         }
-        if (found) continue;
-        for (size_t j = i + 1; j < count; ++j) {
-            if (areTuplesEqual(tuples[i], tuples[j])) {
-                result[*intersectionCount].size = tuples[i].size;
-                result[*intersectionCount].elements = malloc(tuples[i].size * sizeof(int));
-                if (!result[*intersectionCount].elements) {
-                    for (size_t k = 0; k <= *intersectionCount; ++k) free(result[k].elements);
-                    free(result);
-                    return NULL;
-                }
-                memcpy(result[*intersectionCount].elements, tuples[i].elements, tuples[i].size * sizeof(int));
-                (*intersectionCount)++;
-                break;
-            }
+        while (j < intersection.size) {
+            intersection.elements[j++] = 0;
         }
     }
-    return result;
-}
 
-void freeTuples(Tuple *tuples, size_t count) {
-    for (size_t i = 0; i < count; ++i) {
-        free(tuples[i].elements);
+    int newSize = 0;
+    for (int i = 0; i < intersection.size; ++i) {
+        if (intersection.elements[i] != 0) {
+            intersection.elements[newSize++] = intersection.elements[i];
+        }
     }
-    free(tuples);
+    intersection.size = newSize;
+
+    return intersection;
 }
 
 int main() {
     Tuple tuples[] = {
-        { (int[]) {1, 2, 3}, 3 },
-        { (int[]) {4, 5, 6}, 3 },
-        { (int[]) {2, 3, 1}, 3 },
-        { (int[]) {6, 5, 4}, 3 }
+        { .elements = (int[]){3, 2, 1}, .size = 3 },
+        { .elements = (int[]){2, 1, 4}, .size = 3 },
+        { .elements = (int[]){1, 2, 5}, .size = 3 }
     };
-    size_t count = sizeof(tuples) / sizeof(tuples[0]);
-    size_t intersectionCount;
-    Tuple *intersection = findIntersection(tuples, count, &intersectionCount);
+    int count = 3;
 
-    for (size_t i = 0; i < intersectionCount; ++i) {
-        printf("(");
-        for (size_t j = 0; j < intersection[i].size; ++j) {
-            printf("%d", intersection[i].elements[j]);
-            if (j < intersection[i].size - 1) printf(", ");
-        }
-        printf(")\n");
+    Tuple result = findIntersection(tuples, count);
+
+    printf("Intersection: ");
+    for (int i = 0; i < result.size; ++i) {
+        printf("%d ", result.elements[i]);
     }
+    printf("\n");
 
-    freeTuples(intersection, intersectionCount);
+    free(result.elements);
+
     return 0;
 }

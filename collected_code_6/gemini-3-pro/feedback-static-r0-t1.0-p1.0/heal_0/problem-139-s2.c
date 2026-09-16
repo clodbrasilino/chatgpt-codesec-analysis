@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double calculate_circumference(double radius);
+
+int main(void) {
+    double radius = 0.0;
+    double circumference = 0.0;
+    int scan_result = 0;
+
+    scan_result = scanf("%lf", &radius);
+    
+    if (scan_result != 1) {
+        return EXIT_FAILURE;
+    }
+
+    circumference = calculate_circumference(radius);
+    
+    if (circumference < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%.6f\n", circumference) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+double calculate_circumference(double radius) {
+    if (radius < 0.0) {
+        return -1.0;
+    }
+    return 2.0 * M_PI * radius;
+}

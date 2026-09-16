@@ -2,24 +2,22 @@
 #include <string.h>
 #include <limits.h>
 
-char findMaxOccurringChar(const char *str) {
+/* Possible weaknesses found:
+ *  'findMaxOccurringChar' declared here
+ */
+int findMaxOccurringChar(const char *str) {
     int count[256] = {0};
-    int i, max = 0;
-    char result;
-
-    for (i = 0; str[i]; ++i)
-        ++count[str[i]];
-
-    for (i = 0; i < 256; ++i) {
-        /* Possible weaknesses found:
-         *  Assuming condition is false
-         */
-        if (count[i] > max) {
-            max = count[i];
-            result = (char)i;
+    int max = -1, result;
+    /* Possible weaknesses found:
+     *  Assuming condition is false
+     */
+    for (int i = 0; str[i]; i++) {
+        count[(unsigned char)str[i]]++;
+        if (max < count[(unsigned char)str[i]]) {
+            max = count[(unsigned char)str[i]];
+            result = (unsigned char)str[i];
         }
     }
-
     /* Possible weaknesses found:
      *  Uninitialized variable: result [uninitvar]
      *  Uninitialized variable: result
@@ -29,7 +27,12 @@ char findMaxOccurringChar(const char *str) {
 
 int main() {
     const char *input = "test string";
-    char max_char = findMaxOccurringChar(input);
-    printf("The maximum occurring character is: %c\n", max_char);
+    /* Possible weaknesses found:
+     *  call to undeclared function 'findMaxOccuringChar'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  did you mean 'findMaxOccurringChar'?
+     *  implicit declaration of function 'findMaxOccuringChar'; did you mean 'findMaxOccurringChar'? [-Wimplicit-function-declaration]
+     */
+    int maxChar = findMaxOccuringChar(input);
+    printf("The maximum occurring character is: %c\n", maxChar);
     return 0;
 }

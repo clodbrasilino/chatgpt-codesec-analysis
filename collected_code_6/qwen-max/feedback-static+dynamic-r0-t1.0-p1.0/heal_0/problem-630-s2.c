@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Coordinate;
+
+typedef struct {
+    Coordinate *coordinates;
+    int count;
+} AdjacentCoordinates;
+
+AdjacentCoordinates* get_adjacent_coordinates(Coordinate coord) {
+    AdjacentCoordinates *adj_coords = (AdjacentCoordinates*)malloc(sizeof(AdjacentCoordinates));
+    if (adj_coords == NULL) {
+        return NULL;
+    }
+    adj_coords->coordinates = (Coordinate*)malloc(8 * sizeof(Coordinate));
+    if (adj_coords->coordinates == NULL) {
+        free(adj_coords);
+        return NULL;
+    }
+    adj_coords->count = 0;
+
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x - 1, .y = coord.y - 1};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x, .y = coord.y - 1};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x + 1, .y = coord.y - 1};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x - 1, .y = coord.y};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x + 1, .y = coord.y};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x - 1, .y = coord.y + 1};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x, .y = coord.y + 1};
+    adj_coords->coordinates[adj_coords->count++] = (Coordinate){.x = coord.x + 1, .y = coord.y + 1};
+
+    return adj_coords;
+}
+
+void print_adjacent_coordinates(AdjacentCoordinates *adj_coords) {
+    for (int i = 0; i < adj_coords->count; i++) {
+        printf("(%d, %d)\n", adj_coords->coordinates[i].x, adj_coords->coordinates[i].y);
+    }
+}
+
+void free_adjacent_coordinates(AdjacentCoordinates *adj_coords) {
+    if (adj_coords != NULL) {
+        if (adj_coords->coordinates != NULL) {
+            free(adj_coords->coordinates);
+        }
+        free(adj_coords);
+    }
+}
+
+int main() {
+    Coordinate coord = {.x = 5, .y = 5};
+    AdjacentCoordinates *adj_coords = get_adjacent_coordinates(coord);
+
+    if (adj_coords != NULL) {
+        print_adjacent_coordinates(adj_coords);
+        free_adjacent_coordinates(adj_coords);
+    } else {
+        printf("Failed to allocate memory for adjacent coordinates.\n");
+    }
+
+    return 0;
+}

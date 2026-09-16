@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double divide_first_even_odd(int *list, int size, int *error_flag) {
+    if (list == NULL || size <= 0) {
+        *error_flag = 1;
+        return 0.0;
+    }
+
+    int first_even = 0;
+    int first_odd = 0;
+    int even_found = 0;
+    int odd_found = 0;
+
+    for (int i = 0; i < size; i++) {
+        if (list[i] % 2 == 0) {
+            if (!even_found) {
+                first_even = list[i];
+                even_found = 1;
+            }
+        } else {
+            if (!odd_found) {
+                first_odd = list[i];
+                odd_found = 1;
+            }
+        }
+
+        if (even_found && odd_found) {
+            break;
+        }
+    }
+
+    if (!even_found || !odd_found) {
+        *error_flag = 2;
+        return 0.0;
+    }
+
+    if (first_odd == 0) {
+        *error_flag = 3;
+        return 0.0;
+    }
+
+    *error_flag = 0;
+    return (double)first_even / (double)first_odd;
+}
+
+int main(void) {
+    int test_list[] = {3, 5, 7, 2, 4, 6};
+    int size = sizeof(test_list) / sizeof(test_list[0]);
+    int error = 0;
+
+    double result = divide_first_even_odd(test_list, size, &error);
+
+    if (error == 0) {
+        printf("Result: %f\n", result);
+    } else if (error == 1) {
+        printf("Error: Invalid list or size\n");
+    } else if (error == 2) {
+        printf("Error: List must contain both even and odd numbers\n");
+    } else if (error == 3) {
+        printf("Error: Cannot divide by zero\n");
+    }
+
+    return 0;
+}

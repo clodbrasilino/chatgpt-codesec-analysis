@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+
+float positive_ratio(int arr[], int size) {
+    if (size <= 0) {
+        return 0.0f;
+    }
+    int positive_count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] > 0) {
+            positive_count++;
+        }
+    }
+    return (float)positive_count / size;
+}
+
+int main(void) {
+    int arr[] = {1, -2, 3, -4, 5, 0};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    float ratio = positive_ratio(arr, size);
+    printf("%.2f\n", ratio);
+    return 0;
+}
+```

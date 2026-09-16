@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-702-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-702-s2.c:35:18: style: Condition 'kept>max_kept' is always false [knownConditionTrueFalse]
+        if (kept > max_kept) {
+                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-702-s2.c:29:21: note: Assuming that condition 'left<=right' is not redundant
+        while (left <= right &&
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-702-s2.c:34:42: note: Assignment 'kept=right-left+1', assigned value is less than 1
+        const size_t kept = right - left + 1;
+                                         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-702-s2.c:35:18: note: Condition 'kept>max_kept' is always false
+        if (kept > max_kept) {
+                 ^

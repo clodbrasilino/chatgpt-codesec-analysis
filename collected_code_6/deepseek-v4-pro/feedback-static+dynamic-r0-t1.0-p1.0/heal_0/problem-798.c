@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_array(const int *arr, size_t size) {
+    int total = 0;
+    size_t i;
+    
+    for (i = 0; i < size; i++) {
+        total += arr[i];
+    }
+    
+    return total;
+}
+
+int main(void) {
+    int numbers[] = {1, 2, 3, 4, 5};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int result;
+    
+    result = sum_array(numbers, size);
+    printf("Sum: %d\n", result);
+    
+    return 0;
+}

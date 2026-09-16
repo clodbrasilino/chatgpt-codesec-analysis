@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool has_31_days(int month)
+{
+    bool result;
+
+    switch (month) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12:
+        result = true;
+        break;
+    default:
+        result = false;
+        break;
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int month = 0;
+
+    printf("Enter month number (1-12): ");
+
+    if (scanf("%d", &month) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (month < 1 || month > 12) {
+        fprintf(stderr, "Error: month must be between 1 and 12.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (has_31_days(month)) {
+        printf("Month %d has 31 days.\n", month);
+    } else {
+        printf("Month %d does not have 31 days.\n", month);
+    }
+
+    return EXIT_SUCCESS;
+}
+```

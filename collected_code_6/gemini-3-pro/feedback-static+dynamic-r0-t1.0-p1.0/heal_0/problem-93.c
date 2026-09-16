@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double power(double a, int b) {
+    if (b == 0) {
+        return 1.0;
+    }
+    
+    double result = 1.0;
+    int abs_b = b > 0 ? b : -b;
+    
+    for (int i = 0; i < abs_b; i++) {
+        result *= a;
+    }
+    
+    if (b < 0) {
+        if (result == 0.0) {
+            fprintf(stderr, "Error: Division by zero.\n");
+            exit(EXIT_FAILURE);
+        }
+        result = 1.0 / result;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    double base;
+    int exponent;
+    
+    if (scanf("%lf %d", &base, &exponent) != 2) {
+        fprintf(stderr, "Error: Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    
+    double result = power(base, exponent);
+    
+    printf("%f\n", result);
+    
+    return EXIT_SUCCESS;
+}

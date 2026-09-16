@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int *data;
+    size_t length;
+} IntTuple;
+
+IntTuple parseStringToInts(const char *input) {
+    IntTuple result = {NULL, 0};
+    const char *delim = " ,";
+    char *rest = (char *)input;
+    while (1) {
+        /* Possible weaknesses found:
+         * ASan: BUS
+         */
+        char *token = strsep(&rest, delim);
+        if (token == NULL || *token == '\0') {
+            break;
+        }
+        size_t new_length = result.length + 1;
+        int *temp = (int *)realloc(result.data, new_length * sizeof(int));
+        if (temp == NULL) {
+            free(result.data);
+            result.data = NULL;
+            return result;
+        }
+        result.data = temp;
+        result.data[result.length] = atoi(token);
+        result.length = new_length;
+    }
+    return result;
+}
+
+void freeIntTuple(IntTuple *tuple) {
+    free(tuple->data);
+    tuple->data = NULL;
+    tuple->length = 0;
+}
+
+int main() {
+    const char *input = "123 456,789 101,112";
+    IntTuple tuple = parseStringToInts(input);
+    
+    for (size_t i = 0; i < tuple.length; ++i) {
+        printf("%d ", tuple.data[i]);
+    }
+    putchar('\n');
+    
+    freeIntTuple(&tuple);
+    return 0;
+}

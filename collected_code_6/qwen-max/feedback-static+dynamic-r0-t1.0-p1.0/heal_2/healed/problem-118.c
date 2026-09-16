@@ -2,120 +2,69 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct ListNode {
-    char *data;
-    struct ListNode *next;
-} ListNode;
+struct List {
+    char *item;
+    struct List *next;
+};
 
-ListNode *stringToList(const char *str) {
-    if (str == NULL) return NULL;
-
-    ListNode *head = NULL;
-    ListNode *current = NULL;
-    const char *start = str;
-
-    while (*str) {
-        if (*str == ' ' || *str == '\0') {
-            if (start != str) {
-                size_t length = str - start;
-                char *item = (char *)malloc((length + 1) * sizeof(char));
-                if (item == NULL) return NULL;
-                strncpy(item, start, length);
-                item[length] = '\0';
-
-                ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-                if (newNode == NULL) {
-                    free(item);
-                    return NULL;
-                }
-                newNode->data = item;
-                newNode->next = NULL;
-
-                if (head == NULL) {
-                    head = newNode;
-                    current = head;
-                } else {
-                    current->next = newNode;
-                    current = newNode;
-                }
-            }
-            if (*str == ' ') start = str + 1;
-        }
-        ++str;
+struct List* string_to_list(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return NULL;
     }
 
-    if (start != str) {
-        size_t length = str - start;
-        char *item = (char *)malloc((length + 1) * sizeof(char));
-        if (item == NULL) return NULL;
-        strncpy(item, start, length);
-        item[length] = '\0';
+    struct List *head = NULL, *current = NULL;
 
-        ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-        if (newNode == NULL) {
-            free(item);
+    for (char *token = strtok((char *)str, " "); token; token = strtok(NULL, " ")) {
+        struct List *new_item = (struct List *)malloc(sizeof(struct List));
+        if (new_item == NULL) {
+            while (head != NULL) {
+                current = head;
+                head = head->next;
+                free(current->item);
+                free(current);
+            }
             return NULL;
         }
-        newNode->data = item;
-        newNode->next = NULL;
+
+        new_item->item = strdup(token);
+        new_item->next = NULL;
 
         if (head == NULL) {
-            head = newNode;
+            head = new_item;
+            current = new_item;
         } else {
-            current->next = newNode;
+            current->next = new_item;
+            current = new_item;
         }
     }
 
     return head;
 }
 
-void printList(ListNode *head) {
-    ListNode *current = head;
-    while (current != NULL) {
-        printf("%s -> ", current->data);
-        current = current->next;
-    }
-    printf("NULL\n");
-}
-
-void freeList(ListNode *head) {
-    ListNode *current = head;
-    while (current != NULL) {
-        ListNode *temp = current;
-        current = current->next;
-        free(temp->data);
-        free(temp);
+void free_list(struct List *list) {
+    if (list != NULL) {
+        struct List *current = list;
+        while (current != NULL) {
+            struct List *temp = current;
+            current = current->next;
+            free(temp->item);
+            free(temp);
+        }
     }
 }
 
 int main() {
-    const char *input1 = "lists tuples strings";
-    const char *input2 = "write a program";
-    const char *input3 = "python programming";
+    const char *input_strings[] = {"python programming", "write a program", "lists tuples strings"};
+    int num_strings = sizeof(input_strings) / sizeof(input_strings[0]);
 
-    ListNode *list1 = stringToList(input1);
-    if (list1 == NULL) {
-        fprintf(stderr, "Error in creating list\n");
-        return EXIT_FAILURE;
+    for (int i = 0; i < num_strings; ++i) {
+        struct List *list = string_to_list(input_strings[i]);
+        for (struct List *current = list; current != NULL; current = current->next) {
+            printf("%s\n", current->item);
+        }
+        free_list(list);
+        printf("\n");
     }
-    printList(list1);
-    freeList(list1);
 
-    ListNode *list2 = stringToList(input2);
-    if (list2 == NULL) {
-        fprintf(stderr, "Error in creating list\n");
-        return EXIT_FAILURE;
-    }
-    printList(list2);
-    freeList(list2);
-
-    ListNode *list3 = stringToList(input3);
-    if (list3 == NULL) {
-        fprintf(stderr, "Error in creating list\n");
-        return EXIT_FAILURE;
-    }
-    printList(list3);
-    freeList(list3);
-
-    return EXIT_SUCCESS;
+    return 0;
 }

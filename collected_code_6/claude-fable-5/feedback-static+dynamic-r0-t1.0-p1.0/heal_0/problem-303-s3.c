@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static long long countInversionsType1(const int arr[], size_t n)
+{
+    long long count = 0;
+    for (size_t i = 0; i + 1 < n; i++) {
+        for (size_t j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+static long long countInversionsType2(const int arr[], size_t n)
+{
+    long long count = 0;
+    for (size_t i = 0; i + 1 < n; i++) {
+        for (size_t j = i + 1; j < n; j++) {
+            if ((long long)arr[i] > 2LL * (long long)arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+static bool sameInversionCounts(const int arr[], size_t n)
+{
+    if (arr == NULL || n == 0) {
+        return true;
+    }
+    return countInversionsType1(arr, n) == countInversionsType2(arr, n);
+}
+
+int main(void)
+{
+    int arr1[] = {3, 2, 1};
+    int arr2[] = {2, 3, 1};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+
+    if (sameInversionCounts(arr1, n1)) {
+        if (printf("Array 1: Inversion counts are the same\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Array 1: Inversion counts are different\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (sameInversionCounts(arr2, n2)) {
+        if (printf("Array 2: Inversion counts are the same\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Array 2: Inversion counts are different\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

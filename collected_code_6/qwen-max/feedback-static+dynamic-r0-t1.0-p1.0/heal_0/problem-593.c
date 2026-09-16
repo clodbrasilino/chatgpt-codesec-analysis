@@ -1,35 +1,31 @@
 #include <stdio.h>
 #include <string.h>
 
-char* remove_leading_zeroes_ip(char *ip) {
-    char *token, *new_ip = ip;
-    while (*new_ip != '\0') {
-        if (*new_ip == '.') {
-            new_ip++;
-            continue;
+void remove_leading_zeroes(char *ip) {
+    char temp[16];
+    char *part = strtok(ip, ".");
+    int index = 0;
+
+    while (part != NULL) {
+        if (strlen(part) > 1 && part[0] == '0') {
+            int i;
+            for (i = 0; part[i] == '0' && i < strlen(part) - 1; i++);
+            strcpy(temp + index, part + i);
+        } else {
+            strcpy(temp + index, part);
         }
-        token = new_ip;
-        while (*token != '.' && *token != '\0') {
-            token++;
+        index += strlen(temp + index);
+        if (part = strtok(NULL, ".")) {
+            temp[index++] = '.';
         }
-        while (token > new_ip + 1 && *new_ip == '0') {
-            memmove(new_ip, new_ip + 1, token - new_ip);
-        }
-        if (token > new_ip + 1 && *new_ip == '0' && *(new_ip + 1) != '.') {
-            new_ip++;
-        } else if (token - new_ip == 1) {
-            new_ip = token;
-            break;
-        }
-        new_ip = token;
     }
-    return ip;
+    temp[index] = '\0';
+    strcpy(ip, temp);
 }
 
 int main() {
-    char ip[] = "010.010.001.002";
-    printf("Original IP: %s\n", ip);
-    char *new_ip = remove_leading_zeroes_ip(ip);
-    printf("Cleaned IP: %s\n", new_ip);
+    char ip[] = "192.168.001.001";
+    remove_leading_zeroes(ip);
+    printf("%s\n", ip);
     return 0;
 }

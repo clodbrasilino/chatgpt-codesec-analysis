@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'sequence' can be declared as pointer to const [constParameterPointer]
+ */
+bool is_value_in_sequence(int *sequence, int length, int value) {
+    for (int i = 0; i < length; i++) {
+        if (sequence[i] == value) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int sequence[] = {1, 2, 3, 4, 5};
+    int length = sizeof(sequence) / sizeof(sequence[0]);
+    int value = 3;
+
+    bool found = is_value_in_sequence(sequence, length, value);
+
+    if (found) {
+        printf("Value %d is in the sequence.\n", value);
+    } else {
+        printf("Value %d is not in the sequence.\n", value);
+    }
+
+    return 0;
+}

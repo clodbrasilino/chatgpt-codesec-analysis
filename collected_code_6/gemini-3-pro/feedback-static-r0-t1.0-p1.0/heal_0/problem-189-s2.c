@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int firstMissingPositive(int* nums, int numsSize) {
+    if (nums == NULL || numsSize <= 0) {
+        return 1;
+    }
+
+    for (int i = 0; i < numsSize; ++i) {
+        while (nums[i] > 0 && nums[i] <= numsSize && nums[nums[i] - 1] != nums[i]) {
+            int temp = nums[nums[i] - 1];
+            nums[nums[i] - 1] = nums[i];
+            nums[i] = temp;
+        }
+    }
+
+    for (int i = 0; i < numsSize; ++i) {
+        if (nums[i] != i + 1) {
+            return i + 1;
+        }
+    }
+
+    return numsSize + 1;
+}
+
+int main(void) {
+    int nums[] = {3, 4, -1, 1};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    int result = firstMissingPositive(nums, numsSize);
+    printf("%d\n", result);
+    
+    return 0;
+}

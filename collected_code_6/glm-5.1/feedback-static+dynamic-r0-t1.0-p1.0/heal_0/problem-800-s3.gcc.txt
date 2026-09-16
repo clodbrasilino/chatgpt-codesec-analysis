@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-800-s3.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-800-s3.c:33:27: error: implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+   33 |     char *buffer = malloc(strlen(argv[1]) + 1);
+      |                           ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-800-s3.c:4:1: note: include '<string.h>' or provide a declaration of 'strlen'
+    3 | #include <stdlib.h>
+  +++ |+#include <string.h>
+    4 | 
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-800-s3.c:38:5: error: implicit declaration of function 'strcpy' [-Wimplicit-function-declaration]
+   38 |     strcpy(buffer, argv[1]);
+      |     ^~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-800-s3.c:38:5: note: include '<string.h>' or provide a declaration of 'strcpy'

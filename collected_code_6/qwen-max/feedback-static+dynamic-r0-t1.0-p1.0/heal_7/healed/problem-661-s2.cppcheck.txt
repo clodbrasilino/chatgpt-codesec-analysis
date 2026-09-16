@@ -1,1 +1,10 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-661-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-661-s2.c:9:19: style: The scope of the variable 'excl_new' can be reduced. [variableScope]
+    int incl = 0, excl_new, excl, excl2;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-661-s2.c:25:9: style: Variable 'n' can be declared as const array [constVariable]
+    int n[] = {7, 8, 7};
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_7/healed/problem-661-s2.c:26:20: style: Variable 'expected' is assigned a value that is never used. [unreadVariable]
+    int expected[] = {2101, 5013, 27};
+                   ^

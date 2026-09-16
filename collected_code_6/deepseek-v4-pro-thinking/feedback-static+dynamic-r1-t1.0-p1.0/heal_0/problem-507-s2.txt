@@ -1,0 +1,143 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct word_node {
+    char *word;
+    struct word_node *next;
+};
+
+struct word_node *create_node(const char *word)
+{
+    struct word_node *node;
+
+    if (word == NULL) {
+        return NULL;
+    }
+
+    node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+
+    node->word = malloc(strlen(word) + 1);
+    if (node->word == NULL) {
+        free(node);
+        return NULL;
+    }
+
+    strcpy(node->word, word);
+    node->next = NULL;
+    return node;
+}
+
+int append_word(struct word_node **head, const char *word)
+{
+    struct word_node *node;
+    struct word_node *current;
+
+    if (head == NULL || word == NULL) {
+        return 0;
+    }
+
+    node = create_node(word);
+    if (node == NULL) {
+        return 0;
+    }
+
+    if (*head == NULL) {
+        *head = node;
+        return 1;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = node;
+    return 1;
+}
+
+void remove_words(struct word_node **head, const char **remove_words, size_t count)
+{
+    struct word_node **link;
+
+    if (head == NULL || *head == NULL || remove_words == NULL || count == 0) {
+        return;
+    }
+
+    link = head;
+
+    while (*link != NULL) {
+        struct word_node *current = *link;
+        int should_remove = 0;
+
+        if (current->word != NULL) {
+            size_t i;
+
+            for (i = 0; i < count; ++i) {
+                if (remove_words[i] != NULL && strcmp(current->word, remove_words[i]) == 0) {
+                    should_remove = 1;
+                    break;
+                }
+            }
+        }
+
+        if (should_remove) {
+            *link = current->next;
+            free(current->word);
+            free(current);
+        } else {
+            link = &current->next;
+        }
+    }
+}
+
+void print_words(const struct word_node *head)
+{
+    while (head != NULL) {
+        if (head->word != NULL) {
+            printf("%s\n", head->word);
+        }
+        head = head->next;
+    }
+}
+
+void free_words(struct word_node *head)
+{
+    while (head != NULL) {
+        struct word_node *next = head->next;
+        free(head->word);
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    struct word_node *head = NULL;
+    const char *words[] = {"banana", "apple", "grape", "orange", "melon"};
+    const char *remove_list[] = {"apple", "orange"};
+    size_t i;
+
+    for (i = 0; i < sizeof(words) / sizeof(words[0]); ++i) {
+        if (!append_word(&head, words[i])) {
+            free_words(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Before removal:\n");
+    print_words(head);
+
+    remove_words(&head, remove_list, sizeof(remove_list) / sizeof(remove_list[0]));
+
+    printf("After removal:\n");
+    print_words(head);
+
+    free_words(head);
+    return EXIT_SUCCESS;
+}
+```

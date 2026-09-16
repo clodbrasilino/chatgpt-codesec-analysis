@@ -4,130 +4,120 @@
 typedef struct {
     int value;
     int count;
-} Element;
+} IntCount;
 
 typedef struct {
-    int size;
+    IntCount *data;
+    int heap_size;
     int capacity;
-    Element *elements;
 } Heap;
 
-Heap* createHeap(int capacity) {
-    Heap* heap = (Heap*)malloc(sizeof(Heap));
-    if (heap == NULL) exit(EXIT_FAILURE);
-    heap->size = 0;
-    heap->capacity = capacity;
-    heap->elements = (Element*)malloc(capacity * sizeof(Element));
-    if (heap->elements == NULL) exit(EXIT_FAILURE);
-    return heap;
-}
-
-void freeHeap(Heap* heap) {
-    free(heap->elements);
-    free(heap);
-}
-
-void swap(Element *a, Element *b) {
-    Element temp = *a;
+void swap(IntCount *a, IntCount *b) {
+    IntCount temp = *a;
     *a = *b;
     *b = temp;
 }
 
 int parent(int i) { return (i - 1) / 2; }
-int leftChild(int i) { return 2 * i + 1; }
-int rightChild(int i) { return 2 * i + 2; }
+int left(int i) { return (2 * i + 1); }
+int right(int i) { return (2 * i + 2); }
 
-void maxHeapify(Heap* heap, int i) {
+Heap* create_heap(int capacity) {
+    Heap *heap = (Heap *)malloc(sizeof(Heap));
+    heap->data = (IntCount *)malloc(capacity * sizeof(IntCount));
+    heap->capacity = capacity;
+    heap->heap_size = 0;
+    return heap;
+}
+
+void ensure_capacity(Heap *heap, int new_cap) {
+    if (new_cap > heap->capacity) {
+        heap->data = (IntCount *)realloc(heap->data, new_cap * sizeof(IntCount));
+        heap->capacity = new_cap;
+    }
+}
+
+void max_heapify(Heap *heap, int i) {
     int largest = i;
-    int left = leftChild(i);
-    int right = rightChild(i);
+    int l = left(i);
+    int r = right(i);
 
-    if (left < heap->size && heap->elements[left].count > heap->elements[largest].count)
-        largest = left;
-    if (right < heap->size && heap->elements[right].count > heap->elements[largest].count)
-        largest = right;
+    if (l < heap->heap_size && heap->data[l].count > heap->data[largest].count)
+        largest = l;
+    if (r < heap->heap_size && heap->data[r].count > heap->data[largest].count)
+        largest = r;
 
     if (largest != i) {
-        swap(&heap->elements[i], &heap->elements[largest]);
-        maxHeapify(heap, largest);
+        swap(&heap->data[i], &heap->data[largest]);
+        max_heapify(heap, largest);
     }
 }
 
-void buildMaxHeap(Heap* heap) {
-    for (int i = (heap->size / 2) - 1; i >= 0; i--) {
-        maxHeapify(heap, i);
-    }
-}
-
-void insertHeap(Heap* heap, Element element) {
-    if (heap->size == heap->capacity) return;
-    heap->elements[heap->size] = element;
-    int i = heap->size;
-    heap->size++;
-    while (i != 0 && heap->elements[parent(i)].count < element.count) {
-        heap->elements[i] = heap->elements[parent(i)];
+void increase_key(Heap *heap, int i, int count) {
+    heap->data[i].count = count;
+    while (i && heap->data[parent(i)].count < heap->data[i].count) {
+        swap(&heap->data[i], &heap->data[parent(i)]);
         i = parent(i);
     }
-    heap->elements[i] = element;
 }
 
-Element extractMax(Heap* heap) {
-    if (heap->size <= 0) return (Element){0, 0};
-    if (heap->size == 1) {
-        heap->size--;
-        return heap->elements[0];
+void insert_key(Heap *heap, int value, int count) {
+    if (heap->heap_size == heap->capacity) {
+        ensure_capacity(heap, heap->capacity * 2);
     }
-    Element root = heap->elements[0];
-    heap->elements[0] = heap->elements[heap->size - 1];
-    heap->size--;
-    maxHeapify(heap, 0);
+    heap->data[heap->heap_size] = (IntCount){value, -count};
+    increase_key(heap, heap->heap_size, -count);
+    heap->heap_size++;
+}
+
+IntCount extract_max(Heap *heap) {
+    if (heap->heap_size <= 0) {
+        printf("Heap underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    IntCount root = heap->data[0];
+    heap->data[0] = heap->data[heap->heap_size - 1];
+    heap->heap_size--;
+    max_heapify(heap, 0);
     return root;
 }
 
-int* topKFrequent(int* nums, int numsSize, int k, int* returnSize) {
-    int min = nums[0], max = nums[numsSize - 1];
-    int range = max - min + 1;
-    int* counts = (int*)calloc(range, sizeof(int));
-    if (counts == NULL) exit(EXIT_FAILURE);
-
-    for (int i = 0; i < numsSize; i++) {
-        counts[nums[i] - min]++;
+void print_top_k(Heap *heap, int k) {
+    for (int i = 0; i < k; ++i) {
+        IntCount item = extract_max(heap);
+        printf("%d ", item.value);
     }
+}
 
-    Heap* heap = createHeap(k);
-    for (int i = 0; i < range; i++) {
-        if (counts[i] > 0) {
-            Element e = {i + min, counts[i]};
-            if (heap->size < k) {
-                insertHeap(heap, e);
-            } else if (e.count > heap->elements[0].count) {
-                extractMax(heap);
-                insertHeap(heap, e);
+int main() {
+    int arr[] = {1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3;
+
+    Heap *heap = create_heap(k + 1);
+
+    for (int i = 0; i < n; ++i) {
+        int value = arr[i];
+        int *found = NULL;
+        for (int j = 0; j < heap->heap_size; ++j) {
+            if (heap->data[j].value == value) {
+                found = &heap->data[j].count;
+                break;
+            }
+        }
+        if (found) (*found)++;
+        else {
+            if (heap->heap_size < k) {
+                insert_key(heap, value, 1);
+            } else if (-heap->data[0].count < 1) {
+                extract_max(heap);
+                insert_key(heap, value, 1);
             }
         }
     }
 
-    *returnSize = k;
-    int* result = (int*)malloc(k * sizeof(int));
-    if (result == NULL) exit(EXIT_FAILURE);
-    for (int i = 0; i < k; i++) {
-        result[i] = extractMax(heap).value;
-    }
-
-    free(counts);
-    freeHeap(heap);
-    return result;
-}
-
-int main() {
-    int nums[] = {1, 1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
-    int numsSize = 11;
-    int k = 2;
-    int returnSize;
-    int* result = topKFrequent(nums, numsSize, k, &returnSize);
-    for (int i = 0; i < returnSize; i++) {
-        printf("%d ", result[i]);
-    }
-    free(result);
+    print_top_k(heap, k);
+    free(heap->data);
+    free(heap);
     return 0;
 }

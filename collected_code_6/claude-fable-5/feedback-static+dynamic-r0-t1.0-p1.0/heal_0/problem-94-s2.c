@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stddef.h>
+
+struct Record {
+    const char *name;
+    int value;
+};
+
+int index_minimum(const struct Record *records, size_t count, const char **result)
+{
+    size_t i;
+    size_t min_index;
+
+    if (records == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    min_index = 0U;
+    for (i = 1U; i < count; i++) {
+        if (records[i].value < records[min_index].value) {
+            min_index = i;
+        }
+    }
+
+    *result = records[min_index].name;
+    return 0;
+}
+
+int main(void)
+{
+    struct Record records[] = {
+        { "Rash", 143 },
+        { "Manjeet", 200 },
+        { "Varsha", 100 }
+    };
+    size_t count = sizeof(records) / sizeof(records[0]);
+    const char *min_name = NULL;
+
+    if (index_minimum(records, count, &min_name) != 0) {
+        fprintf(stderr, "Error: could not determine minimum record\n");
+        return 1;
+    }
+
+    if (printf("Minimum value record: %s\n", min_name) < 0) {
+        return 1;
+    }
+
+    return 0;
+}

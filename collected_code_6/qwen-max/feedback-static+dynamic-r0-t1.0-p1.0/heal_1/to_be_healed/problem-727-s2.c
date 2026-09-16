@@ -1,48 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <regex.h>
- /* Possible weaknesses found:
-  *  include '<string.h>' or provide a declaration of 'memmove'
-  */
 
-void remove_non_alphanumeric(char *str) {
+void sanitize_string(char *str) {
     regex_t regex;
     regmatch_t pmatch[1];
-    const char *pattern = "[^a-zA-Z0-9]";
+    char *ptr = str;
     /* Possible weaknesses found:
-     *  Unused variable: reti [unusedVariable]
+     *  The scope of the variable 'rc' can be reduced. [variableScope]
      */
-    int reti;
+    int rc;
 
-    if (regcomp(&regex, pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
+    if (regcomp(&regex, "[^a-zA-Z0-9]", REG_EXTENDED | REG_NOSUB) != 0) {
         return;
     }
 
-    while (regexec(&regex, str, 1, pmatch, 0) == 0) {
+    while (ptr && *ptr) {
         /* Possible weaknesses found:
-         *  include the header <string.h> or explicitly provide a declaration for 'memmove'
-         *  call to undeclared library function 'memmove' with type 'void *(void *, const void *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-         *  implicit declaration of function 'memmove' [-Wimplicit-function-declaration]
-         *  include '<string.h>' or provide a declaration of 'strlen'
-         *  include the header <string.h> or explicitly provide a declaration for 'strlen'
-         *  call to undeclared library function 'strlen' with type 'unsigned long (const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-         *  implicit declaration of function 'strlen' [-Wimplicit-function-declaration]
+         *  Although the value stored to 'rc' is used in the enclosing expression, the value is never actually read from 'rc' [deadcode.DeadStores]
+         *  Variable 'rc' is assigned a value that is never used. [unreadVariable]
          */
-        memmove(str + pmatch[0].rm_so, str + pmatch[0].rm_eo, strlen(str + pmatch[0].rm_eo) + 1);
+        if ((rc = regexec(&regex, ptr, 1, pmatch, 0)) == 0) {
+            memmove(ptr, ptr + pmatch[0].rm_eo - pmatch[0].rm_so, strlen(ptr + pmatch[0].rm_eo - pmatch[0].rm_so) + 1);
+        } else {
+            ptr++;
+        }
     }
 
     regfree(&regex);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        return EXIT_FAILURE;
-    }
-
-    char *input = argv[1];
-    remove_non_alphanumeric(input);
-
-    printf("%s\n", input);
-
-    return EXIT_SUCCESS;
+int main() {
+    char str[] = "Hello, World! 123";
+    printf("Original: %s\n", str);
+    sanitize_string(str);
+    printf("Sanitized: %s\n", str);
+    return 0;
 }

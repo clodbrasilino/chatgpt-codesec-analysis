@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool canRearrange(const char *str) {
+    int len = strlen(str);
+    
+    if (len == 0) {
+        return true;
+    }
+    
+    int charCount[UCHAR_MAX + 1] = {0};
+    
+    for (int i = 0; i < len; i++) {
+        charCount[(unsigned char)str[i]]++;
+    }
+    
+    int maxCount = 0;
+    for (int i = 0; i <= UCHAR_MAX; i++) {
+        if (charCount[i] > maxCount) {
+            maxCount = charCount[i];
+        }
+    }
+    
+    return maxCount <= (len + 1) / 2;
+}
+
+int main(void) {
+    char str[1000];
+    
+    printf("Enter a string: ");
+    if (fgets(str, sizeof(str), stdin) != NULL) {
+        size_t len = strlen(str);
+        if (len > 0 && str[len - 1] == '\n') {
+            str[len - 1] = '\0';
+        }
+        
+        if (canRearrange(str)) {
+            printf("Yes, can be rearranged\n");
+        } else {
+            printf("No, cannot be rearranged\n");
+        }
+    }
+    
+    return 0;
+}

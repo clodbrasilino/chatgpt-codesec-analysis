@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+double tuple_to_float(int whole, int fraction)
+{
+    double divisor = 1.0;
+    int temp = fraction;
+
+    if (fraction < 0) {
+        return 0.0;
+    }
+
+    if (temp == 0) {
+        divisor = 10.0;
+    } else {
+        while (temp > 0) {
+            divisor *= 10.0;
+            temp /= 10;
+        }
+    }
+
+    if (whole < 0) {
+        return (double)whole - ((double)fraction / divisor);
+    }
+
+    return (double)whole + ((double)fraction / divisor);
+}
+
+int main(void)
+{
+    int a = 4;
+    int b = 56;
+    double result = tuple_to_float(a, b);
+
+    if (printf("(%d, %d) -> %.2f\n", a, b, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    a = 7;
+    b = 256;
+    result = tuple_to_float(a, b);
+
+    if (printf("(%d, %d) -> %.3f\n", a, b, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    a = 10;
+    b = 0;
+    result = tuple_to_float(a, b);
+
+    if (printf("(%d, %d) -> %.1f\n", a, b, result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

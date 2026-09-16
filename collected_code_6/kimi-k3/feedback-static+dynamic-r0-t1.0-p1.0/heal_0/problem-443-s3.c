@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdbool.h>
+
+bool find_largest_negative(const int arr[], size_t size, int *result)
+{
+    if (arr == NULL || result == NULL || size == 0) {
+        return false;
+    }
+
+    bool found = false;
+    int largest_negative = INT_MIN;
+
+    for (size_t i = 0; i < size; i++) {
+        if (arr[i] < 0) {
+            if (!found || arr[i] > largest_negative) {
+                largest_negative = arr[i];
+                found = true;
+            }
+        }
+    }
+
+    if (found) {
+        *result = largest_negative;
+    }
+
+    return found;
+}
+
+int main(void)
+{
+    int numbers[] = {-5, -2, -8, -1, -10, 3, 7};
+    size_t size = sizeof(numbers) / sizeof(numbers[0]);
+    int largest_negative;
+
+    if (find_largest_negative(numbers, size, &largest_negative)) {
+        printf("The largest negative number is: %d\n", largest_negative);
+    } else {
+        printf("No negative numbers found in the list.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long power(long long base, long long exp, long long mod) {
+    long long res = 1;
+    base = base % mod;
+    if (base < 0) {
+        base += mod;
+    }
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            res = (res * base) % mod;
+        }
+        exp /= 2;
+        base = (base * base) % mod;
+    }
+    return res;
+}
+
+int count_self_modular_inverse(int *arr, int n, int p) {
+    if (arr == NULL || n < 0 || p <= 1) {
+        return 0;
+    }
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] % p < 0) {
+            continue;
+        }
+        if (power(arr[i], p - 2, p) == arr[i] % p) {
+            count++;
+        }
+    }
+    return count;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int p = 11;
+    int result = count_self_modular_inverse(arr, n, p);
+    printf("%d\n", result);
+    return 0;
+}

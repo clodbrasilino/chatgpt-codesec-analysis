@@ -1,0 +1,36 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:7:5: error: unknown type name 'UT_hash_handle'
+    7 |     UT_hash_handle hh;
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:12:5: error: call to undeclared function 'HASH_FIND_INT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   12 |     HASH_FIND_INT(*table, &value, s);
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:17:9: error: call to undeclared function 'HASH_ADD_INT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   17 |         HASH_ADD_INT(*table, value, s);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:5: error: call to undeclared function 'HASH_ITER'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   25 |     HASH_ITER(hh, *table, current, tmp) {
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:15: error: use of undeclared identifier 'hh'
+   25 |     HASH_ITER(hh, *table, current, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:25:40: error: expected ';' after expression
+   25 |     HASH_ITER(hh, *table, current, tmp) {
+      |                                        ^
+      |                                        ;
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:26:9: error: call to undeclared function 'HASH_DEL'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   26 |         HASH_DEL(*table, current);
+      |         ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:39:19: error: call to undeclared function 'HASH_COUNT'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   39 |     *returnSize = HASH_COUNT(table);
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:45:5: error: call to undeclared function 'HASH_ITER'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   45 |     HASH_ITER(hh, table, s, tmp) {
+      |     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:45:15: error: use of undeclared identifier 'hh'
+   45 |     HASH_ITER(hh, table, s, tmp) {
+      |               ^~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_3/healed/problem-694.c:45:33: error: expected ';' after expression
+   45 |     HASH_ITER(hh, table, s, tmp) {
+      |                                 ^
+      |                                 ;
+11 errors generated.

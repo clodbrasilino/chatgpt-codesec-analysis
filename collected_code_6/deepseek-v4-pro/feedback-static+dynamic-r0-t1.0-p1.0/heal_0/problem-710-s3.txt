@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    void **data;
+    size_t size;
+} Tuple;
+
+typedef struct {
+    void *initial;
+    void *last;
+} TupleAccess;
+
+Tuple *create_tuple(size_t size) {
+    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+    if (!tuple) return NULL;
+    
+    tuple->data = (void **)calloc(size, sizeof(void *));
+    if (!tuple->data) {
+        free(tuple);
+        return NULL;
+    }
+    
+    tuple->size = size;
+    return tuple;
+}
+
+void destroy_tuple(Tuple *tuple) {
+    if (!tuple) return;
+    
+    if (tuple->data) {
+        for (size_t i = 0; i < tuple->size; i++) {
+            free(tuple->data[i]);
+        }
+        free(tuple->data);
+    }
+    
+    free(tuple);
+}
+
+int set_tuple_element(Tuple *tuple, size_t index, void *element, size_t element_size) {
+    if (!tuple || !element || index >= tuple->size || element_size == 0) return -1;
+    
+    if (tuple->data[index]) {
+        free(tuple->data[index]);
+    }
+    
+    tuple->data[index] = malloc(element_size);
+    if (!tuple->data[index]) return -1;
+    
+    memcpy(tuple->data[index], element, element_size);
+    return 0;
+}
+
+TupleAccess access_tuple_data(const Tuple *tuple) {
+    TupleAccess access = {NULL, NULL};
+    
+    if (!tuple || tuple->size == 0 || !tuple->data) {
+        return access;
+    }
+    
+    access.initial = tuple->data[0];
+    access.last = tuple->data[tuple->size - 1];
+    
+    return access;
+}
+
+int main(void) {
+    Tuple *tuple = create_tuple(3);
+    if (!tuple) {
+        return EXIT_FAILURE;
+    }
+    
+    int val1 = 10;
+    int val2 = 20;
+    int val3 = 30;
+    
+    if (set_tuple_element(tuple, 0, &val1, sizeof(int)) != 0 ||
+        set_tuple_element(tuple, 1, &val2, sizeof(int)) != 0 ||
+        set_tuple_element(tuple, 2, &val3, sizeof(int)) != 0) {
+        destroy_tuple(tuple);
+        return EXIT_FAILURE;
+    }
+    
+    TupleAccess access = access_tuple_data(tuple);
+    
+    if (access.initial && access.last) {
+        printf("Initial: %d\n", *(int *)access.initial);
+        printf("Last: %d\n", *(int *)access.last);
+    }
+    
+    destroy_tuple(tuple);
+    
+    return EXIT_SUCCESS;
+}
+```

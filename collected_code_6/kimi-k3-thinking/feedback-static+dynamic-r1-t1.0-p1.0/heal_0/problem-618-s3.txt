@@ -1,0 +1,102 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int divide_lists(const double *list_a, const double *list_b, double *result, size_t size_a, size_t size_b)
+{
+    size_t i;
+
+    if (list_a == NULL || list_b == NULL || result == NULL)
+    {
+        return -1;
+    }
+
+    if (size_a != size_b || size_a == 0)
+    {
+        return -2;
+    }
+
+    for (i = 0; i < size_a; i++)
+    {
+        if (list_b[i] == 0.0)
+        {
+            return -3;
+        }
+        result[i] = list_a[i] / list_b[i];
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t size = 5;
+    size_t i;
+    double *list_a = NULL;
+    double *list_b = NULL;
+    double *result = NULL;
+    int status;
+
+    list_a = malloc(size * sizeof(*list_a));
+    if (list_a == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for list_a\n");
+        return EXIT_FAILURE;
+    }
+
+    list_b = malloc(size * sizeof(*list_b));
+    if (list_b == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for list_b\n");
+        free(list_a);
+        return EXIT_FAILURE;
+    }
+
+    result = malloc(size * sizeof(*result));
+    if (result == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed for result\n");
+        free(list_a);
+        free(list_b);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        list_a[i] = (double)(i + 1) * 10.0;
+        list_b[i] = (double)(i + 2);
+    }
+
+    status = divide_lists(list_a, list_b, result, size, size);
+    if (status != 0)
+    {
+        fprintf(stderr, "List division failed with error code %d\n", status);
+        free(list_a);
+        free(list_b);
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < size; i++)
+    {
+        printf("%.2f / %.2f = %.4f\n", list_a[i], list_b[i], result[i]);
+    }
+
+    free(list_a);
+    free(list_b);
+    free(result);
+
+    list_a = NULL;
+    list_b = NULL;
+    result = NULL;
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions addressing the requested CWE concerns:**
+
+- **CWE-664 (Resource Lifetime):** Every `malloc` is paired with `free` on all exit paths, pointers are initialized to `NULL`, and set back to `NULL` after freeing to prevent use-after-free.
+- **CWE-703 (Exceptional Conditions):** The function validates `NULL` pointers, size mismatches, empty lists, and division by zero, returning distinct error codes. All `malloc` calls are checked, and the return status of `divide_lists` is verified in `main`.
+- **CWE-710 (Coding Standards):** Uses `const`-correctness for input parameters, `size_t` for sizes and indices, `sizeof(*ptr)` idiom, `EXIT_SUCCESS`/`EXIT_FAILURE` macros, and avoids magic numbers by returning documented error codes.

@@ -1,0 +1,23 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+int find_similar_tuples(const Tuple* list1, size_t size1, const Tuple* list2, size_t size2, Tuple** out_list, size_t* out_size) {
+    if (!list1 || !list2 || !out_list || !out_size) {
+        return -1;
+    }
+
+    *out_list = NULL;
+    *out_size = 0;
+
+    if (size1 == 0 || size2 == 0) {
+        return 0;
+    }
+
+    size_t max_possible_size = (size1 < size2) ? size1 : size2;
+    Tuple* result = (Tuple*)malloc(max_possible_size * sizeof(Tuple));

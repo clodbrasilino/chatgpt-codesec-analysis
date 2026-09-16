@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <fenv.h>
+
+double calculate_discriminant(double a, double b, double c, int *status) {
+    if (status == NULL) {
+        return NAN;
+    }
+
+    if (feclearexcept(FE_ALL_EXCEPT) != 0) {
+        *status = -1;
+        return NAN;
+    }
+
+    double result = fma(b, b, -4.0 * a * c);
+
+    if (fetestexcept(FE_INVALID | FE_DIVBYZERO)) {
+        *status = -1;
+        return NAN;
+    }
+
+    if (fetestexcept(FE_OVERFLOW | FE_UNDERFLOW)) {
+        *status = -1;
+        return NAN;
+    }
+
+    *status = 0;
+    return result;
+}
+
+int main(void) {
+    double a = 1.0, b = -3.0, c = 2.0;
+    int status = 0;
+    double discriminant = calculate_discriminant(a, b, c, &status);
+
+    if (status != 0) {
+        fprintf(stderr, "Error calculating discriminant\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Discriminant: %.2f\n", discriminant);
+    return EXIT_SUCCESS;
+}

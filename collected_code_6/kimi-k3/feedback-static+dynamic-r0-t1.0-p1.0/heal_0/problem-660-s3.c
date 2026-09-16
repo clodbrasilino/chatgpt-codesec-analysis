@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    double start;
+    double end;
+} Range;
+
+int choose_exclusive_points(const Range *r1, const Range *r2, double *out1, double *out2)
+{
+    if (r1 == NULL || r2 == NULL || out1 == NULL || out2 == NULL) {
+        return -1;
+    }
+    
+    if (r1->start > r1->end || r2->start > r2->end) {
+        return -2;
+    }
+    
+    if (r1->end < r2->start) {
+        *out1 = r1->start;
+        *out2 = r2->start;
+        return 0;
+    }
+    
+    if (r2->end < r1->start) {
+        *out1 = r1->start;
+        *out2 = r2->start;
+        return 0;
+    }
+    
+    if (r1->start < r2->start) {
+        *out1 = r1->start;
+        *out2 = r2->end;
+        return 0;
+    }
+    
+    if (r2->start < r1->start) {
+        *out1 = r1->end;
+        *out2 = r2->start;
+        return 0;
+    }
+    
+    if (r1->end > r2->end) {
+        *out1 = r1->end;
+        *out2 = r2->start;
+        return 0;
+    }
+    
+    if (r2->end > r1->end) {
+        *out1 = r1->start;
+        *out2 = r2->end;
+        return 0;
+    }
+    
+    return 1;
+}
+
+int main(void)
+{
+    Range r1 = {1.0, 5.0};
+    Range r2 = {3.0, 7.0};
+    double p1 = 0.0;
+    double p2 = 0.0;
+    int result;
+    
+    result = choose_exclusive_points(&r1, &r2, &p1, &p2);
+    
+    if (result == 0) {
+        printf("Point from range 1: %.2f\n", p1);
+        printf("Point from range 2: %.2f\n", p2);
+        printf("Points are exclusive to their ranges.\n");
+    } else if (result == 1) {
+        printf("Ranges are identical; cannot select exclusive points.\n");
+    } else {
+        printf("Error: Invalid input parameters.\n");
+    }
+    
+    return result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+}

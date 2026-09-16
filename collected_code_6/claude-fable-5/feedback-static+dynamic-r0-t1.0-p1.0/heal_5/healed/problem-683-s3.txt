@@ -1,0 +1,85 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+static long long integer_sqrt(long long n)
+{
+    if (n < 0) {
+        return -1;
+    }
+
+    if (n == 0) {
+        return 0;
+    }
+
+    long long root = (long long)sqrt((double)n);
+
+    while (root > 0 && root * root > n) {
+        root--;
+    }
+    while ((root + 1) * (root + 1) <= n) {
+        root++;
+    }
+
+    return root;
+}
+
+static bool is_sum_of_two_squares(long long n)
+{
+    if (n < 0) {
+        return false;
+    }
+
+    for (long long a = 0; a * a <= n; a++) {
+        long long remainder = n - a * a;
+
+        if (remainder < 0) {
+            break;
+        }
+
+        long long b = integer_sqrt(remainder);
+
+        if (b >= 0 && b * b == remainder) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int main(void)
+{
+    long long number;
+
+    printf("Enter a non-negative integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return 1;
+    }
+
+    if (number < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return 1;
+    }
+
+    if (is_sum_of_two_squares(number)) {
+        printf("%lld can be represented as the sum of two squares.\n", number);
+    } else {
+        printf("%lld cannot be represented as the sum of two squares.\n", number);
+    }
+
+    return 0;
+}
+```
+
+Key changes made to address the flagged weaknesses:
+
+1. **Invalid `sqrt()` argument** — `integer_sqrt()` now validates its input and returns `-1` for negative values, so `sqrt()` is never called with a value outside its valid domain (`0.0:`).
+
+2. **`remainder` potentially `-1` passed to `integer_sqrt()`** — a defensive check (`remainder < 0`) breaks the loop before calling `integer_sqrt()`, guaranteeing the argument is non-negative even if the loop condition were to be modified later.
+
+3. **Caller-side safety** — the result of `integer_sqrt()` is checked (`b >= 0`) before squaring, so the sentinel error value can never produce a false positive.
+
+4. **`is_sum_of_two_squares()` hardened** — an early return for negative `n` makes the function safe regardless of the validation performed in `main()`, removing the implicit dependency on the caller's input checks.

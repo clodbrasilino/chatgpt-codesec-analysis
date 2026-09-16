@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define PI 3.14159265358979323846
+
+double cylinder_volume(double radius, double height)
+{
+    return PI * radius * radius * height;
+}
+
+int main(void)
+{
+    double radius;
+    double height;
+
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: invalid input for radius.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: invalid input for height.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (radius < 0.0 || height < 0.0) {
+        fprintf(stderr, "Error: radius and height must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (isnan(radius) || isinf(radius) || isnan(height) || isinf(height)) {
+        fprintf(stderr, "Error: input values must be finite numbers.\n");
+        return EXIT_FAILURE;
+    }
+
+    double volume = cylinder_volume(radius, height);
+
+    if (isinf(volume)) {
+        fprintf(stderr, "Error: result overflow.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The volume of the cylinder is: %.6f\n", volume);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,121 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+static Node *create_node(int data)
+{
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+static int append(Node **head, int data)
+{
+    Node *node;
+    Node *current;
+
+    if (head == NULL) {
+        return -1;
+    }
+
+    node = create_node(data);
+    if (node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = node;
+        return 0;
+    }
+
+    current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+    return 0;
+}
+
+static void swap_first_last(Node *head)
+{
+    Node *last;
+    int temp;
+
+    if (head == NULL || head->next == NULL) {
+        return;
+    }
+
+    last = head;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    temp = head->data;
+    head->data = last->data;
+    last->data = temp;
+}
+
+static void print_list(const Node *head)
+{
+    const Node *current = head;
+
+    if (current == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+
+    while (current != NULL) {
+        printf("%d", current->data);
+        if (current->next != NULL) {
+            printf(" -> ");
+        }
+        current = current->next;
+    }
+    printf("\n");
+}
+
+static void free_list(Node *head)
+{
+    while (head != NULL) {
+        Node *next = head->next;
+        free(head);
+        head = next;
+    }
+}
+
+int main(void)
+{
+    Node *head = NULL;
+    int values[] = {10, 20, 30, 40, 50};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        if (append(&head, values[i]) != 0) {
+            fprintf(stderr, "Error: memory allocation failed\n");
+            free_list(head);
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("Original list: ");
+    print_list(head);
+
+    swap_first_last(head);
+
+    printf("After swap:    ");
+    print_list(head);
+
+    free_list(head);
+    head = NULL;
+
+    return EXIT_SUCCESS;
+}

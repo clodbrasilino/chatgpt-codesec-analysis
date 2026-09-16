@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+long long calculate_difference(int n) {
+    if (n < 0) {
+        errno = EINVAL;
+        return 0;
+    }
+    
+    long long sum = (long long)n * (n + 1) / 2;
+    long long squared_sum = sum * sum;
+    long long sum_of_squares = (long long)n * (n + 1) * (2 * n + 1) / 6;
+    
+    return squared_sum - sum_of_squares;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <n>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    
+    char *endptr;
+    errno = 0;
+    long input = strtol(argv[1], &endptr, 10);
+    
+    if (errno != 0 || *endptr != '\0' || input < 0 || input > INT_MAX) {
+        fprintf(stderr, "Invalid input. Please enter a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+    
+    int n = (int)input;
+    long long result = calculate_difference(n);
+    
+    printf("Difference: %lld\n", result);
+    
+    return EXIT_SUCCESS;
+}

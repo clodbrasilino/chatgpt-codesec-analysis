@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  'LLONG_MAX' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+long long permutation(int n, int k) {
+    if (n < 0 || k < 0 || k > n) {
+        return -1;
+    }
+
+    long long result = 1;
+    for (int i = 0; i < k; i++) {
+        /* Possible weaknesses found:
+         *  'LLONG_MAX' undeclared (first use in this function)
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  use of undeclared identifier 'LLONG_MAX'
+         */
+        if (result > LLONG_MAX / (n - i)) {
+            return -1;
+        }
+        result *= (n - i);
+    }
+
+    return result;
+}
+
+int main(void) {
+    int n, k;
+
+    printf("Enter n and k: ");
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    long long result = permutation(n, k);
+    if (result == -1) {
+        fprintf(stderr, "Invalid input or result too large\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("P(%d, %d) = %lld\n", n, k, result);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int capacity;
+    int size;
+    int *elements;
+} IntList;
+
+IntList* create_int_list(int capacity) {
+    IntList *list = (IntList*)malloc(sizeof(IntList));
+    list->capacity = capacity;
+    list->size = 0;
+    list->elements = (int*)malloc(capacity * sizeof(int));
+    return list;
+}
+
+void free_int_list(IntList *list) {
+    free(list->elements);
+    free(list);
+}
+
+int count_sublists_with_element(IntList *main_list, int element, int sublist_size) {
+    if (sublist_size <= 0 || main_list == NULL || main_list->size < sublist_size) {
+        return 0;
+    }
+
+    int count = 0;
+    for (int i = 0; i <= main_list->size - sublist_size; i++) {
+        int found = 0;
+        for (int j = 0; j < sublist_size; j++) {
+            if (main_list->elements[i + j] == element) {
+                found = 1;
+                break;
+            }
+        }
+        count += found;
+    }
+    return count;
+}
+
+int main() {
+    IntList *list = create_int_list(10);
+    list->elements[0] = 1;
+    list->elements[1] = 2;
+    list->elements[2] = 3;
+    list->elements[3] = 4;
+    list->elements[4] = 5;
+    list->elements[5] = 6;
+    list->elements[6] = 7;
+    list->elements[7] = 8;
+    list->elements[8] = 9;
+    list->elements[9] = 10;
+    list->size = 10;
+
+    int element = 3;
+    int sublist_size = 3;
+    int count = count_sublists_with_element(list, element, sublist_size);
+
+    printf("Number of sublists containing %d: %d\n", element, count);
+
+    free_int_list(list);
+    return 0;
+}

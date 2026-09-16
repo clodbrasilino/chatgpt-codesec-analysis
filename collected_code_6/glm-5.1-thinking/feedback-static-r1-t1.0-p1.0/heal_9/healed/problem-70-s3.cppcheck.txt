@@ -1,0 +1,13 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-70-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-70-s3.c:79:9: style: Condition 'null_equal' is always false [knownConditionTrueFalse]
+    if (null_equal) {
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-70-s3.c:77:46: note: Calling function 'are_tuple_lengths_equal' returns 0
+    bool null_equal = are_tuple_lengths_equal(NULL, 0);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-70-s3.c:77:46: note: Assignment 'null_equal=are_tuple_lengths_equal(NULL,0)', assigned value is 0
+    bool null_equal = are_tuple_lengths_equal(NULL, 0);
+                                             ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_9/healed/problem-70-s3.c:79:9: note: Condition 'null_equal' is always false
+    if (null_equal) {
+        ^

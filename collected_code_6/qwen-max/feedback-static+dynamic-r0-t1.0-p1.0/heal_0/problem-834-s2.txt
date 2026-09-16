@@ -2,32 +2,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void fillMatrixInSpiralOrder(int n, int **matrix) {
-    int num = 1, layer;
-    int startRow = 0, endRow = n - 1;
-    int startCol = 0, endCol = n - 1;
-
-    while (startRow <= endRow && startCol <= endCol) {
-        for (layer = startCol; layer <= endCol; layer++) {
-            matrix[startRow][layer] = num++;
+void fillSpiralMatrix(int n, int matrix[n][n]) {
+    int value = 1;
+    int layer = 0;
+    while (value <= n * n) {
+        for (int i = layer; i < n - layer; i++) {
+            matrix[layer][i] = value++;
         }
-        startRow++;
-        for (layer = startRow; layer <= endRow; layer++) {
-            matrix[layer][endCol] = num++;
+        for (int i = layer + 1; i < n - layer; i++) {
+            matrix[i][n - layer - 1] = value++;
         }
-        endCol--;
-        if (startRow <= endRow) {
-            for (layer = endCol; layer >= startCol; layer--) {
-                matrix[endRow][layer] = num++;
-            }
-            endRow--;
+        for (int i = n - layer - 2; i >= layer; i--) {
+            matrix[n - layer - 1][i] = value++;
         }
-        if (startCol <= endCol) {
-            for (layer = endRow; layer >= startRow; layer--) {
-                matrix[layer][startCol] = num++;
-            }
-            startCol++;
+        for (int i = n - layer - 2; i > layer; i--) {
+            matrix[i][layer] = value++;
         }
+        layer++;
     }
 }
 
@@ -36,27 +27,20 @@ int main() {
     printf("Enter the size of the matrix: ");
     scanf("%d", &n);
 
-    int **matrix = (int **)malloc(n * sizeof(int *));
-    if (!matrix) {
+    if (n <= 0) {
         return 1;
     }
 
+    int **matrix = (int **)malloc(n * sizeof(int *));
     for (int i = 0; i < n; i++) {
         matrix[i] = (int *)malloc(n * sizeof(int));
-        if (!matrix[i]) {
-            for (int j = 0; j < i; j++) {
-                free(matrix[j]);
-            }
-            free(matrix);
-            return 1;
-        }
     }
 
-    fillMatrixInSpiralOrder(n, matrix);
+    fillSpiralMatrix(n, matrix);
 
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            printf("%4d", matrix[i][j]);
+            printf("%d ", matrix[i][j]);
         }
         printf("\n");
     }

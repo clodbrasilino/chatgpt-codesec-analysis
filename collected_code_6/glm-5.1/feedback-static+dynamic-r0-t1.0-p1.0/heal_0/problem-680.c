@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool has_increasing_trend(const int *sequence, size_t length) {
+    if (sequence == NULL) {
+        return false;
+    }
+
+    if (length <= 1) {
+        return true;
+    }
+
+    for (size_t i = 1; i < length; ++i) {
+        if (sequence[i] <= sequence[i - 1]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int arr1[] = {1, 2, 3, 4, 5};
+    int arr2[] = {5, 4, 3, 2, 1};
+    int arr3[] = {1, 2, 2, 3};
+    int arr4[] = {10};
+
+    printf("%d\n", has_increasing_trend(arr1, sizeof(arr1) / sizeof(arr1[0])));
+    printf("%d\n", has_increasing_trend(arr2, sizeof(arr2) / sizeof(arr2[0])));
+    printf("%d\n", has_increasing_trend(arr3, sizeof(arr3) / sizeof(arr3[0])));
+    printf("%d\n", has_increasing_trend(arr4, sizeof(arr4) / sizeof(arr4[0])));
+    printf("%d\n", has_increasing_trend(NULL, 5));
+    printf("%d\n", has_increasing_trend(arr1, 0));
+
+    return 0;
+}

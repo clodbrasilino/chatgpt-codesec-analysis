@@ -2,52 +2,60 @@
 #include <stdlib.h>
 #include <string.h>
 
-char** filter_long_words(char *words[], int word_count, int min_length, int *filtered_count) {
-    char **result = NULL;
-    *filtered_count = 0;
+typedef struct Node {
+    char *word;
+    struct Node *next;
+} Node;
 
-    for (int i = 0; i < word_count; ++i) {
-        if (strlen(words[i]) > min_length) {
-            result = realloc(result, sizeof(char*) * (*filtered_count + 1));
-            if (result == NULL) {
-                return NULL;
-            }
-            result[*filtered_count] = strdup(words[i]);
-            if (result[*filtered_count] == NULL) {
-                while (*filtered_count) {
-                    free(result[--(*filtered_count)]);
-                }
-                free(result);
-                return NULL;
-            }
-            (*filtered_count)++;
+Node* create_node(char *word) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->word = strdup(word);
+    new_node->next = NULL;
+    return new_node;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current) {
+        Node *temp = current;
+        current = current->next;
+        free(temp->word);
+        free(temp);
+    }
+}
+
+Node* filter_long_words(Node *head, int n) {
+    Node *dummy = (Node *)malloc(sizeof(Node));
+    dummy->next = NULL;
+    Node *tail = dummy;
+
+    for (Node *current = head; current; current = current->next) {
+        if (strlen(current->word) > n) {
+            tail->next = create_node(current->word);
+            tail = tail->next;
         }
     }
+
+    Node *result = dummy->next;
+    free(dummy);
     return result;
 }
 
-void free_filtered_words(char **words, int count) {
-    for (int i = 0; i < count; ++i) {
-        free(words[i]);
-    }
-    free(words);
-}
-
 int main() {
-    char *words[] = {"hello", "world", "a", "of", "programming"};
-    int word_count = 5;
-    int min_length = 2;
-    int filtered_count = 0;
-    char **filtered_words = filter_long_words(words, word_count, min_length, &filtered_count);
+    Node *head = create_node("hello");
+    head->next = create_node("world");
+    head->next->next = create_node("abc");
+    head->next->next->next = create_node("programming");
 
-    if (filtered_words != NULL) {
-        for (int i = 0; i < filtered_count; ++i) {
-            printf("%s\n", filtered_words[i]);
-        }
-        free_filtered_words(filtered_words, filtered_count);
-    } else {
-        fprintf(stderr, "Memory allocation failed\n");
+    int n = 4;
+    Node *long_words = filter_long_words(head, n);
+
+    for (Node *current = long_words; current; current = current->next) {
+        printf("%s\n", current->word);
     }
+
+    free_list(long_words);
+    free_list(head);
 
     return 0;
 }

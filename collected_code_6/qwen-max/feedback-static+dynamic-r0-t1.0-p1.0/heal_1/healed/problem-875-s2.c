@@ -2,28 +2,32 @@
 #include <stdlib.h>
 #include <limits.h>
 
-int minDiffInTuplePairs(const int *tuples, int length) {
-    if (length < 2) return -1;
+int findMinimumDifference(const int tuples[], int n) {
+    if (n < 2) return -1;
+    
     int min_diff = INT_MAX;
-    for (int i = 0; i < length - 1; i++) {
-        for (int j = i + 1; j < length; j++) {
-            int diff = abs(tuples[i] - tuples[j]);
-            if (diff < min_diff) {
-                min_diff = diff;
-            }
+    
+    for (int i = 0; i < n - 1; i += 2) {
+        int diff = abs(tuples[i] - tuples[i + 1]);
+        if (diff < min_diff) {
+            min_diff = diff;
         }
     }
-    return min_diff == INT_MAX ? -1 : min_diff;
+    
+    return min_diff;
 }
 
 int main() {
-    int tuples[] = {4, 5, 8, 10, 20};
-    int length = sizeof(tuples) / sizeof(tuples[0]);
-    int result = minDiffInTuplePairs(tuples, length);
+    const int tuples[] = {1, 5, 10, 15, 20, 25, 30, 35};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    
+    int result = findMinimumDifference(tuples, n);
+    
     if (result != -1) {
-        printf("Minimum difference: %d\n", result);
+        printf("The minimum difference in the tuple pairs is: %d\n", result);
     } else {
-        printf("Not enough elements in the array.\n");
+        printf("Invalid input.\n");
     }
+    
     return 0;
 }

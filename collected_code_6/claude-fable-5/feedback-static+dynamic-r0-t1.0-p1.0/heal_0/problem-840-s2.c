@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+int roots_equal_opposite(double a, double b, double c)
+{
+    double discriminant;
+
+    if (fabs(a) < DBL_EPSILON) {
+        return -1;
+    }
+
+    discriminant = (b * b) - (4.0 * a * c);
+
+    if (discriminant <= 0.0) {
+        return 0;
+    }
+
+    if (fabs(b) < DBL_EPSILON) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+    int result;
+
+    printf("Enter coefficient a: ");
+    if (scanf("%lf", &a) != 1) {
+        fprintf(stderr, "Invalid input for a\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient b: ");
+    if (scanf("%lf", &b) != 1) {
+        fprintf(stderr, "Invalid input for b\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter coefficient c: ");
+    if (scanf("%lf", &c) != 1) {
+        fprintf(stderr, "Invalid input for c\n");
+        return EXIT_FAILURE;
+    }
+
+    result = roots_equal_opposite(a, b, c);
+
+    if (result == -1) {
+        fprintf(stderr, "Not a quadratic equation (a must be nonzero)\n");
+        return EXIT_FAILURE;
+    }
+
+    if (result == 1) {
+        printf("The roots are numerically equal and opposite in sign.\n");
+    } else {
+        printf("The roots are NOT numerically equal and opposite in sign.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int multiply_list(const long long *items, size_t count, long long *result)
+{
+    size_t i;
+    long long product;
+
+    if (items == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    product = 1LL;
+    for (i = 0U; i < count; i++) {
+        if (__builtin_mul_overflow(product, items[i], &product)) {
+            return -2;
+        }
+    }
+
+    *result = product;
+    return 0;
+}
+
+int main(void)
+{
+    long long numbers[] = {2LL, 3LL, 4LL, 5LL};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    long long result = 0LL;
+    int status;
+
+    status = multiply_list(numbers, count, &result);
+    if (status == 0) {
+        if (printf("Product: %lld\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else if (status == -2) {
+        if (fprintf(stderr, "Error: multiplication overflow\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    } else {
+        if (fprintf(stderr, "Error: invalid input\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

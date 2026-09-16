@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int key_a;
+    int key_b;
+    int value;
+} DictItem;
+
+int compare_items(const void *a, const void *b) {
+    const DictItem *item_a = (const DictItem *)a;
+    const DictItem *item_b = (const DictItem *)b;
+    long long prod_a = (long long)item_a->key_a * (long long)item_a->key_b;
+    long long prod_b = (long long)item_b->key_a * (long long)item_b->key_b;
+    
+    if (prod_a < prod_b) {
+        return -1;
+    }
+    if (prod_a > prod_b) {
+        return 1;
+    }
+    return 0;
+}
+
+int sort_dict_by_tuple_product(DictItem *items, size_t count) {
+    if (items == NULL) {
+        return -1;
+    }
+    if (count == 0) {
+        return 0;
+    }
+    qsort(items, count, sizeof(DictItem), compare_items);
+    return 0;
+}
+
+int main(void) {
+    DictItem items[] = {
+        {2, 3, 100},
+        {1, 5, 200},
+        {4, 1, 300},
+        {2, 2, 400},
+        {3, 3, 500}
+    };
+    size_t count = sizeof(items) / sizeof(items[0]);
+    size_t i;
+    
+    if (sort_dict_by_tuple_product(items, count) != 0) {
+        fprintf(stderr, "Error: Failed to sort dictionary items\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Sorted dictionary items by tuple product:\n");
+    for (i = 0; i < count; i++) {
+        printf("Key: (%d, %d), Product: %lld, Value: %d\n",
+               items[i].key_a,
+               items[i].key_b,
+               (long long)items[i].key_a * (long long)items[i].key_b,
+               items[i].value);
+    }
+    
+    return EXIT_SUCCESS;
+}
+```

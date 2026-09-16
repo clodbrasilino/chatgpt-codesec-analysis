@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int max_of_two(int x, int y)
+{
+    return (x > y) ? x : y;
+}
+
+int max_segments(int n, int a, int b, int c)
+{
+    int *dp;
+    int i;
+    int result;
+
+    if ((n < 0) || (a <= 0) || (b <= 0) || (c <= 0))
+    {
+        return -1;
+    }
+
+    dp = malloc(((size_t)n + 1U) * sizeof(int));
+    if (dp == NULL)
+    {
+        return -1;
+    }
+
+    dp[0] = 0;
+    for (i = 1; i <= n; i++)
+    {
+        int best = -1;
+
+        if (((i - a) >= 0) && (dp[i - a] >= 0))
+        {
+            best = max_of_two(best, dp[i - a]);
+        }
+        if (((i - b) >= 0) && (dp[i - b] >= 0))
+        {
+            best = max_of_two(best, dp[i - b]);
+        }
+        if (((i - c) >= 0) && (dp[i - c] >= 0))
+        {
+            best = max_of_two(best, dp[i - c]);
+        }
+
+        dp[i] = (best >= 0) ? (best + 1) : -1;
+    }
+
+    result = dp[n];
+    free(dp);
+    dp = NULL;
+
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    int a;
+    int b;
+    int c;
+    int result;
+
+    if (scanf("%d %d %d %d", &n, &a, &b, &c) != 4)
+    {
+        fprintf(stderr, "Error: expected four integers (n a b c)\n");
+        return EXIT_FAILURE;
+    }
+
+    result = max_segments(n, a, b, c);
+    if (result < 0)
+    {
+        printf("No valid segmentation possible\n");
+    }
+    else
+    {
+        printf("%d\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

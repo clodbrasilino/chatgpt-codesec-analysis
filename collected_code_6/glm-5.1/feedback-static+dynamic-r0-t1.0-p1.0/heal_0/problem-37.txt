@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int type;
+    union {
+        int int_val;
+        char *str_val;
+    } data;
+} ListItem;
+
+void free_list_items(ListItem *items, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        if (items[i].type == 1) {
+            free(items[i].data.str_val);
+        }
+    }
+}
+
+int compare_list_items(const void *a, const void *b) {
+    const ListItem *ia = (const ListItem *)a;
+    const ListItem *ib = (const ListItem *)b;
+
+    if (ia->type == 0 && ib->type == 0) {
+        return (ia->data.int_val > ib->data.int_val) - (ia->data.int_val < ib->data.int_val);
+    }
+    if (ia->type == 1 && ib->type == 1) {
+        return strcmp(ia->data.str_val, ib->data.str_val);
+    }
+    if (ia->type == 0) {
+        return -1;
+    }
+    return 1;
+}
+
+void sort_mixed_list(ListItem *items, size_t count) {
+    if (items == NULL || count == 0) {
+        return;
+    }
+    qsort(items, count, sizeof(ListItem), compare_list_items);
+}
+
+int main(void) {
+    size_t count = 6;
+    ListItem *items = (ListItem *)malloc(count * sizeof(ListItem));
+    if (items == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    items[0].type = 0;
+    items[0].data.int_val = 42;
+    
+    items[1].type = 1;
+    items[1].data.str_val = strdup("hello");
+    if (items[1].data.str_val == NULL) {
+        free(items);
+        return EXIT_FAILURE;
+    }
+    
+    items[2].type = 0;
+    items[2].data.int_val = 7;
+    
+    items[3].type = 1;
+    items[3].data.str_val = strdup("world");
+    if (items[3].data.str_val == NULL) {
+        free_list_items(items, 3);
+        free(items);
+        return EXIT_FAILURE;
+    }
+    
+    items[4].type = 0;
+    items[4].data.int_val = 19;
+    
+    items[5].type = 1;
+    items[5].data.str_val = strdup("apple");
+    if (items[5].data.str_val == NULL) {
+        free_list_items(items, 5);
+        free(items);
+        return EXIT_FAILURE;
+    }
+
+    sort_mixed_list(items, count);
+
+    for (size_t i = 0; i < count; i++) {
+        if (items[i].type == 0) {
+            printf("%d\n", items[i].data.int_val);
+        } else {
+            printf("%s\n", items[i].data.str_val);
+        }
+    }
+
+    free_list_items(items, count);
+    free(items);
+
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:18:20: warning: Invalid test for overflow 'arr[i]>current_sum+arr[i]'; signed integer overflow is undefined behavior. Some mainstream compilers removes handling of overflows when optimising the code and change the code to 'current_sum<0'. [invalidTestForOverflow]
+        if (arr[i] > current_sum + arr[i]) {
+                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:14:9: style: The scope of the variable 'max_start' can be reduced. [variableScope]
+    int max_start = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:15:9: style: The scope of the variable 'max_end' can be reduced. [variableScope]
+    int max_end = 0;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:4:29: style: Parameter 'arr' can be declared as const array [constParameter]
+int max_subarray_length(int arr[], int n) {
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:14:19: style: Variable 'max_start' is assigned a value that is never used. [unreadVariable]
+    int max_start = 0;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:15:17: style: Variable 'max_end' is assigned a value that is never used. [unreadVariable]
+    int max_end = 0;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:31:23: style: Variable 'max_start' is assigned a value that is never used. [unreadVariable]
+            max_start = start;
+                      ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-836.c:32:21: style: Variable 'max_end' is assigned a value that is never used. [unreadVariable]
+            max_end = i;
+                    ^

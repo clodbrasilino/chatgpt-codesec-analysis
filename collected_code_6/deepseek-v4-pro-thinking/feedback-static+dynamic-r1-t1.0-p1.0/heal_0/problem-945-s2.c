@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+typedef struct {
+    int x;
+    int y;
+} Tuple;
+
+int convert_tuples_to_set(const Tuple *tuples, size_t tuple_count, Tuple **set_out, size_t *set_count);
+
+int main(void) {
+    Tuple input[] = {
+        {1, 2},
+        {3, 4},
+        {1, 2},
+        {5, 6},
+        {3, 4}
+    };
+    size_t input_count = sizeof(input) / sizeof(input[0]);
+    Tuple *set = NULL;
+    size_t set_count = 0;
+    int status = convert_tuples_to_set(input, input_count, &set, &set_count);
+
+    if (status != 0) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (size_t i = 0; i < set_count; i++) {
+        printf("(%d, %d)\n", set[i].x, set[i].y);
+    }
+
+    free(set);
+    return EXIT_SUCCESS;
+}
+
+int convert_tuples_to_set(const Tuple *tuples, size_t tuple_count, Tuple **set_out, size_t *set_count) {
+    if (set_out == NULL || set_count == NULL) {
+        return -1;
+    }
+
+    *set_out = NULL;
+    *set_count = 0;
+
+    if (tuple_count == 0) {
+        return 0;
+    }
+
+    if (tuples == NULL) {
+        return -1;
+    }
+
+    if (tuple_count > SIZE_MAX / sizeof(Tuple)) {
+        return -1;
+    }
+
+    Tuple *temp = malloc(tuple_count * sizeof(Tuple));
+    if (temp == NULL) {
+        return -1;
+    }
+
+    size_t unique_count = 0;
+
+    for (size_t i = 0; i < tuple_count; i++) {
+        int found = 0;
+
+        for (size_t j = 0; j < unique_count; j++) {
+            if (tuples[i].x == temp[j].x && tuples[i].y == temp[j].y) {
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            temp[unique_count] = tuples[i];
+            unique_count++;
+        }
+    }
+
+    Tuple *resized = realloc(temp, unique_count * sizeof(Tuple));
+    if (resized == NULL) {
+        free(temp);
+        return -1;
+    }
+
+    *set_out = resized;
+    *set_count = unique_count;
+    return 0;
+}

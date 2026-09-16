@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* findDivisibleNumbers(const int* numbers, size_t numCount, int m, int n, size_t* resultCount) {
+    if (numbers == NULL || resultCount == NULL || m == 0 || n == 0) {
+        if (resultCount != NULL) {
+            *resultCount = 0;
+        }
+        return NULL;
+    }
+
+    int* results = (int*)malloc(numCount * sizeof(int));
+    if (results == NULL) {
+        *resultCount = 0;
+        return NULL;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < numCount; ++i) {
+        if (numbers[i] % m == 0 && numbers[i] % n == 0) {
+            results[count++] = numbers[i];
+        }
+    }
+
+    if (count == 0) {
+        free(results);
+        *resultCount = 0;
+        return NULL;
+    }
+
+    int* shrunkResults = (int*)realloc(results, count * sizeof(int));
+    if (shrunkResults != NULL) {
+        results = shrunkResults;
+    }
+
+    *resultCount = count;
+    return results;
+}
+
+int main(void) {
+    int numbers[] = {12, 15, 24, 30, 36, 45, 60, 72};
+    size_t numCount = sizeof(numbers) / sizeof(numbers[0]);
+    int m = 3;
+    int n = 4;
+    size_t resultCount = 0;
+
+    int* divisibleNumbers = findDivisibleNumbers(numbers, numCount, m, n, &resultCount);
+
+    if (divisibleNumbers != NULL) {
+        for (size_t i = 0; i < resultCount; ++i) {
+            printf("%d\n", divisibleNumbers[i]);
+        }
+        free(divisibleNumbers);
+    } else {
+        printf("No numbers found or memory allocation failed.\n");
+    }
+
+    return 0;
+}

@@ -1,0 +1,153 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Record {
+    int id;
+    char *name;
+    struct Record *nested;
+} Record;
+
+typedef struct Tuple {
+    Record *record;
+    struct Tuple *next;
+} Tuple;
+
+void free_record(Record *record) {
+    if (record == NULL) {
+        return;
+    }
+    free_record(record->nested);
+    free(record->name);
+    free(record);
+}
+
+Record *copy_record(const Record *src) {
+    if (src == NULL) {
+        return NULL;
+    }
+    Record *new_record = (Record *)malloc(sizeof(Record));
+    if (new_record == NULL) {
+        return NULL;
+    }
+    new_record->id = src->id;
+    new_record->name = (char *)malloc(strlen(src->name) + 1);
+    if (new_record->name == NULL) {
+        free(new_record);
+        return NULL;
+    }
+    strcpy(new_record->name, src->name);
+    new_record->nested = copy_record(src->nested);
+    if (new_record->nested == NULL && src->nested != NULL) {
+        free(new_record->name);
+        free(new_record);
+        return NULL;
+    }
+    return new_record;
+}
+
+void remove_nested_record(Tuple *tuple, int target_id) {
+    if (tuple == NULL || tuple->record == NULL) {
+        return;
+    }
+
+    Record *current = tuple->record;
+    Record *prev = NULL;
+
+    while (current != NULL) {
+        if (current->id == target_id) {
+            current->nested = NULL;
+            return;
+        }
+        prev = current;
+        current = current->nested;
+    }
+
+    if (prev != NULL) {
+        Record *temp = prev->nested;
+        prev->nested = NULL;
+        free_record(temp);
+    }
+}
+
+Record *create_record(int id, const char *name) {
+    Record *record = (Record *)malloc(sizeof(Record));
+    if (record == NULL) {
+        return NULL;
+    }
+    record->id = id;
+    record->name = (char *)malloc(strlen(name) + 1);
+    if (record->name == NULL) {
+        free(record);
+        return NULL;
+    }
+    strcpy(record->name, name);
+    record->nested = NULL;
+    return record;
+}
+
+void add_nested(Record *parent, Record *child) {
+    if (parent == NULL || child == NULL) {
+        return;
+    }
+    if (parent->nested == NULL) {
+        parent->nested = child;
+    } else {
+        Record *temp = parent->nested;
+        while (temp->nested != NULL) {
+            temp = temp->nested;
+        }
+        temp->nested = child;
+    }
+}
+
+void print_record(const Record *record) {
+    if (record == NULL) {
+        return;
+    }
+    printf("ID: %d, Name: %s\n", record->id, record->name);
+    if (record->nested != NULL) {
+        printf("Nested: ");
+        print_record(record->nested);
+    }
+}
+
+int main(void) {
+    Record *record1 = create_record(1, "First");
+    Record *record2 = create_record(2, "Second");
+    Record *record3 = create_record(3, "Third");
+    Record *record4 = create_record(4, "Fourth");
+
+    if (record1 && record2 && record3 && record4) {
+        add_nested(record1, record2);
+        add_nested(record2, record3);
+        add_nested(record3, record4);
+
+        Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
+        if (tuple == NULL) {
+            free_record(record1);
+            return 1;
+        }
+        tuple->record = record1;
+        tuple->next = NULL;
+
+        printf("Before removal:\n");
+        print_record(tuple->record);
+
+        remove_nested_record(tuple, 3);
+
+        printf("After removal:\n");
+        print_record(tuple->record);
+
+        free_record(tuple->record);
+        free(tuple);
+    } else {
+        free_record(record1);
+        free_record(record2);
+        free_record(record3);
+        free_record(record4);
+        return 1;
+    }
+
+    return 0;
+}

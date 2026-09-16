@@ -1,0 +1,143 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct DictEntry {
+    char* key;
+    Node* head;
+    Node* tail;
+    struct DictEntry* next;
+} DictEntry;
+
+typedef struct {
+    DictEntry* head;
+} Dictionary;
+
+typedef struct {
+    char* key;
+    int value;
+} KeyValuePair;
+
+Node* create_node(int value) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->value = value;
+    new_node->next = NULL;
+    return new_node;
+}
+
+DictEntry* create_dict_entry(const char* key, int value) {
+    DictEntry* new_entry = (DictEntry*)malloc(sizeof(DictEntry));
+    if (!new_entry) {
+        exit(EXIT_FAILURE);
+    }
+    new_entry->key = strdup(key);
+    if (!new_entry->key) {
+        free(new_entry);
+        exit(EXIT_FAILURE);
+    }
+    new_entry->head = create_node(value);
+    new_entry->tail = new_entry->head;
+    new_entry->next = NULL;
+    return new_entry;
+}
+
+void add_to_dictionary(Dictionary* dict, const char* key, int value) {
+    if (!dict || !key) return;
+
+    DictEntry* current = dict->head;
+    while (current) {
+        if (strcmp(current->key, key) == 0) {
+            Node* new_node = create_node(value);
+            current->tail->next = new_node;
+            current->tail = new_node;
+            return;
+        }
+        current = current->next;
+    }
+
+    DictEntry* new_entry = create_dict_entry(key, value);
+    new_entry->next = dict->head;
+    dict->head = new_entry;
+}
+
+Dictionary* group_to_dictionary(KeyValuePair* pairs, size_t count) {
+    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) {
+        exit(EXIT_FAILURE);
+    }
+    dict->head = NULL;
+
+    for (size_t i = 0; i < count; i++) {
+        if (pairs[i].key) {
+            add_to_dictionary(dict, pairs[i].key, pairs[i].value);
+        }
+    }
+
+    return dict;
+}
+
+void free_dictionary(Dictionary* dict) {
+    if (!dict) return;
+
+    DictEntry* current_entry = dict->head;
+    while (current_entry) {
+        DictEntry* temp_entry = current_entry;
+        current_entry = current_entry->next;
+
+        Node* current_node = temp_entry->head;
+        while (current_node) {
+            Node* temp_node = current_node;
+            current_node = current_node->next;
+            free(temp_node);
+        }
+
+        free(temp_entry->key);
+        free(temp_entry);
+    }
+    free(dict);
+}
+
+void print_dictionary(Dictionary* dict) {
+    if (!dict) return;
+
+    DictEntry* current = dict->head;
+    while (current) {
+        printf("%s: [", current->key);
+        Node* curr_node = current->head;
+        while (curr_node) {
+            printf("%d", curr_node->value);
+            if (curr_node->next) printf(", ");
+            curr_node = curr_node->next;
+        }
+        printf("]\n");
+        current = current->next;
+    }
+}
+
+int main(void) {
+    KeyValuePair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"orange", 4},
+        {"banana", 5},
+        {"apple", 6}
+    };
+    size_t count = sizeof(pairs) / sizeof(pairs[0]);
+
+    Dictionary* dict = group_to_dictionary(pairs, count);
+    
+    print_dictionary(dict);
+    
+    free_dictionary(dict);
+    
+    return 0;
+}

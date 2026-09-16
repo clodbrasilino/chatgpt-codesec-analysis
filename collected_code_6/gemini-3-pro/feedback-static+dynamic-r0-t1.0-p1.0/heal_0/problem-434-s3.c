@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+
+int match_pattern(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    if (*str != 'a') {
+        return 0;
+    }
+    str++;
+
+    if (*str != 'b') {
+        return 0;
+    }
+
+    while (*str == 'b') {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    const char *test_strings[] = {
+        "ab",
+        "abb",
+        "abbb",
+        "a",
+        "b",
+        "ac",
+        "aba",
+        NULL
+    };
+
+    for (size_t i = 0; test_strings[i] != NULL; i++) {
+        int result = match_pattern(test_strings[i]);
+        if (result) {
+            printf("Match: %s\n", test_strings[i]);
+        } else {
+            printf("No match: %s\n", test_strings[i]);
+        }
+    }
+
+    return 0;
+}

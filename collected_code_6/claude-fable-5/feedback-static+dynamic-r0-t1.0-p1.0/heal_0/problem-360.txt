@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long carol_number(int n)
+{
+    long long power;
+    long long result;
+
+    if (n < 1 || n > 31) {
+        return -1LL;
+    }
+
+    power = (1LL << n) - 1LL;
+    result = power * power - 2LL;
+
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    long long result;
+
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = carol_number(n);
+    if (result == -1LL) {
+        fprintf(stderr, "Error: n must be between 1 and 31\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Carol number %d is %lld\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```

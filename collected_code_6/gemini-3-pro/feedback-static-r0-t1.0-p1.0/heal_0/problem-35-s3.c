@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long nth_rectangular_number(unsigned int n) {
+    if (n == 0) {
+        return 0;
+    }
+    return (unsigned long long)n * (n + 1);
+}
+
+int main(void) {
+    unsigned int n;
+    int result;
+
+    result = scanf("%u", &n);
+    if (result != 1) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%llu\n", nth_rectangular_number(n));
+
+    return EXIT_SUCCESS;
+}

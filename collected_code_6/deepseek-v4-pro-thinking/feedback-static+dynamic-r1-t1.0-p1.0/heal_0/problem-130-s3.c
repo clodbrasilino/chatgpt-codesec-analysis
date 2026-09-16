@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stddef.h>
+
+int most_frequent_item(const int *list, size_t size, int *result) {
+    if (list == NULL || result == NULL || size == 0) {
+        return 0;
+    }
+
+    size_t max_count = 0;
+    int max_item = list[0];
+
+    for (size_t i = 0; i < size; ++i) {
+        size_t count = 0;
+        for (size_t j = 0; j < size; ++j) {
+            if (list[j] == list[i]) {
+                ++count;
+            }
+        }
+        if (count > max_count) {
+            max_count = count;
+            max_item = list[i];
+        }
+    }
+
+    *result = max_item;
+    return 1;
+}
+
+int main(void) {
+    int items[] = {1, 3, 2, 3, 4, 1, 3, 2, 2, 2};
+    int result = 0;
+
+    if (most_frequent_item(items, sizeof(items) / sizeof(items[0]), &result)) {
+        printf("%d\n", result);
+    }
+
+    return 0;
+}

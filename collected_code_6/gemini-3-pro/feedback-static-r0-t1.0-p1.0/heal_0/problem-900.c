@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *prepend_number_to_string(int number, const char *str) {
+    if (str == NULL) {
+        return NULL;
+    }
+
+    int needed = snprintf(NULL, 0, "%d%s", number, str);
+    if (needed < 0) {
+        return NULL;
+    }
+
+    char *result = (char *)malloc((size_t)(needed + 1));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    if (snprintf(result, (size_t)(needed + 1), "%d%s", number, str) < 0) {
+        free(result);
+        return NULL;
+    }
+
+    return result;
+}
+
+int main(void) {
+    int prefix_number = 42;
+    const char *original_string = "_is_the_answer";
+
+    char *modified_string = prepend_number_to_string(prefix_number, original_string);
+
+    if (modified_string != NULL) {
+        printf("%s\n", modified_string);
+        free(modified_string);
+    } else {
+        fprintf(stderr, "Memory allocation or formatting failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

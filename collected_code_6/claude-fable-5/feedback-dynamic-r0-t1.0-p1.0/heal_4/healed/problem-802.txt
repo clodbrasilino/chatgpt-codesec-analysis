@@ -1,0 +1,93 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static int count_rotations(const int *arr, size_t n)
+{
+    size_t low;
+    size_t high;
+
+    if (arr == NULL || n == 0U) {
+        return -1;
+    }
+
+    low = 0U;
+    high = n - 1U;
+
+    while (low < high) {
+        size_t mid = low + ((high - low) / 2U);
+
+        if (arr[mid] > arr[high]) {
+            low = mid + 1U;
+        } else if (arr[mid] < arr[high]) {
+            high = mid;
+        } else {
+            high--;
+        }
+    }
+
+    return (int)low;
+}
+
+int main(void)
+{
+    int arr1[] = {15, 18, 2, 3, 6, 12};
+    int arr2[] = {7, 9, 11, 12, 5};
+    int arr3[] = {7, 9, 11, 12, 15, 18, 2};
+    size_t n1 = sizeof(arr1) / sizeof(arr1[0]);
+    size_t n2 = sizeof(arr2) / sizeof(arr2[0]);
+    size_t n3 = sizeof(arr3) / sizeof(arr3[0]);
+    int rotations;
+
+    rotations = count_rotations(arr1, n1);
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    rotations = count_rotations(arr2, n2);
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    rotations = count_rotations(arr3, n3);
+    if (rotations < 0) {
+        if (fprintf(stderr, "Invalid input array\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+    if (printf("Number of rotations: %d\n", rotations) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The core algorithm in `count_rotations` is actually the correct binary-search approach for finding the rotation count (the index of the minimum element). Tracing it on `{15, 18, 2, 3, 6, 12}`:
+
+- `low=0, high=5, mid=2`: `arr[2]=2 < arr[5]=12` → `high=2`
+- `low=0, high=2, mid=1`: `arr[1]=18 > arr[2]=2` → `low=2`
+- Loop exits, returns `2` ✓
+
+The failing test cases described in the comment ("expected 2, got 3" and "expected 3, got 5") are symptomatic of a classic off-by-one bug in an earlier revision — typically caused by `low = mid` instead of `low = mid + 1`, using `arr[mid] >= arr[high]` in the comparison, or returning `high` after an incorrect boundary update. The fixed version above uses the correct invariants:
+
+1. **`arr[mid] > arr[high]`** → minimum lies strictly right of `mid`, so `low = mid + 1`
+2. **`arr[mid] < arr[high]`** → minimum is at `mid` or left of it, so `high = mid`
+3. **Equal elements** → safely shrink with `high--` (handles duplicates without skipping the minimum)
+
+The rewrite also exercises the previously failing test vectors (rotation counts 2, 4, and 6 respectively for the three arrays), retains the `NULL`/zero-length guard returning `-1`, checks all I/O return values, and avoids any signed/unsigned conversion hazards since `low` can never exceed `INT_MAX` for realistic array sizes.

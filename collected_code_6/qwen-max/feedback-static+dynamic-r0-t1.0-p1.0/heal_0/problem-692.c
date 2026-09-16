@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLastTwoDigitsOfFactorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    long long last_two_digits = 1, i;
+    for (i = 2; i <= n; ++i) {
+        last_two_digits = (last_two_digits * i) % 100;
+    }
+
+    return (int)last_two_digits;
+}
+
+int main() {
+    int number;
+    printf("Enter a number: ");
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = findLastTwoDigitsOfFactorial(number);
+    if (result == -1) {
+        fprintf(stderr, "Negative numbers not allowed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The last two digits of the factorial of %d are: %02d\n", number, result);
+    return EXIT_SUCCESS;
+}

@@ -6,26 +6,28 @@ void reverse_string(char *str) {
     int len = strlen(str);
     for (int i = 0; i < len / 2; i++) {
         char temp = str[i];
-        str[i] = str[len - i - 1];
-        str[len - i - 1] = temp;
+        str[i] = str[len - 1 - i];
+        str[len - 1 - i] = temp;
     }
 }
 
-void reverse_strings_list(char **strings, int count) {
-    for (int i = 0; i < count; i++) {
-        if (strings[i] != NULL) {
-            reverse_string(strings[i]);
+void reverse_strings_in_list(char **list, size_t count) {
+    if (list == NULL || count == 0) return;
+
+    for (size_t i = 0; i < count; i++) {
+        if (list[i] != NULL) {
+            reverse_string(list[i]);
         }
     }
 }
 
 int main() {
     char *strings[] = {"hello", "world", "C", "programming"};
-    int count = sizeof(strings) / sizeof(strings[0]);
+    size_t count = sizeof(strings) / sizeof(strings[0]);
 
-    reverse_strings_list(strings, count);
+    reverse_strings_in_list(strings, count);
 
-    for (int i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         printf("%s\n", strings[i]);
     }
 

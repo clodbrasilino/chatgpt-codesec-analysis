@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void comb_sort(double *array, size_t size) {
+    if (array == NULL || size < 2) {
+        return;
+    }
+
+    size_t gap = size;
+    int swapped = 1;
+    const double shrink_factor = 1.3;
+
+    while (gap > 1 || swapped) {
+        if (gap > 1) {
+            gap = (size_t)((double)gap / shrink_factor);
+            if (gap < 1) {
+                gap = 1;
+            }
+        }
+
+        swapped = 0;
+
+        for (size_t i = 0; i + gap < size; i++) {
+            if (array[i] > array[i + gap]) {
+                double temp = array[i];
+                array[i] = array[i + gap];
+                array[i + gap] = temp;
+                swapped = 1;
+            }
+        }
+    }
+}
+
+int main(void) {
+    double data[] = {64.5, 34.2, 25.1, 12.9, 22.7, 11.3, 90.8, 5.6, 77.4, 44.1};
+    size_t n = sizeof(data) / sizeof(data[0]);
+
+    comb_sort(data, n);
+
+    for (size_t i = 0; i < n; i++) {
+        printf("%.1f ", data[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+
+bool is_non_prime(int num) {
+    if (num <= 1) {
+        return true;
+    }
+    if (num == 2) {
+        return false;
+    }
+    if (num % 2 == 0) {
+        return true;
+    }
+    
+    int limit = (int)sqrt(num);
+    for (int i = 3; i <= limit; i += 2) {
+        if (num % i == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main(void) {
+    int test_values[] = {0, 1, 2, 3, 4, 17, 25, 97, 100};
+    int count = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (int i = 0; i < count; i++) {
+        if (is_non_prime(test_values[i])) {
+            printf("%d is non-prime\n", test_values[i]);
+        } else {
+            printf("%d is prime\n", test_values[i]);
+        }
+    }
+    
+    return 0;
+}
+```

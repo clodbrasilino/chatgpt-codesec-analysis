@@ -1,0 +1,49 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long *square_elements(const int *list, size_t n)
+{
+    long long *result;
+    size_t i;
+
+    if (list == NULL || n == 0) {
+        return NULL;
+    }
+
+    result = malloc(n * sizeof(*result));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < n; i++) {
+        result[i] = (long long)list[i] * (long long)list[i];
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int numbers[] = {1, -2, 3, 4, -5, 46341};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    size_t i;
+    long long *squares;
+
+    squares = square_elements(numbers, count);
+    if (squares == NULL) {
+        fprintf(stderr, "Failed to compute squares\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%d squared is %lld\n", numbers[i], squares[i]) < 0) {
+            free(squares);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(squares);
+    return EXIT_SUCCESS;
+}
+```

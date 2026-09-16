@@ -6,14 +6,14 @@ typedef struct Node {
     struct Node* next;
 } Node;
 
-Node* create_node(int data) {
-    Node* new_node = (Node*)malloc(sizeof(Node));
-    new_node->data = data;
-    new_node->next = NULL;
-    return new_node;
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
 }
 
-void print_list(Node* head) {
+void printList(Node* head) {
     while (head != NULL) {
         printf("%d -> ", head->data);
         head = head->next;
@@ -21,44 +21,44 @@ void print_list(Node* head) {
     printf("NULL\n");
 }
 
-Node* remove_odd_numbers(Node* head) {
-    Node *current = head, *prev = NULL, *temp = NULL;
+Node* removeOddNumbers(Node* head) {
+    Node* dummy = createNode(0);
+    dummy->next = head;
+    Node* prev = dummy;
+    Node* current = head;
 
     while (current != NULL) {
         if (current->data % 2 != 0) {
-            if (prev == NULL) {
-                head = current->next;
-            } else {
-                prev->next = current->next;
-            }
-            temp = current;
-            current = current->next;
-            free(temp);
+            prev->next = current->next;
+            free(current);
+            current = prev->next;
         } else {
             prev = current;
             current = current->next;
         }
     }
 
+    head = dummy->next;
+    free(dummy);
     return head;
 }
 
 int main() {
-    Node* head = create_node(1);
-    head->next = create_node(2);
-    head->next->next = create_node(3);
-    head->next->next->next = create_node(4);
-    head->next->next->next->next = create_node(5);
+    Node* head = createNode(1);
+    head->next = createNode(2);
+    head->next->next = createNode(3);
+    head->next->next->next = createNode(4);
+    head->next->next->next->next = createNode(5);
 
     printf("Original list: ");
-    print_list(head);
+    printList(head);
 
-    head = remove_odd_numbers(head);
+    head = removeOddNumbers(head);
 
     printf("List after removing odd numbers: ");
-    print_list(head);
+    printList(head);
 
-    // Free the remaining nodes
+    // Free remaining nodes
     while (head != NULL) {
         Node* temp = head;
         head = head->next;

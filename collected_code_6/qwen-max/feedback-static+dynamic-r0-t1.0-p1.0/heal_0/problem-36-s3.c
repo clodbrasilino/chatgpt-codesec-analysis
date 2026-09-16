@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_nth_digit(int numerator, int denominator, int n) {
+    if (n <= 0 || denominator == 0) return -1;
+    long long result = (long long)numerator * 10;
+    for (int i = 1; i < n; ++i) {
+        result %= denominator;
+        result *= 10;
+    }
+    return (int)(result / denominator) % 10;
+}
+
+int main() {
+    int numerator = 1;
+    int denominator = 3;
+    int n = 5;
+    int nth_digit = find_nth_digit(numerator, denominator, n);
+    if (nth_digit != -1) {
+        printf("The %dth digit of the proper fraction %d/%d is: %d\n", n, numerator, denominator, nth_digit);
+    } else {
+        printf("Invalid input or unable to find the digit.\n");
+    }
+    return 0;
+}

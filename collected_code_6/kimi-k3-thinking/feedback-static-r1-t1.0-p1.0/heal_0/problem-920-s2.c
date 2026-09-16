@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int is_none;
+    int value;
+} MaybeInt;
+
+typedef struct {
+    MaybeInt *items;
+    size_t count;
+} Tuple;
+
+static int tuple_is_all_none(const Tuple *t)
+{
+    size_t i;
+
+    if (t == NULL || t->items == NULL) {
+        return 1;
+    }
+    for (i = 0; i < t->count; ++i) {
+        if (!t->items[i].is_none) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+size_t remove_all_none_tuples(Tuple *tuples, size_t count)
+{
+    size_t read_idx;
+    size_t write_idx;
+
+    if (tuples == NULL) {
+        return 0;
+    }
+
+    write_idx = 0;
+    for (read_idx = 0; read_idx < count; ++read_idx) {
+        if (tuple_is_all_none(&tuples[read_idx])) {
+            free(tuples[read_idx].items);
+            tuples[read_idx].items = NULL;
+            tuples[read_idx].count = 0;
+        } else {
+            if (write_idx != read_idx) {
+                tuples[write_idx] = tuples[read_idx];
+                tuples[read_idx].items = NULL;
+                tuples[read_idx].count = 0;
+            }
+            ++write_idx;
+        }
+    }
+
+    return write_idx;
+}
+
+static int init_tuple(Tuple *t, size_t n)
+{
+    if (t == NULL) {
+        return -1;
+    }
+    t->items = NULL;
+    t->count = 0;
+    if (n == 0) {
+        return 0;
+    }
+    t->items = malloc(n * sizeof(MaybeInt));
+    if (t->items == NULL) {
+        return -1;
+    }
+    t->count = n;
+    return 0;
+}
+
+static void set_tuple_item(Tuple *t, size_t idx, int is_none, int value)
+{
+    if (t == NULL || t->items == NULL || idx >= t->count) {
+        return;
+    }
+    t->items[idx].is_none = is_none;
+    t->items[idx].value = value;
+}
+
+static void print_tuples(const Tuple *tuples, size_t count)
+{
+    size_t i;
+    size_t j;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0; i < count; ++i) {
+        printf("(");
+        for (j = 0; j < tuples[i].count; ++j) {
+            if (tuples[i].items[j].is_none) {
+                printf("None");
+            } else {
+                printf("%d", tuples[i].items[j].value);
+            }
+            if (j + 1 < tuples[i].count) {
+                printf(", ");
+            }
+        }
+        printf(")\n");
+    }
+}
+
+static void free_tuples(Tuple *tuples, size_t count)
+{
+    size_t i;
+
+    if (tuples == NULL) {
+        return;
+    }
+    for (i = 0; i < count; ++i) {
+        free(tuples[i].items);
+        tuples[i].items = NULL;
+        tuples[i].count = 0;
+    }
+    free(tuples);
+}
+
+int main(void)
+{
+    enum { TUPLE_COUNT = 5, TUPLE_LEN = 3 };
+
+    static const int values[TUPLE_COUNT][TUPLE_LEN] = {
+        {1, 2, 3},
+        {0, 0, 0},
+        {4, 5, 6},
+        {0, 0, 0},
+        {7, 8, 9}
+    };
+    static const int none_flags[TUPLE_COUNT][TUPLE_LEN] = {
+        {0, 0, 0},
+        {1, 1, 1},
+        {0, 1, 0},
+        {1, 1, 1},
+        {0, 0, 1}
+    };
+
+    Tuple *tuples;
+    size_t new_count;
+    size_t i;
+    size_t j;
+
+    tuples = calloc((size_t)TUPLE_COUNT, sizeof(Tuple));
+    if (tuples == NULL) {
+        fprintf(stderr, "Failed to allocate tuple list\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < (size_t)TUPLE_COUNT; ++i) {
+        if (init_tuple(&tuples[i], (size_t)TUPLE_LEN) != 0) {
+            fprintf(stderr, "Failed to allocate tuple\n");
+            free_tuples(tuples, (size_t)TUPLE_COUNT);
+            return EXIT_FAILURE;
+        }
+        for (j = 0; j < (size_t)TUPLE_LEN; ++j) {
+            set_tuple_item(&tuples[i], j, none_flags[i][j], values[i][j]);
+        }
+    }
+
+    printf("Original tuple list:\n");
+    print_tuples(tuples, (size_t)TUPLE_COUNT);
+
+    new_count = remove_all_none_tuples(tuples, (size_t)TUPLE_COUNT);
+
+    printf("Tuple list after removal:\n");
+    print_tuples(tuples, new_count);
+
+    free_tuples(tuples, (size_t)TUPLE_COUNT);
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *tuple_to_string(const int *tuple, size_t len) {
+    if (len == 0) return NULL;
+    size_t str_len = 2 * len - 1; // Each number and commas, except for the trailing comma
+    char *str = (char *)malloc(str_len + 1); // +1 for null-terminator
+    if (!str) return NULL;
+
+    for (size_t i = 0; i < len; ++i) {
+        sprintf(str + 2 * i, "%d", tuple[i]);
+        if (i < len - 1) {
+            str[2 * i + 1] = ',';
+        }
+    }
+    str[str_len] = '\0';
+    return str;
+}
+
+int main() {
+    int example_tuple[] = {1, 2, 3, 4, 5};
+    size_t length = sizeof(example_tuple) / sizeof(example_tuple[0]);
+
+    char *result = tuple_to_string(example_tuple, length);
+    if (result) {
+        printf("%s\n", result);
+        free(result);
+    }
+
+    return 0;
+}

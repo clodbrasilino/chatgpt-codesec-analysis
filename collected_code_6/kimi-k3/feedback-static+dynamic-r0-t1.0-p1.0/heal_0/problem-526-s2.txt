@@ -1,0 +1,47 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void capitalize_first_last(char *str) {
+    if (str == NULL) {
+        return;
+    }
+    
+    size_t len = strlen(str);
+    if (len == 0) {
+        return;
+    }
+    
+    size_t i = 0;
+    while (i < len) {
+        if (!isspace((unsigned char)str[i])) {
+            size_t start = i;
+            size_t end = i;
+            
+            while (end < len && !isspace((unsigned char)str[end])) {
+                end++;
+            }
+            
+            str[start] = (char)toupper((unsigned char)str[start]);
+            if (end - 1 > start) {
+                str[end - 1] = (char)toupper((unsigned char)str[end - 1]);
+            }
+            
+            i = end;
+        } else {
+            i++;
+        }
+    }
+}
+
+int main(void) {
+    char str[] = "hello world this is a test";
+    
+    printf("Original: %s\n", str);
+    capitalize_first_last(str);
+    printf("Modified: %s\n", str);
+    
+    return 0;
+}
+```

@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static int safe_multiply(long long a, long long b, long long *result)
+{
+    if (a > 0) {
+        if (b > 0 && a > LLONG_MAX / b) {
+            return -1;
+        }
+        if (b < 0 && b < LLONG_MIN / a) {
+            return -1;
+        }
+    } else if (a < 0) {
+        if (b > 0 && a < LLONG_MIN / b) {
+            return -1;
+        }
+        if (b < 0 && a < LLONG_MAX / b) {
+            return -1;
+        }
+    }
+    *result = a * b;
+    return 0;
+}
+
+static int nth_power(long long base, unsigned int exponent, long long *result)
+{
+    long long acc = 1;
+    unsigned int i;
+
+    if (result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < exponent; i++) {
+        if (safe_multiply(acc, base, &acc) != 0) {
+            return -1;
+        }
+    }
+
+    *result = acc;
+    return 0;
+}
+
+static long long *power_list(const long long *input, size_t count, unsigned int exponent)
+{
+    long long *output;
+    size_t i;
+
+    if (input == NULL || count == 0) {
+        return NULL;
+    }
+
+    if (count > SIZE_MAX / sizeof(long long)) {
+        return NULL;
+    }
+
+    output = malloc(count * sizeof(long long));
+    if (output == NULL) {
+        return NULL;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (nth_power(input[i], exponent, &output[i]) != 0) {
+            free(output);
+            return NULL;
+        }
+    }
+
+    return output;
+}
+
+int main(void)
+{
+    long long values[] = {1, 2, 3, 4, 5};
+    size_t count = sizeof(values) / sizeof(values[0]);
+    unsigned int exponent = 3;
+    long long *results;
+    size_t i;
+
+    results = power_list(values, count, exponent);
+    if (results == NULL) {
+        fprintf(stderr, "Failed to compute powers\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (printf("%lld^%u = %lld\n", values[i], exponent, results[i]) < 0) {
+            free(results);
+            return EXIT_FAILURE;
+        }
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```

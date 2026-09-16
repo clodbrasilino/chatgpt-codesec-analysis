@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long binomial_coefficient(int n, int k) {
+    if (k < 0 || k > n) {
+        return 0;
+    }
+    if (k == 0 || k == n) {
+        return 1;
+    }
+    if (k > n / 2) {
+        k = n - k;
+    }
+    long long res = 1;
+    for (int i = 1; i <= k; i++) {
+        res = res * (n - i + 1);
+        res = res / i;
+    }
+    return res;
+}
+
+long long derangement(int n) {
+    if (n == 0) {
+        return 1;
+    }
+    if (n == 1) {
+        return 0;
+    }
+    long long *d = (long long*)malloc((n + 1) * sizeof(long long));
+    if (d == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    d[0] = 1;
+    d[1] = 0;
+    for (int i = 2; i <= n; i++) {
+        d[i] = (i - 1) * (d[i - 1] + d[i - 2]);
+    }
+    long long res = d[n];
+    free(d);
+    return res;
+}
+
+long long rencontres_number(int n, int k) {
+    if (n < 0 || k < 0 || k > n) {
+        return 0;
+    }
+    if (n == 0 && k == 0) {
+        return 1;
+    }
+    return binomial_coefficient(n, k) * derangement(n - k);
+}
+
+int main(void) {
+    int n = 7;
+    int k = 2;
+    
+    long long result = rencontres_number(n, k);
+    printf("%lld\n", result);
+    
+    return 0;
+}

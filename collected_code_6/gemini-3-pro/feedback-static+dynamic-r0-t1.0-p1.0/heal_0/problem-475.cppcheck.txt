@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-475.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-475.c:11:19: style: Variable 'counterA' can be declared as pointer to const [constVariablePointer]
+    CounterModel *counterA = (CounterModel *)a;
+                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-475.c:12:19: style: Variable 'counterB' can be declared as pointer to const [constVariablePointer]
+    CounterModel *counterB = (CounterModel *)b;
+                  ^

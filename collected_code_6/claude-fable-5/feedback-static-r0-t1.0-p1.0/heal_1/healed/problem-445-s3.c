@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+int multiply_tuples(const Pair *tup1, const Pair *tup2, Pair *result, size_t n)
+{
+    size_t i;
+
+    if (tup1 == NULL || tup2 == NULL || result == NULL) {
+        return -1;
+    }
+
+    for (i = 0; i < n; i++) {
+        result[i].first = tup1[i].first * tup2[i].first;
+        result[i].second = tup1[i].second * tup2[i].second;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    const Pair tup1[] = { {1, 3}, {4, 5}, {2, 9}, {1, 10} };
+    const Pair tup2[] = { {6, 7}, {3, 9}, {1, 1}, {7, 3} };
+    size_t n = sizeof(tup1) / sizeof(tup1[0]);
+    Pair *result;
+    size_t i;
+    int status;
+
+    result = malloc(n * sizeof(Pair));
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    status = multiply_tuples(tup1, tup2, result, n);
+    if (status != 0) {
+        fprintf(stderr, "Multiplication failed\n");
+        free(result);
+        return EXIT_FAILURE;
+    }
+
+    printf("(");
+    for (i = 0; i < n; i++) {
+        printf("(%d, %d)", result[i].first, result[i].second);
+        if (i < n - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+
+    free(result);
+    return EXIT_SUCCESS;
+}

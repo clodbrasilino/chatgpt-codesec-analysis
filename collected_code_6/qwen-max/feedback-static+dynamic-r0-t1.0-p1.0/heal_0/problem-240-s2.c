@@ -16,7 +16,7 @@ Node* createNode(int data) {
     return newNode;
 }
 
-void append(Node** head, int data) {
+void appendNode(Node** head, int data) {
     Node* newNode = createNode(data);
     if (*head == NULL) {
         *head = newNode;
@@ -29,18 +29,22 @@ void append(Node** head, int data) {
     }
 }
 
-void replaceLastElementWithList(Node** mainList, Node* newList) {
-    if (*mainList == NULL || newList == NULL) {
+void replaceLastElement(Node** head, Node* newList) {
+    if (*head == NULL || newList == NULL) {
         return;
     }
-
-    Node* temp = *mainList;
-    while (temp->next != NULL && temp->next->next != NULL) {
+    Node* temp = *head;
+    Node* prev = NULL;
+    while (temp->next != NULL) {
+        prev = temp;
         temp = temp->next;
     }
-
-    free(temp->next);
-    temp->next = newList;
+    if (prev != NULL) {
+        prev->next = newList;
+    } else {
+        *head = newList; // Replace the single element list with newList
+    }
+    free(temp);
 }
 
 void printList(Node* head) {
@@ -54,31 +58,27 @@ void printList(Node* head) {
 
 int main() {
     Node* list1 = NULL;
-    append(&list1, 1);
-    append(&list1, 2);
-    append(&list1, 3);
+    appendNode(&list1, 10);
+    appendNode(&list1, 20);
+    appendNode(&list1, 30);
 
-    Node* list2 = NULL;
-    append(&list2, 4);
-    append(&list2, 5);
-    append(&list2, 6);
+    Node* newList = NULL;
+    appendNode(&newList, 40);
+    appendNode(&newList, 50);
 
-    printf("Original List 1: ");
+    printf("Original List: ");
     printList(list1);
 
-    printf("Replacement List: ");
-    printList(list2);
+    replaceLastElement(&list1, newList);
 
-    replaceLastElementWithList(&list1, list2);
-
-    printf("Modified List 1: ");
+    printf("Modified List: ");
     printList(list1);
 
-    Node* temp = list1;
-    while (temp != NULL) {
-        Node* next = temp->next;
+    // Free allocated memory
+    while (list1 != NULL) {
+        Node* temp = list1;
+        list1 = list1->next;
         free(temp);
-        temp = next;
     }
 
     return 0;

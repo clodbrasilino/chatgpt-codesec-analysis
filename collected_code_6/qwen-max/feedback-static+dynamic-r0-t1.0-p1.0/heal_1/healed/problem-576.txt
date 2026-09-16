@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool is_subarray(const int *mainArray, int mainSize, const int *subArray, int subSize) {
+    if (subSize == 0) return true;
+    if (subSize > mainSize) return false;
+
+    for (int i = 0; i <= mainSize - subSize; i++) {
+        bool match = true;
+        for (int j = 0; j < subSize; j++) {
+            if (mainArray[i + j] != subArray[j]) {
+                match = false;
+                break;
+            }
+        }
+        if (match) return true;
+    }
+    return false;
+}
+
+int main() {
+    int mainArray[] = {1, 2, 3, 4, 5};
+    int subArray1[] = {3, 4};
+    int subArray2[] = {6};
+
+    int mainSize = sizeof(mainArray) / sizeof(mainArray[0]);
+    int subSize1 = sizeof(subArray1) / sizeof(subArray1[0]);
+    int subSize2 = sizeof(subArray2) / sizeof(subArray2[0]);
+
+    if (is_subarray(mainArray, mainSize, subArray1, subSize1)) {
+        printf("subArray1 is a subarray of mainArray\n");
+    } else {
+        printf("subArray1 is not a subarray of mainArray\n");
+    }
+
+    if (is_subarray(mainArray, mainSize, subArray2, subSize2)) {
+        printf("subArray2 is a subarray of mainArray\n");
+    } else {
+        printf("subArray2 is not a subarray of mainArray\n");
+    }
+
+    return 0;
+}
+```

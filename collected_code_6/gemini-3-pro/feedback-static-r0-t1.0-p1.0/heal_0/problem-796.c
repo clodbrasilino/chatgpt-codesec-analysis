@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct Node {
+    char *key;
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct Dictionary {
+    Node *head;
+} Dictionary;
+
+Dictionary* createDictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        return NULL;
+    }
+    dict->head = NULL;
+    return dict;
+}
+
+int insert(Dictionary *dict, const char *key, int value) {
+    if (dict == NULL || key == NULL) {
+        return -1;
+    }
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        return -1;
+    }
+    newNode->key = strdup(key);
+    if (newNode->key == NULL) {
+        free(newNode);
+        return -1;
+    }
+    newNode->value = value;
+    newNode->next = dict->head;
+    dict->head = newNode;
+    return 0;
+}
+
+long long sumDictionaryValues(const Dictionary *dict) {
+    if (dict == NULL) {
+        return 0;
+    }
+    long long sum = 0;
+    Node *current = dict->head;
+    while (current != NULL) {
+        sum += current->value;
+        current = current->next;
+    }
+    return sum;
+}
+
+void freeDictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    Node *current = dict->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp->key);
+        free(temp);
+    }
+    free(dict);
+}
+
+int main() {
+    Dictionary *dict = createDictionary();
+    if (dict == NULL) {
+        fprintf(stderr, "Failed to create dictionary.\n");
+        return 1;
+    }
+
+    if (insert(dict, "item1", 10) != 0 ||
+        insert(dict, "item2", 20) != 0 ||
+        insert(dict, "item3", 30) != 0) {
+        fprintf(stderr, "Failed to insert items.\n");
+        freeDictionary(dict);
+        return 1;
+    }
+
+    long long totalSum = sumDictionaryValues(dict);
+    printf("Sum of all items: %lld\n", totalSum);
+
+    freeDictionary(dict);
+    return 0;
+}

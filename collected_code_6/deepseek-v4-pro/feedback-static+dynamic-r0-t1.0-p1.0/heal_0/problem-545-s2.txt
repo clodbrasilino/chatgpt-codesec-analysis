@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+unsigned int toggle_first_last_bits(unsigned int num) {
+    if (num == 0) {
+        return 1;
+    }
+    
+    unsigned int msb_mask = 1;
+    unsigned int temp = num;
+    
+    while (temp >> 1) {
+        msb_mask <<= 1;
+        temp >>= 1;
+    }
+    
+    return num ^ msb_mask ^ 1;
+}
+
+int main(void) {
+    unsigned int test_cases[] = {0, 1, 2, 3, 4, 5, 7, 8, 15, 16, 31, 255, 256, 1024};
+    size_t num_tests = sizeof(test_cases) / sizeof(test_cases[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        unsigned int input = test_cases[i];
+        unsigned int result = toggle_first_last_bits(input);
+        printf("Input: %u (0x%X) -> Result: %u (0x%X)\n", input, input, result, result);
+    }
+    
+    return 0;
+}
+```

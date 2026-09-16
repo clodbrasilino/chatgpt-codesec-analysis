@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_subarray_sum(const int *arr, size_t n)
+{
+    long long best;
+    long long current;
+    size_t i;
+
+    if (arr == NULL || n == 0) {
+        return 0;
+    }
+
+    best = arr[0];
+    current = arr[0];
+
+    for (i = 1; i < n; i++) {
+        if (current > 0) {
+            current = current + (long long)arr[i];
+        } else {
+            current = arr[i];
+        }
+        if (current > best) {
+            best = current;
+        }
+    }
+
+    return best;
+}
+
+int main(void)
+{
+    int data[] = { -2, 1, -3, 4, -1, 2, 1, -5, 4 };
+    size_t n = sizeof(data) / sizeof(data[0]);
+    long long result;
+
+    result = max_subarray_sum(data, n);
+
+    if (printf("Largest sum of contiguous subarray: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+1. **Fixed the invalid overflow test** (`current + arr[i] > arr[i]`): This condition performed the addition *before* checking, meaning any overflow would already have occurred, invoking undefined behavior. Optimizing compilers (GCC, Clang) legally assume signed overflow cannot happen and reduce the check to `current > 0` anyway — so the "guard" provided no protection. The rewrite uses the semantically correct Kadane condition `current > 0` directly, which never triggers overflow in the comparison itself.
+
+2. **Widened arithmetic explicitly**: The cast `(long long)arr[i]` makes the promotion to 64-bit arithmetic explicit. Since `current` is `long long`, accumulating `int` values cannot overflow in practice — you would need more than `2^32` elements each at `INT_MAX`, which exceeds addressable memory on realistic systems and would overflow `size_t` bounds long before `long long` does.
+
+3. **Removed the unused `<limits.h>` include**: It was never referenced (`INT_MAX`/`INT_MIN` unused), so it's dropped.
+
+The algorithm's behavior is preserved: it returns the maximum contiguous subarray sum (expected output for the sample data is `6`, from the subarray `{4, -1, 2, 1}`), while the null/empty guard and the checked `printf` return value remain intact.

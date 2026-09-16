@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Dictionary;
+
+void free_dictionary_list(Dictionary *list, size_t size) {
+    if (list == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < size; ++i) {
+        free(list[i].key);
+        list[i].key = NULL;
+    }
+    free(list);
+}
+
+int compare_dictionaries(const void *a, const void *b) {
+    const Dictionary *dictA = (const Dictionary *)a;
+    const Dictionary *dictB = (const Dictionary *)b;
+    if (dictA->key == NULL || dictB->key == NULL) {
+        return 0;
+    }
+    return strcmp(dictA->key, dictB->key);
+}
+
+void sort_dictionary_list(Dictionary *list, size_t size) {
+    if (list != NULL && size > 1) {
+        qsort(list, size, sizeof(Dictionary), compare_dictionaries);
+    }
+}
+
+int main(void) {
+    size_t size = 3;
+    Dictionary *list = (Dictionary *)malloc(size * sizeof(Dictionary));
+    if (list == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    list[0].key = strdup("banana");
+    list[0].value = 2;
+    list[1].key = strdup("apple");
+    list[1].value = 1;
+    list[2].key = strdup("cherry");
+    list[2].value = 3;
+
+    if (list[0].key == NULL || list[1].key == NULL || list[2].key == NULL) {
+        free_dictionary_list(list, size);
+        return EXIT_FAILURE;
+    }
+
+    sort_dictionary_list(list, size);
+
+    for (size_t i = 0; i < size; ++i) {
+        printf("%s: %d\n", list[i].key, list[i].value);
+    }
+
+    free_dictionary_list(list, size);
+
+    return EXIT_SUCCESS;
+}

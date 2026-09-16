@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_cubes(int n) {
+    return (long long)n * n * (n + 1) * (n + 1) / 4;
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    long long result = sum_of_cubes(n);
+    printf("The sum of the series 1^3 + 2^3 + ... + %d^3 is %lld\n", n, result);
+    return EXIT_SUCCESS;
+}

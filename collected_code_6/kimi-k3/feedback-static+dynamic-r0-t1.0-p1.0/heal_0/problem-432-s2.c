@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+
+double calculate_trapezium_median(double base1, double base2) {
+    return (base1 + base2) / 2.0;
+}
+
+int main(void) {
+    double base1, base2, median;
+    int result;
+    
+    printf("Enter the length of the first base: ");
+    result = scanf("%lf", &base1);
+    
+    if (result != 1) {
+        fprintf(stderr, "Error: Invalid input for first base\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (base1 < 0.0) {
+        fprintf(stderr, "Error: Base length cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the length of the second base: ");
+    result = scanf("%lf", &base2);
+    
+    if (result != 1) {
+        fprintf(stderr, "Error: Invalid input for second base\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (base2 < 0.0) {
+        fprintf(stderr, "Error: Base length cannot be negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (errno == ERANGE) {
+        fprintf(stderr, "Error: Input value out of range\n");
+        return EXIT_FAILURE;
+    }
+    
+    median = calculate_trapezium_median(base1, base2);
+    
+    if (isinf(median) || isnan(median)) {
+        fprintf(stderr, "Error: Calculation resulted in invalid value\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("The median of the trapezium is: %.2f\n", median);
+    
+    return EXIT_SUCCESS;
+}

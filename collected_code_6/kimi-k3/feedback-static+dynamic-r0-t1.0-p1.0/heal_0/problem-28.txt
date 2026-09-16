@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long binomial_coefficient(int n, int k)
+{
+    unsigned long long result = 1;
+    int i;
+
+    if (k < 0 || n < 0 || k > n) {
+        return 0;
+    }
+
+    if (k > n - k) {
+        k = n - k;
+    }
+
+    for (i = 0; i < k; i++) {
+        if (result > ULLONG_MAX / (unsigned long long)(n - i)) {
+            return 0;
+        }
+        result = result * (unsigned long long)(n - i) / (unsigned long long)(i + 1);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    int n, k;
+    unsigned long long result;
+
+    printf("Enter n and k: ");
+    
+    if (scanf("%d %d", &n, &k) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || k < 0) {
+        fprintf(stderr, "Inputs must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+
+    if (k > n) {
+        fprintf(stderr, "k cannot exceed n\n");
+        return EXIT_FAILURE;
+    }
+
+    result = binomial_coefficient(n, k);
+
+    if (result == 0 && k != 0 && k != n) {
+        fprintf(stderr, "Overflow occurred or invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("C(%d, %d) = %llu\n", n, k, result);
+
+    return EXIT_SUCCESS;
+}
+```

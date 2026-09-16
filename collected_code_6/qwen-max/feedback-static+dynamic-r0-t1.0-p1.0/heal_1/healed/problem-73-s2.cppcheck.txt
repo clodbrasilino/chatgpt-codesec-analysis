@@ -1,25 +1,16 @@
 Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c ...
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:20:13: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
-            result = realloc(result, sizeof(char*) * (match_count + 1));
-            ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:47:9: error: Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
-        result = realloc(result, sizeof(char*) * (match_count + 1));
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:29:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 2) * sizeof(char*));
         ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:23:26: warning: Either the condition 'result==NULL' is redundant or there is possible null pointer dereference: result. [nullPointerRedundantCheck]
-                    free(result[i]);
-                         ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:21:24: note: Assuming that condition 'result==NULL' is not redundant
-            if (result == NULL) {
-                       ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:23:26: note: Null pointer dereference
-                    free(result[i]);
-                         ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:50:22: warning: Either the condition 'result==NULL' is redundant or there is possible null pointer dereference: result. [nullPointerRedundantCheck]
-                free(result[i]);
-                     ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:48:20: note: Assuming that condition 'result==NULL' is not redundant
-        if (result == NULL) {
-                   ^
-/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:50:22: note: Null pointer dereference
-                free(result[i]);
-                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:46:9: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+        parts = realloc(parts, (count + 1) * sizeof(char*));
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:58:5: error: Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+    parts = realloc(parts, (count + 1) * sizeof(char*));
+    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:7:9: style: The scope of the variable 'status' can be reduced. [variableScope]
+    int status;
+        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-73-s2.c:54:17: style: Variable 'part_idx' is assigned a value that is never used. [unreadVariable]
+        part_idx++;
+                ^

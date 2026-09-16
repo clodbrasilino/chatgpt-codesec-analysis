@@ -1,0 +1,151 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+Node *create_node(int data) {
+    Node *node = malloc(sizeof(*node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+int append_node(Node **head, int data) {
+    if (head == NULL) {
+        return -1;
+    }
+
+    Node *new_node = create_node(data);
+    if (new_node == NULL) {
+        return -1;
+    }
+
+    if (*head == NULL) {
+        *head = new_node;
+        return 0;
+    }
+
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = new_node;
+    return 0;
+}
+
+void free_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int divide_lists(const Node *a, const Node *b, Node **result) {
+    if (result == NULL) {
+        return -1;
+    }
+
+    *result = NULL;
+    Node *tail = NULL;
+
+    while (a != NULL && b != NULL) {
+        if (b->data == 0) {
+            free_list(*result);
+            *result = NULL;
+            return -1;
+        }
+
+        if (a->data == INT_MIN && b->data == -1) {
+            free_list(*result);
+            *result = NULL;
+            return -1;
+        }
+
+        Node *new_node = create_node(a->data / b->data);
+        if (new_node == NULL) {
+            free_list(*result);
+            *result = NULL;
+            return -1;
+        }
+
+        if (*result == NULL) {
+            *result = new_node;
+        } else {
+            tail->next = new_node;
+        }
+        tail = new_node;
+
+        a = a->next;
+        b = b->next;
+    }
+
+    if (a != NULL || b != NULL) {
+        free_list(*result);
+        *result = NULL;
+        return -1;
+    }
+
+    return 0;
+}
+
+void print_list(const Node *head) {
+    if (head == NULL) {
+        printf("NULL\n");
+        return;
+    }
+
+    const Node *current = head;
+    while (current != NULL) {
+        printf("%d", current->data);
+        current = current->next;
+        if (current != NULL) {
+            printf(" -> ");
+        }
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node *list1 = NULL;
+    Node *list2 = NULL;
+    Node *result = NULL;
+
+    if (append_node(&list1, 10) != 0 ||
+        append_node(&list1, 20) != 0 ||
+        append_node(&list1, 30) != 0) {
+        free_list(list1);
+        free_list(list2);
+        return 1;
+    }
+
+    if (append_node(&list2, 2) != 0 ||
+        append_node(&list2, 4) != 0 ||
+        append_node(&list2, 5) != 0) {
+        free_list(list1);
+        free_list(list2);
+        return 1;
+    }
+
+    if (divide_lists(list1, list2, &result) == 0) {
+        print_list(result);
+    } else {
+        fprintf(stderr, "Error\n");
+    }
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}
+```

@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-808-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-808-s3.c:36:59: style: Condition 'tuple_contains_k(NULL,1)' is always false [knownConditionTrueFalse]
+    printf("null tuple contains 1: %s\n", tuple_contains_k(NULL, 1) ? "yes" : "no");
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-808-s3.c:36:59: note: Calling function 'tuple_contains_k' returns 0
+    printf("null tuple contains 1: %s\n", tuple_contains_k(NULL, 1) ? "yes" : "no");
+                                                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-808-s3.c:36:59: note: Condition 'tuple_contains_k(NULL,1)' is always false
+    printf("null tuple contains 1: %s\n", tuple_contains_k(NULL, 1) ? "yes" : "no");
+                                                          ^

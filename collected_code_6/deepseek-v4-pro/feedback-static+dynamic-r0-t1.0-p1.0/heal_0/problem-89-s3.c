@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_closest_smaller(int n) {
+    if (n <= 1) {
+        return -1;
+    }
+    return n - 1;
+}
+
+int main(void) {
+    int test_values[] = {5, 10, 0, -5, 1, 2};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        int input = test_values[i];
+        int result = find_closest_smaller(input);
+        
+        if (result == -1) {
+            printf("No smaller number exists for %d\n", input);
+        } else {
+            printf("Closest smaller number than %d is %d\n", input, result);
+        }
+    }
+    
+    return 0;
+}

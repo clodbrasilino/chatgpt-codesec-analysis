@@ -1,67 +1,113 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <regex.h>
 
-char** split_string(const char *input, const char *delimiters, int *count) {
+int split_string(const char *input, const char *delimiters, char ***result) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'status' can be reduced. [variableScope]
+     */
+    int status;
     regex_t regex;
     regmatch_t match[1];
-    char *string = strdup(input);
-    int len = strlen(string), offset = 0, start = 0, match_count = 0;
-    char **result = NULL;
+    size_t nmatch = 1;
+    char *str;
+    char **parts = NULL;
+    int count = 0, part_idx = 0;
 
-    if (regcomp(&regex, delimiters, REG_EXTENDED | REG_NEWLINE)) {
-        free(string);
-        return NULL;
+    if (regcomp(&regex, delimiters, REG_EXTENDED | REG_NEWLINE) != 0) {
+        return -1;
     }
 
-    while (regexec(&regex, string + offset, 1, match, 0) == 0) {
-        if (match[0].rm_so > 0 && (start + match[0].rm_so) > start) {
-            /* Possible weaknesses found:
-             *  Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
-             */
-            result = realloc(result, sizeof(char*) * (match_count + 1));
-            result[match_count] = strndup(string + start, (start + match[0].rm_so) - start);
-            match_count++;
-        }
-        start += match[0].rm_eo;
-        offset += match[0].rm_eo;
+    /* Possible weaknesses found:
+     *  call to undeclared library function 'strdup' with type 'char *(const char *)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     *  include the header <string.h> or explicitly provide a declaration for 'strdup'
+     *  implicit declaration of function 'strdup' [-Wimplicit-function-declaration]
+     */
+    str = strdup(input);
+    if (str == NULL) {
+        regfree(&regex);
+        return -1;
     }
 
-    if (len - start > 0) {
+    while (1) {
+        status = regexec(&regex, str, nmatch, match, 0);
+        if (status != 0) break;
+
         /* Possible weaknesses found:
-         *  Common realloc mistake: 'result' nulled but not freed upon failure [memleakOnRealloc]
+         *  Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
          */
-        result = realloc(result, sizeof(char*) * (match_count + 1));
-        result[match_count++] = strndup(string + start, len - start);
+        parts = realloc(parts, (count + 2) * sizeof(char*));
+        if (parts == NULL) {
+            free(str);
+            regfree(&regex);
+            return -1;
+        }
+        
+        if (match[0].rm_so > 0) {
+            /* Possible weaknesses found:
+             *  call to undeclared library function 'strndup' with type 'char *(const char *, unsigned long)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+             *  include the header <string.h> or explicitly provide a declaration for 'strndup'
+             *  implicit declaration of function 'strndup' [-Wimplicit-function-declaration]
+             */
+            parts[part_idx] = strndup(str, match[0].rm_so);
+            part_idx++;
+            count++;
+        }
+
+        str += match[0].rm_eo;
     }
 
-    *count = match_count;
-    free(string);
+    if (*str != '\0') {
+        /* Possible weaknesses found:
+         *  Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+         */
+        parts = realloc(parts, (count + 1) * sizeof(char*));
+        if (parts == NULL) {
+            free(str);
+            regfree(&regex);
+            return -1;
+        }
+        
+        parts[part_idx] = strdup(str);
+        /* Possible weaknesses found:
+         *  Variable 'part_idx' is assigned a value that is never used. [unreadVariable]
+         */
+        part_idx++;
+        count++;
+    }
+
+    /* Possible weaknesses found:
+     *  Common realloc mistake: 'parts' nulled but not freed upon failure [memleakOnRealloc]
+     */
+    parts = realloc(parts, (count + 1) * sizeof(char*));
+    if (parts == NULL) {
+        free(str);
+        regfree(&regex);
+        return -1;
+    }
+    
+    parts[count] = NULL;
+    *result = parts;
+
+    free(str);
     regfree(&regex);
-    return result;
-}
-
-void free_array(char **arr, int size) {
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
-    free(arr);
+    return count;
 }
 
 int main() {
-    const char *input = "Hello, world! This is a test. Yes, it is.";
-    const char *delimiters = "[,!. ]+";
-    int count = 0;
-    char **result = split_string(input, delimiters, &count);
+    const char *input = "This,is a test;split string:with multiple,delimiters";
+    const char *delimiters = ",|;|:|\\s+";
+    char **result = NULL;
+    int count = split_string(input, delimiters, &result);
 
-    if (result) {
-        for (int i = 0; i < count; i++) {
+    if (count >= 0) {
+        for (int i = 0; result[i] != NULL; i++) {
             printf("%s\n", result[i]);
+            free(result[i]);
         }
-        free_array(result, count);
+        free(result);
     } else {
-        printf("Failed to split the string.\n");
+        fprintf(stderr, "Split failed\n");
     }
 
     return 0;

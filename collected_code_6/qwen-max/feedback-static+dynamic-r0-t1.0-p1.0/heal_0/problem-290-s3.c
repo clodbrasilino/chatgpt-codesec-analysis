@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct List {
+    int *elements;
+    size_t length;
+} List;
+
+void free_list(List *list) {
+    free(list->elements);
+}
+
+List* create_list(size_t length) {
+    List *new_list = (List *)malloc(sizeof(List));
+    if (new_list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    new_list->elements = (int *)malloc(length * sizeof(int));
+    if (new_list->elements == NULL) {
+        free(new_list);
+        exit(EXIT_FAILURE);
+    }
+    new_list->length = length;
+    for (size_t i = 0; i < length; ++i) {
+        new_list->elements[i] = i;
+    }
+    return new_list;
+}
+
+List** find_longest_lists(List **lists, size_t count, size_t *max_count) {
+    *max_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i]->length > *max_count) {
+            *max_count = lists[i]->length;
+        }
+    }
+
+    size_t result_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i]->length == *max_count) {
+            ++result_count;
+        }
+    }
+
+    List **result = (List **)malloc(result_count * sizeof(List *));
+    if (result == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    size_t index = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i]->length == *max_count) {
+            result[index++] = lists[i];
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    List *lists[] = {
+        create_list(5),
+        create_list(3),
+        create_list(5),
+        create_list(2)
+    };
+    size_t list_count = sizeof(lists) / sizeof(lists[0]);
+
+    size_t max_length;
+    List **longest_lists = find_longest_lists(lists, list_count, &max_length);
+
+    for (size_t i = 0; i < max_length; ++i) {
+        printf("[");
+        for (size_t j = 0; j < max_length; ++j) {
+            if (j > 0) {
+                printf(", ");
+            }
+            printf("%d", longest_lists[0]->elements[j]);
+        }
+        printf("]\n");
+    }
+
+    for (size_t i = 0; i < list_count; ++i) {
+        free_list(lists[i]);
+    }
+    free(longest_lists);
+
+    return 0;
+}

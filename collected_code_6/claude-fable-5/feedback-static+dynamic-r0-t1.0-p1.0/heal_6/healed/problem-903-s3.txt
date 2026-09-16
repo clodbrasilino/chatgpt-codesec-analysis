@@ -1,0 +1,78 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned int countUnsetBits(unsigned int num)
+{
+    unsigned int count = 0U;
+    while (num > 0U)
+    {
+        if ((num & 1U) == 0U)
+        {
+            count++;
+        }
+        num >>= 1U;
+    }
+    return count;
+}
+
+static unsigned long long totalUnsetBits(unsigned int n)
+{
+    unsigned long long total = 0ULL;
+    unsigned int i;
+    for (i = 1U; i <= n; i++)
+    {
+        total += (unsigned long long)countUnsetBits(i);
+        if (i == n)
+        {
+            break;
+        }
+    }
+    return total;
+}
+
+int main(int argc, const char *argv[])
+{
+    unsigned int n = 0U;
+
+    if (argc > 1)
+    {
+        char extra = '\0';
+        if (sscanf(argv[1], "%u %c", &n, &extra) != 1 || n < 1U)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+    }
+    else
+    {
+        if (scanf("%u", &n) != 1)
+        {
+            fprintf(stderr, "Error: invalid input\n");
+            return EXIT_FAILURE;
+        }
+        if (n < 1U)
+        {
+            fprintf(stderr, "Error: input must be at least 1\n");
+            return EXIT_FAILURE;
+        }
+    }
+
+    printf("%llu\n", totalUnsetBits(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the identified weaknesses:**
+
+The test failures noted in the comments (`expected 4, got 1` and `expected 17, got 1`) point to a classic defect where the program printed `countUnsetBits(n)` — the unset bits of only the final number — rather than the accumulated total from 1 to n:
+
+- **Test case 1** (n = 5): The correct total is 0 + 1 + 0 + 2 + 1 = **4**, but `countUnsetBits(5)` alone (binary `101`) yields **1**.
+- **Test case 2** (n = 14): The correct cumulative total is **17**, but `countUnsetBits(14)` alone (binary `1110`) yields **1**.
+
+The fix ensures `main` calls `totalUnsetBits(n)`, which iterates over every value from 1 through n and sums the unset-bit counts. Additional points worth noting:
+
+1. **Overflow safety:** The accumulator is `unsigned long long`, since the total for large `n` (near `UINT_MAX`) exceeds the range of `unsigned int`. Each per-number count is explicitly cast before addition.
+2. **Infinite-loop guard:** The `if (i == n) break;` inside the loop prevents wraparound when `n == UINT_MAX`, where `i <= n` would otherwise always be true.
+3. **Input validation:** The `sscanf` with a trailing `%c` rejects arguments with garbage after the number (e.g., `"5x"`), and both input paths reject values below 1.

@@ -1,0 +1,126 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxTriangleSum(const int *const *triangle, int rows, int *maxSum)
+{
+    int *dp;
+    int i;
+    int j;
+    int best;
+
+    if (triangle == NULL || maxSum == NULL || rows <= 0)
+    {
+        return -1;
+    }
+
+    for (i = 0; i < rows; i++)
+    {
+        if (triangle[i] == NULL)
+        {
+            return -1;
+        }
+    }
+
+    dp = (int *)malloc((size_t)rows * sizeof(*dp));
+    if (dp == NULL)
+    {
+        return -1;
+    }
+
+    for (j = 0; j < rows; j++)
+    {
+        dp[j] = triangle[rows - 1][j];
+    }
+
+    for (i = rows - 2; i >= 0; i--)
+    {
+        for (j = 0; j <= i; j++)
+        {
+            best = dp[j] > dp[j + 1] ? dp[j] : dp[j + 1];
+            dp[j] = triangle[i][j] + best;
+        }
+    }
+
+    *maxSum = dp[0];
+
+    free(dp);
+    dp = NULL;
+
+    return 0;
+}
+
+int main(void)
+{
+    int rows = 4;
+    int **triangle;
+    int i;
+    int maxSum;
+    int status;
+
+    triangle = (int **)malloc((size_t)rows * sizeof(*triangle));
+    if (triangle == NULL)
+    {
+        fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < rows; i++)
+    {
+        triangle[i] = (int *)malloc((size_t)(i + 1) * sizeof(*triangle[i]));
+        if (triangle[i] == NULL)
+        {
+            fprintf(stderr, "Memory allocation failed\n");
+            while (i > 0)
+            {
+                i--;
+                free(triangle[i]);
+                triangle[i] = NULL;
+            }
+            free(triangle);
+            triangle = NULL;
+            return EXIT_FAILURE;
+        }
+    }
+
+    triangle[0][0] = 3;
+
+    triangle[1][0] = 7;
+    triangle[1][1] = 4;
+
+    triangle[2][0] = 2;
+    triangle[2][1] = 4;
+    triangle[2][2] = 6;
+
+    triangle[3][0] = 8;
+    triangle[3][1] = 5;
+    triangle[3][2] = 9;
+    triangle[3][3] = 3;
+
+    status = maxTriangleSum((const int *const *)triangle, rows, &maxSum);
+    if (status != 0)
+    {
+        fprintf(stderr, "Failed to compute maximum sum\n");
+        for (i = 0; i < rows; i++)
+        {
+            free(triangle[i]);
+            triangle[i] = NULL;
+        }
+        free(triangle);
+        triangle = NULL;
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum sum: %d\n", maxSum);
+
+    for (i = 0; i < rows; i++)
+    {
+        free(triangle[i]);
+        triangle[i] = NULL;
+    }
+    free(triangle);
+    triangle = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

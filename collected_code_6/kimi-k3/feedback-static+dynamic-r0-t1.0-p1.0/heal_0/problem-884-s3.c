@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <limits.h>
+
+int check_bits_in_range(unsigned int number, unsigned int low, unsigned int high)
+{
+    if (low > high || high >= (sizeof(unsigned int) * CHAR_BIT))
+    {
+        return 0;
+    }
+
+    unsigned int mask = (high == (sizeof(unsigned int) * CHAR_BIT) - 1)
+                        ? UINT_MAX
+                        : ((1U << (high + 1)) - 1U);
+
+    mask &= ~((1U << low) - 1U);
+
+    return (number & ~mask) == 0;
+}
+
+int main(void)
+{
+    unsigned int number = 0b101010;
+    unsigned int low = 1;
+    unsigned int high = 5;
+
+    if (check_bits_in_range(number, low, high))
+    {
+        printf("All bits are within the range [%u, %u]\n", low, high);
+    }
+    else
+    {
+        printf("Bits are outside the range [%u, %u]\n", low, high);
+    }
+
+    return 0;
+}

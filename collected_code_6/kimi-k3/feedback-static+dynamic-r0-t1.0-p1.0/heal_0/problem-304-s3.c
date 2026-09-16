@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int findElementAfterRotations(const int *arr, size_t size, size_t rotations, size_t index, int *result) {
+    size_t effective_rotations;
+    size_t new_index;
+    
+    if (arr == NULL || result == NULL) {
+        return -1;
+    }
+    
+    if (size == 0) {
+        return -1;
+    }
+    
+    if (index >= size) {
+        return -1;
+    }
+    
+    effective_rotations = rotations % size;
+    new_index = (index + effective_rotations) % size;
+    
+    *result = arr[new_index];
+    return 0;
+}
+
+int main(void) {
+    int arr[] = {10, 20, 30, 40, 50, 60, 70};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t rotations = 3;
+    size_t index = 2;
+    int result = 0;
+    
+    if (findElementAfterRotations(arr, size, rotations, index, &result) == 0) {
+        printf("Element at index %zu after %zu rotations: %d\n", index, rotations, result);
+    } else {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

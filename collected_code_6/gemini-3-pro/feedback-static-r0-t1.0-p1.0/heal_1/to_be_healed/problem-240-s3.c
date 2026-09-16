@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void appendNode(struct Node** head_ref, int new_data) {
+    struct Node* new_node = createNode(new_data);
+    struct Node* last = *head_ref;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        return;
+    }
+
+    while (last->next != NULL) {
+        last = last->next;
+    }
+
+    last->next = new_node;
+}
+
+void printList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(struct Node* node) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'tmp' can be reduced. [variableScope]
+     */
+    struct Node* tmp;
+    while (node != NULL) {
+        tmp = node;
+        node = node->next;
+        free(tmp);
+    }
+}
+
+void replaceLastWithList(struct Node** head1_ref, struct Node* head2) {
+    /* Possible weaknesses found:
+     *  Assuming that condition 'head1_ref==NULL' is not redundant
+     */
+    if (head1_ref == NULL || *head1_ref == NULL) {
+        /* Possible weaknesses found:
+         *  Null pointer dereference
+         *  Either the condition 'head1_ref==NULL' is redundant or there is possible null pointer dereference: head1_ref. [nullPointerRedundantCheck]
+         */
+        *head1_ref = head2;
+        return;
+    }
+
+    struct Node* prev = NULL;
+    struct Node* curr = *head1_ref;
+
+    while (curr->next != NULL) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (prev != NULL) {
+        prev->next = head2;
+    } else {
+        *head1_ref = head2;
+    }
+
+    free(curr);
+}
+
+int main(void) {
+    struct Node* list1 = NULL;
+    struct Node* list2 = NULL;
+
+    appendNode(&list1, 1);
+    appendNode(&list1, 2);
+    appendNode(&list1, 3);
+
+    appendNode(&list2, 4);
+    appendNode(&list2, 5);
+
+    replaceLastWithList(&list1, list2);
+
+    printList(list1);
+
+    freeList(list1);
+
+    return 0;
+}

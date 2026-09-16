@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void sortString(char *str) {
+    if (str == NULL) {
+        return;
+    }
+
+    int length = strlen(str);
+    if (length <= 1) {
+        return;
+    }
+
+    for (int i = 0; i < length - 1; i++) {
+        for (int j = i + 1; j < length; j++) {
+            if (str[i] > str[j]) {
+                char temp = str[i];
+                str[i] = str[j];
+                str[j] = temp;
+            }
+        }
+    }
+}
+
+int main(void) {
+    char str[] = "programming";
+    
+    sortString(str);
+    
+    printf("%s\n", str);
+    
+    return 0;
+}

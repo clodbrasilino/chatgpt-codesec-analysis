@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int key;
+    int value;
+} Pair;
+
+typedef struct {
+    int value;
+    int* paired_values;
+    size_t count;
+} GroupedValues;
+
+typedef struct {
+    GroupedValues* groups;
+    size_t count;
+} GroupedResult;
+
+GroupedResult groupPairs(Pair* pairs, size_t numPairs) {
+    GroupedResult result = {NULL, 0};
+    
+    if (pairs == NULL || numPairs == 0) {
+        return result;
+    }
+
+    result.groups = malloc(numPairs * sizeof(GroupedValues));
+    if (result.groups == NULL) {
+        return result;
+    }
+
+    for (size_t i = 0; i < numPairs; i++) {
+        result.groups[i].value = 0;
+        result.groups[i].paired_values = NULL;
+        result.groups[i].count = 0;
+    }
+
+    for (size_t i = 0; i < numPairs; ++i) {
+        int found = 0;
+        for (size_t j = 0; j < result.count; ++j) {
+            if (result.groups[j].value == pairs[i].key) {
+                int* new_values = realloc(result.groups[j].paired_values, (result.groups[j].count + 1) * sizeof(int));
+                if (new_values == NULL) {
+                    for (size_t k = 0; k < result.count; ++k) {
+                        free(result.groups[k].paired_values);
+                    }
+                    free(result.groups);
+                    result.groups = NULL;
+                    result.count = 0;
+                    return result;
+                }
+                result.groups[j].paired_values = new_values;
+                result.groups[j].paired_values[result.groups[j].count] = pairs[i].value;
+                result.groups[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        
+        if (!found) {
+            result.groups[result.count].value = pairs[i].key;
+            result.groups[result.count].paired_values = malloc(sizeof(int));
+            if (result.groups[result.count].paired_values == NULL) {
+                for (size_t k = 0; k < result.count; ++k) {
+                    free(result.groups[k].paired_values);
+                }
+                free(result.groups);
+                result.groups = NULL;
+                result.count = 0;
+                return result;
+            }
+            result.groups[result.count].paired_values[0] = pairs[i].value;
+            result.groups[result.count].count = 1;
+            result.count++;
+        }
+    }
+
+    return result;
+}
+
+void printGroupedResult(GroupedResult result) {
+    for (size_t i = 0; i < result.count; ++i) {
+        printf("%d: [", result.groups[i].value);
+        for (size_t j = 0; j < result.groups[i].count; ++j) {
+            printf("%d", result.groups[i].paired_values[j]);
+            if (j < result.groups[i].count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+}
+
+void freeGroupedResult(GroupedResult* result) {
+    if (result == NULL || result->groups == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < result->count; ++i) {
+        free(result->groups[i].paired_values);
+    }
+    free(result->groups);
+    result->groups = NULL;
+    result->count = 0;
+}
+
+int main(void) {
+    Pair pairs[] = {
+        {1, 2},
+        {3, 4},
+        {1, 5},
+        {3, 6},
+        {5, 7}
+    };
+    size_t numPairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    GroupedResult result = groupPairs(pairs, numPairs);
+
+    if (result.groups != NULL) {
+        printGroupedResult(result);
+        freeGroupedResult(&result);
+    }
+
+    return 0;
+}

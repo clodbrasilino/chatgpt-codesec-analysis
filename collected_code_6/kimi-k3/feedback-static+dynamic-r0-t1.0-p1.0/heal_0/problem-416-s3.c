@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int max_sum_recursive(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    
+    int max_val = n;
+    int part1 = n / 2;
+    int part2 = n / 3;
+    int part3 = n / 4;
+    
+    int sum1 = max_sum_recursive(part1);
+    int sum2 = max_sum_recursive(part2);
+    int sum3 = max_sum_recursive(part3);
+    
+    int total = sum1 + sum2 + sum3;
+    
+    if (total > max_val) {
+        max_val = total;
+    }
+    
+    return max_val;
+}
+
+int main(void) {
+    int n;
+    int result;
+    
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Input must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n > INT_MAX / 4) {
+        fprintf(stderr, "Input too large\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = max_sum_recursive(n);
+    
+    printf("%d\n", result);
+    
+    return EXIT_SUCCESS;
+}

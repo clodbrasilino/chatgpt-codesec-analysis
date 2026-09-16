@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+double calculate_lateral_surface_area(double radius, double slant_height)
+{
+    if (radius < 0.0 || slant_height < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    double area = M_PI * radius * slant_height;
+    
+    if (isinf(area) || isnan(area)) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    
+    return area;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double slant_height = 0.0;
+    
+    printf("Enter the radius of the cone: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter the slant height of the cone: ");
+    if (scanf("%lf", &slant_height) != 1) {
+        fprintf(stderr, "Error: Invalid input for slant height\n");
+        return 1;
+    }
+    
+    errno = 0;
+    double result = calculate_lateral_surface_area(radius, slant_height);
+    
+    if (errno != 0) {
+        fprintf(stderr, "Error: Invalid dimensions (values must be non-negative and within range)\n");
+        return 1;
+    }
+    
+    printf("Lateral surface area: %.2f\n", result);
+    
+    return 0;
+}
+```

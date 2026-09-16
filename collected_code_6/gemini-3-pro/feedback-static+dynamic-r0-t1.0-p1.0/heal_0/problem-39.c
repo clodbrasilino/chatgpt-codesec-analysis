@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CHAR 256
+
+int isRearrangeable(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    int count[MAX_CHAR] = {0};
+    int length = 0;
+    int maxCount = 0;
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        unsigned char c = (unsigned char)str[i];
+        count[c]++;
+        length++;
+        if (count[c] > maxCount) {
+            maxCount = count[c];
+        }
+    }
+
+    if (maxCount <= (length + 1) / 2) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main() {
+    const char *testCases[] = {
+        "aab",
+        "aaab",
+        "abc",
+        "aabbcc",
+        "aaaa",
+        ""
+    };
+
+    size_t numTests = sizeof(testCases) / sizeof(testCases[0]);
+
+    for (size_t i = 0; i < numTests; i++) {
+        if (isRearrangeable(testCases[i])) {
+            printf("String \"%s\" can be rearranged.\n", testCases[i]);
+        } else {
+            printf("String \"%s\" cannot be rearranged.\n", testCases[i]);
+        }
+    }
+
+    return 0;
+}

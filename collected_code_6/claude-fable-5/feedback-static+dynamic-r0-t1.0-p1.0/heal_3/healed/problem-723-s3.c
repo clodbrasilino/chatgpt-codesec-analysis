@@ -1,0 +1,136 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+static int compare_pair(int a, int b)
+{
+    return (a == b) ? 1 : 0;
+}
+
+static int *map_lists(const int *list1, const int *list2, size_t n, int (*func)(int, int))
+{
+    size_t i;
+    int *result;
+
+    if (list1 == NULL || list2 == NULL || func == NULL || n == 0U) {
+        return NULL;
+    }
+
+    result = malloc(n * sizeof *result);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < n; i++) {
+        result[i] = func(list1[i], list2[i]);
+    }
+
+    return result;
+}
+
+static int count_same_pair(const int *list1, const int *list2, size_t n)
+{
+    size_t i;
+    int count;
+    int *mapped;
+
+    if (list1 == NULL || list2 == NULL) {
+        return -1;
+    }
+
+    if (n == 0U) {
+        return 0;
+    }
+
+    mapped = map_lists(list1, list2, n, compare_pair);
+    if (mapped == NULL) {
+        return -1;
+    }
+
+    count = 0;
+    for (i = 0U; i < n; i++) {
+        count += mapped[i];
+    }
+
+    free(mapped);
+    return count;
+}
+
+static int read_list(int *list, size_t n)
+{
+    size_t i;
+
+    for (i = 0U; i < n; i++) {
+        if (scanf("%d", &list[i]) != 1) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t n;
+    unsigned long input_n;
+    int *list1;
+    int *list2;
+    int result;
+
+    if (scanf("%lu", &input_n) != 1) {
+        (void)fprintf(stderr, "Error: failed to read list length\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (size_t)input_n;
+
+    if (n == 0U) {
+        if (printf("0\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        if (fflush(stdout) == EOF) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_SUCCESS;
+    }
+
+    list1 = malloc(n * sizeof *list1);
+    if (list1 == NULL) {
+        (void)fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    list2 = malloc(n * sizeof *list2);
+    if (list2 == NULL) {
+        free(list1);
+        (void)fprintf(stderr, "Error: memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    if (read_list(list1, n) != 0 || read_list(list2, n) != 0) {
+        free(list1);
+        free(list2);
+        (void)fprintf(stderr, "Error: failed to read list elements\n");
+        return EXIT_FAILURE;
+    }
+
+    result = count_same_pair(list1, list2, n);
+
+    free(list1);
+    free(list2);
+
+    if (result < 0) {
+        (void)fprintf(stderr, "Error: failed to compute pair count\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("%d\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    if (fflush(stdout) == EOF) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

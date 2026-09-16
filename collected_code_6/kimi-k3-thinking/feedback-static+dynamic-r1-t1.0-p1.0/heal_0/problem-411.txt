@@ -1,0 +1,89 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <regex.h>
+
+char *snake_to_camel(const char *input)
+{
+    regex_t regex;
+    regmatch_t match[2];
+    char *result;
+    size_t input_len;
+    size_t result_idx = 0;
+    size_t pos = 0;
+    int ret;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    ret = regcomp(&regex, "_([a-zA-Z0-9])", REG_EXTENDED);
+    if (ret != 0) {
+        free(result);
+        return NULL;
+    }
+
+    while (pos < input_len) {
+        ret = regexec(&regex, input + pos, 2, match, 0);
+        if (ret == REG_NOMATCH) {
+            memcpy(result + result_idx, input + pos, input_len - pos);
+            result_idx += input_len - pos;
+            pos = input_len;
+        } else if (ret != 0) {
+            regfree(&regex);
+            free(result);
+            return NULL;
+        } else {
+            memcpy(result + result_idx, input + pos, (size_t)match[0].rm_so);
+            result_idx += (size_t)match[0].rm_so;
+            result[result_idx] = (char)toupper((unsigned char)input[pos + (size_t)match[1].rm_so]);
+            result_idx++;
+            pos += (size_t)match[0].rm_eo;
+        }
+    }
+
+    result[result_idx] = '\0';
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "convert_snake_case_to_camel_case";
+    char *output;
+
+    output = snake_to_camel(input);
+    if (output == NULL) {
+        fprintf(stderr, "Error: conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Snake case: %s\n", input);
+    printf("Camel case: %s\n", output);
+
+    free(output);
+    return EXIT_SUCCESS;
+}
+```
+
+Output:
+```
+Snake case: convert_snake_case_to_camel_case
+Camel case: convertSnakeCaseToCamelCase
+```
+
+Key points:
+
+- **Regex approach**: The POSIX regex `_([a-zA-Z0-9])` matches an underscore followed by an alphanumeric character; the captured group is uppercased and the underscore dropped.
+- **CWE-664**: `regfree()` is called on every path after a successful `regcomp()`, and the heap buffer is freed on error paths and in `main` after use. No leaks or double-frees.
+- **CWE-703**: Return values of `malloc()`, `regcomp()`, and `regexec()` are all checked; `NULL` input is handled; the function returns `NULL` on failure and the caller checks it.
+- **CWE-710**: Standard prototypes, `int main(void)`, `size_t` for indices with explicit casts from `regoff_t`, `unsigned char` cast for `toupper()`, and bounded `memcpy()` operations. The output buffer is sized `input_len + 1`, which is always sufficient since each replacement only removes characters.

@@ -1,0 +1,87 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long countWays(int n, int k)
+{
+    unsigned long long same;
+    unsigned long long diff;
+    unsigned long long total;
+    int i;
+
+    if (n <= 0 || k <= 0)
+    {
+        return 0ULL;
+    }
+
+    if (n == 1)
+    {
+        return (unsigned long long)k;
+    }
+
+    same = (unsigned long long)k;
+    diff = (unsigned long long)k * (unsigned long long)(k - 1);
+    total = same + diff;
+
+    for (i = 3; i <= n; i++)
+    {
+        same = diff;
+        diff = total * (unsigned long long)(k - 1);
+        total = same + diff;
+    }
+
+    return total;
+}
+
+int main(void)
+{
+    int n;
+    int k;
+    unsigned long long result;
+
+    n = 0;
+    k = 0;
+
+    printf("Enter number of posts: ");
+    if (scanf("%d", &n) != 1)
+    {
+        fprintf(stderr, "Invalid input for number of posts.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Enter number of colors: ");
+    if (scanf("%d", &k) != 1)
+    {
+        fprintf(stderr, "Invalid input for number of colors.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0 || k <= 0)
+    {
+        fprintf(stderr, "Number of posts and colors must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = countWays(n, k);
+    printf("Number of ways: %llu\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Explanation of the approach:**
+
+The solution uses dynamic programming with O(1) space:
+
+- `same` = ways where the last two posts have the same color
+- `diff` = ways where the last two posts have different colors
+- For each new post: if the previous two were the same, the new one must differ; otherwise it can match or differ.
+
+**Recurrence:**
+- `same(i) = diff(i-1)` — you can only repeat a color if the previous two differed
+- `diff(i) = total(i-1) * (k-1)` — pick any of the other k-1 colors
+
+**Safety measures taken (per the CWE requirements):**
+- **CWE-703**: Return values of `scanf` are checked, and inputs are validated for positivity before use, with error messages sent to `stderr` and proper exit codes returned.
+- **CWE-664**: No dynamic resources are allocated, so there is nothing to leak; all variables are initialized before use.
+- **CWE-710**: The code uses `int main(void)`, `EXIT_SUCCESS`/`EXIT_FAILURE`, explicit casts, `unsigned long long` to reduce overflow risk for larger inputs, and consistent brace style throughout.

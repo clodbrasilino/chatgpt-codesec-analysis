@@ -1,0 +1,40 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Pair;
+
+void assignPairElements(Pair *pairs, int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            pairs[i].second = pairs[j].first;
+            pairs[j].second = pairs[i].first;
+        }
+    }
+}
+
+int main() {
+    int size = 5;
+    Pair *pairs = (Pair *)malloc(size * sizeof(Pair));
+    if (pairs == NULL) {
+        return 1;
+    }
+
+    for (int i = 0; i < size; i++) {
+        pairs[i].first = i;
+        pairs[i].second = -1;
+    }
+
+    assignPairElements(pairs, size);
+
+    for (int i = 0; i < size; i++) {
+        printf("(%d, %d)\n", pairs[i].first, pairs[i].second);
+    }
+
+    free(pairs);
+    return 0;
+}
+```

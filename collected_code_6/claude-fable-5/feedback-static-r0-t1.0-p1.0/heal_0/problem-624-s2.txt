@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *string_to_upper(char *str)
+{
+    size_t i;
+    size_t len;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    len = strlen(str);
+    for (i = 0; i < len; i++) {
+        str[i] = (char)toupper((unsigned char)str[i]);
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    char buffer[256];
+    char *result;
+
+    printf("Enter a string: ");
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = string_to_upper(buffer);
+    if (result == NULL) {
+        fprintf(stderr, "Conversion failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Uppercase: %s\n", result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key safety points in this implementation:
+
+- **CWE-664 avoided**: The function operates on a caller-provided fixed-size stack buffer, so there's no dynamic memory to leak or mismanage, and no resource is used outside its valid lifetime.
+- **CWE-703 avoided**: The return values of `fgets` and the conversion function are checked, `NULL` input is handled explicitly, and errors are reported to `stderr` with a failure exit code.
+- **CWE-710 avoided**: The code casts to `unsigned char` before calling `toupper` (required by the standard to avoid undefined behavior with negative `char` values), uses `size_t` for lengths and indices, uses `int main(void)` with standard exit codes, and strips the trailing newline safely with `strcspn`.

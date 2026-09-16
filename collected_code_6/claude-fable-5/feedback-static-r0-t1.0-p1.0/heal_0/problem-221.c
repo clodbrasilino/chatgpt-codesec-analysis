@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_first_even(const int *numbers, size_t count, int *result)
+{
+    size_t i;
+
+    if (numbers == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    for (i = 0U; i < count; i++) {
+        if ((numbers[i] % 2) == 0) {
+            *result = numbers[i];
+            return 0;
+        }
+    }
+
+    return -1;
+}
+
+int main(void)
+{
+    int numbers[] = {7, 3, 9, 4, 5, 6};
+    size_t count = sizeof(numbers) / sizeof(numbers[0]);
+    int first_even = 0;
+    int status;
+
+    status = find_first_even(numbers, count, &first_even);
+
+    if (status == 0) {
+        if (printf("First even number: %d\n", first_even) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("No even number found.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

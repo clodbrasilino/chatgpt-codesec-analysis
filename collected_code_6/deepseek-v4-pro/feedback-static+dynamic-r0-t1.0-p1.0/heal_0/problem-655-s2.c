@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint64_t sum_of_fifth_powers(uint32_t n) {
+    uint64_t sum = 0;
+    for (uint32_t i = 1; i <= n; i++) {
+        uint64_t x = i;
+        uint64_t fifth = x * x * x * x * x;
+        sum += fifth;
+    }
+    return sum;
+}
+
+int main(void) {
+    uint32_t n;
+    printf("Enter a natural number: ");
+    if (scanf("%u", &n) != 1 || n == 0) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return 1;
+    }
+
+    uint64_t result = sum_of_fifth_powers(n);
+    printf("Sum of fifth powers of first %u natural numbers = %llu\n", n, (unsigned long long)result);
+
+    return 0;
+}

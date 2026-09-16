@@ -1,0 +1,36 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isLucid(int num) {
+    if (num < 0) return false;
+    int original_num = num, sum = 0, product = 1;
+    while (num != 0) {
+        int digit = num % 10;
+        sum += digit;
+        if (digit != 0) product *= digit;
+        num /= 10;
+    }
+    return (sum == product);
+}
+
+int getLucidNumber(int n) {
+    for (int i = n; i >= 1; --i) {
+        if (isLucid(i)) return i;
+    }
+    return -1;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    scanf("%d", &n);
+    int result = getLucidNumber(n);
+    if (result != -1) {
+        printf("The largest lucid number <= %d is %d\n", n, result);
+    } else {
+        printf("No lucid number found less than or equal to %d\n", n);
+    }
+    return 0;
+}
+```

@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned int count_set_bits(unsigned int n)
+{
+    unsigned int count = 0U;
+
+    while (n != 0U)
+    {
+        n &= (n - 1U);
+        count++;
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    unsigned int number = 0U;
+    int result = 0;
+
+    printf("Enter a non-negative integer: ");
+
+    result = scanf("%u", &number);
+    if (result != 1)
+    {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Number of set bits in %u: %u\n", number, count_set_bits(number));
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Key design decisions:**
+
+- **`unsigned int`** is used throughout to avoid undefined behavior from bit operations on negative signed values (addresses CWE-710).
+- **Brian Kernighan's algorithm** (`n &= n - 1`) clears the lowest set bit each iteration, running in O(number of set bits) rather than O(total bits).
+- **The return value of `scanf` is checked** to handle malformed input properly (addresses CWE-703). On failure, an error is reported to `stderr` and the program exits with `EXIT_FAILURE`.
+- **No dynamic resources** (heap memory, file handles) are acquired, so there's nothing to leak or mismanage (addresses CWE-664).
+- **All variables are initialized** at declaration, `main` uses the standard `int main(void)` signature, and exit codes use the standard `EXIT_SUCCESS`/`EXIT_FAILURE` macros.
+
+**Example run:**
+
+```
+Enter a non-negative integer: 29
+Number of set bits in 29: 4
+```
+
+(29 is `11101` in binary, which has 4 set bits.)

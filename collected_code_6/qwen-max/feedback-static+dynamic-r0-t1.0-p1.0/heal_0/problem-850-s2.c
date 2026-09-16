@@ -1,0 +1,23 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool is_valid_triangle(float a, float b, float c) {
+    if (a <= 0 || b <= 0 || c <= 0) return false;
+    if (a + b + c != 180) return false;
+    return true;
+}
+
+int main() {
+    float angle1, angle2, angle3;
+
+    printf("Enter the three angles of the triangle: ");
+    scanf("%f %f %f", &angle1, &angle2, &angle3);
+
+    if (is_valid_triangle(angle1, angle2, angle3)) {
+        printf("Triangle with these angles is valid.\n");
+    } else {
+        printf("Triangle with these angles is not valid.\n");
+    }
+
+    return 0;
+}

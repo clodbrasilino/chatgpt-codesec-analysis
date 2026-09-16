@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+
+typedef struct {
+    void **items;
+    size_t size;
+} Tuple;
+
+Tuple *tuple_create(size_t size, ...) {
+    Tuple *t = malloc(sizeof(Tuple));
+    if (t == NULL) {
+        return NULL;
+    }
+    
+    t->size = size;
+    t->items = malloc(size * sizeof(void *));
+    if (t->items == NULL) {
+        free(t);
+        return NULL;
+    }
+    
+    va_list args;
+    va_start(args, size);
+    for (size_t i = 0; i < size; i++) {
+        t->items[i] = va_arg(args, void *);
+    }
+    va_end(args);
+    
+    return t;
+}
+
+void *tuple_get(const Tuple *t, size_t index, int *error) {
+    if (t == NULL || error == NULL) {
+        return NULL;
+    }
+    
+    *error = 1;
+    if (index >= t->size) {
+        return NULL;
+    }
+    
+    *error = 0;
+    return t->items[index];
+}
+
+void tuple_free(Tuple *t) {
+    if (t != NULL) {
+        free(t->items);
+        free(t);
+    }
+}
+
+int main(void) {
+    int a = 10;
+    double b = 5.5;
+    char c = 'x';
+    
+    Tuple *t = tuple_create(3, &a, &b, &c);
+    if (t == NULL) {
+        return EXIT_FAILURE;
+    }
+    
+    int error = 0;
+    void *item1 = tuple_get(t, 1, &error);
+    if (error == 0) {
+        double val = *(double *)item1;
+        printf("%.2f\n", val);
+    }
+    
+    item1 = tuple_get(t, 5, &error);
+    if (error != 0) {
+        printf("Index out of bounds handled safely\n");
+    }
+    
+    tuple_free(t);
+    t = NULL;
+    
+    return EXIT_SUCCESS;
+}

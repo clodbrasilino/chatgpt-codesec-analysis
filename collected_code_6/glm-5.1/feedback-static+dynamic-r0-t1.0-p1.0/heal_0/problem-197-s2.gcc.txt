@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s2.c: In function 'tuple_pow':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s2.c:13:16: error: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+   13 |     result.x = pow(base.x, exp.x);
+      |                ^~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-197-s2.c:4:1: note: include '<math.h>' or provide a declaration of 'pow'
+    3 | #include <errno.h>
+  +++ |+#include <math.h>
+    4 | 

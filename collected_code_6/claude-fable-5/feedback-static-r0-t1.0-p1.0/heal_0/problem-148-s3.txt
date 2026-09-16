@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+static long long digit_sum(long long n)
+{
+    long long sum = 0;
+
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+
+    return sum;
+}
+
+static long long max_split_digit_sum(long long n)
+{
+    long long part = 0;
+    long long candidate = 9;
+
+    while (candidate <= n) {
+        part = candidate;
+        if (candidate > (LLONG_MAX - 9) / 10) {
+            break;
+        }
+        candidate = candidate * 10 + 9;
+    }
+
+    return digit_sum(part) + digit_sum(n - part);
+}
+
+int main(void)
+{
+    long long n = 0;
+    int result;
+
+    printf("Enter a non-negative number: ");
+
+    result = scanf("%lld", &n);
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0) {
+        fprintf(stderr, "Error: number must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum digit sum: %lld\n", max_split_digit_sum(n));
+
+    return EXIT_SUCCESS;
+}
+```
+
+The approach: to maximize the sum of digits when splitting `n` into two parts `a` and `b` where `a + b = n`, the optimal strategy is to choose `a` as the largest number consisting entirely of 9s that does not exceed `n`. This avoids carry propagation losses and guarantees the maximum combined digit sum. For example, for `n = 35`, the split is `9 + 26`, giving a digit sum of `9 + 2 + 6 = 17`.
+
+Safety considerations addressed:
+- `scanf` return value is checked before using the input (CWE-703).
+- Negative input is rejected explicitly.
+- Overflow is guarded when building the all-nines candidate via the `LLONG_MAX` bounds check (CWE-664/CWE-703).
+- No dynamic resources are acquired, all variables are initialized, and standard exit codes are used (CWE-710).

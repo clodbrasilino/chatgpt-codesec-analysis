@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+double calculate_lateral_surface_area(double radius, double height) {
+    if (radius < 0.0 || height < 0.0) {
+        return -1.0;
+    }
+    return 2.0 * M_PI * radius * height;
+}
+
+int main(void) {
+    double radius = 0.0;
+    double height = 0.0;
+    double area = 0.0;
+    int result = 0;
+
+    result = scanf("%lf %lf", &radius, &height);
+    if (result != 2) {
+        return EXIT_FAILURE;
+    }
+
+    area = calculate_lateral_surface_area(radius, height);
+    if (area < 0.0) {
+        return EXIT_FAILURE;
+    }
+
+    printf("%.2f\n", area);
+
+    return EXIT_SUCCESS;
+}

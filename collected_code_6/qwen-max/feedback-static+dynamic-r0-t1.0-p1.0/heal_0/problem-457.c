@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 
 typedef struct {
@@ -6,25 +7,34 @@ typedef struct {
     int end;
 } Sublist;
 
-Sublist findMinLengthSublist(int arr[], int n) {
-    Sublist minSublist = {0, 0};
-    int minLength = INT_MAX;
-    for (int i = 0; i < n; ++i) {
-        for (int j = i; j < n; ++j) {
-            if (j - i + 1 < minLength) {
-                minLength = j - i + 1;
-                minSublist.start = i;
-                minSublist.end = j;
+Sublist find_min_length_sublist(int *arr, int n) {
+    if (n == 0) return (Sublist){-1, -1};
+
+    int min_length = INT_MAX;
+    Sublist result = {-1, -1};
+    for (int i = 0; i < n; i++) {
+        for (int j = i + 1; j <= n; j++) {
+            int length = j - i;
+            if (length < min_length) {
+                min_length = length;
+                result.start = i;
+                result.end = j - 1;
             }
         }
     }
-    return minSublist;
+    return result;
 }
 
 int main() {
     int arr[] = {1, 2, 3, 4, 5};
     int n = sizeof(arr) / sizeof(arr[0]);
-    Sublist result = findMinLengthSublist(arr, n);
-    printf("Minimum length sublist: Start index = %d, End index = %d\n", result.start, result.end);
+
+    Sublist min_sublist = find_min_length_sublist(arr, n);
+    if (min_sublist.start != -1 && min_sublist.end != -1) {
+        printf("Minimum length sublist: start=%d, end=%d\n", min_sublist.start, min_sublist.end);
+    } else {
+        printf("Empty list.\n");
+    }
+
     return 0;
 }

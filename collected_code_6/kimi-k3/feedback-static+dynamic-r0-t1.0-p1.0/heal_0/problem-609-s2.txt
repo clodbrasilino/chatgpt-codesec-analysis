@@ -1,0 +1,80 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <float.h>
+#include <stdlib.h>
+
+double periodic_function(double x) {
+    return sin(x) + cos(2 * x);
+}
+
+double find_minimum(double (*func)(double), double start, double end, double precision) {
+    if (func == NULL || start >= end || precision <= 0.0) {
+        return DBL_MAX;
+    }
+    
+    double min_val = DBL_MAX;
+    double step = 0.001;
+    double x;
+    double current;
+    
+    if (step < precision) {
+        step = precision;
+    }
+    
+    for (x = start; x <= end; x += step) {
+        current = func(x);
+        if (current < min_val) {
+            min_val = current;
+        }
+    }
+    
+    double golden_ratio = 0.6180339887498949;
+    double a = start;
+    double b = end;
+    double c = b - golden_ratio * (b - a);
+    double d = a + golden_ratio * (b - a);
+    double fc, fd;
+    
+    while (fabs(b - a) > precision) {
+        fc = func(c);
+        fd = func(d);
+        
+        if (fc < fd) {
+            b = d;
+            d = c;
+            c = b - golden_ratio * (b - a);
+        } else {
+            a = c;
+            c = d;
+            d = a + golden_ratio * (b - a);
+        }
+    }
+    
+    double refined_x = (a + b) / 2.0;
+    double refined_val = func(refined_x);
+    
+    if (refined_val < min_val) {
+        min_val = refined_val;
+    }
+    
+    return min_val;
+}
+
+int main(void) {
+    double start = 0.0;
+    double end = 2.0 * M_PI;
+    double precision = 1e-9;
+    
+    double minimum = find_minimum(periodic_function, start, end, precision);
+    
+    if (minimum == DBL_MAX) {
+        fprintf(stderr, "Error: Invalid input parameters\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Minimum value: %.10f\n", minimum);
+    
+    return EXIT_SUCCESS;
+}
+```

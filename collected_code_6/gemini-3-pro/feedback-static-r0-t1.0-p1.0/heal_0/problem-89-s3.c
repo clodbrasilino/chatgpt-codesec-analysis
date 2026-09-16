@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
+int get_closest_smaller(int n, int *result);
+
+int get_closest_smaller(int n, int *result) {
+    if (result == NULL) {
+        return -1;
+    }
+    
+    if (n == INT_MIN) {
+        return -1;
+    }
+    
+    *result = n - 1;
+    return 0;
+}
+
+int main(void) {
+    int n = 5;
+    int closest_smaller = 0;
+    
+    if (get_closest_smaller(n, &closest_smaller) == 0) {
+        printf("%d\n", closest_smaller);
+    } else {
+        printf("Error: Integer underflow or invalid pointer.\n");
+        return EXIT_FAILURE;
+    }
+    
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,113 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int **combinations(const int *list, size_t n, size_t *count)
+{
+    size_t total;
+    int **result;
+    size_t i;
+
+    if (list == NULL || count == NULL || n > 63)
+    {
+        return NULL;
+    }
+
+    total = (size_t)1 << n;
+    result = malloc(total * sizeof(*result));
+    if (result == NULL)
+    {
+        return NULL;
+    }
+
+    for (i = 0; i < total; i++)
+    {
+        size_t bits = 0;
+        size_t k = 0;
+        size_t j;
+
+        for (j = 0; j < n; j++)
+        {
+            if ((i & ((size_t)1 << j)) != 0)
+            {
+                bits++;
+            }
+        }
+
+        result[i] = malloc((bits + 1) * sizeof(*result[i]));
+        if (result[i] == NULL)
+        {
+            size_t m;
+
+            for (m = 0; m < i; m++)
+            {
+                free(result[m]);
+            }
+            free(result);
+            return NULL;
+        }
+
+        for (j = 0; j < n; j++)
+        {
+            if ((i & ((size_t)1 << j)) != 0)
+            {
+                result[i][k] = list[j];
+                k++;
+            }
+        }
+        result[i][k] = -1;
+    }
+
+    *count = total;
+    return result;
+}
+
+static void free_combinations(int **comb, size_t count)
+{
+    size_t i;
+
+    if (comb == NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        free(comb[i]);
+    }
+    free(comb);
+}
+
+int main(void)
+{
+    int list[] = {1, 2, 3, 4};
+    size_t n = sizeof(list) / sizeof(list[0]);
+    size_t count = 0;
+    int **comb;
+    size_t i;
+
+    comb = combinations(list, n, &count);
+    if (comb == NULL)
+    {
+        fprintf(stderr, "Failed to generate combinations\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++)
+    {
+        size_t j = 0;
+
+        printf("{ ");
+        while (comb[i][j] != -1)
+        {
+            printf("%d ", comb[i][j]);
+            j++;
+        }
+        printf("}\n");
+    }
+
+    free_combinations(comb, count);
+    return EXIT_SUCCESS;
+}
+```

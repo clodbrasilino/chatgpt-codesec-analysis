@@ -6,61 +6,74 @@ typedef struct {
     size_t length;
 } Tuple;
 
-Tuple* create_tuple(size_t length) {
-    Tuple *tuple = (Tuple *)malloc(sizeof(Tuple));
-    if (tuple == NULL) return NULL;
-    tuple->data = (int *)malloc(length * sizeof(int));
-    if (tuple->data == NULL) {
-        free(tuple);
-        return NULL;
-    }
-    tuple->length = length;
-    for (size_t i = 0; i < length; ++i) {
-        tuple->data[i] = (int)i;
-    }
-    return tuple;
+void freeTuple(Tuple *t) {
+    free(t->data);
+    t->data = NULL;
+    t->length = 0;
 }
 
-void free_tuple(Tuple *tuple) {
-    if (tuple) {
-        free(tuple->data);
-        free(tuple);
+int createTuple(Tuple *t, int *arr, size_t len) {
+    t->data = (int *)malloc(len * sizeof(int));
+    if (t->data == NULL) {
+        return -1;
     }
+    for (size_t i = 0; i < len; ++i) {
+        t->data[i] = arr[i];
+    }
+    t->length = len;
+    return 0;
 }
 
-void remove_tuples_of_length_k(Tuple **tuples, size_t *count, size_t k) {
-    for (size_t i = 0; i < *count; ) {
-        if (tuples[i]->length == k) {
-            free_tuple(tuples[i]);
-            for (size_t j = i; j < *count - 1; ++j) {
-                tuples[j] = tuples[j + 1];
-            }
-            --(*count);
+void removeTuplesWithLengthK(Tuple **tuples, size_t *count, size_t k) {
+    size_t new_count = 0;
+    for (size_t i = 0; i < *count; ++i) {
+        if (tuples[i]->length != k) {
+            tuples[new_count++] = tuples[i];
         } else {
-            ++i;
+            freeTuple(tuples[i]);
+            free(tuples[i]);
         }
     }
+    *count = new_count;
 }
 
 int main() {
-    size_t num_tuples = 6;
-    Tuple *tuples[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+    Tuple *tuples[4];
+    for (size_t i = 0; i < 4; ++i) {
+        tuples[i] = (Tuple *)malloc(sizeof(Tuple));
+    }
 
-    tuples[0] = create_tuple(3);
-    tuples[1] = create_tuple(5);
-    tuples[2] = create_tuple(2);
-    tuples[3] = create_tuple(1);
-    tuples[4] = create_tuple(3);
-    tuples[5] = create_tuple(4);
+    int data1[] = {1, 2};
+    if (createTuple(tuples[0], data1, 2) != 0) {
+        return 1;
+    }
 
-    remove_tuples_of_length_k(tuples, &num_tuples, 3);
+    int data2[] = {3, 4, 5};
+    if (createTuple(tuples[1], data2, 3) != 0) {
+        return 1;
+    }
 
-    for (size_t i = 0; i < num_tuples; ++i) {
+    int data3[] = {6, 7};
+    if (createTuple(tuples[2], data3, 2) != 0) {
+        return 1;
+    }
+
+    int data4[] = {8, 9, 10, 11};
+    if (createTuple(tuples[3], data4, 4) != 0) {
+        return 1;
+    }
+
+    size_t count = 4;
+    size_t k = 2;
+    removeTuplesWithLengthK(tuples, &count, k);
+
+    for (size_t i = 0; i < count; ++i) {
         for (size_t j = 0; j < tuples[i]->length; ++j) {
             printf("%d ", tuples[i]->data[j]);
         }
         printf("\n");
-        free_tuple(tuples[i]);
+        freeTuple(tuples[i]);
+        free(tuples[i]);
     }
 
     return 0;

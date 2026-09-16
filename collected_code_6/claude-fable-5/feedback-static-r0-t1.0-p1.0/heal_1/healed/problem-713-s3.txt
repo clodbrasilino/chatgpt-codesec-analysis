@@ -1,0 +1,62 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_valid(const int *tup, size_t size)
+{
+    if (tup == NULL || size == 0U)
+    {
+        return false;
+    }
+
+    for (size_t i = 0U; i < size; i++)
+    {
+        if (tup[i] == 0)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+static void report_tuple(const char *name, const int *tup, size_t size)
+{
+    if (check_valid(tup, size))
+    {
+        (void)printf("%s: all values are valid\n", name);
+    }
+    else
+    {
+        (void)printf("%s: contains invalid values\n", name);
+    }
+}
+
+int main(void)
+{
+    int tuple1[] = {1, 1, 1, 1};
+    int tuple2[] = {1, 0, 1, 1};
+    int tuple3[] = {1, 1, 1};
+
+    size_t size1 = sizeof(tuple1) / sizeof(tuple1[0]);
+    size_t size2 = sizeof(tuple2) / sizeof(tuple2[0]);
+    size_t size3 = sizeof(tuple3) / sizeof(tuple3[0]);
+
+    report_tuple("Tuple 1", tuple1, size1);
+    report_tuple("Tuple 2", tuple2, size2);
+    report_tuple("Tuple 3", tuple3, size3);
+
+    return 0;
+}
+```
+
+Key changes made to address the identified weaknesses:
+
+1. **Removed the `check_valid(NULL, 5U)` call entirely** — this was the root of all three reported findings. Passing a compile-time constant `NULL` means the condition is statically determinable as always false (`knownConditionTrueFalse`). Dead branches like this add no runtime value and trip up static analyzers (Cppcheck in this case).
+
+2. **The NULL-safety guard remains inside `check_valid`** — the defensive `tup == NULL || size == 0U` check is still correct and valuable for runtime protection against pointers whose value is *not* known at compile time. The weakness was never in the function itself, only in the deliberately-constant call site.
+
+3. **Refactored the repeated if/else printing into a `report_tuple` helper** — this eliminates the copy-pasted branching blocks, reducing the surface for future inconsistencies while keeping the `(void)printf` cast convention (MISRA-style explicit discard of the return value).
+
+The resulting code compiles cleanly with `-Wall -Wextra -Wpedantic` and produces no findings from Cppcheck's `knownConditionTrueFalse` checker.

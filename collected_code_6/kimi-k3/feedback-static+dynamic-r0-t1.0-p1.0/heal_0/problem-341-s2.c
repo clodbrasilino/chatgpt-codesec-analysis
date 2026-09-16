@@ -1,0 +1,80 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Set;
+
+typedef struct {
+    int *values;
+    size_t size;
+} OrderedTuple;
+
+int compare_ints(const void *a, const void *b) {
+    int arg1 = *(const int *)a;
+    int arg2 = *(const int *)b;
+    
+    if (arg1 < arg2) return -1;
+    if (arg1 > arg2) return 1;
+    return 0;
+}
+
+OrderedTuple *set_to_ordered_tuple(const Set *set) {
+    OrderedTuple *tuple;
+    
+    if (set == NULL || set->elements == NULL || set->size == 0) {
+        return NULL;
+    }
+    
+    tuple = malloc(sizeof(OrderedTuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    tuple->values = malloc(set->size * sizeof(int));
+    if (tuple->values == NULL) {
+        free(tuple);
+        return NULL;
+    }
+    
+    for (size_t i = 0; i < set->size; i++) {
+        tuple->values[i] = set->elements[i];
+    }
+    tuple->size = set->size;
+    
+    qsort(tuple->values, tuple->size, sizeof(int), compare_ints);
+    
+    return tuple;
+}
+
+void free_ordered_tuple(OrderedTuple *tuple) {
+    if (tuple != NULL) {
+        free(tuple->values);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    int data[] = {5, 2, 8, 1, 9, 3};
+    Set input_set = {data, sizeof(data) / sizeof(data[0])};
+    OrderedTuple *result;
+    
+    result = set_to_ordered_tuple(&input_set);
+    if (result == NULL) {
+        fprintf(stderr, "Error: Failed to convert set to ordered tuple\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Ordered tuple: (");
+    for (size_t i = 0; i < result->size; i++) {
+        printf("%d", result->values[i]);
+        if (i < result->size - 1) {
+            printf(", ");
+        }
+    }
+    printf(")\n");
+    
+    free_ordered_tuple(result);
+    return EXIT_SUCCESS;
+}

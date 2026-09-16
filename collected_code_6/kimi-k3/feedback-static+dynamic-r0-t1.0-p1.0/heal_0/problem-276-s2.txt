@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+#define PI 3.14159265358979323846
+
+double calculate_cylinder_volume(double radius, double height)
+{
+    if (radius < 0.0 || height < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    if (isnan(radius) || isnan(height)) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    double volume = PI * radius * radius * height;
+    
+    if (isinf(volume) || isnan(volume)) {
+        errno = ERANGE;
+        return -1.0;
+    }
+    
+    return volume;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double height = 0.0;
+    double volume = 0.0;
+    
+    printf("Enter the radius of the cylinder: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return 1;
+    }
+    
+    printf("Enter the height of the cylinder: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: Invalid input for height\n");
+        return 1;
+    }
+    
+    volume = calculate_cylinder_volume(radius, height);
+    
+    if (volume < 0.0) {
+        fprintf(stderr, "Error: Invalid dimensions or calculation overflow\n");
+        return 1;
+    }
+    
+    printf("Volume of the cylinder: %.6f\n", volume);
+    
+    return 0;
+}
+```

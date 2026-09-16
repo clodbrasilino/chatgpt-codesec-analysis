@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_of_squares_odd(int n) {
+    long long sum = 0;
+    int odd = 1;
+    
+    for (int i = 0; i < n; i++) {
+        sum += (long long)odd * odd;
+        odd += 2;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter n: ");
+    if (scanf("%d", &n) != 1 || n < 0) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    long long result = sum_of_squares_odd(n);
+    printf("Sum of squares of first %d odd natural numbers: %lld\n", n, result);
+    
+    return EXIT_SUCCESS;
+}

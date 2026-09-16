@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node *next;
+} Node;
+
+typedef struct List {
+    Node *head;
+    struct List *next;
+} List;
+
+int *get_first_elements(List *lists, int *out_size) {
+    if (out_size == NULL) {
+        return NULL;
+    }
+    *out_size = 0;
+    if (lists == NULL) {
+        return NULL;
+    }
+    int count = 0;
+    List *current = lists;
+    while (current != NULL) {
+        if (current->head != NULL) {
+            count++;
+        }
+        current = current->next;
+    }
+    if (count == 0) {
+        return NULL;
+    }
+    int *result = (int *)malloc(count * sizeof(int));
+    if (result == NULL) {
+        return NULL;
+    }
+    current = lists;
+    int index = 0;
+    while (current != NULL) {
+        if (current->head != NULL) {
+            result[index++] = current->head->value;
+        }
+        current = current->next;
+    }
+    *out_size = count;
+    return result;
+}
+
+Node *create_node(int value) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    node->value = value;
+    node->next = NULL;
+    return node;
+}
+
+List *create_list(Node *head) {
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    list->head = head;
+    list->next = NULL;
+    return list;
+}
+
+void free_nodes(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void free_lists(List *head) {
+    while (head != NULL) {
+        List *temp = head;
+        free_nodes(head->head);
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main(void) {
+    Node *n1 = create_node(1);
+    n1->next = create_node(2);
+    Node *n2 = create_node(3);
+    n2->next = create_node(4);
+    Node *n3 = create_node(5);
+    List *l1 = create_list(n1);
+    List *l2 = create_list(n2);
+    List *l3 = create_list(NULL);
+    List *l4 = create_list(n3);
+    l1->next = l2;
+    l2->next = l3;
+    l3->next = l4;
+    int size = 0;
+    int *firsts = get_first_elements(l1, &size);
+    for (int i = 0; i < size; i++) {
+        printf("%d ", firsts[i]);
+    }
+    printf("\n");
+    free(firsts);
+    free_lists(l1);
+    return 0;
+}

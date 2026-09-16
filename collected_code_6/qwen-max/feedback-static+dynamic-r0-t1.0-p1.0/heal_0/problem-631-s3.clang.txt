@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-631-s3.c:24:13: warning: Although the value stored to 'match' is used in the enclosing expression, the value is never actually read from 'match' [deadcode.DeadStores]
+   24 |     while ((match = regexec(&regex, ptr, 2, pmatch, 0)) == 0) {
+      |             ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.

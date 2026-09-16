@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void findFrequency(const int *arr, int size) {
+    if (arr == NULL || size <= 0) {
+        return;
+    }
+
+    int *visited = (int *)calloc(size, sizeof(int));
+    if (visited == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (visited[i] == 1) {
+            continue;
+        }
+
+        int count = 1;
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] == arr[j]) {
+                visited[j] = 1;
+                count++;
+            }
+        }
+        printf("%d: %d\n", arr[i], count);
+    }
+
+    free(visited);
+}
+
+int main(void) {
+    int arr[] = {1, 2, 8, 3, 2, 2, 2, 5, 1};
+    int size = sizeof(arr) / sizeof(arr[0]);
+
+    findFrequency(arr, size);
+
+    return 0;
+}

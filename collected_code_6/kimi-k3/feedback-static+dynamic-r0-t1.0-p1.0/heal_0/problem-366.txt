@@ -1,0 +1,38 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int largest_adjacent_product(const int *arr, size_t size) {
+    if (arr == NULL || size < 2) {
+        return INT_MIN;
+    }
+    
+    int max_product = INT_MIN;
+    
+    for (size_t i = 0; i < size - 1; i++) {
+        int product = arr[i] * arr[i + 1];
+        if (product > max_product) {
+            max_product = product;
+        }
+    }
+    
+    return max_product;
+}
+
+int main(void) {
+    int arr[] = {1, 2, 3, 4, 5, 6};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = largest_adjacent_product(arr, size);
+    
+    if (result == INT_MIN) {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Largest product of adjacent elements: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

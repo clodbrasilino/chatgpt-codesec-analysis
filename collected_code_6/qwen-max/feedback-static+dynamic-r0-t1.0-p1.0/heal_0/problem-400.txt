@@ -4,62 +4,76 @@
 #include <string.h>
 
 typedef struct {
-    char *tuple;
+    int a;
+    int b;
+} Tuple;
+
+typedef struct Node {
+    Tuple t;
     int count;
-} TupleCount;
+    struct Node *next;
+} Node;
 
 int compareTuples(const void *a, const void *b) {
-    return strcmp(((TupleCount *)a)->tuple, ((TupleCount *)b)->tuple);
+    return ((Tuple *)a)->a == ((Tuple *)b)->a ? 
+           ((Tuple *)a)->b - ((Tuple *)b)->b : 
+           ((Tuple *)a)->a - ((Tuple *)b)->a;
 }
 
-int findTuple(TupleCount *tupleCounts, int size, const char *tuple) {
-    for (int i = 0; i < size; ++i) {
-        if (strcmp(tupleCounts[i].tuple, tuple) == 0) {
-            return i;
+Node* findTuple(Node *head, Tuple t) {
+    for (Node *current = head; current != NULL; current = current->next) {
+        if (current->t.a == t.a && current->t.b == t.b) {
+            return current;
         }
     }
-    return -1;
+    return NULL;
 }
 
-void extractFrequency(char **tuples, int n, TupleCount **result, int *resultSize) {
-    *result = (TupleCount *)malloc(n * sizeof(TupleCount));
-    *resultSize = 0;
+void addTuple(Node **head, Tuple t) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->t = t;
+    newNode->count = 1;
+    newNode->next = *head;
+    *head = newNode;
+}
 
+void freeList(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void printFrequencies(Node *head) {
+    while (head != NULL) {
+        printf("Tuple: (%d, %d) - Frequency: %d\n", head->t.a, head->t.b, head->count);
+        head = head->next;
+    }
+}
+
+void countTupleFrequencies(Tuple *tuples, int n) {
+    Node *head = NULL;
+    
+    qsort(tuples, n, sizeof(Tuple), compareTuples);
+    
     for (int i = 0; i < n; ++i) {
-        int index = findTuple(*result, *resultSize, tuples[i]);
-        if (index != -1) {
-            (*result)[index].count++;
+        Node *node = findTuple(head, tuples[i]);
+        if (node != NULL) {
+            node->count++;
         } else {
-            (*result)[*resultSize].tuple = strdup(tuples[i]);
-            (*result)[*resultSize].count = 1;
-            (*resultSize)++;
+            addTuple(&head, tuples[i]);
         }
     }
 
-    qsort(*result, *resultSize, sizeof(TupleCount), compareTuples);
-}
-
-void freeResult(TupleCount *result, int resultSize) {
-    for (int i = 0; i < resultSize; ++i) {
-        free(result[i].tuple);
-    }
-    free(result);
+    printFrequencies(head);
+    freeList(head);
 }
 
 int main() {
-    char *tuples[] = {"(1, 2, 3)", "(4, 5, 6)", "(1, 2, 3)", "(7, 8, 9)", "(4, 5, 6)"};
-    int n = 5;
-
-    TupleCount *result;
-    int resultSize;
-
-    extractFrequency(tuples, n, &result, &resultSize);
-
-    for (int i = 0; i < resultSize; ++i) {
-        printf("%s: %d\n", result[i].tuple, result[i].count);
-    }
-
-    freeResult(result, resultSize);
+    Tuple tuples[] = {{1, 2}, {2, 3}, {4, 5}, {1, 2}, {2, 3}, {1, 2}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    countTupleFrequencies(tuples, n);
     return 0;
 }
 ```

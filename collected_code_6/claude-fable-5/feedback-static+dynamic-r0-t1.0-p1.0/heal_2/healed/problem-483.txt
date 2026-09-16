@@ -1,0 +1,86 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long mulmod(unsigned long long a, unsigned long long b, unsigned long long m)
+{
+    unsigned long long result = 0ULL;
+
+    a %= m;
+    b %= m;
+
+    while (b > 0ULL) {
+        if (b & 1ULL) {
+            result = (result + a) % m;
+        }
+        a = (a << 1) % m;
+        b >>= 1ULL;
+    }
+
+    return result;
+}
+
+static long long first_factorial_divisible_by(long long x)
+{
+    unsigned long long m;
+    unsigned long long remainder;
+    unsigned long long n;
+
+    if (x <= 0LL) {
+        return -1LL;
+    }
+
+    if (x == 1LL) {
+        return 1LL;
+    }
+
+    m = (unsigned long long)x;
+    remainder = 1ULL % m;
+
+    for (n = 1ULL; n <= m; n++) {
+        remainder = mulmod(remainder, n % m, m);
+        if (remainder == 0ULL) {
+            return (long long)n;
+        }
+    }
+
+    return -1LL;
+}
+
+int main(void)
+{
+    long long x;
+    long long result;
+    int scan_status;
+
+    printf("Enter a positive integer: ");
+    scan_status = scanf("%lld", &x);
+    if (scan_status != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (x <= 0LL) {
+        fprintf(stderr, "Error: input must be a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = first_factorial_divisible_by(x);
+    if (result < 0LL) {
+        fprintf(stderr, "Error: could not compute result.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("The first natural number whose factorial is divisible by %lld is %lld\n", x, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made to address the identified weakness:
+
+1. **Overflow-safe modular multiplication**: The original expression `(remainder * (n % x)) % x` can overflow `long long` when `x` is large (both operands can approach `x - 1`, so the product can exceed `LLONG_MAX`). Signed overflow is undefined behavior in C and produces incorrect remainders, which explains a wrong result such as returning 5 instead of the expected 4 — a spurious non-zero (or zero) remainder shifts the detection point. The rewrite uses a `mulmod` function based on the shift-and-add (Russian peasant) method performed in `unsigned long long`, where intermediate values never exceed `2 * (x - 1)` and therefore always fit.
+
+2. **Robust initialization**: `remainder` is initialized as `1ULL % m`, which keeps correctness uniform even for the `x == 1` edge case if the early return were ever removed.
+
+3. **Consistent unsigned arithmetic** inside the computation loop avoids any signed-overflow undefined behavior, with a safe cast back to `long long` only for the return value (guaranteed safe since `n <= x <= LLONG_MAX`).

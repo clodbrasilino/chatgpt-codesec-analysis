@@ -1,0 +1,114 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+char ***generate_3d_array(size_t x, size_t y, size_t z);
+void free_3d_array(char ***arr, size_t x, size_t y);
+void print_3d_array(char ***arr, size_t x, size_t y, size_t z);
+
+char ***generate_3d_array(size_t x, size_t y, size_t z)
+{
+    char ***arr;
+    size_t i;
+    size_t j;
+
+    if ((x == 0U) || (y == 0U) || (z == 0U)) {
+        return NULL;
+    }
+
+    arr = (char ***)malloc(x * sizeof(char **));
+    if (arr == NULL) {
+        return NULL;
+    }
+
+    for (i = 0U; i < x; i++) {
+        arr[i] = (char **)malloc(y * sizeof(char *));
+        if (arr[i] == NULL) {
+            free_3d_array(arr, i, y);
+            return NULL;
+        }
+        for (j = 0U; j < y; j++) {
+            arr[i][j] = (char *)malloc(z * sizeof(char));
+            if (arr[i][j] == NULL) {
+                size_t k;
+                for (k = 0U; k < j; k++) {
+                    free(arr[i][k]);
+                }
+                free(arr[i]);
+                free_3d_array(arr, i, y);
+                return NULL;
+            }
+            {
+                size_t k;
+                for (k = 0U; k < z; k++) {
+                    arr[i][j][k] = '*';
+                }
+            }
+        }
+    }
+
+    return arr;
+}
+
+void free_3d_array(char ***arr, size_t x, size_t y)
+{
+    size_t i;
+    size_t j;
+
+    if (arr == NULL) {
+        return;
+    }
+
+    for (i = 0U; i < x; i++) {
+        if (arr[i] != NULL) {
+            for (j = 0U; j < y; j++) {
+                free(arr[i][j]);
+            }
+            free(arr[i]);
+        }
+    }
+    free(arr);
+}
+
+void print_3d_array(char ***arr, size_t x, size_t y, size_t z)
+{
+    size_t i;
+    size_t j;
+    size_t k;
+
+    for (i = 0U; i < x; i++) {
+        for (j = 0U; j < y; j++) {
+            for (k = 0U; k < z; k++) {
+                if (printf("%c ", arr[i][j][k]) < 0) {
+                    return;
+                }
+            }
+            if (printf("\n") < 0) {
+                return;
+            }
+        }
+        if (printf("\n") < 0) {
+            return;
+        }
+    }
+}
+
+int main(void)
+{
+    size_t x = 3U;
+    size_t y = 3U;
+    size_t z = 3U;
+    char ***arr;
+
+    arr = generate_3d_array(x, y, z);
+    if (arr == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    print_3d_array(arr, x, y, z);
+    free_3d_array(arr, x, y);
+
+    return EXIT_SUCCESS;
+}
+```

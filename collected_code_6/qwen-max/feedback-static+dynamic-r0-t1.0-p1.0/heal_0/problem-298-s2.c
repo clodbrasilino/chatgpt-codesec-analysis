@@ -1,79 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct ListNode {
+typedef struct Node {
     int value;
-    struct ListNode *next;
-} ListNode;
+    struct Node *next;
+} Node;
 
-ListNode* create_node(int value) {
-    ListNode *new_node = (ListNode*)malloc(sizeof(ListNode));
-    new_node->value = value;
-    new_node->next = NULL;
-    return new_node;
+typedef struct {
+    Node *head;
+} List;
+
+Node* createNode(int value) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    if (newNode == NULL) exit(EXIT_FAILURE);
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-int find_in_list(ListNode *list, int value) {
-    while (list != NULL) {
-        if (list->value == value) {
+List* createList() {
+    List *list = (List *)malloc(sizeof(List));
+    if (list == NULL) exit(EXIT_FAILURE);
+    list->head = NULL;
+    return list;
+}
+
+void addToList(List *list, int value) {
+    Node *newNode = createNode(value);
+    if (list->head == NULL) {
+        list->head = newNode;
+    } else {
+        Node *temp = list->head;
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+}
+
+int isPresentInList(List *list, int value) {
+    Node *current = list->head;
+    while (current != NULL) {
+        if (current->value == value) {
             return 1;
         }
-        list = list->next;
+        current = current->next;
     }
     return 0;
 }
 
-void find_common_elements(ListNode *list1, ListNode *list2, ListNode **result) {
-    while (list1 != NULL) {
-        if (find_in_list(list2, list1->value)) {
-            ListNode *new_node = create_node(list1->value);
-            if (*result == NULL) {
-                *result = new_node;
-            } else {
-                ListNode *temp = *result;
-                while (temp->next != NULL) {
-                    temp = temp->next;
-                }
-                temp->next = new_node;
-            }
+void findCommonElements(List *list1, List *list2, List *resultList) {
+    Node *current = list1->head;
+    while (current != NULL) {
+        if (isPresentInList(list2, current->value)) {
+            addToList(resultList, current->value);
         }
-        list1 = list1->next;
+        current = current->next;
     }
 }
 
-void free_list(ListNode *list) {
-    while (list != NULL) {
-        ListNode *temp = list;
-        list = list->next;
-        free(temp);
-    }
-}
-
-void print_list(ListNode *list) {
-    while (list != NULL) {
-        printf("%d ", list->value);
-        list = list->next;
+void printList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        printf("%d ", current->value);
+        current = current->next;
     }
     printf("\n");
 }
 
+void freeList(List *list) {
+    Node *current = list->head;
+    while (current != NULL) {
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(list);
+}
+
 int main() {
-    ListNode *list1 = create_node(1);
-    list1->next = create_node(2);
-    list1->next->next = create_node(3);
+    List *list1 = createList();
+    List *list2 = createList();
+    List *resultList = createList();
 
-    ListNode *list2 = create_node(2);
-    list2->next = create_node(3);
-    list2->next->next = create_node(4);
+    addToList(list1, 1);
+    addToList(list1, 2);
+    addToList(list1, 3);
 
-    ListNode *result = NULL;
-    find_common_elements(list1, list2, &result);
+    addToList(list2, 3);
+    addToList(list2, 4);
+    addToList(list2, 5);
 
-    print_list(result);
+    findCommonElements(list1, list2, resultList);
 
-    free_list(list1);
-    free_list(list2);
-    free_list(result);
+    printList(resultList);
+
+    freeList(list1);
+    freeList(list2);
+    freeList(resultList);
 
     return 0;
 }

@@ -1,0 +1,33 @@
+```c
+#include <stdio.h>
+
+unsigned long long sum_of_cubes(int n) {
+    unsigned long long sum = 0;
+    
+    for (int i = 1; i <= n; i++) {
+        sum += (unsigned long long)i * i * i;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int n;
+    
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (n < 0) {
+        printf("Please enter a non-negative integer\n");
+        return 1;
+    }
+    
+    unsigned long long result = sum_of_cubes(n);
+    printf("Sum of cubes from 1 to %d: %llu\n", n, result);
+    
+    return 0;
+}
+```

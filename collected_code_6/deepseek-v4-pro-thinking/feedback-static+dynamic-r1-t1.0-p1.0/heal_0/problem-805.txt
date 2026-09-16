@@ -1,0 +1,54 @@
+```c
+#include <stddef.h>
+#include <stdio.h>
+
+size_t find_max_sum_list(int **lists, const size_t *sizes, size_t count) {
+    if (count == 0 || lists == NULL || sizes == NULL) {
+        return (size_t)-1;
+    }
+
+    size_t max_index = 0;
+    long long max_sum = 0;
+    int found = 0;
+
+    for (size_t i = 0; i < count; ++i) {
+        if (sizes[i] > 0 && lists[i] == NULL) {
+            return (size_t)-1;
+        }
+
+        long long sum = 0;
+        for (size_t j = 0; j < sizes[i]; ++j) {
+            sum += lists[i][j];
+        }
+
+        if (!found || sum > max_sum) {
+            max_sum = sum;
+            max_index = i;
+            found = 1;
+        }
+    }
+
+    return max_index;
+}
+
+int main(void) {
+    int list1[] = {1, 2, 3};
+    int list2[] = {10, 20};
+    int list3[] = {-5, 0, 5};
+
+    int *lists[] = {list1, list2, list3};
+    size_t sizes[] = {
+        sizeof(list1) / sizeof(list1[0]),
+        sizeof(list2) / sizeof(list2[0]),
+        sizeof(list3) / sizeof(list3[0])
+    };
+
+    size_t index = find_max_sum_list(lists, sizes, sizeof(sizes) / sizeof(sizes[0]));
+    if (index == (size_t)-1) {
+        return 1;
+    }
+
+    printf("%zu\n", index);
+    return 0;
+}
+```

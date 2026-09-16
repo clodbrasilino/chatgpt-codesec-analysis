@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int a;
+    int b;
+} Tuple;
+
+typedef struct {
+    Tuple tuple;
+    int frequency;
+} TupleFreq;
+
+TupleFreq* extract_frequencies(Tuple* list, int size, int* result_size) {
+    if (list == NULL || result_size == NULL || size <= 0) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    Tuple* normalized = malloc(size * sizeof(Tuple));
+    if (normalized == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (int i = 0; i < size; i++) {
+        if (list[i].a < list[i].b) {
+            normalized[i].a = list[i].a;
+            normalized[i].b = list[i].b;
+        } else {
+            normalized[i].a = list[i].b;
+            normalized[i].b = list[i].a;
+        }
+    }
+
+    TupleFreq* freqs = malloc(size * sizeof(TupleFreq));
+    if (freqs == NULL) {
+        free(normalized);
+        *result_size = 0;
+        return NULL;
+    }
+
+    int unique_count = 0;
+    for (int i = 0; i < size; i++) {
+        int found = 0;
+        for (int j = 0; j < unique_count; j++) {
+            if (freqs[j].tuple.a == normalized[i].a && freqs[j].tuple.b == normalized[i].b) {
+                freqs[j].frequency++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            freqs[unique_count].tuple = normalized[i];
+            freqs[unique_count].frequency = 1;
+            unique_count++;
+        }
+    }
+
+    free(normalized);
+    *result_size = unique_count;
+
+    TupleFreq* final_freqs = realloc(freqs, unique_count * sizeof(TupleFreq));
+    if (final_freqs != NULL) {
+        return final_freqs;
+    }
+    
+    return freqs;
+}
+
+int main() {
+    Tuple list[] = {{1, 2}, {3, 4}, {2, 1}, {5, 6}, {4, 3}, {1, 2}};
+    int size = sizeof(list) / sizeof(list[0]);
+    int result_size = 0;
+
+    TupleFreq* result = extract_frequencies(list, size, &result_size);
+
+    if (result != NULL) {
+        for (int i = 0; i < result_size; i++) {
+            printf("(%d, %d): %d\n", result[i].tuple.a, result[i].tuple.b, result[i].frequency);
+        }
+        free(result);
+    }
+
+    return 0;
+}

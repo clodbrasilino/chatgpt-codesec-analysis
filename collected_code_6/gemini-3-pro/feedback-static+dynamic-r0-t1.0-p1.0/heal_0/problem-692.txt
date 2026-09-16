@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int findLastTwoDigitsOfFactorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    if (n >= 10) {
+        return 0;
+    }
+    
+    int result = 1;
+    for (int i = 2; i <= n; i++) {
+        result = (result * i) % 100;
+    }
+    
+    return result;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1) {
+        return EXIT_FAILURE;
+    }
+    
+    int result = findLastTwoDigitsOfFactorial(n);
+    if (result == -1) {
+        return EXIT_FAILURE;
+    }
+    
+    printf("%02d\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

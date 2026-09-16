@@ -2,24 +2,38 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 char* snake_to_camel(char *str) {
-    for (int i = 0; str[i] != '\0'; i++) {
-        if (str[i] == '_') {
-            memmove(&str[i], &str[i + 1], strlen(&str[i]));
-            str[i] = toupper(str[i]);
-            i--; // Adjust index after removing underscore
-        } else if (i == 0 || (i > 0 && str[i - 1] == '_')) {
-            str[i] = toupper(str[i]);
+    int i = 0, len = strlen(str);
+    char *result = (char *)malloc((len + 1) * sizeof(char));
+    if (result == NULL) return NULL;
+
+    for (; *str; str++) {
+        if (*str == '_') {
+            str++;
+            if (*str) {
+                result[i++] = toupper(*str);
+            }
+        } else {
+            result[i++] = *str;
         }
     }
-    return str;
+    result[i] = '\0';
+    return result;
 }
 
 int main() {
-    char input[] = "example_snake_case_string";
-    char *result = snake_to_camel(input);
-    printf("%s\n", result);
+    char input[] = "python_program";
+    char *output = snake_to_camel(input);
+
+    if (output != NULL) {
+        printf("Camel case: %s\n", output);
+        free(output);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
     return 0;
 }
 ```

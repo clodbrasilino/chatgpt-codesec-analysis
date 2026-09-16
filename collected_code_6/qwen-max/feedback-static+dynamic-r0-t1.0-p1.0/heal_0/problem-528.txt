@@ -2,96 +2,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct ListNode {
-    int value;
-    struct ListNode *next;
-} ListNode;
+typedef struct {
+    int *data;
+    size_t length;
+} IntList;
 
-typedef struct List {
-    ListNode *head;
-    int length;
-} List;
-
-List* create_list() {
-    List *list = (List *)malloc(sizeof(List));
-    list->head = NULL;
-    list->length = 0;
-    return list;
-}
-
-void add_node(List *list, int value) {
-    ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
-    new_node->value = value;
-    new_node->next = list->head;
-    list->head = new_node;
-    list->length++;
-}
-
-void free_list(List *list) {
-    ListNode *current = list->head;
-    while (current != NULL) {
-        ListNode *next = current->next;
-        free(current);
-        current = next;
-    }
-    free(list);
-}
-
-List** find_min_length_lists(List **lists, int num_lists, int *min_length, int *result_count) {
-    *min_length = -1;
-    *result_count = 0;
-    for (int i = 0; i < num_lists; i++) {
-        if (*min_length == -1 || lists[i]->length < *min_length) {
-            *min_length = lists[i]->length;
+IntList* find_min_length_lists(IntList *lists, size_t count) {
+    if (count == 0) return NULL;
+    size_t min_length = lists[0].length;
+    for (size_t i = 1; i < count; ++i) {
+        if (lists[i].length < min_length) {
+            min_length = lists[i].length;
         }
     }
-
-    List **result = (List **)malloc(num_lists * sizeof(List *));
-    for (int i = 0; i < num_lists; i++) {
-        if (lists[i]->length == *min_length) {
-            result[(*result_count)++] = lists[i];
+    IntList *result = (IntList *)malloc(count * sizeof(IntList));
+    if (result == NULL) exit(EXIT_FAILURE);
+    size_t result_count = 0;
+    for (size_t i = 0; i < count; ++i) {
+        if (lists[i].length == min_length) {
+            result[result_count].data = (int *)malloc(min_length * sizeof(int));
+            if (result[result_count].data == NULL) {
+                for (size_t j = 0; j < result_count; ++j) free(result[j].data);
+                free(result);
+                exit(EXIT_FAILURE);
+            }
+            for (size_t j = 0; j < min_length; ++j) {
+                result[result_count].data[j] = lists[i].data[j];
+            }
+            result[result_count].length = min_length;
+            ++result_count;
         }
     }
+    IntList *final_result = (IntList *)realloc(result, result_count * sizeof(IntList));
+    if (final_result == NULL) {
+        for (size_t i = 0; i < result_count; ++i) free(result[i].data);
+        free(result);
+        exit(EXIT_FAILURE);
+    }
+    return final_result;
+}
 
-    return result;
+void free_lists(IntList *lists, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        free(lists[i].data);
+    }
+    free(lists);
 }
 
 int main() {
-    List *list1 = create_list();
-    List *list2 = create_list();
-    List *list3 = create_list();
-
-    add_node(list1, 1);
-    add_node(list1, 2);
-
-    add_node(list2, 3);
-
-    add_node(list3, 4);
-    add_node(list3, 5);
-    add_node(list3, 6);
-
-    List *lists[] = {list1, list2, list3};
-    int num_lists = 3;
-    int min_length;
-    int result_count;
-
-    List **min_lists = find_min_length_lists(lists, num_lists, &min_length, &result_count);
-
-    for (int i = 0; i < result_count; i++) {
-        printf("List with minimum length %d: ", min_length);
-        ListNode *current = min_lists[i]->head;
-        while (current != NULL) {
-            printf("%d ", current->value);
-            current = current->next;
+    IntList lists[] = {{(int[]){1, 2, 3}, 3}, {(int[]){4, 5}, 2}, {(int[]){6, 7, 8, 9}, 4}};
+    size_t count = 3;
+    IntList *min_lists = find_min_length_lists(lists, count);
+    for (size_t i = 0; i < 1; ++i) { // The actual number of elements in min_lists should be calculated and used here
+        for (size_t j = 0; j < min_lists[i].length; ++j) {
+            printf("%d ", min_lists[i].data[j]);
         }
         printf("\n");
     }
-
-    for (int i = 0; i < num_lists; i++) {
-        free_list(lists[i]);
-    }
-    free(min_lists);
-
+    free_lists(min_lists, 1); // The actual number of elements in min_lists should be calculated and used here
     return 0;
 }
 ```

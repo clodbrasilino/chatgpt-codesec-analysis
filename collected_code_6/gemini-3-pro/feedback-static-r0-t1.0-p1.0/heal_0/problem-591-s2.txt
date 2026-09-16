@@ -1,0 +1,96 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (!newNode) {
+        return NULL;
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void swapFirstAndLast(struct Node** head) {
+    if (!head || !*head || !(*head)->next) {
+        return;
+    }
+
+    struct Node* prev = NULL;
+    struct Node* curr = *head;
+
+    while (curr->next) {
+        prev = curr;
+        curr = curr->next;
+    }
+
+    struct Node* first = *head;
+    struct Node* last = curr;
+
+    if (first->next == last) {
+        first->next = NULL;
+        last->next = first;
+        *head = last;
+    } else {
+        struct Node* second = first->next;
+        last->next = second;
+        prev->next = first;
+        first->next = NULL;
+        *head = last;
+    }
+}
+
+void printList(struct Node* head) {
+    while (head) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+    struct Node* head = createNode(1);
+    if (!head) return 1;
+    
+    head->next = createNode(2);
+    if (!head->next) {
+        freeList(head);
+        return 1;
+    }
+    
+    head->next->next = createNode(3);
+    if (!head->next->next) {
+        freeList(head);
+        return 1;
+    }
+
+    head->next->next->next = createNode(4);
+    if (!head->next->next->next) {
+        freeList(head);
+        return 1;
+    }
+
+    printList(head);
+    swapFirstAndLast(&head);
+    printList(head);
+
+    freeList(head);
+
+    return 0;
+}
+```

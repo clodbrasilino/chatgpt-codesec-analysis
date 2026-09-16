@@ -1,0 +1,63 @@
+```c
+#include <stdio.h>
+#include <string.h>
+
+int count_matching_positions(const char *str)
+{
+    int count = 0;
+    size_t len;
+    size_t i;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    len = strlen(str);
+
+    for (i = 0; i < len; i++) {
+        char c = str[i];
+        if (c >= 'a' && c <= 'z') {
+            if ((size_t)(c - 'a') == i) {
+                count++;
+            }
+        } else if (c >= 'A' && c <= 'Z') {
+            if ((size_t)(c - 'A') == i) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char buffer[256];
+    int result;
+
+    printf("Enter a string: ");
+
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+        fprintf(stderr, "Error reading input\n");
+        return 1;
+    }
+
+    buffer[strcspn(buffer, "\n")] = '\0';
+
+    result = count_matching_positions(buffer);
+
+    printf("Number of characters at same position as in alphabet: %d\n", result);
+
+    return 0;
+}
+```
+
+**How it works:**
+
+- `count_matching_positions` iterates over the string and compares each character's zero-based index with its zero-based position in the English alphabet (handling both lowercase and uppercase separately).
+- A `NULL` check guards against invalid input to the function (addressing CWE-703).
+- `fgets` with a bounded buffer prevents overflow, and its return value is checked before use (addressing CWE-664 and CWE-703).
+- `strcspn` safely strips the trailing newline without risking out-of-bounds access.
+- The code uses consistent types (`size_t` for indices, explicit casts) and `main(void)` with proper return codes, adhering to standard coding practices (addressing CWE-710).
+
+**Example:** For input `"aBcTf"`, the characters `a` (index 0), `B` (index 1), `c` (index 2), and `f` (index 4)... wait — `f` is at alphabet position 5 but string index 4, so it doesn't count. The result would be `3` (`a`, `B`, `c`).

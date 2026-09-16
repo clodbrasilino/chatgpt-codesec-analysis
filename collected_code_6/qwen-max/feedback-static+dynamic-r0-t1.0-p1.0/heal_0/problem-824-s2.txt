@@ -2,57 +2,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct ListNode {
-    int val;
-    struct ListNode *next;
-};
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
 
-struct ListNode* removeEvenNumbers(struct ListNode* head) {
-    struct ListNode* current = head;
-    struct ListNode** prevPtr = &head;
+Node* create_node(int data) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
 
+void free_list(Node *head) {
+    Node *current = head;
     while (current != NULL) {
-        if (current->val % 2 == 0) {
-            *prevPtr = current->next;
-            free(current);
-            current = *prevPtr;
+        Node *temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+Node* remove_even_numbers(Node *head) {
+    if (head == NULL) {
+        return NULL;
+    }
+
+    Node dummy;
+    dummy.next = head;
+    Node *prev = &dummy;
+    Node *curr = head;
+
+    while (curr != NULL) {
+        if (curr->data % 2 == 0) {
+            prev->next = curr->next;
+            free(curr);
+            curr = prev->next;
         } else {
-            prevPtr = &current->next;
-            current = current->next;
+            prev = curr;
+            curr = curr->next;
         }
     }
-    return head;
+
+    return dummy.next;
 }
 
 int main() {
-    // Example usage
-    struct ListNode* head = malloc(sizeof(struct ListNode));
-    head->val = 1;
-    head->next = malloc(sizeof(struct ListNode));
-    head->next->val = 2;
-    head->next->next = malloc(sizeof(struct ListNode));
-    head->next->next->val = 3;
-    head->next->next->next = malloc(sizeof(struct ListNode));
-    head->next->next->next->val = 4;
-    head->next->next->next->next = NULL;
+    Node *head = create_node(1);
+    head->next = create_node(2);
+    head->next->next = create_node(3);
+    head->next->next->next = create_node(4);
 
-    head = removeEvenNumbers(head);
+    head = remove_even_numbers(head);
 
-    struct ListNode* temp = head;
-    while (temp != NULL) {
-        printf("%d -> ", temp->val);
-        temp = temp->next;
-    }
-    printf("NULL\n");
-
-    // Clean up
-    temp = head;
-    while (temp != NULL) {
-        struct ListNode* toDelete = temp;
-        temp = temp->next;
-        free(toDelete);
+    for (Node *current = head; current != NULL; current = current->next) {
+        printf("%d ", current->data);
     }
 
+    free_list(head);
     return 0;
 }
 ```

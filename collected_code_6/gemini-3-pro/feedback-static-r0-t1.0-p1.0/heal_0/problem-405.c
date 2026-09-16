@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+typedef struct {
+    int id;
+    float value;
+    char label;
+} TupleType;
+
+bool is_element_in_tuple(const TupleType* tuple, int id_to_find, float value_to_find, char label_to_find) {
+    if (tuple == NULL) {
+        return false;
+    }
+
+    if (tuple->id == id_to_find && 
+        tuple->value == value_to_find && 
+        tuple->label == label_to_find) {
+        return true;
+    }
+
+    return false;
+}
+
+int main(void) {
+    TupleType my_tuple = {1, 3.14f, 'A'};
+
+    bool exists1 = is_element_in_tuple(&my_tuple, 1, 3.14f, 'A');
+    bool exists2 = is_element_in_tuple(&my_tuple, 2, 3.14f, 'A');
+    bool exists3 = is_element_in_tuple(NULL, 1, 3.14f, 'A');
+
+    printf("%d\n", exists1);
+    printf("%d\n", exists2);
+    printf("%d\n", exists3);
+
+    return 0;
+}

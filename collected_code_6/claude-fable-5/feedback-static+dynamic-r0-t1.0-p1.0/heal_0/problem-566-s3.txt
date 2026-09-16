@@ -1,0 +1,48 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+static unsigned long long digit_sum(unsigned long long n)
+{
+    unsigned long long sum = 0ULL;
+
+    while (n > 0ULL) {
+        sum += n % 10ULL;
+        n /= 10ULL;
+    }
+
+    return sum;
+}
+
+int main(void)
+{
+    unsigned long long value = 0ULL;
+    long long input = 0LL;
+    int scan_result = 0;
+
+    printf("Enter a non-negative integer: ");
+
+    scan_result = scanf("%lld", &input);
+    if (scan_result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (input < 0LL) {
+        fprintf(stderr, "Error: value must be non-negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    value = (unsigned long long)input;
+
+    printf("Digit sum of %llu is %llu\n", value, digit_sum(value));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This implementation interprets "sum of a non-negative integer" as the sum of its digits (the common interpretation of this classic exercise). Key safety measures included:
+
+- **CWE-703 avoidance**: The return value of `scanf` is checked before using the input, and negative values are explicitly rejected with a clear error message and non-zero exit status.
+- **CWE-664 avoidance**: No dynamic resources (heap memory, file handles) are allocated, so there is no lifetime to mismanage; all variables are stack-based with well-defined scope.
+- **CWE-710 avoidance**: The code adheres to standard practices — `main` returns `int`, uses `EXIT_SUCCESS`/`EXIT_FAILURE`, the helper function is `static` with a full prototype, all variables are initialized, and unsigned arithmetic prevents undefined behavior from overflow during the digit computation.

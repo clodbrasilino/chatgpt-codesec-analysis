@@ -1,80 +1,68 @@
 ```c
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 typedef struct {
     int first;
     int second;
 } Tuple;
 
-typedef struct ListNode {
-    Tuple* value;
-    struct ListNode* next;
+typedef struct Node {
+    int value;
+    struct Node *next;
 } ListNode;
 
-ListNode* insert_into_list(ListNode* head, Tuple* t) {
-    ListNode* new_node = (ListNode*)malloc(sizeof(ListNode));
-    if (!new_node) return head;
-    new_node->value = t;
-    new_node->next = NULL;
+void add_element(ListNode **head, int value) {
+    ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
+    new_node->value = value;
+    new_node->next = *head;
+    *head = new_node;
+}
 
-    if (head == NULL) {
-        return new_node;
-    } else {
-        ListNode* temp = head;
-        while (temp->next != NULL) {
-            temp = temp->next;
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->second - ((Tuple *)b)->second;
+}
+
+ListNode** group_elements(Tuple *list, int n, int *returnSize) {
+    qsort(list, n, sizeof(Tuple), compare);
+    *returnSize = 0;
+    int current_group = -1;
+    ListNode **result = (ListNode **)malloc(n * sizeof(ListNode *));
+    
+    for (int i = 0; i < n; i++) {
+        if (list[i].second != current_group) {
+            current_group = list[i].second;
+            result[(*returnSize)++] = NULL;
         }
-        temp->next = new_node;
-        return head;
+        add_element(&result[(*returnSize) - 1], list[i].first);
     }
+    return result;
 }
 
-void free_list(ListNode* head) {
-    while (head) {
-        ListNode* temp = head;
-        head = head->next;
-        free(temp->value);
-        free(temp);
+void print_list(ListNode *list) {
+    while (list) {
+        printf("%d -> ", list->value);
+        list = list->next;
     }
-}
-
-void group_by_second_element(Tuple* tuples, int length, ListNode*** grouped_list, int* list_size) {
-    *list_size = 0;
-    *grouped_list = (ListNode**)malloc(10 * sizeof(ListNode*));
-    for (int i = 0; i < 10; i++) (*grouped_list)[i] = NULL;
-
-    for (int i = 0; i < length; i++) {
-        int key = tuples[i].second % 10;
-        if (!(*grouped_list)[key]) (*list_size)++;
-        (*grouped_list)[key] = insert_into_list((*grouped_list)[key], &tuples[i]);
-    }
+    printf("NULL\n");
 }
 
 int main() {
-    Tuple tuples[] = {{1, 3}, {2, 4}, {3, 3}, {4, 2}, {5, 4}};
-    int length = sizeof(tuples)/sizeof(tuples[0]);
+    Tuple list[] = {{5, 1}, {3, 2}, {4, 1}, {2, 2}, {6, 1}};
+    int n = sizeof(list) / sizeof(list[0]);
+    int returnSize;
+    ListNode **result = group_elements(list, n, &returnSize);
 
-    ListNode** grouped_list;
-    int list_size;
-    
-    group_by_second_element(tuples, length, &grouped_list, &list_size);
-
-    for (int i = 0; i < 10; i++) {
-        if (grouped_list[i] != NULL) {
-            printf("Group %d: ", i);
-            for (ListNode* node = grouped_list[i]; node != NULL; node = node->next) {
-                printf("(%d, %d) ", node->value->first, node->value->second);
-            }
-            printf("\n");
+    for (int i = 0; i < returnSize; i++) {
+        print_list(result[i]);
+        ListNode *current = result[i];
+        while (current) {
+            ListNode *temp = current;
+            current = current->next;
+            free(temp);
         }
     }
-
-    for (int i = 0; i < 10; i++) {
-        free_list(grouped_list[i]);
-    }
-    free(grouped_list);
+    free(result);
 
     return 0;
 }

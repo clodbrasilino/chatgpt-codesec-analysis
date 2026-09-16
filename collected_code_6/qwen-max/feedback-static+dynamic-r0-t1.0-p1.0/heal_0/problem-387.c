@@ -1,25 +1,20 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <string.h>
 
-bool is_hex_even(const char *hex) {
-    for (int i = 0; i < (int)strlen(hex); ++i) {
-        if (hex[i] == '1' || hex[i] == '3' || hex[i] == '5' || hex[i] == '7' || hex[i] == '9' ||
-            hex[i] == 'a' || hex[i] == 'c' || hex[i] == 'e' || hex[i] == 'A' || hex[i] == 'C' || hex[i] == 'E') {
-            return false;
-        }
-    }
-    return true;
+bool is_hex_even(unsigned int num) {
+    return (num & 1) == 0;
 }
 
 int main() {
-    char hex[17];
+    unsigned int hex_number;
     printf("Enter a hexadecimal number: ");
-    scanf("%16s", hex);
-    if (is_hex_even(hex)) {
-        printf("The hexadecimal number is even.\n");
+    scanf("%x", &hex_number);
+    
+    if (is_hex_even(hex_number)) {
+        printf("The number is even.\n");
     } else {
-        printf("The hexadecimal number is odd.\n");
+        printf("The number is odd.\n");
     }
+    
     return 0;
 }

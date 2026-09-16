@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int sum_of_digits(int number) {
+    int sum = 0;
+    while (number > 0) {
+        sum += number % 10;
+        number /= 10;
+    }
+    return sum;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'numbers' can be declared as pointer to const [constParameterPointer]
+ */
+void process_list(int *numbers, int size) {
+    for (int i = 0; i < size; ++i) {
+        int result = sum_of_digits(numbers[i]);
+        printf("%d: %d\n", numbers[i], result);
+    }
+}
+
+int main() {
+    int data[] = {123, 456, 789, 0, 1010};
+    int n = sizeof(data) / sizeof(data[0]);
+    process_list(data, n);
+    return 0;
+}

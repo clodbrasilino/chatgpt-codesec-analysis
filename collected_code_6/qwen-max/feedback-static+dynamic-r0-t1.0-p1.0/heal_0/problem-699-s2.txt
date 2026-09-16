@@ -1,34 +1,26 @@
 ```c
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
 
-int minSwaps(char *str1, char *str2) {
-    int len = strlen(str1);
-    int mismatchCount = 0;
-    int xMismatch = 0, yMismatch = 0;
-
-    for (int i = 0; i < len; ++i) {
-        if (str1[i] != str2[i]) {
-            mismatchCount++;
-            if (str1[i] == 'x') xMismatch++;
-            if (str1[i] == 'y') yMismatch++;
+int minSwaps(char *s1, char *s2, int n) {
+    int count[2] = {0};
+    for (int i = 0; i < n; i++) {
+        if (s1[i] != s2[i]) {
+            count[s1[i] - '0']++;
         }
     }
-
-    if (mismatchCount % 2 != 0 || xMismatch != yMismatch) return -1;
-
-    return mismatchCount / 2;
+    return (count[0] == count[1]) ? count[0] : -1;
 }
 
 int main() {
-    char str1[] = "xxyy";
-    char str2[] = "yyxx";
-    int result = minSwaps(str1, str2);
-    if (result == -1) {
-        printf("Conversion not possible\n");
-    } else {
+    char s1[] = "1100";
+    char s2[] = "1001";
+    int n = strlen(s1);
+    int result = minSwaps(s1, s2, n);
+    if (result != -1) {
         printf("Minimum swaps required: %d\n", result);
+    } else {
+        printf("Conversion not possible\n");
     }
     return 0;
 }

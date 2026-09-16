@@ -1,15 +1,28 @@
 ```c
 #include <stdio.h>
-#include <stdint.h>
+#include <stdlib.h>
 
-int get_rightmost_set_bit(uint32_t n) {
-    return (n & -n);
+int rightmostSetBitPosition(int n) {
+    int position = 1;
+
+    while (!(n & 1)) {
+        n >>= 1;
+        position++;
+    }
+
+    return position;
 }
 
 int main() {
-    uint32_t num = 0x5A; // Example number
-    int result = get_rightmost_set_bit(num);
-    printf("Rightmost set bit: %d\n", result);
+    int num = 18; // Example input
+    int result = rightmostSetBitPosition(num);
+
+    if (result == 1) {
+        printf("Rightmost set bit is at position %d (0-based index)\n", result - 1);
+    } else {
+        printf("Rightmost set bit is at position %d (0-based index)\n", result - 1);
+    }
+
     return 0;
 }
 ```

@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int *items;
+    size_t len;
+} Tuple;
+
+bool tuple_contains_all_valid(const Tuple *t) {
+    if (t == NULL) {
+        return false;
+    }
+
+    if (t->len > 0 && t->items == NULL) {
+        return false;
+    }
+
+    for (size_t i = 0; i < t->len; i++) {
+        if (t->items[i] <= 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int a[] = {1, 2, 3};
+    int b[] = {1, 0, 3};
+    int c[] = {0};
+    
+    Tuple t1 = {a, 3};
+    Tuple t2 = {b, 3};
+    Tuple t3 = {NULL, 0};
+    Tuple t4 = {c, 1};
+    Tuple t5 = {NULL, 1};
+
+    printf("%d\n", tuple_contains_all_valid(&t1));
+    printf("%d\n", tuple_contains_all_valid(&t2));
+    printf("%d\n", tuple_contains_all_valid(&t3));
+    printf("%d\n", tuple_contains_all_valid(&t4));
+    printf("%d\n", tuple_contains_all_valid(&t5));
+    printf("%d\n", tuple_contains_all_valid(NULL));
+
+    return 0;
+}

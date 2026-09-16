@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+bool check_even_parity(uint32_t number) {
+    bool parity = true;
+    while (number) {
+        if (number & 1) {
+            parity = !parity;
+        }
+        number >>= 1;
+    }
+    return parity;
+}
+
+int main(void) {
+    uint32_t num = 13;
+    
+    if (check_even_parity(num)) {
+        printf("The number %u has even parity.\n", num);
+    } else {
+        printf("The number %u has odd parity.\n", num);
+    }
+    
+    return 0;
+}

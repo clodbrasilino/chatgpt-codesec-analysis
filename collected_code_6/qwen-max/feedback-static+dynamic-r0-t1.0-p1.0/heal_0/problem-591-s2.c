@@ -1,65 +1,68 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int data;
-    struct Node* next;
-} Node;
+typedef struct List {
+    int *items;
+    size_t size;
+} List;
 
-Node* createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    if (newNode != NULL) {
-        newNode->data = data;
-        newNode->next = NULL;
+List* create_list(size_t size, int initial) {
+    List* list = (List*)malloc(sizeof(List));
+    if (!list) return NULL;
+    list->items = (int*)calloc(size, sizeof(int));
+    if (!list->items) {
+        free(list);
+        return NULL;
     }
-    return newNode;
+    list->size = size;
+    for (size_t i = 0; i < size; ++i) {
+        list->items[i] = initial;
+    }
+    return list;
 }
 
-void swapFirstAndLast(Node** headRef) {
-    if (*headRef == NULL || (*headRef)->next == NULL) {
-        return;
+void free_list(List* list) {
+    if (list) {
+        free(list->items);
+        free(list);
     }
-
-    Node* current = *headRef;
-    Node* prev = NULL;
-    while (current->next != NULL) {
-        prev = current;
-        current = current->next;
-    }
-
-    // Swap data of first and last nodes
-    int temp = (*headRef)->data;
-    (*headRef)->data = current->data;
-    current->data = temp;
 }
 
-void printList(Node* node) {
-    while (node != NULL) {
-        printf("%d -> ", node->data);
-        node = node->next;
+void swap_first_and_last(List* list) {
+    if (list && list->size > 1) {
+        int temp = list->items[0];
+        list->items[0] = list->items[list->size - 1];
+        list->items[list->size - 1] = temp;
     }
-    printf("NULL\n");
+}
+
+void print_list(const List* list) {
+    if (list) {
+        for (size_t i = 0; i < list->size; ++i) {
+            printf("%d ", list->items[i]);
+        }
+        printf("\n");
+    }
 }
 
 int main() {
-    Node* head = createNode(10);
-    head->next = createNode(20);
-    head->next->next = createNode(30);
+    List* list = create_list(5, 0);
+    if (list) {
+        list->items[0] = 1;
+        list->items[1] = 2;
+        list->items[2] = 3;
+        list->items[3] = 4;
+        list->items[4] = 5;
+        
+        printf("Original List: ");
+        print_list(list);
 
-    printf("Original list: ");
-    printList(head);
+        swap_first_and_last(list);
 
-    swapFirstAndLast(&head);
+        printf("Modified List: ");
+        print_list(list);
 
-    printf("List after swapping: ");
-    printList(head);
-
-    // Free the allocated nodes
-    Node* current = head;
-    while (current != NULL) {
-        Node* next = current->next;
-        free(current);
-        current = next;
+        free_list(list);
     }
 
     return 0;

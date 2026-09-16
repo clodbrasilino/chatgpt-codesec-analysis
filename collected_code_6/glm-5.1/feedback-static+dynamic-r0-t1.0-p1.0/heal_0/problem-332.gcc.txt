@@ -1,0 +1,8 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-332.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-332.c:37:17: error: implicit declaration of function 'isprint' [-Wimplicit-function-declaration]
+   37 |             if (isprint((unsigned char)i)) {
+      |                 ^~~~~~~
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-332.c:5:1: note: include '<ctype.h>' or provide a declaration of 'isprint'
+    4 | #include <limits.h>
+  +++ |+#include <ctype.h>
+    5 | 

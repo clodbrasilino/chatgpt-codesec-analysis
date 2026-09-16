@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-693.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-693.c:33:51: style: Condition 'match_count!=0' is always true [knownConditionTrueFalse]
+    if (match_count != REG_NOMATCH && match_count != 0) {
+                                                  ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-693.c:26:22: style: Variable 'total_length' is assigned a value that is never used. [unreadVariable]
+        total_length = length_before + to_be_replaced_length + remaining_length;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-693.c:27:20: style: Variable 'new_length' is assigned a value that is never used. [unreadVariable]
+        new_length = length_before + replacement_length + remaining_length;
+                   ^

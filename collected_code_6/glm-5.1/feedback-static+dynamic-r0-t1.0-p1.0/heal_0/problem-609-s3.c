@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <math.h>
+
+double periodic_function(double x) {
+    return sin(x) * cos(x * 0.5);
+}
+
+double find_minimum(double lower, double upper, double step) {
+    double min_val = periodic_function(lower);
+    double x = lower + step;
+    while (x <= upper) {
+        double current_val = periodic_function(x);
+        if (current_val < min_val) {
+            min_val = current_val;
+        }
+        x += step;
+    }
+    return min_val;
+}
+
+int main(void) {
+    double lower = 0.0;
+    double upper = 4.0 * M_PI;
+    double step = 0.0001;
+
+    if (step <= 0.0 || upper < lower) {
+        return 1;
+    }
+
+    double min_val = find_minimum(lower, upper, step);
+    printf("%f\n", min_val);
+
+    return 0;
+}

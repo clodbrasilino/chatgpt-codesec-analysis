@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+int calculate_dog_age(int human_years, int *dog_years)
+{
+    if (dog_years == NULL)
+    {
+        return -1;
+    }
+
+    if (human_years < 0)
+    {
+        return -1;
+    }
+
+    if (human_years <= 2)
+    {
+        if (human_years > INT_MAX / 15)
+        {
+            return -1;
+        }
+        *dog_years = human_years * 15;
+    }
+    else
+    {
+        if (human_years > (INT_MAX - 24) / 5)
+        {
+            return -1;
+        }
+        *dog_years = 24 + ((human_years - 2) * 5);
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int human_years = 0;
+    int dog_years = 0;
+    int result = 0;
+
+    printf("Enter dog's age in human years: ");
+
+    if (scanf("%d", &human_years) != 1)
+    {
+        fprintf(stderr, "Error: Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    result = calculate_dog_age(human_years, &dog_years);
+
+    if (result != 0)
+    {
+        fprintf(stderr, "Error: Invalid age or calculation overflow\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Dog's age in dog years: %d\n", dog_years);
+
+    return EXIT_SUCCESS;
+}

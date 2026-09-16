@@ -2,63 +2,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int** createMatrix(int rows, int cols) {
-    int **matrix = (int **)malloc(rows * sizeof(int *));
+void extract_elements(int **array, int rows, int cols, int interval, int *output) {
+    int index = 0;
     for (int i = 0; i < rows; i++) {
-        matrix[i] = (int *)malloc(cols * sizeof(int));
+        for (int j = 0; j < cols; j += interval) {
+            output[index++] = array[i][j];
+        }
     }
-    return matrix;
 }
 
-void freeMatrix(int **matrix, int rows) {
-    for (int i = 0; i < rows; i++) {
-        free(matrix[i]);
-    }
-    free(matrix);
-}
+int main() {
+    int rows = 3;
+    int cols = 4;
+    int interval = 2;
 
-int* extractElements(int **matrix, int rows, int cols, int step, int *outSize) {
-    *outSize = (rows * cols + step - 1) / step;
-    int *result = (int *)malloc(*outSize * sizeof(int));
-    if (!result) {
-        return NULL;
+    int **array = (int **)malloc(rows * sizeof(int *));
+    for (int i = 0; i < rows; i++) {
+        array[i] = (int *)malloc(cols * sizeof(int));
     }
 
     int k = 0;
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            if ((i * cols + j) % step == 0) {
-                result[k++] = matrix[i][j];
-            }
+            array[i][j] = k++;
         }
     }
-    return result;
-}
 
-int main() {
-    int rows = 4;
-    int cols = 4;
-    int step = 2;
-    int outSize;
+    int output_len = (cols + interval - 1) / interval * rows;
+    int *output = (int *)malloc(output_len * sizeof(int));
 
-    int **matrix = createMatrix(rows, cols);
+    extract_elements(array, rows, cols, interval, output);
+
+    for (int i = 0; i < output_len; i++) {
+        printf("%d ", output[i]);
+    }
+    printf("\n");
 
     for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            matrix[i][j] = i * cols + j + 1;
-        }
+        free(array[i]);
     }
+    free(array);
+    free(output);
 
-    int *result = extractElements(matrix, rows, cols, step, &outSize);
-
-    if (result) {
-        for (int i = 0; i < outSize; i++) {
-            printf("%d ", result[i]);
-        }
-        free(result);
-    }
-
-    freeMatrix(matrix, rows);
     return 0;
 }
 ```

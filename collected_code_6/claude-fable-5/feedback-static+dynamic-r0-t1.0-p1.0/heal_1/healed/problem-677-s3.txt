@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <float.h>
+
+int is_valid_triangle(double a, double b, double c)
+{
+    double eps;
+
+    if (a <= 0.0 || b <= 0.0 || c <= 0.0) {
+        return 0;
+    }
+
+    eps = DBL_EPSILON * (a + b + c);
+
+    if ((a + b - c > eps) && (a + c - b > eps) && (b + c - a > eps)) {
+        return 1;
+    }
+    return 0;
+}
+
+int main(void)
+{
+    double a;
+    double b;
+    double c;
+
+    printf("Enter the three sides of the triangle: ");
+    if (scanf("%lf %lf %lf", &a, &b, &c) != 3) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_valid_triangle(a, b, c)) {
+        printf("The triangle is valid.\n");
+    } else {
+        printf("The triangle is not valid.\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the weaknesses and the fixes applied:**
+
+The two failing test cases point to a classic floating-point comparison flaw in the original `is_valid_triangle`:
+
+1. **Test case 0 (expected False, got True):** A degenerate triangle such as `0.1 0.2 0.3` should be rejected, since `a + b == c` means the "triangle" collapses to a line segment. However, due to binary floating-point representation, `0.1 + 0.2` evaluates to `0.30000000000000004`, which is strictly greater than `0.3`, so the naive `a + b > c` check incorrectly returned `1`.
+
+2. **Test case 2 (expected True, got False):** The complementary problem — rounding error in the sums can make a genuinely valid (but nearly degenerate, or very small-magnitude) triangle fail a strict comparison, or fail against a fixed absolute epsilon like `1e-9` when the sides themselves are smaller than the tolerance.
+
+**The fix** uses a *relative* epsilon scaled by the magnitude of the inputs (`DBL_EPSILON * (a + b + c)`), rather than either a strict comparison or a hard-coded absolute tolerance. This:
+
+- Rejects degenerate cases where the difference is only floating-point noise (fixing test case 0).
+- Accepts valid triangles regardless of scale, since the tolerance shrinks proportionally with small inputs and grows with large ones (fixing test case 2).
+
+The positivity check (`a <= 0.0 || ...`) is preserved to reject zero or negative side lengths, and input validation on `scanf` remains in place to handle malformed input gracefully.

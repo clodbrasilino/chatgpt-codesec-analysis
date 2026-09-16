@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_oth_nth_bits_set(unsigned int num, unsigned int o, unsigned int n) {
+    return (num & (1 << o)) && (num & (1 << n));
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'array' can be declared as pointer to const [constParameterPointer]
+ */
+int count_numbers_with_oth_nth_bits_set(unsigned int *array, int size, unsigned int o, unsigned int n) {
+    int count = 0;
+    for (int i = 0; i < size; ++i) {
+        if (is_oth_nth_bits_set(array[i], o, n)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int main() {
+    unsigned int numbers[] = {7, 13, 25, 30, 5, 8};
+    int size = sizeof(numbers) / sizeof(numbers[0]);
+    unsigned int o = 0, n = 2;
+    
+    int result = count_numbers_with_oth_nth_bits_set(numbers, size, o, n);
+    printf("Count: %d\n", result);
+    
+    return 0;
+}

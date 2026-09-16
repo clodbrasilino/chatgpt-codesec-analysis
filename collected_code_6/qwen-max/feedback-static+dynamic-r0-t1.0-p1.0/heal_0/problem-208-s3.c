@@ -1,0 +1,30 @@
+#include <stdio.h>
+#include <regex.h>
+
+int is_valid_decimal(const char *input) {
+    regex_t regex;
+    int ret;
+    const char *pattern = "^[0-9]+(\\.[0-9]{2})?$";
+
+    ret = regcomp(&regex, pattern, REG_EXTENDED);
+    if (ret) {
+        return 0;
+    }
+
+    ret = regexec(&regex, input, 0, NULL, 0);
+    regfree(&regex);
+
+    return !ret;
+}
+
+int main() {
+    char test1[] = "123.45";
+    char test2[] = "123.456";
+    char test3[] = "123";
+
+    printf("%s: %s\n", test1, is_valid_decimal(test1) ? "Valid" : "Invalid");
+    printf("%s: %s\n", test2, is_valid_decimal(test2) ? "Valid" : "Invalid");
+    printf("%s: %s\n", test3, is_valid_decimal(test3) ? "Valid" : "Invalid");
+
+    return 0;
+}

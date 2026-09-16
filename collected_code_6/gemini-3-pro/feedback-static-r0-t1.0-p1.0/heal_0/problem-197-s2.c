@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+typedef struct {
+    double elements[2];
+} Tuple;
+
+Tuple tuple_exponentiation(const Tuple* base, const Tuple* exponent) {
+    Tuple result;
+    result.elements[0] = pow(base->elements[0], exponent->elements[0]);
+    result.elements[1] = pow(base->elements[1], exponent->elements[1]);
+    return result;
+}
+
+int main(void) {
+    Tuple base = {{2.0, 3.0}};
+    Tuple exponent = {{3.0, 2.0}};
+    Tuple result;
+
+    result = tuple_exponentiation(&base, &exponent);
+
+    printf("(%f, %f)\n", result.elements[0], result.elements[1]);
+
+    return 0;
+}

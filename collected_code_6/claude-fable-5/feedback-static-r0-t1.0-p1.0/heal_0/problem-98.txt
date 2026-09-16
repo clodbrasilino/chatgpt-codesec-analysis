@@ -1,0 +1,45 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double multiply_and_divide(const double *numbers, size_t length, int *error)
+{
+    double product = 1.0;
+    size_t i;
+
+    if (numbers == NULL || length == 0 || error == NULL) {
+        if (error != NULL) {
+            *error = 1;
+        }
+        return 0.0;
+    }
+
+    for (i = 0; i < length; i++) {
+        product *= numbers[i];
+    }
+
+    *error = 0;
+    return product / (double)length;
+}
+
+int main(void)
+{
+    double values[] = {2.0, 3.0, 4.0, 5.0};
+    size_t length = sizeof(values) / sizeof(values[0]);
+    int error = 0;
+    double result;
+
+    result = multiply_and_divide(values, length, &error);
+
+    if (error != 0) {
+        fprintf(stderr, "Error: invalid input to multiply_and_divide\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Result: %f\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+```

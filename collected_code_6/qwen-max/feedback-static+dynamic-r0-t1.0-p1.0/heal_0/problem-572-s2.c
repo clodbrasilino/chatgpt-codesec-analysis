@@ -1,79 +1,64 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct Node {
-    int value;
-    struct Node *next;
-} Node;
-
-Node* createNode(int value) {
-    Node *newNode = (Node*)malloc(sizeof(Node));
-    newNode->value = value;
-    newNode->next = NULL;
-    return newNode;
+int compare_ints(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
 }
 
-void insertAtEnd(Node **head, int value) {
-    Node *newNode = createNode(value);
-    if (*head == NULL) {
-        *head = newNode;
-    } else {
-        Node *temp = *head;
-        while (temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
-    }
-}
-
-void removeDuplicates(Node **head) {
-    Node *current = *head;
-    Node *prev = NULL;
-    while (current != NULL && current->next != NULL) {
-        if (current->value == current->next->value) {
-            Node *temp = current->next;
-            current->next = current->next->next;
-            free(temp);
-        } else {
-            prev = current;
-            current = current->next;
+int remove_two_duplicates(int *arr, int size, int target) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == target) {
+            count++;
+            if (count > 2) {
+                for (int j = i; j < size - 1; j++) {
+                    arr[j] = arr[j + 1];
+                }
+                size--;
+                i--;
+            }
         }
     }
-}
-
-void printList(Node *head) {
-    Node *temp = head;
-    while (temp != NULL) {
-        printf("%d -> ", temp->value);
-        temp = temp->next;
-    }
-    printf("NULL\n");
+    return size;
 }
 
 int main() {
-    Node *head1 = NULL;
-    insertAtEnd(&head1, 1);
-    insertAtEnd(&head1, 2);
-    insertAtEnd(&head1, 2);
-    insertAtEnd(&head1, 3);
-    insertAtEnd(&head1, 4);
-    insertAtEnd(&head1, 4);
-    insertAtEnd(&head1, 5);
+    int num_lists = 0;
+    printf("Enter the number of lists: ");
+    scanf("%d", &num_lists);
 
-    printf("Original List:\n");
-    printList(head1);
+    for (int i = 0; i < num_lists; i++) {
+        int n = 0;
+        printf("Enter the number of elements in list %d: ", i + 1);
+        scanf("%d", &n);
 
-    removeDuplicates(&head1);
+        int *list = (int *)malloc(n * sizeof(int));
+        if (list == NULL) {
+            fprintf(stderr, "Memory allocation failed\n");
+            exit(1);
+        }
 
-    printf("List after removing duplicates:\n");
-    printList(head1);
+        printf("Enter the elements of list %d: ", i + 1);
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &list[j]);
+        }
 
-    // Free the memory
-    Node *temp;
-    while (head1 != NULL) {
-        temp = head1;
-        head1 = head1->next;
-        free(temp);
+        qsort(list, n, sizeof(int), compare_ints);
+
+        int new_size = n;
+        for (int j = 0; j < n; j++) {
+            if (j == 0 || (j > 0 && list[j] != list[j - 1])) {
+                new_size = remove_two_duplicates(&list[j], n - j, list[j]);
+            }
+        }
+
+        printf("List after removing duplicates: ");
+        for (int j = 0; j < new_size; j++) {
+            printf("%d ", list[j]);
+        }
+        printf("\n");
+
+        free(list);
     }
 
     return 0;

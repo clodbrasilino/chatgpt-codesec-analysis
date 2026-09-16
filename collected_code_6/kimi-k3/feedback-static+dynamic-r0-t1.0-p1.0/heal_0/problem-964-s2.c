@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+#define MAX_WORD_LENGTH 1024
+
+bool is_length_even(const char *word)
+{
+    if (word == NULL)
+    {
+        return false;
+    }
+    return (strlen(word) % 2) == 0;
+}
+
+int main(void)
+{
+    char buffer[MAX_WORD_LENGTH];
+
+    printf("Enter a word: ");
+    
+    if (fgets(buffer, sizeof(buffer), stdin) == NULL)
+    {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+
+    size_t len = strlen(buffer);
+    if (len > 0 && buffer[len - 1] == '\n')
+    {
+        buffer[len - 1] = '\0';
+    }
+
+    if (is_length_even(buffer))
+    {
+        printf("The length of the word is even.\n");
+    }
+    else
+    {
+        printf("The length of the word is odd.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

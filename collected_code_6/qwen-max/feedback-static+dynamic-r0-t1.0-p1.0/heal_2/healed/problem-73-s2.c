@@ -1,98 +1,94 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <regex.h>
+#include <string.h>
 
-char** split_string(const char *input, const char *delimiters, int *count) {
+int split_string(const char *input, const char *delimiters, char ***result) {
     regex_t regex;
     regmatch_t match[1];
-    char *string = strdup(input);
-    int len = strlen(string), offset = 0, start = 0, match_count = 0;
-    char **result = NULL;
+    size_t nmatch = 1;
+    char *str;
+    char **parts = NULL;
+    int count = 0, part_idx = 0;
 
     if (regcomp(&regex, delimiters, REG_EXTENDED | REG_NEWLINE)) {
-        free(string);
-        return NULL;
+        return -1;
     }
 
-    while (regexec(&regex, string + offset, 1, match, 0) == 0) {
-        if (match[0].rm_so > 0 && (start + match[0].rm_so) > start) {
-            result = realloc(result, sizeof(char*) * (match_count + 1));
-            if (result == NULL) {
-                for (int i = 0; i < match_count; i++) {
-                    free(result[i]);
-                }
-                free(result);
-                free(string);
-                regfree(&regex);
-                return NULL;
-            }
-            result[match_count] = strndup(string + start, (start + match[0].rm_so) - start);
-            if (result[match_count] == NULL) {
-                for (int i = 0; i < match_count; i++) {
-                    free(result[i]);
-                }
-                free(result);
-                free(string);
-                regfree(&regex);
-                return NULL;
-            }
-            match_count++;
-        }
-        start += match[0].rm_eo;
-        offset += match[0].rm_eo;
+    str = strdup(input);
+    if (str == NULL) {
+        regfree(&regex);
+        return -1;
     }
 
-    if (len - start > 0) {
-        result = realloc(result, sizeof(char*) * (match_count + 1));
-        if (result == NULL) {
-            for (int i = 0; i < match_count; i++) {
-                free(result[i]);
-            }
-            free(result);
-            free(string);
+    while (1) {
+        int status = regexec(&regex, str, nmatch, match, 0);
+        if (status != 0) break;
+
+        char **new_parts = realloc(parts, (count + 2) * sizeof(char*));
+        if (new_parts == NULL) {
+            free(str);
             regfree(&regex);
-            return NULL;
+            free(parts);
+            return -1;
         }
-        result[match_count] = strndup(string + start, len - start);
-        if (result[match_count] == NULL) {
-            for (int i = 0; i < match_count; i++) {
-                free(result[i]);
-            }
-            free(result);
-            free(string);
-            regfree(&regex);
-            return NULL;
+        parts = new_parts;
+        
+        if (match[0].rm_so > 0) {
+            parts[part_idx] = strndup(str, match[0].rm_so);
+            part_idx++;
+            count++;
         }
-        match_count++;
+
+        str += match[0].rm_eo;
     }
 
-    *count = match_count;
-    free(string);
+    if (*str != '\0') {
+        char **new_parts = realloc(parts, (count + 1) * sizeof(char*));
+        if (new_parts == NULL) {
+            free(str);
+            regfree(&regex);
+            free(parts);
+            return -1;
+        }
+        parts = new_parts;
+        
+        parts[part_idx] = strdup(str);
+        part_idx++;
+        count++;
+    }
+
+    char **new_parts = realloc(parts, (count + 1) * sizeof(char*));
+    if (new_parts == NULL) {
+        free(str);
+        regfree(&regex);
+        free(parts);
+        return -1;
+    }
+    parts = new_parts;
+    
+    parts[count] = NULL;
+    *result = parts;
+
+    free(str);
     regfree(&regex);
-    return result;
-}
-
-void free_array(char **arr, int size) {
-    for (int i = 0; i < size; i++) {
-        free(arr[i]);
-    }
-    free(arr);
+    return count;
 }
 
 int main() {
-    const char *input = "Hello, world! This is a test. Yes, it is.";
-    const char *delimiters = "[,!. ]+";
-    int count = 0;
-    char **result = split_string(input, delimiters, &count);
+    const char *input = "This,is a test;split string:with multiple,delimiters";
+    const char *delimiters = ",|;|:|\\s+";
+    char **result = NULL;
+    int count = split_string(input, delimiters, &result);
 
-    if (result) {
-        for (int i = 0; i < count; i++) {
+    if (count >= 0) {
+        for (int i = 0; result[i] != NULL; i++) {
             printf("%s\n", result[i]);
+            free(result[i]);
         }
-        free_array(result, count);
+        free(result);
     } else {
-        printf("Failed to split the string.\n");
+        fprintf(stderr, "Split failed\n");
     }
 
     return 0;

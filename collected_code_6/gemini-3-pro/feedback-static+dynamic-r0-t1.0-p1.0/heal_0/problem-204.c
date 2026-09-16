@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+size_t count_char_occurrence(const char *str, char c);
+
+size_t count_char_occurrence(const char *str, char c) {
+    size_t count = 0;
+    
+    if (str == NULL) {
+        return 0;
+    }
+
+    while (*str != '\0') {
+        if (*str == c) {
+            count++;
+        }
+        str++;
+    }
+
+    return count;
+}
+
+int main(void) {
+    const char *test_str = "hello world";
+    char char_to_count = 'o';
+    
+    size_t occurrences = count_char_occurrence(test_str, char_to_count);
+    
+    printf("%zu\n", occurrences);
+
+    return 0;
+}

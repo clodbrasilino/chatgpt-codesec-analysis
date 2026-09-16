@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_TUPLE_SIZE 10
+
+bool check_tuple_size(const int *tuple, int k) {
+    for (int i = 0; i < k; i++) {
+        if (tuple[i] == 0) {
+            return false;
+        }
+    }
+    if (tuple[k] != 0) {
+        return false;
+    }
+    return true;
+}
+
+int main(void) {
+    const int tuple1[MAX_TUPLE_SIZE] = {1, 2, 3, 0, 0, 0, 0, 0, 0, 0};
+    const int tuple2[MAX_TUPLE_SIZE] = {4, 5, 6, 7, 0, 0, 0, 0, 0, 0};
+
+    int k1 = 3;
+    int k2 = 4;
+
+    bool result1 = check_tuple_size(tuple1, k1);
+    bool result2 = check_tuple_size(tuple2, k2);
+
+    printf("Tuple1 has %d elements: %s\n", k1, result1 ? "true" : "false");
+    printf("Tuple2 has %d elements: %s\n", k2, result2 ? "true" : "false");
+
+    return 0;
+}
+```

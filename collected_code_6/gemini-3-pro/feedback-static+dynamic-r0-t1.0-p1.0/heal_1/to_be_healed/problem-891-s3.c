@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+ /* Possible weaknesses found:
+  *  'LLONG_MIN' is defined in header '<limits.h>'; this is probably fixable by adding '#include <limits.h>'
+  */
+
+int count_digits(long long num) {
+    if (num == 0) return 1;
+    if (num < 0) {
+        /* Possible weaknesses found:
+         *  use of undeclared identifier 'LLONG_MIN'
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  'LLONG_MIN' undeclared (first use in this function)
+         */
+        if (num == LLONG_MIN) {
+            return 19;
+        }
+        num = -num;
+    }
+    return (int)log10(num) + 1;
+}
+
+int have_same_number_of_digits(long long num1, long long num2) {
+    return count_digits(num1) == count_digits(num2);
+}
+
+int main(void) {
+    long long a, b;
+    int result;
+
+    printf("Enter two numbers: ");
+    if (scanf("%lld %lld", &a, &b) != 2) {
+        fprintf(stderr, "Invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    result = have_same_number_of_digits(a, b);
+
+    if (result) {
+        printf("The numbers have the same number of digits.\n");
+    } else {
+        printf("The numbers do not have the same number of digits.\n");
+    }
+
+    return EXIT_SUCCESS;
+}

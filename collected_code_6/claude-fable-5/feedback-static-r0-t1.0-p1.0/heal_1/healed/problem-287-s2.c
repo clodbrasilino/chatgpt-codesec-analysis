@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+unsigned long long sum_of_squares_even(unsigned int n)
+{
+    unsigned long long sum = 0ULL;
+    unsigned long long i;
+
+    for (i = 1ULL; i <= (unsigned long long)n; i++) {
+        unsigned long long term = 2ULL * i;
+        term = term * term;
+        if (sum > ULLONG_MAX - term) {
+            fprintf(stderr, "Overflow detected during computation\n");
+            exit(EXIT_FAILURE);
+        }
+        sum += term;
+    }
+    return sum;
+}
+
+int main(void)
+{
+    unsigned int n;
+    int result;
+    unsigned long long answer;
+
+    printf("Enter the number of even natural numbers: ");
+    result = scanf("%u", &n);
+    if (result != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n > 1000000U) {
+        fprintf(stderr, "Input too large\n");
+        return EXIT_FAILURE;
+    }
+
+    answer = sum_of_squares_even(n);
+    printf("Sum of squares of first %u even natural numbers: %llu\n", n, answer);
+
+    return EXIT_SUCCESS;
+}

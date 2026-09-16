@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int ends_with_alphanumeric(const char *str)
+{
+    regex_t regex;
+    int compile_status;
+    int match_status;
+    int result;
+
+    if (str == NULL) {
+        return 0;
+    }
+
+    compile_status = regcomp(&regex, "[a-zA-Z0-9]$", REG_EXTENDED | REG_NOSUB);
+    if (compile_status != 0) {
+        char error_buffer[256];
+        regerror(compile_status, &regex, error_buffer, sizeof(error_buffer));
+        fprintf(stderr, "Regex compilation failed: %s\n", error_buffer);
+        return -1;
+    }
+
+    match_status = regexec(&regex, str, 0, NULL, 0);
+    if (match_status == 0) {
+        result = 1;
+    } else if (match_status == REG_NOMATCH) {
+        result = 0;
+    } else {
+        char error_buffer[256];
+        regerror(match_status, &regex, error_buffer, sizeof(error_buffer));
+        fprintf(stderr, "Regex execution failed: %s\n", error_buffer);
+        result = -1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "hello123",
+        "world!",
+        "test string9",
+        "ends with space ",
+        "valid",
+        ""
+    };
+    size_t count = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+
+    for (i = 0; i < count; i++) {
+        int result = ends_with_alphanumeric(test_strings[i]);
+        if (result == 1) {
+            printf("\"%s\" ends with an alphanumeric character.\n", test_strings[i]);
+        } else if (result == 0) {
+            printf("\"%s\" does not end with an alphanumeric character.\n", test_strings[i]);
+        } else {
+            fprintf(stderr, "Error checking string: \"%s\"\n", test_strings[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+bool check_odd_parity(unsigned int num)
+{
+    bool parity = false;
+    
+    while (num != 0U)
+    {
+        parity = !parity;
+        num &= (num - 1U);
+    }
+    
+    return parity;
+}
+
+int main(void)
+{
+    unsigned int test_values[] = {0U, 1U, 2U, 3U, 7U, 8U, 15U, 255U};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    size_t i;
+    
+    for (i = 0U; i < num_tests; i++)
+    {
+        printf("Number: %u, Odd Parity: %s\n", 
+               test_values[i], 
+               check_odd_parity(test_values[i]) ? "true" : "false");
+    }
+    
+    return 0;
+}

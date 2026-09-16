@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <limits.h>
+
+int is_woodall(unsigned long long x) {
+    if (x == 0) return 0;
+    unsigned long long n = 1;
+    unsigned long long pow2 = 2;
+    while (1) {
+        if (n > ULLONG_MAX / pow2) {
+            break;
+        }
+        unsigned long long val = n * pow2 - 1;
+        if (val == x) {
+            return 1;
+        }
+        if (val > x) {
+            return 0;
+        }
+        n++;
+        if (pow2 > ULLONG_MAX / 2) {
+            break;
+        }
+        pow2 *= 2;
+    }
+    return 0;
+}
+
+int main(void) {
+    unsigned long long num;
+    if (scanf("%llu", &num) == 1) {
+        if (is_woodall(num)) {
+            printf("Yes\n");
+        } else {
+            printf("No\n");
+        }
+    }
+    return 0;
+}

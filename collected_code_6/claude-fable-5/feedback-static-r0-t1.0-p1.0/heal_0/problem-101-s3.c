@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+bool find_kth_element(const int *arr, size_t size, size_t k, int *result)
+{
+    if (arr == NULL || result == NULL) {
+        return false;
+    }
+    if (k == 0 || k > size) {
+        return false;
+    }
+    *result = arr[k - 1];
+    return true;
+}
+
+int main(void)
+{
+    int arr[] = {12, 3, 5, 7, 19, 26, 8};
+    size_t size = sizeof(arr) / sizeof(arr[0]);
+    size_t k = 4;
+    int value = 0;
+
+    if (find_kth_element(arr, size, k, &value)) {
+        if (printf("The %zu-th element is: %d\n", k, value) < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (fprintf(stderr, "Error: invalid input or k out of range.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,108 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+char *remove_multiple_spaces(const char *input)
+{
+    char *result;
+    size_t input_len;
+    size_t pos = 0;
+    size_t i = 0;
+    int in_space = 0;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    input_len = strlen(input);
+    result = malloc(input_len + 1);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    while (i < input_len) {
+        if (isspace((unsigned char)input[i])) {
+            if (!in_space) {
+                result[pos++] = ' ';
+                in_space = 1;
+            }
+        } else {
+            result[pos++] = input[i];
+            in_space = 0;
+        }
+        i++;
+    }
+
+    result[pos] = '\0';
+    return result;
+}
+
+char *trim_whitespace(char *str)
+{
+    char *end;
+
+    if (str == NULL) {
+        return NULL;
+    }
+
+    while (isspace((unsigned char)*str)) {
+        str++;
+    }
+
+    if (*str == '\0') {
+        return str;
+    }
+
+    end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char)*end)) {
+        *end = '\0';
+        end--;
+    }
+
+    return str;
+}
+
+int main(void)
+{
+    const char *test_strings[] = {
+        "Google    Assistant",
+        "Quad   Core",
+        "ChromeCast    Built-in"
+    };
+    const char *expected[] = {
+        "Google Assistant",
+        "Quad Core",
+        "ChromeCast Built-in"
+    };
+    size_t num_tests = sizeof(test_strings) / sizeof(test_strings[0]);
+    size_t i;
+    int all_passed = 1;
+
+    for (i = 0; i < num_tests; i++) {
+        char *cleaned = remove_multiple_spaces(test_strings[i]);
+        char *trimmed;
+
+        if (cleaned == NULL) {
+            fprintf(stderr, "Error: failed to process string\n");
+            return EXIT_FAILURE;
+        }
+
+        trimmed = trim_whitespace(cleaned);
+
+        printf("Test %zu: ", i);
+        if (strcmp(trimmed, expected[i]) == 0) {
+            printf("PASSED\n");
+            printf("  Result: '%s'\n", trimmed);
+        } else {
+            printf("FAILED\n");
+            printf("  Expected: '%s'\n", expected[i]);
+            printf("  Got:      '%s'\n", trimmed);
+            all_passed = 0;
+        }
+
+        free(cleaned);
+    }
+
+    return all_passed ? EXIT_SUCCESS : EXIT_FAILURE;
+}

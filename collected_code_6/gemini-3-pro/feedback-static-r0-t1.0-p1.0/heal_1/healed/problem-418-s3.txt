@@ -1,0 +1,90 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+void push(struct Node** head_ref, int new_data) {
+    if (head_ref == NULL) return;
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) return;
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+}
+
+void freeList(struct Node* head) {
+    while (head != NULL) {
+        struct Node* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+void findMaxSublist(struct Node* head, struct Node** maxSublistHead, int* maxLength) {
+    if (head == NULL || maxSublistHead == NULL || maxLength == NULL) return;
+
+    struct Node* current = head;
+    struct Node* currentSublistHead = head;
+    int currentLength = 1;
+    *maxLength = 1;
+    *maxSublistHead = head;
+
+    while (current->next != NULL) {
+        if (current->next->data > current->data) {
+            currentLength++;
+        } else {
+            if (currentLength > *maxLength) {
+                *maxLength = currentLength;
+                *maxSublistHead = currentSublistHead;
+            }
+            currentSublistHead = current->next;
+            currentLength = 1;
+        }
+        current = current->next;
+    }
+
+    if (currentLength > *maxLength) {
+        *maxLength = currentLength;
+        *maxSublistHead = currentSublistHead;
+    }
+}
+
+void printList(struct Node* head, int length) {
+    while (head != NULL && length > 0) {
+        printf("%d ", head->data);
+        head = head->next;
+        length--;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    struct Node* head = NULL;
+
+    push(&head, 5);
+    push(&head, 4);
+    push(&head, 3);
+    push(&head, 10);
+    push(&head, 8);
+    push(&head, 6);
+    push(&head, 4);
+
+    struct Node* maxSublistHead = NULL;
+    int maxLength = 0;
+
+    findMaxSublist(head, &maxSublistHead, &maxLength);
+
+    if (maxSublistHead != NULL) {
+        printList(maxSublistHead, maxLength);
+    }
+
+    freeList(head);
+
+    return 0;
+}
+```

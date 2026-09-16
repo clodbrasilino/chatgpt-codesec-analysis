@@ -1,0 +1,44 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *items;
+    size_t count;
+} List;
+
+size_t count_and_square(List **lists) {
+    if (lists == NULL) {
+        return 0;
+    }
+    size_t count = 0;
+    while (lists[count] != NULL) {
+        count++;
+    }
+    return count * count;
+}
+
+int main(void) {
+    List list1 = { .items = NULL, .count = 0 };
+    List list2 = { .items = NULL, .count = 0 };
+    List list3 = { .items = NULL, .count = 0 };
+
+    List **lists = malloc(4 * sizeof(List *));
+    if (lists == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    lists[0] = &list1;
+    lists[1] = &list2;
+    lists[2] = &list3;
+    lists[3] = NULL;
+
+    size_t result = count_and_square(lists);
+    printf("%zu\n", result);
+
+    free(lists);
+    lists = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

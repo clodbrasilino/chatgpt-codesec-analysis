@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-922-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-922-s3.c:46:11: style: Condition 'n<2' is always false [knownConditionTrueFalse]
+    if (n < 2) {
+          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-922-s3.c:42:28: note: Assignment 'n=sizeof(arr)/sizeof(arr[0])', assigned value is 5
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/gemini-3-pro/feedback-static-r0-t1.0-p1.0/heal_0/problem-922-s3.c:46:11: note: Condition 'n<2' is always false
+    if (n < 2) {
+          ^

@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_ll(long long a, long long b)
+{
+    return (a > b) ? a : b;
+}
+
+long long max_sum_no_three_consecutive(const int *arr, size_t n)
+{
+    long long *dp;
+    size_t i;
+    long long result;
+
+    if (arr == NULL || n == 0U) {
+        return 0LL;
+    }
+
+    dp = (long long *)malloc(n * sizeof(long long));
+    if (dp == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    dp[0] = arr[0];
+    if (n >= 2U) {
+        dp[1] = (long long)arr[0] + (long long)arr[1];
+    }
+    if (n >= 3U) {
+        dp[2] = max_ll(dp[1],
+                max_ll((long long)arr[0] + (long long)arr[2],
+                       (long long)arr[1] + (long long)arr[2]));
+    }
+
+    for (i = 3U; i < n; i++) {
+        dp[i] = max_ll(dp[i - 1U],
+                max_ll(dp[i - 2U] + (long long)arr[i],
+                       dp[i - 3U] + (long long)arr[i - 1U] + (long long)arr[i]));
+    }
+
+    result = dp[n - 1U];
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    int arr[] = {100, 1000, 100, 1000, 1};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long result;
+
+    result = max_sum_no_three_consecutive(arr, n);
+    if (printf("Maximum sum with no three consecutive elements: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

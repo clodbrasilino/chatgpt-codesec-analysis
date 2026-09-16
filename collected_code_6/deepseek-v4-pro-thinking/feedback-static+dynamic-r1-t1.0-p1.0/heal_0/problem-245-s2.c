@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long maxSumBitonic(int arr[], int n) {
+    if (n <= 0) {
+        return 0;
+    }
+
+    long long *inc = malloc((size_t)n * sizeof(*inc));
+    long long *dec = malloc((size_t)n * sizeof(*dec));
+
+    if (inc == NULL || dec == NULL) {
+        free(inc);
+        free(dec);
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < n; i++) {
+        inc[i] = arr[i];
+        for (int j = 0; j < i; j++) {
+            if (arr[j] < arr[i] && inc[j] + arr[i] > inc[i]) {
+                inc[i] = inc[j] + arr[i];
+            }
+        }
+    }
+
+    for (int i = n - 1; i >= 0; i--) {
+        dec[i] = arr[i];
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[i] && dec[j] + arr[i] > dec[i]) {
+                dec[i] = dec[j] + arr[i];
+            }
+        }
+    }
+
+    long long max = inc[0] + dec[0] - arr[0];
+
+    for (int i = 1; i < n; i++) {
+        long long sum = inc[i] + dec[i] - arr[i];
+        if (sum > max) {
+            max = sum;
+        }
+    }
+
+    free(inc);
+    free(dec);
+
+    return max;
+}
+
+int main(void) {
+    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("%lld\n", maxSumBitonic(arr, n));
+
+    return 0;
+}

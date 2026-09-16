@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct {
+    int value;
+    int arr_idx;
+    int elem_idx;
+} Node;
+
+void swap(Node *a, Node *b) {
+    Node temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void min_heapify(Node *heap, int i, int heap_size) {
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+    if (left < heap_size && heap[left].value < heap[smallest].value) smallest = left;
+    if (right < heap_size && heap[right].value < heap[smallest].value) smallest = right;
+    if (smallest != i) {
+        swap(&heap[i], &heap[smallest]);
+        min_heapify(heap, smallest, heap_size);
+    }
+}
+
+void build_min_heap(Node *heap, int heap_size) {
+    for (int i = (heap_size - 1) / 2; i >= 0; i--) {
+        min_heapify(heap, i, heap_size);
+    }
+}
+
+void find_smallest_range(int **arrs, int *sizes, int k, int *range_start, int *range_end) {
+    if (k <= 0) {
+        *range_start = 0;
+        *range_end = -1;
+        return;
+    }
+    Node *heap = (Node *)malloc(k * sizeof(Node));
+    if (!heap) {
+        *range_start = 0;
+        *range_end = -1;
+        return;
+    }
+    int max_val = INT_MIN;
+    for (int i = 0; i < k; i++) {
+        if (sizes[i] <= 0) {
+            free(heap);
+            *range_start = 0;
+            *range_end = -1;
+            return;
+        }
+        heap[i].value = arrs[i][0];
+        heap[i].arr_idx = i;
+        heap[i].elem_idx = 0;
+        if (arrs[i][0] > max_val) max_val = arrs[i][0];
+    }
+    build_min_heap(heap, k);
+    *range_start = heap[0].value;
+    *range_end = max_val;
+    int min_range = max_val - heap[0].value;
+    while (1) {
+        Node root = heap[0];
+        if (root.elem_idx + 1 < sizes[root.arr_idx]) {
+            int next_val = arrs[root.arr_idx][root.elem_idx + 1];
+            heap[0].value = next_val;
+            heap[0].elem_idx = root.elem_idx + 1;
+            if (next_val > max_val) max_val = next_val;
+        } else {
+            break;
+        }
+        min_heapify(heap, 0, k);
+        int current_range = max_val - heap[0].value;
+        if (current_range < min_range) {
+            min_range = current_range;
+            *range_start = heap[0].value;
+            *range_end = max_val;
+        }
+    }
+    free(heap);
+}
+
+int main() {
+    int k = 3;
+    int sizes[] = {3, 3, 3};
+    int arr0[] = {4, 7, 9};
+    int arr1[] = {1, 2, 3};
+    int arr2[] = {5, 6, 8};
+    int *arrs[] = {arr0, arr1, arr2};
+    int range_start, range_end;
+    find_smallest_range(arrs, sizes, k, &range_start, &range_end);
+    printf("[%d, %d]\n", range_start, range_end);
+    return 0;
+}
+```

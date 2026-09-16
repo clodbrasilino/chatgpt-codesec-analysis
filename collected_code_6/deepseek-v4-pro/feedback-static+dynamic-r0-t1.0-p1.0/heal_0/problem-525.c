@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double x;
+    double y;
+} Point;
+
+typedef struct {
+    Point p1;
+    Point p2;
+} Line;
+
+int is_parallel(Line line1, Line line2) {
+    double dx1 = line1.p2.x - line1.p1.x;
+    double dy1 = line1.p2.y - line1.p1.y;
+    double dx2 = line2.p2.x - line2.p1.x;
+    double dy2 = line2.p2.y - line2.p1.y;
+    
+    double cross_product = dx1 * dy2 - dy1 * dx2;
+    
+    if (fabs(cross_product) < 1e-10) {
+        return 1;
+    }
+    
+    return 0;
+}
+
+int main(void) {
+    Line line1 = {{0.0, 0.0}, {1.0, 1.0}};
+    Line line2 = {{5.0, 5.0}, {3.0, 3.0}};
+    Line line3 = {{0.0, 0.0}, {1.0, 0.0}};
+    
+    if (is_parallel(line1, line2)) {
+        printf("Lines 1 and 2 are parallel\n");
+    } else {
+        printf("Lines 1 and 2 are not parallel\n");
+    }
+    
+    if (is_parallel(line1, line3)) {
+        printf("Lines 1 and 3 are parallel\n");
+    } else {
+        printf("Lines 1 and 3 are not parallel\n");
+    }
+    
+    return 0;
+}

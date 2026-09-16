@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <math.h>
+
+int first_digit_factorial(int n) {
+    if (n < 0) {
+        return -1;
+    }
+    
+    if (n == 0 || n == 1) {
+        return 1;
+    }
+    
+    double log_sum = 0.0;
+    for (int i = 2; i <= n; i++) {
+        log_sum += log10((double)i);
+    }
+    
+    double fractional_part = log_sum - floor(log_sum);
+    int first_digit = (int)pow(10.0, fractional_part);
+    
+    return first_digit;
+}
+
+int main(void) {
+    int num;
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    int result = first_digit_factorial(num);
+    if (result == -1) {
+        printf("Factorial is not defined for negative numbers\n");
+    } else {
+        printf("First digit of %d! is: %d\n", num, result);
+    }
+    
+    return 0;
+}

@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_coin_change(const int coins[], int num_coins, int amount) {
+    if (amount < 0 || num_coins <= 0) {
+        return 0;
+    }
+
+    int *dp = (int *)calloc(amount + 1, sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    dp[0] = 1;
+
+    for (int i = 0; i < num_coins; i++) {
+        if (coins[i] <= 0) {
+            free(dp);
+            return -1;
+        }
+        for (int j = coins[i]; j <= amount; j++) {
+            dp[j] += dp[j - coins[i]];
+        }
+    }
+
+    int result = dp[amount];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int coins[] = {1, 2, 5};
+    int num_coins = sizeof(coins) / sizeof(coins[0]);
+    int amount = 11;
+
+    int result = count_coin_change(coins, num_coins, amount);
+    if (result < 0) {
+        printf("Error occurred\n");
+        return 1;
+    }
+
+    printf("Number of ways to make %d: %d\n", amount, result);
+    return 0;
+}
+```

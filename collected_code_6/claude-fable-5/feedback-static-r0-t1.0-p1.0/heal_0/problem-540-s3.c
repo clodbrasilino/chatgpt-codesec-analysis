@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int find_frequency_difference(const int *arr, size_t n, int *result)
+{
+    size_t i;
+    size_t j;
+    size_t max_freq;
+    size_t min_freq;
+    size_t count;
+    int *visited;
+
+    if (arr == NULL || result == NULL || n == 0U) {
+        return -1;
+    }
+
+    visited = calloc(n, sizeof(int));
+    if (visited == NULL) {
+        return -1;
+    }
+
+    max_freq = 0U;
+    min_freq = n + 1U;
+
+    for (i = 0U; i < n; i++) {
+        if (visited[i] != 0) {
+            continue;
+        }
+        count = 1U;
+        for (j = i + 1U; j < n; j++) {
+            if (arr[j] == arr[i]) {
+                visited[j] = 1;
+                count++;
+            }
+        }
+        if (count > max_freq) {
+            max_freq = count;
+        }
+        if (count < min_freq) {
+            min_freq = count;
+        }
+    }
+
+    free(visited);
+
+    *result = (int)(max_freq - min_freq);
+    return 0;
+}
+
+int main(void)
+{
+    int arr[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    int diff;
+
+    if (find_frequency_difference(arr, n, &diff) != 0) {
+        (void)fprintf(stderr, "Error computing frequency difference\n");
+        return EXIT_FAILURE;
+    }
+
+    if (printf("Difference between highest and least frequencies: %d\n", diff) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

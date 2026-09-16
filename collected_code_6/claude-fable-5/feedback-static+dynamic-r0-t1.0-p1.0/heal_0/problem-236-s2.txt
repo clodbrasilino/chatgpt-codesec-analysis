@@ -1,0 +1,64 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+long long countTriangles(int n);
+
+long long countTriangles(int n)
+{
+    long long size;
+    long long result;
+
+    if (n < 0)
+    {
+        return -1;
+    }
+
+    size = (long long)n;
+    result = (size * (size + 2LL) * (2LL * size + 1LL)) / 8LL;
+
+    return result;
+}
+
+int main(void)
+{
+    int n;
+    int scanResult;
+    long long total;
+
+    printf("Enter the side length of the equilateral triangle: ");
+
+    scanResult = scanf("%d", &n);
+    if (scanResult != 1)
+    {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 0 || n > 100000)
+    {
+        fprintf(stderr, "Error: side length must be between 0 and 100000.\n");
+        return EXIT_FAILURE;
+    }
+
+    total = countTriangles(n);
+    if (total < 0)
+    {
+        fprintf(stderr, "Error: computation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Maximum number of equilateral triangles: %lld\n", total);
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution uses the closed-form formula `floor(n * (n + 2) * (2n + 1) / 8)`, which counts all upward-pointing and downward-pointing equilateral triangles of every size within a triangular grid of side length `n`.
+
+Key safety measures taken:
+
+- **CWE-703 (Improper Check or Handling of Exceptional Conditions):** The return value of `scanf` is checked before using `n`, and the function's return value is validated before printing.
+- **CWE-664 (Improper Control of a Resource Through its Lifetime):** No dynamic memory or file handles are used, so no resource can leak or be misused across its lifetime; all variables are stack-allocated with well-defined scope.
+- **CWE-710 (Improper Adherence to Coding Standards):** Input is bounds-checked (`0` to `100000`) so the `long long` arithmetic cannot overflow, `main` uses the standard `int main(void)` signature, `EXIT_SUCCESS`/`EXIT_FAILURE` are used for portable exit codes, and errors are reported to `stderr`.

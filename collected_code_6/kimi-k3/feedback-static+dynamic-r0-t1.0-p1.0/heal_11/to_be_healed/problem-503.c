@@ -1,0 +1,84 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 1 failed: expected [9, 13, 17, 15, 16], got <no output>
+  *  test case 0 failed: expected [2, 4, 7, 8, 9, 11, 13], got <no output>
+  *  test case 2 failed: expected [3, 5, 7, 9, 11, 13, 15, 17, 19], got <no output>
+  */
+
+long long *add_consecutive(const int *list, size_t size, size_t *result_size)
+{
+    long long *result;
+    size_t i;
+
+    if (list == NULL || result_size == NULL || size < 2) {
+        if (result_size != NULL) {
+            *result_size = 0;
+        }
+        return NULL;
+    }
+
+    result = malloc((size - 1) * sizeof(*result));
+    if (result == NULL) {
+        *result_size = 0;
+        return NULL;
+    }
+
+    for (i = 0; i < size - 1; i++) {
+        result[i] = (long long)list[i] + list[i + 1];
+    }
+
+    *result_size = size - 1;
+    return result;
+}
+
+int main(void)
+{
+    int test0[] = {1, 1, 3, 1, 1, 2, 2};
+    int test1[] = {4, 5, 8, -2, 1};
+    int test2[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    size_t result_size;
+    size_t i;
+    long long *result;
+
+    result = add_consecutive(test0, sizeof(test0) / sizeof(test0[0]), &result_size);
+    if (result != NULL) {
+        printf("[");
+        for (i = 0; i < result_size; i++) {
+            printf("%lld", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+
+    result = add_consecutive(test1, sizeof(test1) / sizeof(test1[0]), &result_size);
+    if (result != NULL) {
+        printf("[");
+        for (i = 0; i < result_size; i++) {
+            printf("%lld", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+
+    result = add_consecutive(test2, sizeof(test2) / sizeof(test2[0]), &result_size);
+    if (result != NULL) {
+        printf("[");
+        for (i = 0; i < result_size; i++) {
+            printf("%lld", result[i]);
+            if (i < result_size - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+        free(result);
+    }
+
+    return EXIT_SUCCESS;
+}

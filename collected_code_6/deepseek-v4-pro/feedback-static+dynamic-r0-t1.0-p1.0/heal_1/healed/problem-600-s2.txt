@@ -1,0 +1,25 @@
+```c
+#include <stdio.h>
+
+int is_even(int number) {
+    return (number % 2) == 0;
+}
+
+int main(void) {
+    int num;
+    
+    printf("Enter a number: ");
+    if (scanf("%d", &num) != 1) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    if (is_even(num)) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+    
+    return 0;
+}
+```

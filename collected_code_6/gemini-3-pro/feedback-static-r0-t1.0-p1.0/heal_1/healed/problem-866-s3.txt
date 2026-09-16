@@ -1,0 +1,51 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int has_31_days(const char *month) {
+    if (month == NULL) {
+        return 0; 
+    }
+
+    char lower_month[20];
+    int i = 0;
+    
+    while (i < 19 && month[i] != '\0') {
+        lower_month[i] = tolower((unsigned char)month[i]);
+        i++;
+    }
+    lower_month[i] = '\0';
+
+    if (strcmp(lower_month, "january") == 0 || strcmp(lower_month, "jan") == 0 ||
+        strcmp(lower_month, "march") == 0 || strcmp(lower_month, "mar") == 0 ||
+        strcmp(lower_month, "may") == 0 ||
+        strcmp(lower_month, "july") == 0 || strcmp(lower_month, "jul") == 0 ||
+        strcmp(lower_month, "august") == 0 || strcmp(lower_month, "aug") == 0 ||
+        strcmp(lower_month, "october") == 0 || strcmp(lower_month, "oct") == 0 ||
+        strcmp(lower_month, "december") == 0 || strcmp(lower_month, "dec") == 0) {
+        return 1;
+    }
+
+    return 0;
+}
+
+int main(void) {
+    char input[20];
+    
+    if (fgets(input, sizeof(input), stdin) != NULL) {
+        size_t len = strlen(input);
+        if (len > 0 && input[len - 1] == '\n') {
+            input[len - 1] = '\0';
+        }
+
+        if (has_31_days(input)) {
+            printf("1\n");
+        } else {
+            printf("0\n");
+        }
+    }
+
+    return 0;
+}
+```

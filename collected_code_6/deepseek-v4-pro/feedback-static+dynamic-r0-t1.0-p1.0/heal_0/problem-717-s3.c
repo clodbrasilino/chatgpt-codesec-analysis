@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+double calculate_mean(const double *data, size_t n) {
+    double sum = 0.0;
+    for (size_t i = 0; i < n; ++i) {
+        sum += data[i];
+    }
+    return sum / (double)n;
+}
+
+double calculate_standard_deviation(const double *data, size_t n) {
+    if (data == NULL || n < 2) {
+        return 0.0;
+    }
+    double mean = calculate_mean(data, n);
+    double sum_sq_diff = 0.0;
+    for (size_t i = 0; i < n; ++i) {
+        double diff = data[i] - mean;
+        sum_sq_diff += diff * diff;
+    }
+    return sqrt(sum_sq_diff / (double)(n - 1));
+}
+
+int main(void) {
+    size_t n = 0;
+    if (scanf("%zu", &n) != 1 || n < 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+    
+    double *data = (double *)malloc(n * sizeof(double));
+    if (data == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+    
+    for (size_t i = 0; i < n; ++i) {
+        if (scanf("%lf", &data[i]) != 1) {
+            fprintf(stderr, "Invalid input\n");
+            free(data);
+            return 1;
+        }
+    }
+    
+    double std_dev = calculate_standard_deviation(data, n);
+    printf("%.6f\n", std_dev);
+    
+    free(data);
+    return 0;
+}

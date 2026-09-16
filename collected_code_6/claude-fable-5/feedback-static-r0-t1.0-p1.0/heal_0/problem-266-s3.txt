@@ -1,0 +1,41 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double lateral_surface_area(double side)
+{
+    return 4.0 * side * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+    int result = 0;
+
+    printf("Enter the side length of the cube: ");
+    result = scanf("%lf", &side);
+
+    if (result != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (side < 0.0) {
+        fprintf(stderr, "Error: side length cannot be negative.\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Lateral surface area of the cube: %.2f\n", lateral_surface_area(side));
+
+    return EXIT_SUCCESS;
+}
+```
+
+This solution:
+
+- **Validates input** by checking the return value of `scanf` (addresses CWE-703, ensuring exceptional conditions like malformed input are handled).
+- **Rejects negative side lengths**, since a cube cannot have a negative dimension.
+- **Uses `EXIT_SUCCESS`/`EXIT_FAILURE`** and `int main(void)` per the C standard (addresses CWE-710).
+- **Avoids resource lifetime issues** (CWE-664) by not using dynamic allocation or file handles—all variables are stack-based and properly initialized before use.
+
+The formula used is the standard lateral surface area of a cube: **4 × side²** (the four side faces, excluding top and bottom).

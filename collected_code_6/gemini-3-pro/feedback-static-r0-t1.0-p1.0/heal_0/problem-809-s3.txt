@@ -1,0 +1,34 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool check_elements_smaller(const int *first_tuple, size_t first_size, const int *second_tuple, size_t second_size) {
+    if (first_tuple == NULL || second_tuple == NULL || first_size != second_size) {
+        return false;
+    }
+
+    for (size_t i = 0; i < second_size; ++i) {
+        if (second_tuple[i] >= first_tuple[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void) {
+    int first_tuple[] = {5, 8, 12, 20};
+    int second_tuple[] = {3, 7, 10, 15};
+    size_t size = sizeof(first_tuple) / sizeof(first_tuple[0]);
+
+    bool result = check_elements_smaller(first_tuple, size, second_tuple, size);
+
+    if (result) {
+        printf("All elements are smaller.\n");
+    } else {
+        printf("Not all elements are smaller.\n");
+    }
+
+    return 0;
+}
+```

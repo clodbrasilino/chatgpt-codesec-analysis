@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <math.h>
+
+struct Point {
+    double x;
+    double y;
+};
+
+double calculateDistance(struct Point p1, struct Point p2) {
+    return sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y));
+}
+
+int isValidTriangle(struct Point p1, struct Point p2, struct Point p3) {
+    double a = calculateDistance(p1, p2);
+    double b = calculateDistance(p2, p3);
+    double c = calculateDistance(p3, p1);
+
+    if (a + b > c && a + c > b && b + c > a) {
+        return 1;
+    }
+    return 0;
+}
+
+int main() {
+    struct Point p1, p2, p3;
+
+    if (scanf("%lf %lf", &p1.x, &p1.y) != 2) {
+        return 1;
+    }
+    if (scanf("%lf %lf", &p2.x, &p2.y) != 2) {
+        return 1;
+    }
+    if (scanf("%lf %lf", &p3.x, &p3.y) != 2) {
+        return 1;
+    }
+
+    if (isValidTriangle(p1, p2, p3)) {
+        printf("Valid Triangle\n");
+    } else {
+        printf("Invalid Triangle\n");
+    }
+
+    return 0;
+}

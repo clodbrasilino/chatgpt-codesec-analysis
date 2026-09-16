@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
+typedef struct {
+    int *elements;
+    size_t size;
+} Tuple;
+
+Tuple create_tuple(const int *arr, size_t size) {
+    Tuple t;
+    t.size = size;
+    t.elements = (int *)malloc(size * sizeof(int));
+    if (t.elements == NULL) {
+        t.size = 0;
+        return t;
+    }
+    for (size_t i = 0; i < size; ++i) {
+        t.elements[i] = arr[i];
+    }
+    return t;
+}
+
+void free_tuple(Tuple *t) {
+    if (t == NULL) return;
+    free(t->elements);
+    t->elements = NULL;
+    t->size = 0;
+}
+
+bool is_element_in_tuple(int element, const Tuple *t) {
+    if (t == NULL || t->elements == NULL) return false;
+    for (size_t i = 0; i < t->size; ++i) {
+        if (t->elements[i] == element) return true;
+    }
+    return false;
+}
+
+bool is_subset(const Tuple *subset, const Tuple *superset) {
+    if (subset == NULL || superset == NULL) return false;
+    if (subset->elements == NULL || superset->elements == NULL) return false;
+    if (subset->size > superset->size) return false;
+    
+    for (size_t i = 0; i < subset->size; ++i) {
+        if (!is_element_in_tuple(subset->elements[i], superset)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main(void) {
+    const int arr1[] = {1, 2, 3};
+    const int arr2[] = {1, 2, 3, 4, 5};
+    const int arr3[] = {1, 2, 7};
+    
+    Tuple t1 = create_tuple(arr1, 3);
+    Tuple t2 = create_tuple(arr2, 5);
+    Tuple t3 = create_tuple(arr3, 3);
+    
+    if (t1.elements == NULL || t2.elements == NULL || t3.elements == NULL) {
+        free_tuple(&t1);
+        free_tuple(&t2);
+        free_tuple(&t3);
+        return 1;
+    }
+    
+    printf("t1 is subset of t2: %s\n", is_subset(&t1, &t2) ? "true" : "false");
+    printf("t1 is subset of t3: %s\n", is_subset(&t1, &t3) ? "true" : "false");
+    printf("t3 is subset of t2: %s\n", is_subset(&t3, &t2) ? "true" : "false");
+    printf("t2 is subset of t1: %s\n", is_subset(&t2, &t1) ? "true" : "false");
+    
+    free_tuple(&t1);
+    free_tuple(&t2);
+    free_tuple(&t3);
+    
+    return 0;
+}

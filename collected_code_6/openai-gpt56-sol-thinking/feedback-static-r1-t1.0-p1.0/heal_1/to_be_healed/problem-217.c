@@ -1,0 +1,41 @@
+#include <stdbool.h>
+#include <stdio.h>
+
+bool find_first_repeated_character(const char *string, unsigned char *result)
+{
+    if (string == NULL || result == NULL) {
+        return false;
+    }
+
+    for (const char *current = string; *current != '\0'; ++current) {
+        for (const char *previous = string; previous < current; ++previous) {
+            if (*previous == *current) {
+                *result = (unsigned char)*current;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[])
+{
+    unsigned char repeated_character;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <string>\n", argv[0]);
+        return 1;
+    }
+
+    if (find_first_repeated_character(argv[1], &repeated_character)) {
+        printf("%c\n", repeated_character);
+    } else {
+        printf("No repeated character found\n");
+    }
+
+    return 0;
+}

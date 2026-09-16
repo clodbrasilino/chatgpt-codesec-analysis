@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+long long sum_odd_factors(long long n);
+
+long long sum_odd_factors(long long n)
+{
+    if (n <= 0) {
+        return 0;
+    }
+
+    while (n % 2 == 0) {
+        n /= 2;
+    }
+
+    long long result = 1;
+
+    for (long long i = 3; i * i <= n; i += 2) {
+        if (n % i == 0) {
+            long long term = 1;
+            long long power = 1;
+            while (n % i == 0) {
+                n /= i;
+                power *= i;
+                term += power;
+            }
+            result *= term;
+        }
+    }
+
+    if (n > 1) {
+        result *= (1 + n);
+    }
+
+    return result;
+}
+
+int main(void)
+{
+    long long number = 0;
+
+    printf("Enter a positive integer: ");
+
+    if (scanf("%lld", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (number <= 0) {
+        fprintf(stderr, "Error: number must be positive.\n");
+        return EXIT_FAILURE;
+    }
+
+    long long sum = sum_odd_factors(number);
+
+    printf("Sum of odd factors of %lld is %lld\n", number, sum);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**How it works:**
+
+1. **`sum_odd_factors`**: Strips out all factors of 2 first (since we only want odd divisors), then uses the divisor-sum formula based on prime factorization. For each odd prime factor `p` with multiplicity `k`, it multiplies the result by `(1 + p + p² + ... + pᵏ)`. This runs in O(√n) time rather than the naive O(n) trial of every divisor.
+
+2. **Safety measures addressing the listed CWEs**:
+   - **CWE-703**: The return value of `scanf` is checked, and the input is validated to be positive before use; errors go to `stderr` with a failure exit code.
+   - **CWE-664**: No dynamic resources (memory, files) are allocated, so there is nothing to leak or misuse; only `stdin`/`stdout`/`stderr` managed by the runtime are used.
+   - **CWE-710**: The code uses `int main(void)`, standard exit macros (`EXIT_SUCCESS`/`EXIT_FAILURE`), full function prototypes, braces on all control blocks, and `long long` with matching `%lld` format specifiers to avoid undefined behavior from mismatched types.
+
+**Example run:**
+```
+Enter a positive integer: 30
+Sum of odd factors of 30 is 24
+```
+(Odd factors of 30 are 1, 3, 5, 15 → sum = 24.)

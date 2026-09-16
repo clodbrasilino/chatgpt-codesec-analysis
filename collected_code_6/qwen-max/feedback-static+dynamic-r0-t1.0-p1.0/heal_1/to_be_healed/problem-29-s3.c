@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int findOdd(int arr[], int n) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'count' can be reduced. [variableScope]
+     */
+    int i, j, count;
+    for (i = 0; i < n; i++) {
+        count = 0;
+        for (j = 0; j < n; j++) {
+            if (arr[i] == arr[j]) {
+                count++;
+            }
+        }
+        if (count % 2 != 0) {
+            return arr[i];
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int arr[] = {2, 3, 5, 4, 5, 2, 4, 3, 5, 2, 4, 4, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int result = findOdd(arr, n);
+    if (result != -1) {
+        printf("The element with odd occurrences is: %d\n", result);
+    } else {
+        printf("No element with odd occurrences found.\n");
+    }
+    return 0;
+}

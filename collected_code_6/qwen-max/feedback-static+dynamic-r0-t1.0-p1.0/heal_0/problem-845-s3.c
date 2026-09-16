@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+int countDigitsInFactorial(int n) {
+    if (n < 0) return 0;
+    if (n <= 1) return 1;
+    double digits = 0.0;
+    for (int i = 2; i <= n; i++) {
+        digits += log10(i);
+    }
+    return (int)floor(digits) + 1;
+}
+
+int main() {
+    int n;
+    printf("Enter a number: ");
+    if (scanf("%d", &n) != 1) {
+        return 1;
+    }
+    int result = countDigitsInFactorial(n);
+    printf("Number of digits in %d! is: %d\n", n, result);
+    return 0;
+}

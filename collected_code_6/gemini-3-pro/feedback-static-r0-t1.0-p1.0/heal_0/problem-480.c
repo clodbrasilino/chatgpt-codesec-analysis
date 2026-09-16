@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <string.h>
+
+char findMaxOccurringChar(const char *str) {
+    if (str == NULL || *str == '\0') {
+        return '\0';
+    }
+
+    int count[256] = {0};
+    int maxCount = 0;
+    char maxChar = '\0';
+
+    for (int i = 0; str[i] != '\0'; i++) {
+        count[(unsigned char)str[i]]++;
+    }
+
+    for (int i = 0; i < 256; i++) {
+        if (count[i] > maxCount) {
+            maxCount = count[i];
+            maxChar = (char)i;
+        }
+    }
+
+    return maxChar;
+}
+
+int main(void) {
+    const char *testString = "sample string for testing";
+    char result = findMaxOccurringChar(testString);
+
+    if (result != '\0') {
+        printf("Maximum occurring character: '%c'\n", result);
+    } else {
+        printf("Invalid input or empty string.\n");
+    }
+
+    return 0;
+}

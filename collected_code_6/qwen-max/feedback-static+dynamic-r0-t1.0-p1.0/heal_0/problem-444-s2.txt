@@ -4,69 +4,44 @@
 #include <string.h>
 
 typedef struct {
-    int* data;
-    size_t size;
+    int first;
+    int second;
 } Tuple;
 
-Tuple* create_tuple(int* elements, size_t size) {
-    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
-    if (!tuple) return NULL;
-    tuple->data = (int*)malloc(size * sizeof(int));
-    if (!tuple->data) {
-        free(tuple);
+Tuple* trim_tuples(Tuple* tuples, int n, int k) {
+    if (n <= 0 || k < 0) {
         return NULL;
     }
-    memcpy(tuple->data, elements, size * sizeof(int));
-    tuple->size = size;
-    return tuple;
-}
-
-void free_tuple(Tuple* tuple) {
-    if (tuple) {
-        free(tuple->data);
-        free(tuple);
-    }
-}
-
-Tuple* trim_tuple_by_k(Tuple* tuple, int k) {
-    if (k < 0 || k >= (int)tuple->size) return NULL;
-    Tuple* trimmed = (Tuple*)malloc(sizeof(Tuple));
-    if (!trimmed) return NULL;
-    trimmed->size = tuple->size - k;
-    trimmed->data = (int*)malloc(trimmed->size * sizeof(int));
-    if (!trimmed->data) {
-        free(trimmed);
+    Tuple* result = (Tuple*)malloc(n * sizeof(Tuple));
+    if (result == NULL) {
         return NULL;
     }
-    memcpy(trimmed->data, tuple->data, trimmed->size * sizeof(int));
-    return trimmed;
+    for (int i = 0; i < n; i++) {
+        result[i].first = tuples[i].first - k;
+        result[i].second = tuples[i].second - k;
+    }
+    return result;
+}
+
+void free_tuples(Tuple* tuples) {
+    free(tuples);
 }
 
 int main() {
-    int elements[] = {1, 2, 3, 4, 5};
-    size_t size = sizeof(elements) / sizeof(elements[0]);
+    Tuple tuples[] = {{10, 20}, {30, 40}, {50, 60}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
+    int k = 5;
     
-    Tuple* tuple = create_tuple(elements, size);
-    if (!tuple) {
-        printf("Failed to create tuple\n");
-        return 1;
+    Tuple* trimmed_tuples = trim_tuples(tuples, n, k);
+    if (trimmed_tuples != NULL) {
+        for (int i = 0; i < n; i++) {
+            printf("(%d, %d)\n", trimmed_tuples[i].first, trimmed_tuples[i].second);
+        }
+        free_tuples(trimmed_tuples);
+    } else {
+        printf("Failed to trim tuples.\n");
     }
     
-    int k = 2;
-    Tuple* trimmed = trim_tuple_by_k(tuple, k);
-    if (!trimmed) {
-        printf("Failed to trim tuple\n");
-        free_tuple(tuple);
-        return 1;
-    }
-    
-    for (size_t i = 0; i < trimmed->size; ++i) {
-        printf("%d ", trimmed->data[i]);
-    }
-    printf("\n");
-
-    free_tuple(trimmed);
-    free_tuple(tuple);
     return 0;
 }
 ```

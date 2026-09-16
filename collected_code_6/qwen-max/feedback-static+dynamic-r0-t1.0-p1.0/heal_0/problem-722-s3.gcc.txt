@@ -1,0 +1,12 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-722-s3.c: In function 'add_to_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-722-s3.c:49:17: error: assignment to 'struct dictionary_entry *' from incompatible pointer type 'DictionaryEntry *' [-Wincompatible-pointer-types]
+   49 |     entry->next = dict->table[index];
+      |                 ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-722-s3.c: In function 'filter_dimensions':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-722-s3.c:65:19: error: assignment to 'DictionaryEntry *' from incompatible pointer type 'struct dictionary_entry *' [-Wincompatible-pointer-types]
+   65 |             entry = entry->next;
+      |                   ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-722-s3.c: In function 'destroy_dictionary':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/qwen-max/feedback-static-r0-t1.0-p1.0/heal_0/problem-722-s3.c:79:19: error: assignment to 'DictionaryEntry *' from incompatible pointer type 'struct dictionary_entry *' [-Wincompatible-pointer-types]
+   79 |             entry = entry->next;
+      |                   ^

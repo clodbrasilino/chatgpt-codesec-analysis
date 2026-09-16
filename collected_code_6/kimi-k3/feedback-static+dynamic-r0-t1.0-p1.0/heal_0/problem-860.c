@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <regex.h>
+
+int ends_with_alphanumeric(const char *str) {
+    regex_t regex;
+    int result;
+    
+    if (str == NULL) {
+        return 0;
+    }
+    
+    if (regcomp(&regex, "[a-zA-Z0-9]$", REG_EXTENDED) != 0) {
+        return 0;
+    }
+    
+    result = regexec(&regex, str, 0, NULL, 0);
+    regfree(&regex);
+    
+    return (result == 0) ? 1 : 0;
+}
+
+int main(void) {
+    const char *test1 = "Hello123";
+    const char *test2 = "Hello!";
+    const char *test3 = "Test@123";
+    
+    printf("%s: %d\n", test1, ends_with_alphanumeric(test1));
+    printf("%s: %d\n", test2, ends_with_alphanumeric(test2));
+    printf("%s: %d\n", test3, ends_with_alphanumeric(test3));
+    
+    return 0;
+}

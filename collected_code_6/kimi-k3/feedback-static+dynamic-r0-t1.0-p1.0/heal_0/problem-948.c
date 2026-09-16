@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    double second;
+    char third;
+} Tuple;
+
+typedef enum {
+    TUPLE_FIRST = 0,
+    TUPLE_SECOND = 1,
+    TUPLE_THIRD = 2
+} TupleIndex;
+
+int get_tuple_item(const Tuple *tuple, TupleIndex index, void *out_value)
+{
+    if (tuple == NULL || out_value == NULL) {
+        return -1;
+    }
+
+    switch (index) {
+    case TUPLE_FIRST:
+        *(int *)out_value = tuple->first;
+        break;
+    case TUPLE_SECOND:
+        *(double *)out_value = tuple->second;
+        break;
+    case TUPLE_THIRD:
+        *(char *)out_value = tuple->third;
+        break;
+    default:
+        return -2;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuple = {42, 3.14, 'A'};
+    int first_value;
+    double second_value;
+    char third_value;
+    int result;
+
+    result = get_tuple_item(&tuple, TUPLE_FIRST, &first_value);
+    if (result == 0) {
+        printf("First: %d\n", first_value);
+    } else {
+        fprintf(stderr, "Error getting first item: %d\n", result);
+        return EXIT_FAILURE;
+    }
+
+    result = get_tuple_item(&tuple, TUPLE_SECOND, &second_value);
+    if (result == 0) {
+        printf("Second: %f\n", second_value);
+    } else {
+        fprintf(stderr, "Error getting second item: %d\n", result);
+        return EXIT_FAILURE;
+    }
+
+    result = get_tuple_item(&tuple, TUPLE_THIRD, &third_value);
+    if (result == 0) {
+        printf("Third: %c\n", third_value);
+    } else {
+        fprintf(stderr, "Error getting third item: %d\n", result);
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

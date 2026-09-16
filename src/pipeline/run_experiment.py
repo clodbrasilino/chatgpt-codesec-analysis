@@ -50,6 +50,7 @@ class ExperimentCell:
     fuzz: bool = False  # AFL++ channel (stdin/argv consumers only; costly)
     root: str = "collected_code_6"
     gen_source: str | None = None  # sibling cell slug to import round-0 from
+    gen_source_reports: bool = False  # also import static reports + .o
 
 
 def cell_slug(cell: ExperimentCell, cfg) -> str:
@@ -93,14 +94,25 @@ def _run_dynamic(source_dir: Path, model_id: str, fuzz: bool = False) -> None:
 # (.{gcc,clang,cppcheck,flawfinder}.txt, dynamic reports, .o objects) are never
 # imported — the importing cell must run its own detection gate.
 _ROUND0_RE = re.compile(r"^problem-(\d+)(?:-s(\d+))?\.(c|txt)$")
+# Static-analyzer reports + compile-gate objects for the code above. Copying
+# them (opt-in) lets the importing cell skip re-running static analysis on
+# identical code; the parsers only use the line numbers, so the absolute
+# source paths recorded inside the reports are irrelevant.
+_ROUND0_REPORT_RE = re.compile(
+    r"^problem-(\d+)(?:-s(\d+))?\.(?:gcc|clang|cppcheck|flawfinder)\.txt$")
+_ROUND0_OBJ_RE = re.compile(r"^problem-(\d+)(?:-s(\d+))?\.o$")
 
 
-def import_round0(cell: ExperimentCell, cfg, tasks: list[dict]) -> int:
+def import_round0(cell: ExperimentCell, cfg, tasks: list[dict],
+                  reports: bool = False) -> int:
     """Copy round-0 generations from a sibling cell instead of regenerating.
 
     Imports ``problem-{id}[-s{N}].{c,txt}`` for the cell's tasks, limited to
     the cell's sample count, into this cell's heal_0. Files already present
-    are left untouched (idempotent). Returns the number of files copied.
+    are left untouched (idempotent). With ``reports=True`` also imports the
+    static-analyzer reports and compile-gate objects (safe only when the
+    source cell analyzed the exact same code — true for gen-source imports
+    from a completed static cell). Returns the number of files copied.
     """
     src_dir = REPO_ROOT / cell.root / cell.model / cell.gen_source / "heal_0"
     if not src_dir.is_dir():
@@ -108,9 +120,16 @@ def import_round0(cell: ExperimentCell, cfg, tasks: list[dict]) -> int:
     dst = REPO_ROOT / cell.root / cell.model / cell_slug(cell, cfg) / "heal_0"
     dst.mkdir(parents=True, exist_ok=True)
     task_ids = {t["id"] for t in tasks}
+    pats = [_ROUND0_RE]
+    if reports:
+        pats += [_ROUND0_REPORT_RE, _ROUND0_OBJ_RE]
     copied = 0
     for f in sorted(src_dir.iterdir()):
-        m = _ROUND0_RE.match(f.name)
+        m = None
+        for p in pats:
+            m = p.match(f.name)
+            if m:
+                break
         if not m:
             continue
         if int(m.group(1)) not in task_ids:
@@ -124,7 +143,8 @@ def import_round0(cell: ExperimentCell, cfg, tasks: list[dict]) -> int:
         copied += 1
     print(
         f"[{cell.model}] gen-source: imported {copied} round-0 files "
-        f"from {cell.gen_source} (tasks={len(task_ids)}, samples={cell.samples})"
+        f"from {cell.gen_source} (tasks={len(task_ids)}, samples={cell.samples}"
+        f"{', incl. static reports' if reports else ''})"
     )
     return copied
 
@@ -139,7 +159,7 @@ def run_cell(cell: ExperimentCell, resume: bool = True) -> None:
 
     # ---- heal_0: generation + first analysis ----
     if cell.gen_source:
-        import_round0(cell, cfg, tasks)
+        import_round0(cell, cfg, tasks, reports=cell.gen_source_reports)
     heal0 = root / "heal_0"
     heal0.mkdir(parents=True, exist_ok=True)
     for sample in range(1, cell.samples + 1):
@@ -292,6 +312,10 @@ if __name__ == "__main__":
                         help="import round-0 generations from a sibling cell "
                              "(e.g. feedback-static-r0-t1.0-p1.0) instead of "
                              "regenerating; missing samples are still generated")
+    parser.add_argument("--gen-source-reports", action="store_true",
+                        help="also import static-analyzer reports and compile "
+                             "objects from the gen-source cell (skips re-running "
+                             "static analysis on identical code)")
     args = parser.parse_args()
 
     measure = args.measure or (
@@ -308,5 +332,6 @@ if __name__ == "__main__":
         max_rounds=args.max_rounds,
         fuzz=args.fuzz,
         gen_source=args.gen_source,
+        gen_source_reports=args.gen_source_reports,
     )
     run_cell(cell)

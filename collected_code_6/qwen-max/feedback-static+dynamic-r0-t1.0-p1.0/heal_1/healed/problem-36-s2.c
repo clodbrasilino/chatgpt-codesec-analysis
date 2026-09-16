@@ -1,30 +1,50 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <limits.h>
 
-int nth_digit(int a, int b, int n) {
-    if (b <= 0 || n < 0) return -1;
-    long long result = 0;
-    long long remainder = a % (long long)b;
-    long long multiplier = 1;
-    for (int i = 0; i < n && remainder; ++i) {
-        remainder *= 10;
-        if (remainder / 10 != (a % (long long)b) * 10) break; // Prevent overflow
-        int digit = remainder / b;
-        remainder %= b;
-        if (result > LLONG_MAX / 10 || (result == LLONG_MAX / 10 && multiplier > LLONG_MAX - result * 10)) break; // Prevent overflow
-        result += digit * multiplier;
-        if (multiplier > LLONG_MAX / 10) break; // Prevent overflow
-        multiplier *= 10;
+int nth_digit_proper_fraction(long numerator, long denominator, int n) {
+    long long result = 1;
+    for (int i = 0; i < n; ++i) {
+        if (result * 10 % denominator == 0)
+            return 0;
+        result = (result * 10) % denominator;
     }
-    return remainder == 0 ? -1 : (int)result;
+    return (10 * result / denominator) % 10;
 }
 
 int main() {
-    int a, b, n;
-    scanf("%d %d %d", &a, &b, &n);
-    int digit = nth_digit(a, b, n);
-    printf("%d\n", digit);
+    long num, den;
+    int n;
+
+    printf("Enter the numerator: ");
+    if (scanf("%ld", &num) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    printf("Enter the denominator: ");
+    if (scanf("%ld", &den) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    if (den <= 0) {
+        printf("Denominator must be greater than 0.\n");
+        return 1;
+    }
+
+    printf("Enter the digit position (n): ");
+    if (scanf("%d", &n) != 1) {
+        printf("Invalid input.\n");
+        return 1;
+    }
+
+    if (n < 0) {
+        printf("n must be a non-negative integer.\n");
+        return 1;
+    }
+
+    int digit = nth_digit_proper_fraction(num, den, n);
+    printf("The %dth digit in the proper fraction of %ld/%ld is: %d\n", n, num, den, digit);
+
     return 0;
 }

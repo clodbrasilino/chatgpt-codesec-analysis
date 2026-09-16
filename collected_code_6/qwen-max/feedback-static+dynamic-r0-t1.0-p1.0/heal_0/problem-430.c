@@ -1,0 +1,18 @@
+#include <stdio.h>
+
+double find_directrix(double a) {
+    return -1 / (4 * a);
+}
+
+int main() {
+    double a;
+    printf("Enter the coefficient 'a' of the parabola: ");
+    if (scanf("%lf", &a) == 1) {
+        double directrix = find_directrix(a);
+        printf("The directrix of the parabola is: y = %f\n", directrix);
+    } else {
+        fprintf(stderr, "Invalid input. Please enter a valid number.\n");
+        return 1;
+    }
+    return 0;
+}

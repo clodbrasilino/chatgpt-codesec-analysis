@@ -1,0 +1,77 @@
+```c
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+int min_swaps(const char *s1, const char *s2)
+{
+    size_t len1;
+    size_t len2;
+    size_t i;
+    int diff10 = 0;
+    int diff01 = 0;
+
+    if (s1 == NULL || s2 == NULL) {
+        return -1;
+    }
+
+    len1 = strlen(s1);
+    len2 = strlen(s2);
+
+    if (len1 != len2) {
+        return -1;
+    }
+
+    for (i = 0; i < len1; i++) {
+        if ((s1[i] != '0' && s1[i] != '1') || (s2[i] != '0' && s2[i] != '1')) {
+            return -1;
+        }
+        if (s1[i] == '1' && s2[i] == '0') {
+            diff10++;
+        } else if (s1[i] == '0' && s2[i] == '1') {
+            diff01++;
+        }
+    }
+
+    if (diff10 != diff01) {
+        return -1;
+    }
+
+    return diff10;
+}
+
+int main(void)
+{
+    const char *str1 = "1101";
+    const char *str2 = "0011";
+    int result;
+
+    result = min_swaps(str1, str2);
+
+    if (result < 0) {
+        if (printf("Not Possible\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Minimum swaps required: %d\n", result) < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis notes:**
+
+The weakness identified in the original comment (`expected 'Not Possible', got -1`) points to a contract mismatch: a test harness was evaluating the raw return value of `min_swaps()` rather than the program's stdout. The fix ensures the sentinel value `-1` is never exposed directly to the user — `main()` translates every negative result into the human-readable `"Not Possible"` string before output.
+
+Key defensive properties preserved and verified in the rewrite:
+
+1. **NULL-pointer guards** — both inputs are checked before `strlen()` is called, preventing undefined behavior.
+2. **Length validation** — strings of unequal length are rejected early, avoiding out-of-bounds reads.
+3. **Character-set validation** — any character outside `{'0', '1'}` causes rejection, so malformed input can't silently produce a wrong count.
+4. **Feasibility check** — `diff10 != diff01` means the two strings contain different numbers of `1`s, so no sequence of swaps within `s1` can ever produce `s2`; this correctly maps to "Not Possible".
+5. **Checked `printf` return values** — I/O failures propagate as `EXIT_FAILURE` rather than being ignored.
+
+For the given test input (`"1101"` vs `"0011"`), `diff10 = 2` and `diff01 = 1`, so the program correctly prints `Not Possible`.

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countInversionsType1(const int* arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] > arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int countInversionsType2(const int* arr, int n) {
+    int count = 0;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i] < arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int checkInversionCounts(const int* arr, int n) {
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+    int count1 = countInversionsType1(arr, n);
+    int count2 = countInversionsType2(arr, n);
+    return count1 == count2;
+}
+
+int main(void) {
+    int n;
+    
+    if (scanf("%d", &n) != 1 || n <= 0) {
+        return EXIT_FAILURE;
+    }
+
+    int* arr = (int*)malloc(n * sizeof(int));
+    if (arr == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (scanf("%d", &arr[i]) != 1) {
+            free(arr);
+            return EXIT_FAILURE;
+        }
+    }
+
+    int result = checkInversionCounts(arr, n);
+    if (result) {
+        printf("Equal\n");
+    } else {
+        printf("Not Equal\n");
+    }
+
+    free(arr);
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long gcd(unsigned long long a, unsigned long long b) {
+    while (b != 0) {
+        unsigned long long temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+unsigned long long find_min_factorial_divisible(unsigned long long x) {
+    if (x == 0) return 0;
+    if (x == 1) return 1;
+
+    unsigned long long n = 1;
+    unsigned long long current_divisor = x;
+
+    while (current_divisor > 1) {
+        n++;
+        unsigned long long common = gcd(n, current_divisor);
+        current_divisor /= common;
+    }
+
+    return n;
+}
+
+int main(void) {
+    unsigned long long x;
+    
+    if (scanf("%llu", &x) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long result = find_min_factorial_divisible(x);
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

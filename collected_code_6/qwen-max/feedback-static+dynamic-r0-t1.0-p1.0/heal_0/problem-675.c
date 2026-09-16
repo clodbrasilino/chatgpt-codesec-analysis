@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int add_with_condition(int a, int b, int min, int max) {
+    int sum = a + b;
+    if (sum >= min && sum <= max) {
+        return 20;
+    }
+    return sum;
+}
+
+int main() {
+    int a = 10;
+    int b = 5;
+    int min = 16;
+    int max = 20;
+
+    int result = add_with_condition(a, b, min, max);
+    printf("Result: %d\n", result);
+
+    return 0;
+}

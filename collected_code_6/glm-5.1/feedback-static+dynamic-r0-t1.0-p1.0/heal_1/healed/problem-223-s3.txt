@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_majority(const int arr[], int n, int x) {
+    if (arr == NULL || n <= 0) {
+        return false;
+    }
+    
+    int low = 0;
+    int high = n - 1;
+    int first_occurrence = -1;
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == x) {
+            first_occurrence = mid;
+            high = mid - 1;
+        } else if (arr[mid] < x) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    
+    if (first_occurrence == -1) {
+        return false;
+    }
+    
+    int majority_index = first_occurrence + (n / 2);
+    
+    if (majority_index < n && arr[majority_index] == x) {
+        return true;
+    }
+    
+    return false;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 3, 3, 3, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int x = 3;
+    
+    if (is_majority(arr, n, x)) {
+        printf("%d is the majority element\n", x);
+    } else {
+        printf("%d is not the majority element\n", x);
+    }
+    
+    return 0;
+}

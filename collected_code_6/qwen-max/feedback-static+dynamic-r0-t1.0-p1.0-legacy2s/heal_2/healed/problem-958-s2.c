@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+char *intToRoman(int num) {
+    char *roman = (char *)malloc(20 * sizeof(char));
+    if (!roman) return NULL;
+    *roman = '\0'; // Initialize the string to an empty string
+    const char *s[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    const int v[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+
+    for (int j = 0; j < 13; j++) {
+        while (num >= v[j]) {
+            strcat(roman, s[j]);
+            num -= v[j];
+        }
+    }
+
+    return roman;
+}
+
+int main() {
+    int test_cases[] = {1, 4, 1994, 0};
+    int n = sizeof(test_cases) / sizeof(test_cases[0]);
+
+    for (int i = 0; i < n; i++) {
+        char *result = intToRoman(test_cases[i]);
+        if (result) {
+            printf("%d in Roman numerals is: %s\n", test_cases[i], result);
+            free(result);
+        } else {
+            printf("Failed to convert %d to Roman numeral.\n", test_cases[i]);
+        }
+    }
+
+    return 0;
+}

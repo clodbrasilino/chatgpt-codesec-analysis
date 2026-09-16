@@ -9,57 +9,97 @@ typedef struct {
 
 typedef struct Node {
     Tuple data;
-    struct Node* next;
+    struct Node *next;
 } Node;
 
-Node* create_node(Tuple t) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    if (newNode == NULL) {
+typedef struct {
+    Node *head;
+    Node *tail;
+    int size;
+} List;
+
+List* create_list() {
+    List *list = (List*)malloc(sizeof(List));
+    list->head = NULL;
+    list->tail = NULL;
+    list->size = 0;
+    return list;
+}
+
+void add_tuple(List *list, int key, int value) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->data.key = key;
+    new_node->data.value = value;
+    new_node->next = NULL;
+    
+    if (list->head == NULL) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+    list->size++;
+}
+
+Tuple* extract_rear(List *list) {
+    if (list->size == 0) {
         return NULL;
     }
-    newNode->data = t;
-    newNode->next = NULL;
-    return newNode;
-}
 
-void free_list(Node* head) {
-    Node* current = head;
-    while (current != NULL) {
-        Node* temp = current;
-        current = current->next;
-        free(temp);
-    }
-}
+    Node *current = list->head;
+    Node *prev = NULL;
 
-int extract_rear_value(Node** head) {
-    if (*head == NULL || (*head)->next == NULL) {
-        return -1;
-    }
-
-    Node* current = *head;
-    while (current->next->next != NULL) {
+    while (current != list->tail) {
+        prev = current;
         current = current->next;
     }
 
-    int rearValue = current->next->data.value;
-    free(current->next);
-    current->next = NULL;
-    return rearValue;
+    if (prev != NULL) {
+        prev->next = NULL;
+    } else {
+        list->head = NULL;
+    }
+    list->tail = prev;
+    list->size--;
+
+    Tuple *tuple = (Tuple*)malloc(sizeof(Tuple));
+    tuple->key = current->data.key;
+    tuple->value = current->data.value;
+    free(current);
+    return tuple;
 }
 
 int main() {
-    Tuple t1 = {1, 10};
-    Tuple t2 = {2, 20};
-    Tuple t3 = {3, 30};
+    List *list = create_list();
+    add_tuple(list, 1, 10);
+    add_tuple(list, 2, 20);
+    add_tuple(list, 3, 30);
 
-    Node* head = create_node(t1);
-    head->next = create_node(t2);
-    head->next->next = create_node(t3);
+    Tuple *rear = extract_rear(list);
+    if (rear != NULL) {
+        printf("Extracted: Key = %d, Value = %d\n", rear->key, rear->value);
+        free(rear);
+    }
 
-    int rearValue = extract_rear_value(&head);
-    printf("Rear value: %d\n", rearValue);
+    rear = extract_rear(list);
+    if (rear != NULL) {
+        printf("Extracted: Key = %d, Value = %d\n", rear->key, rear->value);
+        free(rear);
+    }
 
-    free_list(head);
+    rear = extract_rear(list);
+    if (rear != NULL) {
+        printf("Extracted: Key = %d, Value = %d\n", rear->key, rear->value);
+        free(rear);
+    }
+
+    rear = extract_rear(list);
+    if (rear == NULL) {
+        printf("List is empty.\n");
+    }
+
+    free(list);
     return 0;
 }
 ```

@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long int countWays(int n, int k) {
+    long long int total = k;
+    int mod = 1000000007;
+
+    if (n == 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return k;
+    }
+
+    long long int diff = k;
+
+    for (int i = 2; i <= n; i++) {
+        long long int same = diff;
+        diff = total * (k - 1);
+        diff = diff % mod;
+        total = (same + diff) % mod;
+    }
+
+    return total;
+}
+
+int main() {
+    int n, k;
+
+    if (scanf("%d %d", &n, &k) != 2) {
+        return 1;
+    }
+
+    if (n < 0 || k < 0) {
+        return 1;
+    }
+
+    long long int ways = countWays(n, k);
+    printf("%lld\n", ways);
+
+    return 0;
+}

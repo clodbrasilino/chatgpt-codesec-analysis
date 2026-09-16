@@ -1,0 +1,43 @@
+```c
+#include <stdio.h>
+
+int sumOfDivisors(int num) {
+    int sum = 0;
+    if (num <= 0) {
+        return -1;
+    }
+    for (int i = 1; i <= num / 2; i++) {
+        if (num % i == 0) {
+            sum += i;
+        }
+    }
+    return sum;
+}
+
+int areSumsOfDivisorsEqual(int num1, int num2) {
+    int sum1 = sumOfDivisors(num1);
+    int sum2 = sumOfDivisors(num2);
+    if (sum1 == -1 || sum2 == -1) {
+        return -1;
+    }
+    return sum1 == sum2;
+}
+
+int main() {
+    int num1, num2;
+    printf("Enter two numbers: ");
+    if (scanf("%d %d", &num1, &num2) != 2) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    int result = areSumsOfDivisorsEqual(num1, num2);
+    if (result == -1) {
+        printf("Invalid numbers\n");
+    } else if (result) {
+        printf("The sum of divisors is the same\n");
+    } else {
+        printf("The sum of divisors is not the same\n");
+    }
+    return 0;
+}
+```

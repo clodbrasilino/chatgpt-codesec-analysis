@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long cube_sum_of_evens(int n) {
+    long long sum = 0;
+    for (int i = 1; i <= n; ++i) {
+        int even_number = 2 * i;
+        sum += (long long)even_number * even_number * even_number;
+    }
+    return sum;
+}
+
+int main() {
+    int n;
+    if (scanf("%d", &n) != 1 || n < 1) {
+        fprintf(stderr, "Invalid input. Please enter a positive integer.\n");
+        return EXIT_FAILURE;
+    }
+    long long result = cube_sum_of_evens(n);
+    printf("The cube sum of the first %d even natural numbers is: %lld\n", n, result);
+    return EXIT_SUCCESS;
+}

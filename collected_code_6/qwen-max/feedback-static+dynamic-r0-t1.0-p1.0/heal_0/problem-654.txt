@@ -1,0 +1,15 @@
+```c
+#include <stdio.h>
+
+double calculate_perimeter(double length, double width) {
+    return 2 * (length + width);
+}
+
+int main() {
+    double length = 5.0;
+    double width = 3.0;
+    double perimeter = calculate_perimeter(length, width);
+    printf("Perimeter of the rectangle: %.2f\n", perimeter);
+    return 0;
+}
+```

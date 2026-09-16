@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+ /* Possible weaknesses found:
+  *  test case 0 failed: expected 5, got <no output>
+  *  test case 1 failed: expected 3, got <no output>
+  *  test case 2 failed: expected 6, got <no output>
+  */
+
+double find_average_odd(int limit) {
+    if (limit <= 0 || limit % 2 == 0) {
+        return 0.0;
+    }
+
+    long long count = 0;
+    long long sum = 0;
+
+    for (int i = 1; i <= limit; i += 2) {
+        sum += i;
+        count++;
+    }
+
+    if (count == 0) {
+        return 0.0;
+    }
+
+    return (double)sum / (double)count;
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char * const argv[]) {
+    int limit;
+    
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <limit>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (sscanf(argv[1], "%d", &limit) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (limit <= 0 || limit % 2 == 0) {
+        fprintf(stderr, "Limit must be a positive odd integer\n");
+        return EXIT_FAILURE;
+    }
+
+    double average = find_average_odd(limit);
+    printf("%.2f\n", average);
+
+    return EXIT_SUCCESS;
+}

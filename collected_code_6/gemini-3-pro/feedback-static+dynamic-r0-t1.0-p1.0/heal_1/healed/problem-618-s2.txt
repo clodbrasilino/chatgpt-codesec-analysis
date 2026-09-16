@@ -1,0 +1,98 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (!newNode) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void append(Node** head, int data) {
+    Node* newNode = createNode(data);
+    if (!*head) {
+        *head = newNode;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = newNode;
+}
+
+void freeList(Node* head) {
+    while (head) {
+        Node* tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
+Node* divideLists(Node* num, Node* den) {
+    if (!num || !den) {
+        return NULL;
+    }
+
+    Node* result = NULL;
+    Node* currentNum = num;
+    Node* currentDen = den;
+
+    while (currentNum && currentDen) {
+        if (currentDen->data == 0) {
+            fprintf(stderr, "Division by zero encounter\n");
+            freeList(result);
+            return NULL;
+        }
+        append(&result, currentNum->data / currentDen->data);
+        currentNum = currentNum->next;
+        currentDen = currentDen->next;
+    }
+
+    return result;
+}
+
+void printList(Node* head) {
+    while (head) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    Node* result = NULL;
+
+    append(&list1, 10);
+    append(&list1, 20);
+    append(&list1, 30);
+
+    append(&list2, 2);
+    append(&list2, 5);
+    append(&list2, 3);
+
+    result = divideLists(list1, list2);
+
+    if (result) {
+        printList(result);
+    }
+
+    freeList(list1);
+    freeList(list2);
+    freeList(result);
+
+    return 0;
+}
+```

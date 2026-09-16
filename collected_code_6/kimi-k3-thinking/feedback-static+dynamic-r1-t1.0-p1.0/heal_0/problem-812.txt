@@ -1,0 +1,70 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *abbreviate_road(const char *input)
+{
+    const char *word = "road";
+    const char *replacement = "rd.";
+    const size_t word_len = strlen(word);
+    const size_t rep_len = strlen(replacement);
+    const char *p;
+    const char *src;
+    char *dst;
+    char *result;
+    size_t count = 0;
+    size_t len;
+    size_t new_size;
+
+    if (input == NULL) {
+        return NULL;
+    }
+
+    len = strlen(input);
+    p = input;
+    while ((p = strstr(p, word)) != NULL) {
+        count++;
+        p += word_len;
+    }
+
+    new_size = len - (count * (word_len - rep_len)) + 1;
+    result = malloc(new_size);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    src = input;
+    dst = result;
+    while ((p = strstr(src, word)) != NULL) {
+        size_t prefix_len = (size_t)(p - src);
+        memcpy(dst, src, prefix_len);
+        dst += prefix_len;
+        memcpy(dst, replacement, rep_len);
+        dst += rep_len;
+        src = p + word_len;
+    }
+    strcpy(dst, src);
+
+    return result;
+}
+
+int main(void)
+{
+    const char *input = "Take the road and follow the road to the end of the road.";
+    char *output = abbreviate_road(input);
+
+    if (output == NULL) {
+        fprintf(stderr, "Error: abbreviation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    printf("Original:    %s\n", input);
+    printf("Abbreviated: %s\n", output);
+
+    free(output);
+    output = NULL;
+
+    return EXIT_SUCCESS;
+}
+```

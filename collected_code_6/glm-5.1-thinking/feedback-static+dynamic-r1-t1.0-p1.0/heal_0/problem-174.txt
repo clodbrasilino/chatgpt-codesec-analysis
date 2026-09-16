@@ -1,0 +1,136 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} KeyValuePair;
+
+typedef struct {
+    char *key;
+    int *values;
+    size_t count;
+    size_t capacity;
+} DictEntry;
+
+typedef struct {
+    DictEntry *entries;
+    size_t count;
+    size_t capacity;
+} Dictionary;
+
+void free_dictionary(Dictionary *dict) {
+    if (dict == NULL) {
+        return;
+    }
+    for (size_t i = 0; i < dict->count; ++i) {
+        free(dict->entries[i].key);
+        free(dict->entries[i].values);
+    }
+    free(dict->entries);
+    dict->entries = NULL;
+    dict->count = 0;
+    dict->capacity = 0;
+}
+
+int add_to_dictionary(Dictionary *dict, const char *key, int value) {
+    for (size_t i = 0; i < dict->count; ++i) {
+        if (strcmp(dict->entries[i].key, key) == 0) {
+            if (dict->entries[i].count >= dict->entries[i].capacity) {
+                size_t new_capacity = dict->entries[i].capacity == 0 ? 4 : dict->entries[i].capacity * 2;
+                int *new_values = realloc(dict->entries[i].values, new_capacity * sizeof(int));
+                if (new_values == NULL) {
+                    return 0;
+                }
+                dict->entries[i].values = new_values;
+                dict->entries[i].capacity = new_capacity;
+            }
+            dict->entries[i].values[dict->entries[i].count++] = value;
+            return 1;
+        }
+    }
+
+    if (dict->count >= dict->capacity) {
+        size_t new_capacity = dict->capacity == 0 ? 4 : dict->capacity * 2;
+        DictEntry *new_entries = realloc(dict->entries, new_capacity * sizeof(DictEntry));
+        if (new_entries == NULL) {
+            return 0;
+        }
+        dict->entries = new_entries;
+        dict->capacity = new_capacity;
+    }
+
+    DictEntry *entry = &dict->entries[dict->count];
+    entry->key = strdup(key);
+    if (entry->key == NULL) {
+        return 0;
+    }
+
+    entry->capacity = 4;
+    entry->values = malloc(entry->capacity * sizeof(int));
+    if (entry->values == NULL) {
+        free(entry->key);
+        entry->key = NULL;
+        return 0;
+    }
+
+    entry->values[0] = value;
+    entry->count = 1;
+    dict->count++;
+
+    return 1;
+}
+
+Dictionary group_key_value_pairs(const KeyValuePair *pairs, size_t num_pairs) {
+    Dictionary dict = {NULL, 0, 0};
+    if (pairs == NULL) {
+        return dict;
+    }
+
+    for (size_t i = 0; i < num_pairs; ++i) {
+        if (pairs[i].key == NULL) {
+            free_dictionary(&dict);
+            Dictionary empty_dict = {NULL, 0, 0};
+            return empty_dict;
+        }
+
+        if (!add_to_dictionary(&dict, pairs[i].key, pairs[i].value)) {
+            free_dictionary(&dict);
+            Dictionary empty_dict = {NULL, 0, 0};
+            return empty_dict;
+        }
+    }
+
+    return dict;
+}
+
+int main(void) {
+    KeyValuePair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"orange", 4},
+        {"banana", 5},
+        {"apple", 6}
+    };
+    size_t num_pairs = sizeof(pairs) / sizeof(pairs[0]);
+
+    Dictionary dict = group_key_value_pairs(pairs, num_pairs);
+
+    for (size_t i = 0; i < dict.count; ++i) {
+        printf("%s: [", dict.entries[i].key);
+        for (size_t j = 0; j < dict.entries[i].count; ++j) {
+            printf("%d", dict.entries[i].values[j]);
+            if (j < dict.entries[i].count - 1) {
+                printf(", ");
+            }
+        }
+        printf("]\n");
+    }
+
+    free_dictionary(&dict);
+    return 0;
+}
+```

@@ -1,0 +1,1 @@
+int status = regexec(&regex, cursor, 1, &match, 0);

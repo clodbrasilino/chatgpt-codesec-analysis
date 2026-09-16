@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    char *key;
+    int value;
+} DictEntry;
+
+size_t extract_unique_values(const DictEntry *dict, size_t dict_size, int **out_values) {
+    if (dict == NULL || out_values == NULL || dict_size == 0) {
+        return 0;
+    }
+
+    *out_values = (int *)malloc(dict_size * sizeof(int));
+    if (*out_values == NULL) {
+        return 0;
+    }
+
+    size_t unique_count = 0;
+    for (size_t i = 0; i < dict_size; i++) {
+        int is_unique = 1;
+        for (size_t j = 0; j < unique_count; j++) {
+            if ((*out_values)[j] == dict[i].value) {
+                is_unique = 0;
+                break;
+            }
+        }
+        if (is_unique) {
+            (*out_values)[unique_count] = dict[i].value;
+            unique_count++;
+        }
+    }
+
+    if (unique_count == 0) {
+        free(*out_values);
+        *out_values = NULL;
+    } else if (unique_count < dict_size) {
+        int *temp = (int *)realloc(*out_values, unique_count * sizeof(int));
+        if (temp != NULL) {
+            *out_values = temp;
+        }
+    }
+
+    return unique_count;
+}
+
+int main(void) {
+    DictEntry dict[] = {
+        {"apple", 5},
+        {"banana", 3},
+        {"cherry", 5},
+        {"date", 7},
+        {"elderberry", 3}
+    };
+    size_t dict_size = sizeof(dict) / sizeof(dict[0]);
+    int *unique_values = NULL;
+    
+    size_t count = extract_unique_values(dict, dict_size, &unique_values);
+    
+    if (count > 0 && unique_values != NULL) {
+        for (size_t i = 0; i < count; i++) {
+            printf("%d ", unique_values[i]);
+        }
+        printf("\n");
+        free(unique_values);
+        unique_values = NULL;
+    }
+    
+    return 0;
+}

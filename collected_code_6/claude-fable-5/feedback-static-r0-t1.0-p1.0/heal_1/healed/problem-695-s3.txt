@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_greater(const int *tuple1, const int *tuple2, size_t length)
+{
+    size_t i;
+
+    if (tuple1 == NULL || tuple2 == NULL || length == 0U) {
+        return false;
+    }
+
+    for (i = 0U; i < length; i++) {
+        if (tuple2[i] <= tuple1[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    const int first[] = {1, 2, 3, 4};
+    const int second[] = {2, 3, 4, 5};
+    const int third[] = {2, 3, 3, 5};
+    size_t length = sizeof(first) / sizeof(first[0]);
+    bool result;
+
+    result = check_greater(first, second, length);
+    if (result) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    result = check_greater(first, third, length);
+    if (result) {
+        printf("True\n");
+    } else {
+        printf("False\n");
+    }
+
+    return 0;
+}
+```
+
+The changes made address the static-analysis findings:
+
+1. **`second` declared as `const` array** — it is never modified after initialization and is only passed to a function taking `const int *`, so declaring it `const` documents intent and lets the compiler enforce immutability.
+
+2. **`third` declared as `const` array** — same reasoning as above.
+
+3. **`first` also made `const`** — while not flagged in the comments, it has the identical usage pattern, so applying `const` there is consistent and equally safe. The `sizeof` expression still works correctly on a `const` array.
+
+The program's behavior is unchanged: it prints `True` (every element of `second` is strictly greater than the corresponding element of `first`) followed by `False` (`third[2]` equals `first[2] + 0`... specifically `3 <= 3` fails the strict comparison).

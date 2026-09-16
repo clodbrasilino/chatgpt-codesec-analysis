@@ -1,0 +1,27 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int divide(int numerator, int denominator, int *quotient) {
+    if (denominator == 0) {
+        return -1;
+    }
+    if (quotient == NULL) {
+        return -1;
+    }
+    *quotient = numerator / denominator;
+    return 0;
+}
+
+int main(int argc, char *argv[]) {
+    int a = 10;
+    int b = 2;
+    int result;
+
+    if (divide(a, b, &result) == 0) {
+        printf("%d\n", result);
+    } else {
+        printf("Error\n");
+    }
+
+    return EXIT_SUCCESS;
+}

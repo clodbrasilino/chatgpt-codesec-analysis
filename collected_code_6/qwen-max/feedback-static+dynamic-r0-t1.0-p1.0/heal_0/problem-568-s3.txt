@@ -1,0 +1,42 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    void *data;  // Pointer to hold the dictionary data
+} Dictionary;
+
+Dictionary* createEmptyDictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (dict == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    dict->data = NULL;
+    return dict;
+}
+
+void freeDictionary(Dictionary *dict) {
+    if (dict != NULL) {
+        free(dict);
+    }
+}
+
+int main() {
+    int count = 5;  // Number of dictionaries to create
+    Dictionary **list = (Dictionary**)malloc(count * sizeof(Dictionary*));
+    if (list == NULL) {
+        exit(EXIT_FAILURE);
+    }
+
+    for (int i = 0; i < count; ++i) {
+        list[i] = createEmptyDictionary();
+    }
+
+    for (int i = 0; i < count; ++i) {
+        freeDictionary(list[i]);
+    }
+
+    free(list);
+    return 0;
+}
+```

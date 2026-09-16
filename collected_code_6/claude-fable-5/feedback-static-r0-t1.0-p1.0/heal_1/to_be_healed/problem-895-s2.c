@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+long long max_non_adjacent_sum(const int *arr, size_t n);
+
+long long max_non_adjacent_sum(const int *arr, size_t n)
+{
+    long long include;
+    long long exclude;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'new_exclude' can be reduced. [variableScope]
+     */
+    long long new_exclude;
+    size_t i;
+
+    if (arr == NULL || n == 0U) {
+        return 0LL;
+    }
+
+    include = (long long)arr[0];
+    exclude = 0LL;
+
+    for (i = 1U; i < n; i++) {
+        new_exclude = (include > exclude) ? include : exclude;
+        include = exclude + (long long)arr[i];
+        exclude = new_exclude;
+    }
+
+    return (include > exclude) ? include : exclude;
+}
+
+int main(void)
+{
+    int arr[] = {5, 5, 10, 100, 10, 5};
+    size_t n = sizeof(arr) / sizeof(arr[0]);
+    long long result;
+
+    result = max_non_adjacent_sum(arr, n);
+
+    if (printf("Maximum sum of non-adjacent elements: %lld\n", result) < 0) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

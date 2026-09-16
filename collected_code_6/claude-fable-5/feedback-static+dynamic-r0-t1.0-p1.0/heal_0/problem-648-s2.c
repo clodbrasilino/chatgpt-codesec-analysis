@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stddef.h>
+
+int swap_adjacent(int *list, size_t length)
+{
+    size_t i;
+
+    if (list == NULL) {
+        return -1;
+    }
+
+    if (length < 2U) {
+        return 0;
+    }
+
+    for (i = 0U; (i + 1U) < length; i += 2U) {
+        int temp = list[i];
+        list[i] = list[i + 1U];
+        list[i + 1U] = temp;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    size_t i;
+    size_t length = 7U;
+    int *list = NULL;
+
+    list = (int *)malloc(length * sizeof(int));
+    if (list == NULL) {
+        (void)fprintf(stderr, "Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0U; i < length; i++) {
+        list[i] = (int)(i + 1U);
+    }
+
+    (void)printf("Before: ");
+    for (i = 0U; i < length; i++) {
+        (void)printf("%d ", list[i]);
+    }
+    (void)printf("\n");
+
+    if (swap_adjacent(list, length) != 0) {
+        (void)fprintf(stderr, "Swap operation failed\n");
+        free(list);
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("After:  ");
+    for (i = 0U; i < length; i++) {
+        (void)printf("%d ", list[i]);
+    }
+    (void)printf("\n");
+
+    free(list);
+    list = NULL;
+
+    return EXIT_SUCCESS;
+}

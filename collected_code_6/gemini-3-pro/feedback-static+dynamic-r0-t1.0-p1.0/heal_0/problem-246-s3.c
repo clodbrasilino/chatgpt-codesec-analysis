@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <math.h>
+
+double babylonian_sqrt(double number);
+
+int main(void) {
+    double number = 25.0;
+    double result = babylonian_sqrt(number);
+
+    if (result < 0.0) {
+        printf("Error: Invalid input.\n");
+        return 1;
+    }
+
+    printf("%.6f\n", result);
+
+    return 0;
+}
+
+double babylonian_sqrt(double number) {
+    double guess;
+    double next_guess;
+    double epsilon = 1e-9;
+
+    if (number < 0.0) {
+        return -1.0;
+    }
+
+    if (number == 0.0) {
+        return 0.0;
+    }
+
+    guess = number;
+    next_guess = 0.5 * (guess + (number / guess));
+
+    while (fabs(guess - next_guess) > epsilon) {
+        guess = next_guess;
+        next_guess = 0.5 * (guess + (number / guess));
+    }
+
+    return next_guess;
+}

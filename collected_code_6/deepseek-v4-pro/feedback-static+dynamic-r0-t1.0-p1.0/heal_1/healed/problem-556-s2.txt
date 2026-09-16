@@ -1,0 +1,27 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_pairs_with_odd_xor(const int arr[], int n) {
+    int odd_count = 0;
+    int i;
+    
+    for (i = 0; i < n; i++) {
+        if (arr[i] & 1) {
+            odd_count++;
+        }
+    }
+    
+    return odd_count * (n - odd_count);
+}
+
+int main() {
+    int arr[] = {3, 5, 7, 2, 4, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    
+    int result = count_pairs_with_odd_xor(arr, n);
+    printf("Number of pairs with odd XOR: %d\n", result);
+    
+    return 0;
+}
+```

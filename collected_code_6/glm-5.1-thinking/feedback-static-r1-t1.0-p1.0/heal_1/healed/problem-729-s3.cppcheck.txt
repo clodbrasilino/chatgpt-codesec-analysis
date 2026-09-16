@@ -1,0 +1,25 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:101:15: style: Condition 'list1==NULL' is always true [knownConditionTrueFalse]
+    if (list1 == NULL || list2 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:98:29: note: Calling function 'build_list' returns 0
+    Node *list1 = build_list(arr1, sizeof(arr1) / sizeof(arr1[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:98:29: note: Assignment 'list1=build_list(arr1,sizeof(arr1)/sizeof(arr1[0]))', assigned value is 0
+    Node *list1 = build_list(arr1, sizeof(arr1) / sizeof(arr1[0]));
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:101:15: note: Condition 'list1==NULL' is always true
+    if (list1 == NULL || list2 == NULL) {
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:109:16: style: Condition 'result==NULL' is always true [knownConditionTrueFalse]
+    if (result == NULL) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:108:29: note: Calling function 'add_lists' returns 0
+    Node *result = add_lists(list1, list2);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:108:29: note: Assignment 'result=add_lists(list1,list2)', assigned value is 0
+    Node *result = add_lists(list1, list2);
+                            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1-thinking/feedback-static-r1-t1.0-p1.0/heal_1/healed/problem-729-s3.c:109:16: note: Condition 'result==NULL' is always true
+    if (result == NULL) {
+               ^

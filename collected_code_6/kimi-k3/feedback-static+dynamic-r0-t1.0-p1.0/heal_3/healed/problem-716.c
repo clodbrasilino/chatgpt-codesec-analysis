@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+double rhombus_perimeter(double side);
+
+double rhombus_perimeter(double side)
+{
+    return 4.0 * side;
+}
+
+int main(void)
+{
+    double side = 0.0;
+    double perimeter = 0.0;
+    int scan_result = 0;
+
+    scan_result = scanf("%lf", &side);
+
+    if (scan_result != 1)
+    {
+        return 1;
+    }
+
+    perimeter = rhombus_perimeter(side);
+
+    printf("%.2f\n", perimeter);
+
+    return 0;
+}

@@ -1,36 +1,28 @@
 ```c
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 #include <string.h>
-#include <ctype.h>
 
-int count_max_char(const char *str, char *max_char) {
-    int count_arr[UCHAR_MAX + 1] = {0};
-    int max_count = 0;
-
+char find_most_common_char(const char *str) {
+    int counts[256] = {0};
+    int max = 0;
+    char result = '\0';
     while (*str) {
-        if (isprint(*str)) {
-            count_arr[(unsigned char)*str]++;
-            if (count_arr[(unsigned char)*str] > max_count) {
-                max_count = count_arr[(unsigned char)*str];
-                *max_char = *str;
-            }
+        counts[(unsigned char)*str]++;
+        if (counts[(unsigned char)*str] > max) {
+            max = counts[(unsigned char)*str];
+            result = *str;
         }
         str++;
     }
-
-    return max_count;
+    return result;
 }
 
 int main() {
-    const char *input = "example string with many characters";
-    char max_char;
-    int max_count = count_max_char(input, &max_char);
-    if (max_count > 0) {
-        printf("Max character: '%c' with count: %d\n", max_char, max_count);
-    } else {
-        printf("No printable characters found.\n");
-    }
+    const char *input = "example string with text";
+    char most_common = find_most_common_char(input);
+    printf("The most common character is: '%c'\n", most_common);
     return 0;
 }
 ```

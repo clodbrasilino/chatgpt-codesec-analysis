@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+
+void replace_characters(char *str, int n) {
+    if (n <= 0) return;
+    for (int i = 0; str[i] != '\0' && n > 0; ++i) {
+        if (str[i] == ' ' || str[i] == ',' || str[i] == '.') {
+            str[i] = ':';
+            --n;
+        }
+    }
+}
+
+int main() {
+    char str[] = "This is a, test. string with spaces, commas, and dots.";
+    int n = 5;
+
+    replace_characters(str, n);
+
+    printf("Modified string: %s\n", str);
+    return 0;
+}

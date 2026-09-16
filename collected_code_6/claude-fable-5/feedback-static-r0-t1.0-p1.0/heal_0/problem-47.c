@@ -1,0 +1,39 @@
+#include <stdio.h>
+
+static int lastDigitFactorialDivide(unsigned long long a, unsigned long long b)
+{
+    unsigned long long i;
+    unsigned long long result = 1ULL;
+
+    for (i = a + 1ULL; i <= b; i++) {
+        result = (result * (i % 10ULL)) % 10ULL;
+        if (result == 0ULL) {
+            return 0;
+        }
+    }
+
+    return (int)result;
+}
+
+int main(void)
+{
+    unsigned long long a;
+    unsigned long long b;
+    int digit;
+
+    printf("Enter a and b (a <= b): ");
+    if (scanf("%llu %llu", &a, &b) != 2) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    if (a > b) {
+        fprintf(stderr, "Error: a must be less than or equal to b\n");
+        return 1;
+    }
+
+    digit = lastDigitFactorialDivide(a, b);
+    printf("Last digit of %llu! / %llu! is %d\n", b, a, digit);
+
+    return 0;
+}

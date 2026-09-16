@@ -2,49 +2,49 @@
 #include <stdlib.h>
 #include <string.h>
 
-char **extract_strings(const char *source[], int count, size_t size) {
-    char **result = (char **)malloc(count * sizeof(char *));
-    if (result == NULL) return NULL;
-    
-    for (int i = 0; i < count; i++) {
-        result[i] = (char *)malloc(size + 1);
-        if (result[i] == NULL) {
-            for (int j = 0; j < i; j++) {
-                free(result[j]);
-            }
-            free(result);
-            return NULL;
-        }
-        strncpy(result[i], source[i], size);
-        result[i][size] = '\0';
-    }
-    
-    return result;
-}
+char **extract_substrings(const char *const *list, size_t list_size, size_t substring_size, size_t *result_count) {
+    *result_count = 0;
+    if (list == NULL || list_size == 0 || substring_size == 0)
+        return NULL;
 
-void free_strings(char **strings, int count) {
-    for (int i = 0; i < count; i++) {
-        free(strings[i]);
+    char **results = (char **)malloc(list_size * sizeof(char *));
+    if (results == NULL)
+        return NULL;
+
+    for (size_t i = 0; i < list_size; ++i) {
+        if (list[i] != NULL && strlen(list[i]) >= substring_size) {
+            results[*result_count] = (char *)malloc(substring_size + 1);
+            if (results[*result_count] == NULL) {
+                while (*result_count > 0) {
+                    free(results[--(*result_count)]);
+                }
+                free(results);
+                return NULL;
+            }
+            strncpy(results[*result_count], list[i], substring_size);
+            results[*result_count][substring_size] = '\0';
+            (*result_count)++;
+        }
     }
-    free(strings);
+
+    return results;
 }
 
 int main() {
-    const char *source[] = {"practice", "solution"};
-    int count = 2;
-    size_t size = 9;
+    const char *const strings[] = {"practice", "solution", "exercises"};
+    size_t list_size = sizeof(strings) / sizeof(strings[0]);
+    size_t substring_size = 9;
+    size_t result_count;
 
-    char **result = extract_strings(source, count, size);
-    if (result == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        return 1;
+    char **results = extract_substrings(strings, list_size, substring_size, &result_count);
+
+    if (results != NULL) {
+        for (size_t i = 0; i < result_count; ++i) {
+            printf("%s\n", results[i]);
+            free(results[i]);
+        }
+        free(results);
     }
-
-    for (int i = 0; i < count; i++) {
-        printf("%s\n", result[i]);
-    }
-
-    free_strings(result, count);
 
     return 0;
 }

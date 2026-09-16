@@ -1,0 +1,46 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CHARS 256
+
+void count_character_frequency(const char *str, int *freq) {
+    if (str == NULL || freq == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < MAX_CHARS; i++) {
+        freq[i] = 0;
+    }
+
+    while (*str != '\0') {
+        unsigned char current_char = (unsigned char)(*str);
+        freq[current_char]++;
+        str++;
+    }
+}
+
+int main(void) {
+    const char *test_string = "hello world";
+    int *frequency = (int *)malloc(MAX_CHARS * sizeof(int));
+    
+    if (frequency == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        return 1;
+    }
+
+    count_character_frequency(test_string, frequency);
+
+    for (int i = 0; i < MAX_CHARS; i++) {
+        if (frequency[i] > 0) {
+            printf("'%c': %d\n", i, frequency[i]);
+        }
+    }
+
+    free(frequency);
+    frequency = NULL;
+
+    return 0;
+}
+```

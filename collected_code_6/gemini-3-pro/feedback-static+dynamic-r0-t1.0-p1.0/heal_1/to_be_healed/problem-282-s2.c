@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int data;
+    struct Node* next;
+} Node;
+
+Node* create_node(int data) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    if (!new_node) {
+        exit(EXIT_FAILURE);
+    }
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+void append(Node** head, int data) {
+    Node* new_node = create_node(data);
+    if (!*head) {
+        *head = new_node;
+        return;
+    }
+    Node* current = *head;
+    while (current->next) {
+        current = current->next;
+    }
+    current->next = new_node;
+}
+
+void free_list(Node* head) {
+    /* Possible weaknesses found:
+     *  The scope of the variable 'temp' can be reduced. [variableScope]
+     */
+    Node* temp;
+    while (head) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int is_present(Node* head, int data) {
+    Node* current = head;
+    while (current) {
+        if (current->data == data) {
+            return 1;
+        }
+        current = current->next;
+    }
+    return 0;
+}
+
+Node* subtract_lists(Node* list1, Node* list2) {
+    Node* result = NULL;
+    Node* current = list1;
+    while (current) {
+        if (!is_present(list2, current->data)) {
+            append(&result, current->data);
+        }
+        current = current->next;
+    }
+    return result;
+}
+
+void print_list(Node* head) {
+    Node* current = head;
+    while (current) {
+        printf("%d ", current->data);
+        current = current->next;
+    }
+    printf("\n");
+}
+
+int main(void) {
+    Node* list1 = NULL;
+    Node* list2 = NULL;
+    Node* result = NULL;
+
+    append(&list1, 1);
+    append(&list1, 2);
+    append(&list1, 3);
+    append(&list1, 4);
+    append(&list1, 5);
+
+    append(&list2, 2);
+    append(&list2, 4);
+    append(&list2, 6);
+
+    result = subtract_lists(list1, list2);
+
+    print_list(result);
+
+    free_list(list1);
+    free_list(list2);
+    free_list(result);
+
+    return 0;
+}

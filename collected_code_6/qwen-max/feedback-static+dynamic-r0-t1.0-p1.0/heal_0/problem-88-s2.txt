@@ -1,0 +1,56 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int value;
+    int count;
+} ElementFrequency;
+
+ElementFrequency* getFrequency(int *list, int size, int *returnSize) {
+    ElementFrequency *frequencies = (ElementFrequency*)malloc(size * sizeof(ElementFrequency));
+    if (frequencies == NULL) {
+        *returnSize = 0;
+        return NULL;
+    }
+    *returnSize = 0;
+
+    for (int i = 0; i < size; ++i) {
+        int found = 0;
+        for (int j = 0; j < *returnSize; ++j) {
+            if (frequencies[j].value == list[i]) {
+                frequencies[j].count++;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            frequencies[*returnSize].value = list[i];
+            frequencies[*returnSize].count = 1;
+            (*returnSize)++;
+        }
+    }
+
+    return frequencies;
+}
+
+void printFrequency(ElementFrequency *frequencies, int size) {
+    for (int i = 0; i < size; ++i) {
+        printf("%d: %d\n", frequencies[i].value, frequencies[i].count);
+    }
+}
+
+int main() {
+    int list[] = {1, 2, 2, 3, 3, 3, 4, 4, 4, 4};
+    int size = sizeof(list) / sizeof(list[0]);
+    int returnSize;
+    ElementFrequency *frequencies = getFrequency(list, size, &returnSize);
+
+    if (frequencies != NULL) {
+        printFrequency(frequencies, returnSize);
+        free(frequencies);
+    }
+
+    return 0;
+}
+```

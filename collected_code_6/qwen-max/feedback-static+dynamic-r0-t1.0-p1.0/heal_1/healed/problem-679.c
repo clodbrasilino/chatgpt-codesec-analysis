@@ -1,85 +1,75 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct {
-    char** keys;
-    const void** values;  // Changed to pointer to const
+    char *key;
+    void *value;
+} DictionaryEntry;
+
+typedef struct {
+    DictionaryEntry *entries;
     size_t count;
 } Dictionary;
 
-Dictionary* createDictionary() {
-    Dictionary* dict = (Dictionary*)malloc(sizeof(Dictionary));
-    if (dict) {
-        dict->keys = NULL;
-        dict->values = NULL;
-        dict->count = 0;
-    }
+Dictionary* create_dictionary() {
+    Dictionary *dict = (Dictionary*)malloc(sizeof(Dictionary));
+    if (!dict) return NULL;
+    dict->count = 0;
+    dict->entries = NULL;
     return dict;
 }
 
-int insertDictionary(Dictionary* dict, const char* key, const void* value) {  // Changed to const void*
-    if (!dict || !key || !value) {
-        return -1;
+void add_entry(Dictionary *dict, const char *key, void *value) {
+    dict->entries = (DictionaryEntry*)realloc(dict->entries, (dict->count + 1) * sizeof(DictionaryEntry));
+    if (dict->entries) {
+        dict->entries[dict->count].key = strdup(key);
+        dict->entries[dict->count].value = value;
+        dict->count++;
     }
-
-    dict->count++;
-    dict->keys = (char**)realloc(dict->keys, sizeof(char*) * dict->count);
-    dict->values = (const void**)realloc(dict->values, sizeof(const void*) * dict->count);  // Changed to const void**
-
-    if (!dict->keys || !dict->values) {
-        dict->count--;
-        return -1;
-    }
-
-    dict->keys[dict->count - 1] = (char*)key;
-    dict->values[dict->count - 1] = value;  // No cast needed
-    return 0;
 }
 
-const void* getElementByIndex(Dictionary* dict, size_t index) {  // Changed to const void*
-    if (!dict || index >= dict->count) {
-        return NULL;
+void* get_entry_by_index(Dictionary *dict, size_t index) {
+    if (index < dict->count) {
+        return dict->entries[index].value;
     }
-
-    return dict->values[index];  // No cast needed
+    return NULL;
 }
 
-void destroyDictionary(Dictionary* dict) {
-    free(dict->keys);
-    free((void*)dict->values);  // Cast back to void* for free
+void free_dictionary(Dictionary *dict) {
+    for (size_t i = 0; i < dict->count; i++) {
+        free(dict->entries[i].key);
+    }
+    free(dict->entries);
     free(dict);
 }
 
 int main() {
-    Dictionary* dict = createDictionary();
-    if (!dict) {
+    Dictionary *dict = create_dictionary();
+    if (dict == NULL) {
         return 1;
     }
 
-    int a = 10;
-    int b = 20;
-    int c = 30;
+    int num1 = 42;
+    int num2 = 73;
+    add_entry(dict, "one", &num1);
+    add_entry(dict, "two", &num2);
 
-    if (insertDictionary(dict, "one", &a) != 0) {
-        destroyDictionary(dict);
-        return 1;
-    }
-    if (insertDictionary(dict, "two", &b) != 0) {
-        destroyDictionary(dict);
-        return 1;
-    }
-    if (insertDictionary(dict, "three", &c) != 0) {
-        destroyDictionary(dict);
-        return 1;
-    }
+    void *value1 = get_entry_by_index(dict, 0);
+    void *value2 = get_entry_by_index(dict, 1);
 
-    const int* value = (const int*)getElementByIndex(dict, 1);  // Changed to const int*
-    if (value) {
-        printf("Value: %d\n", *value);
+    if (value1) {
+        printf("Value at index 0: %d\n", *(int*)value1);
     } else {
-        printf("Invalid index\n");
+        printf("No value found at index 0\n");
     }
 
-    destroyDictionary(dict);
+    if (value2) {
+        printf("Value at index 1: %d\n", *(int*)value2);
+    } else {
+        printf("No value found at index 1\n");
+    }
+
+    free_dictionary(dict);
     return 0;
 }

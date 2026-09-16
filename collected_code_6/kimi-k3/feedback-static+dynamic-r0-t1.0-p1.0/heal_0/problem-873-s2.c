@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <limits.h>
+
+unsigned long long fibonacci(int n) {
+    if (n <= 1) {
+        return (unsigned long long)n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main(int argc, char *argv[]) {
+    char *endptr;
+    long input_val;
+    int n;
+    unsigned long long result;
+
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <non-negative integer>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    errno = 0;
+    input_val = strtol(argv[1], &endptr, 10);
+
+    if (errno == ERANGE || input_val > INT_MAX || input_val < 0) {
+        fprintf(stderr, "Error: Invalid input range\n");
+        return EXIT_FAILURE;
+    }
+
+    if (endptr == argv[1] || *endptr != '\0') {
+        fprintf(stderr, "Error: Invalid numeric input\n");
+        return EXIT_FAILURE;
+    }
+
+    n = (int)input_val;
+    result = fibonacci(n);
+    
+    printf("Fibonacci(%d) = %llu\n", n, result);
+
+    return EXIT_SUCCESS;
+}

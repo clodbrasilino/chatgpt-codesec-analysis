@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int contains_z(const char *word) {
+    if (word == NULL) {
+        return 0;
+    }
+    
+    while (*word) {
+        if (*word == 'z' || *word == 'Z') {
+            return 1;
+        }
+        word++;
+    }
+    
+    return 0;
+}
+
+int main(int argc, const char *argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <word>\n", argv[0]);
+        return 1;
+    }
+    
+    if (contains_z(argv[1])) {
+        printf("The word contains 'z'.\n");
+    } else {
+        printf("The word does not contain 'z'.\n");
+    }
+    
+    return 0;
+}

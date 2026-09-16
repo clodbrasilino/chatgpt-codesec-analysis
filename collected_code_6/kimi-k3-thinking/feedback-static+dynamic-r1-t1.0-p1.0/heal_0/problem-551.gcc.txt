@@ -1,0 +1,9 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-551.c: In function 'main':
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-551.c:83:29: error: passing argument 1 of 'extract_column' from incompatible pointer type [-Wincompatible-pointer-types]
+   83 |     column = extract_column(matrix, rows, cols, col_index);
+      |                             ^~~~~~
+      |                             |
+      |                             int **
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/kimi-k3-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-551.c:4:39: note: expected 'const int * const*' but argument is of type 'int **'
+    4 | int *extract_column(const int *const *matrix, size_t rows, size_t cols, size_t col_index)
+      |                     ~~~~~~~~~~~~~~~~~~^~~~~~

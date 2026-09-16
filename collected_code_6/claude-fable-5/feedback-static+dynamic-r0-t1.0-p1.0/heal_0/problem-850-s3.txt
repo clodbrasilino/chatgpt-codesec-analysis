@@ -1,0 +1,52 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+bool is_valid_triangle(int angle1, int angle2, int angle3)
+{
+    if (angle1 <= 0 || angle2 <= 0 || angle3 <= 0)
+    {
+        return false;
+    }
+
+    if (angle1 + angle2 + angle3 != 180)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int a;
+    int b;
+    int c;
+
+    printf("Enter three angles: ");
+
+    if (scanf("%d %d %d", &a, &b, &c) != 3)
+    {
+        fprintf(stderr, "Error: invalid input\n");
+        return 1;
+    }
+
+    if (is_valid_triangle(a, b, c))
+    {
+        printf("A triangle with positive area is possible.\n");
+    }
+    else
+    {
+        printf("A triangle with positive area is not possible.\n");
+    }
+
+    return 0;
+}
+```
+
+**How it works:**
+
+- `is_valid_triangle` checks two conditions: every angle must be strictly greater than zero (guaranteeing positive area, ruling out degenerate triangles), and the angles must sum to exactly 180 degrees.
+- The `main` function validates the return value of `scanf` to ensure exactly three integers were read, returning a nonzero exit code with an error message on stderr if input is malformed. This addresses CWE-703 by properly handling exceptional input conditions.
+- No dynamic resources (files, memory) are allocated, so there is nothing to leak or mismanage (CWE-664).
+- The code adheres to standard C conventions: `int main(void)`, explicit return values, `bool` from `<stdbool.h>`, and braces on all control structures (CWE-710).

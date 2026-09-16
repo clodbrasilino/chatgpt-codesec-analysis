@@ -1,0 +1,60 @@
+```c
+#include <stdio.h>
+
+double tuple_to_float(int whole, int fraction)
+{
+    double divisor = 1.0;
+    int temp;
+
+    if (fraction < 0) {
+        fprintf(stderr, "Error: fraction part must be non-negative\n");
+        return 0.0;
+    }
+
+    temp = fraction;
+    do {
+        divisor *= 10.0;
+        temp /= 10;
+    } while (temp > 0);
+
+    if (whole < 0) {
+        return (double)whole - (double)fraction / divisor;
+    }
+
+    return (double)whole + (double)fraction / divisor;
+}
+
+int main(void)
+{
+    const int tuple[2] = {4, 5};
+    double result;
+
+    result = tuple_to_float(tuple[0], tuple[1]);
+    printf("(%d, %d) -> %g\n", tuple[0], tuple[1], result);
+
+    return 0;
+}
+```
+
+**Summary of the fix applied:**
+
+The identified weakness was flagged by the static analyzer (cppcheck's `constVariable` check): the local array `tuple` in `main()` is never modified after initialization, so it should be declared `const`. The fix changes:
+
+```c
+int tuple[2] = {4, 5};
+```
+
+to:
+
+```c
+const int tuple[2] = {4, 5};
+```
+
+**Why this matters:**
+
+1. **Communicates intent** — Declaring the array `const` explicitly documents that its contents are read-only, making the code self-explanatory to other developers and tools.
+2. **Enables compiler optimizations** — The compiler may place `const` data in read-only memory sections (e.g., `.rodata`), potentially reducing RAM usage and enabling further optimizations.
+3. **Prevents accidental mutation** — Any future modification attempt on `tuple` will now produce a compile-time error rather than introducing a subtle runtime bug.
+4. **Silences the static analyzer warning** — Eliminating the `constVariable` diagnostic keeps the codebase warning-free, which makes real issues easier to spot in future analysis runs.
+
+The rest of the program logic is sound: `tuple_to_float` correctly handles negative fractions (rejecting them via `stderr`), properly computes the divisor using a do-while loop (which correctly handles `fraction == 0` by producing a divisor of 10.0), and correctly handles negative whole values by subtracting the fractional part to preserve the sign convention (e.g., `(-4, 5)` → `-4.5` rather than `-3.5`).

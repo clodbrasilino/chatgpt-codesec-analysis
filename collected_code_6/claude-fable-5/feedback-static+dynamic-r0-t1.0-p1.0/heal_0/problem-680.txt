@@ -1,0 +1,53 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool is_increasing(const int *sequence, size_t length)
+{
+    size_t i;
+
+    if (sequence == NULL || length == 0U) {
+        return false;
+    }
+
+    for (i = 1U; i < length; i++) {
+        if (sequence[i] <= sequence[i - 1U]) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int increasing_seq[] = {1, 3, 5, 7, 9};
+    int non_increasing_seq[] = {2, 4, 4, 8, 10};
+    size_t len1 = sizeof(increasing_seq) / sizeof(increasing_seq[0]);
+    size_t len2 = sizeof(non_increasing_seq) / sizeof(non_increasing_seq[0]);
+
+    if (is_increasing(increasing_seq, len1)) {
+        if (printf("Sequence 1 is increasing.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Sequence 1 is not increasing.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (is_increasing(non_increasing_seq, len2)) {
+        if (printf("Sequence 2 is increasing.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (printf("Sequence 2 is not increasing.\n") < 0) {
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```

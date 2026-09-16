@@ -1,0 +1,57 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *longestCommonPrefix(char **strs, int strsSize) {
+    if (strs == NULL || strsSize <= 0 || strs[0] == NULL) {
+        return NULL;
+    }
+
+    size_t min_len = strlen(strs[0]);
+    for (int i = 1; i < strsSize; i++) {
+        if (strs[i] == NULL) {
+            return NULL;
+        }
+        size_t len = strlen(strs[i]);
+        if (len < min_len) {
+            min_len = len;
+        }
+    }
+
+    char *prefix = (char *)malloc(min_len + 1);
+    if (prefix == NULL) {
+        return NULL;
+    }
+
+    size_t i;
+    for (i = 0; i < min_len; i++) {
+        char c = strs[0][i];
+        for (int j = 1; j < strsSize; j++) {
+            if (strs[j][i] != c) {
+                goto done;
+            }
+        }
+        prefix[i] = c;
+    }
+
+done:
+    prefix[i] = '\0';
+    return prefix;
+}
+
+int main(void) {
+    char *strs[] = {"flower", "flow", "flight"};
+    int size = sizeof(strs) / sizeof(strs[0]);
+
+    char *result = longestCommonPrefix(strs, size);
+    if (result != NULL) {
+        printf("Longest common prefix: %s\n", result);
+        free(result);
+    } else {
+        printf("No common prefix found or error occurred.\n");
+    }
+
+    return 0;
+}
+```

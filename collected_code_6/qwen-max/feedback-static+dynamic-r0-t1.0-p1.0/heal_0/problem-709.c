@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    char *key;
+    int value;
+} Tuple;
+
+int compare(const void *a, const void *b) {
+    return ((Tuple *)a)->value - ((Tuple *)b)->value;
+}
+
+int countUniqueKeys(Tuple *tuples, int len) {
+    if (len == 0) return 0;
+
+    qsort(tuples, len, sizeof(Tuple), compare);
+
+    int count = 1;
+    for (int i = 1; i < len; i++) {
+        if (tuples[i].value != tuples[i - 1].value || strcmp(tuples[i].key, tuples[i - 1].key) != 0) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    Tuple tuples[] = {{"A", 2}, {"B", 3}, {"C", 2}, {"D", 3}, {"E", 3}, {"F", 4}};
+    int len = sizeof(tuples) / sizeof(tuples[0]);
+
+    int uniqueCount = countUniqueKeys(tuples, len);
+    printf("Unique keys count: %d\n", uniqueCount);
+
+    return 0;
+}

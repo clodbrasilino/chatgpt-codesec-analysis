@@ -3,53 +3,71 @@
 #include <stdlib.h>
 
 typedef struct {
-    int x, y;
+    int first;
+    int second;
 } Tuple;
 
-typedef struct Node {
+typedef struct node {
     Tuple data;
-    struct Node* next;
+    struct node *next;
 } Node;
 
 typedef struct {
-    Node* head;
+    Node *head;
 } List;
 
-void initList(List* list) {
-    list->head = NULL;
+void init_list(List *l) {
+    l->head = NULL;
 }
 
-void addTupleToList(List* list, Tuple tuple) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
-    if (newNode == NULL) {
-        exit(EXIT_FAILURE);
-    }
-    newNode->data = tuple;
-    newNode->next = list->head;
-    list->head = newNode;
+Node* create_node(Tuple t) {
+    Node *new_node = (Node*)malloc(sizeof(Node));
+    new_node->data = t;
+    new_node->next = NULL;
+    return new_node;
 }
 
-void freeList(List* list) {
-    Node* current = list->head;
+int add_tuple_to_list(List *l, Tuple t) {
+    Node *new_node = create_node(t);
+    if (!new_node) return -1;
+
+    new_node->next = l->head;
+    l->head = new_node;
+    return 0;
+}
+
+void free_list(List *l) {
+    Node *current = l->head;
     while (current != NULL) {
-        Node* temp = current;
+        Node *temp = current;
         current = current->next;
         free(temp);
     }
-    list->head = NULL;
+    l->head = NULL;
 }
 
 int main() {
-    List myList;
-    initList(&myList);
+    List list;
+    init_list(&list);
 
     Tuple t1 = {1, 2};
     Tuple t2 = {3, 4};
 
-    addTupleToList(&myList, t1);
-    addTupleToList(&myList, t2);
+    if (add_tuple_to_list(&list, t1) == -1 || add_tuple_to_list(&list, t2) == -1) {
+        printf("Error adding tuple to list\n");
+        free_list(&list);
+        return 1;
+    }
 
-    freeList(&myList);
+    // Print the list for verification
+    Node *current = list.head;
+    while (current != NULL) {
+        printf("(%d, %d) -> ", current->data.first, current->data.second);
+        current = current->next;
+    }
+    printf("NULL\n");
+
+    free_list(&list);
     return 0;
 }
 ```

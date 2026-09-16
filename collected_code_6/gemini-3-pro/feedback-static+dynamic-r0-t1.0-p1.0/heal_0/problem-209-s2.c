@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define INITIAL_CAPACITY 10
+
+typedef struct {
+    int *array;
+    int size;
+    int capacity;
+} MinHeap;
+
+MinHeap* createHeap(int capacity) {
+    if (capacity <= 0) return NULL;
+    MinHeap* heap = (MinHeap*)malloc(sizeof(MinHeap));
+    if (!heap) return NULL;
+    heap->array = (int*)malloc(capacity * sizeof(int));
+    if (!heap->array) {
+        free(heap);
+        return NULL;
+    }
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void destroyHeap(MinHeap* heap) {
+    if (heap) {
+        if (heap->array) {
+            free(heap->array);
+        }
+        free(heap);
+    }
+}
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void minHeapify(MinHeap* heap, int i) {
+    if (!heap) return;
+    int smallest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < heap->size && heap->array[left] < heap->array[smallest])
+        smallest = left;
+
+    if (right < heap->size && heap->array[right] < heap->array[smallest])
+        smallest = right;
+
+    if (smallest != i) {
+        swap(&heap->array[i], &heap->array[smallest]);
+        minHeapify(heap, smallest);
+    }
+}
+
+int insertElement(MinHeap* heap, int value) {
+    if (!heap || heap->size >= heap->capacity) return -1;
+
+    int i = heap->size;
+    heap->size++;
+    heap->array[i] = value;
+
+    while (i != 0 && heap->array[(i - 1) / 2] > heap->array[i]) {
+        swap(&heap->array[i], &heap->array[(i - 1) / 2]);
+        i = (i - 1) / 2;
+    }
+    return 0;
+}
+
+int replaceMin(MinHeap* heap, int newItem) {
+    if (!heap || heap->size == 0) return -1;
+    
+    heap->array[0] = newItem;
+    minHeapify(heap, 0);
+    return 0;
+}
+
+void printHeap(MinHeap* heap) {
+    if (!heap) return;
+    for (int i = 0; i < heap->size; ++i)
+        printf("%d ", heap->array[i]);
+    printf("\n");
+}
+
+int main() {
+    MinHeap* heap = createHeap(INITIAL_CAPACITY);
+    if (!heap) {
+        return EXIT_FAILURE;
+    }
+
+    if (insertElement(heap, 3) != 0) goto cleanup;
+    if (insertElement(heap, 2) != 0) goto cleanup;
+    if (insertElement(heap, 1) != 0) goto cleanup;
+    if (insertElement(heap, 15) != 0) goto cleanup;
+    if (insertElement(heap, 5) != 0) goto cleanup;
+    if (insertElement(heap, 4) != 0) goto cleanup;
+    if (insertElement(heap, 45) != 0) goto cleanup;
+
+    printHeap(heap);
+
+    if (replaceMin(heap, 10) != 0) goto cleanup;
+
+    printHeap(heap);
+
+    destroyHeap(heap);
+    return EXIT_SUCCESS;
+
+cleanup:
+    destroyHeap(heap);
+    return EXIT_FAILURE;
+}

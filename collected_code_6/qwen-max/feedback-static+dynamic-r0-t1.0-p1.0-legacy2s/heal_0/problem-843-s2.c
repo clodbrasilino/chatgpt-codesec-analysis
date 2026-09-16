@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int* data;
+    int size;
+    int capacity;
+} Heap;
+
+Heap* createHeap(int capacity) {
+    Heap* heap = (Heap*)malloc(sizeof(Heap));
+    heap->data = (int*)malloc(capacity * sizeof(int));
+    heap->size = 0;
+    heap->capacity = capacity;
+    return heap;
+}
+
+void freeHeap(Heap* heap) {
+    free(heap->data);
+    free(heap);
+}
+
+void insertHeap(Heap* heap, int value) {
+    if (heap->size < heap->capacity) {
+        int i = heap->size++;
+        for (; i > 0 && heap->data[(i - 1) / 2] > value; i = (i - 1) / 2) {
+            heap->data[i] = heap->data[(i - 1) / 2];
+        }
+        heap->data[i] = value;
+    }
+}
+
+int extractMin(Heap* heap) {
+    int min = heap->data[0];
+    heap->data[0] = heap->data[--heap->size];
+    int i = 0, minIndex = 0;
+    while (2 * i + 1 < heap->size) {
+        minIndex = 2 * i + 1;
+        if (2 * i + 2 < heap->size && heap->data[2 * i + 2] < heap->data[minIndex]) {
+            minIndex = 2 * i + 2;
+        }
+        if (heap->data[i] <= heap->data[minIndex]) {
+            break;
+        } else {
+            int temp = heap->data[i];
+            heap->data[i] = heap->data[minIndex];
+            heap->data[minIndex] = temp;
+            i = minIndex;
+        }
+    }
+    return min;
+}
+
+int nthSuperUglyNumber(int n, int k, int* primes) {
+    int* uglyNumbers = (int*)malloc(n * sizeof(int));
+    uglyNumbers[0] = 1;
+    int nextMultiple[k], indices[k];
+    for (int i = 0; i < k; ++i) {
+        nextMultiple[i] = uglyNumbers[0] * primes[i];
+        indices[i] = 0;
+    }
+
+    Heap* minHeap = createHeap(k);
+
+    for (int i = 1; i < n; ++i) {
+        for (int j = 0; j < k; ++j) {
+            insertHeap(minHeap, nextMultiple[j]);
+        }
+        uglyNumbers[i] = extractMin(minHeap);
+
+        for (int j = 0; j < k; ++j) {
+            if (nextMultiple[j] == uglyNumbers[i]) {
+                nextMultiple[j] = uglyNumbers[++indices[j]] * primes[j];
+                break;
+            }
+        }
+    }
+
+    freeHeap(minHeap);
+    free(uglyNumbers);
+    return uglyNumbers[n - 1];
+}
+
+int main() {
+    int primes[] = {2, 3, 5};
+    int k = 3;
+    int n = 12;
+    printf("%d\n", nthSuperUglyNumber(n, k, primes));
+    return 0;
+}

@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+
+int search_string(const char *haystack, const char *needle, size_t *position)
+{
+    const char *found;
+
+    if (haystack == NULL || needle == NULL || position == NULL) {
+        return -1;
+    }
+
+    if (needle[0] == '\0') {
+        *position = 0;
+        return 0;
+    }
+
+    found = strstr(haystack, needle);
+    if (found == NULL) {
+        return 1;
+    }
+
+    *position = (size_t)(found - haystack);
+    return 0;
+}
+
+int main(void)
+{
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *pattern = "brown fox";
+    size_t location = 0;
+    int result;
+
+    result = search_string(text, pattern, &location);
+
+    if (result == 0) {
+        if (printf("Pattern \"%s\" found at index %zu\n", pattern, location) < 0) {
+            return 1;
+        }
+    } else if (result == 1) {
+        if (printf("Pattern \"%s\" not found\n", pattern) < 0) {
+            return 1;
+        }
+    } else {
+        if (fprintf(stderr, "Invalid input to search_string\n") < 0) {
+            return 1;
+        }
+        return 1;
+    }
+
+    return 0;
+}

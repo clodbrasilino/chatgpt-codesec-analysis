@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int find_nth_digit(long long numerator, long long denominator, int n) {
+    if (denominator == 0) {
+        return -1;
+    }
+    if (n <= 0) {
+        return -1;
+    }
+    long long num = llabs(numerator % denominator);
+    long long den = llabs(denominator);
+    long long remainder = num;
+    int digit = 0;
+    for (int i = 0; i < n; i++) {
+        if (remainder > LLONG_MAX / 10) {
+            return -1;
+        }
+        remainder *= 10;
+        digit = (int)(remainder / den);
+        remainder = remainder % den;
+    }
+    return digit;
+}
+
+int main(void) {
+    printf("%d\n", find_nth_digit(1, 7, 1));
+    printf("%d\n", find_nth_digit(1, 7, 2));
+    printf("%d\n", find_nth_digit(1, 7, 6));
+    printf("%d\n", find_nth_digit(22, 7, 1));
+    printf("%d\n", find_nth_digit(5, 2, 1));
+    printf("%d\n", find_nth_digit(1, 0, 1));
+    printf("%d\n", find_nth_digit(1, 3, 0));
+    return 0;
+}

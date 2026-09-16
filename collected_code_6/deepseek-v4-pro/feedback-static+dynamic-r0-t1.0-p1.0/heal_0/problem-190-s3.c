@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+int count_integral_points_inside_square(Point center, int side_length) {
+    int count = 0;
+    int half = side_length / 2;
+    int x_min = center.x - half;
+    int x_max = center.x + half;
+    int y_min = center.y - half;
+    int y_max = center.y + half;
+    
+    for (int x = x_min; x <= x_max; x++) {
+        for (int y = y_min; y <= y_max; y++) {
+            if (x > x_min && x < x_max && y > y_min && y < y_max) {
+                count++;
+            }
+        }
+    }
+    
+    return count;
+}
+
+int main(void) {
+    Point center;
+    int side_length;
+    
+    printf("Enter center coordinates (x y): ");
+    if (scanf("%d %d", &center.x, &center.y) != 2) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter side length: ");
+    if (scanf("%d", &side_length) != 1) {
+        fprintf(stderr, "Error reading input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (side_length <= 0) {
+        fprintf(stderr, "Side length must be positive\n");
+        return EXIT_FAILURE;
+    }
+    
+    int result = count_integral_points_inside_square(center, side_length);
+    printf("Number of integral points inside the square: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}

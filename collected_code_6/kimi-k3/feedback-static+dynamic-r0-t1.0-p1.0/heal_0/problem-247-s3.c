@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+static int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+static int longestPalindromeSubseq(const char *s)
+{
+    if (s == NULL) {
+        return 0;
+    }
+
+    size_t n = strlen(s);
+    if (n == 0) {
+        return 0;
+    }
+
+    int *dp = (int *)calloc(n * n, sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+
+    for (size_t i = 0; i < n; i++) {
+        dp[i * n + i] = 1;
+    }
+
+    for (size_t len = 2; len <= n; len++) {
+        for (size_t i = 0; i <= n - len; i++) {
+            size_t j = i + len - 1;
+            if (s[i] == s[j]) {
+                dp[i * n + j] = (len == 2) ? 2 : dp[(i + 1) * n + (j - 1)] + 2;
+            } else {
+                dp[i * n + j] = max(dp[(i + 1) * n + j], dp[i * n + (j - 1)]);
+            }
+        }
+    }
+
+    int result = dp[n - 1];
+    free(dp);
+    return result;
+}
+
+int main(void)
+{
+    const char *str = "bbbab";
+    int result = longestPalindromeSubseq(str);
+    
+    if (result >= 0) {
+        printf("Length of longest palindromic subsequence: %d\n", result);
+    } else {
+        fprintf(stderr, "Error: Memory allocation failed\n");
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}

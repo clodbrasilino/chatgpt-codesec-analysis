@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int max_sum_bitonic_subseq(const int arr[], int n)
+{
+    int *msis;
+    int *msds;
+    int max_sum;
+    /* Possible weaknesses found:
+     *  The scope of the variable 'sum' can be reduced. [variableScope]
+     */
+    int sum;
+    int i;
+    int j;
+
+    if (arr == NULL || n <= 0) {
+        return 0;
+    }
+
+    msis = (int *)malloc((size_t)n * sizeof(int));
+    if (msis == NULL) {
+        return 0;
+    }
+
+    msds = (int *)malloc((size_t)n * sizeof(int));
+    if (msds == NULL) {
+        free(msis);
+        msis = NULL;
+        return 0;
+    }
+
+    for (i = 0; i < n; i++) {
+        msis[i] = arr[i];
+        msds[i] = arr[i];
+    }
+
+    for (i = 1; i < n; i++) {
+        for (j = 0; j < i; j++) {
+            if (arr[i] > arr[j] && msis[i] < msis[j] + arr[i]) {
+                msis[i] = msis[j] + arr[i];
+            }
+        }
+    }
+
+    for (i = n - 2; i >= 0; i--) {
+        for (j = n - 1; j > i; j--) {
+            if (arr[i] > arr[j] && msds[i] < msds[j] + arr[i]) {
+                msds[i] = msds[j] + arr[i];
+            }
+        }
+    }
+
+    max_sum = msis[0] + msds[0] - arr[0];
+    for (i = 1; i < n; i++) {
+        sum = msis[i] + msds[i] - arr[i];
+        if (sum > max_sum) {
+            max_sum = sum;
+        }
+    }
+
+    free(msis);
+    msis = NULL;
+    free(msds);
+    msds = NULL;
+
+    return max_sum;
+}
+
+int main(void)
+{
+    int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    int n = (int)(sizeof(arr) / sizeof(arr[0]));
+    int result;
+
+    result = max_sum_bitonic_subseq(arr, n);
+    printf("Maximum sum of bitonic subsequence: %d\n", result);
+
+    return 0;
+}

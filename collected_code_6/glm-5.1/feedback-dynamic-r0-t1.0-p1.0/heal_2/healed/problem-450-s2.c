@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** extract_substrings(char** strings, int count, int size) {
+    if (strings == NULL || count <= 0 || size <= 0) {
+        return NULL;
+    }
+
+    char** result = (char**)malloc((count + 1) * sizeof(char*));
+    if (result == NULL) {
+        return NULL;
+    }
+
+    for (int i = 0; i < count; i++) {
+        if (strings[i] == NULL) {
+            result[i] = NULL;
+            continue;
+        }
+
+        size_t len = strlen(strings[i]);
+
+        if ((size_t)size < len) {
+            size_t alloc_size = (size_t)size;
+
+            result[i] = (char*)malloc(alloc_size + 1);
+            if (result[i] == NULL) {
+                for (int j = 0; j < i; j++) {
+                    free(result[j]);
+                }
+                free(result);
+                return NULL;
+            }
+
+            strncpy(result[i], strings[i], alloc_size);
+            result[i][alloc_size] = '\0';
+        } else {
+            result[i] = NULL;
+        }
+    }
+
+    int insert_pos = 0;
+    for (int i = 0; i < count; i++) {
+        if (result[i] != NULL) {
+            result[insert_pos++] = result[i];
+        }
+    }
+    result[insert_pos] = NULL;
+
+    return result;
+}
+
+void free_extracted_strings(char** strings) {
+    if (strings == NULL) {
+        return;
+    }
+
+    for (int i = 0; strings[i] != NULL; i++) {
+        free(strings[i]);
+    }
+    free(strings);
+}
+
+int main() {
+    char* input_strings[] = {
+        "Python",
+        "list",
+        "exercises",
+        "practice",
+        "solution",
+        NULL
+    };
+
+    int count = 0;
+    while (input_strings[count] != NULL) {
+        count++;
+    }
+
+    int extract_size = 9;
+
+    char** extracted = extract_substrings(input_strings, count, extract_size);
+    if (extracted == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    for (int i = 0; extracted[i] != NULL; i++) {
+        printf("%s\n", extracted[i]);
+    }
+
+    free_extracted_strings(extracted);
+
+    return EXIT_SUCCESS;
+}

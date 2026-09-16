@@ -1,0 +1,149 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+#include <stdint.h>
+
+static unsigned long long sat_add(unsigned long long a, unsigned long long b)
+{
+    if (b > ULLONG_MAX - a)
+        return ULLONG_MAX;
+    return a + b;
+}
+
+static unsigned long long sat_mul(unsigned long long a, unsigned long long b)
+{
+    if (a != 0ULL && b > ULLONG_MAX / a)
+        return ULLONG_MAX;
+    return a * b;
+}
+
+static unsigned long long pow2_sat(size_t e)
+{
+    if (e >= 64U)
+        return ULLONG_MAX;
+    return 1ULL << e;
+}
+
+static unsigned long long pow2_minus1_sat(size_t e)
+{
+    if (e >= 64U)
+        return ULLONG_MAX;
+    return (1ULL << e) - 1ULL;
+}
+
+bool count_product_subsequences(const int *arr, size_t n, long long k,
+                                unsigned long long *result)
+{
+    size_t i;
+    size_t zeros = 0U;
+    size_t m = 0U;
+    int *pos = NULL;
+    unsigned long long *prev = NULL;
+    unsigned long long *cur = NULL;
+    unsigned long long positive_count = 0ULL;
+    unsigned long long zero_count = 0ULL;
+
+    if (result == NULL)
+        return false;
+    *result = 0ULL;
+    if (arr == NULL)
+        return false;
+    if (n == 0U || k <= 0LL)
+        return true;
+    if (n > SIZE_MAX / sizeof(*pos))
+        return false;
+
+    pos = malloc(n * sizeof(*pos));
+    if (pos == NULL)
+        return false;
+
+    for (i = 0U; i < n; i++) {
+        if (arr[i] == 0) {
+            zeros++;
+        } else if (arr[i] > 0) {
+            pos[m++] = arr[i];
+        } else {
+            free(pos);
+            return false;
+        }
+    }
+
+    if (k >= 2LL && m > 0U) {
+        size_t rows;
+        size_t p;
+
+        if ((long long)(size_t)k != k) {
+            free(pos);
+            return false;
+        }
+        rows = (size_t)k;
+
+        prev = calloc(rows, sizeof(*prev));
+        cur = calloc(rows, sizeof(*cur));
+        if (prev == NULL || cur == NULL) {
+            free(prev);
+            free(cur);
+            free(pos);
+            return false;
+        }
+
+        for (i = 0U; i < m; i++) {
+            unsigned long long v = (unsigned long long)pos[i];
+            unsigned long long *tmp;
+            for (p = 1U; p < rows; p++) {
+                unsigned long long val = prev[p];
+                if (v <= (unsigned long long)p)
+                    val = sat_add(val, sat_add(prev[p / v], 1ULL));
+                cur[p] = val;
+            }
+            tmp = prev;
+            prev = cur;
+            cur = tmp;
+        }
+
+        positive_count = prev[rows - 1U];
+        free(prev);
+        free(cur);
+    }
+
+    if (zeros > 0U)
+        zero_count = sat_mul(pow2_minus1_sat(zeros), pow2_sat(m));
+
+    *result = sat_add(positive_count, zero_count);
+    free(pos);
+    return true;
+}
+
+int main(void)
+{
+    const int arr1[] = {1, 2, 3, 4};
+    const int arr2[] = {0, 1, 2};
+    const int arr3[] = {2, 4, 5, 3};
+    const int arr4[] = {0, 0, 0};
+    unsigned long long result = 0ULL;
+
+    if (count_product_subsequences(arr1, sizeof(arr1) / sizeof(arr1[0]), 10LL, &result))
+        printf("Test 1: %llu\n", result);
+    else
+        fprintf(stderr, "Test 1: error\n");
+
+    if (count_product_subsequences(arr2, sizeof(arr2) / sizeof(arr2[0]), 2LL, &result))
+        printf("Test 2: %llu\n", result);
+    else
+        fprintf(stderr, "Test 2: error\n");
+
+    if (count_product_subsequences(arr3, sizeof(arr3) / sizeof(arr3[0]), 12LL, &result))
+        printf("Test 3: %llu\n", result);
+    else
+        fprintf(stderr, "Test 3: error\n");
+
+    if (count_product_subsequences(arr4, sizeof(arr4) / sizeof(arr4[0]), 1LL, &result))
+        printf("Test 4: %llu\n", result);
+    else
+        fprintf(stderr, "Test 4: error\n");
+
+    return EXIT_SUCCESS;
+}
+```

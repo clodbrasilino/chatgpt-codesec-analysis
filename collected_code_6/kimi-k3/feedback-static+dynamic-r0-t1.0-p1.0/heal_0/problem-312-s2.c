@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <math.h>
+#include <errno.h>
+#include <stdlib.h>
+
+double calculate_cone_volume(double radius, double height)
+{
+    if (radius < 0.0 || height < 0.0) {
+        errno = EDOM;
+        return -1.0;
+    }
+    
+    return (M_PI * radius * radius * height) / 3.0;
+}
+
+int main(void)
+{
+    double radius = 0.0;
+    double height = 0.0;
+    double volume = 0.0;
+    
+    printf("Enter the radius of the cone: ");
+    if (scanf("%lf", &radius) != 1) {
+        fprintf(stderr, "Error: Invalid input for radius\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the height of the cone: ");
+    if (scanf("%lf", &height) != 1) {
+        fprintf(stderr, "Error: Invalid input for height\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    volume = calculate_cone_volume(radius, height);
+    
+    if (errno == EDOM) {
+        fprintf(stderr, "Error: Radius and height must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Volume of the cone: %.2f\n", volume);
+    
+    return EXIT_SUCCESS;
+}

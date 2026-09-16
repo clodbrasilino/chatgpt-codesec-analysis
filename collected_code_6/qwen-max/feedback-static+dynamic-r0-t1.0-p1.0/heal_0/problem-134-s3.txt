@@ -1,0 +1,32 @@
+```c
+#include <stdio.h>
+
+int check_last_element(int *array, int length, int p) {
+    if (length <= 0 || p < 0) {
+        return -1;
+    }
+
+    for (int i = 0; i < p; ++i) {
+        array[length - 1] += 1;
+    }
+
+    return (array[length - 1] % 2 == 0) ? 0 : 1;
+}
+
+int main() {
+    int arr[] = {1, 2, 3, 4, 5};
+    int length = sizeof(arr) / sizeof(arr[0]);
+    int p = 3;
+
+    int result = check_last_element(arr, length, p);
+    if (result == 0) {
+        printf("The last element is even.\n");
+    } else if (result == 1) {
+        printf("The last element is odd.\n");
+    } else {
+        printf("Invalid input.\n");
+    }
+
+    return 0;
+}
+```

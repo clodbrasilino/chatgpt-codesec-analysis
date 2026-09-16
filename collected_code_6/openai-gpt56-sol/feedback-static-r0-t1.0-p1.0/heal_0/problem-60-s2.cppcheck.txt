@@ -1,0 +1,16 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-60-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-60-s2.c:13:25: warning: Possible null pointer dereference: array [nullPointer]
+        int64_t value = array[i];
+                        ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-60-s2.c:49:22: note: Assignment 'array=NULL', assigned value is 0
+    int64_t *array = NULL;
+                     ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-60-s2.c:51:16: note: Assuming condition is false
+    if (length > 0) {
+               ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-60-s2.c:67:44: note: Calling function 'max_subsequence_length', 1st argument 'array' value is 0
+    printf("%zu\n", max_subsequence_length(array, length, difference));
+                                           ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/openai-gpt56-sol/feedback-static-r0-t1.0-p1.0/heal_0/problem-60-s2.c:13:25: note: Null pointer dereference
+        int64_t value = array[i];
+                        ^

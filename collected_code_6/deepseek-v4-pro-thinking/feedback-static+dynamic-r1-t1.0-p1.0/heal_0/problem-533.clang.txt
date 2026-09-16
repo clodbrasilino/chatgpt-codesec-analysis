@@ -1,0 +1,4 @@
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/deepseek-v4-pro-thinking/feedback-static-r1-t1.0-p1.0/heal_0/problem-533.c:63:42: error: indirection requires pointer operand ('size_t' (aka 'unsigned long') invalid)
+   63 |     if (new_capacity > SIZE_MAX / sizeof(*new_capacity)) return -1;
+      |                                          ^~~~~~~~~~~~~
+1 error generated.

@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <math.h>
+
+int hasEvenDivisors(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    
+    int root = (int)sqrt((double)n);
+    if (root * root == n) {
+        return 0;
+    }
+    
+    return 1;
+}
+
+int main(void) {
+    int testCases[] = {1, 2, 3, 4, 9, 10, 16, 25, 30};
+    size_t numTestCases = sizeof(testCases) / sizeof(testCases[0]);
+
+    for (size_t i = 0; i < numTestCases; i++) {
+        int n = testCases[i];
+        if (hasEvenDivisors(n)) {
+            printf("%d has an even number of divisors.\n", n);
+        } else {
+            printf("%d has an odd number of divisors.\n", n);
+        }
+    }
+
+    return 0;
+}

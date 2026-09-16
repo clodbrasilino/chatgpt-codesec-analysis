@@ -6,69 +6,71 @@ typedef struct Node {
     struct Node *next;
 } Node;
 
-Node* create_node(int value) {
-    Node *new_node = (Node *)malloc(sizeof(Node));
-    new_node->value = value;
-    new_node->next = NULL;
-    return new_node;
+Node* createNode(int value) {
+    Node *newNode = (Node*)malloc(sizeof(Node));
+    newNode->value = value;
+    newNode->next = NULL;
+    return newNode;
 }
 
-void insert_at_end(Node **head, int value) {
-    Node *new_node = create_node(value);
+void insertAtEnd(Node **head, int value) {
+    Node *newNode = createNode(value);
     if (*head == NULL) {
-        *head = new_node;
+        *head = newNode;
     } else {
         Node *temp = *head;
         while (temp->next != NULL) {
             temp = temp->next;
         }
-        temp->next = new_node;
+        temp->next = newNode;
     }
 }
 
-void print_list(Node *head) {
-    Node *temp = head;
-    while (temp != NULL) {
-        printf("%d -> ", temp->value);
-        temp = temp->next;
-    }
-    printf("NULL\n");
-}
-
-void rotate_left(Node **head, int k) {
-    if (*head == NULL || k <= 0) return;
-
+void rotateLeft(Node **head, int k) {
+    if (*head == NULL || (*head)->next == NULL || k <= 0) return;
+    
     Node *current = *head;
     int count = 1;
-    while (count < k && current != NULL) {
+    while (current->next != NULL && count < k) {
         current = current->next;
         count++;
     }
-
-    if (current == NULL) return;
-
-    Node *kth_node = current;
-
-    while (current->next != NULL) {
-        current = current->next;
+    
+    if (current->next == NULL) return;
+    
+    Node *kthNode = current;
+    current = kthNode->next;
+    kthNode->next = NULL;
+    
+    Node *temp = current;
+    while (temp->next != NULL) {
+        temp = temp->next;
     }
+    temp->next = *head;
+    *head = current;
+}
 
-    current->next = *head;
-    *head = kth_node->next;
-    kth_node->next = NULL;
+void printList(Node *head) {
+    while (head != NULL) {
+        printf("%d ", head->value);
+        head = head->next;
+    }
+    printf("\n");
 }
 
 int main() {
     Node *head = NULL;
-    for (int i = 1; i <= 5; ++i) {
-        insert_at_end(&head, i);
+    for (int i = 1; i <= 5; i++) {
+        insertAtEnd(&head, i);
     }
-
-    print_list(head);
-
-    rotate_left(&head, 2);
-
-    print_list(head);
-
+    
+    printf("Original list: ");
+    printList(head);
+    
+    rotateLeft(&head, 2);
+    
+    printf("Rotated list: ");
+    printList(head);
+    
     return 0;
 }

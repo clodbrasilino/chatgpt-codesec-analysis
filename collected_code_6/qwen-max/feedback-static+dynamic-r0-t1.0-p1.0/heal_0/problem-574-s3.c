@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <math.h>
+
+double calculate_surface_area(double radius, double height) {
+    return 2 * M_PI * radius * (radius + height);
+}
+
+int main() {
+    double radius = 5.0;
+    double height = 10.0;
+    double surface_area = calculate_surface_area(radius, height);
+    printf("Surface area of the cylinder: %.2f\n", surface_area);
+    return 0;
+}

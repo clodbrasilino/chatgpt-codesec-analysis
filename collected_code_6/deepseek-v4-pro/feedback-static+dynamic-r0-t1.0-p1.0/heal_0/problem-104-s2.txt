@@ -1,0 +1,112 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_STRING_LENGTH 256
+
+typedef struct Node {
+    char **strings;
+    int count;
+    struct Node *next;
+} Node;
+
+void sort_strings(char **strings, int count) {
+    for (int i = 0; i < count - 1; i++) {
+        for (int j = 0; j < count - i - 1; j++) {
+            if (strcmp(strings[j], strings[j + 1]) > 0) {
+                char *temp = strings[j];
+                strings[j] = strings[j + 1];
+                strings[j + 1] = temp;
+            }
+        }
+    }
+}
+
+void sort_each_sublist(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        if (current->strings != NULL && current->count > 0) {
+            sort_strings(current->strings, current->count);
+        }
+        current = current->next;
+    }
+}
+
+Node *create_node(char **strings, int count) {
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL) {
+        return NULL;
+    }
+    node->strings = strings;
+    node->count = count;
+    node->next = NULL;
+    return node;
+}
+
+void append_node(Node **head, Node *node) {
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    Node *current = *head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = node;
+}
+
+void free_node_list(Node *head) {
+    Node *current = head;
+    while (current != NULL) {
+        Node *next = current->next;
+        free(current);
+        current = next;
+    }
+}
+
+int main(void) {
+    char *list1[] = {"banana", "apple", "cherry"};
+    char *list2[] = {"dog", "cat", "bird", "fish"};
+    char *list3[] = {"zebra", "lion"};
+
+    Node *head = NULL;
+
+    Node *node1 = create_node(list1, sizeof(list1) / sizeof(list1[0]));
+    Node *node2 = create_node(list2, sizeof(list2) / sizeof(list2[0]));
+    Node *node3 = create_node(list3, sizeof(list3) / sizeof(list3[0]));
+
+    if (node1 == NULL || node2 == NULL || node3 == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        free_node_list(head);
+        free(node1);
+        free(node2);
+        free(node3);
+        return 1;
+    }
+
+    append_node(&head, node1);
+    append_node(&head, node2);
+    append_node(&head, node3);
+
+    sort_each_sublist(head);
+
+    Node *current = head;
+    int list_index = 1;
+    while (current != NULL) {
+        printf("List %d sorted: ", list_index);
+        for (int i = 0; i < current->count; i++) {
+            printf("%s", current->strings[i]);
+            if (i < current->count - 1) {
+                printf(", ");
+            }
+        }
+        printf("\n");
+        current = current->next;
+        list_index++;
+    }
+
+    free_node_list(head);
+    return 0;
+}
+```

@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int* fill_max_sum_increasing(const int arr[], int n) {
+    int *max_incr = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; ++i) {
+        max_incr[i] = arr[i];
+        for (int j = 0; j < i; ++j) {
+            if (arr[i] > arr[j] && max_incr[i] < max_incr[j] + arr[i]) {
+                max_incr[i] = max_incr[j] + arr[i];
+            }
+        }
+    }
+    return max_incr;
+}
+
+int* fill_max_sum_decreasing(const int arr[], int n) {
+    int *max_decr = (int*)malloc(n * sizeof(int));
+    for (int i = n - 1; i >= 0; --i) {
+        max_decr[i] = arr[i];
+        for (int j = i + 1; j < n; ++j) {
+            if (arr[i] > arr[j] && max_decr[i] < max_decr[j] + arr[i]) {
+                max_decr[i] = max_decr[j] + arr[i];
+            }
+        }
+    }
+    return max_decr;
+}
+
+int max_sum_bi_tonic_subseq(const int arr[], int n) {
+    int *max_incr = fill_max_sum_increasing(arr, n);
+    int *max_decr = fill_max_sum_decreasing(arr, n);
+
+    int max_sum = 0;
+    for (int i = 0; i < n; ++i) {
+        max_sum = max(max_sum, max_incr[i] + max_decr[i] - arr[i]);
+    }
+
+    free(max_incr);
+    free(max_decr);
+    return max_sum;
+}
+
+int main() {
+    const int arr[] = {1, 15, 51, 45, 33, 100, 12, 18, 9};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Maximum sum of bi-tonic subsequence: %d\n", max_sum_bi_tonic_subseq(arr, n));
+
+    return 0;
+}

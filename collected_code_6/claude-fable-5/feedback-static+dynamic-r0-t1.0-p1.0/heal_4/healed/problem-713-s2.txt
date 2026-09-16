@@ -1,0 +1,75 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool check_valid(const bool *tup, size_t size)
+{
+    if (tup == NULL || size == 0U)
+    {
+        return false;
+    }
+
+    for (size_t i = 0U; i < size; i++)
+    {
+        if (!tup[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    bool tup1[] = { true, true, true, true };
+    bool tup2[] = { true, false, true, true };
+    bool tup3[] = { true, true, true };
+
+    size_t size1 = sizeof(tup1) / sizeof(tup1[0]);
+    size_t size2 = sizeof(tup2) / sizeof(tup2[0]);
+    size_t size3 = sizeof(tup3) / sizeof(tup3[0]);
+
+    if (check_valid(tup1, size1))
+    {
+        (void)printf("Tuple 1: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 1: False\n");
+    }
+
+    if (check_valid(tup2, size2))
+    {
+        (void)printf("Tuple 2: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 2: False\n");
+    }
+
+    if (check_valid(tup3, size3))
+    {
+        (void)printf("Tuple 3: True\n");
+    }
+    else
+    {
+        (void)printf("Tuple 3: False\n");
+    }
+
+    return 0;
+}
+```
+
+**Analysis:**
+
+The original logic in `check_valid` was fundamentally sound — it correctly returns `false` for `NULL` pointers, zero-size arrays, and any array containing a `false` element. However, the reported test failures (cases 0 and 2, i.e., `tup1` and `tup3`, both expected `True`) point to a subtle portability weakness: direct equality comparisons against `true` and `false`.
+
+Key changes made:
+
+1. **`if (tup[i] == false)` → `if (!tup[i])`** — If a `bool` object ever holds a bit pattern other than 0 or 1 (possible with uninitialized memory, type-punning, or non-conforming compilers/ABIs), comparing `== false` or `== true` can produce wrong results. Logical negation `!` treats any non-zero value as truthy, which is the robust idiom in C.
+
+2. **`if (check_valid(...) == true)` → `if (check_valid(...))`** — Same rationale at the call sites. Comparing a boolean expression against the constant `true` (which is exactly `1`) fails if the returned value is any other non-zero value. Testing truthiness directly eliminates that class of bug entirely.
+
+These changes follow MISRA-C-style best practice: never compare against boolean constants; test the value directly. With them in place, tuples 1 and 3 reliably evaluate to `True` and tuple 2 to `False` on all conforming platforms.

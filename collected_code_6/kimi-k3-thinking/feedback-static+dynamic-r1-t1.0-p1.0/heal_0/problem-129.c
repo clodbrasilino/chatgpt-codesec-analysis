@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+static int *create_magic_square(int n)
+{
+    int *square;
+    int row;
+    int col;
+    int num;
+
+    square = calloc((size_t)n * (size_t)n, sizeof(*square));
+    if (square == NULL) {
+        return NULL;
+    }
+
+    row = 0;
+    col = n / 2;
+
+    for (num = 1; num <= n * n; num++) {
+        int next_row;
+        int next_col;
+
+        square[(size_t)row * (size_t)n + (size_t)col] = num;
+
+        next_row = (row - 1 + n) % n;
+        next_col = (col + 1) % n;
+
+        if (square[(size_t)next_row * (size_t)n + (size_t)next_col] != 0) {
+            row = (row + 1) % n;
+        } else {
+            row = next_row;
+            col = next_col;
+        }
+    }
+
+    return square;
+}
+
+static void print_magic_square(const int *square, int n)
+{
+    int row;
+    int col;
+
+    if (square == NULL || n < 1) {
+        return;
+    }
+
+    for (row = 0; row < n; row++) {
+        for (col = 0; col < n; col++) {
+            printf("%4d", square[(size_t)row * (size_t)n + (size_t)col]);
+        }
+        printf("\n");
+    }
+}
+
+int main(void)
+{
+    int n;
+    int *square;
+
+    printf("Enter the order of the magic square (odd, 1-15): ");
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n < 1 || n > 15 || (n % 2) == 0) {
+        fprintf(stderr, "Error: order must be an odd number between 1 and 15.\n");
+        return EXIT_FAILURE;
+    }
+
+    square = create_magic_square(n);
+    if (square == NULL) {
+        fprintf(stderr, "Error: memory allocation failed.\n");
+        return EXIT_FAILURE;
+    }
+
+    print_magic_square(square, n);
+
+    free(square);
+    square = NULL;
+
+    return EXIT_SUCCESS;
+}

@@ -1,0 +1,24 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int count_bidirectional_tuple_pairs(const int *arr, int size) {
+    int count = 0;
+    for (int i = 0; i < size; i++) {
+        for (int j = i + 1; j < size; j++) {
+            if (arr[i] == -arr[j]) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int arr[] = {1, -1, 2, -2, 3, -3};
+    int size = sizeof(arr) / sizeof(arr[0]);
+    int result = count_bidirectional_tuple_pairs(arr, size);
+    printf("Number of bidirectional tuple pairs: %d\n", result);
+    return 0;
+}
+```

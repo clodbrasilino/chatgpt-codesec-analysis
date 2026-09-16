@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <inttypes.h>
+
+uint64_t sum_of_fifth_power_of_odds(uint32_t n) {
+    uint64_t sum = 0;
+    uint32_t i;
+    uint64_t odd = 1;
+
+    for (i = 0; i < n; i++) {
+        uint64_t power = odd * odd * odd * odd * odd;
+        sum += power;
+        odd += 2;
+    }
+
+    return sum;
+}
+
+int main(void) {
+    uint32_t n;
+    uint64_t result;
+
+    if (scanf("%" SCNu32, &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return 1;
+    }
+
+    result = sum_of_fifth_power_of_odds(n);
+    printf("Sum of fifth power of first %" PRIu32 " odd numbers: %" PRIu64 "\n", n, result);
+
+    return 0;
+}

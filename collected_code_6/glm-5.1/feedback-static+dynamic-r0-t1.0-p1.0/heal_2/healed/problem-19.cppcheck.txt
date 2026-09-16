@@ -1,0 +1,10 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-19.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-19.c:67:27: style: Condition 'contains_duplicate(arr4,arr4_size)' is always false [knownConditionTrueFalse]
+    if (contains_duplicate(arr4, arr4_size)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-19.c:67:27: note: Calling function 'contains_duplicate' returns 0
+    if (contains_duplicate(arr4, arr4_size)) {
+                          ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_2/healed/problem-19.c:67:27: note: Condition 'contains_duplicate(arr4,arr4_size)' is always false
+    if (contains_duplicate(arr4, arr4_size)) {
+                          ^

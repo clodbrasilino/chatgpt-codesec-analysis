@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int* elements;
+    size_t size;
+} Tuple;
+
+bool is_tuple_size_k(const Tuple* tuple, size_t k) {
+    if (tuple == NULL) {
+        return false;
+    }
+    return tuple->size == k;
+}
+
+Tuple* create_tuple(size_t size) {
+    Tuple* tuple = (Tuple*)malloc(sizeof(Tuple));
+    if (tuple == NULL) {
+        return NULL;
+    }
+    
+    if (size > 0) {
+        tuple->elements = (int*)malloc(size * sizeof(int));
+        if (tuple->elements == NULL) {
+            free(tuple);
+            return NULL;
+        }
+    } else {
+        tuple->elements = NULL;
+    }
+    
+    tuple->size = size;
+    return tuple;
+}
+
+void free_tuple(Tuple* tuple) {
+    if (tuple != NULL) {
+        free(tuple->elements);
+        free(tuple);
+    }
+}
+
+int main(void) {
+    size_t k = 5;
+    
+    Tuple* tuple1 = create_tuple(5);
+    if (tuple1 != NULL) {
+        bool result1 = is_tuple_size_k(tuple1, k);
+        printf("%d\n", result1);
+        free_tuple(tuple1);
+    }
+    
+    Tuple* tuple2 = create_tuple(3);
+    if (tuple2 != NULL) {
+        bool result2 = is_tuple_size_k(tuple2, k);
+        printf("%d\n", result2);
+        free_tuple(tuple2);
+    }
+    
+    return 0;
+}

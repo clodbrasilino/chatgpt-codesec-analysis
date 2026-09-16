@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int max_run_of_uppercase(const char *str) {
+    int max_run = 0, current_run = 0;
+    while (*str) {
+        if (isupper((unsigned char)*str)) {
+            current_run++;
+            if (current_run > max_run) {
+                max_run = current_run;
+            }
+        } else {
+            current_run = 0;
+        }
+        str++;
+    }
+    return max_run;
+}
+
+int main() {
+    const char *test_string = "ABcdEFGhiJklMNOpQRStuvWXYZ";
+    int result = max_run_of_uppercase(test_string);
+    printf("Maximum run of uppercase: %d\n", result);
+    return 0;
+}

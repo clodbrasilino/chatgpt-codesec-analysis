@@ -1,0 +1,71 @@
+```c
+#include <stdio.h>
+#include <stdbool.h>
+
+static bool is_present(long long a, long long b, long long c)
+{
+    long long diff;
+
+    diff = b - a;
+
+    if (c == 0)
+    {
+        return (diff == 0);
+    }
+
+    if (diff % c != 0)
+    {
+        return false;
+    }
+
+    return ((diff / c) >= 0);
+}
+
+int main(void)
+{
+    long long a;
+    long long b;
+    long long c;
+
+    printf("Enter first term (a): ");
+    if (scanf("%lld", &a) != 1)
+    {
+        fprintf(stderr, "Invalid input for a\n");
+        return 1;
+    }
+
+    printf("Enter number to search (b): ");
+    if (scanf("%lld", &b) != 1)
+    {
+        fprintf(stderr, "Invalid input for b\n");
+        return 1;
+    }
+
+    printf("Enter common difference (c): ");
+    if (scanf("%lld", &c) != 1)
+    {
+        fprintf(stderr, "Invalid input for c\n");
+        return 1;
+    }
+
+    if (is_present(a, b, c))
+    {
+        printf("%lld is present in the sequence\n", b);
+    }
+    else
+    {
+        printf("%lld is not present in the sequence\n", b);
+    }
+
+    return 0;
+}
+```
+
+This solves the classic problem of determining whether a number `b` appears in the infinite arithmetic sequence `a, a+c, a+2c, ...`
+
+**Key design decisions:**
+
+- **CWE-703 avoidance:** Every `scanf` return value is checked, and the division by `c` is guarded by an explicit zero check before any modulo or division operation, preventing undefined behavior from division by zero.
+- **CWE-710 avoidance:** All functions have proper prototypes, `main` uses the standard `int main(void)` signature with explicit return values, braces are used consistently, and the helper function is declared `static` since it has internal linkage only.
+- **CWE-664 avoidance:** No dynamic resources (heap memory, file handles) are allocated, so there is nothing to leak or misuse across its lifetime; all variables are stack-local with well-defined scope.
+- The membership check verifies both divisibility (`diff % c == 0`) and direction (`diff / c >= 0`), correctly handling negative common differences and the degenerate constant sequence when `c == 0`.

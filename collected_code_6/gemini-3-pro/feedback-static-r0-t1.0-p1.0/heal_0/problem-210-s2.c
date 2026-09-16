@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <regex.h>
+
+int check_string(const char *str) {
+    if (str == NULL) {
+        return 0;
+    }
+
+    regex_t regex;
+    int ret;
+    int result = 0;
+
+    ret = regcomp(&regex, "^[a-zA-Z0-9]+$", REG_EXTENDED);
+    if (ret != 0) {
+        return 0;
+    }
+
+    ret = regexec(&regex, str, 0, NULL, 0);
+    if (ret == 0) {
+        result = 1;
+    }
+
+    regfree(&regex);
+    return result;
+}
+
+int main(void) {
+    const char *test1 = "ValidString123";
+    const char *test2 = "Invalid String!";
+
+    if (check_string(test1)) {
+        printf("test1 is valid\n");
+    } else {
+        printf("test1 is invalid\n");
+    }
+
+    if (check_string(test2)) {
+        printf("test2 is valid\n");
+    } else {
+        printf("test2 is invalid\n");
+    }
+
+    return 0;
+}

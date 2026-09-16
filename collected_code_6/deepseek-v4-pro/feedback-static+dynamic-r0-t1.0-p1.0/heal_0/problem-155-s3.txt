@@ -1,0 +1,19 @@
+```c
+#include <stdio.h>
+
+unsigned int toggleEvenBits(unsigned int num) {
+    unsigned int mask = 0xAAAAAAAA;
+    return num ^ mask;
+}
+
+int main(void) {
+    unsigned int test_values[] = {0, 1, 5, 10, 15, 255, 1024, 4294967295U};
+    int num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (int i = 0; i < num_tests; i++) {
+        printf("%u -> %u\n", test_values[i], toggleEvenBits(test_values[i]));
+    }
+    
+    return 0;
+}
+```

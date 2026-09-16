@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <stdint.h>
+
+uint32_t highest_power_of_two_leq(uint32_t n) {
+    if (n == 0) {
+        return 0;
+    }
+    
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    
+    return n - (n >> 1);
+}
+
+int main(void) {
+    uint32_t test_values[] = {0, 1, 2, 3, 4, 5, 8, 9, 16, 17, 32, 33, 64, 100, 255, 256, 1000, 4294967295u};
+    size_t num_tests = sizeof(test_values) / sizeof(test_values[0]);
+    
+    for (size_t i = 0; i < num_tests; i++) {
+        uint32_t result = highest_power_of_two_leq(test_values[i]);
+        printf("highest_power_of_two_leq(%u) = %u\n", test_values[i], result);
+    }
+    
+    return 0;
+}

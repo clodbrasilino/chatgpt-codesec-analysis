@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int* intersection(const int* nums1, int nums1Size, const int* nums2, int nums2Size, int* returnSize) {
+    int* result = NULL;
+    *returnSize = 0;
+
+    if (nums1Size == 0 || nums2Size == 0) {
+        return result;
+    }
+
+    int* seen = (int*)calloc(1001, sizeof(int));
+    if (seen == NULL) {
+        return result;
+    }
+
+    result = (int*)malloc(nums1Size * sizeof(int));
+    if (result == NULL) {
+        free(seen);
+        return result;
+    }
+
+    for (int i = 0; i < nums1Size; i++) {
+        if (nums1[i] >= 0 && nums1[i] <= 1000) {
+            seen[nums1[i]] = 1;
+        }
+    }
+
+    for (int i = 0; i < nums2Size; i++) {
+        if (nums2[i] >= 0 && nums2[i] <= 1000 && seen[nums2[i]] == 1) {
+            result[*returnSize] = nums2[i];
+            (*returnSize)++;
+            seen[nums2[i]] = 2;
+        }
+    }
+
+    free(seen);
+
+    if (*returnSize == 0) {
+        free(result);
+        return NULL;
+    }
+
+    int* temp = (int*)realloc(result, (*returnSize) * sizeof(int));
+    if (temp != NULL) {
+        result = temp;
+    }
+
+    return result;
+}
+
+int main() {
+    int nums1[] = {4, 9, 5};
+    int nums1Size = sizeof(nums1) / sizeof(nums1[0]);
+    int nums2[] = {9, 4, 9, 8, 4};
+    int nums2Size = sizeof(nums2) / sizeof(nums2[0]);
+    int returnSize = 0;
+
+    int* result = intersection(nums1, nums1Size, nums2, nums2Size, &returnSize);
+
+    if (result != NULL) {
+        for (int i = 0; i < returnSize; i++) {
+            printf("%d ", result[i]);
+        }
+        printf("\n");
+        free(result);
+    }
+
+    return 0;
+}

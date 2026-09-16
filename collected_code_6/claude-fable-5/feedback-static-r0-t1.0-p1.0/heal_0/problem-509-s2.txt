@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+double average_of_odds(long n)
+{
+    long sum = 0;
+    long count = 0;
+    long i;
+
+    for (i = 1; i <= n; i += 2) {
+        sum += i;
+        count++;
+    }
+
+    if (count == 0) {
+        return 0.0;
+    }
+
+    return (double)sum / (double)count;
+}
+
+int main(void)
+{
+    long n;
+    double result;
+
+    printf("Enter an odd number: ");
+
+    if (scanf("%ld", &n) != 1) {
+        fprintf(stderr, "Error: invalid input\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n <= 0) {
+        fprintf(stderr, "Error: number must be positive\n");
+        return EXIT_FAILURE;
+    }
+
+    if (n % 2 == 0) {
+        fprintf(stderr, "Error: number must be odd\n");
+        return EXIT_FAILURE;
+    }
+
+    result = average_of_odds(n);
+    printf("Average of odd numbers up to %ld is %.2f\n", n, result);
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key points about this implementation:
+
+- **Input validation**: The return value of `scanf` is checked to detect malformed input (addresses CWE-703), and the number is verified to be positive and odd before processing.
+- **Safe arithmetic**: `long` is used for the sum to reduce overflow risk, and division by zero is guarded against in `average_of_odds` (addresses CWE-703).
+- **Resource lifetime**: No dynamic allocation or file handles are used, so there are no resources to leak or misuse (addresses CWE-664).
+- **Coding standards**: The code uses `int main(void)`, explicit return values via `EXIT_SUCCESS`/`EXIT_FAILURE`, error messages to `stderr`, and consistent brace style (addresses CWE-710).
+
+Fun fact for this problem: the average of the first *k* odd numbers is always `(n + 1) / 2`, since their sum is `k²` — but the loop-based version above keeps the logic explicit and general.

@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+unsigned long long count_equilateral_triangles(unsigned long long n) {
+    if (n % 2 == 0) {
+        return (n * (n + 2) * (2 * n + 1)) / 8;
+    } else {
+        return ((n * (n + 2) * (2 * n + 1)) - 1) / 8;
+    }
+}
+
+/* Possible weaknesses found:
+ *  Parameter 'argv' can be declared as const array [constParameter]
+ */
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <size>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *endptr;
+    long long input = strtoll(argv[1], &endptr, 10);
+
+    if (*endptr != '\0' || input < 0) {
+        fprintf(stderr, "Invalid input. Please provide a non-negative integer.\n");
+        return EXIT_FAILURE;
+    }
+
+    unsigned long long n = (unsigned long long)input;
+    unsigned long long result = count_equilateral_triangles(n);
+
+    printf("%llu\n", result);
+
+    return EXIT_SUCCESS;
+}

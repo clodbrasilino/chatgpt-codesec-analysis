@@ -1,81 +1,62 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdbool.h>
 
-typedef struct ListNode {
-    char *data;
-    struct ListNode *next;
-} ListNode;
+#define MAX_LIST_SIZE 100
 
-ListNode* createNode(char *data) {
-    ListNode *newNode = (ListNode *)malloc(sizeof(ListNode));
-    if (newNode == NULL) {
-        return NULL;
+typedef struct {
+    char *value;
+} ListElement;
+
+bool is_convertible(const char *str) {
+    if (str == NULL || *str == '\0') return false;
+    while (*str) {
+        if (!isdigit(*str) && *str != '.' && *str != '-' && *str != '+') return false;
+        str++;
     }
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
+    return true;
 }
 
-void freeList(ListNode *head) {
-    while (head != NULL) {
-        ListNode *temp = head;
-        head = head->next;
-        free(temp->data);
-        free(temp);
-    }
+float convert_to_float(const char *str) {
+    return atof(str);
 }
 
-float strToFloat(const char *str) {
-    char *endptr;
-    float result = strtod(str, &endptr);
-    if (endptr == str) {
-        return -1.0; // Indicate conversion failure
-    }
-    return result;
-}
-
-ListNode* convertToListFloat(ListNode *head) {
-    ListNode *current = head;
-    while (current != NULL) {
-        float value = strToFloat(current->data);
-        if (value != -1.0) {
-            free(current->data);
-            current->data = (char*)malloc(sizeof(float));
-            if (current->data == NULL) {
-                return NULL; // Out of memory
-            }
-            /* Possible weaknesses found:
-             *  Casting between signed char * and float * which have an incompatible binary data representation. [invalidPointerCast]
-             */
-            *(float*)current->data = value;
+void convert_list(ListElement *list, int count) {
+    for (int i = 0; i < count; i++) {
+        if (is_convertible(list[i].value)) {
+            float value = convert_to_float(list[i].value);
+            list[i].value = (char *)realloc(list[i].value, sizeof(char) * (snprintf(NULL, 0, "%f", value) + 1));
+            sprintf(list[i].value, "%f", value);
         }
-        current = current->next;
     }
-    return head;
 }
 
 int main() {
-    ListNode *head = createNode("3.14");
-    head->next = createNode("hello");
-    head->next->next = createNode("2.71");
-    head->next->next->next = createNode("world");
+    ListElement list[MAX_LIST_SIZE] = {0};
+    int count = 0;
 
-    head = convertToListFloat(head);
-
-    for (ListNode *curr = head; curr != NULL; curr = curr->next) {
+    const char *input[] = {"123", "45.67", "abc", "89.01", "1e-5", "0.0001", "test"};
+    /* Possible weaknesses found:
+     *  expected ';' in 'for' statement specifier
+     *  expected '=', ',', ';', 'asm' or '__attribute__' before ':' token
+     *  expected expression
+     */
+    for (const char *s : input) {
         /* Possible weaknesses found:
-         *  Casting between signed char * and float * which have an incompatible binary data representation. [invalidPointerCast]
+         *  each undeclared identifier is reported only once for each function it appears in
+         *  's' undeclared (first use in this function)
          */
-        if (*(float*)curr->data == *(float*)curr->data) { // Check if it is a float
-            /* Possible weaknesses found:
-             *  Casting between signed char * and float * which have an incompatible binary data representation. [invalidPointerCast]
-             */
-            printf("%.2f\n", *(float*)curr->data);
-        } else {
-            printf("%s\n", curr->data);
-        }
+        list[count++].value = strdup(s);
     }
 
-    freeList(head);
+    convert_list(list, count);
+
+    for (int i = 0; i < count; i++) {
+        printf("%s\n", list[i].value);
+        free(list[i].value);
+    }
+
     return 0;
 }

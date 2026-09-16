@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <errno.h>
+#include <float.h>
+
+static int parse_double(const char *str, double *value)
+{
+    char *endptr;
+    double temp;
+
+    if (str == NULL || value == NULL || *str == '\0')
+    {
+        return 0;
+    }
+
+    errno = 0;
+    temp = strtod(str, &endptr);
+
+    if (endptr == str || *endptr != '\0' || errno == ERANGE)
+    {
+        return 0;
+    }
+
+    *value = temp;
+    return 1;
+}
+
+static int parse_int(const char *str, int *value)
+{
+    char *endptr;
+    long temp;
+
+    if (str == NULL || value == NULL || *str == '\0')
+    {
+        return 0;
+    }
+
+    errno = 0;
+    temp = strtol(str, &endptr, 10);
+
+    if (endptr == str || *endptr != '\0' || errno == ERANGE || temp > 1000000L || temp < 0L)
+    {
+        return 0;
+    }
+
+    *value = (int)temp;
+    return 1;
+}
+
+static double geometric_series_sum(double a, double r, int n)
+{
+    double ratio_power;
+    double denominator;
+    double numerator;
+
+    if (n <= 0)
+    {
+        return 0.0;
+    }
+
+    if (r == 1.0)
+    {
+        return a * (double)n;
+    }
+
+    errno = 0;
+    ratio_power = pow(r, (double)n);
+    
+    if (errno == ERANGE || !isfinite(ratio_power))
+    {
+        return (r > 1.0 || r < -1.0) ? 
+               ((a > 0.0) ? HUGE_VAL : -HUGE_VAL) : 0.0;
+    }
+
+    denominator = 1.0 - r;
+    numerator = 1.0 - ratio_power;
+    
+    if (denominator == 0.0)
+    {
+        return a * (double)n;
+    }
+
+    return a * (numerator / denominator);
+}
+
+int main(int argc, const char *argv[])
+{
+    double first_term;
+    double common_ratio;
+    int num_terms;
+    double result;
+
+    if (argc != 4)
+    {
+        fprintf(stderr, "Usage: %s <first_term> <common_ratio> <num_terms>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    if (!parse_double(argv[1], &first_term))
+    {
+        fprintf(stderr, "Error: Invalid first term\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!parse_double(argv[2], &common_ratio))
+    {
+        fprintf(stderr, "Error: Invalid common ratio\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!parse_int(argv[3], &num_terms))
+    {
+        fprintf(stderr, "Error: Invalid number of terms (must be 0-1000000)\n");
+        return EXIT_FAILURE;
+    }
+
+    if (!isfinite(first_term) || !isfinite(common_ratio))
+    {
+        fprintf(stderr, "Error: Values must be finite\n");
+        return EXIT_FAILURE;
+    }
+
+    result = geometric_series_sum(first_term, common_ratio, num_terms);
+
+    if (isinf(result))
+    {
+        fprintf(stderr, "Result: %sInfinity\n", (result > 0) ? "+" : "-");
+    }
+    else if (isnan(result))
+    {
+        fprintf(stderr, "Result: NaN\n");
+    }
+    else
+    {
+        printf("Sum: %.10g\n", result);
+    }
+
+    return EXIT_SUCCESS;
+}

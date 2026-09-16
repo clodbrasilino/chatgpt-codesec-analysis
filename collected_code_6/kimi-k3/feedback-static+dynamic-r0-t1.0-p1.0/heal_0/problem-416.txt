@@ -1,0 +1,59 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSum(int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return 1;
+    }
+    
+    int max = n;
+    int sum1, sum2, sum3;
+    
+    sum1 = maxSum(n / 2) + maxSum(n / 3) + maxSum(n / 4);
+    if (sum1 > max) {
+        max = sum1;
+    }
+    
+    sum2 = maxSum(n / 2) + maxSum(n / 3) + maxSum(n / 5);
+    if (sum2 > max) {
+        max = sum2;
+    }
+    
+    sum3 = maxSum(n / 2) + maxSum(n / 4) + maxSum(n / 5);
+    if (sum3 > max) {
+        max = sum3;
+    }
+    
+    int sum4 = maxSum(n / 3) + maxSum(n / 4) + maxSum(n / 5);
+    if (sum4 > max) {
+        max = sum4;
+    }
+    
+    return max;
+}
+
+int main(void) {
+    int n;
+    int result;
+    
+    printf("Enter a positive integer: ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Invalid input\n");
+        return EXIT_FAILURE;
+    }
+    
+    if (n < 0) {
+        fprintf(stderr, "Number must be non-negative\n");
+        return EXIT_FAILURE;
+    }
+    
+    result = maxSum(n);
+    printf("Maximum sum: %d\n", result);
+    
+    return EXIT_SUCCESS;
+}
+```

@@ -1,0 +1,37 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+static bool is_odd(int number)
+{
+    return (number & 1) != 0;
+}
+
+int main(void)
+{
+    int number;
+
+    printf("Enter an integer: ");
+
+    if (scanf("%d", &number) != 1) {
+        fprintf(stderr, "Error: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+
+    if (is_odd(number)) {
+        printf("%d is odd.\n", number);
+    } else {
+        printf("%d is even.\n", number);
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+A few notes on the design choices:
+
+- **`(number & 1) != 0`** checks the least significant bit, which reliably determines oddness on two's complement systems (mandated by C23, and universal in practice). Using `!= 0` instead of relying on implicit conversion keeps the boolean intent explicit.
+- The return value of `scanf` is checked so malformed input is handled gracefully rather than reading an uninitialized variable (addresses CWE-703).
+- `int main(void)` with explicit `EXIT_SUCCESS`/`EXIT_FAILURE` return codes follows standard-conforming practice (addresses CWE-710).
+- The function is `static` with a clear prototype-style definition, and no resources (files, memory) are acquired, so there is nothing to leak (addresses CWE-664).

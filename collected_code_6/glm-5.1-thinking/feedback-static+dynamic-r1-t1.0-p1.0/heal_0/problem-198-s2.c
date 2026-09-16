@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <math.h>
+
+double largest_inscribed_ellipse_triangle_area(double a, double b) {
+    if (!isfinite(a) || !isfinite(b) || a <= 0.0 || b <= 0.0) {
+        return -1.0;
+    }
+    return (3.0 * sqrt(3.0) / 4.0) * a * b;
+}
+
+int main(void) {
+    double a = 5.0;
+    double b = 3.0;
+    double area = largest_inscribed_ellipse_triangle_area(a, b);
+    
+    if (area < 0.0) {
+        printf("Invalid input\n");
+        return 1;
+    }
+    
+    printf("Largest triangle area: %f\n", area);
+    return 0;
+}

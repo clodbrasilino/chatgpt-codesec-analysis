@@ -1,0 +1,95 @@
+```c
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool is_valid_parentheses(const char *str)
+{
+    bool valid = true;
+
+    if (str == NULL)
+    {
+        valid = false;
+    }
+    else
+    {
+        size_t top = 0;
+        char *stack = malloc(strlen(str) + 1);
+
+        if (stack == NULL)
+        {
+            valid = false;
+        }
+        else
+        {
+            for (const char *p = str; *p != '\0'; ++p)
+            {
+                const char c = *p;
+
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    stack[top++] = c;
+                }
+                else if (c == ')' || c == ']' || c == '}')
+                {
+                    const char expected = (c == ')') ? '(' : (c == ']') ? '[' : '{';
+
+                    if (top == 0 || stack[--top] != expected)
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    valid = false;
+                    break;
+                }
+            }
+
+            if (top != 0)
+            {
+                valid = false;
+            }
+
+            free(stack);
+        }
+    }
+
+    printf("%s\n", valid ? "True" : "False");
+
+    return valid;
+}
+
+int main(int argc, const char *argv[])
+{
+    if (argc > 1)
+    {
+        for (int i = 1; i < argc; ++i)
+        {
+            is_valid_parentheses(argv[i]);
+        }
+    }
+    else
+    {
+        char buffer[65536];
+
+        while (fgets(buffer, sizeof buffer, stdin) != NULL)
+        {
+            buffer[strcspn(buffer, "\r\n")] = '\0';
+            is_valid_parentheses(buffer);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+```
+
+Key changes made:
+
+- **Test failure fix**: Replaced the simple counter with a proper stack-based matcher that correctly handles `()`, `[]`, and `{}` (including proper nesting like `([{}])` and mismatches like `([)]`), which a single balance counter cannot validate.
+- **`balance` variableScope**: The counter (`top`) is now declared inside the `else` block where it is actually used, reducing its scope.
+- **`argv` constParameter**: Changed `main`'s signature to `int main(int argc, const char *argv[])` since the argument strings are never modified; this also matches the `const char *` parameter of `is_valid_parentheses`.
+- **`buffer` variableScope**: Moved the `char buffer[65536]` declaration into the `else` branch, the only place it is used.
+- All required includes (`stdbool.h`, `stdio.h`, `stdlib.h`, `string.h`) are retained and all are used; `malloc` failure is handled safely.

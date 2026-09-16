@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int first;
+    int second;
+} Tuple;
+
+int cumulativeSum(Tuple *list, size_t size) {
+    int sum = 0;
+    for (size_t i = 0; i < size; ++i) {
+        sum += list[i].first + list[i].second;
+    }
+    return sum;
+}
+
+int main() {
+    Tuple list[] = {{1, 2}, {3, 4}, {5, 6}};
+    size_t size = sizeof(list) / sizeof(list[0]);
+    int result = cumulativeSum(list, size);
+    printf("%d\n", result);
+    return 0;
+}

@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int min_sublist_length(const size_t *lengths, size_t count, size_t *result)
+{
+    size_t i;
+    size_t min;
+
+    if (lengths == NULL || result == NULL || count == 0U) {
+        return -1;
+    }
+
+    min = lengths[0];
+    for (i = 1U; i < count; i++) {
+        if (lengths[i] < min) {
+            min = lengths[i];
+        }
+    }
+
+    *result = min;
+    return 0;
+}
+
+int main(void)
+{
+    int list1[] = {1, 2, 3, 4};
+    int list2[] = {5, 6};
+    int list3[] = {7, 8, 9};
+    const int *sublists[3];
+    size_t lengths[3];
+    size_t min_len;
+    size_t i;
+    int status;
+
+    sublists[0] = list1;
+    sublists[1] = list2;
+    sublists[2] = list3;
+
+    lengths[0] = sizeof(list1) / sizeof(list1[0]);
+    lengths[1] = sizeof(list2) / sizeof(list2[0]);
+    lengths[2] = sizeof(list3) / sizeof(list3[0]);
+
+    status = min_sublist_length(lengths, 3U, &min_len);
+    if (status != 0) {
+        (void)fprintf(stderr, "Error: invalid input to min_sublist_length\n");
+        return EXIT_FAILURE;
+    }
+
+    (void)printf("Sublists:\n");
+    for (i = 0U; i < 3U; i++) {
+        size_t j;
+        (void)printf("  [");
+        for (j = 0U; j < lengths[i]; j++) {
+            if (j > 0U) {
+                (void)printf(", ");
+            }
+            (void)printf("%d", sublists[i][j]);
+        }
+        (void)printf("]\n");
+    }
+
+    (void)printf("Minimum sublist length: %zu\n", min_len);
+
+    return EXIT_SUCCESS;
+}

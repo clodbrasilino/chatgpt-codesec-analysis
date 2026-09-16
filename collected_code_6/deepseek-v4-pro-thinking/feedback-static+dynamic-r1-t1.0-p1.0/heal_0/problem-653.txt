@@ -1,0 +1,171 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct KeyValuePair {
+    const char *key;
+    int value;
+};
+
+struct IntList {
+    int *values;
+    size_t count;
+    size_t capacity;
+};
+
+struct MapEntry {
+    char *key;
+    struct IntList list;
+    struct MapEntry *next;
+};
+
+struct Map {
+    struct MapEntry *head;
+};
+
+enum { INITIAL_LIST_CAPACITY = 4 };
+
+static char *copy_string(const char *str)
+{
+    if (str == NULL)
+        return NULL;
+    size_t len = strlen(str);
+    char *copy = malloc(len + 1);
+    if (copy == NULL)
+        return NULL;
+    memcpy(copy, str, len + 1);
+    return copy;
+}
+
+static int append_to_list(struct IntList *list, int value)
+{
+    if (list->count == list->capacity) {
+        size_t new_capacity;
+        if (list->capacity == 0) {
+            new_capacity = INITIAL_LIST_CAPACITY;
+        } else {
+            if (list->capacity > (size_t)-1 / 2)
+                return 0;
+            new_capacity = list->capacity * 2;
+        }
+        if (new_capacity > (size_t)-1 / sizeof(int))
+            return 0;
+        int *new_values = realloc(list->values, new_capacity * sizeof(int));
+        if (new_values == NULL)
+            return 0;
+        list->values = new_values;
+        list->capacity = new_capacity;
+    }
+    list->values[list->count++] = value;
+    return 1;
+}
+
+static struct MapEntry *create_map_entry(const char *key, int value)
+{
+    struct MapEntry *entry = malloc(sizeof(*entry));
+    if (entry == NULL)
+        return NULL;
+    entry->key = copy_string(key);
+    if (entry->key == NULL) {
+        free(entry);
+        return NULL;
+    }
+    entry->list.values = NULL;
+    entry->list.count = 0;
+    entry->list.capacity = 0;
+    entry->next = NULL;
+    if (!append_to_list(&entry->list, value)) {
+        free(entry->key);
+        free(entry->list.values);
+        free(entry);
+        return NULL;
+    }
+    return entry;
+}
+
+static void free_map(struct Map *map)
+{
+    if (map == NULL)
+        return;
+    struct MapEntry *entry = map->head;
+    while (entry != NULL) {
+        struct MapEntry *next = entry->next;
+        free(entry->key);
+        free(entry->list.values);
+        free(entry);
+        entry = next;
+    }
+    free(map);
+}
+
+struct Map *group_pairs(const struct KeyValuePair *pairs, size_t count)
+{
+    if (pairs == NULL && count > 0)
+        return NULL;
+    struct Map *map = malloc(sizeof(*map));
+    if (map == NULL)
+        return NULL;
+    map->head = NULL;
+
+    for (size_t i = 0; i < count; ++i) {
+        const char *key = pairs[i].key;
+        int value = pairs[i].value;
+        if (key == NULL) {
+            free_map(map);
+            return NULL;
+        }
+
+        struct MapEntry *entry = map->head;
+        while (entry != NULL) {
+            if (strcmp(entry->key, key) == 0)
+                break;
+            entry = entry->next;
+        }
+
+        if (entry != NULL) {
+            if (!append_to_list(&entry->list, value)) {
+                free_map(map);
+                return NULL;
+            }
+        } else {
+            struct MapEntry *new_entry = create_map_entry(key, value);
+            if (new_entry == NULL) {
+                free_map(map);
+                return NULL;
+            }
+            new_entry->next = map->head;
+            map->head = new_entry;
+        }
+    }
+
+    return map;
+}
+
+int main(void)
+{
+    struct KeyValuePair pairs[] = {
+        {"apple", 1},
+        {"banana", 2},
+        {"apple", 3},
+        {"cherry", 4},
+        {"banana", 5}
+    };
+
+    struct Map *map = group_pairs(pairs, sizeof(pairs) / sizeof(pairs[0]));
+    if (map == NULL) {
+        fprintf(stderr, "Failed to group pairs\n");
+        return 1;
+    }
+
+    for (struct MapEntry *entry = map->head; entry != NULL; entry = entry->next) {
+        printf("%s:", entry->key);
+        for (size_t i = 0; i < entry->list.count; ++i)
+            printf(" %d", entry->list.values[i]);
+        printf("\n");
+    }
+
+    free_map(map);
+    return 0;
+}
+```

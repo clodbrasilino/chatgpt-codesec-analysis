@@ -1,0 +1,99 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+typedef struct {
+    int index;
+    int value;
+} Tuple;
+
+typedef struct {
+    int index;
+    int max_value;
+} ResultTuple;
+
+typedef struct {
+    ResultTuple *data;
+    size_t size;
+} ResultList;
+
+void free_result_list(ResultList *list) {
+    if (list != NULL) {
+        free(list->data);
+        list->data = NULL;
+        list->size = 0;
+    }
+}
+
+ResultList find_max_of_similar_indices(const Tuple *list1, size_t size1, const Tuple *list2, size_t size2) {
+    ResultList result = {NULL, 0};
+    
+    if (list1 == NULL || list2 == NULL || size1 == 0 || size2 == 0) {
+        return result;
+    }
+
+    size_t max_possible_size = size1 < size2 ? size1 : size2;
+    result.data = (ResultTuple *)malloc(max_possible_size * sizeof(ResultTuple));
+    if (result.data == NULL) {
+        return result;
+    }
+
+    size_t count = 0;
+    for (size_t i = 0; i < size1; i++) {
+        for (size_t j = 0; j < size2; j++) {
+            if (list1[i].index == list2[j].index) {
+                result.data[count].index = list1[i].index;
+                result.data[count].max_value = MAX(list1[i].value, list2[j].value);
+                count++;
+                break;
+            }
+        }
+    }
+
+    result.size = count;
+    
+    if (count == 0) {
+        free(result.data);
+        result.data = NULL;
+    } else if (count < max_possible_size) {
+        ResultTuple *temp = (ResultTuple *)realloc(result.data, count * sizeof(ResultTuple));
+        if (temp != NULL) {
+            result.data = temp;
+        }
+    }
+
+    return result;
+}
+
+int main(void) {
+    Tuple list1[] = {
+        {1, 10},
+        {2, 20},
+        {3, 30},
+        {5, 50}
+    };
+    size_t size1 = sizeof(list1) / sizeof(list1[0]);
+
+    Tuple list2[] = {
+        {2, 15},
+        {3, 35},
+        {4, 40},
+        {5, 45}
+    };
+    size_t size2 = sizeof(list2) / sizeof(list2[0]);
+
+    ResultList max_list = find_max_of_similar_indices(list1, size1, list2, size2);
+
+    if (max_list.data != NULL) {
+        for (size_t i = 0; i < max_list.size; i++) {
+            printf("Index: %d, Max Value: %d\n", max_list.data[i].index, max_list.data[i].max_value);
+        }
+    }
+
+    free_result_list(&max_list);
+
+    return 0;
+}
+```

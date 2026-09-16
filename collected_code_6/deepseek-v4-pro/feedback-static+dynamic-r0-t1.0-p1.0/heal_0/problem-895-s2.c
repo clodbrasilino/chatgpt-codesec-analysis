@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int maxSubsequenceSum(int *arr, int n) {
+    if (n <= 0) {
+        return 0;
+    }
+    if (n == 1) {
+        return arr[0];
+    }
+    
+    int *dp = (int *)malloc(n * sizeof(int));
+    if (dp == NULL) {
+        return -1;
+    }
+    
+    dp[0] = arr[0];
+    dp[1] = (arr[0] > arr[1]) ? arr[0] : arr[1];
+    
+    for (int i = 2; i < n; i++) {
+        int include = arr[i] + dp[i - 2];
+        int exclude = dp[i - 1];
+        dp[i] = (include > exclude) ? include : exclude;
+    }
+    
+    int result = dp[n - 1];
+    free(dp);
+    return result;
+}
+
+int main(void) {
+    int arr1[] = {3, 2, 7, 10};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("%d\n", maxSubsequenceSum(arr1, n1));
+    
+    int arr2[] = {3, 2, 5, 10, 7};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("%d\n", maxSubsequenceSum(arr2, n2));
+    
+    int arr3[] = {5, 5, 10, 100, 10, 5};
+    int n3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("%d\n", maxSubsequenceSum(arr3, n3));
+    
+    int arr4[] = {1, 2, 3};
+    int n4 = sizeof(arr4) / sizeof(arr4[0]);
+    printf("%d\n", maxSubsequenceSum(arr4, n4));
+    
+    int arr5[] = {1, 20, 3};
+    int n5 = sizeof(arr5) / sizeof(arr5[0]);
+    printf("%d\n", maxSubsequenceSum(arr5, n5));
+    
+    int arr6[] = {-1, -2, -3, -4};
+    int n6 = sizeof(arr6) / sizeof(arr6[0]);
+    printf("%d\n", maxSubsequenceSum(arr6, n6));
+    
+    int arr7[] = {-1, 2, -3, 4, -5};
+    int n7 = sizeof(arr7) / sizeof(arr7[0]);
+    printf("%d\n", maxSubsequenceSum(arr7, n7));
+    
+    return 0;
+}

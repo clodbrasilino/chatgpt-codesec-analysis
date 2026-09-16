@@ -1,0 +1,65 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <math.h>
+#include <float.h>
+
+double geometric_nth_term(double first_term, double common_ratio, int n)
+{
+    if (n < 1) {
+        errno = EINVAL;
+        return 0.0;
+    }
+    
+    if (n == 1) {
+        return first_term;
+    }
+    
+    double result = first_term * pow(common_ratio, n - 1);
+    
+    if (isnan(result) || isinf(result)) {
+        errno = ERANGE;
+        return 0.0;
+    }
+    
+    return result;
+}
+
+int main(void)
+{
+    double first_term;
+    double common_ratio;
+    int n;
+    
+    printf("Enter the first term: ");
+    if (scanf("%lf", &first_term) != 1) {
+        fprintf(stderr, "Error: Invalid input for first term\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the common ratio: ");
+    if (scanf("%lf", &common_ratio) != 1) {
+        fprintf(stderr, "Error: Invalid input for common ratio\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("Enter the term number (n): ");
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "Error: Invalid input for term number\n");
+        return EXIT_FAILURE;
+    }
+    
+    errno = 0;
+    double result = geometric_nth_term(first_term, common_ratio, n);
+    
+    if (errno != 0) {
+        fprintf(stderr, "Error: Calculation failed (invalid input or overflow)\n");
+        return EXIT_FAILURE;
+    }
+    
+    printf("The %d-th term of the geometric series is: %.6f\n", n, result);
+    
+    return EXIT_SUCCESS;
+}
+```

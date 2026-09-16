@@ -5,20 +5,33 @@
 
 char* snake_to_camel(char *str) {
     int i, len = strlen(str);
-    for (i = 0; i < len; i++) {
-        if (str[i] == '_') {
-            str[i] = toupper(str[i + 1]);
-            memmove(&str[i], &str[i + 1], strlen(&str[i]));
-            len--;
+    char *result = (char *)malloc((len + 1) * sizeof(char));
+    if (result == NULL) return NULL;
+
+    for (i = 0, result[0] = '\0'; *str; str++) {
+        if (*str == '_') {
+            str++;
+            if (*str) {
+                strnfcat(result, "%c", toupper(*str));
+            }
+        } else {
+            strnfcat(result, "%c", *str);
         }
     }
-    return str;
+    return result;
 }
 
 int main() {
-    char input[] = "example_snake_case_string";
-    char *result = snake_to_camel(input);
-    printf("%s\n", result);
+    char input[] = "this_is_snake_case";
+    char *output = snake_to_camel(input);
+
+    if (output != NULL) {
+        printf("Camel case: %s\n", output);
+        free(output);
+    } else {
+        printf("Memory allocation failed.\n");
+    }
+
     return 0;
 }
 ```

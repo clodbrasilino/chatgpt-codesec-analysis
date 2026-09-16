@@ -1,0 +1,19 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c:45:17: style: Condition 'top<1024' is always true [knownConditionTrueFalse]
+        if (top < 1024) stack[top++] = root;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c:42:15: note: Assignment 'top=0', assigned value is 0
+    int top = 0;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c:45:17: note: Condition 'top<1024' is always true
+        if (top < 1024) stack[top++] = root;
+                ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c:81:13: style: Condition 'top<1024' is always true [knownConditionTrueFalse]
+    if (top < 1024) stack[top++] = root;
+            ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c:80:15: note: Assignment 'top=0', assigned value is 0
+    int top = 0;
+              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-580-s2.c:81:13: note: Condition 'top<1024' is always true
+    if (top < 1024) stack[top++] = root;
+            ^

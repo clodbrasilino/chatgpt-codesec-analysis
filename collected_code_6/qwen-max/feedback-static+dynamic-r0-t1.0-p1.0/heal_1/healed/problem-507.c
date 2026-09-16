@@ -2,56 +2,84 @@
 #include <stdlib.h>
 #include <string.h>
 
-int find_word(const char *str, const char *word) {
-    int i;
-    for (i = 0; str[i] != '\0'; i++) {
-        if (strncmp(&str[i], word, strlen(word)) == 0 && (str[i + strlen(word)] == ' ' || str[i + strlen(word)] == '\0')) {
-            return i;
-        }
-        while (str[i] != '\0' && str[i] != ' ') {
-            i++;
-        }
-    }
-    return -1;
+typedef struct Node {
+    char *word;
+    struct Node *next;
+} Node;
+
+Node* create_node(char *w) {
+    Node *new_node = (Node *)malloc(sizeof(Node));
+    new_node->word = strdup(w);
+    new_node->next = NULL;
+    return new_node;
 }
 
-char *remove_word(char *str, const char *word) {
-    char *new_str = (char *)malloc(strlen(str) + 1);
-    if (new_str == NULL) {
-        return NULL;
+void free_list(Node *head) {
+    while (head != NULL) {
+        Node *temp = head;
+        head = head->next;
+        free(temp->word);
+        free(temp);
     }
-    new_str[0] = '\0';
-    char *token = strtok(str, " ");
-    while (token != NULL) {
-        if (strcmp(token, word) != 0) {
-            strcat(new_str, token);
-            strcat(new_str, " ");
+}
+
+Node* add_to_list(Node *head, char *word) {
+    if (head == NULL) {
+        return create_node(word);
+    }
+    Node *current = head;
+    while (current->next != NULL) {
+        current = current->next;
+    }
+    current->next = create_node(word);
+    return head;
+}
+
+Node* remove_words(Node *head, char *word_to_remove) {
+    Node *dummy = create_node("");
+    dummy->next = head;
+    Node *prev = dummy;
+    Node *current = head;
+
+    while (current != NULL) {
+        if (strcmp(current->word, word_to_remove) == 0) {
+            prev->next = current->next;
+            free(current->word);
+            free(current);
+            current = prev->next;
+        } else {
+            prev = current;
+            current = current->next;
         }
-        token = strtok(NULL, " ");
     }
-    new_str[strcspn(new_str, " ")] = '\0';
-    free(str);
-    return new_str;
+    Node *new_head = dummy->next;
+    free(dummy->word);
+    free(dummy);
+    return new_head;
+}
+
+void print_list(Node *head) {
+    while (head != NULL) {
+        printf("%s\n", head->word);
+        head = head->next;
+    }
 }
 
 int main() {
-    char *input = strdup("red green blue black");
-    const char *word_to_remove = "black";
-    input = remove_word(input, word_to_remove);
-    printf("%s\n", input);
-    free(input);
+    Node *words = NULL;
+    words = add_to_list(words, "hello");
+    words = add_to_list(words, "world");
+    words = add_to_list(words, "hello");
+    words = add_to_list(words, "again");
 
-    input = strdup("red green blue white");
-    word_to_remove = "blue";
-    input = remove_word(input, word_to_remove);
-    printf("%s\n", input);
-    free(input);
+    printf("Original list:\n");
+    print_list(words);
 
-    input = strdup("red green black orange");
-    word_to_remove = "green";
-    input = remove_word(input, word_to_remove);
-    printf("%s\n", input);
-    free(input);
+    words = remove_words(words, "hello");
 
+    printf("List after removal:\n");
+    print_list(words);
+
+    free_list(words);
     return 0;
 }

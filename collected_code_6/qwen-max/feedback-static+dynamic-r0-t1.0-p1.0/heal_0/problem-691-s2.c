@@ -8,84 +8,88 @@ typedef struct {
 
 typedef struct Node {
     int value;
-    struct Node *next;
+    struct Node* next;
 } Node;
 
 typedef struct {
-    int key;
-    Node *data;
+    int second;
+    Node* head;
 } Group;
 
-int compare(const void *a, const void *b) {
-    return ((Tuple *)a)->second - ((Tuple *)b)->second;
+int compare(const void* a, const void* b) {
+    return ((Tuple*)a)->second - ((Tuple*)b)->second;
 }
 
-void addValueToGroup(Group *group, int value) {
-    Node *newNode = (Node *)malloc(sizeof(Node));
-    newNode->value = value;
-    newNode->next = NULL;
+void add_to_group(Group* group, int first) {
+    Node* new_node = (Node*)malloc(sizeof(Node));
+    new_node->value = first;
+    new_node->next = NULL;
 
-    if (group->data == NULL) {
-        group->data = newNode;
+    if (group->head == NULL) {
+        group->head = new_node;
     } else {
-        Node *temp = group->data;
-        while (temp->next != NULL) {
-            temp = temp->next;
+        Node* current = group->head;
+        while (current->next != NULL) {
+            current = current->next;
         }
-        temp->next = newNode;
+        current->next = new_node;
     }
 }
 
-void freeGroup(Group *group) {
-    Node *current = group->data;
-    Node *next;
-
-    while (current != NULL) {
-        next = current->next;
-        free(current);
-        current = next;
+void print_groups(Group* groups, int size) {
+    for (int i = 0; i < size; i++) {
+        printf("Group %d: ", groups[i].second);
+        Node* current = groups[i].head;
+        while (current != NULL) {
+            printf("%d ", current->value);
+            current = current->next;
+        }
+        printf("\n");
     }
 }
 
-void printGroups(Group *groups, int n) {
-    for (int i = 0; i < n; i++) {
-        printf("%d: ", groups[i].key);
-        Node *temp = groups[i].data;
-        while (temp != NULL) {
-            printf("%d -> ", temp->value);
-            temp = temp->temp;
+void free_groups(Group* groups, int size) {
+    for (int i = 0; i < size; i++) {
+        Node* current = groups[i].head;
+        while (current != NULL) {
+            Node* next = current->next;
+            free(current);
+            current = next;
         }
-        printf("NULL\n");
     }
+    free(groups);
 }
 
 int main() {
-    Tuple list[] = {{1, 2}, {3, 2}, {4, 3}, {5, 3}, {6, 1}};
-    int n = sizeof(list) / sizeof(list[0]);
+    Tuple tuples[] = {{1, 2}, {3, 4}, {5, 2}, {7, 4}, {9, 6}};
+    int n = sizeof(tuples) / sizeof(tuples[0]);
 
-    qsort(list, n, sizeof(Tuple), compare);
+    qsort(tuples, n, sizeof(Tuple), compare);
 
-    Group *groups = (Group *)malloc(n * sizeof(Group));
-    int groupIndex = 0;
-    groups[groupIndex].key = list[0].second;
-    addValueToGroup(&groups[groupIndex], list[0].first);
-
+    int group_count = 1;
     for (int i = 1; i < n; i++) {
-        if (list[i].second == groups[groupIndex].key) {
-            addValueToGroup(&groups[groupIndex], list[i].first);
-        } else {
-            groupIndex++;
-            groups[groupIndex].key = list[i].second;
-            addValueToGroup(&groups[groupIndex], list[i].first);
+        if (tuples[i].second != tuples[i-1].second) {
+            group_count++;
         }
     }
 
-    printGroups(groups, groupIndex + 1);
+    Group* groups = (Group*)calloc(group_count, sizeof(Group));
+    if (groups == NULL) return 1;
 
-    for (int i = 0; i <= groupIndex; i++) {
-        freeGroup(&groups[i]);
+    int group_index = 0;
+    groups[group_index].second = tuples[0].second;
+    add_to_group(&groups[group_index], tuples[0].first);
+
+    for (int i = 1; i < n; i++) {
+        if (tuples[i].second != groups[group_index].second) {
+            group_index++;
+            groups[group_index].second = tuples[i].second;
+        }
+        add_to_group(&groups[group_index], tuples[i].first);
     }
-    free(groups);
+
+    print_groups(groups, group_count);
+    free_groups(groups, group_count);
 
     return 0;
 }

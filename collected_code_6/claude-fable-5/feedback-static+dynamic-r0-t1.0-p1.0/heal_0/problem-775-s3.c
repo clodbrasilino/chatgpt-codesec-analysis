@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+bool odd_indices_contain_odd_numbers(const int *arr, size_t length)
+{
+    if (arr == NULL) {
+        return false;
+    }
+
+    for (size_t i = 1; i < length; i += 2) {
+        if (arr[i] % 2 == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+int main(void)
+{
+    int list1[] = {2, 1, 4, 3, 6, 7, 6, 3};
+    int list2[] = {4, 1, 2, 3, 4};
+    int list3[] = {1, 2, 3};
+
+    size_t len1 = sizeof(list1) / sizeof(list1[0]);
+    size_t len2 = sizeof(list2) / sizeof(list2[0]);
+    size_t len3 = sizeof(list3) / sizeof(list3[0]);
+
+    if (odd_indices_contain_odd_numbers(list1, len1)) {
+        printf("list1: true\n");
+    } else {
+        printf("list1: false\n");
+    }
+
+    if (odd_indices_contain_odd_numbers(list2, len2)) {
+        printf("list2: true\n");
+    } else {
+        printf("list2: false\n");
+    }
+
+    if (odd_indices_contain_odd_numbers(list3, len3)) {
+        printf("list3: true\n");
+    } else {
+        printf("list3: false\n");
+    }
+
+    return 0;
+}

@@ -1,25 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 double tuple_to_float(const char *tuple) {
-    const char *start = strchr(tuple, '(');
-    if (start == NULL) return 0.0;
-
-    start++;
-    char *end;
-    double result = strtod(start, &end);
-
-    if (*end != ')') return 0.0;
-
-    return result;
+    double num1, num2;
+    if (sscanf(tuple, "(%lf,%lf)", &num1, &num2) != 2) {
+        fprintf(stderr, "Invalid input format\n");
+        exit(EXIT_FAILURE);
+    }
+    return num1 + num2;
 }
 
 int main() {
-    const char *test_tuples[] = {"(4.56)", "(7.256)", "(8.123)"};
-    for (size_t i = 0; i < 3; ++i) {
-        double result = tuple_to_float(test_tuples[i]);
-        printf("Converted float: %f\n", result);
+    const char *test_cases[] = {"(4.56,0.0)", "(7.256,0.867)", "(8.123,0.0)"};
+    const double expected_results[] = {4.56, 7.256 + 0.867, 8.123};
+
+    for (int i = 0; i < 3; i++) {
+        double result = tuple_to_float(test_cases[i]);
+        if (result != expected_results[i]) {
+            printf("Test case %d failed: expected %.3f, got %.3f\n", i, expected_results[i], result);
+        } else {
+            printf("Test case %d passed: %.3f\n", i, result);
+        }
     }
+
     return 0;
 }

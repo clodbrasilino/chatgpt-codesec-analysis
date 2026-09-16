@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <limits.h>
+
+int find_min_sum_of_factors(int num) {
+    if (num <= 0) {
+        return -1;
+    }
+
+    int sum = 0;
+    
+    for (int i = 2; i * i <= num; i++) {
+        while (num % i == 0) {
+            sum += i;
+            num /= i;
+        }
+    }
+    
+    if (num > 1) {
+        sum += num;
+    }
+    
+    return sum;
+}
+
+int main(void) {
+    int num;
+    
+    if (scanf("%d", &num) != 1) {
+        return 1;
+    }
+    
+    int result = find_min_sum_of_factors(num);
+    
+    if (result == -1) {
+        return 1;
+    }
+    
+    printf("%d\n", result);
+    
+    return 0;
+}

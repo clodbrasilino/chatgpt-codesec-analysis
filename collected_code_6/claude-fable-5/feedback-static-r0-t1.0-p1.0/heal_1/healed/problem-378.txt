@@ -1,0 +1,106 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *createNode(int data)
+{
+    struct Node *node = malloc(sizeof(struct Node));
+    if (node == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+    node->data = data;
+    node->next = NULL;
+    return node;
+}
+
+void appendNode(struct Node **head, int data)
+{
+    struct Node *node = createNode(data);
+    if (*head == NULL) {
+        *head = node;
+        return;
+    }
+    struct Node *cur = *head;
+    while (cur->next != NULL) {
+        cur = cur->next;
+    }
+    cur->next = node;
+}
+
+void shiftLastToFirst(struct Node **head)
+{
+    if (head == NULL || *head == NULL || (*head)->next == NULL) {
+        return;
+    }
+    struct Node *prev = *head;
+    struct Node *cur = (*head)->next;
+    while (cur->next != NULL) {
+        prev = cur;
+        cur = cur->next;
+    }
+    prev->next = NULL;
+    cur->next = *head;
+    *head = cur;
+}
+
+void printList(const struct Node *head)
+{
+    const struct Node *cur = head;
+    while (cur != NULL) {
+        printf("%d ", cur->data);
+        cur = cur->next;
+    }
+    printf("\n");
+}
+
+void freeList(struct Node **head)
+{
+    struct Node *cur = *head;
+    while (cur != NULL) {
+        struct Node *next = cur->next;
+        free(cur);
+        cur = next;
+    }
+    *head = NULL;
+}
+
+int main(void)
+{
+    struct Node *head = NULL;
+
+    appendNode(&head, 1);
+    appendNode(&head, 2);
+    appendNode(&head, 3);
+    appendNode(&head, 4);
+    appendNode(&head, 5);
+
+    printf("Original list: ");
+    printList(head);
+
+    shiftLastToFirst(&head);
+
+    printf("After shift:   ");
+    printList(head);
+
+    freeList(&head);
+
+    return EXIT_SUCCESS;
+}
+```
+
+**Analysis of the fix:**
+
+The static-analysis warnings all centered on `shiftLastToFirst()`. The original code initialized `prev = NULL` and only assigned it inside the loop body. Although the guard clause (`(*head)->next == NULL` check) guarantees at least two nodes — meaning the loop always executes at least once and `prev` can never actually be `NULL` at the dereference point — the analyzer cannot prove this invariant, hence the `nullPointer` warning.
+
+The rewrite eliminates the warning structurally rather than suppressing it:
+
+- `prev` is initialized to `*head` (guaranteed non-NULL by the guard).
+- `cur` starts at `(*head)->next` (also guaranteed non-NULL by the guard).
+
+With this initialization, `prev` is never `NULL` on any path reaching `prev->next = NULL`, so the null-dereference warning, the "assigned value is 0" note, and the "assuming condition is false" path all disappear. The algorithm's behavior is identical: it walks to the last node, detaches it, and prepends it to the list. The rest of the code (allocation checking, full list teardown in `freeList`, resetting `*head` to `NULL` after freeing) was already sound and is preserved unchanged.

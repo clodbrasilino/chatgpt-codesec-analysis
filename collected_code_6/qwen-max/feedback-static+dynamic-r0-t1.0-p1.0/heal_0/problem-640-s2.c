@@ -1,35 +1,32 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
-char* remove_parenthesis(char *s) {
-    int len = strlen(s);
-    char *result = (char*)malloc((len + 1) * sizeof(char));
-    if (result == NULL) return s;
-    
-    int r_index = 0;
-    int p_count = 0;
+char* remove_parenthesis(char *str) {
+    char *result = (char*)malloc(strlen(str) + 1);
+    char *write_pos = result;
+    int parenthesis_level = 0;
 
-    for (int i = 0; i < len; i++) {
-        if (s[i] == '(') {
-            p_count++;
-        } else if (s[i] == ')') {
-            if (p_count > 0) {
-                p_count--;
-            }
-        } else if (p_count == 0) {
-            result[r_index++] = s[i];
+    for (char *read_pos = str; *read_pos; read_pos++) {
+        if (*read_pos == '(') {
+            parenthesis_level++;
+        } else if (*read_pos == ')') {
+            parenthesis_level--;
+        } else if (parenthesis_level == 0) {
+            *write_pos++ = *read_pos;
         }
     }
 
-    result[r_index] = '\0';
+    *write_pos = '\0';
     return result;
 }
 
 int main() {
-    char input[] = "Hello (World, this is a (test)) string.";
+    char input[] = "Example (with (nested) parenthesis) string.";
     char *output = remove_parenthesis(input);
+
     printf("%s\n", output);
+
     free(output);
     return 0;
 }

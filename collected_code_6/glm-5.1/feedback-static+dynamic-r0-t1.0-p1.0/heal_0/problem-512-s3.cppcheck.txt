@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-512-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-512-s3.c:21:31: style: Parameter 'tuple' can be declared as pointer to const [constParameterPointer]
+void count_frequency(Element *tuple, FreqNode **freq_map) {
+                              ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static-r0-t1.0-p1.0/heal_0/problem-512-s3.c:77:26: style: Parameter 'tuple' can be declared as pointer to const [constParameterPointer]
+void free_tuple(Element *tuple) {
+                         ^

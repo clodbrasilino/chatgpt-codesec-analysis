@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+/* Possible weaknesses found:
+ *  Parameter 'list' can be declared as pointer to const [constParameterPointer]
+ */
+void find_values_greater_than(int *list, int n, int threshold) {
+    for (int i = 0; i < n; ++i) {
+        if (list[i] > threshold) {
+            printf("%d\n", list[i]);
+        }
+    }
+}
+
+int main() {
+    int numbers[] = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    int count = sizeof(numbers) / sizeof(numbers[0]);
+    int threshold = 50;
+    
+    find_values_greater_than(numbers, count, threshold);
+    
+    return 0;
+}

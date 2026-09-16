@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <string.h>
+
+int minSwaps(char *a, const char *b) {
+    int count[2] = {0}, diffCount = 0;
+    int n = strlen(a);
+    for (int i = 0; i < n; i++) {
+        if (a[i] != b[i]) {
+            if (a[i] == '0' || a[i] == '1') count[a[i] - '0']++;
+            if (b[i] == '0' || b[i] == '1') count[b[i] - '0']--;
+            diffCount++;
+        }
+    }
+    if (diffCount % 2 != 0 || (count[0] != 0) || (count[1] != 0)) return -1;
+    return diffCount / 2;
+}
+
+int main() {
+    char a[] = "1100";
+    const char b[] = "1001";
+    int result = minSwaps(a, b);
+    if (result != -1) {
+        printf("Minimum swaps required: %d\n", result);
+    } else {
+        printf("Not Possible\n");
+    }
+    return 0;
+}

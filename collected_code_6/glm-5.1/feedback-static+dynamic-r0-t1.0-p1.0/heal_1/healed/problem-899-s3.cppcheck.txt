@@ -1,0 +1,7 @@
+Checking /Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-899-s3.c ...
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-899-s3.c:33:21: style: Variable 'min_val' is assigned a value that is never used. [unreadVariable]
+        int min_val = (deque[left] <= deque[right]) ? deque[left] : deque[right];
+                    ^
+/Users/clodbrasilino/zju-workspace/chatgpt-codesec-analysis/collected_code_6/glm-5.1/feedback-static+dynamic-r0-t1.0-p1.0/heal_1/healed/problem-899-s3.c:34:21: style: Variable 'max_val' is assigned a value that is never used. [unreadVariable]
+        int max_val = (deque[left] >= deque[right]) ? deque[left] : deque[right];
+                    ^

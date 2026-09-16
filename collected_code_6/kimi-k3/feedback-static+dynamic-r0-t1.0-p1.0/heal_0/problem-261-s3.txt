@@ -1,0 +1,58 @@
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    double dividend;
+    double divisor;
+} Tuple;
+
+int divide_tuples(const Tuple *tuples, size_t count, double *results)
+{
+    size_t i;
+
+    if (tuples == NULL || results == NULL || count == 0) {
+        return -1;
+    }
+
+    for (i = 0; i < count; i++) {
+        if (tuples[i].divisor == 0.0) {
+            return -1;
+        }
+        results[i] = tuples[i].dividend / tuples[i].divisor;
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    Tuple tuples[] = {
+        {10.0, 2.0},
+        {15.0, 3.0},
+        {20.0, 4.0}
+    };
+    size_t count = sizeof(tuples) / sizeof(tuples[0]);
+    double *results;
+    size_t i;
+    int status;
+
+    results = (double *)malloc(count * sizeof(double));
+    if (results == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    status = divide_tuples(tuples, count, results);
+    if (status != 0) {
+        free(results);
+        return EXIT_FAILURE;
+    }
+
+    for (i = 0; i < count; i++) {
+        printf("%.2f / %.2f = %.2f\n", tuples[i].dividend, tuples[i].divisor, results[i]);
+    }
+
+    free(results);
+    return EXIT_SUCCESS;
+}
+```

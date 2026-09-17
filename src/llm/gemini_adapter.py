@@ -56,9 +56,18 @@ class GeminiClient:
         text = resp.text or ""
         reasoning = None
         # Thinking traces are exposed in thought parts when include_thoughts=True.
+        # NOTE: Part.thought is a *bool flag* (not the text) in google-genai;
+        # the thought summary lives in Part.text. SDK's resp.text skips thought
+        # parts, so only the reasoning extraction needs manual handling.
         if resp.candidates:
             parts = resp.candidates[0].content.parts
-            thought_texts = [p.thought for p in parts if getattr(p, "thought", None)]
+            thought_texts = [
+                p.text
+                for p in parts
+                if isinstance(getattr(p, "thought", None), bool)
+                and p.thought
+                and isinstance(p.text, str)
+            ]
             if thought_texts:
                 reasoning = "\n".join(thought_texts)
         usage = {}
